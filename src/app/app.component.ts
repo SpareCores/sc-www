@@ -32,7 +32,7 @@ import { NeetoCalService } from "./services/neeto-cal.service";
 const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
 
 @Component({
-  selector: "app-root",
+  selector: "sc-root",
   imports: [PromoBanner, HeaderComponent, FooterComponent, RouterModule],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",

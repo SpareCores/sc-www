@@ -36,7 +36,7 @@ interface HistogramBin {
 }
 
 @Component({
-  selector: "app-benchmark-workload",
+  selector: "sc-benchmark-workload",
   imports: [
     LucideCircleArrowDown,
     LucideCircleArrowUp,

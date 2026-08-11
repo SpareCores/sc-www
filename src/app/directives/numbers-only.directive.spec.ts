@@ -4,8 +4,8 @@ import { NumbersOnlyDirective } from "./numbers-only.directive";
 
 @Component({
   template: `
-    <input id="decimal" appNumbersOnly />
-    <input id="integer" appNumbersOnly [allowDecimal]="false" />
+    <input id="decimal" scNumbersOnly />
+    <input id="integer" scNumbersOnly [allowDecimal]="false" />
   `,
   imports: [NumbersOnlyDirective],
 })

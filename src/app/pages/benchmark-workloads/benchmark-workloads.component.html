@@ -1,7 +1,7 @@
 <!-- Header band -->
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-4">
-    <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
+    <sc-breadcrumbs [segments]="breadcrumbs()"></sc-breadcrumbs>
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl flex items-center">
@@ -20,11 +20,11 @@
 <div class="content py-8 bg-primary min-h-screen">
   @if (isLoading()) {
     <div class="flex justify-center items-center mt-16">
-      <app-loading-spinner
+      <sc-loading-spinner
         size="lg"
         text="Loading benchmark workloads..."
         textClasses="text-lg text-white"
-      ></app-loading-spinner>
+      ></sc-loading-spinner>
     </div>
   } @else if (errorMessage()) {
     <div class="flex justify-center items-center mt-16">
@@ -37,7 +37,7 @@
       [class.page_layout_mobile]="isMobileViewport()"
     >
       <!-- Sticky TOC sidebar -->
-      <app-benchmark-workloads-sidebar
+      <sc-benchmark-workloads-sidebar
         [benchmarkFamilies]="benchmarkFamilies()"
         [isCollapsed]="isCollapsed()"
         [activeBenchmarkId]="activeBenchmarkId()"
@@ -46,14 +46,14 @@
         (toggleCollapseEvent)="toggleCollapse()"
         (familyClick)="handleFamilyClick($event)"
         (benchmarkClick)="scrollTo($event)"
-      ></app-benchmark-workloads-sidebar>
+      ></sc-benchmark-workloads-sidebar>
 
       <!-- Main scrollable content column -->
       <div
         class="list_holder flex flex-col gap-12"
         [class.limited-full]="!isCollapsed()"
         [class.mini-full]="isCollapsed()"
-        [appScrollSpy]="allBenchmarkIds()"
+        [scScrollSpy]="allBenchmarkIds()"
         (activeItemId)="onActiveItemChange($event)"
       >
         @for (family of benchmarkFamilies(); track family.framework) {
@@ -138,9 +138,9 @@
             <div class="flex flex-col gap-8">
               @for (bm of family.benchmarks; track bm.benchmark_id) {
                 <div [id]="bm.benchmark_id" class="scroll-mt-[6.5rem]">
-                  <app-benchmark-workload
+                  <sc-benchmark-workload
                     [workload]="bm"
-                  ></app-benchmark-workload>
+                  ></sc-benchmark-workload>
                 </div>
               }
             </div>

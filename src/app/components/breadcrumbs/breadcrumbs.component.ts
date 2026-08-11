@@ -8,7 +8,7 @@ export type BreadcrumbSegment = {
 };
 
 @Component({
-  selector: "app-breadcrumbs",
+  selector: "sc-breadcrumbs",
   imports: [RouterLink],
   templateUrl: "./breadcrumbs.component.html",
   styleUrl: "./breadcrumbs.component.scss",

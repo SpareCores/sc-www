@@ -15,7 +15,7 @@ import { NeetoCalService } from "../../services/neeto-cal.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 
 @Component({
-  selector: "app-about-spare-cores",
+  selector: "sc-about-spare-cores",
   imports: [BreadcrumbsComponent, RouterLink],
   templateUrl: "./spare-cores.component.html",
   styleUrl: "./spare-cores.component.scss",

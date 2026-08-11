@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from "@angular/core";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 
 @Component({
-  selector: "app-funding-information",
+  selector: "sc-funding-information",
   templateUrl: "./funding-information.component.html",
   styleUrl: "./funding-information.component.scss",
 })

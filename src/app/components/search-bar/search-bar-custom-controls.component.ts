@@ -34,7 +34,7 @@ import {
 } from "./search-bar.utils";
 
 @Component({
-  selector: "app-search-bar-custom-controls",
+  selector: "sc-search-bar-custom-controls",
   imports: [
     CommonModule,
     LucideDynamicIcon,

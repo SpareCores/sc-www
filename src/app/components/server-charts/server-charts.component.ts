@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import {
   LucideDynamicIcon,
   LucideInfo,
@@ -16,20 +15,22 @@ import {
 } from "@lucide/angular";
 import { Benchmark } from "../../../../sdk/data-contracts";
 import {
-  staticWebChartTemplate,
   redisChartTemplate,
+  staticWebChartTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
-import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { Button } from "../button/button";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
 import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
-import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
 import { GeekbenchBenchmarkMeta } from "../charts/geekbench/geekbench-radar-chart.types";
-import { ServerMemoryChartComponent } from "../charts/memory/server-memory-chart.component";
-import { MemoryBenchmarkMeta } from "../charts/memory/memory-chart.types";
+import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
 import {
   LineBenchmarkGroup,
   LineChartDetailsServer,
 } from "../charts/line/benchmark-line-chart.types";
+import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
+import { MemoryBenchmarkMeta } from "../charts/memory/memory-chart.types";
+import { ServerMemoryChartComponent } from "../charts/memory/server-memory-chart.component";
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import { BenchmarkMultiBarChartItem } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
@@ -38,8 +39,9 @@ import { WorkloadProfilePanelComponent } from "../charts/workload-profile/worklo
 import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload-profile.utils";
 
 @Component({
-  selector: "app-server-charts",
+  selector: "sc-server-charts",
   imports: [
+    Button,
     LucideDynamicIcon,
     LucideInfo,
     LucideTriangleAlert,

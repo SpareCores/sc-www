@@ -1,11 +1,11 @@
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16">
-    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     <div class="content_gutter articles_holder flex flex-wrap mt-4 text-white">
       @for (article of articles; track article.title + "_" + article.date) {
         <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4">
-          <app-article-card [article]="article"></app-article-card>
+          <sc-article-card [article]="article"></sc-article-card>
         </div>
       }
     </div>

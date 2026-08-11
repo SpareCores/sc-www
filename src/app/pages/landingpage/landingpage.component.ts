@@ -15,6 +15,7 @@ import { spinner_initial_data } from "../../tools/spinner_initial_data";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
+import { Button } from "../../components/button/button";
 import { RouterLink } from "@angular/router";
 import {
   LucideCheck,
@@ -42,11 +43,12 @@ import {
 } from "./landingpage.types";
 
 @Component({
-  selector: "app-landingpage",
+  selector: "sc-landingpage",
   imports: [
     CommonModule,
     FormsModule,
     ThemeTextComponent,
+    Button,
     RouterLink,
     LucideCheck,
     LucideMessageSquareMore,

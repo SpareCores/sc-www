@@ -16,7 +16,7 @@ import {
 import { PartnerCategory, PartnerInterestSection } from "./partners.types";
 
 @Component({
-  selector: "app-partners",
+  selector: "sc-partners",
   imports: [BreadcrumbsComponent, RouterLink],
   templateUrl: "./partners.component.html",
   styleUrl: "./partners.component.scss",

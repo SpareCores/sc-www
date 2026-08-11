@@ -30,7 +30,7 @@ import {
 } from "./geekbench-radar-chart.types";
 
 @Component({
-  selector: "app-geekbench-radar-chart",
+  selector: "sc-geekbench-radar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

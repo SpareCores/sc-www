@@ -64,6 +64,24 @@ describe("HeaderComponent", () => {
   });
 
   it("configures the compare dropdown to stay within the viewport", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    serverCompare.selectedForCompare = [
+      {
+        display_name: "a",
+        vendor: "aws",
+        server: "a",
+        zonesRegions: [],
+      },
+      {
+        display_name: "b",
+        vendor: "aws",
+        server: "b",
+        zonesRegions: [],
+      },
+    ];
+    serverCompare.selectionChanged.next(serverCompare.selectedForCompare);
+    fixture.detectChanges();
+
     const compareDropdown = fixture.debugElement
       .query(By.css("#compare_button"))
       .injector.get(FlowbiteDropdownDirective);
@@ -186,7 +204,7 @@ describe("HeaderComponent", () => {
     fixture.detectChanges();
 
     const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
-      "#compare_options button.bg-emerald-400",
+      "#compare_options sc-button[label='Compare'] button",
     );
 
     expect(compareButton?.textContent?.trim()).toBe("Compare");
@@ -206,7 +224,7 @@ describe("HeaderComponent", () => {
     fixture.detectChanges();
 
     const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
-      "#compare_options button.bg-emerald-400",
+      "#compare_options sc-button[label='Compare'] button",
     );
 
     expect(compareButton).toBeNull();

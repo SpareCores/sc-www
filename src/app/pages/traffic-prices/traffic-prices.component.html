@@ -1,6 +1,6 @@
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16">
-    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
@@ -33,7 +33,7 @@
         >
           <svg lucideChevronLeft class="h-6 w-6 text-emerald-400"></svg>
         </div>
-        <app-search-bar
+        <sc-search-bar
           [query]="query"
           [filterCategories]="filterCategories"
           [searchParameters]="searchParameters"
@@ -41,7 +41,7 @@
           AIAssistantType="traffic_prices"
           (searchChanged)="searchBarChanged($event)"
         >
-        </app-search-bar>
+        </sc-search-bar>
       </div>
       <div
         class="list_holder flex flex-col gap-4"
@@ -50,43 +50,23 @@
           'w-full': isCollapsed,
         }"
       >
-        <div class="top_buttons w-full flex justify-end gap-6 items-center">
-          <button
+        <div class="top_buttons w-full flex justify-end gap-4 items-center">
+          <sc-button
             id="currency_button"
-            [appFlowbiteDropdown]="'currency_options'"
-            #currencyDropdown="appFlowbiteDropdown"
-            class="dropdown_button"
-            type="button"
-          >
-            <div class="px-4 py-3">
-              {{ selectedCurrency.slug }}
-            </div>
-            <div
-              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-            >
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
-          <button
+            [scFlowbiteDropdown]="'currency_options'"
+            #currencyDropdown="scFlowbiteDropdown"
+            [label]="selectedCurrency.slug"
+            icon="credit-card"
+            variant="dropdown"
+          ></sc-button>
+          <sc-button
             id="column_button"
             data-ph-capture-attribute-sc-event="server listing columns select"
-            [appFlowbiteDropdown]="'column_options'"
-            class="dropdown_button"
-            type="button"
-          >
-            <div class="px-4 py-3">Columns</div>
-            <div
-              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-            >
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [scFlowbiteDropdown]="'column_options'"
+            label="Columns"
+            icon="columns-3-cog"
+            variant="dropdown"
+          ></sc-button>
         </div>
         <div>
           <div
@@ -98,7 +78,7 @@
                 class="absolute top-0 left-0 w-full h-full pt-16"
                 style="background-color: rgba(0, 0, 0, 0.2)"
               >
-                <app-loading-spinner size="lg"></app-loading-spinner>
+                <sc-loading-spinner size="lg"></sc-loading-spinner>
               </div>
             }
             <table class="items_table">
@@ -228,39 +208,28 @@
           </div>
           <div>
             <div class="flex justify-between mt-4">
-              <div>
-                <button
+              <div class="flex items-center gap-2">
+                <sc-button
                   id="pagesize_button"
                   data-ph-capture-attribute-sc-event="server listing page size select"
-                  [appFlowbiteDropdown]="'pagesize_options'"
+                  [scFlowbiteDropdown]="'pagesize_options'"
                   [dropdownFlip]="true"
                   [dropdownPlacement]="'bottom-start'"
-                  #pageDropdown="appFlowbiteDropdown"
-                  class="dropdown_button"
-                  type="button"
-                >
-                  <div class="px-4 py-2">
-                    {{ limit }}
-                  </div>
-                  <div
-                    class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                  >
-                    <svg
-                      lucideChevronDown
-                      class="h-6 w-6 shrink-0 text-emerald-400"
-                    ></svg>
-                  </div>
-                </button>
-                <span class="text-white"> items per page</span>
+                  #pageDropdown="scFlowbiteDropdown"
+                  [label]="'' + limit"
+                  icon="chevron-down"
+                  variant="dropdown"
+                ></sc-button>
+                <span class="text-white">items per page</span>
               </div>
               <div>
-                <app-pagination
+                <sc-pagination
                   baseURL="/traffic-prices"
                   [currentPage]="page"
                   [totalPages]="totalPages"
                   [baseQueryParams]="getQueryObjectBase()"
                 >
-                </app-pagination>
+                </sc-pagination>
               </div>
             </div>
           </div>

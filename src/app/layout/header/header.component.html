@@ -12,118 +12,110 @@
       class="justify-end items-center w-auto flex order-1"
       id="mobile-menu-2"
     >
-      <ul
-        class="flex font-medium flex-row space-x-3 xl:space-x-8 mt-0 items-center"
+      <div
+        class="flex font-medium flex-row gap-4 mt-0 items-center justify-end"
       >
-        <li class="hidden xl:flex">
-          <div
-            class="navbar_link cursor-pointer"
+        <div class="hidden xl:flex">
+          <sc-button
             id="about_button"
-            [appFlowbiteDropdown]="'about_options'"
+            [scFlowbiteDropdown]="'about_options'"
             [dropdownPlacement]="'bottom'"
-            #aboutDropdown="appFlowbiteDropdown"
-          >
-            <span class="navbar_icon">
-              <svg lucideInfo class="h-4 w-4"></svg>
-            </span>
-            About
-          </div>
-        </li>
-        <li class="hidden xl:flex">
-          <div
-            class="navbar_link cursor-pointer"
+            #aboutDropdown="scFlowbiteDropdown"
+            label="About"
+            icon="info"
+            iconPosition="start"
+            variant="link"
+            color="inverse"
+          ></sc-button>
+        </div>
+        <div class="hidden xl:flex">
+          <sc-button
             id="navigator_button"
-            [appFlowbiteDropdown]="'navigator_options'"
+            [scFlowbiteDropdown]="'navigator_options'"
             [dropdownPlacement]="'bottom'"
-            #navigatorDropdown="appFlowbiteDropdown"
-          >
-            <span class="navbar_icon">
-              <svg lucideShipWheel class="h-4 w-4"></svg>
-            </span>
-            Navigator
-          </div>
-        </li>
-        <li class="hidden xl:flex">
-          <a routerLink="/advisor" class="navbar_link">
-            <span class="navbar_icon">
-              <svg lucideBot class="cursor-pointer h-4 w-4"></svg>
-            </span>
-            Advisor
-          </a>
-        </li>
-        <li class="hidden xl:flex">
-          <a
+            #navigatorDropdown="scFlowbiteDropdown"
+            label="Navigator"
+            icon="ship-wheel"
+            iconPosition="start"
+            variant="link"
+            color="inverse"
+          ></sc-button>
+        </div>
+        <div class="hidden xl:flex">
+          <sc-button
+            label="Advisor"
+            icon="bot"
+            iconPosition="start"
+            variant="link"
+            color="inverse"
+            [routerLink]="'/advisor'"
+          ></sc-button>
+        </div>
+        <div class="hidden xl:flex">
+          <sc-button
+            label="Resource Tracker"
+            icon="gauge"
+            iconPosition="start"
+            variant="link"
+            color="inverse"
             href="https://sparecores.github.io/resource-tracker/"
             target="_blank"
             rel="noopener"
-            class="navbar_link whitespace-nowrap"
-          >
-            <span class="navbar_icon">
-              <svg lucideGauge class="cursor-pointer h-4 w-4"></svg>
-            </span>
-            Resource Tracker
-          </a>
-        </li>
-        <li class="hidden xl:flex">
-          <a
+          ></sc-button>
+        </div>
+        <div class="hidden xl:flex">
+          <sc-button
+            label="Sentinel"
+            icon="shield-cog"
+            iconPosition="start"
+            variant="link"
+            color="inverse"
             href="https://sentinel.sparecores.com/"
             target="_blank"
             rel="noopener"
-            class="navbar_link"
-          >
-            <span class="navbar_icon">
-              <svg lucideShieldCog class="cursor-pointer h-4 w-4"></svg>
-            </span>
-            Sentinel
-          </a>
-        </li>
-        <li class="!px-0 py-1">
-          <div class="flex items-center gap-4">
-            <button
-              id="meeting-header-demo"
-              aria-label="Book a Call"
-              class="hidden sm:flex text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative gap-2 items-center whitespace-nowrap"
-            >
-              <span class="navbar_icon">
-                <svg lucideCalendarDays class="h-4 w-4"></svg>
-              </span>
-              Book a Call
-            </button>
-            <button
+          ></sc-button>
+        </div>
+        <div class="flex items-center gap-4">
+          <sc-button
+            id="meeting-header-demo"
+            label="Book a Call"
+            icon="calendar-days"
+            iconPosition="start"
+            size="small"
+            ariaLabel="Book a Call"
+            class="hidden sm:flex"
+            buttonClass="whitespace-nowrap"
+          ></sc-button>
+          @if (compareCount() >= 2) {
+            <sc-button
               id="compare_button"
-              [appFlowbiteDropdown]="'compare_options'"
+              [scFlowbiteDropdown]="'compare_options'"
               [dropdownPlacement]="'bottom-end'"
               [dropdownFlip]="true"
-              #compareDropdown="appFlowbiteDropdown"
-              class="inline-flex items-center justify-center text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-3 relative"
-              [class.hidden]="compareCount() === 0"
-            >
-              <span
-                class="h-4 w-4 absolute text-white bg-red-500 z-10 top-2 right-2 rounded-full"
-                style="top: 2px; font-size: 0.625rem; right: 2px"
-                >{{ compareCount() }}
-              </span>
-              <span class="navbar_icon">
-                <svg lucideScale class="h-4 w-4"></svg>
-              </span>
-            </button>
-          </div>
-        </li>
-        <li class="xl:hidden">
+              #compareDropdown="scFlowbiteDropdown"
+              icon="scale"
+              size="small"
+              ariaLabel="Open compare menu"
+              [badge]="compareCount()"
+              [badgePing]="true"
+            ></sc-button>
+          }
+        </div>
+        <div class="xl:hidden">
           <span
             id="menu_button"
-            [appFlowbiteDropdown]="'menu_options'"
+            [scFlowbiteDropdown]="'menu_options'"
             [dropdownPlacement]="'bottom-end'"
             [dropdownFlip]="true"
-            #menuDropdown="appFlowbiteDropdown"
+            #menuDropdown="scFlowbiteDropdown"
             class="navbar_link cursor-pointer"
           >
             <span class="navbar_icon">
               <svg lucideMenu class="h-8 w-8"></svg>
             </span>
           </span>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
@@ -525,13 +517,12 @@
     }
     @if (!isOnComparePage()) {
       <li class="py-2">
-        <button
-          type="button"
-          class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-md py-2"
+        <sc-button
+          class="w-full"
+          label="Compare"
+          size="small"
           (click)="compareServers(); closeCompare()"
-        >
-          Compare
-        </button>
+        ></sc-button>
       </li>
     }
   </ul>

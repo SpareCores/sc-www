@@ -67,15 +67,15 @@ describe("AppComponent", () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector(".app-shell")).not.toBeNull();
+    expect(compiled.querySelector(".sc-shell")).not.toBeNull();
   });
 
   it("should render the site promo banner below the navbar", () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const chrome = compiled.querySelector(".app-shell-chrome");
-    const bannerHost = compiled.querySelector("app-promo-banner");
+    const chrome = compiled.querySelector(".sc-shell-chrome");
+    const bannerHost = compiled.querySelector("sc-promo-banner");
     const ctaLink = bannerHost?.querySelector("a") as HTMLAnchorElement | null;
 
     expect(bannerHost?.textContent).toContain(SITE_PROMO_BANNER.lead);
@@ -86,7 +86,7 @@ describe("AppComponent", () => {
     expect(chrome?.firstElementChild?.tagName).toBe("HEADER");
     expect(
       compiled.querySelector(
-        ".app-shell-chrome + .app-shell-banner app-promo-banner",
+        ".sc-shell-chrome + .sc-shell-banner sc-promo-banner",
       ),
     ).toBe(bannerHost);
   });
@@ -99,7 +99,7 @@ describe("AppComponent", () => {
     fixture.detectChanges();
 
     const bannerHost = fixture.nativeElement.querySelector(
-      "app-promo-banner",
+      "sc-promo-banner",
     ) as HTMLElement | null;
 
     expect(bannerHost?.textContent).toContain(ADVISOR_PROMO_BANNER.lead);
@@ -118,7 +118,7 @@ describe("AppComponent", () => {
     fixture.detectChanges();
 
     let bannerHost = fixture.nativeElement.querySelector(
-      "app-promo-banner",
+      "sc-promo-banner",
     ) as HTMLElement | null;
     const ctaLink = bannerHost?.querySelector("a") as HTMLAnchorElement | null;
 
@@ -131,19 +131,19 @@ describe("AppComponent", () => {
     await router.navigateByUrl("/storages");
     fixture.detectChanges();
 
-    bannerHost = fixture.nativeElement.querySelector("app-promo-banner");
+    bannerHost = fixture.nativeElement.querySelector("sc-promo-banner");
     expect(bannerHost?.textContent).toContain(STORAGE_PRICES_PROMO_BANNER.body);
 
     await router.navigateByUrl("/traffic-prices");
     fixture.detectChanges();
 
-    bannerHost = fixture.nativeElement.querySelector("app-promo-banner");
+    bannerHost = fixture.nativeElement.querySelector("sc-promo-banner");
     expect(bannerHost?.textContent).toContain(TRAFFIC_PRICES_PROMO_BANNER.body);
 
     await router.navigateByUrl("/other");
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("app-promo-banner")).toBeNull();
+    expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
   });
 
   it("should hide dismissed promo banners by session group", async () => {
@@ -162,18 +162,18 @@ describe("AppComponent", () => {
     closeButton.click();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("app-promo-banner")).toBeNull();
+    expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
 
     await router.navigateByUrl("/storages");
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("app-promo-banner")).toBeNull();
+    expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
 
     await router.navigateByUrl("/advisor");
     fixture.detectChanges();
 
     const advisorBannerHost = fixture.nativeElement.querySelector(
-      "app-promo-banner",
+      "sc-promo-banner",
     ) as HTMLElement | null;
 
     expect(advisorBannerHost?.textContent).toContain(ADVISOR_PROMO_BANNER.body);
@@ -185,7 +185,7 @@ describe("AppComponent", () => {
     fixture.detectChanges();
 
     expect(
-      fixture.nativeElement.querySelector("app-promo-banner"),
+      fixture.nativeElement.querySelector("sc-promo-banner"),
     ).not.toBeNull();
 
     const serverCloseButton = fixture.nativeElement.querySelector(
@@ -195,12 +195,12 @@ describe("AppComponent", () => {
     serverCloseButton.click();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("app-promo-banner")).toBeNull();
+    expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
 
     await router.navigateByUrl("/");
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("app-promo-banner")).toBeNull();
+    expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
   });
 
   it("should keep Advisor launch promos visible after dismissing the contact promo", async () => {
@@ -217,13 +217,13 @@ describe("AppComponent", () => {
     closeButton.click();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("app-promo-banner")).toBeNull();
+    expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
 
     await router.navigateByUrl("/");
     fixture.detectChanges();
 
     const launchBannerHost = fixture.nativeElement.querySelector(
-      "app-promo-banner",
+      "sc-promo-banner",
     ) as HTMLElement | null;
 
     expect(launchBannerHost?.textContent).toContain(SITE_PROMO_BANNER.body);

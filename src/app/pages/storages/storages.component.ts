@@ -10,7 +10,6 @@ import {
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
-  LucideChevronDown,
   LucideChevronLeft,
   LucideDollarSign,
   LucideDynamicIcon,
@@ -23,6 +22,7 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
+import { Button } from "../../components/button/button";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
@@ -37,17 +37,17 @@ import {
 } from "../../tools/table-columns";
 
 @Component({
-  selector: "app-storages",
+  selector: "sc-storages",
   imports: [
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideChevronLeft,
     LucideDollarSign,
     LucideInfo,
     RouterModule,
+    Button,
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,

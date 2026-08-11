@@ -4,7 +4,7 @@ import { RouterLink } from "@angular/router";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 
 @Component({
-  selector: "app-article-card",
+  selector: "sc-article-card",
   imports: [RouterLink, TimeToShortDatePipe],
   templateUrl: "./article-card.component.html",
   styleUrl: "./article-card.component.scss",

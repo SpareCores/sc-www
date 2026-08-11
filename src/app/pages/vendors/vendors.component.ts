@@ -14,7 +14,7 @@ import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { Router, RouterModule } from "@angular/router";
 
 @Component({
-  selector: "app-vendors",
+  selector: "sc-vendors",
   imports: [
     BreadcrumbsComponent,
     LucideChevronRight,

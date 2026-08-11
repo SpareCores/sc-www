@@ -40,7 +40,7 @@ type LegalArticleLoadResult =
   | { type: "error"; error: unknown };
 
 @Component({
-  selector: "app-tos",
+  selector: "sc-tos",
   imports: [
     BreadcrumbsComponent,
     RouterModule,

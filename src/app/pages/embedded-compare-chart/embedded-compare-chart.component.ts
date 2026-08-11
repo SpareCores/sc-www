@@ -20,7 +20,7 @@ const INVALID_COMPARE_URL_TOAST_BODY =
   'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
 
 @Component({
-  selector: "app-embedded-compare-chart",
+  selector: "sc-embedded-compare-chart",
   imports: [ServerCompareChartsComponent, LucideExternalLink],
   templateUrl: "./embedded-compare-chart.component.html",
   styleUrl: "./embedded-compare-chart.component.scss",

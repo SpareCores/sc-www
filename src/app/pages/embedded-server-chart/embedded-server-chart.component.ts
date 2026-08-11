@@ -9,7 +9,7 @@ import { LucideExternalLink } from "@lucide/angular";
 import { Subscription } from "rxjs";
 
 @Component({
-  selector: "app-embedded-server-chart",
+  selector: "sc-embedded-server-chart",
   imports: [ServerChartsComponent, LucideExternalLink],
   templateUrl: "./embedded-server-chart.component.html",
   styleUrl: "./embedded-server-chart.component.scss",

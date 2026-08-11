@@ -10,11 +10,11 @@ import {
 import { isPlatformBrowser } from "@angular/common";
 
 @Directive({
-  selector: "[appScrollSpy]",
+  selector: "[scScrollSpy]",
   standalone: true,
 })
 export class ScrollSpyDirective implements OnDestroy {
-  appScrollSpy = input<string[]>();
+  scScrollSpy = input<string[]>();
   rootMargin = input("-180px 0px 0px 0px");
   threshold = input([0, 0.1, 0.5, 0.9, 1]);
   activeItemId = output<string>();
@@ -30,7 +30,7 @@ export class ScrollSpyDirective implements OnDestroy {
         return;
       }
 
-      const ids = this.appScrollSpy() || [];
+      const ids = this.scScrollSpy() || [];
       const margin = this.rootMargin();
       const thresh = this.threshold();
 

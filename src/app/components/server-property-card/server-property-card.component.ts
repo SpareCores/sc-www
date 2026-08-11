@@ -1,18 +1,19 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
   HostListener,
+  afterNextRender,
   computed,
+  effect,
+  inject,
   input,
   output,
-  viewChild,
   signal,
-  effect,
-  afterNextRender,
-  inject,
-  DestroyRef,
+  viewChild,
 } from "@angular/core";
 import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
+import { Button } from "../button/button";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 
 export interface ServerPropertyTooltip {
@@ -33,8 +34,8 @@ export interface ServerPropertySection {
 }
 
 @Component({
-  selector: "app-server-property-card",
-  imports: [LucideDynamicIcon, LucideInfo],
+  selector: "sc-server-property-card",
+  imports: [LucideDynamicIcon, LucideInfo, Button],
   templateUrl: "./server-property-card.component.html",
   styleUrl: "./server-property-card.component.scss",
 })

@@ -1,0 +1,14 @@
+:host ::ng-deep {
+  .pagination-button.sc-button {
+    @apply size-11 shrink-0 justify-center border-0 p-0;
+  }
+
+  .pagination-button.sc-button:hover,
+  .pagination-button.sc-button:focus {
+    @apply border-0 bg-emerald-400 text-white;
+  }
+
+  .pagination-button--nav.sc-button {
+    @apply size-11 p-0;
+  }
+}

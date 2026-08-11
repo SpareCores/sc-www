@@ -1,73 +1,44 @@
 <div class="w-full bg-primary min-h-screen">
   <div class="content pt-16 pb-16">
-    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
-      <div class="flex gap-4 items-center w-full justify-between">
-        <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideScale class="h-8 w-8 mr-2"></svg>
-          {{ title }}
-        </h1>
+      <sc-page-header
+        icon="scale"
+        [title]="title"
+        [showShare]="!!instances.length"
+        [shareIcon]="clipboardIcon"
+        (shareClick)="clipboardURL($event)"
+      >
         @if (instances.length) {
-          <div class="flex gap-4">
-            <button
-              class="btn-primary py-2 px-3 flex gap-1 items-center"
-              (click)="clipboardURL($event)"
-            >
-              Share
-              <svg [lucideIcon]="clipboardIcon" size="16"></svg>
-            </button>
-            <button
-              class="btn-primary py-2 px-3 flex gap-1 items-center"
-              (click)="openModal()"
-            >
-              Embed chart
-              <svg lucideCopy size="16"></svg>
-            </button>
-          </div>
+          <sc-button
+            label="Embed chart"
+            icon="copy"
+            iconPosition="end"
+            variant="outline"
+            (buttonClick)="openModal()"
+          ></sc-button>
         }
-      </div>
+      </sc-page-header>
       @if (instances.length) {
         <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
         <div class="flex flex-wrap gap-4 items-center justify-end w-full">
-          <button
+          <sc-button
             id="baseline_server_button"
-            [appFlowbiteDropdown]="'baseline_server_options'"
-            #baselineDropdown="appFlowbiteDropdown"
-            class="dropdown_button"
-            type="button"
-          >
-            <div class="px-4 py-3">
-              {{ getBaselineServerLabel() }}
-            </div>
-            <div
-              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-            >
-              <svg
-                [lucideIcon]="'target'"
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
-          <button
+            [scFlowbiteDropdown]="'baseline_server_options'"
+            #baselineDropdown="scFlowbiteDropdown"
+            [label]="getBaselineServerLabel()"
+            icon="target"
+            variant="dropdown"
+          ></sc-button>
+          <sc-button
             id="currency_button"
-            [appFlowbiteDropdown]="'currency_options'"
-            #currencyDropdown="appFlowbiteDropdown"
-            class="dropdown_button"
-            type="button"
-          >
-            <div class="px-4 py-3">
-              {{ selectedCurrency.slug }}
-            </div>
-            <div
-              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-            >
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [scFlowbiteDropdown]="'currency_options'"
+            #currencyDropdown="scFlowbiteDropdown"
+            [label]="selectedCurrency.slug"
+            icon="credit-card"
+            variant="dropdown"
+          ></sc-button>
         </div>
       }
     </div>
@@ -216,10 +187,10 @@
 
     @if (isLoading) {
       <div class="flex justify-center items-center mt-12 text-white">
-        <app-loading-spinner
+        <sc-loading-spinner
           size="md"
           text="Loading comparison data..."
-        ></app-loading-spinner>
+        ></sc-loading-spinner>
       </div>
     }
 
@@ -275,7 +246,7 @@
           </div>
         }
         <div>
-          <app-server-compare-charts
+          <sc-server-compare-charts
             [servers]="servers"
             [baselineServer]="selectedBaselineServer"
             [instanceProperties]="instanceProperties"
@@ -285,7 +256,7 @@
             [showZone]="showZoneIds"
             (layoutChanged)="onCompareTableLayoutChange()"
           >
-          </app-server-compare-charts>
+          </sc-server-compare-charts>
         </div>
       </div>
       @if (isBrowser()) {
@@ -410,12 +381,12 @@
       </div>
       @if (instancesRaw) {
         <div class="space-y-4 flex flex-col">
-          <app-embed-compare-preview
+          <sc-embed-compare-preview
             [instances]="instancesRaw"
             [isModal]="true"
             [charts]="embeddableCharts"
           >
-          </app-embed-compare-preview>
+          </sc-embed-compare-preview>
         </div>
       }
     </div>

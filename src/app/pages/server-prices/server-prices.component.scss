@@ -77,13 +77,6 @@
   }
 }
 
-.dropdown_button {
-  @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
-  transition-duration: 0.15s;
-  transition-property: background-color, border-color, box-shadow, color;
-  transition-timing-function: ease-in;
-}
-
 .unit {
   position: absolute;
   right: 0.5rem;
@@ -94,11 +87,16 @@
 .fixed_buttons {
   position: fixed;
   bottom: 2rem;
-  left: calc(50% - 10rem);
+  left: calc(50% + 10rem);
+  transform: translateX(-50%);
   z-index: 100;
-  button {
+  sc-button {
     width: 9rem;
   }
+}
+
+.fixed_buttons.fixed_buttons--collapsed {
+  left: 50%;
 }
 
 .partially_selected {

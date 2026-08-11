@@ -13,11 +13,11 @@ import {
 } from "@angular/core";
 import {
   LucideDynamicIcon,
-  LucideChevronDown,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
+import { Button } from "../../../components/button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
@@ -31,12 +31,12 @@ import {
 } from "./memory-chart.types";
 
 @Component({
-  selector: "app-server-memory-chart",
+  selector: "sc-server-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    Button,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,

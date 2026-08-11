@@ -17,7 +17,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { Subscription } from "rxjs";
 
 @Component({
-  selector: "app-survey-fill",
+  selector: "sc-survey-fill",
   imports: [SurveyModule, RouterModule],
   templateUrl: "./survey-fill.component.html",
   styleUrl: "./survey-fill.component.scss",

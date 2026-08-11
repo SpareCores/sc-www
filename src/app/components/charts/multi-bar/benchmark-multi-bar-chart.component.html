@@ -28,27 +28,17 @@
             ></svg>
           }
         </h3>
-        <button
-          #primaryDropdown="appFlowbiteDropdown"
+        <sc-button
+          #primaryDropdown="scFlowbiteDropdown"
           [id]="buttonId"
-          class="dropdown_button chart-selector-button"
-          type="button"
-          [appFlowbiteDropdown]="optionsId"
+          [scFlowbiteDropdown]="optionsId"
           [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
-        >
-          <div
-            class="chart-selector-button__label"
-            [title]="currentOption().name"
-          >
-            {{ currentOption().name }}
-          </div>
-          <div class="chart-selector-button__icon">
-            <svg
-              lucideChevronDown
-              class="h-6 w-6 shrink-0 text-emerald-400"
-            ></svg>
-          </div>
-        </button>
+          [label]="currentOption().name || ''"
+          icon="chevron-down"
+          variant="dropdown"
+          size="small"
+          [title]="currentOption().name || null"
+        ></sc-button>
       </div>
       @if (isBrowserEnvironment()) {
         <div class="h-full">
@@ -67,56 +57,38 @@
     </div>
   } @else {
     <div class="block_full_inline">
-      <div class="flex min-w-0 flex-nowrap items-center justify-end gap-4">
+      <div
+        class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-4"
+      >
         @if (hasSecondaryOptions()) {
-          <button
-            #secondaryDropdown="appFlowbiteDropdown"
+          <sc-button
+            #secondaryDropdown="scFlowbiteDropdown"
             [id]="secondaryButtonId"
-            class="dropdown_button chart-selector-button max-w-full"
-            type="button"
-            [appFlowbiteDropdown]="secondaryOptionsId"
+            [scFlowbiteDropdown]="secondaryOptionsId"
             [dropdownEnabled]="
               isBrowserEnvironment() && !!chartData() && hasSecondaryOptions()
             "
-          >
-            <div
-              class="chart-selector-button__label"
-              [title]="currentSecondaryOption()?.name || ''"
-            >
-              {{ currentSecondaryOption()?.name }}
-            </div>
-            <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [label]="currentSecondaryOption()?.name || ''"
+            icon="chevron-down"
+            variant="dropdown"
+            size="small"
+            [title]="currentSecondaryOption()?.name || null"
+          ></sc-button>
         }
-        <button
-          #primaryDropdown="appFlowbiteDropdown"
+        <sc-button
+          #primaryDropdown="scFlowbiteDropdown"
           [id]="buttonId"
-          class="dropdown_button chart-selector-button max-w-full"
-          type="button"
-          [appFlowbiteDropdown]="optionsId"
+          [scFlowbiteDropdown]="optionsId"
           [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
-        >
-          <div
-            class="chart-selector-button__label"
-            [title]="currentOption().name"
-          >
-            {{ currentOption().name }}
-          </div>
-          <div class="chart-selector-button__icon">
-            <svg
-              lucideChevronDown
-              class="h-6 w-6 shrink-0 text-emerald-400"
-            ></svg>
-          </div>
-        </button>
+          [label]="currentOption().name || ''"
+          icon="chevron-down"
+          variant="dropdown"
+          size="small"
+          [title]="currentOption().name || null"
+        ></sc-button>
       </div>
       @if (isBrowserEnvironment()) {
-        <div class="h-full">
+        <div class="min-h-0 flex-1">
           <div class="chart_div" chartType="bar">
             <canvas
               baseChart

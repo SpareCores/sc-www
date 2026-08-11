@@ -16,9 +16,9 @@ import {
 } from "../services/dropdown-manager.service";
 
 @Directive({
-  selector: "[appFlowbiteDropdown]",
+  selector: "[scFlowbiteDropdown]",
   standalone: true,
-  exportAs: "appFlowbiteDropdown",
+  exportAs: "scFlowbiteDropdown",
 })
 export class FlowbiteDropdownDirective implements AfterViewInit {
   private platformId = inject(PLATFORM_ID);
@@ -26,7 +26,7 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
   private dropdownManager = inject(DropdownManagerService);
   private viewReady = signal(false);
 
-  appFlowbiteDropdown = input.required<string>();
+  scFlowbiteDropdown = input.required<string>();
   dropdownEnabled = input(true);
   dropdownFlip = input(false);
   dropdownPlacement = input<DropdownBehaviorOptions["placement"]>();
@@ -47,7 +47,7 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
       }
 
       const triggerId = this.elementRef.nativeElement.id;
-      const targetId = this.appFlowbiteDropdown();
+      const targetId = this.scFlowbiteDropdown();
       const key = `${triggerId}:${targetId}`;
       if (this.initializedKey === key) {
         this.dropdown?.show();
@@ -87,7 +87,7 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
     }
 
     const triggerId = this.elementRef.nativeElement.id;
-    const targetId = this.appFlowbiteDropdown();
+    const targetId = this.scFlowbiteDropdown();
     if (!triggerId || !targetId) {
       return;
     }

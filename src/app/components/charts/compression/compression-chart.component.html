@@ -33,43 +33,27 @@
         </h3>
         <div class="flex min-w-0 gap-4">
           @if (hasCoresSelector()) {
-            <button
-              #coresDropdown="appFlowbiteDropdown"
+            <sc-button
+              #coresDropdown="scFlowbiteDropdown"
               [id]="coresButtonId"
-              class="dropdown_button chart-selector-button"
-              type="button"
-              [appFlowbiteDropdown]="coresOptionsId"
+              [scFlowbiteDropdown]="coresOptionsId"
               [dropdownEnabled]="isBrowser"
-            >
-              <div class="chart-selector-button__label">
-                {{ coresLabel() }}
-              </div>
-              <div class="chart-selector-button__icon">
-                <svg
-                  lucideChevronDown
-                  class="h-6 w-6 shrink-0 text-emerald-400"
-                ></svg>
-              </div>
-            </button>
+              [label]="coresLabel()"
+              icon="chevron-down"
+              variant="dropdown"
+              size="small"
+            ></sc-button>
           }
-          <button
-            #selectorDropdown="appFlowbiteDropdown"
+          <sc-button
+            #selectorDropdown="scFlowbiteDropdown"
             [id]="buttonId"
-            class="dropdown_button chart-selector-button"
-            type="button"
-            [appFlowbiteDropdown]="optionsId"
+            [scFlowbiteDropdown]="optionsId"
             [dropdownEnabled]="isBrowser && hasOptions()"
-          >
-            <div class="chart-selector-button__label">
-              {{ currentDetailsMode().name }}
-            </div>
-            <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [label]="currentDetailsMode().name"
+            icon="chevron-down"
+            variant="dropdown"
+            size="small"
+          ></sc-button>
         </div>
       </div>
       @if (isBrowser) {
@@ -94,24 +78,16 @@
       <div class="block_full_short_inline">
         <div class="flex justify-end items-center">
           <div class="flex gap-4">
-            <button
-              #selectorDropdown="appFlowbiteDropdown"
+            <sc-button
+              #selectorDropdown="scFlowbiteDropdown"
               [id]="buttonId"
-              class="dropdown_button chart-selector-button chart-selector-button--responsive"
-              type="button"
-              [appFlowbiteDropdown]="optionsId"
+              [scFlowbiteDropdown]="optionsId"
               [dropdownEnabled]="isBrowser && hasOptions()"
-            >
-              <div class="chart-selector-button__label">
-                {{ currentCompareOptionName() }}
-              </div>
-              <div class="chart-selector-button__icon">
-                <svg
-                  lucideChevronDown
-                  class="h-6 w-6 shrink-0 text-emerald-400"
-                ></svg>
-              </div>
-            </button>
+              [label]="currentCompareOptionName()"
+              icon="chevron-down"
+              variant="dropdown"
+              size="small"
+            ></sc-button>
           </div>
         </div>
         @if (isBrowser) {

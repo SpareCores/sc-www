@@ -10,7 +10,7 @@ import { ArticleCardComponent } from "../../components/article-card/article-card
 import { Subscription } from "rxjs";
 
 @Component({
-  selector: "app-articles",
+  selector: "sc-articles",
   imports: [BreadcrumbsComponent, ArticleCardComponent],
   templateUrl: "./articles.component.html",
   styleUrl: "./articles.component.scss",

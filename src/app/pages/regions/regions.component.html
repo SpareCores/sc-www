@@ -1,6 +1,6 @@
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16 text-white flex flex-col gap-8">
-    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
     <h1 class="text-4xl font-bold mx-2 xl:mx-0">Regions</h1>
     <div class="text-white text-xl pr-16 mx-2 xl:mx-0">
       Currently we are tracking {{ regions.length }} regions at
@@ -13,19 +13,22 @@
     </div>
 
     @if (vendors.length) {
-      <div class="vendor_labels mt-4 mb-4 flex gap-6 mx-2 xl:mx-0">
+      <div
+        class="vendor_labels mt-4 mb-4 flex flex-wrap justify-center gap-8 mx-2 xl:mx-0"
+      >
         @for (vendor of vendors; track vendor.vendor_id) {
-          <div
-            class="vendor_label cursor-pointer"
-            tabindex="0"
-            (click)="toggleVendorSelected(vendor.vendor_id)"
-            [ngClass]="{
-              'line-through': !isVendorSelected(vendor.vendor_id),
-            }"
-          >
-            <div class="color_circle" [style]="getColorStyle(vendor)"></div>
-            {{ vendor.name }}
-          </div>
+          <sc-button
+            [label]="vendor.name"
+            [swatchColor]="vendor.color || '#06263a'"
+            variant="ghost"
+            color="inverse"
+            [buttonClass]="
+              isVendorSelected(vendor.vendor_id)
+                ? ''
+                : 'sc-button--swatch-inactive'
+            "
+            (buttonClick)="toggleVendorSelected(vendor.vendor_id)"
+          ></sc-button>
         }
       </div>
     }

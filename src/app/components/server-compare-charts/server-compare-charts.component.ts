@@ -26,6 +26,7 @@ import {
 import { ToastService } from "../../services/toast.service";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { AdvisorUiService } from "../../pages/advisor/advisor-ui.service";
+import { Button } from "../button/button";
 import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
 import {
@@ -92,7 +93,7 @@ import {
 } from "../charts/shared/server-compare-table.utils";
 
 @Component({
-  selector: "app-server-compare-charts",
+  selector: "sc-server-compare-charts",
   imports: [
     CommonModule,
     LucideDynamicIcon,
@@ -109,6 +110,7 @@ import {
     ServerCompareMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
     WorkloadProfilePanelComponent,
+    Button,
   ],
   templateUrl: "./server-compare-charts.component.html",
   styleUrl: "./server-compare-charts.component.scss",

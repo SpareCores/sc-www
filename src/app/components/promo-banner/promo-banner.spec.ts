@@ -24,9 +24,7 @@ describe("PromoBanner", () => {
     fixture.detectChanges();
 
     const host = fixture.nativeElement as HTMLElement;
-    const ctaLink = host.querySelector(
-      ".promo-banner__cta",
-    ) as HTMLAnchorElement | null;
+    const ctaLink = host.querySelector("a") as HTMLAnchorElement | null;
 
     expect(host.querySelector(".promo-banner__lead")?.textContent).toContain(
       SITE_PROMO_BANNER.lead,

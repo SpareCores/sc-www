@@ -27,26 +27,18 @@
           ></svg>
         }
       </h3>
-      <button
-        #memoryDropdown="appFlowbiteDropdown"
+      <sc-button
+        #memoryDropdown="scFlowbiteDropdown"
         [id]="buttonId"
-        class="dropdown_button chart-selector-button chart-selector-button--responsive"
-        type="button"
-        [appFlowbiteDropdown]="optionsId"
+        [scFlowbiteDropdown]="optionsId"
         [dropdownEnabled]="
           isBrowser && availableMemoryChartOptions().length > 0
         "
-      >
-        <div class="chart-selector-button__label">
-          {{ currentMemoryChartOption().name }}
-        </div>
-        <div class="chart-selector-button__icon">
-          <svg
-            lucideChevronDown
-            class="h-6 w-6 shrink-0 text-emerald-400"
-          ></svg>
-        </div>
-      </button>
+        [label]="currentMemoryChartOption().name"
+        icon="chevron-down"
+        variant="dropdown"
+        size="small"
+      ></sc-button>
     </div>
     @if (isBrowser) {
       <div class="h-full">

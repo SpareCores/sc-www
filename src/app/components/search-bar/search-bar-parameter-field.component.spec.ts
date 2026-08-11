@@ -82,7 +82,7 @@ describe("SearchBarParameterFieldComponent", () => {
     expect(input.classList.contains("filter-draft-input--dirty")).toBeTrue();
   });
 
-  it("attaches appNumbersOnly to numeric inputs", () => {
+  it("attaches scNumbersOnly to numeric inputs", () => {
     const parameter: SearchBarParameter = {
       name: "price_max",
       modelValue: null,

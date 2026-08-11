@@ -504,32 +504,24 @@
               </h3>
               @if (!getCompareFixedWideTrailingColSpan()) {
                 <div class="flex items-stretch gap-4 shrink-0">
-                  <button
-                    type="button"
-                    class="btn-primary compare-details-toggle"
+                  <sc-button
+                    [label]="
+                      (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
+                    "
+                    [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
+                    iconPosition="start"
+                    size="small"
                     (click)="toggleWorkloadProfileDetails()"
-                  >
-                    <svg
-                      [lucideIcon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
-                      size="16"
-                      aria-hidden="true"
-                    ></svg>
-                    {{ workloadProfileShowMore ? "Hide" : "Show" }} Details
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Copy benchmark section link"
-                    class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                  ></sc-button>
+                  <sc-button
+                    [icon]="clipboardIcon"
+                    ariaLabel="Copy benchmark section link"
+                    size="small"
+                    buttonClass="shrink-0"
                     (click)="
                       clipboardURL($event, 'benchmark_line_workload_profile')
                     "
-                  >
-                    <svg
-                      [lucideIcon]="clipboardIcon"
-                      size="16"
-                      aria-hidden="true"
-                    ></svg>
-                  </button>
+                  ></sc-button>
                 </div>
               }
             </div>
@@ -540,32 +532,24 @@
           @if (getCompareFixedWideTrailingColSpan()) {
             <td [colSpan]="1" class="compare-section-header-action-cell">
               <div class="flex justify-end items-stretch gap-4">
-                <button
-                  type="button"
-                  class="btn-primary compare-details-toggle"
+                <sc-button
+                  [label]="
+                    (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
+                  "
+                  [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
+                  iconPosition="start"
+                  size="small"
                   (click)="toggleWorkloadProfileDetails()"
-                >
-                  <svg
-                    [lucideIcon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
-                    size="16"
-                    aria-hidden="true"
-                  ></svg>
-                  {{ workloadProfileShowMore ? "Hide" : "Show" }} Details
-                </button>
-                <button
-                  type="button"
-                  aria-label="Copy benchmark section link"
-                  class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                ></sc-button>
+                <sc-button
+                  [icon]="clipboardIcon"
+                  ariaLabel="Copy benchmark section link"
+                  size="small"
+                  buttonClass="shrink-0"
                   (click)="
                     clipboardURL($event, 'benchmark_line_workload_profile')
                   "
-                >
-                  <svg
-                    [lucideIcon]="clipboardIcon"
-                    size="16"
-                    aria-hidden="true"
-                  ></svg>
-                </button>
+                ></sc-button>
               </div>
             </td>
           }
@@ -576,13 +560,13 @@
               class="compare-chart-content"
               [style]="getCompareChartContentStyle()"
             >
-              <app-workload-profile-panel
+              <sc-workload-profile-panel
                 layout="compare"
                 [showHeader]="false"
                 [servers]="workloadProfileCompareServers"
                 [benchmarkMeta]="workloadProfileBenchmarkMeta"
                 (layoutChanged)="layoutChanged.emit()"
-              ></app-workload-profile-panel>
+              ></sc-workload-profile-panel>
             </div>
           </td>
           @if (getCompareFixedWideTrailingColSpan()) {
@@ -874,39 +858,29 @@
                 @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
                   <div class="flex items-stretch gap-4 shrink-0">
                     @if (canToggleDetails) {
-                      <button
-                        type="button"
-                        class="btn-primary compare-details-toggle"
+                      <sc-button
+                        [label]="
+                          (benchmarkCategory.show_more ? 'Hide' : 'Show') +
+                          ' Details'
+                        "
+                        [icon]="benchmarkCategory.show_more ? 'eye-off' : 'eye'"
+                        iconPosition="start"
+                        size="small"
                         (click)="toggleBenchmarkCategory(benchmarkCategory)"
-                      >
-                        <svg
-                          [lucideIcon]="
-                            benchmarkCategory.show_more ? 'eye-off' : 'eye'
-                          "
-                          size="16"
-                          aria-hidden="true"
-                        ></svg>
-                        {{ benchmarkCategory.show_more ? "Hide" : "Show" }}
-                        Details
-                      </button>
+                      ></sc-button>
                     }
-                    <button
-                      type="button"
-                      aria-label="Copy benchmark section link"
-                      class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                    <sc-button
+                      [icon]="clipboardIcon"
+                      ariaLabel="Copy benchmark section link"
+                      size="small"
+                      buttonClass="shrink-0"
                       (click)="
                         clipboardURL(
                           $event,
                           'benchmark_line_' + benchmarkCategory.id
                         )
                       "
-                    >
-                      <svg
-                        [lucideIcon]="clipboardIcon"
-                        size="16"
-                        aria-hidden="true"
-                      ></svg>
-                    </button>
+                    ></sc-button>
                   </div>
                 }
               </div>
@@ -919,39 +893,29 @@
                 @if (!isEmbedded) {
                   <div class="flex justify-end items-stretch gap-4">
                     @if (canToggleDetails) {
-                      <button
-                        type="button"
-                        class="btn-primary compare-details-toggle"
+                      <sc-button
+                        [label]="
+                          (benchmarkCategory.show_more ? 'Hide' : 'Show') +
+                          ' Details'
+                        "
+                        [icon]="benchmarkCategory.show_more ? 'eye-off' : 'eye'"
+                        iconPosition="start"
+                        size="small"
                         (click)="toggleBenchmarkCategory(benchmarkCategory)"
-                      >
-                        <svg
-                          [lucideIcon]="
-                            benchmarkCategory.show_more ? 'eye-off' : 'eye'
-                          "
-                          size="16"
-                          aria-hidden="true"
-                        ></svg>
-                        {{ benchmarkCategory.show_more ? "Hide" : "Show" }}
-                        Details
-                      </button>
+                      ></sc-button>
                     }
-                    <button
-                      type="button"
-                      aria-label="Copy benchmark section link"
-                      class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                    <sc-button
+                      [icon]="clipboardIcon"
+                      ariaLabel="Copy benchmark section link"
+                      size="small"
+                      buttonClass="shrink-0"
                       (click)="
                         clipboardURL(
                           $event,
                           'benchmark_line_' + benchmarkCategory.id
                         )
                       "
-                    >
-                      <svg
-                        [lucideIcon]="clipboardIcon"
-                        size="16"
-                        aria-hidden="true"
-                      ></svg>
-                    </button>
+                    ></sc-button>
                   </div>
                 }
               </td>
@@ -970,27 +934,27 @@
               >
                 @if (benchmarkCategory.id === "bw_mem") {
                   <div>
-                    <app-server-compare-memory-chart
+                    <sc-server-compare-memory-chart
                       [servers]="memoryCompareServers"
                       [benchmarkMeta]="memoryBenchmarkMeta"
-                    ></app-server-compare-memory-chart>
+                    ></sc-server-compare-memory-chart>
                   </div>
                 }
                 @if (benchmarkCategory.id === "openssl") {
                   <div>
-                    <app-benchmark-line-chart
+                    <sc-benchmark-line-chart
                       layout="compare"
                       blockClass="block_full_inline"
                       chartSource="compare-ssl"
                       chartType="bar"
                       [servers]="lineCompareServers"
                       [benchmarkMeta]="lineBenchmarkMeta"
-                    ></app-benchmark-line-chart>
+                    ></sc-benchmark-line-chart>
                   </div>
                 }
                 @if (benchmarkCategory.id === "stress_ng") {
                   <div>
-                    <app-benchmark-line-chart
+                    <sc-benchmark-line-chart
                       layout="compare"
                       blockClass="block_full_inline"
                       chartSource="compare-stress-raw"
@@ -1000,12 +964,12 @@
                       (chartAvailabilityChange)="
                         setBenchmarkCategoryHidden(benchmarkCategory, !$event)
                       "
-                    ></app-benchmark-line-chart>
+                    ></sc-benchmark-line-chart>
                   </div>
                 }
                 @if (benchmarkCategory.id === "stress_ng_pct") {
                   <div>
-                    <app-benchmark-line-chart
+                    <sc-benchmark-line-chart
                       layout="compare"
                       blockClass="block_full_inline"
                       chartSource="compare-stress-percent"
@@ -1015,16 +979,16 @@
                       (chartAvailabilityChange)="
                         setBenchmarkCategoryHidden(benchmarkCategory, !$event)
                       "
-                    ></app-benchmark-line-chart>
+                    ></sc-benchmark-line-chart>
                   </div>
                 }
                 @if (benchmarkCategory.id === "compress") {
                   <div>
-                    <app-compression-chart
+                    <sc-compression-chart
                       layout="compare"
                       [servers]="compressionServers"
                       [benchmarkMeta]="compressionBenchmarkMeta"
-                    ></app-compression-chart>
+                    ></sc-compression-chart>
                   </div>
                 }
                 @if (
@@ -1033,22 +997,22 @@
                   benchmarkCategory.id === "geekbench_multi"
                 ) {
                   <div>
-                    <app-geekbench-radar-chart
+                    <sc-geekbench-radar-chart
                       layout="compare"
                       [servers]="geekbenchCompareServers"
                       [showSingle]="benchmarkCategory.id !== 'geekbench_multi'"
                       [benchmarkMeta]="geekbenchBenchmarkMeta"
                       [showMulti]="benchmarkCategory.id !== 'geekbench_single'"
-                    ></app-geekbench-radar-chart>
+                    ></sc-geekbench-radar-chart>
                   </div>
                 }
                 @if (benchmarkCategory.id === "llm_inference") {
                   <div>
-                    <app-llm-inference-chart
+                    <sc-llm-inference-chart
                       layout="compare"
                       [benchmarkMeta]="benchmarkMeta"
                       [servers]="llmCompareServers"
-                    ></app-llm-inference-chart>
+                    ></sc-llm-inference-chart>
                   </div>
                 }
               </div>
@@ -1400,35 +1364,27 @@
                 </h3>
                 @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
                   <div class="flex items-stretch gap-4 shrink-0">
-                    <button
-                      type="button"
-                      class="btn-primary compare-details-toggle"
+                    <sc-button
+                      [label]="
+                        (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
+                      "
+                      [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
+                      iconPosition="start"
+                      size="small"
                       (click)="toggleBenchmarkCategory(chartItem)"
-                    >
-                      <svg
-                        [lucideIcon]="chartItem.show_more ? 'eye-off' : 'eye'"
-                        size="16"
-                        aria-hidden="true"
-                      ></svg>
-                      {{ chartItem.show_more ? "Hide" : "Show" }} Details
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Copy benchmark section link"
-                      class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                    ></sc-button>
+                    <sc-button
+                      [icon]="clipboardIcon"
+                      ariaLabel="Copy benchmark section link"
+                      size="small"
+                      buttonClass="shrink-0"
                       (click)="
                         clipboardURL(
                           $event,
                           'benchmark_line_' + chartItem.chart.id
                         )
                       "
-                    >
-                      <svg
-                        [lucideIcon]="clipboardIcon"
-                        size="16"
-                        aria-hidden="true"
-                      ></svg>
-                    </button>
+                    ></sc-button>
                   </div>
                 }
               </div>
@@ -1440,35 +1396,27 @@
               <td [colSpan]="1" class="compare-section-header-action-cell">
                 @if (!isEmbedded) {
                   <div class="flex justify-end items-stretch gap-4">
-                    <button
-                      type="button"
-                      class="btn-primary compare-details-toggle"
+                    <sc-button
+                      [label]="
+                        (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
+                      "
+                      [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
+                      iconPosition="start"
+                      size="small"
                       (click)="toggleBenchmarkCategory(chartItem)"
-                    >
-                      <svg
-                        [lucideIcon]="chartItem.show_more ? 'eye-off' : 'eye'"
-                        size="16"
-                        aria-hidden="true"
-                      ></svg>
-                      {{ chartItem.show_more ? "Hide" : "Show" }} Details
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Copy benchmark section link"
-                      class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                    ></sc-button>
+                    <sc-button
+                      [icon]="clipboardIcon"
+                      ariaLabel="Copy benchmark section link"
+                      size="small"
+                      buttonClass="shrink-0"
                       (click)="
                         clipboardURL(
                           $event,
                           'benchmark_line_' + chartItem.chart.id
                         )
                       "
-                    >
-                      <svg
-                        [lucideIcon]="clipboardIcon"
-                        size="16"
-                        aria-hidden="true"
-                      ></svg>
-                    </button>
+                    ></sc-button>
                   </div>
                 }
               </td>
@@ -1480,7 +1428,7 @@
                 class="compare-chart-content"
                 [style]="getCompareChartContentStyle()"
               >
-                <app-benchmark-multi-bar-chart
+                <sc-benchmark-multi-bar-chart
                   [chartItem]="chartItem"
                   [benchmarkMeta]="benchmarkMeta"
                   [servers]="multiBarCompareServers"
@@ -1491,7 +1439,7 @@
                   (secondaryOptionSelected)="
                     syncMultiBarHeaderSecondaryOption(chartItem, $event)
                   "
-                ></app-benchmark-multi-bar-chart>
+                ></sc-benchmark-multi-bar-chart>
               </div>
             </td>
             @if (getCompareFixedWideTrailingColSpan()) {
@@ -1776,12 +1724,14 @@
             track server.vendor_id + "_" + server.server_id
           ) {
             <td>
-              <button
-                class="btn-primary py-2 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis"
+              <sc-button
+                class="w-full min-w-0 max-w-full"
+                [label]="server.display_name"
+                [title]="server.display_name"
+                size="small"
+                buttonClass="min-w-0 overflow-hidden"
                 (click)="viewServer(server)"
-              >
-                {{ server.display_name }}
-              </button>
+              ></sc-button>
             </td>
           }
         </tr>

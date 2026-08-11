@@ -1,5 +1,5 @@
 <div class="content_embed">
-  <app-server-charts
+  <sc-server-charts
     class="w-full flex flex-wrap gap-8 bg-secondary"
     [serverDetails]="serverDetails"
     [benchmarksByCategory]="benchmarksByCategory"
@@ -7,7 +7,7 @@
     [showChart]="showChart"
     [isEmbedded]="true"
     style="height: calc(100% - 64px)"
-  ></app-server-charts>
+  ></sc-server-charts>
   @if (serverDetails) {
     <a
       class="w-full flex flex-col justify-center items-center text-white bg-primary px-6 py-4 hover:text-gray-200"

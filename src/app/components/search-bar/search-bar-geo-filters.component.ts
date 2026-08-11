@@ -20,7 +20,7 @@ import type {
 import { getParameterType } from "./search-bar.utils";
 
 @Component({
-  selector: "app-search-bar-geo-filters",
+  selector: "sc-search-bar-geo-filters",
   imports: [
     FormsModule,
     LucideChevronDown,

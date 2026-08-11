@@ -53,7 +53,7 @@ type RawBenchmarkWorkloadConfig = {
 };
 
 @Component({
-  selector: "app-benchmark-workloads",
+  selector: "sc-benchmark-workloads",
   imports: [
     BreadcrumbsComponent,
     LucideBot,

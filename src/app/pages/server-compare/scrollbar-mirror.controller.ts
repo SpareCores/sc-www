@@ -139,7 +139,7 @@ export class ScrollbarMirrorController {
       return stickyHeader.getBoundingClientRect().bottom;
     }
 
-    const appHeader = document.querySelector<HTMLElement>("app-header");
+    const appHeader = document.querySelector<HTMLElement>("sc-header");
     if (appHeader) {
       return appHeader.getBoundingClientRect().bottom;
     }

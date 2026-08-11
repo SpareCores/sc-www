@@ -1,14 +1,9 @@
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16">
-    <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
+    <sc-breadcrumbs [segments]="breadcrumbs()"></sc-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
-      <div class="flex gap-4 items-center w-full justify-between">
-        <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideActivity class="h-8 w-8 mr-2"></svg>
-          {{ pageTitle }}
-        </h1>
-      </div>
+      <sc-page-header icon="activity" [title]="pageTitle"></sc-page-header>
       <div class="text-white text-xl pr-4 md:pr-16">
         {{ pageDescription }}
       </div>
@@ -202,7 +197,7 @@
             ></svg>
           }
         </div>
-        <app-search-bar
+        <sc-search-bar
           [query]="searchQuery"
           [filterCategories]="filterCategories"
           [searchParameters]="searchParameters"
@@ -213,7 +208,7 @@
           [noTopPaddingCategoryIds]="['vendor', 'benchmark']"
           (searchChanged)="searchBarChanged($event)"
         >
-        </app-search-bar>
+        </sc-search-bar>
 
         @if (!isCollapsed) {
           <div
@@ -223,14 +218,14 @@
               {{ filteredTableRows().length }} of
               {{ tableRows().length }} servers
             </div>
-            <button
-              type="button"
-              class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
+            <sc-button
+              label="Clear filters"
+              icon="funnel-x"
+              iconPosition="start"
+              size="small"
+              class="w-full"
               (click)="clearFilters()"
-            >
-              <svg lucideFunnelX class="h-4 w-4"></svg>
-              Clear filters
-            </button>
+            ></sc-button>
           </div>
         }
       </div>
@@ -441,25 +436,14 @@
 
         <div class="pagination_controls">
           <div class="page_size_selector relative">
-            <button
+            <sc-button
               id="pagesize_button"
-              class="dropdown_button"
-              type="button"
+              [label]="limit() | pageLimitLabel"
+              icon="chevron-down"
+              variant="dropdown"
               (click)="togglePageSizeOptions()"
-            >
-              <div class="px-4 py-2">
-                {{ limit() | pageLimitLabel }}
-              </div>
-              <div
-                class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-              >
-                <svg
-                  lucideChevronDown
-                  class="h-6 w-6 shrink-0 text-emerald-400"
-                ></svg>
-              </div>
-            </button>
-            <span class="text-white hidden md:inline"> items per page</span>
+            ></sc-button>
+            <span class="text-white hidden md:inline">items per page</span>
 
             @if (showPageSizeOptions()) {
               <div
@@ -490,22 +474,23 @@
 
           <div class="pagination_nav" aria-label="Table pagination">
             @if (page() > 1) {
-              <button
-                type="button"
-                class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+              <sc-button
+                icon="chevron-left"
+                ariaLabel="Previous page"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button pagination-button--nav"
                 (click)="goToPage(page() - 1)"
-              >
-                <svg lucideChevronLeft class="h-6 w-6 shrink-0"></svg>
-              </button>
+              ></sc-button>
             }
             @if (page() > 2) {
-              <button
-                type="button"
-                class="pagination_button"
+              <sc-button
+                label="1"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button"
                 (click)="goToPage(1)"
-              >
-                1
-              </button>
+              ></sc-button>
               @if (page() > 3) {
                 <span
                   class="text-white py-2 px-4 rounded-lg font-bold"
@@ -515,14 +500,13 @@
               }
             }
             @for (pageNumber of possiblePages(); track pageNumber) {
-              <button
-                type="button"
-                class="pagination_button"
-                [class.pagination_button_active]="pageNumber === page()"
+              <sc-button
+                [label]="'' + pageNumber"
+                [variant]="pageNumber === page() ? 'solid' : 'ghost'"
+                [color]="pageNumber === page() ? 'brand' : 'inverse'"
+                buttonClass="pagination-button"
                 (click)="goToPage(pageNumber)"
-              >
-                {{ pageNumber }}
-              </button>
+              ></sc-button>
             }
             @if (totalPages() > page() + 2) {
               <span
@@ -530,30 +514,31 @@
                 aria-hidden="true"
                 >...</span
               >
-              <button
-                type="button"
-                class="pagination_button"
+              <sc-button
+                [label]="'' + totalPages()"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button"
                 (click)="goToPage(totalPages())"
-              >
-                {{ totalPages() }}
-              </button>
+              ></sc-button>
             } @else if (totalPages() === page() + 2) {
-              <button
-                type="button"
-                class="pagination_button"
+              <sc-button
+                [label]="'' + totalPages()"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button"
                 (click)="goToPage(totalPages())"
-              >
-                {{ totalPages() }}
-              </button>
+              ></sc-button>
             }
             @if (page() < totalPages()) {
-              <button
-                type="button"
-                class="pagination_button pagination_arrow"
+              <sc-button
+                icon="chevron-right"
+                ariaLabel="Next page"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button pagination-button--nav"
                 (click)="goToPage(page() + 1)"
-              >
-                <svg lucideChevronRight class="h-6 w-6 shrink-0"></svg>
-              </button>
+              ></sc-button>
             }
           </div>
         </div>

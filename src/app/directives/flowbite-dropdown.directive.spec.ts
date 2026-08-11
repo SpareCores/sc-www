@@ -8,7 +8,7 @@ import { FlowbiteDropdownDirective } from "./flowbite-dropdown.directive";
   template: `
     <button
       id="trigger"
-      [appFlowbiteDropdown]="targetId"
+      [scFlowbiteDropdown]="targetId"
       [dropdownEnabled]="enabled"
     >
       Open dropdown

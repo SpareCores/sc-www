@@ -1,0 +1,11 @@
+.page-header {
+  @apply flex gap-4 justify-between items-center;
+}
+
+.page-header__title {
+  @apply text-white font-bold text-3xl flex items-center;
+}
+
+.page-header__actions {
+  @apply flex flex-wrap items-center gap-4 lg:justify-end;
+}

@@ -9,6 +9,7 @@ import {
   inject,
 } from "@angular/core";
 import { AnalyticsService } from "../../services/analytics.service";
+import { Button } from "../button/button";
 
 type DownloadItemVm = {
   file: string;
@@ -17,8 +18,8 @@ type DownloadItemVm = {
 };
 
 @Component({
-  selector: "app-downloadable-logo-collection",
-  imports: [NgOptimizedImage],
+  selector: "sc-downloadable-logo-collection",
+  imports: [NgOptimizedImage, Button],
   templateUrl: "./downloadable-logo-collection.component.html",
   styleUrl: "./downloadable-logo-collection.component.scss",
 })

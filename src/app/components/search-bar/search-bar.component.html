@@ -48,13 +48,14 @@
           </button>
         </div>
       } @else {
-        <button
-          class="w-full bg-emerald-400 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold"
+        <sc-button
+          class="w-full"
+          label="Search Prompt"
+          icon="search"
+          iconPosition="start"
           data-ph-capture-attribute-server-listing-search-prompt-action="open"
-          (click)="openSearchPrompt()"
-        >
-          Search Prompt
-        </button>
+          (buttonClick)="openSearchPrompt()"
+        ></sc-button>
       }
     </div>
   }
@@ -69,7 +70,7 @@
         getParameterType(parameter) === "country" ||
         getParameterType(parameter) === "vendor_regions"
       ) {
-        <app-search-bar-geo-filters
+        <sc-search-bar-geo-filters
           [parameter]="parameter"
           [filterCategoryId]="filterCategoryId"
           [showParameterTitles]="showParameterTitles()"
@@ -88,9 +89,9 @@
           (filterServers)="filterServers()"
           (showTooltip)="showTooltip($event.event, $event.content)"
           (hideTooltip)="hideTooltip()"
-        ></app-search-bar-geo-filters>
+        ></sc-search-bar-geo-filters>
       } @else {
-        <app-search-bar-parameter-field
+        <sc-search-bar-parameter-field
           [parameter]="parameter"
           [filterCategoryId]="filterCategoryId"
           [showParameterTitles]="showParameterTitles()"
@@ -103,7 +104,7 @@
           (filterServers)="filterServers()"
           (showTooltip)="showTooltip($event.event, $event.content)"
           (hideTooltip)="hideTooltip()"
-        ></app-search-bar-parameter-field>
+        ></sc-search-bar-parameter-field>
       }
     </ng-template>
 
@@ -138,7 +139,7 @@
               !noTopPaddingCategoryIds().includes(filter.category_id)
             "
           >
-            <app-search-bar-custom-controls
+            <sc-search-bar-custom-controls
               [controls]="getCustomControlsByCategory(filter.category_id)"
               [parameters]="getParametersByCategory(filter.category_id)"
               [parameterPlacements]="parameterPlacements()"
@@ -147,7 +148,7 @@
               (customControlChanged)="customControlChanged.emit($event)"
               (showTooltip)="showTooltip($event.event, $event.content)"
               (hideTooltip)="hideTooltip()"
-            ></app-search-bar-custom-controls>
+            ></sc-search-bar-custom-controls>
 
             @for (
               parameter of getTrailingParametersByCategory(filter.category_id);
@@ -217,15 +218,16 @@
           class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm focus:ring-emerald-400 focus:border-emerald-400"
           [(ngModel)]="freetextSearchInput"
         ></textarea>
-        <button
+        <sc-button
+          class="w-full"
+          label="Submit"
+          icon="send"
+          iconPosition="start"
           data-ph-capture-attribute-sc-event="server listing search prompt process"
           data-ph-capture-attribute-server-listing-search-prompt-action="process"
-          class="text-white bg-emerald-400 hover:bg-emerald-500 focus:ring-0 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-          (click)="submitFreetextSearch()"
           [disabled]="modalSubmitted"
-        >
-          Submit
-        </button>
+          (buttonClick)="submitFreetextSearch()"
+        ></sc-button>
         @if (modalResponse) {
           <div>
             <div class="text-white">Suggested filter parameters</div>
@@ -240,16 +242,16 @@
       <div
         class="flex flex-col p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600"
       >
-        <button
-          type="button"
+        <sc-button
+          class="w-full"
+          label="Confirm"
+          icon="circle-check"
+          iconPosition="start"
           data-ph-capture-attribute-sc-event="server listing search prompt confirm"
           data-ph-capture-attribute-server-listing-search-prompt-action="confirm"
           [disabled]="!modalResponse"
-          class="text-white bg-emerald-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:bg-emerald-500 focus:ring-0 focus:outline-none disabled:bg-gray-400"
-          (click)="closeModal(true)"
-        >
-          Confirm
-        </button>
+          (buttonClick)="closeModal(true)"
+        ></sc-button>
       </div>
     </div>
   </div>

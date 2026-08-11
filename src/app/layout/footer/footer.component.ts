@@ -4,7 +4,7 @@ import { LucideDynamicIcon, LucideMail } from "@lucide/angular";
 import { RouterLink } from "@angular/router";
 
 @Component({
-  selector: "app-footer",
+  selector: "sc-footer",
   imports: [ThemeTextComponent, LucideDynamicIcon, LucideMail, RouterLink],
   templateUrl: "./footer.component.html",
   styleUrl: "./footer.component.scss",

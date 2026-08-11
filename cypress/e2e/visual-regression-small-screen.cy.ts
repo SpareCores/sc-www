@@ -94,7 +94,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     // Force isTableOutsideViewport to always set to false
     cy.window().then((win: any) => {
-      cy.get("app-server-compare").then(($el) => {
+      cy.get("sc-server-compare").then(($el) => {
         if (win.ng?.getComponent) {
           const component = win.ng.getComponent($el[0]);
           const alwaysFalseSignal = Object.assign(() => false, {

@@ -14,11 +14,11 @@ import {
 } from "@angular/core";
 import {
   LucideDynamicIcon,
-  LucideChevronDown,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
+import { Button } from "../../../components/button/button";
 import {
   ChartFromBenchmarkSecondaryOptions,
   ChartFromBenchmarkTemplate,
@@ -38,12 +38,12 @@ import {
 } from "./benchmark-multi-bar-chart.types";
 
 @Component({
-  selector: "app-benchmark-multi-bar-chart",
+  selector: "sc-benchmark-multi-bar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    Button,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,

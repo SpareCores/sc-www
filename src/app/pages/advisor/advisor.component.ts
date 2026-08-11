@@ -17,19 +17,10 @@ import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
 import {
   LucideArrowDownNarrowWide,
   LucideArrowDownWideNarrow,
-  LucideBot,
-  LucideCheck,
-  LucideChevronDown,
   LucideChevronLeft,
   LucideChevronRight,
-  LucideClipboard,
-  LucideColumns3Cog,
-  LucideCreditCard,
-  LucideDices,
-  LucideFunnelX,
   LucideInfo,
   LucideScale,
-  LucideTvMinimalPlay,
 } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
@@ -47,6 +38,8 @@ import {
   ServerPriceWithPKs,
 } from "../../../../sdk/data-contracts";
 import openApiSpec from "../../../../sdk/openapi.json";
+import { Button } from "../../components/button/button";
+import { PageHeader } from "../../components/page-header/page-header";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -370,27 +363,20 @@ type AdvisorComparableResourceKey =
   | "outbound_traffic";
 
 @Component({
-  selector: "app-advisor",
+  selector: "sc-advisor",
   imports: [
     CommonModule,
+    Button,
     BreadcrumbsComponent,
     FlowbiteDropdownDirective,
     LucideArrowDownNarrowWide,
     LucideArrowDownWideNarrow,
-    LucideBot,
-    LucideCheck,
-    LucideChevronDown,
     LucideChevronLeft,
     LucideChevronRight,
-    LucideClipboard,
-    LucideColumns3Cog,
-    LucideCreditCard,
-    LucideDices,
-    LucideFunnelX,
     LucideInfo,
     LucideScale,
-    LucideTvMinimalPlay,
     LoadingSpinnerComponent,
+    PageHeader,
     PaginationComponent,
     GpuCountPipe,
     CpuCacheSizePipe,

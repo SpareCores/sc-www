@@ -1,15 +1,14 @@
 <div class="flex justify-between items-center mb-4 gap-8">
   <h3 class="text-2xl">CPU and System Topology</h3>
   @if (inlineSvg && lstopoUrl) {
-    <button
-      class="btn-primary py-2 px-3 flex gap-2 h-[42px]"
-      aria-haspopup="dialog"
-      aria-controls="lstopo-modal"
+    <sc-button
+      label="Open fullscreen"
+      icon="maximize-2"
+      iconPosition="start"
+      [attr.aria-haspopup]="'dialog'"
+      ariaControls="lstopo-modal"
       (click)="openLstopoModal()"
-    >
-      <span>Open fullscreen</span>
-      <svg lucideMaximize2 class="h-6 w-6"></svg>
-    </button>
+    ></sc-button>
   }
 </div>
 
@@ -82,7 +81,7 @@
             <span class="sr-only">Close modal</span>
           </button>
         </div>
-        <div class="lstopo-modal-body overflow-auto max-h-[80vh]" appDragToPan>
+        <div class="lstopo-modal-body overflow-auto max-h-[80vh]" scDragToPan>
           <div
             class="lstopo-container lstopo-modal-svg"
             role="img"

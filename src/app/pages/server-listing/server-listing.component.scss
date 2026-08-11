@@ -1,18 +1,3 @@
-.server-listing-hero-header {
-  @apply flex gap-4 justify-between items-center;
-}
-
-.server-listing-hero-actions {
-  @apply flex flex-wrap items-center gap-3 lg:justify-end;
-}
-
-.server-listing-header-action {
-  @apply inline-flex items-center gap-2 px-3 py-2;
-
-  min-height: 50px;
-  white-space: nowrap;
-}
-
 .server-listing-video-frame {
   border: 2px solid #34d399;
   border-radius: 0.5rem;
@@ -96,12 +81,13 @@
   border: 3px solid #9ca3af; /* creates padding around scroll thumb */
 }
 
-:host ::ng-deep .dropdown_group_button {
-  @apply mx-2 px-2 py-2 text-white bg-emerald-400 items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
+:host ::ng-deep .dropdown_group_button.sc-button {
+  @apply mx-2 w-auto px-2 py-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
   text-wrap: auto;
 }
 
-:host ::ng-deep .dropdown_group_button:hover {
+:host ::ng-deep .dropdown_group_button.sc-button:hover,
+:host ::ng-deep .dropdown_group_button.sc-button:focus {
   @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white;
 }
 
@@ -138,13 +124,6 @@
   }
 }
 
-.dropdown_button {
-  @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
-  transition-duration: 0.15s;
-  transition-property: background-color, border-color, box-shadow, color;
-  transition-timing-function: ease-in;
-}
-
 .unit {
   position: absolute;
   right: 0.5rem;
@@ -155,11 +134,16 @@
 .fixed_buttons {
   position: fixed;
   bottom: 2rem;
-  left: calc(50% - 10rem);
+  left: calc(50% + 10rem);
+  transform: translateX(-50%);
   z-index: 100;
-  button {
+  sc-button {
     width: 9rem;
   }
+}
+
+.fixed_buttons.fixed_buttons--collapsed {
+  left: 50%;
 }
 
 .button_list_holder {
@@ -171,7 +155,7 @@
   }
 
   .button_list_item {
-    @apply py-2 text-white border-transparent border hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
+    @apply w-full py-2 text-center text-white border border-transparent hover:border-emerald-400 hover:border-solid cursor-pointer;
   }
 
   .button_list_item.active {

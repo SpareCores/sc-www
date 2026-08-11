@@ -24,6 +24,7 @@ import {
   LucideChevronRight,
   LucideLeaf,
 } from "@lucide/angular";
+import { Button } from "../../components/button/button";
 import { Router, RouterModule } from "@angular/router";
 
 declare let Datamap: any;
@@ -48,8 +49,9 @@ const colors = [
 ];
 
 @Component({
-  selector: "app-regions",
+  selector: "sc-regions",
   imports: [
+    Button,
     BreadcrumbsComponent,
     CountryIdtoNamePipe,
     FormsModule,
@@ -121,9 +123,9 @@ export class RegionsComponent implements OnInit {
 
               this.vendors = this.vendors.map((vendor, index) => {
                 return {
+                  ...vendor,
                   selected: true,
                   color: colors[index % colors.length],
-                  ...vendor,
                 };
               });
 
@@ -278,9 +280,5 @@ export class RegionsComponent implements OnInit {
   isVendorSelected(vendorId: string) {
     return this.vendors?.find((vendor) => vendor.vendor_id === vendorId)
       ?.selected;
-  }
-
-  getColorStyle(vendor: any) {
-    return `background-color: ${vendor.color || "#06263a"}`;
   }
 }
