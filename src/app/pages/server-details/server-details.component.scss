@@ -92,7 +92,11 @@
 }
 
 .summarize-fab {
-  @apply fixed bottom-6 right-6 z-40 rounded-full p-4 shadow-lg;
+  @apply fixed bottom-6 right-6 z-40;
+
+  ::ng-deep .sc-button {
+    @apply rounded-full;
+  }
 }
 
 .summarize-modal-paragraph {

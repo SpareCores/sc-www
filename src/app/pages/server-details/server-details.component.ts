@@ -14,11 +14,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import {
-  LucideCheck,
-  LucideSparkles,
-  LucideTriangleAlert,
-} from "@lucide/angular";
+import { LucideCheck, LucideTriangleAlert } from "@lucide/angular";
 import { Chart, ChartConfiguration, ChartData } from "chart.js";
 import { Modal, ModalOptions } from "flowbite";
 import { BaseChartDirective } from "ng2-charts";
@@ -104,7 +100,6 @@ interface PropertyCategoryDefinition {
     Button,
     BreadcrumbsComponent,
     LucideCheck,
-    LucideSparkles,
     LucideTriangleAlert,
     AccordionComponent,
     FormsModule,
