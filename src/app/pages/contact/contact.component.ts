@@ -10,12 +10,12 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import * as crypto from "crypto-js";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { Button } from "../../components/button/button";
 import { ToastService } from "../../services/toast.service";
 
 @Component({
   selector: "sc-contact",
-  imports: [ReactiveFormsModule, BreadcrumbsComponent, LoadingSpinnerComponent],
+  imports: [ReactiveFormsModule, BreadcrumbsComponent, Button],
   templateUrl: "./contact.component.html",
   styleUrls: ["./contact.component.scss"],
 })

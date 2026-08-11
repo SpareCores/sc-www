@@ -474,22 +474,23 @@
 
           <div class="pagination_nav" aria-label="Table pagination">
             @if (page() > 1) {
-              <button
-                type="button"
-                class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+              <sc-button
+                icon="chevron-left"
+                ariaLabel="Previous page"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button pagination-button--nav"
                 (click)="goToPage(page() - 1)"
-              >
-                <svg lucideChevronLeft class="h-6 w-6 shrink-0"></svg>
-              </button>
+              ></sc-button>
             }
             @if (page() > 2) {
-              <button
-                type="button"
-                class="pagination_button"
+              <sc-button
+                label="1"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button"
                 (click)="goToPage(1)"
-              >
-                1
-              </button>
+              ></sc-button>
               @if (page() > 3) {
                 <span
                   class="text-white py-2 px-4 rounded-lg font-bold"
@@ -499,14 +500,13 @@
               }
             }
             @for (pageNumber of possiblePages(); track pageNumber) {
-              <button
-                type="button"
-                class="pagination_button"
-                [class.pagination_button_active]="pageNumber === page()"
+              <sc-button
+                [label]="'' + pageNumber"
+                [variant]="pageNumber === page() ? 'solid' : 'ghost'"
+                [color]="pageNumber === page() ? 'brand' : 'inverse'"
+                buttonClass="pagination-button"
                 (click)="goToPage(pageNumber)"
-              >
-                {{ pageNumber }}
-              </button>
+              ></sc-button>
             }
             @if (totalPages() > page() + 2) {
               <span
@@ -514,30 +514,31 @@
                 aria-hidden="true"
                 >...</span
               >
-              <button
-                type="button"
-                class="pagination_button"
+              <sc-button
+                [label]="'' + totalPages()"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button"
                 (click)="goToPage(totalPages())"
-              >
-                {{ totalPages() }}
-              </button>
+              ></sc-button>
             } @else if (totalPages() === page() + 2) {
-              <button
-                type="button"
-                class="pagination_button"
+              <sc-button
+                [label]="'' + totalPages()"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button"
                 (click)="goToPage(totalPages())"
-              >
-                {{ totalPages() }}
-              </button>
+              ></sc-button>
             }
             @if (page() < totalPages()) {
-              <button
-                type="button"
-                class="pagination_button pagination_arrow"
+              <sc-button
+                icon="chevron-right"
+                ariaLabel="Next page"
+                variant="ghost"
+                color="inverse"
+                buttonClass="pagination-button pagination-button--nav"
                 (click)="goToPage(page() + 1)"
-              >
-                <svg lucideChevronRight class="h-6 w-6 shrink-0"></svg>
-              </button>
+              ></sc-button>
             }
           </div>
         </div>

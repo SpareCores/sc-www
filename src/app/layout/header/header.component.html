@@ -517,13 +517,12 @@
     }
     @if (!isOnComparePage()) {
       <li class="py-2">
-        <button
-          type="button"
-          class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-md py-2"
+        <sc-button
+          class="w-full"
+          label="Compare"
+          size="small"
           (click)="compareServers(); closeCompare()"
-        >
-          Compare
-        </button>
+        ></sc-button>
       </li>
     }
   </ul>

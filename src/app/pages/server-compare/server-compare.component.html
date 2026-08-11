@@ -23,25 +23,14 @@
       @if (instances.length) {
         <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
         <div class="flex flex-wrap gap-4 items-center justify-end w-full">
-          <button
+          <sc-button
             id="baseline_server_button"
             [scFlowbiteDropdown]="'baseline_server_options'"
             #baselineDropdown="scFlowbiteDropdown"
-            class="dropdown_button"
-            type="button"
-          >
-            <div class="px-4 py-3">
-              {{ getBaselineServerLabel() }}
-            </div>
-            <div
-              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-            >
-              <svg
-                [lucideIcon]="'target'"
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [label]="getBaselineServerLabel()"
+            icon="target"
+            variant="dropdown"
+          ></sc-button>
           <sc-button
             id="currency_button"
             [scFlowbiteDropdown]="'currency_options'"

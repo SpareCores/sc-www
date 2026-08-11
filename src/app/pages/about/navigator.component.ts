@@ -28,9 +28,9 @@ import {
   LucideSquareKanban,
 } from "@lucide/angular";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
+import { Button } from "../../components/button/button";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { isPlatformBrowser } from "@angular/common";
-import { RouterLink } from "@angular/router";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 
@@ -60,7 +60,7 @@ interface Quote {
     LucideScale,
     LucideSquareKanban,
     ThemeTextComponent,
-    RouterLink,
+    Button,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: "./navigator.component.html",

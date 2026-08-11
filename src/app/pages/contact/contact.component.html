@@ -158,22 +158,12 @@
 
         @if (!isSubmitted) {
           <div class="pt-6">
-            <button
+            <sc-button
+              class="w-full"
               type="submit"
               [disabled]="isLoading || contactForm.invalid"
-              class="w-full px-6 py-3 btn-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              @if (isLoading) {
-                <sc-loading-spinner
-                  size="sm"
-                  text="Verifying human credentials ..."
-                  textClasses="text-white"
-                ></sc-loading-spinner>
-              }
-              @if (!isLoading) {
-                <span>Submit</span>
-              }
-            </button>
+              [label]="isLoading ? 'Verifying human credentials ...' : 'Submit'"
+            ></sc-button>
           </div>
         }
         @if (isSubmitted) {
