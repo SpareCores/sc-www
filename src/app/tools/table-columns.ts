@@ -32,7 +32,10 @@ export type TableColumnType =
   | "storage_speed"
   | "inbound_traffic"
   | "outbound_traffic"
-  | "ipv4";
+  | "ipv4"
+  | "list"
+  | "boolean"
+  | "sla";
 
 export type TableColumn = {
   name: string;
@@ -209,6 +212,92 @@ const COLUMNS = {
     orderField: "vendor_id",
   },
   zone: { name: "ZONE", type: "text", key: "zone.name" },
+  engine: {
+    name: "ENGINE",
+    type: "text",
+    key: "engine",
+    orderField: "engine",
+  },
+  engineVersions: {
+    name: "ENGINE VERSIONS",
+    type: "list",
+    key: "engine_versions",
+  },
+  wireProtocol: {
+    name: "WIRE PROTOCOL",
+    type: "text",
+    key: "wire_protocol",
+    orderField: "wire_protocol",
+  },
+  family: {
+    name: "FAMILY",
+    type: "text",
+    key: "family",
+    orderField: "family",
+  },
+  ha: {
+    name: "HA",
+    type: "list",
+    key: "ha",
+  },
+  haStrategy: {
+    name: "HA STRATEGY",
+    type: "list",
+    key: "ha_strategy",
+  },
+  maxReadReplicas: {
+    name: "MAX READ REPLICAS",
+    type: "text",
+    key: "max_read_replicas",
+    orderField: "max_read_replicas",
+  },
+  sla: {
+    name: "SLA",
+    type: "sla",
+    key: "sla",
+    orderField: "sla",
+  },
+  diskEncryption: {
+    name: "DISK ENCRYPTION",
+    type: "boolean",
+    key: "disk_encryption",
+    orderField: "disk_encryption",
+  },
+  scheduledBackups: {
+    name: "SCHEDULED BACKUPS",
+    type: "boolean",
+    key: "scheduled_backups",
+    orderField: "scheduled_backups",
+  },
+  continuousBackups: {
+    name: "CONTINUOUS BACKUPS",
+    type: "text",
+    key: "continuous_backups",
+    orderField: "continuous_backups",
+  },
+  connectionPool: {
+    name: "CONNECTION POOL",
+    type: "boolean",
+    key: "connection_pool",
+    orderField: "connection_pool",
+  },
+  customConfig: {
+    name: "CUSTOM CONFIG",
+    type: "boolean",
+    key: "custom_config",
+    orderField: "custom_config",
+  },
+  customExtensions: {
+    name: "CUSTOM EXTENSIONS",
+    type: "boolean",
+    key: "custom_extensions",
+    orderField: "custom_extensions",
+  },
+  securityFeatures: {
+    name: "SECURITY FEATURES",
+    type: "list",
+    key: "security_features",
+  },
 } satisfies Record<string, Omit<TableColumn, "show">>;
 
 export function buildServerListingColumns(): TableColumn[] {
@@ -363,5 +452,34 @@ export function buildTrafficPricesColumns(): TableColumn[] {
     { ...COLUMNS.price, show: true },
     { ...COLUMNS.priceTiers, show: true },
     { ...COLUMNS.priceMonthly, show: true },
+  ];
+}
+
+export function buildDatabaseListingColumns(): TableColumn[] {
+  return [
+    { ...COLUMNS.name, show: true },
+    { ...COLUMNS.vendor, show: false },
+    { ...COLUMNS.engine, show: true },
+    { ...COLUMNS.engineVersions, show: true },
+    { ...COLUMNS.wireProtocol, show: false },
+    { ...COLUMNS.family, show: false },
+    { ...COLUMNS.processor, show: true },
+    { ...COLUMNS.memory, show: true },
+    { ...COLUMNS.storage, show: true },
+    { ...COLUMNS.ha, show: true },
+    { ...COLUMNS.haStrategy, show: false },
+    { ...COLUMNS.maxReadReplicas, show: true },
+    { ...COLUMNS.sla, show: true },
+    { ...COLUMNS.diskEncryption, show: false },
+    { ...COLUMNS.scheduledBackups, show: false },
+    { ...COLUMNS.continuousBackups, show: false },
+    { ...COLUMNS.connectionPool, show: false },
+    { ...COLUMNS.customConfig, show: false },
+    { ...COLUMNS.customExtensions, show: false },
+    { ...COLUMNS.securityFeatures, show: false },
+    { ...COLUMNS.bestPrice, show: true },
+    { ...COLUMNS.bestOndemandPrice, show: false },
+    { ...COLUMNS.bestOndemandMonthlyPrice, show: false },
+    { ...COLUMNS.status, show: false },
   ];
 }

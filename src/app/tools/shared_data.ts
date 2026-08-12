@@ -27,6 +27,18 @@ export const bestPriceAllocationTypes: BestPriceAllocationType[] = [
   { name: "Spot prices", slug: "SPOT_ONLY" },
 ];
 
+export interface BestDatabasePriceAllocationType {
+  name: string;
+  slug: "ANY" | "ONDEMAND_ONLY" | "MONTHLY";
+}
+
+export const bestDatabasePriceAllocationTypes: BestDatabasePriceAllocationType[] =
+  [
+    { name: "Any price", slug: "ANY" },
+    { name: "Ondemand prices", slug: "ONDEMAND_ONLY" },
+    { name: "Monthly prices", slug: "MONTHLY" },
+  ];
+
 export const availableCurrencies: CurrencyOption[] = [
   { name: "US dollar", slug: "USD", symbol: "$" },
   { name: "Euro", slug: "EUR", symbol: "€" },
