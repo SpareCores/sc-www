@@ -11,6 +11,7 @@
  */
 
 import {
+  AssistDatabaseFiltersAiAssistDatabaseFiltersGetData,
   AssistServerFiltersAiAssistServerFiltersGetData,
   AssistServerPriceFiltersAiAssistServerPriceFiltersGetData,
   AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData,
@@ -18,6 +19,25 @@ import {
 } from "./data-contracts";
 
 export namespace Ai {
+  /**
+   * @description Extract Database JSON filters from freetext.
+   * @tags AI
+   * @name AssistDatabaseFiltersAiAssistDatabaseFiltersGet
+   * @summary Assist Database Filters
+   * @request GET:/ai/assist_database_filters
+   */
+  export namespace AssistDatabaseFiltersAiAssistDatabaseFiltersGet {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      /** Text */
+      text: string;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody =
+      AssistDatabaseFiltersAiAssistDatabaseFiltersGetData;
+  }
+
   /**
    * @description Extract Server JSON filters from freetext.
    * @tags AI

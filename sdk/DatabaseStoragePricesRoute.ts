@@ -12,18 +12,18 @@
 
 import {
   OrderDir,
-  SearchTrafficPricesTrafficPricesGetData,
+  SearchDatabaseStoragePricesDatabaseStoragePricesGetData,
 } from "./data-contracts";
 
-export namespace TrafficPrices {
+export namespace DatabaseStoragePrices {
   /**
    * No description
    * @tags Query Resources
-   * @name SearchTrafficPricesTrafficPricesGet
-   * @summary Search Traffic Prices
-   * @request GET:/traffic_prices
+   * @name SearchDatabaseStoragePricesDatabaseStoragePricesGet
+   * @summary Search Database Storage Prices
+   * @request GET:/database_storage_prices
    */
-  export namespace SearchTrafficPricesTrafficPricesGet {
+  export namespace SearchDatabaseStoragePricesDatabaseStoragePricesGet {
     export type RequestParams = {};
     export type RequestQuery = {
       /**
@@ -44,6 +44,11 @@ export namespace TrafficPrices {
        * Filter for regions that are 100% powered by renewable energy.
        */
       green_energy?: boolean | null;
+      /**
+       * Required local storage size
+       * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
+       */
+      storage_min?: number | null;
       /**
        * Compliance framework
        * Compliance framework implemented at the vendor.
@@ -610,18 +615,6 @@ export namespace TrafficPrices {
         | "US"
         | "ZA";
       /**
-       * Direction
-       * Direction of the Internet traffic.
-       * @default ["outbound"]
-       */
-      direction?: "inbound" | "outbound";
-      /**
-       * Monthly overall traffic
-       * Overall amount of monthly traffic (GBs).
-       * @default 1
-       */
-      monthly_traffic?: number | null;
-      /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
        * @default 10
@@ -658,6 +651,7 @@ export namespace TrafficPrices {
     };
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = SearchTrafficPricesTrafficPricesGetData;
+    export type ResponseBody =
+      SearchDatabaseStoragePricesDatabaseStoragePricesGetData;
   }
 }
