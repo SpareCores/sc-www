@@ -149,6 +149,12 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
       collapsed: true,
     },
     {
+      category_id: "vcpus",
+      name: "vCPUs",
+      icon: "microchip",
+      collapsed: false,
+    },
+    {
       category_id: "processor",
       name: "Processor",
       icon: "microchip",
