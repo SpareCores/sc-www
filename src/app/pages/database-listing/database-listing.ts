@@ -20,7 +20,11 @@ import {
   LucideX,
 } from "@lucide/angular";
 import { Subscription } from "rxjs";
-import { DatabasePKs, OrderDir, SearchDatabasesDatabasesGetParams } from "../../../../sdk/data-contracts";
+import {
+  DatabasePKs,
+  OrderDir,
+  SearchDatabasesDatabasesGetParams,
+} from "../../../../sdk/data-contracts";
 import openApiSpec from "../../../../sdk/openapi.json";
 import {
   BreadcrumbSegment,
@@ -219,9 +223,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
         }),
       );
 
-    const limit = this.searchParameters.find(
-      (param) => param.name === "limit",
-    );
+    const limit = this.searchParameters.find((param) => param.name === "limit");
     if (typeof limit?.schema?.default === "number") {
       this.limit = limit.schema.default;
     }
@@ -376,8 +378,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private _searchDatabases(updateTotalCount = true) {
     this.isLoading = true;
 
-    const query = structuredClone(this.query) as SearchDatabasesDatabasesGetParams &
-      DatabaseListingQuery;
+    const query = structuredClone(
+      this.query,
+    ) as SearchDatabasesDatabasesGetParams & DatabaseListingQuery;
 
     if (query.columns) {
       delete query.columns;
@@ -552,16 +555,18 @@ export class DatabaseListing implements OnInit, OnDestroy {
   }
 
   getField(item: DatabasePKs, field: string): unknown {
-    return field.split(".").reduce<unknown>(
-      (obj, key) =>
-        obj !== null &&
-        obj !== undefined &&
-        typeof obj === "object" &&
-        key in (obj as Record<string, unknown>)
-          ? (obj as Record<string, unknown>)[key]
-          : undefined,
-      item,
-    );
+    return field
+      .split(".")
+      .reduce<unknown>(
+        (obj, key) =>
+          obj !== null &&
+          obj !== undefined &&
+          typeof obj === "object" &&
+          key in (obj as Record<string, unknown>)
+            ? (obj as Record<string, unknown>)[key]
+            : undefined,
+        item,
+      );
   }
 
   formatList(value: unknown): string {

@@ -127,102 +127,109 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       this.keeperAPI.getVendors(),
       this.keeperAPI.getRegions(),
     ])
-      .then(([databaseResponse, pricesResponse, vendorsResponse, regionsResponse]) => {
-        const database = databaseResponse.body;
-        if (!database) {
-          this.keeperResponseErrorMsg = "Database not found.";
-          return;
-        }
+      .then(
+        ([
+          databaseResponse,
+          pricesResponse,
+          vendorsResponse,
+          regionsResponse,
+        ]) => {
+          const database = databaseResponse.body;
+          if (!database) {
+            this.keeperResponseErrorMsg = "Database not found.";
+            return;
+          }
 
-        const vendors = (vendorsResponse?.body || []) as Vendor[];
-        const regions = (regionsResponse?.body || []) as Region[];
-        const prices = (pricesResponse?.body || []) as DatabasePrice[];
+          const vendors = (vendorsResponse?.body || []) as Vendor[];
+          const regions = (regionsResponse?.body || []) as Region[];
+          const prices = (pricesResponse?.body || []) as DatabasePrice[];
 
-        this.databaseDetails = {
-          ...database,
-          vendor: vendors.find((v) => v.vendor_id === database.vendor_id),
-          prices: prices
-            .map((price) => ({
-              ...price,
-              region: regions.find(
-                (region) =>
-                  region.vendor_id === price.vendor_id &&
-                  region.region_id === price.region_id,
-              ),
-            }))
-            .sort((a, b) => a.price - b.price),
-        };
+          this.databaseDetails = {
+            ...database,
+            vendor: vendors.find((v) => v.vendor_id === database.vendor_id),
+            prices: prices
+              .map((price) => ({
+                ...price,
+                region: regions.find(
+                  (region) =>
+                    region.vendor_id === price.vendor_id &&
+                    region.region_id === price.region_id,
+                ),
+              }))
+              .sort((a, b) => a.price - b.price),
+          };
 
-        this.breadcrumbs = [
-          { name: "Home", url: "/" },
-          { name: "Databases", url: "/databases" },
-          {
-            name: this.databaseDetails.vendor?.name || database.vendor_id,
-            url: `/databases?vendor=${database.vendor_id}`,
-          },
-          {
-            name: database.display_name,
-            url: `/database/${database.vendor_id}/${database.api_reference}`,
-          },
-        ];
+          this.breadcrumbs = [
+            { name: "Home", url: "/" },
+            { name: "Databases", url: "/databases" },
+            {
+              name: this.databaseDetails.vendor?.name || database.vendor_id,
+              url: `/databases?vendor=${database.vendor_id}`,
+            },
+            {
+              name: database.display_name,
+              url: `/database/${database.vendor_id}/${database.api_reference}`,
+            },
+          ];
 
-        this.description =
-          database.description ||
-          `${database.display_name} managed database offered by ${
-            this.databaseDetails.vendor?.name || database.vendor_id
-          }.`;
+          this.description =
+            database.description ||
+            `${database.display_name} managed database offered by ${
+              this.databaseDetails.vendor?.name || database.vendor_id
+            }.`;
 
-        this.cardPriceDescription = "";
-        if (this.databaseDetails.prices?.length) {
-          const cheapest = this.databaseDetails.prices[0];
-          const roundedPrice =
-            cheapest.price < 1
-              ? cheapest.price.toPrecision(2)
-              : cheapest.price.toFixed(2);
-          this.cardPriceDescription = ` Pricing starts at ${roundedPrice} ${cheapest.currency}/${cheapest.unit}.`;
-        }
+          this.cardPriceDescription = "";
+          if (this.databaseDetails.prices?.length) {
+            const cheapest = this.databaseDetails.prices[0];
+            const roundedPrice =
+              cheapest.price < 1
+                ? cheapest.price.toPrecision(2)
+                : cheapest.price.toFixed(2);
+            this.cardPriceDescription = ` Pricing starts at ${roundedPrice} ${cheapest.currency}/${cheapest.unit}.`;
+          }
 
-        this.features = [
-          {
-            name: "vCPUs",
-            value:
-              database.vcpus === null || database.vcpus === undefined
-                ? "-"
-                : String(database.vcpus),
-          },
-          {
-            name: "Memory",
-            value:
-              database.memory_amount === null ||
-              database.memory_amount === undefined
-                ? "-"
-                : `${(database.memory_amount / 1024).toFixed(1)} GiB`,
-          },
-          {
-            name: "Storage",
-            value:
-              database.storage_size === null ||
-              database.storage_size === undefined
-                ? "-"
-                : `${database.storage_size} GB`,
-          },
-          {
-            name: "Engine",
-            value: database.engine || "-",
-          },
-        ];
+          this.features = [
+            {
+              name: "vCPUs",
+              value:
+                database.vcpus === null || database.vcpus === undefined
+                  ? "-"
+                  : String(database.vcpus),
+            },
+            {
+              name: "Memory",
+              value:
+                database.memory_amount === null ||
+                database.memory_amount === undefined
+                  ? "-"
+                  : `${(database.memory_amount / 1024).toFixed(1)} GiB`,
+            },
+            {
+              name: "Storage",
+              value:
+                database.storage_size === null ||
+                database.storage_size === undefined
+                  ? "-"
+                  : `${database.storage_size} GB`,
+            },
+            {
+              name: "Engine",
+              value: database.engine || "-",
+            },
+          ];
 
-        this.buildPropertySections(database);
-        this.buildAvailabilityRows();
+          this.buildPropertySections(database);
+          this.buildAvailabilityRows();
 
-        this.SEOHandler.updateTitleAndMetaTags(
-          `${database.display_name} by ${
-            this.databaseDetails.vendor?.name || database.vendor_id
-          } - Spare Cores`,
-          this.description + this.cardPriceDescription,
-          "cloud, database, dbaas, price, comparison, sparecores",
-        );
-      })
+          this.SEOHandler.updateTitleAndMetaTags(
+            `${database.display_name} by ${
+              this.databaseDetails.vendor?.name || database.vendor_id
+            } - Spare Cores`,
+            this.description + this.cardPriceDescription,
+            "cloud, database, dbaas, price, comparison, sparecores",
+          );
+        },
+      )
       .catch((err) => {
         this.analytics.SentryException(err, {
           tags: {
