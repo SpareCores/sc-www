@@ -5,7 +5,12 @@ import { Server } from "../../../sdk/Server";
 import { Servers } from "../../../sdk/Servers";
 import {
   AssistServerFiltersAiAssistServerFiltersGetParams,
+  GetDatabasePricesDatabaseVendorDatabasePricesGetData,
+  GetDatabasePricesDatabaseVendorDatabasePricesGetParams,
+  GetDatabaseWithoutRelationsDatabaseVendorDatabaseGetData,
   HTTPValidationError,
+  SearchDatabasesDatabasesGetData,
+  SearchDatabasesDatabasesGetParams,
   SearchServerPricesServerPricesGetParams,
   SearchServersServersGetParams,
   SearchStoragePricesStoragePricesGetParams,
@@ -22,6 +27,15 @@ import { TrafficPrices } from "../../../sdk/TrafficPrices";
 import { BenchmarkConfigs } from "../../../sdk/BenchmarkConfigs";
 import { Debug } from "../../../sdk/Debug";
 import { BenchmarkScoreStats } from "../../../sdk/BenchmarkScoreStats";
+import { Databases } from "../../../sdk/Databases";
+import { Database } from "../../../sdk/Database";
+
+type KeeperApiResponse<T> = {
+  body?: T;
+  headers?: {
+    get(name: string): string | null;
+  };
+};
 
 type ServerSelectColumn = NonNullable<
   TableServerSelectTableServerSelectGetParams["columns"]
@@ -41,6 +55,8 @@ export class KeeperAPIService {
   public SearchController: Servers = new Servers(this.myHttp);
   public ServerController: Server = new Server(this.myHttp);
   public ServerPricesController: ServerPrices = new ServerPrices(this.myHttp);
+  public DatabasesController: Databases = new Databases(this.myHttp);
+  public DatabaseController: Database = new Database(this.myHttp);
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
   public StorageController: StoragePrices = new StoragePrices(this.myHttp);
@@ -99,6 +115,44 @@ export class KeeperAPIService {
     return this.SearchController.searchServersServersGet(query);
   }
 
+  public searchDatabases(
+    query: SearchDatabasesDatabasesGetParams,
+  ): Promise<KeeperApiResponse<SearchDatabasesDatabasesGetData>> {
+    return this.DatabasesController.searchDatabasesDatabasesGet(
+      query,
+    ) as unknown as Promise<KeeperApiResponse<SearchDatabasesDatabasesGetData>>;
+  }
+
+  public getDatabase(
+    vendor: string,
+    database: string,
+  ): Promise<
+    KeeperApiResponse<GetDatabaseWithoutRelationsDatabaseVendorDatabaseGetData>
+  > {
+    return this.DatabaseController.getDatabaseWithoutRelationsDatabaseVendorDatabaseGet(
+      { vendor, database },
+    ) as unknown as Promise<
+      KeeperApiResponse<GetDatabaseWithoutRelationsDatabaseVendorDatabaseGetData>
+    >;
+  }
+
+  public getDatabasePrices(
+    vendor: string,
+    database: string,
+    query: Omit<
+      GetDatabasePricesDatabaseVendorDatabasePricesGetParams,
+      "vendor" | "database"
+    > = {},
+  ): Promise<
+    KeeperApiResponse<GetDatabasePricesDatabaseVendorDatabasePricesGetData>
+  > {
+    return this.DatabaseController.getDatabasePricesDatabaseVendorDatabasePricesGet(
+      { vendor, database, ...query },
+    ) as unknown as Promise<
+      KeeperApiResponse<GetDatabasePricesDatabaseVendorDatabasePricesGetData>
+    >;
+  }
+
   public searchServerPrices(
     query: SearchServerPricesServerPricesGetParams,
   ): Promise<any> {
@@ -120,6 +174,10 @@ export class KeeperAPIService {
         );
       case "server_prices":
         return this.AIController.assistServerPriceFiltersAiAssistServerPriceFiltersGet(
+          query,
+        );
+      case "databases":
+        return this.AIController.assistDatabaseFiltersAiAssistDatabaseFiltersGet(
           query,
         );
       case "servers":
