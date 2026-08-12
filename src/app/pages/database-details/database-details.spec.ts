@@ -2,6 +2,14 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 
+import {
+  Allocation,
+  DatabaseEngine,
+  DatabaseHaLevel,
+  DatabaseHaStrategy,
+  PriceUnit,
+  Status,
+} from "../../../../sdk/data-contracts";
 import { DatabaseDetails } from "./database-details";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
@@ -29,13 +37,13 @@ describe("DatabaseDetails", () => {
         description: "General purpose",
         vcpus: 2,
         memory_amount: 7680,
-        engine: "postgresql",
+        engine: DatabaseEngine.Postgresql,
         engine_versions: ["15", "16"],
-        ha: ["multi-zone"],
-        ha_strategy: ["passive-standby"],
+        ha: [DatabaseHaLevel.MultiZone],
+        ha_strategy: [DatabaseHaStrategy.PassiveStandby],
         storage_size: 902,
         sla: 99.95,
-        status: "active",
+        status: Status.Active,
       },
     });
     keeperAPI.getDatabasePrices.and.resolveTo({
@@ -44,10 +52,10 @@ describe("DatabaseDetails", () => {
           vendor_id: "aws",
           region_id: "us-east-1",
           database_id: "db.m1.large",
-          allocation: "ondemand",
-          ha: "none",
-          ha_strategy: "none",
-          unit: "h",
+          allocation: Allocation.Ondemand,
+          ha: DatabaseHaLevel.None,
+          ha_strategy: DatabaseHaStrategy.None,
+          unit: PriceUnit.Hour,
           price: 0.2,
           currency: "USD",
         },
