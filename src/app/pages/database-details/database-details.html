@@ -34,15 +34,6 @@
             by {{ databaseDetails.vendor?.name || databaseDetails.vendor_id }}
           </h1>
           <div>{{ description }}<span>{{ cardPriceDescription }}</span></div>
-          <div class="flex gap-4 flex-wrap">
-            <sc-button
-              label="Share"
-              [icon]="clipboardIcon"
-              iconPosition="start"
-              size="large"
-              (click)="clipboardURL()"
-            ></sc-button>
-          </div>
         </div>
       </div>
       <div class="w-full lg:w-2/5 flex">
@@ -137,6 +128,7 @@
         >
           <sc-button
             label="Show more"
+            size="small"
             id="availability_more_button"
             [ariaExpanded]="false"
             (click)="toggleCard('availability')"
@@ -146,6 +138,7 @@
         <div class="w-full pt-3 flex justify-center" id="availability_less">
           <sc-button
             label="Show less"
+            size="small"
             [ariaExpanded]="true"
             (click)="toggleCard('availability')"
           ></sc-button>

@@ -1,11 +1,5 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  PLATFORM_ID,
-  inject,
-} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { LucideCheck } from "@lucide/angular";
 import { Subscription } from "rxjs";
@@ -53,7 +47,6 @@ type LoadedDatabase = Database & {
   styleUrl: "./database-details.scss",
 })
 export class DatabaseDetails implements OnInit, OnDestroy {
-  private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
   private keeperAPI = inject(KeeperAPIService);
   private SEOHandler = inject(SeoHandlerService);
@@ -98,8 +91,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     currency: string;
     unit: string;
   }[] = [];
-
-  clipboardIcon = "clipboard";
 
   private subscription = new Subscription();
 
@@ -506,21 +497,5 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
   toggleCard(cardId: string) {
     this.expandedCards[cardId] = !this.expandedCards[cardId];
-  }
-
-  clipboardURL() {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-    navigator.clipboard.writeText(window.location.href);
-    this.clipboardIcon = "check";
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 }
