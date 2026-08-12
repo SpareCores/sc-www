@@ -9,6 +9,20 @@ export const routes: Routes = [
   { path: "servers", component: ServerListingComponent },
   { path: "servers/:id", component: ServerListingComponent },
   {
+    path: "databases",
+    loadComponent: () =>
+      import("./pages/database-listing/database-listing").then(
+        (m) => m.DatabaseListing,
+      ),
+  },
+  {
+    path: "database/:vendor/:id",
+    loadComponent: () =>
+      import("./pages/database-details/database-details").then(
+        (m) => m.DatabaseDetails,
+      ),
+  },
+  {
     path: "advisor",
     loadComponent: () =>
       import("./pages/advisor/advisor.component").then(
