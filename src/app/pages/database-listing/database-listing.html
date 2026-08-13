@@ -184,7 +184,8 @@
                   } @if (column.type === "price") {
                   <td>
                     @let priceValue = getField( item, column.key || "price" );
-                    @if (priceValue !== null && priceValue !== "") {
+                    @if ( priceValue !== null && priceValue !== undefined &&
+                    priceValue !== "" ) {
                     <div class="text-sm text-white whitespace-nowrap">
                       {{ priceValue }} {{ displayedCurrency.slug }}
                     </div>
