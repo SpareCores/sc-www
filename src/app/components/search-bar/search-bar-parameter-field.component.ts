@@ -355,6 +355,25 @@ export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
     this.filterServers.emit();
   }
 
+  booleanFilterSelection(): "all" | "yes" | "no" {
+    const value = this.parameter().modelValue;
+    if (value === true) {
+      return "yes";
+    }
+    if (value === false) {
+      return "no";
+    }
+    return "all";
+  }
+
+  setBooleanFilterSelection(selection: "all" | "yes" | "no") {
+    const parameter = this.parameter();
+    parameter.modelValue =
+      selection === "yes" ? true : selection === "no" ? false : null;
+    this.lastModelValue = parameter.modelValue;
+    this.filterServers.emit();
+  }
+
   getEnumOptionLabel(
     parameterType: SearchBarParameterType,
     option: BenchmarkFilterOption,

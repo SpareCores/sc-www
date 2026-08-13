@@ -157,6 +157,7 @@ export type SearchBarParameterType =
   | "vendor"
   | "storage_id"
   | "singleRadio"
+  | "booleanTriState"
   | "benchmarkTriState"
   | "range"
   | "cpuCacheRange"

@@ -215,13 +215,20 @@ export class DatabaseListing implements OnInit, OnDestroy {
     const parameters = openApi.paths["/databases"]?.get?.parameters ?? [];
     this.searchParameters = parameters
       .filter((parameter) => parameter.name !== "regions")
-      .map(
-        (parameter): SearchBarParameter => ({
+      .map((parameter): SearchBarParameter => {
+        const schema = { ...(parameter.schema ?? {}) };
+        if (
+          schema.type === "boolean" ||
+          schema.anyOf?.some((item) => item.type === "boolean")
+        ) {
+          schema.filter_mode = "tri_state_boolean";
+        }
+        return {
           name: parameter.name,
           modelValue: null,
-          schema: parameter.schema ?? {},
-        }),
-      );
+          schema,
+        };
+      });
 
     const limit = this.searchParameters.find((param) => param.name === "limit");
     if (typeof limit?.schema?.default === "number") {
