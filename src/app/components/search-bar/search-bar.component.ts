@@ -246,9 +246,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
 
       let value =
-        extraParameters[item.name] ||
-        query[item.name] ||
-        item.schema.default ||
+        extraParameters[item.name] ??
+        query[item.name] ??
+        item.schema.default ??
         null;
 
       if (typeof query[item.name] === "string") {
