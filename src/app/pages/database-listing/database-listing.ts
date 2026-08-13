@@ -212,7 +212,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
     );
 
     const openApi = openApiSpec as OpenApiSpecShape;
-    const parameters = openApi.paths["/databases"].get?.parameters ?? [];
+    const parameters = openApi.paths["/databases"]?.get?.parameters ?? [];
     this.searchParameters = parameters
       .filter((parameter) => parameter.name !== "regions")
       .map(
