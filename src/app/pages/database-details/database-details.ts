@@ -30,6 +30,7 @@ import {
   ServerPropertyCardComponent,
   ServerPropertyRow,
   ServerPropertySection,
+  ServerPropertyTooltip,
 } from "../../components/server-property-card/server-property-card.component";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -306,31 +307,43 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     this.metadataSections = [
       {
         name: "Database Metadata",
-        properties: this.rows([
-          { id: "name", name: "Name", value: database.name },
-          {
-            id: "display_name",
-            name: "Display Name",
-            value: database.display_name,
-          },
-          {
-            id: "api_reference",
-            name: "API Reference",
-            value: database.api_reference,
-          },
-          {
-            id: "database_id",
-            name: "Database ID",
-            value: database.database_id,
-          },
-          { id: "family", name: "Family", value: database.family },
-          {
-            id: "server_id",
-            name: "Underlying Server",
-            value: database.serverDisplayName || database.server_id,
-          },
-          { id: "status", name: "Status", value: database.status },
-        ]),
+        properties: this.dedupeMetadataProperties(
+          this.rows([
+            {
+              id: "name",
+              name: "Name",
+              value: database.name,
+              description: "Human-friendly name.",
+            },
+            {
+              id: "display_name",
+              name: "Display Name",
+              value: database.display_name,
+              description:
+                "Human-friendly reference (usually the id or name) of the resource.",
+            },
+            {
+              id: "api_reference",
+              name: "API Reference",
+              value: database.api_reference,
+              description:
+                "How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.",
+            },
+            {
+              id: "database_id",
+              name: "Database ID",
+              value: database.database_id,
+              description: "Unique identifier, as called at the Vendor.",
+            },
+            { id: "family", name: "Family", value: database.family },
+            {
+              id: "server_id",
+              name: "Underlying Server",
+              value: database.serverDisplayName || database.server_id,
+            },
+            { id: "status", name: "Status", value: database.status },
+          ]),
+        ),
       },
     ];
 
@@ -517,14 +530,105 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     }));
   }
 
+  private dedupeMetadataProperties(
+    properties: ServerPropertyRow[],
+  ): ServerPropertyRow[] {
+    const nameProperty = properties.find((property) => property.id === "name");
+    if (!nameProperty) {
+      return properties;
+    }
+
+    const hiddenMetadataIds = new Set([
+      "database_id",
+      "api_reference",
+      "display_name",
+    ]);
+    const identityPropertyIds = [
+      "database_id",
+      "name",
+      "api_reference",
+      "display_name",
+    ];
+    const matchingIdentityProperties = properties.filter(
+      (property) =>
+        property.id !== "name" &&
+        identityPropertyIds.includes(property.id) &&
+        this.normalizeComparableValue(property.value) ===
+          this.normalizeComparableValue(nameProperty.value),
+    );
+    const shouldAggregateIdentityTooltips =
+      matchingIdentityProperties.length > 0;
+    const nameTooltips = shouldAggregateIdentityTooltips
+      ? this.uniqueTooltips(
+          [nameProperty, ...matchingIdentityProperties].flatMap(
+            (property) => property.tooltips || [],
+          ),
+        )
+      : nameProperty.tooltips || [];
+
+    const filteredProperties = properties.filter((property) => {
+      if (!hiddenMetadataIds.has(property.id)) {
+        return true;
+      }
+
+      if (
+        this.normalizeComparableValue(property.value) !==
+        this.normalizeComparableValue(nameProperty.value)
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+
+    return filteredProperties.map((property) => {
+      if (property.id !== "name") {
+        return property;
+      }
+
+      return {
+        ...property,
+        tooltips: nameTooltips,
+      };
+    });
+  }
+
+  private uniqueTooltips(tooltips: ServerPropertyTooltip[]) {
+    const seen = new Set<string>();
+
+    return tooltips.filter((tooltip) => {
+      if (seen.has(tooltip.key)) {
+        return false;
+      }
+
+      seen.add(tooltip.key);
+      return true;
+    });
+  }
+
+  private normalizeComparableValue(value: string) {
+    return value
+      .replace(/<[^>]*>/g, "")
+      .trim()
+      .toLowerCase();
+  }
+
   private rows(
-    items: { id: string; name: string; value: unknown }[],
+    items: {
+      id: string;
+      name: string;
+      value: unknown;
+      description?: string;
+    }[],
   ): ServerPropertyRow[] {
     return items
       .map((item) => ({
         id: item.id,
         name: item.name,
         value: this.toDisplayValue(item.value),
+        tooltips: item.description
+          ? [{ key: item.id, content: item.description }]
+          : undefined,
       }))
       .filter((item) => item.value !== "");
   }
