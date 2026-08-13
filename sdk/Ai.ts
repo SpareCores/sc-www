@@ -33,28 +33,6 @@ export class Ai<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Extract Database JSON filters from freetext.
-   *
-   * @tags AI
-   * @name AssistDatabaseFiltersAiAssistDatabaseFiltersGet
-   * @summary Assist Database Filters
-   * @request GET:/ai/assist_database_filters
-   */
-  assistDatabaseFiltersAiAssistDatabaseFiltersGet = (
-    query: AssistDatabaseFiltersAiAssistDatabaseFiltersGetParams,
-    params: RequestParams = {},
-  ) =>
-    this.http.request<
-      AssistDatabaseFiltersAiAssistDatabaseFiltersGetData,
-      HTTPValidationError
-    >({
-      path: `/ai/assist_database_filters`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-  /**
    * @description Extract Server JSON filters from freetext.
    *
    * @tags AI
@@ -71,6 +49,28 @@ export class Ai<SecurityDataType = unknown> {
       HTTPValidationError
     >({
       path: `/ai/assist_server_filters`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Extract Database JSON filters from freetext.
+   *
+   * @tags AI
+   * @name AssistDatabaseFiltersAiAssistDatabaseFiltersGet
+   * @summary Assist Database Filters
+   * @request GET:/ai/assist_database_filters
+   */
+  assistDatabaseFiltersAiAssistDatabaseFiltersGet = (
+    query: AssistDatabaseFiltersAiAssistDatabaseFiltersGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      AssistDatabaseFiltersAiAssistDatabaseFiltersGetData,
+      HTTPValidationError
+    >({
+      path: `/ai/assist_database_filters`,
       method: "GET",
       query: query,
       format: "json",

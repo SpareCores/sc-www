@@ -11,6 +11,7 @@
  */
 
 import {
+  GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetData,
   GetDatabasePricesDatabaseVendorDatabasePricesGetData,
   GetDatabaseWithoutRelationsDatabaseVendorDatabaseGetData,
 } from "./data-contracts";
@@ -384,5 +385,32 @@ export namespace Database {
     export type RequestHeaders = {};
     export type ResponseBody =
       GetDatabasePricesDatabaseVendorDatabasePricesGetData;
+  }
+
+  /**
+   * @description Query the current benchmark scores of a single database.
+   * @tags Database Details
+   * @name GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGet
+   * @summary Get Database Benchmarks
+   * @request GET:/database/{vendor}/{database}/benchmarks
+   */
+  export namespace GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGet {
+    export type RequestParams = {
+      /**
+       * Vendor
+       * A Vendor's ID.
+       */
+      vendor: string;
+      /**
+       * Database
+       * A Database's ID or API reference.
+       */
+      database: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody =
+      GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetData;
   }
 }

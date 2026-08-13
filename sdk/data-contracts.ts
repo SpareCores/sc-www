@@ -373,6 +373,15 @@ export enum ServerColumns {
   ObservedAt = "observed_at",
 }
 
+/**
+ * ResourceType
+ * Kind of resource a benchmark score refers to.
+ */
+export enum ResourceType {
+  Server = "server",
+  Database = "database",
+}
+
 /** Regions */
 export enum Regions {
   Value1000 = "1000",
@@ -1075,15 +1084,16 @@ export interface BenchmarkHistogram {
 
 /**
  * BenchmarkScore
- * Results of running Benchmark scenarios on Servers.
+ * Results of running Benchmark scenarios on Servers or managed Databases.
  *
  * Attributes:
  *     vendor_id (str): Reference to the Vendor.
- *     server_id (str): Reference to the Server.
  *     benchmark_id (str): Reference to the Benchmark.
+ *     resource_type (ResourceType): Kind of resource the score refers to.
+ *     resource_id (str): Reference to the resource (see resource_type).
  *     config (sc_crawler.table_fields.HashableDict | dict): Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
  *     framework_version (typing.Optional[str]): The version of the benchmark tool used.
- *     kernel_version (typing.Optional[str]): The kernel version of the server when the benchmark was run.
+ *     environment (typing.Optional[dict]): Extensible environment details (e.g. kernel_version, database_engine_version).
  *     score (float): The resulting score of the benchmark.
  *     score_breakdown (typing.Optional[sc_crawler.table_fields.WorkloadScoreBreakdown]): Structured derivation of composite scores (e.g. workload profiles): per-component raw values, references, normalized values, weights, and coverage. Null for simple benchmark scores.
  *     note (typing.Optional[str]): Optional note, comment or context on the benchmark score.
@@ -1097,15 +1107,17 @@ export interface BenchmarkScore {
    */
   vendor_id: string;
   /**
-   * Server Id
-   * Reference to the Server.
-   */
-  server_id: string;
-  /**
    * Benchmark Id
    * Reference to the Benchmark.
    */
   benchmark_id: string;
+  /** Kind of resource the score refers to. */
+  resource_type: ResourceType;
+  /**
+   * Resource Id
+   * Reference to the resource (see resource_type).
+   */
+  resource_id: string;
   /**
    * Config
    * Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
@@ -1118,10 +1130,10 @@ export interface BenchmarkScore {
    */
   framework_version?: string | null;
   /**
-   * Kernel Version
-   * The kernel version of the server when the benchmark was run.
+   * Environment
+   * Extensible environment details (e.g. kernel_version, database_engine_version).
    */
-  kernel_version?: string | null;
+  environment?: Record<string, any> | null;
   /**
    * Score
    * The resulting score of the benchmark.
@@ -1978,10 +1990,10 @@ export interface DatabasePKs {
   min_price_ondemand?: number | null;
   /** Min Price Ondemand Monthly */
   min_price_ondemand_monthly?: number | null;
-  /** Score */
-  score?: number | null;
-  /** Score Per Price */
-  score_per_price?: number | null;
+  /** Selected Benchmark Score */
+  selected_benchmark_score?: number | null;
+  /** Selected Benchmark Score Per Price */
+  selected_benchmark_score_per_price?: number | null;
   vendor: VendorBase;
   /** @default {} */
   price_breakdown?: DatabasePriceBreakdown;
@@ -7487,16 +7499,22 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
 export type GetDatabasePricesDatabaseVendorDatabasePricesGetData =
   DatabasePrice[];
 
-export interface AssistDatabaseFiltersAiAssistDatabaseFiltersGetParams {
-  /** Text */
-  text: string;
+export interface GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetParams {
+  /**
+   * Vendor
+   * A Vendor's ID.
+   */
+  vendor: string;
+  /**
+   * Database
+   * A Database's ID or API reference.
+   */
+  database: string;
 }
 
-/** Response Assist Database Filters Ai Assist Database Filters Get */
-export type AssistDatabaseFiltersAiAssistDatabaseFiltersGetData = Record<
-  string,
-  any
->;
+/** Response Get Database Benchmarks Database  Vendor   Database  Benchmarks Get */
+export type GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetData =
+  BenchmarkScore[];
 
 export interface AssistServerFiltersAiAssistServerFiltersGetParams {
   /** Text */
@@ -7505,6 +7523,17 @@ export interface AssistServerFiltersAiAssistServerFiltersGetParams {
 
 /** Response Assist Server Filters Ai Assist Server Filters Get */
 export type AssistServerFiltersAiAssistServerFiltersGetData = Record<
+  string,
+  any
+>;
+
+export interface AssistDatabaseFiltersAiAssistDatabaseFiltersGetParams {
+  /** Text */
+  text: string;
+}
+
+/** Response Assist Database Filters Ai Assist Database Filters Get */
+export type AssistDatabaseFiltersAiAssistDatabaseFiltersGetData = Record<
   string,
   any
 >;
@@ -8563,20 +8592,10 @@ export interface SearchDatabasesDatabasesGetParams {
    */
   partial_name_or_id?: string | null;
   /**
-   * Database engine
-   * Managed database engine.
+   * Engine version
+   * Required major engine version.
    */
-  engine?: "postgresql";
-  /**
-   * Engine versions
-   * Required major engine versions; all must be supported by the database instance.
-   */
-  engine_versions?: string[] | null;
-  /**
-   * Wire protocol
-   * Network protocol used for client connections.
-   */
-  wire_protocol?: "postgresql";
+  engine_version?: string | null;
   /**
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
@@ -8595,6 +8614,27 @@ export interface SearchDatabasesDatabasesGetParams {
    * Required amount of memory in GBs.
    */
   memory_min?: number | null;
+  /**
+   * Benchmark Id
+   * Benchmark id to use as the main score for the server.
+   * @default "pgbench:heavy_read_only"
+   */
+  benchmark_id?: string;
+  /**
+   * Benchmark Config
+   * Optional benchmark config dict JSON to filter results of a benchmark_id.
+   */
+  benchmark_config?: string | null;
+  /**
+   * Required benchmark score
+   * Required value of the selected benchmark score.
+   */
+  benchmark_score_min?: number | null;
+  /**
+   * Required benchmark score/price
+   * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+   */
+  benchmark_score_per_price_min?: number | null;
   /**
    * High availability levels
    * Required HA levels; all must appear in the database instance's supported list.

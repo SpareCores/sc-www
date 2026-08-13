@@ -20,6 +20,24 @@ import {
 
 export namespace Ai {
   /**
+   * @description Extract Server JSON filters from freetext.
+   * @tags AI
+   * @name AssistServerFiltersAiAssistServerFiltersGet
+   * @summary Assist Server Filters
+   * @request GET:/ai/assist_server_filters
+   */
+  export namespace AssistServerFiltersAiAssistServerFiltersGet {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      /** Text */
+      text: string;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = AssistServerFiltersAiAssistServerFiltersGetData;
+  }
+
+  /**
    * @description Extract Database JSON filters from freetext.
    * @tags AI
    * @name AssistDatabaseFiltersAiAssistDatabaseFiltersGet
@@ -36,24 +54,6 @@ export namespace Ai {
     export type RequestHeaders = {};
     export type ResponseBody =
       AssistDatabaseFiltersAiAssistDatabaseFiltersGetData;
-  }
-
-  /**
-   * @description Extract Server JSON filters from freetext.
-   * @tags AI
-   * @name AssistServerFiltersAiAssistServerFiltersGet
-   * @summary Assist Server Filters
-   * @request GET:/ai/assist_server_filters
-   */
-  export namespace AssistServerFiltersAiAssistServerFiltersGet {
-    export type RequestParams = {};
-    export type RequestQuery = {
-      /** Text */
-      text: string;
-    };
-    export type RequestBody = never;
-    export type RequestHeaders = {};
-    export type ResponseBody = AssistServerFiltersAiAssistServerFiltersGetData;
   }
 
   /**

@@ -29,20 +29,10 @@ export namespace Databases {
        */
       partial_name_or_id?: string | null;
       /**
-       * Database engine
-       * Managed database engine.
+       * Engine version
+       * Required major engine version.
        */
-      engine?: "postgresql";
-      /**
-       * Engine versions
-       * Required major engine versions; all must be supported by the database instance.
-       */
-      engine_versions?: string[] | null;
-      /**
-       * Wire protocol
-       * Network protocol used for client connections.
-       */
-      wire_protocol?: "postgresql";
+      engine_version?: string | null;
       /**
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
@@ -61,6 +51,27 @@ export namespace Databases {
        * Required amount of memory in GBs.
        */
       memory_min?: number | null;
+      /**
+       * Benchmark Id
+       * Benchmark id to use as the main score for the server.
+       * @default "pgbench:heavy_read_only"
+       */
+      benchmark_id?: string;
+      /**
+       * Benchmark Config
+       * Optional benchmark config dict JSON to filter results of a benchmark_id.
+       */
+      benchmark_config?: string | null;
+      /**
+       * Required benchmark score
+       * Required value of the selected benchmark score.
+       */
+      benchmark_score_min?: number | null;
+      /**
+       * Required benchmark score/price
+       * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+       */
+      benchmark_score_per_price_min?: number | null;
       /**
        * High availability levels
        * Required HA levels; all must appear in the database instance's supported list.

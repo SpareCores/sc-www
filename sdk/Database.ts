@@ -11,6 +11,8 @@
  */
 
 import {
+  GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetData,
+  GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetParams,
   GetDatabasePricesDatabaseVendorDatabasePricesGetData,
   GetDatabasePricesDatabaseVendorDatabasePricesGetParams,
   GetDatabaseWithoutRelationsDatabaseVendorDatabaseGetData,
@@ -73,6 +75,30 @@ export class Database<SecurityDataType = unknown> {
       path: `/database/${vendor}/${database}/prices`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Query the current benchmark scores of a single database.
+   *
+   * @tags Database Details
+   * @name GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGet
+   * @summary Get Database Benchmarks
+   * @request GET:/database/{vendor}/{database}/benchmarks
+   */
+  getDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGet = (
+    {
+      vendor,
+      database,
+    }: GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetData,
+      HTTPValidationError
+    >({
+      path: `/database/${vendor}/${database}/benchmarks`,
+      method: "GET",
       format: "json",
       ...params,
     });
