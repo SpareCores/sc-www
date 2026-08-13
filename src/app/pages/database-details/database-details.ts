@@ -41,6 +41,7 @@ import { formatKebabTitle } from "../../pipes/pipe-utils";
 type LoadedDatabase = Database & {
   vendor?: Vendor;
   prices?: (DatabasePrice & { region?: Region })[];
+  serverDisplayName?: string;
 };
 
 @Component({
@@ -153,7 +154,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       this.keeperAPI.getRegions(),
     ])
       .then(
-        ([
+        async ([
           databaseResponse,
           pricesResponse,
           vendorsResponse,
@@ -168,6 +169,18 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           const vendors = (vendorsResponse?.body || []) as Vendor[];
           const regions = (regionsResponse?.body || []) as Region[];
           const prices = (pricesResponse?.body || []) as DatabasePrice[];
+          let serverDisplayName: string | undefined;
+          if (database.server_id) {
+            try {
+              const serverResponse = await this.keeperAPI.getServerV2(
+                database.vendor_id,
+                database.server_id,
+              );
+              serverDisplayName = serverResponse?.body?.display_name;
+            } catch {
+              serverDisplayName = undefined;
+            }
+          }
 
           this.databaseDetails = {
             ...database,
@@ -182,6 +195,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
                 ),
               }))
               .sort((a, b) => a.price - b.price),
+            serverDisplayName,
           };
 
           this.breadcrumbs = [
@@ -253,7 +267,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             },
           ];
 
-          this.buildPropertySections(database);
+          this.buildPropertySections(this.databaseDetails);
           this.buildAvailabilityRows();
 
           this.SEOHandler.updateTitleAndMetaTags(
@@ -288,7 +302,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       });
   }
 
-  private buildPropertySections(database: Database) {
+  private buildPropertySections(database: LoadedDatabase) {
     this.metadataSections = [
       {
         name: "Database Metadata",
@@ -313,7 +327,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           {
             id: "server_id",
             name: "Underlying Server",
-            value: database.server_id,
+            value: database.serverDisplayName || database.server_id,
           },
           { id: "status", name: "Status", value: database.status },
         ]),
