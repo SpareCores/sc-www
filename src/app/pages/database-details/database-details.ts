@@ -36,6 +36,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
+import { formatKebabTitle } from "../../pipes/pipe-utils";
 
 type LoadedDatabase = Database & {
   vendor?: Vendor;
@@ -479,7 +480,11 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             name: "Disk Encryption",
             value: this.formatBoolean(database.disk_encryption),
           },
-          ...this.securityFeatureRows(database.security_features),
+          ...(database.security_features || []).map((feature) => ({
+            id: feature,
+            name: formatKebabTitle(feature),
+            value: "check",
+          })),
         ]),
       },
     ];
@@ -534,31 +539,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       return null;
     }
     return value.join(", ");
-  }
-
-  private securityFeatureRows(
-    features: unknown,
-  ): { id: string; name: string; value: string }[] {
-    if (!Array.isArray(features)) {
-      return [];
-    }
-    return features
-      .filter(
-        (feature): feature is string =>
-          typeof feature === "string" && feature.length > 0,
-      )
-      .map((feature) => ({
-        id: feature,
-        name: this.formatFeatureName(feature),
-        value: "check",
-      }));
-  }
-
-  private formatFeatureName(value: string): string {
-    return value
-      .split("-")
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(" ");
   }
 
   toggleCard(cardId: string) {
