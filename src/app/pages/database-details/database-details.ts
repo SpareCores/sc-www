@@ -188,10 +188,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             { name: "Home", url: "/" },
             { name: "Databases", url: "/databases" },
             {
-              name: this.databaseDetails.vendor?.name || database.vendor_id,
-              url: `/databases?vendor=${database.vendor_id}`,
-            },
-            {
               name: database.display_name,
               url: `/database/${database.vendor_id}/${database.api_reference}`,
             },
