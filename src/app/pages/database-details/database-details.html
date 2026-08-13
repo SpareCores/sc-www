@@ -83,23 +83,20 @@
           <thead>
             <tr>
               <th>REGION / ID</th>
-              <th>ALLOCATION</th>
               <th>HA</th>
               <th>HA STRATEGY</th>
               <th>PRICE</th>
             </tr>
           </thead>
           <tbody>
-            @for ( row of availabilityRows; track row.region_id + "_" +
-            row.allocation + "_" + row.ha + "_" + row.ha_strategy + "_" +
-            row.unit ) {
+            @for ( row of availabilityRows; track row.region_id + "_" + row.ha +
+            "_" + row.ha_strategy + "_" + row.unit ) {
             <tr class="availability_line">
               <td>
                 <div>
                   <b>{{ row.display_name }}</b> / {{ row.api_reference }}
                 </div>
               </td>
-              <td>{{ row.allocation }}</td>
               <td>{{ row.ha }}</td>
               <td>{{ row.ha_strategy }}</td>
               <td>
@@ -109,7 +106,7 @@
             </tr>
             } @if (!availabilityRows.length) {
             <tr>
-              <td colspan="5" class="px-5 py-6 text-center text-gray-400">
+              <td colspan="4" class="px-5 py-6 text-center text-gray-400">
                 No prices available for this database.
               </td>
             </tr>

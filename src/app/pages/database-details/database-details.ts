@@ -96,7 +96,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     region_id: string;
     display_name: string;
     api_reference: string;
-    allocation: string;
     ha: string;
     ha_strategy: string;
     price: number | null;
@@ -496,7 +495,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       region_id: price.region_id,
       display_name: price.region?.display_name || price.region_id,
       api_reference: price.region?.api_reference || price.region_id,
-      allocation: price.allocation || "ondemand",
       ha: price.ha || "none",
       ha_strategy: price.ha_strategy || "none",
       price: price.price,
