@@ -42,6 +42,7 @@ import {
   parseNumericDraftValue,
   parseTextDraftValue,
 } from "./search-bar.utils";
+import { formatKebabTitle } from "../../pipes/pipe-utils";
 
 type CpuCacheRangeFocusLossSkip = {
   target: HTMLInputElement | null;
@@ -393,8 +394,12 @@ export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
         return (
           this.storageIds().find((item) => item.storage_id === id)?.name || id
         );
-      default:
-        return this.benchmarkFilterOptionLabel(option);
+      default: {
+        const label = this.benchmarkFilterOptionLabel(option);
+        return this.parameter().name === "security_features"
+          ? formatKebabTitle(label)
+          : label;
+      }
     }
   }
 
