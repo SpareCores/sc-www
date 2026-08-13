@@ -16,6 +16,7 @@ import { Subscription } from "rxjs";
 import {
   Database,
   DatabasePrice,
+  PriceUnit,
   Region,
   Vendor,
 } from "../../../../sdk/data-contracts";
@@ -203,13 +204,26 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             }.`;
 
           this.cardPriceDescription = "";
-          if (this.databaseDetails.prices?.length) {
-            const cheapest = this.databaseDetails.prices[0];
+          const priceParts: string[] = [];
+          for (const unit of [PriceUnit.Hour, PriceUnit.Month]) {
+            const unitPrices =
+              this.databaseDetails.prices?.filter(
+                (price) => price.unit === unit,
+              ) || [];
+            if (!unitPrices.length) {
+              continue;
+            }
+            const cheapest = unitPrices[0];
             const roundedPrice =
               cheapest.price < 1
                 ? cheapest.price.toPrecision(2)
                 : cheapest.price.toFixed(2);
-            this.cardPriceDescription = ` Pricing starts at ${roundedPrice} ${cheapest.currency}/${cheapest.unit}.`;
+            priceParts.push(
+              `${roundedPrice} ${cheapest.currency}/${cheapest.unit}`,
+            );
+          }
+          if (priceParts.length) {
+            this.cardPriceDescription = ` Pricing starts at ${priceParts.join(" and ")}.`;
           }
 
           this.features = [

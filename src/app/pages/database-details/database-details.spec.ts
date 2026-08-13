@@ -108,4 +108,71 @@ describe("DatabaseDetails", () => {
     expect(component.availabilityRows[0].display_name).toBe("US East");
     expect(component.engineSections[0].properties.length).toBeGreaterThan(0);
   });
+
+  it("shows cheapest hour and month starts when both units are present", async () => {
+    keeperAPI.getDatabasePrices.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          region_id: "us-east-1",
+          database_id: "db.m1.large",
+          allocation: Allocation.Ondemand,
+          ha: DatabaseHaLevel.None,
+          ha_strategy: DatabaseHaStrategy.None,
+          unit: PriceUnit.Month,
+          price: 50,
+          currency: "USD",
+        },
+        {
+          vendor_id: "aws",
+          region_id: "us-east-1",
+          database_id: "db.m1.large",
+          allocation: Allocation.Ondemand,
+          ha: DatabaseHaLevel.None,
+          ha_strategy: DatabaseHaStrategy.None,
+          unit: PriceUnit.Hour,
+          price: 0.4,
+          currency: "USD",
+        },
+        {
+          vendor_id: "aws",
+          region_id: "us-west-2",
+          database_id: "db.m1.large",
+          allocation: Allocation.Ondemand,
+          ha: DatabaseHaLevel.None,
+          ha_strategy: DatabaseHaStrategy.None,
+          unit: PriceUnit.Hour,
+          price: 0.2,
+          currency: "USD",
+        },
+      ],
+    });
+    keeperAPI.getRegions.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          region_id: "us-east-1",
+          display_name: "US East",
+          api_reference: "us-east-1",
+        },
+        {
+          vendor_id: "aws",
+          region_id: "us-west-2",
+          display_name: "US West",
+          api_reference: "us-west-2",
+        },
+      ],
+    });
+
+    fixture = TestBed.createComponent(DatabaseDetails);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.databaseDetails?.prices?.length).toBe(3);
+    expect(component.cardPriceDescription).toBe(
+      " Pricing starts at 0.20 USD/hour and 50.00 USD/month.",
+    );
+  });
 });

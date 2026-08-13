@@ -91,7 +91,8 @@
           </thead>
           <tbody>
             @for ( row of availabilityRows; track row.region_id + "_" +
-            row.allocation + "_" + row.ha + "_" + row.ha_strategy ) {
+            row.allocation + "_" + row.ha + "_" + row.ha_strategy + "_" +
+            row.unit ) {
             <tr class="availability_line">
               <td>
                 <div>
