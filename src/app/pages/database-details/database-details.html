@@ -16,9 +16,9 @@
     } @if (databaseDetails) {
     <div
       id="database_base_info_box"
-      class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+      class="mx-2 xl:mx-0 flex flex-col lg:flex-row lg:items-center justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
     >
-      <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
+      <div class="flex gap-8 min-w-0 flex-1">
         <div class="flex gap-4 flex-col min-w-32">
           <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
             @if (databaseDetails.vendor?.logo) {
@@ -36,25 +36,23 @@
           <div>{{ description }}<span>{{ cardPriceDescription }}</span></div>
         </div>
       </div>
-      <div class="w-full lg:w-2/5 flex">
-        <div class="w-full">
-          @for (feature of features; track feature.name; let i = $index) {
-          <div>
-            @if (i !== 0) {
-            <div
-              class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
-            ></div>
-            }
-            <div class="flex gap-2 text-xl items-center text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                <svg lucideCheck class="h-4 w-4"></svg>
-              </div>
-              <b> {{ feature.value }} </b>
-              <span> {{ feature.name }} </span>
-            </div>
-          </div>
+      <div class="shrink-0 lg:ml-auto">
+        @for (feature of features; track feature.name; let i = $index) {
+        <div>
+          @if (i !== 0) {
+          <div
+            class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
+          ></div>
           }
+          <div class="flex gap-2 text-xl items-center text-gray-200">
+            <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+              <svg lucideCheck class="h-4 w-4"></svg>
+            </div>
+            <b> {{ feature.value }} </b>
+            <span> {{ feature.name }} </span>
+          </div>
         </div>
+        }
       </div>
     </div>
 
