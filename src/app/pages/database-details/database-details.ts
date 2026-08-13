@@ -479,11 +479,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             name: "Disk Encryption",
             value: this.formatBoolean(database.disk_encryption),
           },
-          {
-            id: "security_features",
-            name: "Security Features",
-            value: this.formatList(database.security_features),
-          },
+          ...this.securityFeatureRows(database.security_features),
         ]),
       },
     ];
@@ -538,6 +534,31 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       return null;
     }
     return value.join(", ");
+  }
+
+  private securityFeatureRows(
+    features: unknown,
+  ): { id: string; name: string; value: string }[] {
+    if (!Array.isArray(features)) {
+      return [];
+    }
+    return features
+      .filter(
+        (feature): feature is string =>
+          typeof feature === "string" && feature.length > 0,
+      )
+      .map((feature) => ({
+        id: feature,
+        name: this.formatFeatureName(feature),
+        value: "check",
+      }));
+  }
+
+  private formatFeatureName(value: string): string {
+    return value
+      .split("-")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
   }
 
   toggleCard(cardId: string) {
