@@ -240,12 +240,14 @@ export class DatabaseListing implements OnInit, OnDestroy {
         const query: DatabaseListingQuery = { ...params };
         this.query = query;
 
-        if (query.page) {
-          this.page = parseInt(String(query.page));
+        const parsedPage = parseInt(String(query.page ?? ""));
+        if (Number.isFinite(parsedPage) && parsedPage > 0) {
+          this.page = parsedPage;
         }
 
-        if (query.limit) {
-          this.limit = parseInt(String(query.limit));
+        const parsedLimit = parseInt(String(query.limit ?? ""));
+        if (Number.isFinite(parsedLimit) && parsedLimit > 0) {
+          this.limit = parsedLimit;
         }
 
         const tableColumns = query.columns;
