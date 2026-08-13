@@ -238,14 +238,15 @@ export class DatabaseDetails implements OnInit, OnDestroy {
                   ? "-"
                   : `${(database.memory_amount / 1024).toFixed(1)} GiB`,
             },
-            {
-              name: "Storage",
-              value:
-                database.storage_size === null ||
-                database.storage_size === undefined
-                  ? "-"
-                  : `${database.storage_size} GB`,
-            },
+            ...(database.storage_size === null ||
+            database.storage_size === undefined
+              ? []
+              : [
+                  {
+                    name: "Storage",
+                    value: `${database.storage_size} GB`,
+                  },
+                ]),
             {
               name: "Engine",
               value: database.engine || "-",
