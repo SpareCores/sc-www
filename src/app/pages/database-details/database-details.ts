@@ -1,5 +1,15 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, OnInit, inject } from "@angular/core";
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  afterNextRender,
+  inject,
+  viewChild,
+} from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { LucideCheck } from "@lucide/angular";
 import { Subscription } from "rxjs";
@@ -92,7 +102,25 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     unit: string;
   }[] = [];
 
+  availabilityCanExpand = false;
+
+  private availabilityCard =
+    viewChild<ElementRef<HTMLDivElement>>("availabilityCard");
+  private availabilityOverflowCheckTimeout?: ReturnType<typeof setTimeout>;
   private subscription = new Subscription();
+  private destroyRef = inject(DestroyRef);
+
+  constructor() {
+    afterNextRender(() => {
+      this.scheduleAvailabilityOverflowCheck();
+    });
+
+    this.destroyRef.onDestroy(() => {
+      if (this.availabilityOverflowCheckTimeout) {
+        clearTimeout(this.availabilityOverflowCheckTimeout);
+      }
+    });
+  }
 
   ngOnInit() {
     this.subscription.add(
@@ -106,6 +134,11 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  @HostListener("window:resize")
+  onResize() {
+    this.scheduleAvailabilityOverflowCheck();
   }
 
   private loadDatabase(vendor: string, id: string) {
@@ -240,6 +273,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       })
       .finally(() => {
         this.isLoading = false;
+        this.scheduleAvailabilityOverflowCheck();
       });
   }
 
@@ -497,5 +531,37 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
   toggleCard(cardId: string) {
     this.expandedCards[cardId] = !this.expandedCards[cardId];
+    if (cardId === "availability") {
+      this.scheduleAvailabilityOverflowCheck();
+    }
+  }
+
+  private scheduleAvailabilityOverflowCheck() {
+    if (this.availabilityOverflowCheckTimeout) {
+      clearTimeout(this.availabilityOverflowCheckTimeout);
+    }
+
+    this.availabilityOverflowCheckTimeout = setTimeout(() => {
+      this.updateAvailabilityOverflowState();
+    }, 0);
+  }
+
+  private updateAvailabilityOverflowState() {
+    const cardElement = this.availabilityCard()?.nativeElement;
+    if (!cardElement) {
+      return;
+    }
+
+    const hadOpenClass = cardElement.classList.contains("open");
+    if (hadOpenClass) {
+      cardElement.classList.remove("open");
+    }
+
+    this.availabilityCanExpand =
+      cardElement.scrollHeight > cardElement.clientHeight + 1;
+
+    if (hadOpenClass) {
+      cardElement.classList.add("open");
+    }
   }
 }

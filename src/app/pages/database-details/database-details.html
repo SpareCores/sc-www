@@ -75,6 +75,7 @@
       <div
         class="block_half"
         id="availability"
+        #availabilityCard
         [class.open]="expandedCards.availability"
       >
         <h3 class="text-2xl">Availability & Pricing</h3>
@@ -114,7 +115,7 @@
             }
           </tbody>
         </table>
-        @if (availabilityRows.length > 7 && !expandedCards.availability) {
+        @if (availabilityCanExpand && !expandedCards.availability) {
         <div
           class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
           id="availability_more"
@@ -134,7 +135,7 @@
             (click)="toggleCard('availability')"
           ></sc-button>
         </div>
-        } @if (availabilityRows.length > 7 && expandedCards.availability) {
+        } @if (availabilityCanExpand && expandedCards.availability) {
         <div class="w-full pt-3 flex justify-center" id="availability_less">
           <sc-button
             label="Show less"
