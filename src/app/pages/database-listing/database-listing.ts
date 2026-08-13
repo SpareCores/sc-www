@@ -252,6 +252,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
         if (tableColumns && parseInt(String(tableColumns))) {
           const tableColumnsArray: number[] = Number(tableColumns)
             .toString(2)
+            .padStart(this.possibleColumns.length, "0")
             .split("")
             .map(Number);
           if (tableColumnsArray.length === this.possibleColumns.length) {

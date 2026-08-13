@@ -89,4 +89,25 @@ describe("DatabaseListing", () => {
       "7.5 GiB",
     );
   });
+
+  it("pads column bitmask so a hidden first column still restores", () => {
+    const columnCount = component.possibleColumns.length;
+    const bits = component.possibleColumns.map((_, index) =>
+      index === 0 ? 0 : 1,
+    );
+    const encoded = bits.reduce(
+      (acc: number, bit: number) => (acc << 1) | bit,
+      0,
+    );
+    const restored = Number(encoded)
+      .toString(2)
+      .padStart(columnCount, "0")
+      .split("")
+      .map(Number);
+
+    expect(Number(encoded).toString(2).length).toBeLessThan(columnCount);
+    expect(restored.length).toBe(columnCount);
+    expect(restored[0]).toBe(0);
+    expect(restored.slice(1).every((bit) => bit === 1)).toBeTrue();
+  });
 });
