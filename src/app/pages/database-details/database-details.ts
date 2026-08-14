@@ -42,7 +42,10 @@ import { formatKebabTitle } from "../../pipes/pipe-utils";
 type LoadedDatabase = Database & {
   vendor?: Vendor;
   prices?: (DatabasePrice & { region?: Region })[];
-  serverDisplayName?: string;
+  underlyingServer?: {
+    display_name: string;
+    api_reference: string;
+  };
 };
 
 @Component({
@@ -170,16 +173,22 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           const vendors = (vendorsResponse?.body || []) as Vendor[];
           const regions = (regionsResponse?.body || []) as Region[];
           const prices = (pricesResponse?.body || []) as DatabasePrice[];
-          let serverDisplayName: string | undefined;
+          let underlyingServer: LoadedDatabase["underlyingServer"];
           if (database.server_id) {
             try {
               const serverResponse = await this.keeperAPI.getServerV2(
                 database.vendor_id,
                 database.server_id,
               );
-              serverDisplayName = serverResponse?.body?.display_name;
+              const server = serverResponse?.body;
+              if (server?.display_name && server?.api_reference) {
+                underlyingServer = {
+                  display_name: server.display_name,
+                  api_reference: server.api_reference,
+                };
+              }
             } catch {
-              serverDisplayName = undefined;
+              underlyingServer = undefined;
             }
           }
 
@@ -196,7 +205,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
                 ),
               }))
               .sort((a, b) => a.price - b.price),
-            serverDisplayName,
+            underlyingServer,
           };
 
           this.breadcrumbs = [
@@ -339,7 +348,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             {
               id: "server_id",
               name: "Underlying Server",
-              value: database.serverDisplayName || database.server_id,
+              value: this.formatUnderlyingServer(database),
             },
             { id: "status", name: "Status", value: database.status },
           ]),
@@ -528,6 +537,17 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       currency: price.currency || "USD",
       unit: price.unit,
     }));
+  }
+
+  private formatUnderlyingServer(database: LoadedDatabase) {
+    if (database.underlyingServer) {
+      const { display_name, api_reference } = database.underlyingServer;
+      return `<a class="underline decoration-dotted hover:text-gray-500"
+      href="/server/${database.vendor_id}/${api_reference}">
+      ${display_name}</a>`;
+    }
+
+    return database.server_id;
   }
 
   private dedupeMetadataProperties(
