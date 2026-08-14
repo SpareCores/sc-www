@@ -668,14 +668,16 @@ export class BenchmarkLineChartBuilderService {
       type: "line",
       borderWidth: 3,
       borderColor: "#EF4444",
+      drawTime: "beforeDatasetsDraw",
       xMin: vcpus,
       xMax: vcpus,
       label: {
         rotation: "auto",
-        position: "start",
+        position: "center",
         content: "vCPUs",
         backgroundColor: "#EF4444",
         display: true,
+        drawTime: "beforeDatasetsDraw",
       },
     };
 

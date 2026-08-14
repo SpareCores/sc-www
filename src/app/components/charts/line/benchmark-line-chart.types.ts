@@ -108,12 +108,22 @@ export type AnnotationLine = {
   borderColor: string;
   xMin: number;
   xMax: number;
+  drawTime?:
+    | "beforeDatasetsDraw"
+    | "afterDatasetsDraw"
+    | "beforeDraw"
+    | "afterDraw";
   label: {
     rotation: "auto";
-    position: "start";
+    position: "start" | "center" | "end";
     content: string;
     backgroundColor: string;
     display: true;
+    drawTime?:
+      | "beforeDatasetsDraw"
+      | "afterDatasetsDraw"
+      | "beforeDraw"
+      | "afterDraw";
   };
 };
 

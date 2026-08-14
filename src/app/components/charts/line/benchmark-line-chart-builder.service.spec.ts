@@ -273,9 +273,18 @@ describe("BenchmarkLineChartBuilderService", () => {
     ]);
 
     const annotations = result?.options.plugins?.annotation?.annotations as
-      | { line1?: { xMin?: number; content?: string } }
+      | {
+          line1?: {
+            xMin?: number;
+            content?: string;
+            drawTime?: string;
+            label?: { drawTime?: string };
+          };
+        }
       | undefined;
     expect(annotations?.line1?.xMin).toBe(4);
+    expect(annotations?.line1?.drawTime).toBe("beforeDatasetsDraw");
+    expect(annotations?.line1?.label?.drawTime).toBe("beforeDatasetsDraw");
 
     const label = result?.options.plugins?.tooltip?.callbacks?.label as
       | ((tooltipItem: {
