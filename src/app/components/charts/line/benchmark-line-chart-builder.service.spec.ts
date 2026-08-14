@@ -290,7 +290,7 @@ describe("BenchmarkLineChartBuilderService", () => {
         raw: { x: 2, y: 120, note: "peak nearby", unit: "tps" },
         dataset: { yAxisID: "y" },
       }),
-    ).toBe("Performance: 120 tps; Note: peak nearby");
+    ).toBe("Performance: 120 tps");
     expect(
       label?.({
         formattedValue: "4.5",

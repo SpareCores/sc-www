@@ -945,9 +945,7 @@ export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
       },
     },
     title: {
-      display: true,
-      text: "pgbench heavy read-only score and latency",
-      color: "#FFF",
+      display: false,
     },
   },
 };

@@ -627,11 +627,9 @@ export class BenchmarkLineChartBuilderService {
             }
 
             const unit = raw?.unit?.trim();
-            const scoreLabel = unit
+            return unit
               ? `Performance: ${tooltipItem.formattedValue} ${unit}`
               : `Performance: ${tooltipItem.formattedValue}`;
-            const note = raw?.note?.trim();
-            return note ? `${scoreLabel}; Note: ${note}` : scoreLabel;
           },
           title: function (
             this: TooltipModel<"line">,
