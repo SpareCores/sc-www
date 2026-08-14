@@ -15,6 +15,7 @@ export type BenchmarkLineChartKind = "bar" | "line";
 export type BenchmarkLineChartSource =
   | "direct"
   | "details-ssl"
+  | "details-pgbench"
   | "details-stress-raw"
   | "details-stress-percent"
   | "compare-ssl"
@@ -61,6 +62,7 @@ export type LineChartServer = BenchmarkChartServer<LineBenchmarkScore>;
 export type LineChartDetailsServer = {
   display_name: string;
   cpu_cores?: number;
+  vcpus?: number;
 };
 
 export type StressNgDataPoint = {
