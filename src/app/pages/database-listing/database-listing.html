@@ -53,6 +53,18 @@
         >
           <div class="min-w-0">
             <sc-button
+              id="benchmark_select_button"
+              data-ph-capture-attribute-sc-event="database listing benchmark select"
+              class="min-w-0 max-w-full"
+              variant="benchmark"
+              [disabled]="true"
+              [icon]="'pgbench' | benchmarkIcon"
+              [label]="selectedBenchmarkName"
+              [sublabel]="selectedBenchmarkConfig"
+            ></sc-button>
+          </div>
+          <div class="min-w-0">
+            <sc-button
               id="allocation_button"
               data-ph-capture-attribute-sc-event="database listing price allocation select"
               [scFlowbiteDropdown]="'allocation_options'"
@@ -180,6 +192,33 @@
                       @if (item.vcpus !== null) { {{ item.vcpus }} vCPUs } @else
                       { - }
                     </div>
+                  </td>
+                  } @if (column.type === "benchmark") {
+                  <td>
+                    <div class="text-sm text-white whitespace-nowrap">
+                      {{ getScore(item.selected_benchmark_score) }}
+                    </div>
+                    @if (item.selected_benchmark_score) {
+                    <div class="text-xs text-white flex gap-1">
+                      <span class="whitespace-nowrap"
+                        >{{ selectedBenchmarkShortUnit }}</span
+                      >
+                    </div>
+                    }
+                  </td>
+                  } @if (column.type === "benchmark_score_per_price") {
+                  <td>
+                    @if (item.selected_benchmark_score_per_price) {
+                    <span class="whitespace-nowrap"
+                      >{{ getScore(item.selected_benchmark_score_per_price) }}
+                      {{ selectedBenchmarkUnitAbbreviation }}</span
+                    >
+                    <div class="text-xs text-white flex gap-1">
+                      <span class="whitespace-nowrap">for $1/hour</span>
+                    </div>
+                    } @else {
+                    <span>-</span>
+                    }
                   </td>
                   } @if (column.type === "price") {
                   <td>

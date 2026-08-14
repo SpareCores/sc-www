@@ -21,6 +21,7 @@ import {
 } from "@lucide/angular";
 import { Subscription } from "rxjs";
 import {
+  Benchmark,
   DatabasePKs,
   OrderDir,
   SearchDatabasesDatabasesGetParams,
@@ -40,6 +41,7 @@ import type {
   SearchBarQuery,
 } from "../../components/search-bar/search-bar.types";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -102,6 +104,7 @@ type DatabaseListingQuery = Params &
     LoadingSpinnerComponent,
     StoragePipe,
     FlowbiteDropdownDirective,
+    BenchmarkIconPipe,
   ],
   templateUrl: "./database-listing.html",
   styleUrl: "./database-listing.scss",
@@ -166,6 +169,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
   tableColumns: TableColumn[] = [];
   possibleColumns: TableColumn[] = buildDatabaseListingColumns();
   hasCustomColumns = false;
+  readonly selectedBenchmarkName = "pgbench:heavy_read_only:peak";
+  readonly selectedBenchmarkConfig = "{}";
+  selectedBenchmarkShortUnit = "";
+  selectedBenchmarkUnitAbbreviation = "";
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
@@ -214,7 +221,12 @@ export class DatabaseListing implements OnInit, OnDestroy {
     const openApi = openApiSpec as OpenApiSpecShape;
     const parameters = openApi.paths["/databases"]?.get?.parameters ?? [];
     this.searchParameters = parameters
-      .filter((parameter) => parameter.name !== "regions")
+      .filter(
+        (parameter) =>
+          parameter.name !== "regions" &&
+          parameter.name !== "benchmark_id" &&
+          parameter.name !== "benchmark_config",
+      )
       .map((parameter): SearchBarParameter => {
         const schema = { ...(parameter.schema ?? {}) };
         if (
@@ -241,6 +253,13 @@ export class DatabaseListing implements OnInit, OnDestroy {
     if (typeof order?.schema?.default === "string") {
       this.orderBy = order.schema.default;
     }
+
+    this.keeperAPI
+      .getServerBenchmarkMeta()
+      .then((response) => {
+        this.applyDatabaseBenchmarkMeta((response?.body || []) as Benchmark[]);
+      })
+      .catch(() => undefined);
 
     this.subscription.add(
       this.route.queryParams.subscribe((params: Params) => {
@@ -324,6 +343,17 @@ export class DatabaseListing implements OnInit, OnDestroy {
     return item.memory_amount === null || item.memory_amount === undefined
       ? "-"
       : `${(item.memory_amount / 1024).toFixed(1)} GiB`;
+  }
+
+  getScore(value: number | null | undefined): string {
+    if (value === null || value === undefined) return "-";
+    if (value < 1) {
+      return value.toPrecision(1);
+    }
+    if (value < 100) {
+      return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+    }
+    return Number.isInteger(value) ? value.toString() : value.toFixed(0);
   }
 
   openDatabaseDetails(database: DatabasePKs) {
@@ -422,6 +452,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
     } else {
       delete query.best_price_allocation;
     }
+
+    query.benchmark_id = this.selectedBenchmarkName;
+    query.benchmark_config = this.selectedBenchmarkConfig;
 
     this.keeperAPI
       .searchDatabases(query)
@@ -627,5 +660,27 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   hideTooltip() {
     this.uiTooltip.hide(this.tooltip.nativeElement);
+  }
+
+  private applyDatabaseBenchmarkMeta(benchmarkMeta: Benchmark[]) {
+    const meta = benchmarkMeta.find(
+      (benchmark) => benchmark.benchmark_id === this.selectedBenchmarkName,
+    );
+    if (!meta) {
+      return;
+    }
+
+    if (typeof meta.unit === "string") {
+      const unit = meta.unit;
+      const longUnit = unit.replace(/\s*\([^)]*\)\s*$/, "");
+      this.selectedBenchmarkUnitAbbreviation =
+        unit.match(/\(([^)]*)\)/)?.at(1) || unit;
+      this.selectedBenchmarkShortUnit =
+        unit.length < 25 ? longUnit : this.selectedBenchmarkUnitAbbreviation;
+      return;
+    }
+
+    this.selectedBenchmarkShortUnit = "";
+    this.selectedBenchmarkUnitAbbreviation = "";
   }
 }

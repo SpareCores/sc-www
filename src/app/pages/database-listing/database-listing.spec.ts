@@ -90,6 +90,25 @@ describe("DatabaseListing", () => {
     );
   });
 
+  it("shows benchmark columns by default and hides engine versions and ha", () => {
+    const shown = component.possibleColumns
+      .filter((column) => column.show)
+      .map((column) => column.name);
+
+    expect(shown).toContain("BENCHMARK");
+    expect(shown).toContain("$ EFFICIENCY");
+    expect(shown).not.toContain("ENGINE VERSIONS");
+    expect(shown).not.toContain("HA");
+    expect(shown).not.toContain("HA STRATEGY");
+  });
+
+  it("formats benchmark scores", () => {
+    expect(component.getScore(null)).toBe("-");
+    expect(component.getScore(0.12)).toBe("0.1");
+    expect(component.getScore(12.34)).toBe("12.34");
+    expect(component.getScore(120.9)).toBe("121");
+  });
+
   it("pads column bitmask so a hidden first column still restores", () => {
     const columnCount = component.possibleColumns.length;
     const bits = component.possibleColumns.map((_, index) =>
