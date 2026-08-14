@@ -34,6 +34,23 @@
   ></sc-benchmark-line-chart>
 }
 
+@if (isChartShown("pgbench")) {
+  <sc-benchmark-line-chart
+    benchmarkKey="pgbench"
+    chartSource="details-pgbench"
+    [title]="pgbenchTitle"
+    blockClass="block_full"
+    elementId="pgbench_chart"
+    canvasId="pgbench_canvas"
+    chartType="line"
+    [detailsServer]="lineChartDetailsServer"
+    [benchmarksByCategory]="lineBenchmarkGroups"
+    [benchmarkMeta]="benchmarkMeta"
+    [infoTooltip]="benchmarkDescription('pgbench:heavy_read_only')"
+    [noteTooltip]="benchmarkNote('pgbench:heavy_read_only')"
+  ></sc-benchmark-line-chart>
+}
+
 @if (isChartShown("geek_single")) {
   <sc-geekbench-radar-chart
     [title]="'Geekbench Single-Core'"

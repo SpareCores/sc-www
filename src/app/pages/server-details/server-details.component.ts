@@ -544,6 +544,17 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 });
               }
 
+              if (
+                this.benchmarksByCategory.some(
+                  (c) => c.benchmark_id === "pgbench:heavy_read_only",
+                )
+              ) {
+                this.embeddableCharts.push({
+                  id: "pgbench",
+                  name: "pgbench Heavy Read-Only",
+                });
+              }
+
               if (isPlatformBrowser(this.platformId)) {
                 setTimeout(() => {
                   const showDetails =

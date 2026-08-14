@@ -90,4 +90,51 @@ describe("ServerChartsComponent", () => {
       ),
     ).toBeNull();
   });
+
+  it("renders the pgbench chart when pgbench scores exist", () => {
+    fixture.componentRef.setInput("showChart", "pgbench");
+    fixture.componentRef.setInput("benchmarkMeta", [
+      {
+        benchmark_id: "pgbench:heavy_read_only",
+        name: "pgbench Heavy Read-Only",
+        description: "Read-only pgbench throughput.",
+        unit: "Transactions per minute (TPM)",
+        status: Status.Active,
+      },
+    ]);
+    fixture.componentRef.setInput("benchmarksByCategory", [
+      {
+        benchmark_id: "pgbench:heavy_read_only",
+        benchmarks: [
+          {
+            vendor_id: "aws",
+            server_id: "m7g.large",
+            benchmark_id: "pgbench:heavy_read_only",
+            config: { concurrency: 2 },
+            score: 120,
+            environment: { latency_avg_ms: 4.5 },
+          },
+        ],
+      },
+    ]);
+    fixture.componentRef.setInput("serverDetails", {
+      display_name: "Server A",
+      vcpus: 4,
+    });
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+
+    expect(root.querySelector("sc-benchmark-line-chart")).toBeTruthy();
+    expect(root.textContent).toContain("pgbench Heavy Read-Only");
+  });
+
+  it("hides the pgbench chart when no pgbench scores exist", () => {
+    fixture.componentRef.setInput("showChart", "pgbench");
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector("#pgbench_chart"),
+    ).toBeNull();
+  });
 });
