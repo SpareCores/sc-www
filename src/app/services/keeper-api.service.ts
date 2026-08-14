@@ -5,6 +5,7 @@ import { Server } from "../../../sdk/Server";
 import { Servers } from "../../../sdk/Servers";
 import {
   AssistServerFiltersAiAssistServerFiltersGetParams,
+  GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetData,
   GetDatabasePricesDatabaseVendorDatabasePricesGetData,
   GetDatabasePricesDatabaseVendorDatabasePricesGetParams,
   GetDatabaseWithoutRelationsDatabaseVendorDatabaseGetData,
@@ -150,6 +151,19 @@ export class KeeperAPIService {
       { vendor, database, ...query },
     ) as unknown as Promise<
       KeeperApiResponse<GetDatabasePricesDatabaseVendorDatabasePricesGetData>
+    >;
+  }
+
+  public getDatabaseBenchmarks(
+    vendor: string,
+    database: string,
+  ): Promise<
+    KeeperApiResponse<GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetData>
+  > {
+    return this.DatabaseController.getDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGet(
+      { vendor, database },
+    ) as unknown as Promise<
+      KeeperApiResponse<GetDatabaseBenchmarksDatabaseVendorDatabaseBenchmarksGetData>
     >;
   }
 

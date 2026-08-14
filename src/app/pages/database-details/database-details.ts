@@ -14,12 +14,21 @@ import { ActivatedRoute, RouterModule } from "@angular/router";
 import { LucideCheck } from "@lucide/angular";
 import { Subscription } from "rxjs";
 import {
+  Benchmark,
   Database,
   DatabasePrice,
   PriceUnit,
   Region,
   Vendor,
 } from "../../../../sdk/data-contracts";
+import { BenchmarkLineChartComponent } from "../../components/charts/line/benchmark-line-chart.component";
+import { BenchmarkLineChartBuilderService } from "../../components/charts/line/benchmark-line-chart-builder.service";
+import {
+  PgbenchChartResult,
+  PgbenchScore,
+} from "../../components/charts/line/benchmark-line-chart.types";
+import { getBenchmarkMetaNote } from "../../components/charts/shared/chart-tooltip.utils";
+import { lineChartOptionsPgbench } from "../server-details/chartOptions";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -48,6 +57,11 @@ type LoadedDatabase = Database & {
   };
 };
 
+const PGBENCH_CHART_BENCHMARK_ID = "pgbench:heavy_read_only";
+const PGBENCH_PEAK_BENCHMARK_ID = "pgbench:heavy_read_only:peak";
+const PGBENCH_SINGLE_BENCHMARK_ID = "pgbench:heavy_read_only:single";
+const PGBENCH_TITLE_FALLBACK = "pgbench Heavy Read-Only";
+
 @Component({
   selector: "sc-database-details",
   imports: [
@@ -57,6 +71,7 @@ type LoadedDatabase = Database & {
     Button,
     LoadingSpinnerComponent,
     ServerPropertyCardComponent,
+    BenchmarkLineChartComponent,
     LucideCheck,
     ReduceUnitNamePipe,
   ],
@@ -66,6 +81,7 @@ type LoadedDatabase = Database & {
 export class DatabaseDetails implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private keeperAPI = inject(KeeperAPIService);
+  private lineChartBuilder = inject(BenchmarkLineChartBuilderService);
   private SEOHandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
@@ -109,6 +125,12 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   }[] = [];
 
   availabilityCanExpand = false;
+  pgbenchChart: PgbenchChartResult | undefined;
+  pgbenchTitle = PGBENCH_TITLE_FALLBACK;
+  pgbenchInfoTooltip = "";
+  pgbenchNoteTooltip = "";
+  pgbenchPeakScore: string | null = null;
+  pgbenchSingleScore: string | null = null;
 
   private availabilityCard =
     viewChild<ElementRef<HTMLDivElement>>("availabilityCard");
@@ -156,6 +178,12 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       this.keeperAPI.getDatabasePrices(vendor, id),
       this.keeperAPI.getVendors(),
       this.keeperAPI.getRegions(),
+      this.keeperAPI.getDatabaseBenchmarks(vendor, id).catch(() => ({
+        body: [],
+      })),
+      this.keeperAPI.getServerBenchmarkMeta().catch(() => ({
+        body: [],
+      })),
     ])
       .then(
         async ([
@@ -163,6 +191,8 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           pricesResponse,
           vendorsResponse,
           regionsResponse,
+          benchmarksResponse,
+          benchmarkMetaResponse,
         ]) => {
           const database = databaseResponse.body;
           if (!database) {
@@ -279,6 +309,11 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
           this.buildPropertySections(this.databaseDetails);
           this.buildAvailabilityRows();
+          this.applyPgbenchBenchmarks(
+            benchmarksResponse?.body || [],
+            (benchmarkMetaResponse?.body || []) as Benchmark[],
+            database.vcpus,
+          );
 
           this.SEOHandler.updateTitleAndMetaTags(
             `${database.display_name} by ${
@@ -537,6 +572,39 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       currency: price.currency || "USD",
       unit: price.unit,
     }));
+  }
+
+  get hasPgbenchHeaderScores() {
+    return this.pgbenchPeakScore !== null && this.pgbenchSingleScore !== null;
+  }
+
+  private applyPgbenchBenchmarks(
+    scores: PgbenchScore[],
+    benchmarkMeta: Benchmark[],
+    vcpus?: number | null,
+  ) {
+    const peak = scores.find(
+      (score) => score.benchmark_id === PGBENCH_PEAK_BENCHMARK_ID,
+    );
+    const single = scores.find(
+      (score) => score.benchmark_id === PGBENCH_SINGLE_BENCHMARK_ID,
+    );
+    this.pgbenchPeakScore = peak ? peak.score.toFixed(0) : null;
+    this.pgbenchSingleScore = single ? single.score.toFixed(0) : null;
+
+    const meta = benchmarkMeta.find(
+      (item) => item.benchmark_id === PGBENCH_CHART_BENCHMARK_ID,
+    );
+    this.pgbenchTitle = meta?.name || PGBENCH_TITLE_FALLBACK;
+    this.pgbenchInfoTooltip = meta?.description || "";
+    this.pgbenchNoteTooltip =
+      getBenchmarkMetaNote(benchmarkMeta, PGBENCH_CHART_BENCHMARK_ID) || "";
+    this.pgbenchChart = this.lineChartBuilder.buildDetailsPgbenchChart({
+      scores,
+      vcpus,
+      optionsBase: lineChartOptionsPgbench,
+      scoreUnit: meta?.unit,
+    });
   }
 
   private formatUnderlyingServer(database: LoadedDatabase) {

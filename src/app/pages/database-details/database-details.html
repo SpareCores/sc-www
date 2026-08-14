@@ -16,9 +16,9 @@
     } @if (databaseDetails) {
     <div
       id="database_base_info_box"
-      class="mx-2 xl:mx-0 flex flex-col lg:flex-row lg:items-center justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+      class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
     >
-      <div class="flex gap-8 min-w-0 flex-1">
+      <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
         <div class="flex gap-4 flex-col min-w-32">
           <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
             @if (databaseDetails.vendor?.logo) {
@@ -36,20 +36,46 @@
           <div>{{ description }}<span>{{ cardPriceDescription }}</span></div>
         </div>
       </div>
-      <div class="shrink-0 lg:ml-auto">
-        @for (feature of features; track feature.name; let i = $index) {
-        <div>
-          @if (i !== 0) {
-          <div
-            class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
-          ></div>
-          }
-          <div class="flex gap-2 text-xl items-center text-gray-200">
-            <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-              <svg lucideCheck class="h-4 w-4"></svg>
+      <div class="w-full lg:w-2/5 flex">
+        <div
+          [class.w-1/2]="hasPgbenchHeaderScores"
+          [class.mr-8]="hasPgbenchHeaderScores"
+          [class.w-full]="!hasPgbenchHeaderScores"
+        >
+          @for (feature of features; track feature.name; let i = $index) {
+          <div>
+            @if (i !== 0) {
+            <div
+              class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
+            ></div>
+            }
+            <div class="flex gap-2 text-xl items-center text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+                <svg lucideCheck class="h-4 w-4"></svg>
+              </div>
+              <b> {{ feature.value }} </b>
+              <span> {{ feature.name }} </span>
             </div>
-            <b> {{ feature.value }} </b>
-            <span> {{ feature.name }} </span>
+          </div>
+          }
+        </div>
+        @if (hasPgbenchHeaderScores) {
+        <div class="border-r border-solid border-emerald-400 h-full w-1"></div>
+        <div class="w-1/2 flex flex-col gap-4 text-center ml-8">
+          <div class="text-white text-3xl font-semibold">
+            Spare <span class="text-emerald-400"> SC</span>ore
+          </div>
+          <div class="flex flex-col gap-4">
+            <div class="text-gray-200">
+              <span class="text-3xl text-emerald-400 font-semibold"
+                >{{ pgbenchPeakScore }}</span
+              ><br />
+              (All-cores)
+            </div>
+            <div class="text-gray-200">
+              <span class="text-xl">{{ pgbenchSingleScore }}</span><br />
+              (Single-core)
+            </div>
           </div>
         </div>
         }
@@ -178,6 +204,24 @@
         [isOpen]="expandedCards.security"
         (toggleRequested)="toggleCard('security')"
       ></sc-server-property-card>
+
+      @if (pgbenchChart) {
+      <div class="my-2 w-full">
+        <h2 class="text-3xl font-bold">Performance</h2>
+      </div>
+      <sc-benchmark-line-chart
+        benchmarkKey="pgbench"
+        [title]="pgbenchTitle"
+        blockClass="block_full"
+        elementId="pgbench_chart"
+        canvasId="pgbench_canvas"
+        chartType="line"
+        [chartData]="pgbenchChart.data"
+        [chartOptions]="pgbenchChart.options"
+        [infoTooltip]="pgbenchInfoTooltip"
+        [noteTooltip]="pgbenchNoteTooltip"
+      ></sc-benchmark-line-chart>
+      }
     </div>
     }
   </div>

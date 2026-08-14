@@ -25,6 +25,8 @@ describe("DatabaseDetails", () => {
       "getDatabasePrices",
       "getVendors",
       "getRegions",
+      "getDatabaseBenchmarks",
+      "getServerBenchmarkMeta",
     ]);
 
     keeperAPI.getDatabase.and.resolveTo({
@@ -74,6 +76,8 @@ describe("DatabaseDetails", () => {
         },
       ],
     });
+    keeperAPI.getDatabaseBenchmarks.and.resolveTo({ body: [] });
+    keeperAPI.getServerBenchmarkMeta.and.resolveTo({ body: [] });
 
     await TestBed.configureTestingModule({
       imports: [DatabaseDetails],
@@ -107,6 +111,107 @@ describe("DatabaseDetails", () => {
     expect(component.availabilityRows.length).toBe(1);
     expect(component.availabilityRows[0].display_name).toBe("US East");
     expect(component.engineSections[0].properties.length).toBeGreaterThan(0);
+    expect(component.pgbenchChart).toBeUndefined();
+    expect(component.hasPgbenchHeaderScores).toBeFalse();
+  });
+
+  it("shows a performance chart when pgbench scores exist", async () => {
+    keeperAPI.getDatabase.and.resolveTo({
+      body: {
+        vendor_id: "aws",
+        database_id: "db.m1.large",
+        name: "db.m1.large",
+        api_reference: "db.m1.large",
+        display_name: "db.m1.large",
+        description: "General purpose",
+        vcpus: 4,
+        memory_amount: 7680,
+        engine: DatabaseEngine.Postgresql,
+        engine_versions: ["15", "16"],
+        ha: [DatabaseHaLevel.MultiZone],
+        ha_strategy: [DatabaseHaStrategy.PassiveStandby],
+        storage_size: 902,
+        sla: 99.95,
+        status: Status.Active,
+      },
+    });
+    keeperAPI.getDatabaseBenchmarks.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          benchmark_id: "pgbench:heavy_read_only",
+          resource_type: "database",
+          resource_id: "db.m1.large",
+          score: 120,
+          note: "peak nearby",
+          config: { concurrency: 2 },
+          environment: { latency_avg_ms: 4.5 },
+        },
+        {
+          vendor_id: "aws",
+          benchmark_id: "pgbench:heavy_read_only",
+          resource_type: "database",
+          resource_id: "db.m1.large",
+          score: 200,
+          config: { concurrency: 4 },
+          environment: { latency_avg_ms: 8 },
+        },
+      ],
+    });
+    keeperAPI.getServerBenchmarkMeta.and.resolveTo({
+      body: [
+        {
+          benchmark_id: "pgbench:heavy_read_only",
+          name: "pgbench Heavy Read-Only",
+          description: "Read-only pgbench throughput.",
+          framework: "pgbench",
+          unit: "tps",
+        },
+      ],
+    });
+
+    fixture = TestBed.createComponent(DatabaseDetails);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.pgbenchChart).toBeTruthy();
+    expect(component.pgbenchTitle).toBe("pgbench Heavy Read-Only");
+    expect(component.pgbenchChart?.data.datasets[0].yAxisID).toBe("y");
+    expect(component.pgbenchChart?.data.datasets[1].yAxisID).toBe("y1");
+    expect(component.hasPgbenchHeaderScores).toBeFalse();
+  });
+
+  it("fills the header SCore when peak and single pgbench scores exist", async () => {
+    keeperAPI.getDatabaseBenchmarks.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          benchmark_id: "pgbench:heavy_read_only:peak",
+          resource_type: "database",
+          resource_id: "db.m1.large",
+          score: 8868.4,
+        },
+        {
+          vendor_id: "aws",
+          benchmark_id: "pgbench:heavy_read_only:single",
+          resource_type: "database",
+          resource_id: "db.m1.large",
+          score: 2166.2,
+        },
+      ],
+    });
+
+    fixture = TestBed.createComponent(DatabaseDetails);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.hasPgbenchHeaderScores).toBeTrue();
+    expect(component.pgbenchPeakScore).toBe("8868");
+    expect(component.pgbenchSingleScore).toBe("2166");
   });
 
   it("shows cheapest hour and month starts when both units are present", async () => {
