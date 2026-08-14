@@ -8,6 +8,7 @@ import {
   DatabaseHaLevel,
   DatabaseHaStrategy,
   PriceUnit,
+  ResourceType,
   Status,
 } from "../../../../sdk/data-contracts";
 import { DatabaseDetails } from "./database-details";
@@ -150,7 +151,7 @@ describe("DatabaseDetails", () => {
         {
           vendor_id: "aws",
           benchmark_id: "pgbench:heavy_read_only",
-          resource_type: "database",
+          resource_type: ResourceType.Database,
           resource_id: "db.m1.large",
           score: 120,
           note: "peak nearby",
@@ -160,7 +161,7 @@ describe("DatabaseDetails", () => {
         {
           vendor_id: "aws",
           benchmark_id: "pgbench:heavy_read_only",
-          resource_type: "database",
+          resource_type: ResourceType.Database,
           resource_id: "db.m1.large",
           score: 200,
           config: { concurrency: 4 },
@@ -199,14 +200,14 @@ describe("DatabaseDetails", () => {
         {
           vendor_id: "aws",
           benchmark_id: "pgbench:heavy_read_only:peak",
-          resource_type: "database",
+          resource_type: ResourceType.Database,
           resource_id: "db.m1.large",
           score: 8868.4,
         },
         {
           vendor_id: "aws",
           benchmark_id: "pgbench:heavy_read_only:single",
-          resource_type: "database",
+          resource_type: ResourceType.Database,
           resource_id: "db.m1.large",
           score: 2166.2,
         },
