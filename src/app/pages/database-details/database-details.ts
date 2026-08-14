@@ -398,7 +398,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
               {
                 id: "server_id",
                 name: "Underlying Server",
-                value: this.formatUnderlyingServer(database),
+                ...this.formatUnderlyingServer(database),
               },
               { id: "status", name: "Status", value: database.status },
             ],
@@ -624,15 +624,19 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     });
   }
 
-  private formatUnderlyingServer(database: LoadedDatabase) {
+  private formatUnderlyingServer(database: LoadedDatabase): {
+    value: unknown;
+    routerLink?: string[];
+  } {
     if (database.underlyingServer) {
       const { display_name, api_reference } = database.underlyingServer;
-      return `<a class="underline decoration-dotted hover:text-gray-500"
-      href="/server/${database.vendor_id}/${api_reference}">
-      ${display_name}</a>`;
+      return {
+        value: display_name,
+        routerLink: ["/server", database.vendor_id, api_reference],
+      };
     }
 
-    return database.server_id;
+    return { value: database.server_id };
   }
 
   private dedupeMetadataProperties(
@@ -724,6 +728,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       name: string;
       value: unknown;
       description?: string;
+      routerLink?: string[] | string;
     }[],
     useSchemaDescriptions = false,
   ): ServerPropertyRow[] {
@@ -741,6 +746,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           tooltips: description
             ? [{ key: item.id, content: description }]
             : undefined,
+          routerLink: item.routerLink,
         };
       })
       .filter((item) => item.value !== "");
