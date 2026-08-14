@@ -258,6 +258,7 @@ describe("BenchmarkLineChartBuilderService", () => {
       scoreUnit: "tps",
     });
 
+    expect(result?.options.scales?.y?.title?.text).toBe("tps");
     expect(result?.data.datasets[0].yAxisID).toBe("y");
     expect(result?.data.datasets[1].yAxisID).toBe("y1");
     expect(result?.data.datasets[0].borderColor).toBe("#34D399");

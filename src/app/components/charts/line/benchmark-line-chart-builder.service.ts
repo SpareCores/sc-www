@@ -203,7 +203,7 @@ export class BenchmarkLineChartBuilderService {
     const options = cloneChartOptions(
       optionsBase ?? {},
     ) as MutableLineChartOptions;
-    this.configurePgbenchOptions(options);
+    this.configurePgbenchOptions(options, unit);
     this.applyPgbenchAnnotation(
       options,
       points.map((point) => point.concurrency),
@@ -593,7 +593,24 @@ export class BenchmarkLineChartBuilderService {
     return a.localeCompare(b);
   }
 
-  private configurePgbenchOptions(options: MutableLineChartOptions): void {
+  private configurePgbenchOptions(
+    options: MutableLineChartOptions,
+    unit?: string,
+  ): void {
+    if (unit) {
+      options.scales = {
+        ...options.scales,
+        y: {
+          ...options.scales?.y,
+          title: {
+            ...options.scales?.y?.title,
+            display: true,
+            text: unit,
+          },
+        },
+      };
+    }
+
     options.plugins = {
       ...options.plugins,
       tooltip: {
