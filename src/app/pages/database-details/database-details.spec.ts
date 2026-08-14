@@ -113,6 +113,16 @@ describe("DatabaseDetails", () => {
     expect(component.engineSections[0].properties.length).toBeGreaterThan(0);
     expect(component.pgbenchChart).toBeUndefined();
     expect(component.hasPgbenchHeaderScores).toBeFalse();
+    expect(
+      component.metadataSections[0].properties
+        .find((property) => property.id === "name")
+        ?.tooltips?.map((tooltip) => tooltip.content),
+    ).toEqual([
+      "Human-friendly name.",
+      "Human-friendly reference (usually the id or name) of the resource.",
+      "How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.",
+      "Unique identifier, as called at the Vendor.",
+    ]);
   });
 
   it("shows a performance chart when pgbench scores exist", async () => {

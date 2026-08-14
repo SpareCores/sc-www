@@ -21,6 +21,7 @@ import {
   Region,
   Vendor,
 } from "../../../../sdk/data-contracts";
+import openApiSpec from "../../../../sdk/openapi.json";
 import { BenchmarkLineChartComponent } from "../../components/charts/line/benchmark-line-chart.component";
 import { BenchmarkLineChartBuilderService } from "../../components/charts/line/benchmark-line-chart-builder.service";
 import {
@@ -61,6 +62,23 @@ const PGBENCH_CHART_BENCHMARK_ID = "pgbench:heavy_read_only";
 const PGBENCH_PEAK_BENCHMARK_ID = "pgbench:heavy_read_only:peak";
 const PGBENCH_SINGLE_BENCHMARK_ID = "pgbench:heavy_read_only:single";
 const PGBENCH_TITLE_FALLBACK = "pgbench Heavy Read-Only";
+
+type OpenApiProperty = {
+  description?: string;
+};
+
+const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
+  (
+    openApiSpec as {
+      components?: {
+        schemas?: {
+          Database?: {
+            properties?: Record<string, OpenApiProperty>;
+          };
+        };
+      };
+    }
+  ).components?.schemas?.Database?.properties ?? {};
 
 @Component({
   selector: "sc-database-details",
@@ -352,41 +370,38 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       {
         name: "Database Metadata",
         properties: this.dedupeMetadataProperties(
-          this.rows([
-            {
-              id: "name",
-              name: "Name",
-              value: database.name,
-              description: "Human-friendly name.",
-            },
-            {
-              id: "display_name",
-              name: "Display Name",
-              value: database.display_name,
-              description:
-                "Human-friendly reference (usually the id or name) of the resource.",
-            },
-            {
-              id: "api_reference",
-              name: "API Reference",
-              value: database.api_reference,
-              description:
-                "How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.",
-            },
-            {
-              id: "database_id",
-              name: "Database ID",
-              value: database.database_id,
-              description: "Unique identifier, as called at the Vendor.",
-            },
-            { id: "family", name: "Family", value: database.family },
-            {
-              id: "server_id",
-              name: "Underlying Server",
-              value: this.formatUnderlyingServer(database),
-            },
-            { id: "status", name: "Status", value: database.status },
-          ]),
+          this.rows(
+            [
+              {
+                id: "name",
+                name: "Name",
+                value: database.name,
+              },
+              {
+                id: "display_name",
+                name: "Display Name",
+                value: database.display_name,
+              },
+              {
+                id: "api_reference",
+                name: "API Reference",
+                value: database.api_reference,
+              },
+              {
+                id: "database_id",
+                name: "Database ID",
+                value: database.database_id,
+              },
+              { id: "family", name: "Family", value: database.family },
+              {
+                id: "server_id",
+                name: "Underlying Server",
+                value: this.formatUnderlyingServer(database),
+              },
+              { id: "status", name: "Status", value: database.status },
+            ],
+            true,
+          ),
         ),
       },
     ];
@@ -708,16 +723,24 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       value: unknown;
       description?: string;
     }[],
+    useSchemaDescriptions = false,
   ): ServerPropertyRow[] {
     return items
-      .map((item) => ({
-        id: item.id,
-        name: item.name,
-        value: this.toDisplayValue(item.value),
-        tooltips: item.description
-          ? [{ key: item.id, content: item.description }]
-          : undefined,
-      }))
+      .map((item) => {
+        const description =
+          item.description ??
+          (useSchemaDescriptions
+            ? DATABASE_SCHEMA_PROPERTIES[item.id]?.description
+            : undefined);
+        return {
+          id: item.id,
+          name: item.name,
+          value: this.toDisplayValue(item.value),
+          tooltips: description
+            ? [{ key: item.id, content: description }]
+            : undefined,
+        };
+      })
       .filter((item) => item.value !== "");
   }
 
