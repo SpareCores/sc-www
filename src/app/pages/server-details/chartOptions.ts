@@ -925,14 +925,14 @@ export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
       display: true,
       position: "right",
       ticks: {
-        color: "#F97316",
+        color: "#EAB308",
       },
       grid: {
         drawOnChartArea: false,
       },
       title: {
         display: true,
-        color: "#F97316",
+        color: "#EAB308",
         text: "Avg latency (ms)",
       },
     },

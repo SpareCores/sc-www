@@ -262,7 +262,7 @@ describe("BenchmarkLineChartBuilderService", () => {
     expect(result?.data.datasets[0].yAxisID).toBe("y");
     expect(result?.data.datasets[1].yAxisID).toBe("y1");
     expect(result?.data.datasets[0].borderColor).toBe("#34D399");
-    expect(result?.data.datasets[1].borderColor).toBe("#F97316");
+    expect(result?.data.datasets[1].borderColor).toBe("#EAB308");
     expect(result?.data.datasets[0].data).toEqual([
       { x: 2, y: 120, note: "peak nearby", unit: "tps" },
       { x: 4, y: 200, note: undefined, unit: "tps" },

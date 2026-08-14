@@ -29,7 +29,7 @@ import {
 
 const PGBENCH_HEAVY_READ_ONLY_ID = "pgbench:heavy_read_only";
 const PGBENCH_SCORE_COLOR = radarDatasetColors[0].borderColor;
-const PGBENCH_LATENCY_COLOR = "#F97316";
+const PGBENCH_LATENCY_COLOR = "#EAB308";
 
 type StressNgServerDetails = {
   display_name: string;
