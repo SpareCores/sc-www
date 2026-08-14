@@ -18,10 +18,18 @@ import {
   LineChartServer,
   MutableBarChartOptions,
   MutableLineChartOptions,
+  PgbenchChartData,
+  PgbenchChartResult,
+  PgbenchDataPoint,
+  PgbenchScore,
   SslChartResult,
   StressNgChartData,
   StressNgChartResult,
 } from "./benchmark-line-chart.types";
+
+const PGBENCH_HEAVY_READ_ONLY_ID = "pgbench:heavy_read_only";
+const PGBENCH_SCORE_COLOR = radarDatasetColors[0].borderColor;
+const PGBENCH_LATENCY_COLOR = "#F97316";
 
 type StressNgServerDetails = {
   display_name: string;
@@ -114,6 +122,95 @@ export class BenchmarkLineChartBuilderService {
     );
 
     return { data, rawOptions, percentOptions };
+  }
+
+  buildDetailsPgbenchChart(params: {
+    scores: PgbenchScore[];
+    vcpus?: number | null;
+    optionsBase: ChartConfiguration<"line">["options"];
+    scoreUnit?: string | null;
+  }): PgbenchChartResult | undefined {
+    const { scores, vcpus, optionsBase, scoreUnit } = params;
+
+    const points: Array<{
+      concurrency: number;
+      score: number;
+      latency: number | undefined;
+      note?: string | null;
+    }> = [];
+
+    for (const score of scores) {
+      if (score.benchmark_id !== PGBENCH_HEAVY_READ_ONLY_ID) {
+        continue;
+      }
+
+      const concurrency = this.getConcurrency(score.config);
+      if (concurrency === undefined) {
+        continue;
+      }
+
+      points.push({
+        concurrency,
+        score: score.score,
+        latency: this.getLatencyMs(score.environment),
+        note: score.note,
+      });
+    }
+
+    points.sort((a, b) => a.concurrency - b.concurrency);
+
+    if (!points.length) {
+      return undefined;
+    }
+
+    const unit = scoreUnit?.trim() || undefined;
+    const scoreData: Array<PgbenchDataPoint | null> = points.map((point) => ({
+      x: point.concurrency,
+      y: point.score,
+      note: point.note,
+      unit,
+    }));
+    const latencyData: Array<PgbenchDataPoint | null> = points.map((point) =>
+      point.latency === undefined
+        ? null
+        : {
+            x: point.concurrency,
+            y: point.latency,
+          },
+    );
+
+    const data: PgbenchChartData = {
+      datasets: [
+        {
+          data: scoreData,
+          label: "Score",
+          yAxisID: "y",
+          spanGaps: true,
+          borderColor: PGBENCH_SCORE_COLOR,
+          backgroundColor: PGBENCH_SCORE_COLOR,
+        },
+        {
+          data: latencyData,
+          label: "Avg latency",
+          yAxisID: "y1",
+          spanGaps: true,
+          borderColor: PGBENCH_LATENCY_COLOR,
+          backgroundColor: PGBENCH_LATENCY_COLOR,
+        },
+      ],
+    };
+
+    const options = cloneChartOptions(
+      optionsBase ?? {},
+    ) as MutableLineChartOptions;
+    this.configurePgbenchOptions(options);
+    this.applyPgbenchAnnotation(
+      options,
+      points.map((point) => point.concurrency),
+      vcpus,
+    );
+
+    return { data, options };
   }
 
   buildCompareStressNgChart(params: {
@@ -494,5 +591,122 @@ export class BenchmarkLineChartBuilderService {
     }
 
     return a.localeCompare(b);
+  }
+
+  private configurePgbenchOptions(options: MutableLineChartOptions): void {
+    options.plugins = {
+      ...options.plugins,
+      tooltip: {
+        ...options.plugins?.tooltip,
+        callbacks: {
+          ...options.plugins?.tooltip?.callbacks,
+          label: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            const raw = tooltipItem.raw as PgbenchDataPoint | null;
+            if (tooltipItem.dataset.yAxisID === "y1") {
+              return `Avg latency: ${tooltipItem.formattedValue} ms`;
+            }
+
+            const unit = raw?.unit?.trim();
+            const scoreLabel = unit
+              ? `Performance: ${tooltipItem.formattedValue} ${unit}`
+              : `Performance: ${tooltipItem.formattedValue}`;
+            const note = raw?.note?.trim();
+            return note ? `${scoreLabel}; Note: ${note}` : scoreLabel;
+          },
+          title: function (
+            this: TooltipModel<"line">,
+            tooltipItems: TooltipItem<"line">[],
+          ) {
+            const concurrency =
+              (tooltipItems[0]?.raw as PgbenchDataPoint | null)?.x ??
+              tooltipItems[0]?.parsed?.x;
+            return `${concurrency} concurrency`;
+          },
+        },
+      },
+    };
+  }
+
+  private applyPgbenchAnnotation(
+    options: MutableLineChartOptions,
+    concurrencies: number[],
+    vcpus?: number | null,
+  ): void {
+    if (!vcpus) {
+      return;
+    }
+
+    const xValues = [...concurrencies, vcpus];
+    const scales = options.scales ?? {};
+    const xScale = scales.x ?? {};
+    scales.x = {
+      ...xScale,
+      min: Math.min(...xValues),
+      max: Math.max(...xValues),
+    };
+    options.scales = scales;
+
+    const annotationLine: AnnotationLine = {
+      type: "line",
+      borderWidth: 3,
+      borderColor: "#EF4444",
+      xMin: vcpus,
+      xMax: vcpus,
+      label: {
+        rotation: "auto",
+        position: "start",
+        content: "vCPUs",
+        backgroundColor: "#EF4444",
+        display: true,
+      },
+    };
+
+    const plugins = (options.plugins ?? {}) as NonNullable<
+      MutableLineChartOptions["plugins"]
+    > &
+      AnnotationPluginState;
+    plugins.annotation = {
+      ...plugins.annotation,
+      annotations: {
+        ...plugins.annotation?.annotations,
+        line1: annotationLine,
+      },
+    };
+    options.plugins = plugins;
+  }
+
+  private getConcurrency(config: PgbenchScore["config"]): number | undefined {
+    let parsed: unknown = config;
+    if (typeof config === "string") {
+      try {
+        parsed = JSON.parse(config);
+      } catch {
+        return undefined;
+      }
+    }
+    if (!parsed || typeof parsed !== "object") {
+      return undefined;
+    }
+
+    const value = (parsed as { concurrency?: unknown }).concurrency;
+    return typeof value === "number" && Number.isFinite(value)
+      ? value
+      : undefined;
+  }
+
+  private getLatencyMs(
+    environment: PgbenchScore["environment"],
+  ): number | undefined {
+    if (!environment || typeof environment !== "object") {
+      return undefined;
+    }
+
+    const value = environment["latency_avg_ms"];
+    return typeof value === "number" && Number.isFinite(value)
+      ? value
+      : undefined;
   }
 }

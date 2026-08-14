@@ -230,4 +230,87 @@ describe("BenchmarkLineChartBuilderService", () => {
     expect(result?.data.datasets[0].data).toEqual([null, 10, null, 20]);
     expect(result?.data.datasets[1].data).toEqual([34, null, 12, null]);
   });
+
+  it("builds a dual-axis pgbench chart with notes and a vCPU annotation", () => {
+    const result = service.buildDetailsPgbenchChart({
+      scores: [
+        {
+          benchmark_id: "pgbench:heavy_read_only",
+          score: 120,
+          note: "peak nearby",
+          config: { concurrency: 2 },
+          environment: { latency_avg_ms: 4.5 },
+        },
+        {
+          benchmark_id: "pgbench:heavy_read_only",
+          score: 200,
+          config: { concurrency: 4 },
+          environment: { latency_avg_ms: 8 },
+        },
+        {
+          benchmark_id: "other",
+          score: 1,
+          config: { concurrency: 8 },
+        },
+      ],
+      vcpus: 4,
+      optionsBase: { plugins: { annotation: {}, legend: {} } },
+      scoreUnit: "tps",
+    });
+
+    expect(result?.data.datasets[0].yAxisID).toBe("y");
+    expect(result?.data.datasets[1].yAxisID).toBe("y1");
+    expect(result?.data.datasets[0].borderColor).toBe("#34D399");
+    expect(result?.data.datasets[1].borderColor).toBe("#F97316");
+    expect(result?.data.datasets[0].data).toEqual([
+      { x: 2, y: 120, note: "peak nearby", unit: "tps" },
+      { x: 4, y: 200, note: undefined, unit: "tps" },
+    ]);
+    expect(result?.data.datasets[1].data).toEqual([
+      { x: 2, y: 4.5 },
+      { x: 4, y: 8 },
+    ]);
+
+    const annotations = result?.options.plugins?.annotation?.annotations as
+      | { line1?: { xMin?: number; content?: string } }
+      | undefined;
+    expect(annotations?.line1?.xMin).toBe(4);
+
+    const label = result?.options.plugins?.tooltip?.callbacks?.label as
+      | ((tooltipItem: {
+          formattedValue: string;
+          raw: { x: number; y: number; note?: string; unit?: string };
+          dataset: { yAxisID?: string };
+        }) => string)
+      | undefined;
+    expect(
+      label?.({
+        formattedValue: "120",
+        raw: { x: 2, y: 120, note: "peak nearby", unit: "tps" },
+        dataset: { yAxisID: "y" },
+      }),
+    ).toBe("Performance: 120 tps; Note: peak nearby");
+    expect(
+      label?.({
+        formattedValue: "4.5",
+        raw: { x: 2, y: 4.5 },
+        dataset: { yAxisID: "y1" },
+      }),
+    ).toBe("Avg latency: 4.5 ms");
+  });
+
+  it("hides the pgbench chart when there are no matching scores", () => {
+    expect(
+      service.buildDetailsPgbenchChart({
+        scores: [
+          {
+            benchmark_id: "other",
+            score: 1,
+            config: { concurrency: 1 },
+          },
+        ],
+        optionsBase: {},
+      }),
+    ).toBeUndefined();
+  });
 });

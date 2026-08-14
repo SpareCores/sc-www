@@ -885,3 +885,69 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<"line">["option
       yAxisKey: "percent",
     },
   };
+
+export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
+  maintainAspectRatio: false,
+  interaction: {
+    mode: "index",
+    intersect: true,
+  },
+  scales: {
+    x: {
+      type: "linear",
+      ticks: {
+        color: "#FFF",
+      },
+      title: {
+        display: true,
+        color: "#FFF",
+        text: "Concurrency",
+      },
+    },
+    y: {
+      type: "linear",
+      display: true,
+      position: "left",
+      ticks: {
+        color: "#34D399",
+      },
+      grid: {
+        color: "#4B5563",
+      },
+      title: {
+        display: true,
+        color: "#34D399",
+        text: "Score",
+      },
+    },
+    y1: {
+      type: "linear",
+      display: true,
+      position: "right",
+      ticks: {
+        color: "#F97316",
+      },
+      grid: {
+        drawOnChartArea: false,
+      },
+      title: {
+        display: true,
+        color: "#F97316",
+        text: "Avg latency (ms)",
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: "#FFF",
+      },
+    },
+    title: {
+      display: true,
+      text: "pgbench heavy read-only score and latency",
+      color: "#FFF",
+    },
+  },
+};

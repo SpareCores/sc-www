@@ -21,7 +21,10 @@ export type BenchmarkLineChartSource =
   | "compare-stress-raw"
   | "compare-stress-percent";
 
-export type BenchmarkLineChartData = BenchmarkBarChartData | StressNgChartData;
+export type BenchmarkLineChartData =
+  | BenchmarkBarChartData
+  | StressNgChartData
+  | PgbenchChartData;
 
 export type BenchmarkBarChartData = ChartData<"bar">;
 
@@ -44,6 +47,7 @@ export type LineBenchmarkConfig = BenchmarkConfigShape & {
   algo?: string;
   block_size?: number;
   cores?: number;
+  concurrency?: number;
 };
 
 export type LineBenchmarkScore = BenchmarkScoreWithConfig<LineBenchmarkConfig>;
@@ -70,6 +74,31 @@ export type StressNgChartData = ChartData<
   Array<StressNgDataPoint | null>,
   number
 >;
+
+export type PgbenchDataPoint = {
+  x: number;
+  y: number;
+  note?: string | null;
+  unit?: string;
+};
+
+export type PgbenchScore = {
+  benchmark_id: string;
+  score: number;
+  note?: string | null;
+  config?: LineBenchmarkConfig | string;
+  environment?: Record<string, unknown> | null;
+};
+
+export type PgbenchChartData = ChartData<
+  "line",
+  Array<PgbenchDataPoint | null>
+>;
+
+export type PgbenchChartResult = {
+  data: PgbenchChartData;
+  options: MutableLineChartOptions;
+};
 
 export type AnnotationLine = {
   type: "line";
