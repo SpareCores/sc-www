@@ -35,7 +35,7 @@ export interface BestDatabasePriceAllocationType {
 export const bestDatabasePriceAllocationTypes: BestDatabasePriceAllocationType[] =
   [
     { name: "Any price", slug: "ANY" },
-    { name: "Ondemand prices", slug: "ONDEMAND_ONLY" },
+    { name: "Hourly prices", slug: "ONDEMAND_ONLY" },
     { name: "Monthly prices", slug: "MONTHLY" },
   ];
 
