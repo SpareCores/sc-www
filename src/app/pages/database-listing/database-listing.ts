@@ -134,7 +134,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
       collapsed: false,
     },
     {
-      category_id: "vcpus",
+      category_id: "processor",
       name: "Processor",
       icon: "microchip",
       collapsed: true,
