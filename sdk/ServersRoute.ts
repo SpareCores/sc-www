@@ -65,8 +65,7 @@ export namespace Servers {
         | "EPYC"
         | "Grace"
         | "Xeon"
-        | "Yitian"
-        | "Zen";
+        | "Yitian";
       /**
        * CPU allocation
        * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -434,6 +433,7 @@ export namespace Servers {
         | "hnl"
         | "icn"
         | "il-central-1"
+        | "indiasouthcentral"
         | "indonesiacentral"
         | "israelcentral"
         | "italynorth"
@@ -563,6 +563,7 @@ export namespace Servers {
         | "alicloud~me-central-1"
         | "alicloud~me-east-1"
         | "alicloud~na-south-1"
+        | "alicloud~sa-east-1"
         | "alicloud~us-east-1"
         | "alicloud~us-west-1"
         | "aws~af-south-1"
@@ -626,6 +627,7 @@ export namespace Servers {
         | "azure~francesouth"
         | "azure~germanynorth"
         | "azure~germanywestcentral"
+        | "azure~indiasouthcentral"
         | "azure~indonesiacentral"
         | "azure~israelcentral"
         | "azure~italynorth"
@@ -929,7 +931,7 @@ export namespace Servers {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
@@ -937,7 +939,6 @@ export namespace Servers {
         | "Blackwell"
         | "CDNA3"
         | "CDNA4"
-        | "Gaudi"
         | "Hopper"
         | "Pascal"
         | "Radeon Pro Navi"
@@ -956,7 +957,6 @@ export namespace Servers {
         | "GH200"
         | "H100"
         | "H200"
-        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"

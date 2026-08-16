@@ -10,22 +10,171 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  OrderDir,
-  SearchTrafficPricesTrafficPricesGetData,
-} from "./data-contracts";
+import { OrderDir, SearchDatabasesDatabasesGetData } from "./data-contracts";
 
-export namespace TrafficPrices {
+export namespace Databases {
   /**
    * No description
    * @tags Query Resources
-   * @name SearchTrafficPricesTrafficPricesGet
-   * @summary Search Traffic Prices
-   * @request GET:/traffic_prices
+   * @name SearchDatabasesDatabasesGet
+   * @summary Search Databases
+   * @request GET:/databases
    */
-  export namespace SearchTrafficPricesTrafficPricesGet {
+  export namespace SearchDatabasesDatabasesGet {
     export type RequestParams = {};
     export type RequestQuery = {
+      /**
+       * Partial name or id
+       * Freetext, case-insensitive search on the database_id, name, api_reference or display_name.
+       */
+      partial_name_or_id?: string | null;
+      /**
+       * Engine version
+       * Required major engine version.
+       */
+      engine_version?: string | null;
+      /**
+       * Minimum vCPUs
+       * Minimum number of virtual CPUs.
+       * @min 1
+       * @max 256
+       * @default 1
+       */
+      vcpus_min?: number;
+      /**
+       * Maximum vCPUs
+       * Maximum number of virtual CPUs.
+       */
+      vcpus_max?: number | null;
+      /**
+       * Required memory
+       * Required amount of memory in GBs.
+       */
+      memory_min?: number | null;
+      /**
+       * Benchmark Id
+       * Benchmark id to use as the main score for the server.
+       * @default "pgbench:heavy_read_only"
+       */
+      benchmark_id?: string;
+      /**
+       * Benchmark Config
+       * Optional benchmark config dict JSON to filter results of a benchmark_id.
+       */
+      benchmark_config?: string | null;
+      /**
+       * Required benchmark score
+       * Required value of the selected benchmark score.
+       */
+      benchmark_score_min?: number | null;
+      /**
+       * Required benchmark score/price
+       * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+       */
+      benchmark_score_per_price_min?: number | null;
+      /**
+       * High availability levels
+       * Required HA levels; all must appear in the database instance's supported list.
+       */
+      ha?: "none" | "single-zone" | "multi-zone" | "multi-region";
+      /**
+       * High availability strategies
+       * Required HA strategies; all must appear in the database instance's supported list.
+       */
+      ha_strategy?:
+        | "none"
+        | "passive-standby"
+        | "readable-cluster"
+        | "multi-master";
+      /**
+       * Minimum max read replicas
+       * Minimum number of read-only replica nodes the database instance must support.
+       */
+      max_read_replicas_min?: number | null;
+      /**
+       * Storage autosize
+       * Filter for database instances that can automatically expand storage as disk usage grows.
+       */
+      storage_extra_autosize?: boolean | null;
+      /**
+       * Disk encryption
+       * Filter for database instances with storage encrypted at rest.
+       */
+      disk_encryption?: boolean | null;
+      /**
+       * Scheduled backups
+       * Filter for database instances that support scheduled/automated backups.
+       */
+      scheduled_backups?: boolean | null;
+      /**
+       * Minimum continuous backup retention
+       * Minimum point-in-time recovery retention in days.
+       */
+      continuous_backups_min?: number | null;
+      /**
+       * Connection pool
+       * Filter for database instances with managed connection proxy support.
+       */
+      connection_pool?: boolean | null;
+      /**
+       * System monitoring
+       * Filter for database instances with host-level CPU, RAM, and disk metrics.
+       */
+      system_monitoring?: boolean | null;
+      /**
+       * Database monitoring
+       * Filter for database instances with engine performance insights (slow queries, locks, execution plans).
+       */
+      database_monitoring?: boolean | null;
+      /**
+       * Auto-upgrade versions
+       * Filter for database instances that support auto-upgrade between minor engine versions.
+       */
+      auto_upgrade_versions?: boolean | null;
+      /**
+       * Autotuning advice
+       * Filter for database instances that analyze workload and generate performance tuning advice.
+       */
+      autotuning_advice?: boolean | null;
+      /**
+       * Autotuning apply
+       * Filter for database instances that automatically apply performance fixes without operator intervention.
+       */
+      autotuning_apply?: boolean | null;
+      /**
+       * Custom configuration
+       * Filter for database instances that support custom configuration.
+       */
+      custom_config?: boolean | null;
+      /**
+       * Custom extensions
+       * Filter for database instances that support custom extensions.
+       */
+      custom_extensions?: boolean | null;
+      /**
+       * Security features
+       * Required security features; all must be supported by the database instance.
+       */
+      security_features?:
+        | "ip-filtering"
+        | "private-network"
+        | "network-peering"
+        | "identity-based-auth"
+        | "client-cert-auth"
+        | "enforced-tls"
+        | "customer-managed-keys"
+        | "audit-logging";
+      /**
+       * Minimum SLA
+       * Minimum service level agreement as a percentage, e.g. 99.95.
+       */
+      sla_min?: number | null;
+      /**
+       * Active only
+       * Filter for active servers only.
+       * @default true
+       */
+      only_active?: boolean | null;
       /**
        * Vendor
        * Identifier of the cloud provider vendor.
@@ -39,16 +188,6 @@ export namespace TrafficPrices {
         | "ovh"
         | "upcloud"
         | "vultr";
-      /**
-       * Green energy
-       * Filter for regions that are 100% powered by renewable energy.
-       */
-      green_energy?: boolean | null;
-      /**
-       * Compliance framework
-       * Compliance framework implemented at the vendor.
-       */
-      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Region
        * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
@@ -610,21 +749,32 @@ export namespace TrafficPrices {
         | "US"
         | "ZA";
       /**
-       * Direction
-       * Direction of the Internet traffic.
-       * @default ["outbound"]
+       * Required bundled storage size
+       * Required amount of storage (GB) bundled with the database instance.
        */
-      direction?: "inbound" | "outbound";
+      storage_size?: number | null;
       /**
-       * Monthly overall traffic
-       * Overall amount of monthly traffic (GBs).
-       * @default 1
+       * Required storage size
+       * Total storage needed in GBs, combining bundled (where applicable) and on-demand database storage. Bundled storage is subtracted; any remainder is billed as extra storage (at least the instance's storage_extra_min). Instances where bundled + storage_extra_max is below this value are excluded.
+       * @default 0
        */
-      monthly_traffic?: number | null;
+      extra_storage_size?: number | null;
+      /**
+       * Currency
+       * Currency used for prices.
+       * @default "USD"
+       */
+      currency?: string | null;
+      /**
+       * Best price allocation strategy
+       * Controls how the database's "best price" is computed: on-demand hourly, monthly, or the lowest available on-demand price.
+       * @default "ANY"
+       */
+      best_price_allocation?: "ANY" | "ONDEMAND_ONLY" | "MONTHLY";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
-       * @default 10
+       * @default 25
        */
       limit?: number;
       /**
@@ -635,7 +785,7 @@ export namespace TrafficPrices {
       /**
        * Order By
        * Order by column.
-       * @default "price"
+       * @default "min_price"
        */
       order_by?: string;
       /**
@@ -643,12 +793,6 @@ export namespace TrafficPrices {
        * @default "asc"
        */
       order_dir?: OrderDir;
-      /**
-       * Currency
-       * Currency used for prices.
-       * @default "USD"
-       */
-      currency?: string | null;
       /**
        * Add Total Count Header
        * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
@@ -658,6 +802,6 @@ export namespace TrafficPrices {
     };
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = SearchTrafficPricesTrafficPricesGetData;
+    export type ResponseBody = SearchDatabasesDatabasesGetData;
   }
 }

@@ -24,6 +24,7 @@ import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import {
   barChartOptionsSSL,
   barChartOptionsSSLCompare,
+  lineChartOptionsPgbench,
   lineChartOptionsStressNG,
   lineChartOptionsStressNGPercent,
 } from "../../../pages/server-details/chartOptions";
@@ -152,6 +153,24 @@ export class BenchmarkLineChartComponent {
       baseOptions: barChartOptionsSSL,
     });
   });
+  readonly detailsPgbenchChart = computed(() => {
+    if (this.chartSource() !== "details-pgbench") {
+      return undefined;
+    }
+
+    const meta = this.benchmarkMeta().find(
+      (item) => item.benchmark_id === "pgbench:heavy_read_only",
+    );
+
+    return this.builder.buildDetailsPgbenchChart({
+      scores: this.benchmarksByCategory().flatMap(
+        (group) => group.benchmarks ?? [],
+      ),
+      vcpus: this.detailsServer()?.vcpus,
+      optionsBase: lineChartOptionsPgbench,
+      scoreUnit: meta?.unit,
+    });
+  });
   readonly detailsStressNgChart = computed(() => {
     if (
       this.chartSource() !== "details-stress-raw" &&
@@ -214,6 +233,8 @@ export class BenchmarkLineChartComponent {
       switch (this.chartSource()) {
         case "details-ssl":
           return this.detailsSslChart()?.data;
+        case "details-pgbench":
+          return this.detailsPgbenchChart()?.data;
         case "details-stress-raw":
         case "details-stress-percent":
           return this.detailsStressNgChart()?.data;
@@ -236,6 +257,8 @@ export class BenchmarkLineChartComponent {
     switch (this.chartSource()) {
       case "details-ssl":
         return this.detailsSslChart()?.options;
+      case "details-pgbench":
+        return this.detailsPgbenchChart()?.options;
       case "details-stress-raw":
         return this.detailsStressNgChart()?.rawOptions;
       case "details-stress-percent":

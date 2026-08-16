@@ -1,0 +1,226 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16 text-white">
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
+
+    @if (isLoading) {
+    <div class="flex justify-center items-center mt-12">
+      <sc-loading-spinner
+        size="md"
+        text="Loading database data..."
+      ></sc-loading-spinner>
+    </div>
+    } @if (!isLoading && !databaseDetails) {
+    <div class="flex justify-center items-center mt-12">
+      <div class="text-2xl text-red-400">{{ keeperResponseErrorMsg }}</div>
+    </div>
+    } @if (databaseDetails) {
+    <div
+      id="database_base_info_box"
+      class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+    >
+      <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
+        <div class="flex gap-4 flex-col min-w-32">
+          <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
+            @if (databaseDetails.vendor?.logo) {
+            <img [src]="databaseDetails.vendor?.logo" alt="logo" />
+            }
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          <h1 class="text-2xl">
+            <span class="text-emerald-400 font-bold"
+              >{{ databaseDetails.display_name }}</span
+            >
+            by {{ databaseDetails.vendor?.name || databaseDetails.vendor_id }}
+          </h1>
+          <div>{{ description }}<span>{{ cardPriceDescription }}</span></div>
+        </div>
+      </div>
+      <div class="w-full lg:w-2/5 flex">
+        <div
+          [class.w-1/2]="hasPgbenchHeaderScores"
+          [class.mr-8]="hasPgbenchHeaderScores"
+          [class.w-full]="!hasPgbenchHeaderScores"
+        >
+          @for (feature of features; track feature.name; let i = $index) {
+          <div>
+            @if (i !== 0) {
+            <div
+              class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
+            ></div>
+            }
+            <div class="flex gap-2 text-xl items-center text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+                <svg lucideCheck class="h-4 w-4"></svg>
+              </div>
+              <b> {{ feature.value }} </b>
+              <span> {{ feature.name }} </span>
+            </div>
+          </div>
+          }
+        </div>
+        @if (hasPgbenchHeaderScores) {
+        <div class="border-r border-solid border-emerald-400 h-full w-1"></div>
+        <div class="w-1/2 flex flex-col gap-4 text-center ml-8">
+          <div class="text-white text-3xl font-semibold">Performance</div>
+          <div class="flex flex-col gap-4">
+            <div class="text-gray-200">
+              <span class="text-3xl text-emerald-400 font-semibold"
+                >{{ pgbenchPeakScore }}</span
+              ><br />
+              (Peak TPM)
+            </div>
+            <div class="text-gray-200">
+              <span class="text-xl">{{ pgbenchSingleScore }}</span><br />
+              (Single-client baseline)
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
+      <div class="my-2 w-full">
+        <h2 class="text-3xl font-bold">Specifications</h2>
+      </div>
+
+      <sc-server-property-card
+        cardTitle="Database Metadata"
+        cardId="details"
+        [sections]="metadataSections"
+        [showSectionHeaders]="false"
+        [isOpen]="expandedCards.details"
+        (toggleRequested)="toggleCard('details')"
+      ></sc-server-property-card>
+
+      <div
+        class="block_half"
+        id="availability"
+        #availabilityCard
+        [class.open]="expandedCards.availability"
+      >
+        <h3 class="text-2xl">Availability & Pricing</h3>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>REGION / ID</th>
+              <th>HA</th>
+              <th>HA STRATEGY</th>
+              <th>PRICE</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for ( row of availabilityRows; track row.region_id + "_" + row.ha +
+            "_" + row.ha_strategy + "_" + row.unit ) {
+            <tr class="availability_line">
+              <td>
+                <div>
+                  <b>{{ row.display_name }}</b> / {{ row.api_reference }}
+                </div>
+              </td>
+              <td>{{ row.ha }}</td>
+              <td>{{ row.ha_strategy }}</td>
+              <td>
+                @if (row.price !== null) { {{ row.price }} {{ row.currency }}/{{
+                row.unit | reduceUnitName }} } @else { - }
+              </td>
+            </tr>
+            } @if (!availabilityRows.length) {
+            <tr>
+              <td colspan="4" class="px-5 py-6 text-center text-gray-400">
+                No prices available for this database.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+        @if (availabilityCanExpand && !expandedCards.availability) {
+        <div
+          class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
+          id="availability_more"
+          style="
+            background: linear-gradient(
+              360deg,
+              #06263a 23.44%,
+              rgba(6, 38, 58, 0) 100%
+            );
+          "
+        >
+          <sc-button
+            label="Show more"
+            size="small"
+            id="availability_more_button"
+            [ariaExpanded]="false"
+            (click)="toggleCard('availability')"
+          ></sc-button>
+        </div>
+        } @if (availabilityCanExpand && expandedCards.availability) {
+        <div class="w-full pt-3 flex justify-center" id="availability_less">
+          <sc-button
+            label="Show less"
+            size="small"
+            [ariaExpanded]="true"
+            (click)="toggleCard('availability')"
+          ></sc-button>
+        </div>
+        }
+      </div>
+
+      <sc-server-property-card
+        cardTitle="Engine"
+        cardId="engine"
+        [sections]="engineSections"
+        [showSectionHeaders]="false"
+        [isOpen]="expandedCards.engine"
+        (toggleRequested)="toggleCard('engine')"
+      ></sc-server-property-card>
+
+      <sc-server-property-card
+        cardTitle="Capacity"
+        cardId="capacity"
+        [sections]="capacitySections"
+        [showSectionHeaders]="false"
+        [isOpen]="expandedCards.capacity"
+        (toggleRequested)="toggleCard('capacity')"
+      ></sc-server-property-card>
+
+      <sc-server-property-card
+        cardTitle="Features"
+        cardId="features"
+        [sections]="featureSections"
+        [showSectionHeaders]="false"
+        [isOpen]="expandedCards.features"
+        (toggleRequested)="toggleCard('features')"
+      ></sc-server-property-card>
+
+      <sc-server-property-card
+        cardTitle="Security"
+        cardId="security"
+        [sections]="securitySections"
+        [showSectionHeaders]="false"
+        [isOpen]="expandedCards.security"
+        (toggleRequested)="toggleCard('security')"
+      ></sc-server-property-card>
+
+      @if (pgbenchChart) {
+      <div class="my-2 w-full">
+        <h2 class="text-3xl font-bold">Performance</h2>
+      </div>
+      <sc-benchmark-line-chart
+        benchmarkKey="pgbench"
+        [title]="pgbenchTitle"
+        blockClass="block_full"
+        elementId="pgbench_chart"
+        canvasId="pgbench_canvas"
+        chartType="line"
+        [chartData]="pgbenchChart.data"
+        [chartOptions]="pgbenchChart.options"
+        [infoTooltip]="pgbenchInfoTooltip"
+        [noteTooltip]="pgbenchNoteTooltip"
+      ></sc-benchmark-line-chart>
+      }
+    </div>
+    }
+  </div>
+</div>

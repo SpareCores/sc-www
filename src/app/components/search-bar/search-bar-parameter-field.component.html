@@ -299,6 +299,44 @@
       </div>
     }
 
+    @if (parameterType === "booleanTriState") {
+      <div class="flex items-center gap-4 text-sm text-white mb-4 mt-4">
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input
+            type="radio"
+            [name]="'filter_boolean_' + parameter.name"
+            [checked]="booleanFilterSelection() === 'all'"
+            (change)="setBooleanFilterSelection('all')"
+            [disabled]="disabled()"
+            class="checkbox"
+          />
+          <span>Any</span>
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input
+            type="radio"
+            [name]="'filter_boolean_' + parameter.name"
+            [checked]="booleanFilterSelection() === 'yes'"
+            (change)="setBooleanFilterSelection('yes')"
+            [disabled]="disabled()"
+            class="checkbox"
+          />
+          <span>True</span>
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input
+            type="radio"
+            [name]="'filter_boolean_' + parameter.name"
+            [checked]="booleanFilterSelection() === 'no'"
+            (change)="setBooleanFilterSelection('no')"
+            [disabled]="disabled()"
+            class="checkbox"
+          />
+          <span>False</span>
+        </label>
+      </div>
+    }
+
     @if (
       parameterType === "enumArray" ||
       parameterType === "compliance_framework" ||

@@ -12,6 +12,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
 import { Button } from "../button/button";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
@@ -26,6 +27,7 @@ export interface ServerPropertyRow {
   name: string;
   value: string;
   tooltips?: ServerPropertyTooltip[];
+  routerLink?: string[] | string;
 }
 
 export interface ServerPropertySection {
@@ -35,7 +37,7 @@ export interface ServerPropertySection {
 
 @Component({
   selector: "sc-server-property-card",
-  imports: [LucideDynamicIcon, LucideInfo, Button],
+  imports: [LucideDynamicIcon, LucideInfo, Button, RouterLink],
   templateUrl: "./server-property-card.component.html",
   styleUrl: "./server-property-card.component.scss",
 })

@@ -11,6 +11,7 @@ import {
   Allocation,
   OrderDir,
   PriceUnit,
+  ResourceType,
   Status,
 } from "../../../../sdk/data-contracts";
 import { AdvisorComponent } from "./advisor.component";
@@ -897,14 +898,16 @@ describe("AdvisorComponent", () => {
     component.baselineBenchmarkScores.set([
       {
         vendor_id: "aws",
-        server_id: "srv-1",
+        resource_type: ResourceType.Server,
+        resource_id: "srv-1",
         benchmark_id: "fio:randread",
         config: {},
         score: 200,
       },
       {
         vendor_id: "aws",
-        server_id: "srv-1",
+        resource_type: ResourceType.Server,
+        resource_id: "srv-1",
         benchmark_id: "workload_profile:web",
         config: {},
         score: 100,

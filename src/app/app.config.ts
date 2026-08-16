@@ -36,6 +36,7 @@ function customErrorHandler(error: any) {
 const SCROLL_DISABLED_PATHS = [
   "/navigator/benchmark-coverage",
   "/servers",
+  "/databases",
   "/server_prices",
   "/storages",
   "/traffic-prices",

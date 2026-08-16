@@ -76,7 +76,9 @@ export function getParameterType(
   }
 
   if (type === "boolean") {
-    return "checkbox";
+    return parameter.schema.filter_mode === "tri_state_boolean"
+      ? "booleanTriState"
+      : "checkbox";
   }
 
   if (type === "array" && parameter.schema.enum) {

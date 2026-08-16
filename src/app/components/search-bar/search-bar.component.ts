@@ -246,9 +246,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
 
       let value =
-        extraParameters[item.name] ||
-        query[item.name] ||
-        item.schema.default ||
+        extraParameters[item.name] ??
+        query[item.name] ??
+        item.schema.default ??
         null;
 
       if (typeof query[item.name] === "string") {
@@ -283,7 +283,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         : undefined;
       const hasEffectiveValue = Array.isArray(effectiveValue)
         ? effectiveValue.length > 0
-        : Boolean(effectiveValue);
+        : effectiveValue === false || Boolean(effectiveValue);
 
       if (hasEffectiveValue && filterCategory) {
         filterCategory.collapsed = false;
@@ -322,7 +322,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         value = normalizeCommittedCpuCacheRangeValue(item, value);
       }
 
-      if (!value && item.schema.null_value) {
+      if (!value && value !== false && item.schema.null_value) {
         value = item.schema.null_value;
       }
 

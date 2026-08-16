@@ -173,6 +173,14 @@ export class ServerChartsComponent implements OnChanges {
     return this.serverDetails as LineChartDetailsServer;
   }
 
+  get pgbenchTitle(): string {
+    return (
+      this.benchmarkMeta?.find(
+        (benchmark) => benchmark.benchmark_id === "pgbench:heavy_read_only",
+      )?.name || "pgbench Heavy Read-Only"
+    );
+  }
+
   benchmarkDescription(benchmarkId: string): string {
     return (
       this.benchmarkMeta.find(

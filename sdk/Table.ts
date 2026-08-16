@@ -15,6 +15,10 @@ import {
   TableBenchmarkTableBenchmarkGetData,
   TableComplianceFrameworksTableComplianceFrameworkGetData,
   TableCountryTableCountryGetData,
+  TableDatabasePriceTableDatabasePriceGetData,
+  TableDatabasePriceTableDatabasePriceGetParams,
+  TableDatabaseStorageTableDatabaseStorageGetData,
+  TableDatabaseTableDatabaseGetData,
   TableMetadataServerTableServerMetaGetData,
   TableRegionTableRegionGetData,
   TableServerPricesTableServerPricesGetData,
@@ -202,6 +206,60 @@ export class Table<SecurityDataType = unknown> {
   tableStorageTableStorageGet = (params: RequestParams = {}) =>
     this.http.request<TableStorageTableStorageGetData, any>({
       path: `/table/storage`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Return the Database table as-is, without filtering options or relationships resolved.
+   *
+   * @tags Table dumps
+   * @name TableDatabaseTableDatabaseGet
+   * @summary Table Database
+   * @request GET:/table/database
+   */
+  tableDatabaseTableDatabaseGet = (params: RequestParams = {}) =>
+    this.http.request<TableDatabaseTableDatabaseGetData, any>({
+      path: `/table/database`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Query DatabasePrice records without relationships resolved.
+   *
+   * @tags Table dumps
+   * @name TableDatabasePriceTableDatabasePriceGet
+   * @summary Table Database Price
+   * @request GET:/table/database_price
+   * @secure
+   */
+  tableDatabasePriceTableDatabasePriceGet = (
+    query: TableDatabasePriceTableDatabasePriceGetParams = {},
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      TableDatabasePriceTableDatabasePriceGetData,
+      HTTPValidationError
+    >({
+      path: `/table/database_price`,
+      method: "GET",
+      query: query,
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Return the DatabaseStorage table as-is, without filtering options or relationships resolved.
+   *
+   * @tags Table dumps
+   * @name TableDatabaseStorageTableDatabaseStorageGet
+   * @summary Table Database Storage
+   * @request GET:/table/database_storage
+   */
+  tableDatabaseStorageTableDatabaseStorageGet = (params: RequestParams = {}) =>
+    this.http.request<TableDatabaseStorageTableDatabaseStorageGetData, any>({
+      path: `/table/database_storage`,
       method: "GET",
       format: "json",
       ...params,
