@@ -627,7 +627,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
   }
 
   showAPIReference(item: DatabasePKs) {
-    return item.display_name !== item.api_reference;
+    return (
+      item.display_name !== item.api_reference &&
+      item.display_name !== item.api_reference.replace("Standard_", "")
+    );
   }
 
   clipboardURL() {
