@@ -1,8 +1,11 @@
 import {
   COLUMN_BENCHMARK_EFFICIENCY_TOOLTIP,
   COLUMN_BENCHMARK_TOOLTIP,
+  COLUMN_HA_TOOLTIP,
+  COLUMN_HA_STRATEGY_TOOLTIP,
   COLUMN_SCORE_PER_PRICE_TOOLTIP,
   COLUMN_SCORE_TOOLTIP,
+  COLUMN_SLA_TOOLTIP,
 } from "./column-tooltips";
 
 export type TableColumnType =
@@ -239,11 +242,13 @@ const COLUMNS = {
     name: "HA",
     type: "list",
     key: "ha",
+    info: COLUMN_HA_TOOLTIP,
   },
   haStrategy: {
     name: "HA STRATEGY",
     type: "list",
     key: "ha_strategy",
+    info: COLUMN_HA_STRATEGY_TOOLTIP,
   },
   maxReadReplicas: {
     name: "MAX READ REPLICAS",
@@ -256,6 +261,7 @@ const COLUMNS = {
     type: "sla",
     key: "sla",
     orderField: "sla",
+    info: COLUMN_SLA_TOOLTIP,
   },
   diskEncryption: {
     name: "DISK ENCRYPTION",
