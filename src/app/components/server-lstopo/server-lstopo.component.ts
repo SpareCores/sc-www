@@ -70,6 +70,7 @@ export class ServerLstopoComponent implements OnChanges {
   private modal: Modal | null = null;
   private svgSub?: Subscription;
   private resizeObserver?: ResizeObserver;
+  private renderTimeout?: ReturnType<typeof setTimeout>;
   private tooltipListeners: Array<{
     el: Element;
     type: string;
@@ -115,24 +116,27 @@ export class ServerLstopoComponent implements OnChanges {
                 this.inlineSvg = trustedSvg;
                 this.modalSvg = trustedSvg;
                 this.svgExists.emit(true);
+                this.cdr.markForCheck();
+                this.renderTimeout = setTimeout(() => {
+                  this.renderTimeout = undefined;
+                  if (!this.inlineSvg) return;
+                  const el = this.lstopoModalRef?.nativeElement;
+                  if (el) {
+                    if (this.modal) {
+                      this.modal.destroyAndRemoveInstance();
+                      this.modal = null;
+                    }
+                    this.modal = new Modal(el, lstopoModalOptions);
+                  }
+                  this.addSvgTooltips();
+                  this.setupFullscreenCheck();
+                }, 0);
               } catch (e) {
                 console.warn("[lstopo] SVG processing failed", e);
                 this.resetRenderedSvg();
                 this.svgExists.emit(false);
+                this.cdr.markForCheck();
               }
-              this.cdr.markForCheck();
-              setTimeout(() => {
-                const el = this.lstopoModalRef?.nativeElement;
-                if (el) {
-                  if (this.modal) {
-                    this.modal.destroyAndRemoveInstance();
-                    this.modal = null;
-                  }
-                  this.modal = new Modal(el, lstopoModalOptions);
-                }
-                this.addSvgTooltips();
-                this.setupFullscreenCheck();
-              }, 0);
             } else {
               // Skip inline SVG on server to avoid bloating SSR response
             }
@@ -251,6 +255,10 @@ export class ServerLstopoComponent implements OnChanges {
   }
 
   private resetRenderedSvg(): void {
+    if (this.renderTimeout !== undefined) {
+      clearTimeout(this.renderTimeout);
+      this.renderTimeout = undefined;
+    }
     this.removeSvgTooltips();
     this.teardownFullscreenCheck();
     this.showFullscreen = false;
