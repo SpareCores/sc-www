@@ -60,6 +60,7 @@ export class ServerLstopoComponent implements OnChanges {
   inlineSvg: SafeHtml | null = null;
   modalSvg: SafeHtml | null = null;
   isLoading: boolean = false;
+  showFullscreen = false;
 
   @ViewChild("lstopoModal") private lstopoModalRef?: ElementRef<HTMLElement>;
   @ViewChild("lstopoTooltip") private tooltipRef?: ElementRef<HTMLElement>;
@@ -68,6 +69,7 @@ export class ServerLstopoComponent implements OnChanges {
 
   private modal: Modal | null = null;
   private svgSub?: Subscription;
+  private resizeObserver?: ResizeObserver;
   private tooltipListeners: Array<{
     el: Element;
     type: string;
@@ -129,6 +131,7 @@ export class ServerLstopoComponent implements OnChanges {
                   this.modal = new Modal(el, lstopoModalOptions);
                 }
                 this.addSvgTooltips();
+                this.setupFullscreenCheck();
               }, 0);
             } else {
               // Skip inline SVG on server to avoid bloating SSR response
@@ -209,8 +212,49 @@ export class ServerLstopoComponent implements OnChanges {
     this.tooltipListeners = [];
   }
 
+  private setupFullscreenCheck(): void {
+    this.teardownFullscreenCheck();
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.updateFullscreenVisibility();
+    this.resizeObserver = new ResizeObserver(() =>
+      this.updateFullscreenVisibility(),
+    );
+    this.resizeObserver.observe(this.elRef.nativeElement);
+  }
+
+  private teardownFullscreenCheck(): void {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
+  }
+
+  private updateFullscreenVisibility(): void {
+    const svg = this.elRef.nativeElement.querySelector(
+      ".lstopo-inline-svg svg",
+    ) as SVGSVGElement | null;
+    if (!svg) {
+      if (this.showFullscreen) {
+        this.showFullscreen = false;
+        this.cdr.markForCheck();
+      }
+      return;
+    }
+    const intrinsicW = parseFloat(svg.getAttribute("width") ?? "0");
+    const intrinsicH = parseFloat(svg.getAttribute("height") ?? "0");
+    const needsFullscreen =
+      !intrinsicW || !intrinsicH
+        ? true
+        : svg.clientWidth < intrinsicW - 1 ||
+          svg.clientHeight < intrinsicH - 1;
+    if (needsFullscreen !== this.showFullscreen) {
+      this.showFullscreen = needsFullscreen;
+      this.cdr.markForCheck();
+    }
+  }
+
   private resetRenderedSvg(): void {
     this.removeSvgTooltips();
+    this.teardownFullscreenCheck();
+    this.showFullscreen = false;
     if (isPlatformBrowser(this.platformId) && this.modal) {
       this.modal.destroyAndRemoveInstance();
       this.modal = null;
