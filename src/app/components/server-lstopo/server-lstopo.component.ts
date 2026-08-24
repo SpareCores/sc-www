@@ -243,8 +243,7 @@ export class ServerLstopoComponent implements OnChanges {
     const needsFullscreen =
       !intrinsicW || !intrinsicH
         ? true
-        : svg.clientWidth < intrinsicW - 1 ||
-          svg.clientHeight < intrinsicH - 1;
+        : svg.clientWidth < intrinsicW - 1 || svg.clientHeight < intrinsicH - 1;
     if (needsFullscreen !== this.showFullscreen) {
       this.showFullscreen = needsFullscreen;
       this.cdr.markForCheck();
