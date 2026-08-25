@@ -58,6 +58,7 @@ import {
   MultiBarServer,
 } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
+import { CompareChartLegendVisibilityService } from "../charts/shared/compare-chart-legend-visibility.service";
 import {
   getBenchmarkMetaNote,
   getBenchmarkMetaNotes,
@@ -112,6 +113,7 @@ import {
     WorkloadProfilePanelComponent,
     Button,
   ],
+  providers: [CompareChartLegendVisibilityService],
   templateUrl: "./server-compare-charts.component.html",
   styleUrl: "./server-compare-charts.component.scss",
 })
@@ -122,6 +124,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   private geekbenchBuilder = inject(GeekbenchRadarChartBuilderService);
   private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
   private advisorUi = inject(AdvisorUiService);
+  private legendVisibility = inject(CompareChartLegendVisibilityService);
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() baselineServer: ExtendedServerDetails | null = null;
@@ -169,6 +172,8 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   setup() {
+    this.legendVisibility.clear();
+
     if (
       this.servers.length === 0 ||
       !this.benchmarkMeta ||

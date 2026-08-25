@@ -20,7 +20,8 @@ export type BenchmarkLineChartSource =
   | "details-stress-percent"
   | "compare-ssl"
   | "compare-stress-raw"
-  | "compare-stress-percent";
+  | "compare-stress-percent"
+  | "compare-pgbench";
 
 export type BenchmarkLineChartData =
   | BenchmarkBarChartData
@@ -146,6 +147,8 @@ export type CompareSslOption = {
   name: string;
   value: string;
 };
+
+export const PGBENCH_HEAVY_READ_ONLY_ID = "pgbench:heavy_read_only";
 
 export const DEFAULT_COMPARE_SSL_OPTIONS: CompareSslOption[] = [
   { name: "AES-256-CBC", value: "AES-256-CBC" },

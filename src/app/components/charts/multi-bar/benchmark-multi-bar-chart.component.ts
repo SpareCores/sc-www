@@ -28,6 +28,11 @@ import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
+import {
+  injectCompareLegendVisibility,
+  syncCompareLegendData,
+  syncCompareLegendOptions,
+} from "../shared/compare-chart-legend.bind";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { BenchmarkMultiBarChartBuilderService } from "./benchmark-multi-bar-chart-builder.service";
 import {
@@ -65,6 +70,7 @@ export class BenchmarkMultiBarChartComponent {
   private platformId = inject(PLATFORM_ID);
   private tooltipService = inject(ChartTooltipService);
   private builder = inject(BenchmarkMultiBarChartBuilderService);
+  private legendVisibility = injectCompareLegendVisibility();
 
   primaryDropdown = viewChild<FlowbiteDropdownDirective>("primaryDropdown");
   secondaryDropdown = viewChild<FlowbiteDropdownDirective>("secondaryDropdown");
@@ -94,7 +100,21 @@ export class BenchmarkMultiBarChartComponent {
   readonly optionsId = `${this.idBase}_options`;
   readonly secondaryButtonId = `${this.idBase}_button2`;
   readonly secondaryOptionsId = `${this.idBase}_options2`;
-  readonly chart = computed(() => this.localChart() || this.chartItem().chart);
+  readonly chart = computed(() => {
+    const base = this.localChart() || this.chartItem().chart;
+    if (this.layout() !== "compare") {
+      return base;
+    }
+
+    return {
+      ...base,
+      chartData: syncCompareLegendData(base.chartData, this.legendVisibility),
+      chartOptions: syncCompareLegendOptions(
+        base.chartOptions,
+        this.legendVisibility,
+      ),
+    };
+  });
   readonly chartData = computed(() => this.chart().chartData);
   readonly currentOption = computed(
     () => this.chart().options[this.chart().selectedOption],

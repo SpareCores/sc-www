@@ -12,6 +12,11 @@ import {
 } from "@angular/core";
 import { BaseChartDirective } from "ng2-charts";
 import { ActiveElement, ChartEvent } from "chart.js";
+import {
+  injectCompareLegendVisibility,
+  syncCompareLegendData,
+  syncCompareLegendOptions,
+} from "../shared/compare-chart-legend.bind";
 import { WorkloadProfileRadarChartBuilderService } from "./workload-profile-radar-chart-builder.service";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -32,6 +37,7 @@ export class WorkloadProfileRadarChartComponent {
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
   private builder = inject(WorkloadProfileRadarChartBuilderService);
+  private legendVisibility = injectCompareLegendVisibility();
 
   chartDirective = viewChild(BaseChartDirective);
 
@@ -75,13 +81,19 @@ export class WorkloadProfileRadarChartComponent {
     });
   });
 
-  readonly resolvedChartData = computed(
-    () =>
+  readonly resolvedChartData = computed(() => {
+    const data =
       this.chartData() ??
       (this.layout() === "details"
         ? this.detailsCharts()?.chartData
-        : this.compareCharts()?.chartData),
-  );
+        : this.compareCharts()?.chartData);
+
+    if (!data || this.layout() !== "compare") {
+      return data;
+    }
+
+    return syncCompareLegendData(data, this.legendVisibility);
+  });
 
   readonly resolvedChartOptions = computed(() => {
     const options =
@@ -90,7 +102,15 @@ export class WorkloadProfileRadarChartComponent {
         ? this.detailsCharts()?.options
         : this.compareCharts()?.options);
 
-    if (this.layout() !== "details" || !options) {
+    if (!options) {
+      return options;
+    }
+
+    if (this.layout() === "compare") {
+      return syncCompareLegendOptions(options, this.legendVisibility);
+    }
+
+    if (this.layout() !== "details") {
       return options;
     }
 

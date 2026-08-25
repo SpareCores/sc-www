@@ -323,4 +323,67 @@ describe("BenchmarkLineChartBuilderService", () => {
       }),
     ).toBeUndefined();
   });
+
+  it("builds a score-only compare pgbench chart without latency", () => {
+    const result = service.buildComparePgbenchChart({
+      servers: [
+        {
+          display_name: "db-a",
+          vendor_id: "aws",
+          api_reference: "db-a",
+          benchmark_scores: [
+            {
+              benchmark_id: "pgbench:heavy_read_only",
+              score: 100,
+              config: { concurrency: 2 },
+            },
+            {
+              benchmark_id: "pgbench:heavy_read_only",
+              score: 180,
+              config: { concurrency: 4 },
+            },
+          ],
+        },
+        {
+          display_name: "db-b",
+          vendor_id: "gcp",
+          api_reference: "db-b",
+          benchmark_scores: [
+            {
+              benchmark_id: "pgbench:heavy_read_only",
+              score: 90,
+              config: { concurrency: 2 },
+            },
+          ],
+        },
+        {
+          display_name: "db-c",
+          vendor_id: "azure",
+          api_reference: "db-c",
+          benchmark_scores: [],
+        },
+      ],
+      scoreUnit: "tpm",
+      optionsBase: {
+        scales: {
+          y: { title: { display: true, text: "Score" } },
+          y1: { title: { display: true, text: "Latency" } },
+        },
+      },
+    });
+
+    expect(result?.data.datasets.length).toBe(3);
+    expect(result?.data.datasets[0].hidden).toBeFalse();
+    expect(result?.data.datasets[1].hidden).toBeFalse();
+    expect(result?.data.datasets[2].hidden).toBeTrue();
+    expect(result?.data.datasets[2].label).toBe("db-c");
+    expect(
+      result?.data.datasets.every((dataset) => dataset.yAxisID === "y"),
+    ).toBeTrue();
+    expect(result?.options.scales?.y1).toBeUndefined();
+    expect(result?.data.datasets[0].data).toEqual([
+      { x: 2, y: 100, unit: "tpm" },
+      { x: 4, y: 180, unit: "tpm" },
+    ]);
+  });
 });

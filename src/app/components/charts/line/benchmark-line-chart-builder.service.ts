@@ -18,6 +18,7 @@ import {
   LineChartServer,
   MutableBarChartOptions,
   MutableLineChartOptions,
+  PGBENCH_HEAVY_READ_ONLY_ID,
   PgbenchChartData,
   PgbenchChartResult,
   PgbenchDataPoint,
@@ -27,7 +28,6 @@ import {
   StressNgChartResult,
 } from "./benchmark-line-chart.types";
 
-const PGBENCH_HEAVY_READ_ONLY_ID = "pgbench:heavy_read_only";
 const PGBENCH_SCORE_COLOR = radarDatasetColors[0].borderColor;
 const PGBENCH_LATENCY_COLOR = "#EAB308";
 
@@ -209,6 +209,72 @@ export class BenchmarkLineChartBuilderService {
       points.map((point) => point.concurrency),
       vcpus,
     );
+
+    return { data, options };
+  }
+
+  buildComparePgbenchChart(params: {
+    servers: LineChartServer[];
+    scoreUnit?: string | null;
+    optionsBase: ChartConfiguration<"line">["options"];
+  }): PgbenchChartResult | undefined {
+    const { servers, scoreUnit, optionsBase } = params;
+    const unit = scoreUnit?.trim() || undefined;
+
+    const concurrencySet = new Set<number>();
+    const pointsByServer = servers.map((server) => {
+      const points: Array<{ concurrency: number; score: number }> = [];
+      for (const score of server.benchmark_scores) {
+        if (score.benchmark_id !== PGBENCH_HEAVY_READ_ONLY_ID) {
+          continue;
+        }
+        const concurrency = this.getConcurrency(score.config);
+        if (concurrency === undefined) {
+          continue;
+        }
+        concurrencySet.add(concurrency);
+        points.push({ concurrency, score: score.score });
+      }
+      points.sort((a, b) => a.concurrency - b.concurrency);
+      return points;
+    });
+
+    if (![...concurrencySet].length || pointsByServer.every((p) => !p.length)) {
+      return undefined;
+    }
+
+    const data: PgbenchChartData = {
+      datasets: servers.map((server, index) => {
+        const points = pointsByServer[index];
+        return withServerTooltipIdentity(
+          {
+            data: points.map((point) => ({
+              x: point.concurrency,
+              y: point.score,
+              unit,
+            })),
+            hidden: points.length === 0,
+            label: server.display_name,
+            yAxisID: "y",
+            spanGaps: true,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length]
+                .backgroundColor,
+          },
+          server,
+        );
+      }),
+    };
+
+    const options = cloneChartOptions(
+      optionsBase ?? {},
+    ) as MutableLineChartOptions;
+    if (options.scales?.y1) {
+      delete options.scales.y1;
+    }
+    this.configureComparePgbenchOptions(options, unit);
 
     return { data, options };
   }
@@ -630,6 +696,58 @@ export class BenchmarkLineChartBuilderService {
             return unit
               ? `Performance: ${tooltipItem.formattedValue} ${unit}`
               : `Performance: ${tooltipItem.formattedValue}`;
+          },
+          title: function (
+            this: TooltipModel<"line">,
+            tooltipItems: TooltipItem<"line">[],
+          ) {
+            const concurrency =
+              (tooltipItems[0]?.raw as PgbenchDataPoint | null)?.x ??
+              tooltipItems[0]?.parsed?.x;
+            return `${concurrency} concurrency`;
+          },
+        },
+      },
+    };
+  }
+
+  private configureComparePgbenchOptions(
+    options: MutableLineChartOptions,
+    unit?: string,
+  ): void {
+    if (unit) {
+      options.scales = {
+        ...options.scales,
+        y: {
+          ...options.scales?.y,
+          title: {
+            ...options.scales?.y?.title,
+            display: true,
+            text: unit,
+          },
+        },
+      };
+    }
+
+    options.plugins = {
+      ...options.plugins,
+      legend: {
+        ...options.plugins?.legend,
+      },
+      tooltip: {
+        ...options.plugins?.tooltip,
+        callbacks: {
+          ...options.plugins?.tooltip?.callbacks,
+          label: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            const raw = tooltipItem.raw as PgbenchDataPoint | null;
+            const identity = getDatasetTooltipIdentity(tooltipItem.dataset);
+            const value = raw?.unit?.trim()
+              ? `${tooltipItem.formattedValue} ${raw.unit.trim()}`
+              : tooltipItem.formattedValue;
+            return identity ? `${identity}: ${value}` : value;
           },
           title: function (
             this: TooltipModel<"line">,

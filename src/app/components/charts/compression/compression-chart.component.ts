@@ -37,6 +37,11 @@ import {
 } from "../../../pages/server-details/chartOptions";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
+import {
+  injectCompareLegendVisibility,
+  syncCompareLegendData,
+  syncCompareLegendOptions,
+} from "../shared/compare-chart-legend.bind";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 
 @Component({
@@ -67,6 +72,7 @@ export class CompressionChartComponent {
   private platformId = inject(PLATFORM_ID);
   private builder = inject(CompressionChartBuilderService);
   private tooltipService = inject(ChartTooltipService);
+  private legendVisibility = injectCompareLegendVisibility();
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   selectorDropdown = viewChild<FlowbiteDropdownDirective>("selectorDropdown");
@@ -165,12 +171,35 @@ export class CompressionChartComponent {
         return undefined;
       }
 
-      return this.builder.buildCompareCharts({
+      const built = this.builder.buildCompareCharts({
         servers: this.servers(),
         selectedOption: this.currentCompareOption(),
         compressOptionsBase: lineChartOptionsCompareCompress,
         decompressOptionsBase: lineChartOptionsCompareDecompress,
       });
+      if (!built) {
+        return undefined;
+      }
+
+      return {
+        ...built,
+        compressData: syncCompareLegendData(
+          built.compressData,
+          this.legendVisibility,
+        )!,
+        decompressData: syncCompareLegendData(
+          built.decompressData,
+          this.legendVisibility,
+        )!,
+        compressOptions: syncCompareLegendOptions(
+          built.compressOptions,
+          this.legendVisibility,
+        )!,
+        decompressOptions: syncCompareLegendOptions(
+          built.decompressOptions,
+          this.legendVisibility,
+        )!,
+      };
     },
   );
   readonly detailsChartData = computed(() => this.detailsChart()?.data);
