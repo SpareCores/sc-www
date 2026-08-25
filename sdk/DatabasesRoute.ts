@@ -171,10 +171,15 @@ export namespace Databases {
       sla_min?: number | null;
       /**
        * Active only
-       * Filter for active servers only.
-       * @default true
+       * Filter for active resources only.
        */
       only_active?: boolean | null;
+      /**
+       * Orderable only
+       * Filter for orderable (active or planned for retirement) resources only.
+       * @default true
+       */
+      only_orderable?: boolean | null;
       /**
        * Vendor
        * Identifier of the cloud provider vendor.
@@ -288,6 +293,7 @@ export namespace Databases {
         | "centralus"
         | "centraluseuap"
         | "chilecentral"
+        | "cmh"
         | "cn-beijing"
         | "cn-chengdu"
         | "cn-fuzhou"
@@ -369,6 +375,7 @@ export namespace Databases {
         | "mex"
         | "mexicocentral"
         | "mia"
+        | "msp"
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
@@ -407,6 +414,7 @@ export namespace Databases {
         | "southeastasia"
         | "southindia"
         | "spaincentral"
+        | "stl"
         | "sto"
         | "swedencentral"
         | "switzerlandnorth"
@@ -676,6 +684,7 @@ export namespace Databases {
         | "vultr~blr"
         | "vultr~bom"
         | "vultr~cdg"
+        | "vultr~cmh"
         | "vultr~del"
         | "vultr~dfw"
         | "vultr~ewr"
@@ -691,6 +700,7 @@ export namespace Databases {
         | "vultr~mel"
         | "vultr~mex"
         | "vultr~mia"
+        | "vultr~msp"
         | "vultr~mxp"
         | "vultr~nrt"
         | "vultr~ord"
@@ -699,6 +709,7 @@ export namespace Databases {
         | "vultr~sea"
         | "vultr~sgp"
         | "vultr~sjc"
+        | "vultr~stl"
         | "vultr~sto"
         | "vultr~syd"
         | "vultr~tlv"

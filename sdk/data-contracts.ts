@@ -256,6 +256,7 @@ export enum VendorRegions {
   VultrBlr = "vultr~blr",
   VultrBom = "vultr~bom",
   VultrCdg = "vultr~cdg",
+  VultrCmh = "vultr~cmh",
   VultrDel = "vultr~del",
   VultrDfw = "vultr~dfw",
   VultrEwr = "vultr~ewr",
@@ -271,6 +272,7 @@ export enum VendorRegions {
   VultrMel = "vultr~mel",
   VultrMex = "vultr~mex",
   VultrMia = "vultr~mia",
+  VultrMsp = "vultr~msp",
   VultrMxp = "vultr~mxp",
   VultrNrt = "vultr~nrt",
   VultrOrd = "vultr~ord",
@@ -279,6 +281,7 @@ export enum VendorRegions {
   VultrSea = "vultr~sea",
   VultrSgp = "vultr~sgp",
   VultrSjc = "vultr~sjc",
+  VultrStl = "vultr~stl",
   VultrSto = "vultr~sto",
   VultrSyd = "vultr~syd",
   VultrTlv = "vultr~tlv",
@@ -313,6 +316,8 @@ export enum StorageType {
 export enum Status {
   Active = "active",
   Inactive = "inactive",
+  PlannedForRetirement = "planned-for-retirement",
+  Retired = "retired",
 }
 
 /** ServerColumns */
@@ -479,6 +484,7 @@ export enum Regions {
   Centralus = "centralus",
   Centraluseuap = "centraluseuap",
   Chilecentral = "chilecentral",
+  Cmh = "cmh",
   CnBeijing = "cn-beijing",
   CnChengdu = "cn-chengdu",
   CnFuzhou = "cn-fuzhou",
@@ -560,6 +566,7 @@ export enum Regions {
   Mex = "mex",
   Mexicocentral = "mexicocentral",
   Mia = "mia",
+  Msp = "msp",
   MxCentral1 = "mx-central-1",
   Mxp = "mxp",
   NaSouth1 = "na-south-1",
@@ -598,6 +605,7 @@ export enum Regions {
   Southeastasia = "southeastasia",
   Southindia = "southindia",
   Spaincentral = "spaincentral",
+  Stl = "stl",
   Sto = "sto",
   Swedencentral = "swedencentral",
   Switzerlandnorth = "switzerlandnorth",
@@ -661,15 +669,11 @@ export enum GpuModels {
   B200 = "B200",
   B300 = "B300",
   GB200 = "GB200",
-  GH200 = "GH200",
   H100 = "H100",
   H200 = "H200",
   L20 = "L20",
   L4 = "L4",
   L40S = "L40S",
-  MI300X = "MI300X",
-  MI325X = "MI325X",
-  MI355X = "MI355X",
   P100 = "P100",
   P4 = "P4",
   RTX5000 = "RTX 5000",
@@ -696,8 +700,6 @@ export enum GpuFamilies {
   AdaLovelace = "Ada Lovelace",
   Ampere = "Ampere",
   Blackwell = "Blackwell",
-  CDNA3 = "CDNA3",
-  CDNA4 = "CDNA4",
   Hopper = "Hopper",
   Pascal = "Pascal",
   RadeonProNavi = "Radeon Pro Navi",
@@ -786,7 +788,6 @@ export enum CpuManufacturers {
   Apple = "Apple",
   Intel = "Intel",
   Microsoft = "Microsoft",
-  NVIDIA = "NVIDIA",
 }
 
 /** CpuFamilies */
@@ -796,7 +797,6 @@ export enum CpuFamilies {
   ARMv9 = "ARMv9",
   AmpereAltra = "Ampere Altra",
   EPYC = "EPYC",
-  Grace = "Grace",
   Xeon = "Xeon",
   Yitian = "Yitian",
 }
@@ -4525,7 +4525,7 @@ export interface TrafficPriceWithPKsWithMonthlyTraffic {
 
 /**
  * User
- * User object extracted from OAuth 2.0 token introspection.
+ * User object extracted from a verified Bearer token.
  */
 export interface User {
   /** User Id */
@@ -4941,7 +4941,7 @@ export interface GetStatsStatsGetParams {
     | "vultr";
   /**
    * Active only
-   * Filter for active servers only.
+   * Filter for active resources only.
    * @default false
    */
   only_active?: boolean | null;
@@ -5157,6 +5157,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -5238,6 +5239,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -5276,6 +5278,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -5545,6 +5548,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -5560,6 +5564,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -5568,6 +5573,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -5580,7 +5586,7 @@ export interface TableServerPricesTableServerPricesGetParams {
   allocation?: "ondemand" | "reserved" | "spot";
   /**
    * Active only
-   * Filter for active servers only.
+   * Filter for active resources only.
    * @default true
    */
   only_active?: boolean | null;
@@ -5714,6 +5720,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -5795,6 +5802,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -5833,6 +5841,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -6102,6 +6111,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -6117,6 +6127,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -6125,6 +6136,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -6137,7 +6149,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
   allocation?: "ondemand" | "reserved" | "spot";
   /**
    * Active only
-   * Filter for active servers only.
+   * Filter for active resources only.
    * @default true
    */
   only_active?: boolean | null;
@@ -6272,6 +6284,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -6353,6 +6366,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -6391,6 +6405,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -6704,6 +6719,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -6719,6 +6735,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -6727,6 +6744,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -7069,6 +7087,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -7084,6 +7103,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -7092,6 +7112,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -7449,6 +7470,7 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -7464,6 +7486,7 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -7472,6 +7495,7 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -7618,8 +7642,7 @@ export interface SearchServersServersGetParams {
     | "Ampere"
     | "Apple"
     | "Intel"
-    | "Microsoft"
-    | "NVIDIA";
+    | "Microsoft";
   /** Processor family */
   cpu_family?:
     | "ARM"
@@ -7627,7 +7650,6 @@ export interface SearchServersServersGetParams {
     | "ARMv9"
     | "Ampere Altra"
     | "EPYC"
-    | "Grace"
     | "Xeon"
     | "Yitian";
   /**
@@ -7818,10 +7840,15 @@ export interface SearchServersServersGetParams {
     | 25000;
   /**
    * Active only
-   * Filter for active servers only.
-   * @default true
+   * Filter for active resources only.
    */
   only_active?: boolean | null;
+  /**
+   * Orderable only
+   * Filter for orderable (active or planned for retirement) resources only.
+   * @default true
+   */
+  only_orderable?: boolean | null;
   /**
    * Vendor
    * Identifier of the cloud provider vendor.
@@ -7940,6 +7967,7 @@ export interface SearchServersServersGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -8021,6 +8049,7 @@ export interface SearchServersServersGetParams {
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -8059,6 +8088,7 @@ export interface SearchServersServersGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -8328,6 +8358,7 @@ export interface SearchServersServersGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -8343,6 +8374,7 @@ export interface SearchServersServersGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -8351,6 +8383,7 @@ export interface SearchServersServersGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -8501,8 +8534,6 @@ export interface SearchServersServersGetParams {
     | "Ada Lovelace"
     | "Ampere"
     | "Blackwell"
-    | "CDNA3"
-    | "CDNA4"
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
@@ -8518,15 +8549,11 @@ export interface SearchServersServersGetParams {
     | "B200"
     | "B300"
     | "GB200"
-    | "GH200"
     | "H100"
     | "H200"
     | "L20"
     | "L4"
     | "L40S"
-    | "MI300X"
-    | "MI325X"
-    | "MI355X"
     | "P100"
     | "P4"
     | "RTX 5000"
@@ -8734,10 +8761,15 @@ export interface SearchDatabasesDatabasesGetParams {
   sla_min?: number | null;
   /**
    * Active only
-   * Filter for active servers only.
-   * @default true
+   * Filter for active resources only.
    */
   only_active?: boolean | null;
+  /**
+   * Orderable only
+   * Filter for orderable (active or planned for retirement) resources only.
+   * @default true
+   */
+  only_orderable?: boolean | null;
   /**
    * Vendor
    * Identifier of the cloud provider vendor.
@@ -8851,6 +8883,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -8932,6 +8965,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -8970,6 +9004,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -9239,6 +9274,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -9254,6 +9290,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -9262,6 +9299,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -9399,8 +9437,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Ampere"
     | "Apple"
     | "Intel"
-    | "Microsoft"
-    | "NVIDIA";
+    | "Microsoft";
   /** Processor family */
   cpu_family?:
     | "ARM"
@@ -9408,7 +9445,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ARMv9"
     | "Ampere Altra"
     | "EPYC"
-    | "Grace"
     | "Xeon"
     | "Yitian";
   /**
@@ -9443,7 +9479,7 @@ export interface SearchServerPricesServerPricesGetParams {
   price_max?: number | null;
   /**
    * Active only
-   * Filter for active servers only.
+   * Filter for active resources only.
    * @default true
    */
   only_active?: boolean | null;
@@ -9570,6 +9606,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -9651,6 +9688,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -9689,6 +9727,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -9958,6 +9997,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -9973,6 +10013,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -9981,6 +10022,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -10067,8 +10109,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Ada Lovelace"
     | "Ampere"
     | "Blackwell"
-    | "CDNA3"
-    | "CDNA4"
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
@@ -10084,15 +10124,11 @@ export interface SearchServerPricesServerPricesGetParams {
     | "B200"
     | "B300"
     | "GB200"
-    | "GH200"
     | "H100"
     | "H200"
     | "L20"
     | "L4"
     | "L40S"
-    | "MI300X"
-    | "MI325X"
-    | "MI355X"
     | "P100"
     | "P4"
     | "RTX 5000"
@@ -10280,6 +10316,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -10361,6 +10398,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -10399,6 +10437,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -10668,6 +10707,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -10683,6 +10723,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -10691,6 +10732,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -10908,6 +10950,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -10989,6 +11032,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -11027,6 +11071,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -11296,6 +11341,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -11311,6 +11357,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -11319,6 +11366,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -11532,6 +11580,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
@@ -11613,6 +11662,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "mex"
     | "mexicocentral"
     | "mia"
+    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
@@ -11651,6 +11701,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -11920,6 +11971,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
+    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -11935,6 +11987,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
+    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -11943,6 +11996,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
+    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
