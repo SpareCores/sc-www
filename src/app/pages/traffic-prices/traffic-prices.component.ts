@@ -76,7 +76,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
-    { name: "Network traffic prices", url: "/traffic-prices" },
+    { name: "Network Traffic Prices", url: "/traffic-prices" },
   ];
 
   isCollapsed = false;

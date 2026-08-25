@@ -78,7 +78,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
-    { name: "Storage prices", url: "/storages" },
+    { name: "Storage Prices", url: "/storages" },
   ];
 
   isCollapsed = false;

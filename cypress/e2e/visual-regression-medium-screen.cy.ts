@@ -90,7 +90,7 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
 
   it("should compare screenshot of server comparison page", () => {
     E2EEvent.visitURL(
-      "/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYTEubWVkaXVtIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjNmdkLm1lZGl1bSJ9XQ%3D%3D",
+      "/servers/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYTEubWVkaXVtIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjNmdkLm1lZGl1bSJ9XQ%3D%3D",
     );
 
     // Force isTableOutsideViewport to always set to false

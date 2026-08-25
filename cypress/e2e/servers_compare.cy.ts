@@ -3,9 +3,9 @@ import { E2EEvent } from "../support/generics";
 const BENCHMARKS_COUNT_WITHOUT_STRESSNG = 10;
 const BENCHMARKS_COUNT = 12;
 const COMPARE_PRICE_URL =
-  "/compare?instances=W3siZGlzcGxheV9uYW1lIjoidDJhLXN0YW5kYXJkLTEiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmEtc3RhbmRhcmQtMSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzdnLm1lZGl1bSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3Zy5tZWRpdW0iLCJ6b25lc1JlZ2lvbnMiOltdfV0%3D";
+  "/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoidDJhLXN0YW5kYXJkLTEiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmEtc3RhbmRhcmQtMSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzdnLm1lZGl1bSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3Zy5tZWRpdW0iLCJ6b25lc1JlZ2lvbnMiOltdfV0%3D";
 const COMPARE_36_VCPU_URL =
-  "/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVuLjl4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImQyLjh4bGFyZ2UifV0%3D";
+  "/servers/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVuLjl4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImQyLjh4bGFyZ2UifV0%3D";
 
 function showCompareTooltip() {
   cy.get(
