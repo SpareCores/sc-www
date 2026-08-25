@@ -569,7 +569,10 @@ export class DatabaseCompareComponent
           specialCompare.title,
           specialCompare.description,
         );
-        this.setPremadeCompareBreadcrumb(specialCompare.title, specialCompare.id);
+        this.setPremadeCompareBreadcrumb(
+          specialCompare.title,
+          specialCompare.id,
+        );
       } else {
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
