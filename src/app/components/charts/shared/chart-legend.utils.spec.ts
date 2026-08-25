@@ -18,7 +18,9 @@ describe("chart-legend.utils", () => {
   });
 
   it("detects comparable numeric and point data", () => {
-    expect(datasetHasComparableData({ data: [1, null, 3] } as never)).toBeTrue();
+    expect(
+      datasetHasComparableData({ data: [1, null, 3] } as never),
+    ).toBeTrue();
     expect(
       datasetHasComparableData({ data: [{ x: 1, y: 2 }] } as never),
     ).toBeTrue();
@@ -36,7 +38,9 @@ describe("chart-legend.utils", () => {
     expect(
       datasetHasComparableData({ data: [{ value: null }] } as never),
     ).toBeFalse();
-    expect(datasetHasComparableData({ data: [null, null] } as never)).toBeFalse();
+    expect(
+      datasetHasComparableData({ data: [null, null] } as never),
+    ).toBeFalse();
     expect(datasetHasComparableData({ data: [] } as never)).toBeFalse();
   });
 
@@ -49,7 +53,7 @@ describe("chart-legend.utils", () => {
           { data: [null, null], label: "empty" },
         ],
       },
-    } as never;
+    };
 
     const native = Chart.defaults.plugins.legend.labels.generateLabels;
     spyOn(Chart.defaults.plugins.legend.labels, "generateLabels").and.callFake(
@@ -61,9 +65,6 @@ describe("chart-legend.utils", () => {
       },
     );
 
-    // Use captured native via our wrapper: re-capture after spy is wrong.
-    // Instead call generateLabels with a mock that uses our filter logic directly
-    // by temporarily setting native through capture after spy — simpler assert via filter:
     const items = [
       { datasetIndex: 0, text: "with-data" },
       { datasetIndex: 1, text: "empty" },
@@ -94,7 +95,8 @@ describe("chart-legend.utils", () => {
     };
     const changes: Array<[string, boolean]> = [];
     const onClick = createCompareLegendOnClick({
-      onVisibilityChange: (identity, hidden) => changes.push([identity, hidden]),
+      onVisibilityChange: (identity, hidden) =>
+        changes.push([identity, hidden]),
     });
 
     onClick.call(
@@ -137,7 +139,7 @@ describe("chart-legend.utils", () => {
       },
       isDatasetVisible: (index: number) => visible[index],
     };
-    const target = { style: { cursor: "" } };
+    const target = document.createElement("div");
     const event = { native: { target } };
     const onHover = createLegendPointerOnHover();
 
@@ -181,10 +183,14 @@ describe("chart-legend.utils", () => {
       new Set(["aws::a"]),
     );
 
-    expect(result.datasets[0].hidden).toBeTrue();
-    expect(result.datasets[1].hidden).toBeTrue();
-    expect(result.datasets[2].hidden).toBeFalse();
-    expect(getCompareDatasetKey(result.datasets[0])).toBe("aws::a");
+    const datasets = result.datasets as Array<{
+      hidden?: boolean;
+      serverCompareKey?: string;
+    }>;
+    expect(datasets[0].hidden).toBeTrue();
+    expect(datasets[1].hidden).toBeTrue();
+    expect(datasets[2].hidden).toBeFalse();
+    expect(getCompareDatasetKey(datasets[0])).toBe("aws::a");
   });
 
   it("merges compare legend behavior into options", () => {
