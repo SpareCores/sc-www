@@ -4,6 +4,7 @@ const matter = require("gray-matter");
 const { SitemapStream, streamToPromise } = require("sitemap");
 const { Readable } = require("stream");
 const specialCompares = require("./src/app/pages/server-compare/special-compares");
+const databaseCompares = require("./src/app/pages/database-compare/database-compares");
 const specialServerLists = require("./src/app/pages/server-listing/special-lists");
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +97,7 @@ const links = [
   { url: "about/spare-cores", changefreq: "monthly", priority: 1.0 },
   { url: "about/navigator", changefreq: "monthly", priority: 1.0 },
   { url: "servers", changefreq: "hourly", priority: 0.75 },
+  { url: "databases", changefreq: "hourly", priority: 0.75 },
   { url: "server_prices", changefreq: "hourly", priority: 0.75 },
   { url: "vendors", changefreq: "monthly", priority: 0.5 },
   { url: "regions", changefreq: "weekly", priority: 0.5 },
@@ -104,7 +106,8 @@ const links = [
   { url: "legal/terms-of-service", changefreq: "monthly", priority: 0.1 },
   { url: "articles", changefreq: "weekly", priority: 0.75 },
   { url: "talks", changefreq: "monthly", priority: 0.75 },
-  { url: "compare", changefreq: "weekly", priority: 0.75 },
+  { url: "servers/compare", changefreq: "weekly", priority: 0.75 },
+  { url: "databases/compare", changefreq: "weekly", priority: 0.75 },
 ];
 
 allArticles.forEach((article) => {
@@ -119,7 +122,19 @@ if (specialCompares?.length) {
   specialCompares.forEach((specialCompare) => {
     if (specialCompare.type === "card") {
       links.push({
-        url: `compare/${specialCompare.id}`,
+        url: `servers/compare/${specialCompare.id}`,
+        changefreq: "daily",
+        priority: 0.9,
+      });
+    }
+  });
+}
+
+if (databaseCompares?.length) {
+  databaseCompares.forEach((databaseCompare) => {
+    if (databaseCompare.type === "card") {
+      links.push({
+        url: `databases/compare/${databaseCompare.id}`,
         changefreq: "daily",
         priority: 0.9,
       });
@@ -137,45 +152,75 @@ if (specialServerLists?.length) {
   });
 }
 
-// get https://keeper.sparecores.net/table/server using http
+////////////////////////////////////////////////////////////////////////////////
+// get server and database tables from the Keeper API
+////////////////////////////////////////////////////////////////////////////////
+
 const https = require("https");
 
-https
-  .get("https://keeper.sparecores.net/table/server", (res) => {
-    let data = "";
-
-    // A chunk of data has been received.
-    res.on("data", (chunk) => {
-      data += chunk;
-    });
-
-    // The whole response has been received.
-    res.on("end", () => {
-      const parsedData = JSON.parse(data);
-      if (parsedData?.length) {
-        parsedData.forEach((server) => {
-          links.push({
-            url: `server/${server.vendor_id}/${server.api_reference}`,
-            changefreq: "daily",
-            priority: 0.9,
-          });
+function fetchJson(url) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, (res) => {
+        let data = "";
+        res.on("data", (chunk) => {
+          data += chunk;
         });
-        streamToPromise(Readable.from(links).pipe(sitemapStream))
-          .then((data) => {
-            data.toString();
-            const xmlFormatter = require("xml-formatter");
-            fs.writeFileSync(
-              "./src/sitemap.xml",
-              xmlFormatter(data.toString(), {
-                indentation: "  ",
-                collapseContent: true,
-              }),
-            );
-          })
-          .catch((err) => console.error(err));
-      }
-    });
-  })
-  .on("error", (err) => {
-    console.log("Error: " + err.message);
+        res.on("end", () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (err) {
+            reject(err);
+          }
+        });
+      })
+      .on("error", reject);
   });
+}
+
+function writeSitemap() {
+  streamToPromise(Readable.from(links).pipe(sitemapStream))
+    .then((data) => {
+      data.toString();
+      const xmlFormatter = require("xml-formatter");
+      fs.writeFileSync(
+        "./src/sitemap.xml",
+        xmlFormatter(data.toString(), {
+          indentation: "  ",
+          collapseContent: true,
+        }),
+      );
+    })
+    .catch((err) => console.error(err));
+}
+
+Promise.allSettled([
+  fetchJson("https://keeper.sparecores.net/table/server"),
+  fetchJson("https://keeper.sparecores.net/table/database"),
+]).then(([serversResult, databasesResult]) => {
+  if (serversResult.status === "fulfilled" && serversResult.value?.length) {
+    serversResult.value.forEach((server) => {
+      links.push({
+        url: `server/${server.vendor_id}/${server.api_reference}`,
+        changefreq: "daily",
+        priority: 0.9,
+      });
+    });
+  } else if (serversResult.status === "rejected") {
+    console.log("Error: " + serversResult.reason?.message);
+  }
+
+  if (databasesResult.status === "fulfilled" && databasesResult.value?.length) {
+    databasesResult.value.forEach((database) => {
+      links.push({
+        url: `database/${database.vendor_id}/${database.api_reference}`,
+        changefreq: "daily",
+        priority: 0.9,
+      });
+    });
+  } else if (databasesResult.status === "rejected") {
+    console.log("Error: " + databasesResult.reason?.message);
+  }
+
+  writeSitemap();
+});
