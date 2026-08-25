@@ -46,6 +46,7 @@ import { StoragePipe } from "../../pipes/storage.pipe";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
@@ -122,6 +123,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
+  private serverCompare = inject(ServerCompareService);
 
   isCollapsed = false;
 
@@ -163,7 +165,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
-    { name: "Database listing", url: "/databases" },
+    { name: "Databases", url: "/databases" },
   ];
 
   tableColumns: TableColumn[] = [];
@@ -190,7 +192,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   orderBy: string | undefined = undefined;
   orderDir: OrderDir | undefined = undefined;
 
-  databases: DatabasePKs[] = [];
+  databases: (DatabasePKs & { selected?: boolean })[] = [];
 
   searchParameters: SearchBarParameter[] = [];
   query: DatabaseListingQuery = {};
@@ -329,6 +331,19 @@ export class DatabaseListing implements OnInit, OnDestroy {
         this._searchDatabases(true);
       }),
     );
+
+    this.subscription.add(
+      this.serverCompare.databaseSelectionChanged.subscribe((selection) => {
+        this.databases?.forEach((database) => {
+          database.selected =
+            selection.findIndex(
+              (item) =>
+                item.vendor === database.vendor_id &&
+                item.database === database.api_reference,
+            ) !== -1;
+        });
+      }),
+    );
   }
 
   ngOnDestroy() {
@@ -459,7 +474,15 @@ export class DatabaseListing implements OnInit, OnDestroy {
     this.keeperAPI
       .searchDatabases(query)
       .then((databases) => {
-        this.databases = databases?.body || [];
+        this.databases = (databases?.body || []).map((database) => ({
+          ...database,
+          selected:
+            this.serverCompare.selectedDatabases.findIndex(
+              (item) =>
+                item.vendor === database.vendor_id &&
+                item.database === database.api_reference,
+            ) !== -1,
+        }));
         this.displayedCurrency = this.selectedCurrency;
 
         if (updateTotalCount) {
@@ -663,6 +686,38 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   hideTooltip() {
     this.uiTooltip.hide(this.tooltip.nativeElement);
+  }
+
+  toggleCompare2(event: Event, database: DatabasePKs & { selected?: boolean }) {
+    event.stopPropagation();
+    database.selected = !database.selected;
+    this.toggleCompare(!!database.selected, database);
+  }
+
+  toggleCompare(
+    event: boolean,
+    database: DatabasePKs & { selected?: boolean },
+  ) {
+    this.serverCompare.toggleDatabaseCompare(event, {
+      database: database.api_reference,
+      vendor: database.vendor_id,
+      display_name: database.display_name,
+    });
+  }
+
+  compareCount() {
+    return this.serverCompare.databaseCompareCount();
+  }
+
+  clearCompare() {
+    this.serverCompare.clearDatabaseCompare();
+    this.databases?.forEach((database) => {
+      database.selected = false;
+    });
+  }
+
+  openCompare() {
+    this.serverCompare.openDatabaseCompare();
   }
 
   private applyDatabaseBenchmarkMeta(benchmarkMeta: Benchmark[]) {

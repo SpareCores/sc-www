@@ -46,6 +46,7 @@ import {
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
@@ -105,6 +106,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
+  private serverCompare = inject(ServerCompareService);
 
   isLoading = true;
   databaseDetails: LoadedDatabase | null = null;
@@ -593,6 +595,31 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
   get hasPgbenchHeaderScores() {
     return this.pgbenchPeakScore !== null && this.pgbenchSingleScore !== null;
+  }
+
+  addToCompare() {
+    if (!this.databaseDetails) {
+      return;
+    }
+
+    this.serverCompare.toggleDatabaseCompare(
+      !this.serverCompare.isDatabaseSelected(this.databaseDetails),
+      {
+        database: this.databaseDetails.api_reference,
+        vendor: this.databaseDetails.vendor_id,
+        display_name: this.databaseDetails.display_name,
+      },
+    );
+  }
+
+  compareText() {
+    if (!this.databaseDetails) {
+      return "Compare";
+    }
+
+    return this.serverCompare.isDatabaseSelected(this.databaseDetails)
+      ? "Don't Compare"
+      : "Compare";
   }
 
   private applyPgbenchBenchmarks(

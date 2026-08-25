@@ -34,6 +34,14 @@
             by {{ databaseDetails.vendor?.name || databaseDetails.vendor_id }}
           </h1>
           <div>{{ description }}<span>{{ cardPriceDescription }}</span></div>
+          <div class="flex gap-4 flex-wrap mt-2">
+            <sc-button
+              [label]="compareText()"
+              icon="scale"
+              data-ph-capture-attribute-sc-event="database details compare"
+              (click)="addToCompare()"
+            ></sc-button>
+          </div>
         </div>
       </div>
       <div class="w-full lg:w-2/5 flex">

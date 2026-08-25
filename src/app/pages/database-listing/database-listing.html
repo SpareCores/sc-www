@@ -116,6 +116,7 @@
             <table class="items_table" id="databases_table">
               <thead>
                 <tr>
+                  <th class="checkbox_column"></th>
                   @for (column of tableColumns; track column.name) {
                   <th
                     [ngClass]="{
@@ -160,6 +161,21 @@
                     "
                   class="database_table_data_line"
                 >
+                  <td
+                    (click)="toggleCompare2($event, item)"
+                    class="checkbox_column"
+                  >
+                    <div class="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="database_compare_checkbox_{{ item.database_id }}"
+                        [(ngModel)]="item.selected"
+                        (ngModelChange)="toggleCompare($event, item)"
+                        (click)="$event.stopPropagation()"
+                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                      />
+                    </div>
+                  </td>
                   @for (column of tableColumns; track column.name) { @if
                   (column.type === "name") {
                   <td>
@@ -319,7 +335,7 @@
                 } @if (!databases.length && !isLoading) {
                 <tr>
                   <td
-                    [attr.colspan]="tableColumns.length + 1"
+                    [attr.colspan]="tableColumns.length + 2"
                     class="px-5 py-6 text-center text-gray-400 text-sm"
                   >
                     No databases match the selected filters.
@@ -361,6 +377,30 @@
     </div>
   </div>
 </div>
+
+@if (compareCount() >= 2) {
+<div class="fixed_buttons" [class.fixed_buttons--collapsed]="isCollapsed">
+  <div class="flex gap-4">
+    <sc-button
+      label="Clear"
+      icon="circle-x"
+      iconPosition="start"
+      color="danger"
+      data-ph-capture-attribute-sc-event="database listing compare"
+      data-ph-capture-attribute-database-listing-compare-action="clear"
+      (click)="clearCompare()"
+    ></sc-button>
+    <sc-button
+      [label]="'Compare (' + compareCount() + ')'"
+      icon="scale"
+      iconPosition="start"
+      data-ph-capture-attribute-sc-event="database listing compare"
+      data-ph-capture-attribute-database-listing-compare-action="open"
+      (click)="openCompare()"
+    ></sc-button>
+  </div>
+</div>
+}
 
 <div
   id="pagesize_options"
