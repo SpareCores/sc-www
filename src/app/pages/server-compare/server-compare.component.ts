@@ -58,6 +58,13 @@ import {
   type CompareMemoryChartOption,
 } from "../../components/charts/shared/memory-chart.types";
 import {
+  getCompareColumnWidthStyle,
+  getCompareFixedHolderStyle,
+  getCompareMainTableWidthStyle,
+  getCompareStickyFirstColStyle,
+} from "./compare-table-layout.utils";
+import { pushBrowserQueryState } from "./compare-url-state.utils";
+import {
   type MemoryBenchmarkConfig,
   type MemoryBenchmarkMeta,
 } from "../../components/charts/memory/memory-chart.types";
@@ -71,6 +78,13 @@ const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_COMPARE_URL_TOAST_BODY =
   'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
+const SERVER_COMPARE_GUIDE_TITLE = "Server Compare Guide";
+const SERVER_COMPARISON_TITLE = "Server Comparison";
+const SERVER_COMPARE_BREADCRUMB = "Compare";
+const SERVER_COMPARE_PARENT_BREADCRUMB = "Servers";
+const SERVER_CUSTOM_COMPARISON_BREADCRUMB = "Custom Comparison";
+const SERVER_COMPARE_GUIDE_DESCRIPTION =
+  "Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.";
 
 type CompareTableBenchmarkConfig = {
   config: MemoryBenchmarkConfig;
@@ -127,7 +141,8 @@ export class ServerCompareComponent
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
-    { name: "Compare Servers", url: "/compare" },
+    { name: SERVER_COMPARE_PARENT_BREADCRUMB, url: "/servers" },
+    { name: SERVER_COMPARE_BREADCRUMB, url: "/servers/compare" },
   ];
 
   isLoading = false;
@@ -327,9 +342,8 @@ export class ServerCompareComponent
     );
   };
 
-  title = "Server Compare Guide";
-  description =
-    "Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.";
+  title = SERVER_COMPARE_GUIDE_TITLE;
+  description = SERVER_COMPARE_GUIDE_DESCRIPTION;
   keywords =
     "compare, servers, server, hosting, cloud, vps, dedicated, comparison";
 
@@ -360,20 +374,6 @@ export class ServerCompareComponent
   private checkExistInterval: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get("id");
-
-    if (id) {
-      const specialCompare = this.specialCompares.find((x: any) => x.id === id);
-      if (specialCompare) {
-        this.title = specialCompare.title;
-        this.description = specialCompare.description;
-        this.breadcrumbs.push({
-          name: specialCompare.title,
-          url: `/compare/${specialCompare.id}`,
-        });
-      }
-    }
-
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
       this.description,
@@ -446,18 +446,17 @@ export class ServerCompareComponent
         this.instances = specialCompare.instances;
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-        let breadcrumb = {
-          name: specialCompare.title,
-          url: `/compare/${specialCompare.id}`,
-        };
-        if (this.breadcrumbs.length < 3) {
-          this.breadcrumbs.push(breadcrumb);
-        } else {
-          this.breadcrumbs[2] = breadcrumb;
-        }
-      } else if (this.breadcrumbs.length > 2) {
+        this.applyComparisonChrome(
+          specialCompare.title,
+          specialCompare.description,
+        );
+        this.setPremadeCompareBreadcrumb(
+          specialCompare.title,
+          specialCompare.id,
+        );
+      } else {
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-        this.breadcrumbs.pop();
+        this.applyGuideChrome();
       }
     } else if (param) {
       const decodedInstances = decodeBase64JsonUrlState(
@@ -467,9 +466,7 @@ export class ServerCompareComponent
 
       if (!decodedInstances.value) {
         console.warn("Invalid instances data in URL:", decodedInstances.error);
-        if (this.breadcrumbs.length > 2) {
-          this.breadcrumbs.pop();
-        }
+        this.applyGuideChrome();
         if (isPlatformBrowser(this.platformId)) {
           this.toastService.show({
             title: INVALID_URL_TOAST_TITLE,
@@ -487,24 +484,14 @@ export class ServerCompareComponent
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
 
       if (this.instances?.length) {
-        let breadcrumb = {
-          name: `Compare (${this.instances?.length})`,
-          url: `/compare`,
-          queryParams: { instances: param },
-        };
-        if (this.breadcrumbs.length < 3) {
-          this.breadcrumbs.push(breadcrumb);
-        } else {
-          this.breadcrumbs[2] = breadcrumb;
-        }
-      } else if (this.breadcrumbs.length > 2) {
-        this.breadcrumbs.pop();
+        this.applyComparisonChrome();
+        this.updateCompareBreadcrumb(this.instances.length);
+      } else {
+        this.applyGuideChrome();
       }
     } else {
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-      if (this.breadcrumbs.length > 2) {
-        this.breadcrumbs.pop();
-      }
+      this.applyGuideChrome();
     }
 
     if (this.instances?.length > 0) {
@@ -1207,28 +1194,59 @@ export class ServerCompareComponent
     });
   }
 
+  private applyGuideChrome(): void {
+    this.title = SERVER_COMPARE_GUIDE_TITLE;
+    this.description = SERVER_COMPARE_GUIDE_DESCRIPTION;
+    this.breadcrumbs = this.baseCompareBreadcrumbs();
+    this.seoHandler.updateTitleAndMetaTags(
+      this.title,
+      this.description,
+      this.keywords,
+    );
+  }
+
+  private applyComparisonChrome(title?: string, description?: string): void {
+    this.title = title || SERVER_COMPARISON_TITLE;
+    this.description = description || SERVER_COMPARE_GUIDE_DESCRIPTION;
+    this.breadcrumbs = this.baseCompareBreadcrumbs();
+    this.seoHandler.updateTitleAndMetaTags(
+      this.title,
+      this.description,
+      this.keywords,
+    );
+  }
+
+  private baseCompareBreadcrumbs(): BreadcrumbSegment[] {
+    return [
+      { name: "Home", url: "/" },
+      { name: SERVER_COMPARE_PARENT_BREADCRUMB, url: "/servers" },
+      { name: SERVER_COMPARE_BREADCRUMB, url: "/servers/compare" },
+    ];
+  }
+
+  private setPremadeCompareBreadcrumb(title: string, id: string): void {
+    this.breadcrumbs = [
+      ...this.baseCompareBreadcrumbs(),
+      { name: title, url: `/servers/compare/${id}` },
+    ];
+  }
+
   private updateCompareBreadcrumb(serverCount: number): void {
     if (serverCount > 0) {
-      const breadcrumb = {
-        name: `Compare (${serverCount})`,
-        url: `/compare`,
-        queryParams: this.instancesRaw
-          ? { instances: this.instancesRaw }
-          : undefined,
-      };
-
-      if (this.breadcrumbs.length < 3) {
-        this.breadcrumbs.push(breadcrumb);
-      } else {
-        this.breadcrumbs[2] = breadcrumb;
-      }
-
+      this.breadcrumbs = [
+        ...this.baseCompareBreadcrumbs(),
+        {
+          name: `${SERVER_CUSTOM_COMPARISON_BREADCRUMB} (${serverCount})`,
+          url: `/servers/compare`,
+          queryParams: this.instancesRaw
+            ? { instances: this.instancesRaw }
+            : undefined,
+        },
+      ];
       return;
     }
 
-    if (this.breadcrumbs.length > 2) {
-      this.breadcrumbs.pop();
-    }
+    this.breadcrumbs = this.baseCompareBreadcrumbs();
   }
 
   private syncCompareUrlState(): void {
@@ -1243,44 +1261,28 @@ export class ServerCompareComponent
     }
 
     this.lastEncodedCompareQuery = encodedQuery;
-    const path = window.location.pathname;
-    const hash = window.location.hash;
-
-    if (encodedQuery?.length) {
-      window.history.pushState({}, "", `${path}?${encodedQuery}${hash}`);
-    } else {
-      window.history.pushState({}, "", `${path}${hash}`);
-    }
+    pushBrowserQueryState(encodedQuery);
   }
 
   getStyle(index: number) {
-    // lookup the width of the corresponding column in the main table
-    const mainTable = this.document.getElementById("main-table");
-    if (mainTable) {
-      const headerCells = mainTable.querySelectorAll("thead th");
-      // 1st cell (index 0) is the label column, so add 1 to get the correct col
-      if (headerCells && headerCells[index + 1]) {
-        const width = headerCells[index + 1].getBoundingClientRect().width;
-        return `width: ${width}px; min-width: ${width}px; max-width: ${width}px;`;
-      }
-    }
-    // fallback to approximate calculation
-    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`;
+    return getCompareColumnWidthStyle(
+      this.document,
+      "main-table",
+      index,
+      this.servers.length,
+    );
   }
 
   getMainTableWidth() {
-    const thead = this.document.querySelector("#main-table thead");
-    const rect = this.document
-      .getElementById("main-table")
-      ?.getBoundingClientRect();
-    const rect2 = this.tableHolder?.nativeElement.getBoundingClientRect();
-    const posLeft = rect && rect2 ? rect.x - rect2.x : 0;
-    return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
+    return getCompareMainTableWidthStyle(
+      this.document,
+      "main-table",
+      this.tableHolder?.nativeElement,
+    );
   }
 
   getFixedDivStyle() {
-    const div = this.document.getElementById("table_holder");
-    return `width: ${div?.clientWidth}px; overflow: hidden;`;
+    return getCompareFixedHolderStyle(this.document, "table_holder");
   }
 
   onMirrorScroll(event: Event) {
@@ -1292,15 +1294,10 @@ export class ServerCompareComponent
   }
 
   getStickyHeaderFirstColStyle() {
-    const firstColumn = this.document.getElementById(
+    return getCompareStickyFirstColStyle(
+      this.document,
       "server-compare-table-first-col",
     );
-
-    if (firstColumn) {
-      const width = Math.ceil(firstColumn.getBoundingClientRect().width);
-      return { width: `${width}px` };
-    }
-    return {};
   }
 
   openModal() {

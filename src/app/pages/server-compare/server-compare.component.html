@@ -78,7 +78,7 @@
                   <span>{{ compare.title }}</span>
                   <a
                     class="header-anchor"
-                    [href]="'/compare#' + compare.id"
+                    [href]="'/servers/compare#' + compare.id"
                     [attr.aria-label]="'Link to ' + compare.title"
                     [attr.title]="'Link to ' + compare.title"
                   >
@@ -89,7 +89,7 @@
               @if (compare.type === "card") {
                 <h3>
                   <a
-                    routerLink="/compare/{{ compare.id }}"
+                    routerLink="/servers/compare/{{ compare.id }}"
                     class="text-emerald-400 text-xl font-semibold"
                   >
                     {{ compare.title }}

@@ -11,6 +11,12 @@ export interface ScrollbarMirrorState {
   innerWidth: number;
 }
 
+export interface ScrollbarMirrorOptions {
+  tableId?: string;
+  firstColId?: string;
+  bottomAnchorRowId?: string;
+}
+
 export const INITIAL_SCROLLBAR_MIRROR_STATE: ScrollbarMirrorState = {
   bottomPosition: null,
   innerWidth: 0,
@@ -26,12 +32,20 @@ export class ScrollbarMirrorController {
   private syncingFrom: "table" | "mirror" | null = null;
   private captureHandler: (e: Event) => void;
   private syncResetFrameId: number | null = null;
+  private readonly tableId: string;
+  private readonly firstColId: string;
+  private readonly bottomAnchorId: string;
 
   constructor(
     private tableHolderGetter: () => ElementRef | undefined,
     private bottomMirrorSignal: Signal<ElementRef | undefined>,
     private stateSignal: WritableSignal<ScrollbarMirrorState>,
+    options: ScrollbarMirrorOptions = {},
   ) {
+    this.tableId = options.tableId ?? "main-table";
+    this.firstColId = options.firstColId ?? "server-compare-table-first-col";
+    this.bottomAnchorId =
+      options.bottomAnchorRowId ?? ScrollbarMirrorController.bottomAnchorRowId;
     this.captureHandler = (e: Event) => {
       const el = this.tableHolderGetter()?.nativeElement;
       if (el && e.target === el) {
@@ -54,7 +68,7 @@ export class ScrollbarMirrorController {
       | HTMLElement
       | undefined;
     const mainTable = document.getElementById(
-      "main-table",
+      this.tableId,
     ) as HTMLElement | null;
     if (!tableHolder || !mainTable) {
       this.stateSignal.set({ ...INITIAL_SCROLLBAR_MIRROR_STATE });
@@ -62,7 +76,7 @@ export class ScrollbarMirrorController {
     }
 
     const tableHolderRect = tableHolder.getBoundingClientRect();
-    const firstCol = document.getElementById("server-compare-table-first-col");
+    const firstCol = document.getElementById(this.firstColId);
     const firstColWidth = firstCol ? firstCol.getBoundingClientRect().width : 0;
     const mirrorLeft = tableHolderRect.left + firstColWidth;
     const mirrorWidth = Math.max(
@@ -176,9 +190,8 @@ export class ScrollbarMirrorController {
 
   private getBottomAnchorRow(mainTable: HTMLElement): HTMLElement | null {
     return (
-      mainTable.querySelector<HTMLElement>(
-        `#${ScrollbarMirrorController.bottomAnchorRowId}`,
-      ) ?? mainTable.querySelector<HTMLElement>("tbody tr:last-of-type")
+      mainTable.querySelector<HTMLElement>(`#${this.bottomAnchorId}`) ??
+      mainTable.querySelector<HTMLElement>("tbody tr:last-of-type")
     );
   }
 

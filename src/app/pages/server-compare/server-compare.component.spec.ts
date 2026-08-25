@@ -335,7 +335,7 @@ describe("ServerCompareComponent", () => {
     window.history.replaceState(
       null,
       "",
-      "/compare?instances=encoded-instances#benchmark_line_cpu",
+      "/servers/compare?instances=encoded-instances#benchmark_line_cpu",
     );
     component["lastEncodedCompareQuery"] = "";
     const pushState = spyOn(window.history, "pushState");
