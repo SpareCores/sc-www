@@ -13,7 +13,7 @@
       variant="dropdown"
     ></sc-button>
   </div>
-  @if (isBrowser) {
+  @if (chartData() && isBrowser) {
     <div class="h-full">
       <div class="chart_div" chartType="bar">
         <canvas

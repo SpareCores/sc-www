@@ -47,7 +47,7 @@
         ></sc-button>
       }
     </div>
-    @if (isBrowser) {
+    @if (resolvedChartData() && isBrowser) {
       <div class="h-full">
         <div class="chart_div" [attr.chartType]="chartType()">
           @if (chartType() === "line") {
@@ -89,7 +89,7 @@
         ></sc-button>
       </div>
     }
-    @if (isBrowser) {
+    @if (resolvedChartData() && isBrowser) {
       <div class="h-full">
         <div class="chart_div" [attr.chartType]="chartType()">
           @if (chartType() === "line") {

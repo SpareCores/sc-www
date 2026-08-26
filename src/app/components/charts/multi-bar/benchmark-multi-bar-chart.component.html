@@ -39,7 +39,7 @@
         [title]="currentOption().name || null"
       ></sc-button>
     </div>
-    @if (isBrowserEnvironment()) {
+    @if (chartData() && isBrowserEnvironment()) {
       <div class="h-full">
         <div class="chart_div" chartType="bar">
           <canvas
@@ -86,7 +86,7 @@
         [title]="currentOption().name || null"
       ></sc-button>
     </div>
-    @if (isBrowserEnvironment()) {
+    @if (chartData() && isBrowserEnvironment()) {
       <div class="min-h-0 flex-1">
         <div class="chart_div" chartType="bar">
           <canvas
