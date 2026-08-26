@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { LandingpageComponent } from "./pages/landingpage/landingpage.component";
 import { ServerListingComponent } from "./pages/server-listing/server-listing.component";
 import { ServerPricesComponent } from "./pages/server-prices/server-prices.component";
+import { redirectServerComparison } from "./routing/redirects";
 
 export const routes: Routes = [
   { path: "", component: LandingpageComponent },
@@ -57,10 +58,14 @@ export const routes: Routes = [
         (m) => m.AdvisorComponent,
       ),
   },
-  { path: "compare", redirectTo: "/servers/compare", pathMatch: "full" },
+  {
+    path: "compare",
+    pathMatch: "full",
+    redirectTo: redirectServerComparison,
+  },
   {
     path: "compare/:id",
-    redirectTo: ({ params }) => `/servers/compare/${params["id"]}`,
+    redirectTo: redirectServerComparison,
   },
   { path: "server_prices", component: ServerPricesComponent },
   {
