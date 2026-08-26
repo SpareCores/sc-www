@@ -551,7 +551,13 @@
                     [title]="database.display_name"
                     size="small"
                     buttonClass="min-w-0 overflow-hidden"
-                    (click)="viewDatabaseDetails(database)"
+                    [href]="
+                      '/database/' +
+                      database.vendor_id +
+                      '/' +
+                      database.api_reference
+                    "
+                    target="_blank"
                   ></sc-button>
                 </td>
               }
@@ -570,7 +576,13 @@
                       [title]="server.display_name"
                       size="small"
                       buttonClass="min-w-0 overflow-hidden"
-                      (click)="viewUnderlyingServer(database)"
+                      [href]="
+                        '/server/' +
+                        database.vendor_id +
+                        '/' +
+                        server.api_reference
+                      "
+                      target="_blank"
                     ></sc-button>
                   }
                 </td>

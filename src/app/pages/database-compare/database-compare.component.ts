@@ -354,24 +354,6 @@ export class DatabaseCompareComponent
     return isCompareBaselineServer(database, this.baselineDatabase);
   }
 
-  viewDatabaseDetails(database: LoadedCompareDatabase): void {
-    window.open(
-      `/database/${database.vendor_id}/${database.api_reference}`,
-      "_blank",
-    );
-  }
-
-  viewUnderlyingServer(database: LoadedCompareDatabase): void {
-    const server = database.underlyingServer;
-    if (!server) {
-      return;
-    }
-    window.open(
-      `/server/${database.vendor_id}/${server.api_reference}`,
-      "_blank",
-    );
-  }
-
   showChartTooltip(el: MouseEvent, content?: string): void {
     this.chartTooltip.showIfPresent({
       tooltipElement: this.chartSectionTooltip()?.nativeElement,
