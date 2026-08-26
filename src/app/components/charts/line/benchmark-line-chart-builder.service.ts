@@ -224,7 +224,7 @@ export class BenchmarkLineChartBuilderService {
     const concurrencySet = new Set<number>();
     const pointsByServer = servers.map((server) => {
       const points: Array<{ concurrency: number; score: number }> = [];
-      for (const score of server.benchmark_scores) {
+      for (const score of server.benchmark_scores ?? []) {
         if (score.benchmark_id !== PGBENCH_HEAVY_READ_ONLY_ID) {
           continue;
         }
@@ -303,8 +303,9 @@ export class BenchmarkLineChartBuilderService {
     const data: StressNgChartData = {
       labels: scales,
       datasets: servers.map((server, index) => {
+        const scores = server.benchmark_scores ?? [];
         const score1 =
-          server.benchmark_scores.find(
+          scores.find(
             (score) =>
               score.benchmark_id === "stress_ng:div16" &&
               score.config.cores === 1,
@@ -313,7 +314,7 @@ export class BenchmarkLineChartBuilderService {
         return withServerTooltipIdentity(
           {
             data: scales.map((size) => {
-              const item = server.benchmark_scores.find(
+              const item = scores.find(
                 (score) =>
                   score.benchmark_id === "stress_ng:div16" &&
                   score.config.cores === size,
@@ -421,7 +422,7 @@ export class BenchmarkLineChartBuilderService {
         withServerTooltipIdentity(
           {
             data: scales.map((size) => {
-              const item = server.benchmark_scores.find(
+              const item = (server.benchmark_scores ?? []).find(
                 (score) =>
                   score.benchmark_id === "openssl" &&
                   score.config.algo === selectedAlgo.value &&
@@ -715,19 +716,22 @@ export class BenchmarkLineChartBuilderService {
     options: MutableLineChartOptions,
     unit?: string,
   ): void {
-    if (unit) {
-      options.scales = {
-        ...options.scales,
-        y: {
-          ...options.scales?.y,
-          title: {
-            ...options.scales?.y?.title,
-            display: true,
-            text: unit,
-          },
+    options.scales = {
+      ...options.scales,
+      y: {
+        ...options.scales?.y,
+        ticks: {
+          ...options.scales?.y?.ticks,
+          color: "#FFF",
         },
-      };
-    }
+        title: {
+          ...options.scales?.y?.title,
+          display: true,
+          color: "#FFF",
+          ...(unit ? { text: unit } : {}),
+        },
+      },
+    };
 
     options.plugins = {
       ...options.plugins,

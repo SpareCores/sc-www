@@ -239,7 +239,7 @@ export class CompressionChartBuilderService {
 
     const allMatchedItems: { config: CompressionConfig; score: number }[] = [];
     params.servers.forEach((server) => {
-      server.benchmark_scores
+      (server.benchmark_scores ?? [])
         .filter(
           (b) =>
             b.benchmark_id === "compression_text:ratio" &&
@@ -249,6 +249,10 @@ export class CompressionChartBuilderService {
           allMatchedItems.push({ config: b.config, score: b.score }),
         );
     });
+
+    if (!allMatchedItems.length) {
+      return undefined;
+    }
 
     const hasCompressionLevel = allMatchedItems.some(
       (item) => item.config.compression_level != null,
@@ -293,9 +297,10 @@ export class CompressionChartBuilderService {
     };
 
     params.servers.forEach((server, i) => {
+      const scores = server.benchmark_scores ?? [];
       if (hasCompressionLevel) {
         (labels as number[]).forEach((level) => {
-          const item = server.benchmark_scores.find(
+          const item = scores.find(
             (b) =>
               b.benchmark_id === "compression_text:ratio" &&
               this.matchesConfig(selectedConfig, b.config) &&
@@ -311,7 +316,7 @@ export class CompressionChartBuilderService {
           }
         });
       } else {
-        const item = server.benchmark_scores.find(
+        const item = scores.find(
           (b) =>
             b.benchmark_id === "compression_text:ratio" &&
             this.matchesConfig(selectedConfig, b.config),
