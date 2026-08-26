@@ -199,7 +199,7 @@
   </div>
 }
 
-@if (isChartShown("stress_ng_div16")) {
+@if (isChartShown("stress_ng_div16") && hasStressNgChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="stress_ng"
     chartSource="details-stress-raw"
@@ -216,7 +216,7 @@
   ></sc-benchmark-line-chart>
 }
 
-@if (isChartShown("stress_ng_relative")) {
+@if (isChartShown("stress_ng_relative") && hasStressNgChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="stress_ng"
     chartSource="details-stress-percent"

@@ -69,6 +69,13 @@ import {
     BenchmarkIconPipe,
   ],
   templateUrl: "./benchmark-line-chart.component.html",
+  styles: [
+    `
+      :host {
+        display: contents;
+      }
+    `,
+  ],
 })
 export class BenchmarkLineChartComponent {
   private static nextId = 0;

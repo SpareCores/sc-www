@@ -134,6 +134,24 @@ export class ServerChartsComponent implements OnChanges {
     );
   }
 
+  hasStressNgChart(): boolean {
+    const dataSet = (this.benchmarksByCategory ?? []).find(
+      (group) => group.benchmark_id === "stress_ng:div16",
+    );
+    if (!dataSet?.benchmarks?.length) {
+      return false;
+    }
+
+    const scales: number[] = [];
+    for (const item of dataSet.benchmarks) {
+      const cores = item.config?.cores;
+      if (typeof cores === "number" && !scales.includes(cores)) {
+        scales.push(cores);
+      }
+    }
+    return scales.length > 1;
+  }
+
   getBenchmarkCategory(category: string) {
     return (
       this.benchmarksByCategory?.find((x) => x.benchmark_id === category)

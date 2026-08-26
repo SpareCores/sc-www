@@ -147,6 +147,26 @@ describe("ServerChartsComponent", () => {
     ).toBeNull();
   });
 
+  it("hides stress-ng charts when no usable scores exist", () => {
+    fixture.componentRef.setInput("showChart", "stress_ng_div16");
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        "#stress_ng_div16_chart",
+      ),
+    ).toBeNull();
+
+    fixture.componentRef.setInput("showChart", "stress_ng_relative");
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        "#stress_ng_relative_chart",
+      ),
+    ).toBeNull();
+  });
+
   it("hides multi-bar charts when no scores exist", () => {
     fixture.componentRef.setInput("showChart", "static_web");
     fixture.detectChanges();

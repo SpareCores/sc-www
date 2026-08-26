@@ -58,6 +58,13 @@ import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown
     BenchmarkIconPipe,
   ],
   templateUrl: "./compression-chart.component.html",
+  styles: [
+    `
+      :host {
+        display: contents;
+      }
+    `,
+  ],
 })
 export class CompressionChartComponent {
   private static nextId = 0;

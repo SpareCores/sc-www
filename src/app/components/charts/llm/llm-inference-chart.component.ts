@@ -57,6 +57,13 @@ import {
     BenchmarkIconPipe,
   ],
   templateUrl: "./llm-inference-chart.component.html",
+  styles: [
+    `
+      :host {
+        display: contents;
+      }
+    `,
+  ],
 })
 export class LlmInferenceChartComponent {
   private static nextId = 0;
