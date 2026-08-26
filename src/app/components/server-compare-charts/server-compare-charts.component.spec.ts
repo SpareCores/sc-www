@@ -93,6 +93,7 @@ describe("ServerCompareChartsComponent", () => {
         hidden: false,
       },
     ];
+    spyOn(component, "hasCompareChart").and.returnValue(true);
 
     fixture.detectChanges();
 
@@ -169,6 +170,7 @@ describe("ServerCompareChartsComponent", () => {
         hidden: false,
       },
     ];
+    spyOn(component, "hasCompareChart").and.returnValue(true);
 
     fixture.detectChanges();
 
@@ -211,6 +213,7 @@ describe("ServerCompareChartsComponent", () => {
         display_name: "Server C",
       },
     ] as unknown as typeof component.servers;
+    spyOn(component, "hasMultiBarCompareChart").and.returnValue(true);
 
     fixture.detectChanges();
 
@@ -265,6 +268,7 @@ describe("ServerCompareChartsComponent", () => {
         hidden: false,
       },
     ];
+    spyOn(component, "hasCompareChart").and.returnValue(true);
 
     fixture.detectChanges();
 
@@ -313,6 +317,7 @@ describe("ServerCompareChartsComponent", () => {
         hidden: false,
       },
     ];
+    spyOn(component, "hasCompareChart").and.returnValue(true);
 
     fixture.detectChanges();
 
@@ -342,6 +347,7 @@ describe("ServerCompareChartsComponent", () => {
 
     component.showChart = "static_web";
     component.servers = buildServers(9) as unknown as typeof component.servers;
+    spyOn(component, "hasMultiBarCompareChart").and.returnValue(true);
 
     fixture.detectChanges();
 

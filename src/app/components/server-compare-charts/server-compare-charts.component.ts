@@ -29,6 +29,7 @@ import { AdvisorUiService } from "../../pages/advisor/advisor-ui.service";
 import { Button } from "../button/button";
 import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
+import { CompressionChartBuilderService } from "../charts/compression/compression-chart-builder.service";
 import {
   CompressionBenchmarkMeta,
   CompressionServer,
@@ -36,12 +37,14 @@ import {
 import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
 import { GeekbenchRadarChartBuilderService } from "../charts/geekbench/geekbench-radar-chart-builder.service";
 import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
+import { LlmInferenceChartBuilderService } from "../charts/llm/llm-inference-chart-builder.service";
 import {
   GeekbenchBenchmarkMeta,
   GeekbenchCompareServer,
 } from "../charts/geekbench/geekbench-radar-chart.types";
 import { LlmChartServer } from "../charts/llm/llm-inference-chart.types";
 import { ServerCompareMemoryChartComponent } from "../charts/memory/server-compare-memory-chart.component";
+import { MemoryChartBuilderService } from "../charts/memory/memory-chart-builder.service";
 import {
   MemoryBenchmarkMeta,
   MemoryChartServer,
@@ -49,6 +52,7 @@ import {
 import {
   LineBenchmarkMeta,
   LineChartServer,
+  PGBENCH_HEAVY_READ_ONLY_ID,
 } from "../charts/line/benchmark-line-chart.types";
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
@@ -123,6 +127,9 @@ export class ServerCompareChartsComponent implements OnChanges {
   private tooltipService = inject(ChartTooltipService);
   private geekbenchBuilder = inject(GeekbenchRadarChartBuilderService);
   private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
+  private memoryBuilder = inject(MemoryChartBuilderService);
+  private compressionBuilder = inject(CompressionChartBuilderService);
+  private llmBuilder = inject(LlmInferenceChartBuilderService);
   private advisorUi = inject(AdvisorUiService);
   private legendVisibility = inject(CompareChartLegendVisibilityService);
 
@@ -169,6 +176,9 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   ngOnChanges() {
     this.setup();
+    if (isPlatformBrowser(this.platformId)) {
+      requestAnimationFrame(() => this.layoutChanged.emit());
+    }
   }
 
   setup() {
@@ -702,11 +712,6 @@ export class ServerCompareChartsComponent implements OnChanges {
     );
   }
 
-  setBenchmarkCategoryHidden(category: { hidden?: boolean }, hidden: boolean) {
-    category.hidden = hidden;
-    this.layoutChanged.emit();
-  }
-
   syncMultiBarHeaderOption(
     chartItem: BenchmarkMultiBarChartItem,
     optionIndex: number,
@@ -731,6 +736,125 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   hasMultipleChartData(chartItem: BenchmarkMultiBarChartItem): boolean {
     return (chartItem.data?.length ?? 0) > 1;
+  }
+
+  isPassmarkBenchmarkCategory(categoryId: string): boolean {
+    return categoryId === "passmark_cpu" || categoryId === "passmark_other";
+  }
+
+  hasCompareChart(categoryId: string): boolean {
+    switch (categoryId) {
+      case "bw_mem":
+        return (
+          this.memoryBuilder.getAvailableCompareOptions(
+            this.memoryCompareServers,
+          ).length > 0
+        );
+      case "openssl":
+        return !!this.lineBenchmarkMeta?.find(
+          (benchmark) => benchmark.benchmark_id === "openssl",
+        )?.configs?.length;
+      case "stress_ng":
+      case "stress_ng_pct": {
+        const dataSet = this.lineBenchmarkMeta?.find(
+          (benchmark) => benchmark.benchmark_id === "stress_ng:div16",
+        );
+        if (!dataSet?.configs?.length) {
+          return false;
+        }
+        const cores = new Set<number>();
+        for (const config of dataSet.configs) {
+          const value = config.config?.cores;
+          if (typeof value === "number") {
+            cores.add(value);
+          }
+        }
+        return cores.size > 1;
+      }
+      case "compress": {
+        const option = this.compressionBuilder.getCompareOptions(
+          this.compressionBenchmarkMeta,
+        )[0];
+        if (!option) {
+          return false;
+        }
+        return !!this.compressionBuilder.buildCompareCharts({
+          servers: this.compressionServers,
+          selectedOption: option,
+          compressOptionsBase: {},
+          decompressOptionsBase: {},
+        });
+      }
+      case "geekbench":
+      case "geekbench_single":
+      case "geekbench_multi":
+        return !!this.geekbenchBuilder.buildCompareCharts({
+          servers: this.geekbenchCompareServers,
+          benchmarkMeta: this.geekbenchBenchmarkMeta ?? [],
+        });
+      case "llm_inference": {
+        const models = new Set(
+          this.llmBuilder
+            .getAvailableModels(this.benchmarkMeta)
+            .map((model) => model.value),
+        );
+        if (!models.size) {
+          return false;
+        }
+        return this.llmCompareServers.some((server) =>
+          (server.benchmark_scores ?? []).some(
+            (score) =>
+              models.has(String(score.config?.model)) &&
+              (score.benchmark_id === "llm_speed:prompt_processing" ||
+                score.benchmark_id === "llm_speed:text_generation") &&
+              typeof score.config?.tokens === "number" &&
+              score.score != null,
+          ),
+        );
+      }
+      default:
+        return false;
+    }
+  }
+
+  hasMultiBarCompareChart(chartItem: BenchmarkMultiBarChartItem): boolean {
+    return !!this.multiBarBuilder.buildCompareChart(
+      chartItem.chart,
+      this.benchmarkMeta as MultiBarBenchmarkMeta[],
+      this.multiBarCompareServers,
+    );
+  }
+
+  hasPgbenchCompareChart(): boolean {
+    if (!this.isChartShown("pgbench")) {
+      return false;
+    }
+    return this.lineCompareServers.some((server) =>
+      (server.benchmark_scores ?? []).some(
+        (score) =>
+          score.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID &&
+          score.score != null,
+      ),
+    );
+  }
+
+  private get pgbenchMeta() {
+    return this.benchmarkMeta?.find(
+      (benchmark: { benchmark_id?: string }) =>
+        benchmark.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID,
+    );
+  }
+
+  get pgbenchTitle(): string {
+    return this.pgbenchMeta?.name || "PostgreSQL heavy read-only throughput";
+  }
+
+  get pgbenchInfoTooltip(): string {
+    return this.pgbenchMeta?.description || "";
+  }
+
+  get pgbenchNoteTooltip(): string {
+    return this.getBenchmarkNote(PGBENCH_HEAVY_READ_ONLY_ID, false);
   }
 
   get compressionServers(): CompressionServer[] {
@@ -834,6 +958,7 @@ export class ServerCompareChartsComponent implements OnChanges {
       !isWorkloadProfileBenchmark(benchmark) &&
       !found &&
       !String(benchmark.benchmark_id ?? "").startsWith("stress_ng:") &&
+      !String(benchmark.benchmark_id ?? "").startsWith("pgbench:") &&
       !this.benchmarkCategories.some((c: any) =>
         c.benchmarks.includes(benchmark.benchmark_id),
       )
