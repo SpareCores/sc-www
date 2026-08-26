@@ -45,7 +45,7 @@ import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PrismService } from "../../services/prism.service";
 import { Subscription } from "rxjs";
-import specialComparesData from "./special-compares.js";
+import serverComparesData from "./server-compares.js";
 import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
 import {
   decodeBase64JsonUrlState,
@@ -366,7 +366,7 @@ export class ServerCompareComponent
 
   modalEmbed: any;
 
-  specialCompares: any[] = specialComparesData;
+  serverCompares: any[] = serverComparesData;
 
   showZoneIds = false;
 
@@ -441,19 +441,16 @@ export class ServerCompareComponent
     this.instancesRaw = "";
 
     if (id) {
-      const specialCompare = this.specialCompares.find((x: any) => x.id === id);
-      if (specialCompare) {
-        this.instances = specialCompare.instances;
+      const serverCompare = this.serverCompares.find((x: any) => x.id === id);
+      if (serverCompare) {
+        this.instances = serverCompare.instances;
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
         this.applyComparisonChrome(
-          specialCompare.title,
-          specialCompare.description,
+          serverCompare.title,
+          serverCompare.description,
         );
-        this.setPremadeCompareBreadcrumb(
-          specialCompare.title,
-          specialCompare.id,
-        );
+        this.setPremadeCompareBreadcrumb(serverCompare.title, serverCompare.id);
       } else {
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();

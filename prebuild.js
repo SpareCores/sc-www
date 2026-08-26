@@ -3,7 +3,7 @@ const path = require("path");
 const matter = require("gray-matter");
 const { SitemapStream, streamToPromise } = require("sitemap");
 const { Readable } = require("stream");
-const specialCompares = require("./src/app/pages/server-compare/special-compares");
+const serverCompares = require("./src/app/pages/server-compare/server-compares");
 const databaseCompares = require("./src/app/pages/database-compare/database-compares");
 const specialServerLists = require("./src/app/pages/server-listing/special-lists");
 
