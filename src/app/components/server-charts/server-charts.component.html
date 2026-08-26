@@ -18,7 +18,7 @@
   ></sc-compression-chart>
 }
 
-@if (isChartShown("ssl")) {
+@if (isChartShown("ssl") && hasSslChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="openssl"
     chartSource="details-ssl"
@@ -245,7 +245,7 @@
   chartItem of multiBarCharts;
   track chartItem.chart.name + "_" + chartItem.chart.id
 ) {
-  @if (isChartShown(chartItem.chart.id)) {
+  @if (isChartShown(chartItem.chart.id) && hasMultiBarChart(chartItem)) {
     <sc-benchmark-multi-bar-chart
       [chartItem]="chartItem"
       [benchmarkMeta]="benchmarkMeta"
