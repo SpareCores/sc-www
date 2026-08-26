@@ -2,12 +2,12 @@ import { Injectable, signal } from "@angular/core";
 
 @Injectable()
 export class CompareChartLegendVisibilityService {
-  private readonly hidden = signal<ReadonlySet<string>>(new Set());
+  private readonly overrides = signal<ReadonlyMap<string, boolean>>(new Map());
 
-  readonly hiddenIdentities = this.hidden.asReadonly();
+  readonly visibilityOverrides = this.overrides.asReadonly();
 
   isHidden(identity: string): boolean {
-    return this.hidden().has(identity);
+    return this.overrides().get(identity) === true;
   }
 
   setHidden(identity: string, hidden: boolean): void {
@@ -15,24 +15,20 @@ export class CompareChartLegendVisibilityService {
       return;
     }
 
-    this.hidden.update((current) => {
-      if (hidden === current.has(identity)) {
+    this.overrides.update((current) => {
+      if (current.get(identity) === hidden) {
         return current;
       }
-      const next = new Set(current);
-      if (hidden) {
-        next.add(identity);
-      } else {
-        next.delete(identity);
-      }
+      const next = new Map(current);
+      next.set(identity, hidden);
       return next;
     });
   }
 
   clear(): void {
-    if (this.hidden().size === 0) {
+    if (this.overrides().size === 0) {
       return;
     }
-    this.hidden.set(new Set());
+    this.overrides.set(new Map());
   }
 }

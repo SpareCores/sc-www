@@ -11,6 +11,7 @@ export type CompareChartDataset = {
   serverCompareKey?: string;
   serverTooltipIdentity?: string;
   hidden?: boolean;
+  configuredHidden?: boolean;
   data?: unknown;
 };
 
@@ -192,17 +193,25 @@ export function createCompareLegendOnClick(options?: {
 
 export function applyCompareDatasetVisibility<
   T extends { datasets: readonly unknown[] },
->(data: T, hiddenIdentities: ReadonlySet<string>): T {
+>(data: T, visibilityOverrides: ReadonlyMap<string, boolean>): T {
   return {
     ...data,
     datasets: data.datasets.map((dataset) => {
       const compareDataset = dataset as CompareChartDataset;
       const identity = getCompareDatasetKey(compareDataset);
+      const configuredHidden =
+        compareDataset.configuredHidden ?? !!compareDataset.hidden;
       const hiddenByData = !datasetHasComparableData(compareDataset);
-      const hiddenByUser = !!identity && hiddenIdentities.has(identity);
+      const userOverride =
+        identity && visibilityOverrides.has(identity)
+          ? visibilityOverrides.get(identity)
+          : undefined;
       return {
         ...(dataset as object),
-        hidden: hiddenByData || hiddenByUser,
+        configuredHidden,
+        hidden:
+          hiddenByData ||
+          (userOverride !== undefined ? userOverride : configuredHidden),
       };
     }),
   } as T;

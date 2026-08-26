@@ -19,7 +19,7 @@ export function syncCompareLegendData<T>(
 
   return applyCompareDatasetVisibility(
     data as T & { datasets: unknown[] },
-    visibility?.hiddenIdentities() ?? new Set<string>(),
+    visibility?.visibilityOverrides() ?? new Map<string, boolean>(),
   ) as T;
 }
 

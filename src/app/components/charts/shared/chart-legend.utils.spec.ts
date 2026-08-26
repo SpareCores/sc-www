@@ -180,7 +180,7 @@ describe("chart-legend.utils", () => {
           { data: [3], serverCompareKey: "azure::c" },
         ],
       },
-      new Set(["aws::a"]),
+      new Map([["aws::a", true]]),
     );
 
     const datasets = result.datasets as Array<{
@@ -191,6 +191,52 @@ describe("chart-legend.utils", () => {
     expect(datasets[1].hidden).toBeTrue();
     expect(datasets[2].hidden).toBeFalse();
     expect(getCompareDatasetKey(datasets[0])).toBe("aws::a");
+  });
+
+  it("retains configured hidden when no user override exists", () => {
+    const result = applyCompareDatasetVisibility(
+      {
+        datasets: [
+          { data: [1], serverCompareKey: "aws::a", hidden: true },
+          { data: [2], serverCompareKey: "gcp::b" },
+        ],
+      },
+      new Map(),
+    );
+
+    const datasets = result.datasets as Array<{
+      hidden?: boolean;
+      configuredHidden?: boolean;
+    }>;
+    expect(datasets[0].configuredHidden).toBeTrue();
+    expect(datasets[0].hidden).toBeTrue();
+    expect(datasets[1].configuredHidden).toBeFalse();
+    expect(datasets[1].hidden).toBeFalse();
+  });
+
+  it("allows a user show to override configured hidden", () => {
+    const initial = applyCompareDatasetVisibility(
+      {
+        datasets: [
+          { data: [1], serverCompareKey: "aws::a", hidden: true },
+          { data: [2], serverCompareKey: "gcp::b" },
+        ],
+      },
+      new Map(),
+    );
+
+    const shown = applyCompareDatasetVisibility(
+      initial,
+      new Map([["aws::a", false]]),
+    );
+
+    const datasets = shown.datasets as Array<{
+      hidden?: boolean;
+      configuredHidden?: boolean;
+    }>;
+    expect(datasets[0].configuredHidden).toBeTrue();
+    expect(datasets[0].hidden).toBeFalse();
+    expect(datasets[1].hidden).toBeFalse();
   });
 
   it("merges compare legend behavior into options", () => {
