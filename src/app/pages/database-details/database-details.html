@@ -227,6 +227,39 @@
         [infoTooltip]="pgbenchInfoTooltip"
         [noteTooltip]="pgbenchNoteTooltip"
       ></sc-benchmark-line-chart>
+      } @if (showUnderlyingServerPerformance && underlyingServerPgbenchChart) {
+      <div
+        class="my-2 w-full flex justify-between items-center gap-4 flex-wrap"
+      >
+        <h2 class="text-3xl font-bold">Underlying Server's Performance</h2>
+        <sc-button
+          label="More details"
+          icon="square-arrow-up-right"
+          [routerLink]="underlyingServerLink"
+          data-ph-capture-attribute-sc-event="database details underlying server"
+        ></sc-button>
+      </div>
+      <sc-benchmark-line-chart
+        benchmarkKey="pgbench"
+        [title]="pgbenchTitle"
+        blockClass="block_full"
+        elementId="underlying_server_pgbench_chart"
+        canvasId="underlying_server_pgbench_canvas"
+        chartType="line"
+        [chartData]="underlyingServerPgbenchChart.data"
+        [chartOptions]="underlyingServerPgbenchChart.options"
+        [infoTooltip]="pgbenchInfoTooltip"
+        [noteTooltip]="pgbenchNoteTooltip"
+      ></sc-benchmark-line-chart>
+      } @else if (underlyingServerLink) {
+      <div class="w-full flex justify-center mt-4">
+        <sc-button
+          label="More details"
+          icon="square-arrow-up-right"
+          [routerLink]="underlyingServerLink"
+          data-ph-capture-attribute-sc-event="database details underlying server"
+        ></sc-button>
+      </div>
       }
     </div>
     }
