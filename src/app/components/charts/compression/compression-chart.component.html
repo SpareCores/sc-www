@@ -89,7 +89,7 @@
           ></sc-button>
         </div>
       </div>
-      @if (isBrowser) {
+      @if (isBrowser && hasOptions()) {
         <div class="charts_div">
           <div class="chart_div" [attr.chartType]="compareChartType()">
             @if (compareChartType() === "line") {
