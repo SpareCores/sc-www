@@ -453,7 +453,7 @@
                 </tr>
               }
             }
-            @if (showPgbenchChart) {
+            @if (hasPgbenchCompareChart()) {
               <tr class="section_header" id="database_compare_pgbench_section">
                 <td [attr.colspan]="databases.length + 1">
                   <div class="compare-section-header-row">

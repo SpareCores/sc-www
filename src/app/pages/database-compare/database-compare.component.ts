@@ -215,7 +215,6 @@ export class DatabaseCompareComponent
   private lastEncodedCompareQuery: string | null = null;
   databases: LoadedCompareDatabase[] = [];
   lineCompareServers: LineChartServer[] = [];
-  showPgbenchChart = false;
   propertySections: ComparePropertySection[] = [];
   priceRows: ComparePropertyRow[] = [];
   databaseCompares: any[] = databaseComparesData;
@@ -535,7 +534,6 @@ export class DatabaseCompareComponent
     this.instancesRaw = "";
     this.databases = [];
     this.lineCompareServers = [];
-    this.showPgbenchChart = false;
     this.legendVisibility.clear();
     this.propertySections = [];
     this.priceRows = [];
@@ -1181,10 +1179,15 @@ export class DatabaseCompareComponent
       benchmark_scores:
         database.benchmark_scores as LineChartServer["benchmark_scores"],
     }));
-    this.showPgbenchChart = this.lineCompareServers.some(
-      (server) =>
-        Array.isArray(server.benchmark_scores) &&
-        server.benchmark_scores.length > 0,
+  }
+
+  hasPgbenchCompareChart(): boolean {
+    return this.lineCompareServers.some((server) =>
+      (server.benchmark_scores ?? []).some(
+        (score) =>
+          score.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID &&
+          score.score != null,
+      ),
     );
   }
 
@@ -1239,6 +1242,8 @@ export class DatabaseCompareComponent
     return {
       id: "cost_efficiency",
       name: "Cost-efficiency",
+      description:
+        "Peak pgbench performance per price ratio showing how much throughput you get for $1/hour.",
       values: rawValues.map((value) =>
         value === null ? "" : value.toFixed(2),
       ),
