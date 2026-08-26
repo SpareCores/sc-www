@@ -833,6 +833,7 @@ export class ServerCompareChartsComponent implements OnChanges {
     return (
       !isWorkloadProfileBenchmark(benchmark) &&
       !found &&
+      !String(benchmark.benchmark_id ?? "").startsWith("stress_ng:") &&
       !this.benchmarkCategories.some((c: any) =>
         c.benchmarks.includes(benchmark.benchmark_id),
       )
