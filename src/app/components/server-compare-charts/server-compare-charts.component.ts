@@ -49,6 +49,7 @@ import {
   MemoryBenchmarkMeta,
   MemoryChartServer,
 } from "../charts/memory/memory-chart.types";
+import { BenchmarkLineChartBuilderService } from "../charts/line/benchmark-line-chart-builder.service";
 import {
   LineBenchmarkMeta,
   LineChartServer,
@@ -129,6 +130,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
   private memoryBuilder = inject(MemoryChartBuilderService);
   private compressionBuilder = inject(CompressionChartBuilderService);
+  private lineBuilder = inject(BenchmarkLineChartBuilderService);
   private llmBuilder = inject(LlmInferenceChartBuilderService);
   private advisorUi = inject(AdvisorUiService);
   private legendVisibility = inject(CompareChartLegendVisibilityService);
@@ -829,13 +831,11 @@ export class ServerCompareChartsComponent implements OnChanges {
     if (!this.isChartShown("pgbench")) {
       return false;
     }
-    return this.lineCompareServers.some((server) =>
-      (server.benchmark_scores ?? []).some(
-        (score) =>
-          score.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID &&
-          score.score != null,
-      ),
-    );
+    return !!this.lineBuilder.buildComparePgbenchChart({
+      servers: this.lineCompareServers,
+      scoreUnit: this.pgbenchMeta?.unit,
+      optionsBase: {},
+    });
   }
 
   private get pgbenchMeta() {
