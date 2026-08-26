@@ -47,13 +47,6 @@ import {
     BenchmarkIconPipe,
   ],
   templateUrl: "./geekbench-radar-chart.component.html",
-  styles: [
-    `
-      :host {
-        display: contents;
-      }
-    `,
-  ],
 })
 export class GeekbenchRadarChartComponent {
   private platformId = inject(PLATFORM_ID);
@@ -197,9 +190,6 @@ export class GeekbenchRadarChartComponent {
     return this.compareCharts()?.multiOptions;
   });
   readonly hasDetailsChart = computed(() => !!this.resolvedDetailsChartData());
-  readonly hasCompareCharts = computed(
-    () => !!this.resolvedSingleChartData() || !!this.resolvedMultiChartData(),
-  );
 
   tooltipContent = "";
   tooltipHtml: GeekbenchTooltipHtml = null;

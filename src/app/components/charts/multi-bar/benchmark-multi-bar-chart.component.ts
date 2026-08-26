@@ -56,13 +56,6 @@ import {
     BenchmarkIconPipe,
   ],
   templateUrl: "./benchmark-multi-bar-chart.component.html",
-  styles: [
-    `
-      :host {
-        display: contents;
-      }
-    `,
-  ],
 })
 export class BenchmarkMultiBarChartComponent {
   private static nextId = 0;

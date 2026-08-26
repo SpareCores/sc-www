@@ -1,167 +1,165 @@
-@if (chartData()) {
-  @if (layout() === "details") {
-    <div class="block_half" id="{{ chart().id }}_chart">
-      <div class="flex justify-between items-center">
-        <h3 class="text-2xl flex items-center gap-2 pr-2">
-          <svg [lucideIcon]="chart().id | benchmarkIcon" class="h-6 w-6"></svg>
-          <span class="whitespace-nowrap">{{ chart().name }}</span>
-          @if (currentOption().icon) {
-            <svg
-              [lucideIcon]="currentOption().icon || 'circle-arrow-up'"
-              class="benchmark-direction-icon h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, currentOption().tooltip)"
-              (mouseleave)="hideTooltip()"
-            ></svg>
-          }
+@if (layout() === "details") {
+  <div class="block_half" id="{{ chart().id }}_chart">
+    <div class="flex justify-between items-center">
+      <h3 class="text-2xl flex items-center gap-2 pr-2">
+        <svg [lucideIcon]="chart().id | benchmarkIcon" class="h-6 w-6"></svg>
+        <span class="whitespace-nowrap">{{ chart().name }}</span>
+        @if (currentOption().icon) {
           <svg
-            lucideInfo
-            class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, currentBenchmarkDescription())"
+            [lucideIcon]="currentOption().icon || 'circle-arrow-up'"
+            class="benchmark-direction-icon h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, currentOption().tooltip)"
             (mouseleave)="hideTooltip()"
           ></svg>
-          @if (currentBenchmarkNote()) {
-            <svg
-              lucideTriangleAlert
-              class="benchmark-note-icon"
-              (mouseenter)="showWarningTooltip($event, currentBenchmarkNote())"
-              (mouseleave)="hideTooltip()"
-            ></svg>
-          }
-        </h3>
-        <sc-button
-          #primaryDropdown="scFlowbiteDropdown"
-          [id]="buttonId"
-          [scFlowbiteDropdown]="optionsId"
-          [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
-          [label]="currentOption().name || ''"
-          icon="chevron-down"
-          variant="dropdown"
-          size="small"
-          [title]="currentOption().name || null"
-        ></sc-button>
-      </div>
-      @if (isBrowserEnvironment()) {
-        <div class="h-full">
-          <div class="chart_div" chartType="bar">
-            <canvas
-              baseChart
-              [id]="chart().id + '_canvas'"
-              [data]="chartData()"
-              [options]="chart().chartOptions"
-              [type]="chart().chartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      }
-    </div>
-  } @else {
-    <div class="block_full_inline">
-      <div
-        class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-4"
-      >
-        @if (hasSecondaryOptions()) {
-          <sc-button
-            #secondaryDropdown="scFlowbiteDropdown"
-            [id]="secondaryButtonId"
-            [scFlowbiteDropdown]="secondaryOptionsId"
-            [dropdownEnabled]="
-              isBrowserEnvironment() && !!chartData() && hasSecondaryOptions()
-            "
-            [label]="currentSecondaryOption()?.name || ''"
-            icon="chevron-down"
-            variant="dropdown"
-            size="small"
-            [title]="currentSecondaryOption()?.name || null"
-          ></sc-button>
         }
+        <svg
+          lucideInfo
+          class="h-4 w-4 text-gray-200"
+          (mouseenter)="showTooltip($event, currentBenchmarkDescription())"
+          (mouseleave)="hideTooltip()"
+        ></svg>
+        @if (currentBenchmarkNote()) {
+          <svg
+            lucideTriangleAlert
+            class="benchmark-note-icon"
+            (mouseenter)="showWarningTooltip($event, currentBenchmarkNote())"
+            (mouseleave)="hideTooltip()"
+          ></svg>
+        }
+      </h3>
+      <sc-button
+        #primaryDropdown="scFlowbiteDropdown"
+        [id]="buttonId"
+        [scFlowbiteDropdown]="optionsId"
+        [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
+        [label]="currentOption().name || ''"
+        icon="chevron-down"
+        variant="dropdown"
+        size="small"
+        [title]="currentOption().name || null"
+      ></sc-button>
+    </div>
+    @if (isBrowserEnvironment()) {
+      <div class="h-full">
+        <div class="chart_div" chartType="bar">
+          <canvas
+            baseChart
+            [id]="chart().id + '_canvas'"
+            [data]="chartData()"
+            [options]="chart().chartOptions"
+            [type]="chart().chartType"
+          >
+          </canvas>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="block_full_inline">
+    <div
+      class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-4"
+    >
+      @if (hasSecondaryOptions()) {
         <sc-button
-          #primaryDropdown="scFlowbiteDropdown"
-          [id]="buttonId"
-          [scFlowbiteDropdown]="optionsId"
-          [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
-          [label]="currentOption().name || ''"
+          #secondaryDropdown="scFlowbiteDropdown"
+          [id]="secondaryButtonId"
+          [scFlowbiteDropdown]="secondaryOptionsId"
+          [dropdownEnabled]="
+            isBrowserEnvironment() && !!chartData() && hasSecondaryOptions()
+          "
+          [label]="currentSecondaryOption()?.name || ''"
           icon="chevron-down"
           variant="dropdown"
           size="small"
-          [title]="currentOption().name || null"
+          [title]="currentSecondaryOption()?.name || null"
         ></sc-button>
-      </div>
-      @if (isBrowserEnvironment()) {
-        <div class="min-h-0 flex-1">
-          <div class="chart_div" chartType="bar">
-            <canvas
-              baseChart
-              [data]="chartData()"
-              [options]="chart().chartOptions"
-              [type]="chart().chartType"
-            >
-            </canvas>
-          </div>
-        </div>
       }
+      <sc-button
+        #primaryDropdown="scFlowbiteDropdown"
+        [id]="buttonId"
+        [scFlowbiteDropdown]="optionsId"
+        [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
+        [label]="currentOption().name || ''"
+        icon="chevron-down"
+        variant="dropdown"
+        size="small"
+        [title]="currentOption().name || null"
+      ></sc-button>
     </div>
-  }
+    @if (isBrowserEnvironment()) {
+      <div class="min-h-0 flex-1">
+        <div class="chart_div" chartType="bar">
+          <canvas
+            baseChart
+            [data]="chartData()"
+            [options]="chart().chartOptions"
+            [type]="chart().chartType"
+          >
+          </canvas>
+        </div>
+      </div>
+    }
+  </div>
+}
 
+<div
+  [id]="optionsId"
+  class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    [attr.aria-labelledby]="buttonId"
+  >
+    @for (
+      chartTemplate of chart().options;
+      track chartTemplate.benchmark_id;
+      let i = $index
+    ) {
+      <li>
+        <button
+          type="button"
+          class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+          (click)="selectOption(i)"
+        >
+          <div class="text-white text-sm">{{ chartTemplate.name }}</div>
+        </button>
+      </li>
+    }
+  </ul>
+</div>
+
+@if (hasSecondaryOptions()) {
   <div
-    [id]="optionsId"
+    [id]="secondaryOptionsId"
     class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      [attr.aria-labelledby]="buttonId"
+      [attr.aria-labelledby]="secondaryButtonId"
     >
       @for (
-        chartTemplate of chart().options;
-        track chartTemplate.benchmark_id;
+        option of chart().secondaryOptions;
+        track option.name;
         let i = $index
       ) {
         <li>
           <button
             type="button"
             class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
-            (click)="selectOption(i)"
+            (click)="selectSecondaryOption(i)"
           >
-            <div class="text-white text-sm">{{ chartTemplate.name }}</div>
+            <div class="text-white text-sm">{{ option.name }}</div>
           </button>
         </li>
       }
     </ul>
   </div>
-
-  @if (hasSecondaryOptions()) {
-    <div
-      [id]="secondaryOptionsId"
-      class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
-    >
-      <ul
-        class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-        [attr.aria-labelledby]="secondaryButtonId"
-      >
-        @for (
-          option of chart().secondaryOptions;
-          track option.name;
-          let i = $index
-        ) {
-          <li>
-            <button
-              type="button"
-              class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
-              (click)="selectSecondaryOption(i)"
-            >
-              <div class="text-white text-sm">{{ option.name }}</div>
-            </button>
-          </li>
-        }
-      </ul>
-    </div>
-  }
-
-  <div
-    #tooltipDefault
-    style="opacity: 0; display: none"
-    class="tooltip-panel fixed z-100 pointer-events-none"
-  >
-    {{ tooltipContent() }}
-  </div>
 }
+
+<div
+  #tooltipDefault
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+>
+  {{ tooltipContent() }}
+</div>

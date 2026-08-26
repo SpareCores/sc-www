@@ -57,13 +57,6 @@ import {
     BenchmarkIconPipe,
   ],
   templateUrl: "./llm-inference-chart.component.html",
-  styles: [
-    `
-      :host {
-        display: contents;
-      }
-    `,
-  ],
 })
 export class LlmInferenceChartComponent {
   private static nextId = 0;
@@ -198,9 +191,6 @@ export class LlmInferenceChartComponent {
   );
   readonly compareGenerationOptions = computed(
     () => this.compareCharts()?.generationOptions,
-  );
-  readonly hasCompareData = computed(
-    () => !!(this.comparePromptData() || this.compareGenerationData()),
   );
   readonly hasDetailsData = computed(
     () => !!(this.detailsPromptData() || this.detailsGenerationData()),

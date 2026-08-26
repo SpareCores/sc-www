@@ -5,7 +5,6 @@ import {
   ElementRef,
   PLATFORM_ID,
   computed,
-  effect,
   inject,
   input,
   output,
@@ -70,13 +69,6 @@ import {
     BenchmarkIconPipe,
   ],
   templateUrl: "./benchmark-line-chart.component.html",
-  styles: [
-    `
-      :host {
-        display: contents;
-      }
-    `,
-  ],
 })
 export class BenchmarkLineChartComponent {
   private static nextId = 0;
@@ -111,7 +103,6 @@ export class BenchmarkLineChartComponent {
   selectedOptionName = input("");
 
   selectorSelected = output<number>();
-  chartAvailabilityChange = output<boolean>();
 
   tooltipContent = signal("");
   private selectedCompareSslIndex = signal(
@@ -330,7 +321,6 @@ export class BenchmarkLineChartComponent {
   readonly hasSelector = computed(
     () => this.resolvedSelectorOptions().length > 0,
   );
-  readonly hasChartData = computed(() => !!this.resolvedChartData());
   readonly resolvedSelectedOptionName = computed(
     () =>
       this.selectedOptionName() ||
@@ -368,9 +358,6 @@ export class BenchmarkLineChartComponent {
   readonly idBase = `line_chart_${BenchmarkLineChartComponent.nextId++}`;
   readonly buttonId = `${this.idBase}_button`;
   readonly optionsId = `${this.idBase}_options`;
-  private readonly availabilityEffect = effect(() => {
-    this.chartAvailabilityChange.emit(this.hasChartData());
-  });
 
   private shouldSyncCompareLegend(): boolean {
     return (
