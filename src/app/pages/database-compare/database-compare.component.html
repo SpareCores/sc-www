@@ -266,7 +266,11 @@
             </tr>
           </thead>
           <tbody>
-            @for (section of propertySections; track section.name) {
+            @for (
+              section of propertySections;
+              track section.name;
+              let sectionIndex = $index
+            ) {
               @if (section.name) {
                 <tr class="section_header">
                   <td>
@@ -370,84 +374,84 @@
                 <td></td>
                 <td [attr.colspan]="databases.length"></td>
               </tr>
-            }
-            @if (priceRows.length) {
-              <tr class="section_header">
-                <td>
-                  <h2 class="text-xl font-semibold">Pricing</h2>
-                </td>
-                <td [attr.colspan]="databases.length"></td>
-              </tr>
-              <tr class="compare-instance-section-gap" aria-hidden="true">
-                <td></td>
-                <td [attr.colspan]="databases.length"></td>
-              </tr>
-              @for (
-                row of priceRows;
-                track row.id;
-                let first = $first;
-                let last = $last
-              ) {
-                <tr
-                  [class.compare-instance-section-first-row]="first"
-                  [class.compare-instance-section-last-row]="last"
-                >
-                  <td class="whitespace-nowrap">
-                    <div class="flex gap-2 items-center">
-                      {{ row.name }}
-                      @if (row.description) {
-                        <svg
-                          lucideInfo
-                          class="h-4 w-4 shrink-0 text-gray-200"
-                          (mouseenter)="
-                            showChartTooltip($event, row.description)
-                          "
-                          (mouseleave)="hideChartTooltip()"
-                        ></svg>
-                      }
-                    </div>
+              @if (sectionIndex === 0 && priceRows.length) {
+                <tr class="section_header">
+                  <td>
+                    <h2 class="text-xl font-semibold">Pricing</h2>
                   </td>
-                  @for (value of row.values; track $index) {
-                    <td>
-                      <div class="compare-table-metric-cell">
-                        <span [style]="getBestCellStyle(row, $index)">{{
-                          value
-                        }}</span>
-                        @if (shouldShowDeltaRow(row)) {
-                          <div class="compare-table-delta-row">
-                            @if (getRowDelta(row, $index); as rowDelta) {
-                              <span
-                                class="compare-table-delta"
-                                [class.compare-table-delta--positive]="
-                                  rowDelta.tone === 'positive'
-                                "
-                                [class.compare-table-delta--negative]="
-                                  rowDelta.tone === 'negative'
-                                "
-                                [class.compare-table-delta--neutral]="
-                                  rowDelta.tone === 'neutral'
-                                "
-                              >
-                                {{ rowDelta.label }}
-                              </span>
-                            } @else {
-                              <span
-                                class="compare-table-delta-placeholder"
-                                aria-hidden="true"
-                                >&nbsp;</span
-                              >
-                            }
-                          </div>
+                  <td [attr.colspan]="databases.length"></td>
+                </tr>
+                <tr class="compare-instance-section-gap" aria-hidden="true">
+                  <td></td>
+                  <td [attr.colspan]="databases.length"></td>
+                </tr>
+                @for (
+                  row of priceRows;
+                  track row.id;
+                  let first = $first;
+                  let last = $last
+                ) {
+                  <tr
+                    [class.compare-instance-section-first-row]="first"
+                    [class.compare-instance-section-last-row]="last"
+                  >
+                    <td class="whitespace-nowrap">
+                      <div class="flex gap-2 items-center">
+                        {{ row.name }}
+                        @if (row.description) {
+                          <svg
+                            lucideInfo
+                            class="h-4 w-4 shrink-0 text-gray-200"
+                            (mouseenter)="
+                              showChartTooltip($event, row.description)
+                            "
+                            (mouseleave)="hideChartTooltip()"
+                          ></svg>
                         }
                       </div>
                     </td>
-                  }
+                    @for (value of row.values; track $index) {
+                      <td>
+                        <div class="compare-table-metric-cell">
+                          <span [style]="getBestCellStyle(row, $index)">{{
+                            value
+                          }}</span>
+                          @if (shouldShowDeltaRow(row)) {
+                            <div class="compare-table-delta-row">
+                              @if (getRowDelta(row, $index); as rowDelta) {
+                                <span
+                                  class="compare-table-delta"
+                                  [class.compare-table-delta--positive]="
+                                    rowDelta.tone === 'positive'
+                                  "
+                                  [class.compare-table-delta--negative]="
+                                    rowDelta.tone === 'negative'
+                                  "
+                                  [class.compare-table-delta--neutral]="
+                                    rowDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ rowDelta.label }}
+                                </span>
+                              } @else {
+                                <span
+                                  class="compare-table-delta-placeholder"
+                                  aria-hidden="true"
+                                  >&nbsp;</span
+                                >
+                              }
+                            </div>
+                          }
+                        </div>
+                      </td>
+                    }
+                  </tr>
+                }
+                <tr class="compare-instance-section-gap" aria-hidden="true">
+                  <td></td>
+                  <td [attr.colspan]="databases.length"></td>
                 </tr>
               }
-              <tr class="compare-instance-section-gap" aria-hidden="true">
-                <td></td>
-                <td [attr.colspan]="databases.length"></td>
-              </tr>
             }
             @if (showPgbenchChart) {
               <tr class="section_header" id="database_compare_pgbench_section">
