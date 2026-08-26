@@ -27,6 +27,7 @@ import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart
 import {
   LineBenchmarkGroup,
   LineChartDetailsServer,
+  PGBENCH_HEAVY_READ_ONLY_ID,
 } from "../charts/line/benchmark-line-chart.types";
 import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
 import { MemoryBenchmarkMeta } from "../charts/memory/memory-chart.types";
@@ -103,6 +104,16 @@ export class ServerChartsComponent implements OnChanges {
       benchmarkMeta: this.benchmarkMeta ?? [],
       benchmarkScores: this.serverDetails?.benchmark_scores,
     });
+  }
+
+  hasPgbenchChart(): boolean {
+    return (this.benchmarksByCategory ?? []).some((group) =>
+      (group.benchmarks ?? []).some(
+        (score: { benchmark_id?: string; score?: number | null }) =>
+          score.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID &&
+          score.score != null,
+      ),
+    );
   }
 
   getBenchmarkCategory(category: string) {

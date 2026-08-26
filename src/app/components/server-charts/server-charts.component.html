@@ -254,7 +254,7 @@
   }
 }
 
-@if (isChartShown("pgbench")) {
+@if (isChartShown("pgbench") && hasPgbenchChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="pgbench"
     chartSource="details-pgbench"
