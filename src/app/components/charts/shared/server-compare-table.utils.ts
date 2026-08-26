@@ -35,8 +35,13 @@ const NETWORK_SPEED_PROPERTY_IDS = new Set([
 
 const CPU_CACHE_PROPERTY_IDS = new Set([
   "cpu_l1d_cache",
+  "cpu_l1d_cache_total",
+  "cpu_l1i_cache",
+  "cpu_l1i_cache_total",
   "cpu_l2_cache",
+  "cpu_l2_cache_total",
   "cpu_l3_cache",
+  "cpu_l3_cache_total",
 ]);
 
 const TRAFFIC_PROPERTY_IDS = new Set(["inbound_traffic", "outbound_traffic"]);
