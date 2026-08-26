@@ -145,6 +145,7 @@ const DATABASE_CUSTOM_COMPARISON_BREADCRUMB = "Custom Comparison";
 const DATABASE_COMPARE_GUIDE_DESCRIPTION =
   "Compare managed databases (DBaaS) and their key specs, including engine type and versions supported, vCPU and RAM, storage throughput and backup options, high availability features etc. alongside benchmark metrics to find the optimal managed cloud database for your workload.";
 const PGBENCH_TITLE_FALLBACK = "PostgreSQL heavy read-only throughput";
+const PGBENCH_PEAK_BENCHMARK_ID = "pgbench:heavy_read_only:peak";
 const DATABASE_COMPARE_TABLE_ID = "database-compare-table";
 const DATABASE_COMPARE_TABLE_HOLDER_ID = "database_compare_table_holder";
 const DATABASE_COMPARE_FIRST_COL_ID = "database-compare-table-first-col";
@@ -1218,6 +1219,7 @@ export class DatabaseCompareComponent
         ),
         lowerIsBetter: true,
       },
+      this.buildCostEfficiencyRow(),
       {
         id: "best_month",
         name: "Best Monthly Price",
@@ -1229,7 +1231,37 @@ export class DatabaseCompareComponent
         ),
         lowerIsBetter: true,
       },
-    ].filter((row) => row.values.some((value) => value !== "-"));
+    ].filter((row) =>
+      row.values.some((value) => value !== "-" && value !== ""),
+    );
+  }
+
+  private buildCostEfficiencyRow(): ComparePropertyRow {
+    const rawValues = this.databases.map((database) => {
+      const peakScore = database.benchmark_scores?.find(
+        (score) => score.benchmark_id === PGBENCH_PEAK_BENCHMARK_ID,
+      )?.score;
+      const hourlyPrice = database.bestHourPrice?.price;
+      if (
+        typeof peakScore !== "number" ||
+        !Number.isFinite(peakScore) ||
+        typeof hourlyPrice !== "number" ||
+        !Number.isFinite(hourlyPrice) ||
+        hourlyPrice <= 0
+      ) {
+        return null;
+      }
+      return peakScore / hourlyPrice;
+    });
+
+    return {
+      id: "cost_efficiency",
+      name: "Cost-efficiency",
+      values: rawValues.map((value) =>
+        value === null ? "" : value.toFixed(2),
+      ),
+      rawValues,
+    };
   }
 
   private formatPrice(price?: DatabasePrice): string {
