@@ -102,6 +102,15 @@ type CompareTableBenchmarkMeta = Omit<
   legacyOperation?: CompareMemoryChartOption["legacyOperation"];
 };
 
+function hasMeaningfulCompareTableValue(value: unknown): boolean {
+  if (value === "-" || value == null || value === "") {
+    return false;
+  }
+
+  const numeric = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numeric) && numeric !== 0;
+}
+
 @Component({
   selector: "sc-server-compare",
   imports: [
@@ -318,6 +327,10 @@ export class ServerCompareComponent
   readonly scrollbarMirror = signal<ScrollbarMirrorState>({
     ...INITIAL_SCROLLBAR_MIRROR_STATE,
   });
+  readonly stickyFixedDivStyle = signal("");
+  readonly stickyMainTableStyle = signal("");
+  readonly stickyFirstColStyle = signal<{ width?: string }>({});
+  readonly stickyColumnStyles = signal<string[]>([]);
   private mirrorCtrl?: ScrollbarMirrorController;
   private mirrorLayoutTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private mirrorLayoutFrameId: number | null = null;
@@ -327,6 +340,34 @@ export class ServerCompareComponent
       (this.document.getElementById("main-table")?.getBoundingClientRect()
         .top ?? 0) < 70;
     this.isTableOutsideViewport.set(isSticky);
+    if (isSticky) {
+      this.stickyFixedDivStyle.set(
+        getCompareFixedHolderStyle(this.document, "table_holder"),
+      );
+      this.stickyMainTableStyle.set(
+        getCompareMainTableWidthStyle(
+          this.document,
+          "main-table",
+          this.tableHolder?.nativeElement,
+        ),
+      );
+      this.stickyFirstColStyle.set(
+        getCompareStickyFirstColStyle(
+          this.document,
+          "server-compare-table-first-col",
+        ),
+      );
+      this.stickyColumnStyles.set(
+        this.servers.map((_, index) =>
+          getCompareColumnWidthStyle(
+            this.document,
+            "main-table",
+            index,
+            this.servers.length,
+          ),
+        ),
+      );
+    }
     this.mirrorCtrl?.update();
   };
   private readonly updateMirrorLayout = () => {
@@ -362,6 +403,7 @@ export class ServerCompareComponent
     { id: "llm_inference", name: "LLM Inference" },
     { id: "static_web", name: "Static Web Server" },
     { id: "redis", name: "Redis" },
+    { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
   ];
 
   modalEmbed: any;
@@ -707,7 +749,10 @@ export class ServerCompareComponent
                     s.benchmark_id === benchmark.benchmark_id &&
                     JSON.stringify(s.config) === JSON.stringify(config.config),
                 );
-                config.values.push(score ? score.score : "-");
+                const rawScore = score?.score;
+                config.values.push(
+                  hasMeaningfulCompareTableValue(rawScore) ? rawScore : "-",
+                );
               });
             });
           });
@@ -716,29 +761,7 @@ export class ServerCompareComponent
             this.benchmarkMeta,
           );
 
-          this.benchmarkCategories.forEach((category) => {
-            category.data = this.benchmarkMeta.filter((b: any) =>
-              category.benchmarks.includes(b.benchmark_id),
-            );
-            category.data?.forEach((d: any) => {
-              d.name = d.name
-                .replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, "$1$2")
-                .replace(/PassMark: (.*?) Test|PassMark: (.*?)/, "$1$2");
-            });
-          });
-
-          // sort the stress_ng and stress_ng_pct by config.cores
-          let ngData: any[] = this.benchmarkCategories.find(
-            (c) => c.id === "stress_ng",
-          ).data;
-          if (ngData?.length > 0) {
-            ngData[0].configs = ngData[0].configs.sort((a: any, b: any) => {
-              return a.config.cores - b.config.cores;
-            });
-          }
-
-          this.benchmarkCategories.find((c) => c.id === "stress_ng_pct").data =
-            ngData;
+          this.refreshBenchmarkCategoryData();
 
           if (isPlatformBrowser(this.platformId)) {
             const targetElModal = document.getElementById(
@@ -1156,6 +1179,7 @@ export class ServerCompareComponent
     }
 
     this.remapBenchmarkConfigValues(indexMap);
+    this.refreshBenchmarkCategoryData();
     this.servers = nextServers;
     this.instances = selection.map((item) => ({
       display_name: item.display_name,
@@ -1189,6 +1213,48 @@ export class ServerCompareComponent
         config.values = indexMap.map((oldIndex) => config.values?.[oldIndex]);
       });
     });
+  }
+
+  private refreshBenchmarkCategoryData(): void {
+    this.benchmarkCategories.forEach((category) => {
+      category.data = (
+        (this.benchmarkMeta ?? []) as CompareTableBenchmarkMeta[]
+      ).filter(
+        (benchmark) =>
+          !!category.benchmarks?.includes(benchmark.benchmark_id) &&
+          !!benchmark.configs?.some(
+            (config) =>
+              !!config.values?.some((value) =>
+                hasMeaningfulCompareTableValue(value),
+              ),
+          ),
+      );
+      category.data.forEach((benchmark: CompareTableBenchmarkMeta) => {
+        if (!benchmark.name) {
+          return;
+        }
+        benchmark.name = benchmark.name
+          .replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, "$1$2")
+          .replace(/PassMark: (.*?) Test|PassMark: (.*?)/, "$1$2");
+      });
+    });
+
+    const stressNgData: CompareTableBenchmarkMeta[] =
+      this.benchmarkCategories.find((category) => category.id === "stress_ng")
+        ?.data ?? [];
+    if (stressNgData.length > 0) {
+      stressNgData[0].configs = stressNgData[0].configs.sort(
+        (left, right) =>
+          Number(left.config.cores ?? 0) - Number(right.config.cores ?? 0),
+      );
+    }
+
+    const stressPctCategory = this.benchmarkCategories.find(
+      (category) => category.id === "stress_ng_pct",
+    );
+    if (stressPctCategory) {
+      stressPctCategory.data = stressNgData;
+    }
   }
 
   private applyGuideChrome(): void {
@@ -1262,24 +1328,15 @@ export class ServerCompareComponent
   }
 
   getStyle(index: number) {
-    return getCompareColumnWidthStyle(
-      this.document,
-      "main-table",
-      index,
-      this.servers.length,
-    );
+    return this.stickyColumnStyles()[index] || "";
   }
 
   getMainTableWidth() {
-    return getCompareMainTableWidthStyle(
-      this.document,
-      "main-table",
-      this.tableHolder?.nativeElement,
-    );
+    return this.stickyMainTableStyle();
   }
 
   getFixedDivStyle() {
-    return getCompareFixedHolderStyle(this.document, "table_holder");
+    return this.stickyFixedDivStyle();
   }
 
   onMirrorScroll(event: Event) {
@@ -1291,10 +1348,7 @@ export class ServerCompareComponent
   }
 
   getStickyHeaderFirstColStyle() {
-    return getCompareStickyFirstColStyle(
-      this.document,
-      "server-compare-table-first-col",
-    );
+    return this.stickyFirstColStyle();
   }
 
   openModal() {
