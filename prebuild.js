@@ -118,15 +118,13 @@ allArticles.forEach((article) => {
   });
 });
 
-if (specialCompares?.length) {
-  specialCompares.forEach((specialCompare) => {
-    if (specialCompare.type === "card") {
-      links.push({
-        url: `servers/compare/${specialCompare.id}`,
-        changefreq: "daily",
-        priority: 0.9,
-      });
-    }
+if (serverCompares?.length) {
+  serverCompares.forEach((serverCompare) => {
+    links.push({
+      url: `servers/compare/${serverCompare.id}`,
+      changefreq: "daily",
+      priority: 0.9,
+    });
   });
 }
 
