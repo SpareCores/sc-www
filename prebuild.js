@@ -165,6 +165,10 @@ function fetchJson(url) {
           data += chunk;
         });
         res.on("end", () => {
+          if (res.statusCode < 200 || res.statusCode > 299) {
+            reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+            return;
+          }
           try {
             resolve(JSON.parse(data));
           } catch (err) {
