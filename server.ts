@@ -433,13 +433,6 @@ export function app(): express.Express {
       })
       .then((html) => {
         clearTimeout(renderTimeout);
-
-        console.log("SSR response state:", {
-          statusCode: res.statusCode,
-          headersSent: res.headersSent,
-          location: res.getHeader("Location"),
-        });
-
         res.send(html);
       })
       .catch((err) => {
