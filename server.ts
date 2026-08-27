@@ -307,6 +307,21 @@ export function app(): express.Express {
     next();
   });
 
+  // Legacy comparison URL redirects
+  server.get("/compare", (req, res) => {
+    return res.redirect(
+      301,
+      req.originalUrl.replace(/^\/compare/, "/servers/compare"),
+    );
+  });
+
+  server.get("/compare/:id", (req, res) => {
+    return res.redirect(
+      301,
+      req.originalUrl.replace(/^\/compare/, "/servers/compare"),
+    );
+  });
+
   // Serve static files
   server.get("*.*", express.static(browserDistFolder));
 
@@ -418,6 +433,13 @@ export function app(): express.Express {
       })
       .then((html) => {
         clearTimeout(renderTimeout);
+
+        console.log("SSR response state:", {
+          statusCode: res.statusCode,
+          headersSent: res.headersSent,
+          location: res.getHeader("Location"),
+        });
+
         res.send(html);
       })
       .catch((err) => {
