@@ -171,18 +171,18 @@
         (scroll)="updateStickyLayout()"
       >
         @if (isBrowser() && isTableOutsideViewport()) {
-          <div class="fixed_thead" [style]="getFixedDivStyle()">
-            <table class="items_table" [style]="getMainTableWidth()">
+          <div class="fixed_thead" [style]="stickyFixedDivStyle()">
+            <table class="items_table" [style]="stickyMainTableStyle()">
               <thead>
                 <tr>
-                  <th [style]="getStickyHeaderFirstColStyle()"></th>
+                  <th [style]="stickyFirstColStyle()"></th>
                   @for (
                     database of databases;
                     track database.vendor_id + "_" + database.database_id;
                     let i = $index
                   ) {
                     <th
-                      [style]="getStyle(i)"
+                      [style]="stickyColumnStyles()[i] || ''"
                       class="compact-number-header-cell compare-table-header-cell"
                     >
                       <div
@@ -454,8 +454,9 @@
               }
             }
             @if (hasPgbenchCompareChart()) {
+              @let pinnedRow = getComparePinnedRowLayout();
               <tr class="section_header" id="database_compare_pgbench_section">
-                <td [attr.colspan]="databases.length + 1">
+                <td [attr.colspan]="pinnedRow.contentColSpan">
                   <div class="compare-section-header-row">
                     <h3 class="text-xl font-semibold m-0 flex items-center">
                       <span class="compare-section-header-title">
@@ -503,10 +504,16 @@
                     </h3>
                   </div>
                 </td>
+                @if (pinnedRow.trailingColSpan) {
+                  <td [attr.colspan]="pinnedRow.trailingColSpan"></td>
+                }
               </tr>
               <tr class="compare-fixed-chart-row">
-                <td [attr.colspan]="databases.length + 1">
-                  <div class="compare-chart-content">
+                <td [attr.colspan]="pinnedRow.contentColSpan">
+                  <div
+                    class="compare-chart-content"
+                    [style]="pinnedRow.chartWidthStyle"
+                  >
                     <sc-benchmark-line-chart
                       benchmarkKey="pgbench"
                       chartSource="compare-pgbench"
@@ -523,6 +530,9 @@
                     ></sc-benchmark-line-chart>
                   </div>
                 </td>
+                @if (pinnedRow.trailingColSpan) {
+                  <td [attr.colspan]="pinnedRow.trailingColSpan"></td>
+                }
               </tr>
             }
             <tr class="section_header">

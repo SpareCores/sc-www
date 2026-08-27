@@ -5,6 +5,7 @@
 
   position: relative;
   border-collapse: collapse;
+  table-layout: fixed;
 
   col.compare-first-column-col {
     width: var(--compare-first-column-width);

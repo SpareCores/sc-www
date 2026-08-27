@@ -16,7 +16,8 @@ import {
   INITIAL_SCROLLBAR_MIRROR_STATE,
   ScrollbarMirrorController,
   ScrollbarMirrorState,
-} from "./scrollbar-mirror.controller";
+} from "../shared/compare-table/scrollbar-mirror.controller";
+import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
@@ -58,11 +59,10 @@ import {
   type CompareMemoryChartOption,
 } from "../../components/charts/shared/memory-chart.types";
 import {
-  getCompareColumnWidthStyle,
-  getCompareFixedHolderStyle,
-  getCompareMainTableWidthStyle,
-  getCompareStickyFirstColStyle,
-} from "./compare-table-layout.utils";
+  SERVER_COMPARE_FIRST_COL_ID,
+  SERVER_COMPARE_TABLE_HOLDER_ID,
+  SERVER_COMPARE_TABLE_ID,
+} from "./server-compare.constants";
 import { pushBrowserQueryState } from "./compare-url-state.utils";
 import {
   type MemoryBenchmarkConfig,
@@ -331,57 +331,26 @@ export class ServerCompareComponent
   readonly stickyMainTableStyle = signal("");
   readonly stickyFirstColStyle = signal<{ width?: string }>({});
   readonly stickyColumnStyles = signal<string[]>([]);
-  private mirrorCtrl?: ScrollbarMirrorController;
-  private mirrorLayoutTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  private mirrorLayoutFrameId: number | null = null;
-  private readonly flushMirrorLayout = () => {
-    this.mirrorLayoutFrameId = null;
-    const isSticky =
-      (this.document.getElementById("main-table")?.getBoundingClientRect()
-        .top ?? 0) < 70;
-    this.isTableOutsideViewport.set(isSticky);
-    if (isSticky) {
-      this.stickyFixedDivStyle.set(
-        getCompareFixedHolderStyle(this.document, "table_holder"),
-      );
-      this.stickyMainTableStyle.set(
-        getCompareMainTableWidthStyle(
-          this.document,
-          "main-table",
-          this.tableHolder?.nativeElement,
-        ),
-      );
-      this.stickyFirstColStyle.set(
-        getCompareStickyFirstColStyle(
-          this.document,
-          "server-compare-table-first-col",
-        ),
-      );
-      this.stickyColumnStyles.set(
-        this.servers.map((_, index) =>
-          getCompareColumnWidthStyle(
-            this.document,
-            "main-table",
-            index,
-            this.servers.length,
-          ),
-        ),
-      );
-    }
-    this.mirrorCtrl?.update();
-  };
-  private readonly updateMirrorLayout = () => {
-    if (
-      !isPlatformBrowser(this.platformId) ||
-      this.mirrorLayoutFrameId !== null
-    ) {
-      return;
-    }
-
-    this.mirrorLayoutFrameId = window.requestAnimationFrame(
-      this.flushMirrorLayout,
-    );
-  };
+  private stickyLayout = new CompareStickyLayoutController({
+    document: this.document,
+    isBrowser: () => this.isBrowser(),
+    tableHolder: () => this.tableHolder,
+    bottomMirror: this.scrollbarMirrorBottomEl,
+    scrollbarMirror: this.scrollbarMirror,
+    isTableOutsideViewport: this.isTableOutsideViewport,
+    stickyStyles: {
+      fixedDivStyle: this.stickyFixedDivStyle,
+      mainTableStyle: this.stickyMainTableStyle,
+      firstColStyle: this.stickyFirstColStyle,
+      columnStyles: this.stickyColumnStyles,
+    },
+    ids: {
+      tableId: SERVER_COMPARE_TABLE_ID,
+      tableHolderId: SERVER_COMPARE_TABLE_HOLDER_ID,
+      firstColId: SERVER_COMPARE_FIRST_COL_ID,
+    },
+    itemCount: () => this.servers.length,
+  });
 
   title = SERVER_COMPARE_GUIDE_TITLE;
   description = SERVER_COMPARE_GUIDE_DESCRIPTION;
@@ -455,23 +424,7 @@ export class ServerCompareComponent
       this.checkExistInterval = null;
     }
 
-    if (isPlatformBrowser(this.platformId)) {
-      if (this.mirrorLayoutTimeoutId !== null) {
-        clearTimeout(this.mirrorLayoutTimeoutId);
-        this.mirrorLayoutTimeoutId = null;
-      }
-
-      if (this.mirrorLayoutFrameId !== null) {
-        cancelAnimationFrame(this.mirrorLayoutFrameId);
-        this.mirrorLayoutFrameId = null;
-      }
-
-      window.removeEventListener("scroll", this.updateMirrorLayout);
-      window.removeEventListener("resize", this.updateMirrorLayout);
-      window.removeEventListener("orientationchange", this.updateMirrorLayout);
-    }
-
-    this.mirrorCtrl?.destroy();
+    this.stickyLayout.destroy();
   }
 
   setup() {
@@ -481,6 +434,7 @@ export class ServerCompareComponent
 
     this.instances = [];
     this.instancesRaw = "";
+    this.stickyLayout.reset();
 
     if (id) {
       const serverCompare = this.serverCompares.find((x: any) => x.id === id);
@@ -791,16 +745,7 @@ export class ServerCompareComponent
 
           this.isLoading = false;
           this.restoreBaselineFromUrl();
-          if (isPlatformBrowser(this.platformId)) {
-            if (this.mirrorLayoutTimeoutId !== null) {
-              clearTimeout(this.mirrorLayoutTimeoutId);
-            }
-
-            this.mirrorLayoutTimeoutId = setTimeout(() => {
-              this.mirrorLayoutTimeoutId = null;
-              this.updateMirrorLayout();
-            }, 150);
-          }
+          this.stickyLayout.scheduleDeferredUpdate();
         });
     } else {
       this.isLoading = false;
@@ -821,17 +766,7 @@ export class ServerCompareComponent
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.mirrorCtrl = new ScrollbarMirrorController(
-        () => this.tableHolder,
-        this.scrollbarMirrorBottomEl,
-        this.scrollbarMirror,
-      );
-
-      window.addEventListener("scroll", this.updateMirrorLayout);
-      window.addEventListener("resize", this.updateMirrorLayout);
-      window.addEventListener("orientationchange", this.updateMirrorLayout);
-      this.updateMirrorLayout();
-
+      this.stickyLayout.init();
       this.adjustScrollForFragment();
     }
   }
@@ -1327,28 +1262,16 @@ export class ServerCompareComponent
     pushBrowserQueryState(encodedQuery);
   }
 
-  getStyle(index: number) {
-    return this.stickyColumnStyles()[index] || "";
-  }
-
-  getMainTableWidth() {
-    return this.stickyMainTableStyle();
-  }
-
-  getFixedDivStyle() {
-    return this.stickyFixedDivStyle();
-  }
-
   onMirrorScroll(event: Event) {
-    this.mirrorCtrl?.syncFromMirror(event.target as HTMLElement);
+    this.stickyLayout.syncFromMirror(event.target as HTMLElement);
   }
 
   onCompareTableLayoutChange(): void {
-    this.updateMirrorLayout();
+    this.stickyLayout.scheduleDeferredUpdate();
   }
 
-  getStickyHeaderFirstColStyle() {
-    return this.stickyFirstColStyle();
+  updateMirrorLayout(): void {
+    this.stickyLayout.scheduleUpdate();
   }
 
   openModal() {

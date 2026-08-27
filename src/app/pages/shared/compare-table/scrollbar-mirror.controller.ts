@@ -1,4 +1,13 @@
 import { ElementRef, Signal, WritableSignal } from "@angular/core";
+import {
+  SCROLLBAR_MIRROR_CONTAINER_HEIGHT_PX,
+  SCROLLBAR_MIRROR_DEFAULT_BOTTOM_ANCHOR_ROW_ID,
+  SCROLLBAR_MIRROR_DEFAULT_FIRST_COL_ID,
+  SCROLLBAR_MIRROR_DEFAULT_TABLE_ID,
+  SCROLLBAR_MIRROR_OVERFLOW_VISIBILITY_THRESHOLD_PX,
+  SCROLLBAR_MIRROR_VIEWPORT_INSET_PX,
+  SCROLLBAR_MIRROR_Z_INDEX,
+} from "./scrollbar-mirror.constants";
 
 export interface ScrollbarMirrorPosition {
   left: number;
@@ -23,11 +32,13 @@ export const INITIAL_SCROLLBAR_MIRROR_STATE: ScrollbarMirrorState = {
 };
 
 export class ScrollbarMirrorController {
-  static readonly bottomAnchorRowId = "server-compare-view-server-row";
-  static readonly mirrorContainerHeight = 11;
-  static readonly mirrorZIndex = 41;
-  static readonly mirrorViewportInset = 0;
-  static readonly overflowVisibilityThreshold = 1;
+  static readonly bottomAnchorRowId =
+    SCROLLBAR_MIRROR_DEFAULT_BOTTOM_ANCHOR_ROW_ID;
+  static readonly mirrorContainerHeight = SCROLLBAR_MIRROR_CONTAINER_HEIGHT_PX;
+  static readonly mirrorZIndex = SCROLLBAR_MIRROR_Z_INDEX;
+  static readonly mirrorViewportInset = SCROLLBAR_MIRROR_VIEWPORT_INSET_PX;
+  static readonly overflowVisibilityThreshold =
+    SCROLLBAR_MIRROR_OVERFLOW_VISIBILITY_THRESHOLD_PX;
 
   private syncingFrom: "table" | "mirror" | null = null;
   private captureHandler: (e: Event) => void;
@@ -42,10 +53,12 @@ export class ScrollbarMirrorController {
     private stateSignal: WritableSignal<ScrollbarMirrorState>,
     options: ScrollbarMirrorOptions = {},
   ) {
-    this.tableId = options.tableId ?? "main-table";
-    this.firstColId = options.firstColId ?? "server-compare-table-first-col";
+    this.tableId = options.tableId ?? SCROLLBAR_MIRROR_DEFAULT_TABLE_ID;
+    this.firstColId =
+      options.firstColId ?? SCROLLBAR_MIRROR_DEFAULT_FIRST_COL_ID;
     this.bottomAnchorId =
-      options.bottomAnchorRowId ?? ScrollbarMirrorController.bottomAnchorRowId;
+      options.bottomAnchorRowId ??
+      SCROLLBAR_MIRROR_DEFAULT_BOTTOM_ANCHOR_ROW_ID;
     this.captureHandler = (e: Event) => {
       const el = this.tableHolderGetter()?.nativeElement;
       if (el && e.target === el) {

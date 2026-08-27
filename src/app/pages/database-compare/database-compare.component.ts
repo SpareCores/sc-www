@@ -45,8 +45,8 @@ import {
   PgbenchScore,
 } from "../../components/charts/line/benchmark-line-chart.types";
 import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
-import { CompareChartLegendVisibilityService } from "../../components/charts/shared/compare-chart-legend-visibility.service";
 import { getBenchmarkMetaNote } from "../../components/charts/shared/chart-tooltip.utils";
+import { CompareChartLegendVisibilityService } from "../../components/charts/shared/compare-chart-legend-visibility.service";
 import {
   formatCompareDeltaLabel,
   formatCompareSignedPercentageDeltaLabel,
@@ -76,18 +76,20 @@ import {
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { AdvisorUiService } from "../advisor/advisor-ui.service";
-import {
-  getCompareColumnWidthStyle,
-  getCompareFixedHolderStyle,
-  getCompareMainTableWidthStyle,
-  getCompareStickyFirstColStyle,
-} from "../server-compare/compare-table-layout.utils";
+import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
+import * as compareTableLayout from "../shared/compare-table/compare-table-layout.utils";
 import { pushBrowserQueryState } from "../server-compare/compare-url-state.utils";
+import {
+  DATABASE_COMPARE_FIRST_COL_ID,
+  DATABASE_COMPARE_TABLE_HOLDER_ID,
+  DATABASE_COMPARE_TABLE_ID,
+  DATABASE_COMPARE_VIEW_SERVER_ROW_ID,
+} from "./database-compare.constants";
 import {
   INITIAL_SCROLLBAR_MIRROR_STATE,
   ScrollbarMirrorController,
   ScrollbarMirrorState,
-} from "../server-compare/scrollbar-mirror.controller";
+} from "../shared/compare-table/scrollbar-mirror.controller";
 import databaseComparesData from "./database-compares.js";
 
 type LoadedCompareDatabase = Database & {
@@ -146,9 +148,6 @@ const DATABASE_COMPARE_GUIDE_DESCRIPTION =
   "Compare managed databases (DBaaS) and their key specs, including engine type and versions supported, vCPU and RAM, storage throughput and backup options, high availability features etc. alongside benchmark metrics to find the optimal managed cloud database for your workload.";
 const PGBENCH_TITLE_FALLBACK = "PostgreSQL heavy read-only throughput";
 const PGBENCH_PEAK_BENCHMARK_ID = "pgbench:heavy_read_only:peak";
-const DATABASE_COMPARE_TABLE_ID = "database-compare-table";
-const DATABASE_COMPARE_TABLE_HOLDER_ID = "database_compare_table_holder";
-const DATABASE_COMPARE_FIRST_COL_ID = "database-compare-table-first-col";
 const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
 
 @Component({
@@ -230,41 +229,37 @@ export class DatabaseCompareComponent
   chartTooltipContent = "";
   benchmarkMeta: LineBenchmarkMeta[] = [];
   readonly isTableOutsideViewport = signal(false);
+  readonly stickyFixedDivStyle = signal("");
+  readonly stickyMainTableStyle = signal("");
+  readonly stickyFirstColStyle = signal<{ width?: string }>({});
+  readonly stickyColumnStyles = signal<string[]>([]);
   readonly bestCellStyle = "font-weight: 600; color: #34D399";
 
   private subscription = new Subscription();
   private compareLoadId = 0;
-  private stickyLayoutFrameId: number | null = null;
-  private mirrorLayoutTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  private mirrorCtrl?: ScrollbarMirrorController;
-
-  private readonly flushStickyLayout = () => {
-    this.stickyLayoutFrameId = null;
-    const top =
-      this.document
-        .getElementById("database-compare-table")
-        ?.getBoundingClientRect().top ?? 0;
-    this.isTableOutsideViewport.set(top < 70);
-    this.mirrorCtrl?.update();
-  };
-
-  private readonly updateMirrorLayout = () => {
-    this.mirrorCtrl?.update();
-    this.updateStickyLayout();
-  };
-
-  readonly updateStickyLayout = () => {
-    if (
-      !isPlatformBrowser(this.platformId) ||
-      this.stickyLayoutFrameId !== null
-    ) {
-      return;
-    }
-
-    this.stickyLayoutFrameId = window.requestAnimationFrame(
-      this.flushStickyLayout,
-    );
-  };
+  private stickyLayout = new CompareStickyLayoutController({
+    document: this.document,
+    isBrowser: () => this.isBrowser(),
+    tableHolder: () => this.tableHolder,
+    bottomMirror: this.scrollbarMirrorBottomEl,
+    scrollbarMirror: this.scrollbarMirror,
+    isTableOutsideViewport: this.isTableOutsideViewport,
+    stickyStyles: {
+      fixedDivStyle: this.stickyFixedDivStyle,
+      mainTableStyle: this.stickyMainTableStyle,
+      firstColStyle: this.stickyFirstColStyle,
+      columnStyles: this.stickyColumnStyles,
+    },
+    ids: {
+      tableId: DATABASE_COMPARE_TABLE_ID,
+      tableHolderId: DATABASE_COMPARE_TABLE_HOLDER_ID,
+      firstColId: DATABASE_COMPARE_FIRST_COL_ID,
+    },
+    itemCount: () => this.databases.length,
+    mirrorOptions: {
+      bottomAnchorRowId: DATABASE_COMPARE_VIEW_SERVER_ROW_ID,
+    },
+  });
 
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
@@ -300,46 +295,23 @@ export class DatabaseCompareComponent
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-
-    if (isPlatformBrowser(this.platformId)) {
-      window.removeEventListener("scroll", this.updateMirrorLayout);
-      window.removeEventListener("resize", this.updateMirrorLayout);
-      window.removeEventListener("orientationchange", this.updateMirrorLayout);
-      if (this.stickyLayoutFrameId !== null) {
-        cancelAnimationFrame(this.stickyLayoutFrameId);
-        this.stickyLayoutFrameId = null;
-      }
-      if (this.mirrorLayoutTimeoutId !== null) {
-        clearTimeout(this.mirrorLayoutTimeoutId);
-        this.mirrorLayoutTimeoutId = null;
-      }
-    }
-
-    this.mirrorCtrl?.destroy();
+    this.stickyLayout.destroy();
   }
 
   ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.mirrorCtrl = new ScrollbarMirrorController(
-        () => this.tableHolder,
-        this.scrollbarMirrorBottomEl,
-        this.scrollbarMirror,
-        {
-          tableId: "database-compare-table",
-          firstColId: "database-compare-table-first-col",
-          bottomAnchorRowId: "database-compare-view-server-row",
-        },
-      );
-
-      window.addEventListener("scroll", this.updateMirrorLayout);
-      window.addEventListener("resize", this.updateMirrorLayout);
-      window.addEventListener("orientationchange", this.updateMirrorLayout);
-      this.updateMirrorLayout();
-    }
+    this.stickyLayout.init();
   }
 
   isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
+  }
+
+  updateStickyLayout(): void {
+    this.stickyLayout.scheduleUpdate();
+  }
+
+  onMirrorScroll(event: Event) {
+    this.stickyLayout.syncFromMirror(event.target as HTMLElement);
   }
 
   getBaselineDatabaseLabel(): string {
@@ -389,10 +361,6 @@ export class DatabaseCompareComponent
     return `max(10.5rem, ${displayNameLength + 3}ch)`;
   }
 
-  onMirrorScroll(event: Event): void {
-    this.mirrorCtrl?.syncFromMirror(event.target as HTMLElement);
-  }
-
   getBestCellStyle(row: ComparePropertyRow, databaseIndex: number): string {
     return getBestNumericCompareCellStyle(
       row.rawValues[databaseIndex],
@@ -402,35 +370,14 @@ export class DatabaseCompareComponent
     );
   }
 
-  getStyle(index: number) {
-    return getCompareColumnWidthStyle(
-      this.document,
-      DATABASE_COMPARE_TABLE_ID,
-      index,
-      this.databases.length,
-    );
-  }
-
-  getMainTableWidth() {
-    return getCompareMainTableWidthStyle(
-      this.document,
-      DATABASE_COMPARE_TABLE_ID,
-      this.tableHolder?.nativeElement,
-    );
-  }
-
-  getFixedDivStyle() {
-    return getCompareFixedHolderStyle(
-      this.document,
-      DATABASE_COMPARE_TABLE_HOLDER_ID,
-    );
-  }
-
-  getStickyHeaderFirstColStyle() {
-    return getCompareStickyFirstColStyle(
-      this.document,
-      DATABASE_COMPARE_FIRST_COL_ID,
-    );
+  getComparePinnedRowLayout() {
+    return compareTableLayout.resolveComparePinnedRowLayout({
+      document: this.document,
+      holderId: DATABASE_COMPARE_TABLE_HOLDER_ID,
+      tableId: DATABASE_COMPARE_TABLE_ID,
+      itemCount: this.databases.length,
+      isBrowser: this.isBrowser(),
+    });
   }
 
   shouldShowDeltaRow(row: ComparePropertyRow): boolean {
@@ -537,6 +484,7 @@ export class DatabaseCompareComponent
     this.legendVisibility.clear();
     this.propertySections = [];
     this.priceRows = [];
+    this.stickyLayout.reset();
 
     if (id) {
       const specialCompare = this.databaseCompares.find(
@@ -737,15 +685,7 @@ export class DatabaseCompareComponent
       .finally(() => {
         if (loadId === this.compareLoadId) {
           this.isLoading = false;
-          if (isPlatformBrowser(this.platformId)) {
-            if (this.mirrorLayoutTimeoutId !== null) {
-              clearTimeout(this.mirrorLayoutTimeoutId);
-            }
-            this.mirrorLayoutTimeoutId = setTimeout(() => {
-              this.mirrorLayoutTimeoutId = null;
-              this.updateMirrorLayout();
-            }, 150);
-          }
+          this.stickyLayout.scheduleDeferredUpdate();
         }
       });
   }
