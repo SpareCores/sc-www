@@ -17,8 +17,7 @@ describe("ServerCompareChartsComponent", () => {
   }
 
   function mountTableHolder(width: number): void {
-    const existingTableHolder = document.getElementById("table_holder");
-    existingTableHolder?.remove();
+    document.getElementById("table_holder")?.remove();
 
     const tableHolder = document.createElement("div");
     tableHolder.id = "table_holder";
@@ -27,6 +26,45 @@ describe("ServerCompareChartsComponent", () => {
       value: width,
     });
     document.body.appendChild(tableHolder);
+  }
+
+  function ensureTableHeaderWidth(headerWidth: number): void {
+    const table = document.getElementById("main-table");
+    if (!table) {
+      return;
+    }
+
+    let thead = table.querySelector("thead");
+    if (!thead) {
+      thead = document.createElement("thead");
+      table.insertBefore(thead, table.firstChild);
+    }
+
+    Object.defineProperty(thead, "scrollWidth", {
+      configurable: true,
+      value: headerWidth,
+    });
+  }
+
+  function renderLayout(): void {
+    component.ngOnChanges();
+    fixture.detectChanges();
+  }
+
+  function renderWithMeasuredPinnedLayout(headerWidth = 1200): void {
+    const frameCallbacks: FrameRequestCallback[] = [];
+    spyOn(window, "requestAnimationFrame").and.callFake(
+      (callback: FrameRequestCallback): number => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      },
+    );
+
+    component.ngOnChanges();
+    fixture.detectChanges();
+    ensureTableHeaderWidth(headerWidth);
+    frameCallbacks.shift()?.(0);
+    fixture.detectChanges();
   }
 
   beforeEach(async () => {
@@ -95,7 +133,7 @@ describe("ServerCompareChartsComponent", () => {
     ];
     spyOn(component, "hasCompareChart").and.returnValue(true);
 
-    fixture.detectChanges();
+    renderLayout();
 
     const benchmarkRow = (fixture.nativeElement as HTMLElement).querySelector(
       "#benchmark_line_openssl",
@@ -172,7 +210,7 @@ describe("ServerCompareChartsComponent", () => {
     ];
     spyOn(component, "hasCompareChart").and.returnValue(true);
 
-    fixture.detectChanges();
+    renderWithMeasuredPinnedLayout();
 
     const chartRow = (fixture.nativeElement as HTMLElement).querySelector(
       "#benchmark_line_openssl + tr",
@@ -215,7 +253,7 @@ describe("ServerCompareChartsComponent", () => {
     ] as unknown as typeof component.servers;
     spyOn(component, "hasMultiBarCompareChart").and.returnValue(true);
 
-    fixture.detectChanges();
+    renderWithMeasuredPinnedLayout();
 
     const titleRow = (fixture.nativeElement as HTMLElement).querySelector(
       "#benchmark_line_static_web",
@@ -270,7 +308,7 @@ describe("ServerCompareChartsComponent", () => {
     ];
     spyOn(component, "hasCompareChart").and.returnValue(true);
 
-    fixture.detectChanges();
+    renderWithMeasuredPinnedLayout(2000);
 
     const titleRow = (fixture.nativeElement as HTMLElement).querySelector(
       "#benchmark_line_openssl",
@@ -319,7 +357,7 @@ describe("ServerCompareChartsComponent", () => {
     ];
     spyOn(component, "hasCompareChart").and.returnValue(true);
 
-    fixture.detectChanges();
+    renderLayout();
 
     const titleRow = (fixture.nativeElement as HTMLElement).querySelector(
       "#benchmark_line_llm_inference",
@@ -349,7 +387,7 @@ describe("ServerCompareChartsComponent", () => {
     component.servers = buildServers(9) as unknown as typeof component.servers;
     spyOn(component, "hasMultiBarCompareChart").and.returnValue(true);
 
-    fixture.detectChanges();
+    renderWithMeasuredPinnedLayout(2000);
 
     const titleRow = (fixture.nativeElement as HTMLElement).querySelector(
       "#benchmark_line_static_web",

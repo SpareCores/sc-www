@@ -81,6 +81,7 @@
       </thead>
     }
     <tbody>
+      @let pinnedRow = comparePinnedRowLayout;
       @if (isChartShown("generic")) {
         <tr class="compare-instance-section-gap" aria-hidden="true">
           <td></td>
@@ -460,7 +461,7 @@
       }
       @if (hasVisibleWorkloadProfileChart() && !isEmbedded) {
         <tr class="section_header" id="benchmark_line_workload_profile">
-          <td [colSpan]="getCompareFixedWideContentColSpan()">
+          <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
               <h3 class="text-xl font-semibold m-0 flex items-center">
                 <span class="compare-section-header-title">
@@ -502,7 +503,7 @@
                   </span>
                 </span>
               </h3>
-              @if (!getCompareFixedWideTrailingColSpan()) {
+              @if (!pinnedRow.trailingColSpan) {
                 <div class="flex items-stretch gap-4 shrink-0">
                   <sc-button
                     [label]="
@@ -526,10 +527,10 @@
               }
             </div>
           </td>
-          @if (getCompareFixedWideActionSpacerColSpan()) {
-            <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+          @if (pinnedRow.actionSpacerColSpan) {
+            <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
           }
-          @if (getCompareFixedWideTrailingColSpan()) {
+          @if (pinnedRow.trailingColSpan) {
             <td [colSpan]="1" class="compare-section-header-action-cell">
               <div class="flex justify-end items-stretch gap-4">
                 <sc-button
@@ -555,10 +556,10 @@
           }
         </tr>
         <tr class="compare-fixed-chart-row">
-          <td [colSpan]="getCompareFixedWideContentColSpan()">
+          <td [colSpan]="pinnedRow.contentColSpan">
             <div
               class="compare-chart-content"
-              [style]="getCompareChartContentStyle()"
+              [style]="pinnedRow.chartWidthStyle"
             >
               <sc-workload-profile-panel
                 layout="compare"
@@ -569,8 +570,8 @@
               ></sc-workload-profile-panel>
             </div>
           </td>
-          @if (getCompareFixedWideTrailingColSpan()) {
-            <td [colSpan]="getCompareFixedWideTrailingColSpan()"></td>
+          @if (pinnedRow.trailingColSpan) {
+            <td [colSpan]="pinnedRow.trailingColSpan"></td>
           }
         </tr>
         @if (workloadProfileShowMore) {
@@ -698,7 +699,7 @@
                 benchmarkCategory.id === 'openssl'
               "
             >
-              <td [colSpan]="getCompareFixedWideContentColSpan()">
+              <td [colSpan]="pinnedRow.contentColSpan">
                 <div class="compare-section-header-row">
                   <h3 class="text-xl font-semibold m-0 flex items-center">
                     <span class="compare-section-header-title">
@@ -860,7 +861,7 @@
                       </span>
                     </span>
                   </h3>
-                  @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
+                  @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                     <div class="flex items-stretch gap-4 shrink-0">
                       @if (canToggleDetails) {
                         <sc-button
@@ -892,10 +893,10 @@
                   }
                 </div>
               </td>
-              @if (getCompareFixedWideActionSpacerColSpan()) {
-                <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+              @if (pinnedRow.actionSpacerColSpan) {
+                <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
               }
-              @if (getCompareFixedWideTrailingColSpan()) {
+              @if (pinnedRow.trailingColSpan) {
                 <td [colSpan]="1" class="compare-section-header-action-cell">
                   @if (!isEmbedded) {
                     <div class="flex justify-end items-stretch gap-4">
@@ -938,10 +939,10 @@
                 benchmarkCategory.id === 'compress'
               "
             >
-              <td [colSpan]="getCompareFixedWideContentColSpan()">
+              <td [colSpan]="pinnedRow.contentColSpan">
                 <div
                   class="compare-chart-content"
-                  [style]="getCompareChartContentStyle()"
+                  [style]="pinnedRow.chartWidthStyle"
                 >
                   @if (benchmarkCategory.id === "bw_mem") {
                     <div>
@@ -1026,12 +1027,16 @@
                   }
                 </div>
               </td>
-              @if (getCompareFixedWideTrailingColSpan()) {
-                <td [colSpan]="getCompareFixedWideTrailingColSpan()"></td>
+              @if (pinnedRow.trailingColSpan) {
+                <td [colSpan]="pinnedRow.trailingColSpan"></td>
               }
             </tr>
           }
           @if (isPassmark) {
+            <tr class="compare-instance-section-gap" aria-hidden="true">
+              <td></td>
+              <td [colSpan]="servers.length"></td>
+            </tr>
             @for (
               benchmarkData of benchmarkCategory.data;
               track benchmarkData.benchmark_key ?? benchmarkData.benchmark_id
@@ -1188,7 +1193,7 @@
                       </div>
                     </div>
                   </td>
-                  <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
+                  <td [colSpan]="getCompareHeaderSpacerColSpan()"></td>
                   <td [colSpan]="1" class="compare-section-header-action-cell">
                     @if (benchmarkData.description) {
                       <button
@@ -1293,7 +1298,7 @@
             class="section_header"
             [id]="'benchmark_line_' + chartItem.chart.id"
           >
-            <td [colSpan]="getCompareFixedWideContentColSpan()">
+            <td [colSpan]="pinnedRow.contentColSpan">
               <div class="compare-section-header-row">
                 <h3 class="text-xl font-semibold m-0 flex items-center min-w-0">
                   <span class="compare-section-header-title">
@@ -1369,7 +1374,7 @@
                     </span>
                   </span>
                 </h3>
-                @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
+                @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                   <div class="flex items-stretch gap-4 shrink-0">
                     <sc-button
                       [label]="
@@ -1396,10 +1401,10 @@
                 }
               </div>
             </td>
-            @if (getCompareFixedWideActionSpacerColSpan()) {
-              <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+            @if (pinnedRow.actionSpacerColSpan) {
+              <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
             }
-            @if (getCompareFixedWideTrailingColSpan()) {
+            @if (pinnedRow.trailingColSpan) {
               <td [colSpan]="1" class="compare-section-header-action-cell">
                 @if (!isEmbedded) {
                   <div class="flex justify-end items-stretch gap-4">
@@ -1430,10 +1435,10 @@
             }
           </tr>
           <tr class="compare-fixed-chart-row">
-            <td [colSpan]="getCompareFixedWideContentColSpan()">
+            <td [colSpan]="pinnedRow.contentColSpan">
               <div
                 class="compare-chart-content"
-                [style]="getCompareChartContentStyle()"
+                [style]="pinnedRow.chartWidthStyle"
               >
                 <sc-benchmark-multi-bar-chart
                   [chartItem]="chartItem"
@@ -1449,8 +1454,8 @@
                 ></sc-benchmark-multi-bar-chart>
               </div>
             </td>
-            @if (getCompareFixedWideTrailingColSpan()) {
-              <td [colSpan]="getCompareFixedWideTrailingColSpan()"></td>
+            @if (pinnedRow.trailingColSpan) {
+              <td [colSpan]="pinnedRow.trailingColSpan"></td>
             }
           </tr>
           @if (chartItem.show_more) {
@@ -1487,7 +1492,7 @@
                       </div>
                     </div>
                   </td>
-                  <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
+                  <td [colSpan]="getCompareHeaderSpacerColSpan()"></td>
                   <td [colSpan]="1" class="compare-section-header-action-cell">
                     @if (chartData.description) {
                       <button
@@ -1585,7 +1590,7 @@
 
       @if (hasPgbenchCompareChart()) {
         <tr class="section_header" id="benchmark_line_pgbench">
-          <td [colSpan]="getCompareFixedWideContentColSpan()">
+          <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
               <h3 class="text-xl font-semibold m-0 flex items-center">
                 <span class="compare-section-header-title">
@@ -1624,7 +1629,7 @@
                   </span>
                 </span>
               </h3>
-              @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
+              @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                 <div class="flex items-stretch gap-4 shrink-0">
                   <sc-button
                     [icon]="clipboardIcon"
@@ -1637,10 +1642,10 @@
               }
             </div>
           </td>
-          @if (getCompareFixedWideActionSpacerColSpan()) {
-            <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+          @if (pinnedRow.actionSpacerColSpan) {
+            <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
           }
-          @if (getCompareFixedWideTrailingColSpan()) {
+          @if (pinnedRow.trailingColSpan) {
             <td [colSpan]="1" class="compare-section-header-action-cell">
               @if (!isEmbedded) {
                 <div class="flex justify-end items-stretch gap-4">
@@ -1657,10 +1662,10 @@
           }
         </tr>
         <tr class="compare-fixed-chart-row">
-          <td [colSpan]="getCompareFixedWideContentColSpan()">
+          <td [colSpan]="pinnedRow.contentColSpan">
             <div
               class="compare-chart-content"
-              [style]="getCompareChartContentStyle()"
+              [style]="pinnedRow.chartWidthStyle"
             >
               <sc-benchmark-line-chart
                 benchmarkKey="pgbench"
@@ -1678,8 +1683,8 @@
               ></sc-benchmark-line-chart>
             </div>
           </td>
-          @if (getCompareFixedWideTrailingColSpan()) {
-            <td [colSpan]="getCompareFixedWideTrailingColSpan()"></td>
+          @if (pinnedRow.trailingColSpan) {
+            <td [colSpan]="pinnedRow.trailingColSpan"></td>
           }
         </tr>
       }
@@ -1734,7 +1739,7 @@
               </div>
             </td>
 
-            <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
+            <td [colSpan]="getCompareHeaderSpacerColSpan()"></td>
             <td [colSpan]="1" class="compare-section-header-action-cell">
               @if (benchmarkCategory.description) {
                 <button
