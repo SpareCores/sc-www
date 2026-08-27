@@ -35,7 +35,8 @@ export type CompareStickyLayoutControllerOptions = {
 };
 
 export class CompareStickyLayoutController {
-  static readonly deferredUpdateDelayMs = COMPARE_STICKY_DEFERRED_UPDATE_DELAY_MS;
+  static readonly deferredUpdateDelayMs =
+    COMPARE_STICKY_DEFERRED_UPDATE_DELAY_MS;
 
   private mirrorCtrl?: ScrollbarMirrorController;
   private layoutFrameId: number | null = null;
@@ -130,7 +131,9 @@ export class CompareStickyLayoutController {
   private readonly flushLayout = (): void => {
     this.layoutFrameId = null;
 
-    const table = this.options.document.getElementById(this.options.ids.tableId);
+    const table = this.options.document.getElementById(
+      this.options.ids.tableId,
+    );
     const isSticky = table
       ? table.getBoundingClientRect().top < COMPARE_STICKY_VIEWPORT_TOP_PX
       : false;
