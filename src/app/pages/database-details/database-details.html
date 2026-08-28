@@ -20,9 +20,16 @@
     >
       <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
         <div class="flex gap-4 flex-col min-w-32">
-          <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
+          <div
+            class="vendor-logo min-w-20 w-20 h-20 bg-white rounded-lg mx-auto"
+          >
             @if (databaseDetails.vendor?.logo) {
-            <img [src]="databaseDetails.vendor?.logo" alt="logo" />
+            <a
+              [routerLink]="['/vendors', databaseDetails.vendor_id]"
+              class="block h-full"
+            >
+              <img [src]="databaseDetails.vendor?.logo" alt="logo" />
+            </a>
             }
           </div>
         </div>
@@ -31,7 +38,13 @@
             <span class="text-emerald-400 font-bold"
               >{{ databaseDetails.display_name }}</span
             >
-            by {{ databaseDetails.vendor?.name || databaseDetails.vendor_id }}
+            by
+            <a
+              [routerLink]="['/vendors', databaseDetails.vendor_id]"
+              class="underline decoration-dotted hover:text-gray-500"
+            >
+              {{ databaseDetails.vendor?.name || databaseDetails.vendor_id }}
+            </a>
           </h1>
           <div>{{ description }}<span>{{ cardPriceDescription }}</span></div>
           <div class="flex gap-4 flex-wrap mt-2">

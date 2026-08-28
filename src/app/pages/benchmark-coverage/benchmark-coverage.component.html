@@ -65,7 +65,14 @@
               <tr>
                 <td class="pl-3 pr-2 py-3">
                   <div class="flex gap-1">
-                    {{ vendorNameById()[vendor.vendor_id] || vendor.vendor_id }}
+                    <a
+                      [routerLink]="['/vendors', vendor.vendor_id]"
+                      class="underline decoration-dotted hover:text-gray-500"
+                    >
+                      {{
+                        vendorNameById()[vendor.vendor_id] || vendor.vendor_id
+                      }}
+                    </a>
                   </div>
                 </td>
                 <td class="px-4">
