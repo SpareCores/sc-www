@@ -31,6 +31,58 @@ type LegendHoverHandler = (
   legend: LegendElement<ChartType>,
 ) => void;
 
+export const chartLegendLabels = {
+  color: "#FFF",
+  boxWidth: 40,
+  boxHeight: 12,
+  usePointStyle: false,
+};
+
+function isTranslucentColor(
+  color: string | CanvasGradient | CanvasPattern | undefined,
+): boolean {
+  if (!color || typeof color !== "string") {
+    return false;
+  }
+
+  const eightDigitHex = /^#([0-9a-fA-F]{8})$/.exec(color);
+  if (eightDigitHex) {
+    return parseInt(eightDigitHex[1].slice(6, 8), 16) < 255;
+  }
+
+  const rgba = /^rgba\(([^)]+)\)$/.exec(color);
+  if (rgba) {
+    const alpha = parseFloat(rgba[1].split(",").at(3)?.trim() ?? "1");
+    return alpha < 1;
+  }
+
+  return false;
+}
+
+function resolveLegendSwatchColor(
+  item: LegendItem,
+): string | CanvasGradient | CanvasPattern | undefined {
+  if (isTranslucentColor(item.fillStyle)) {
+    return item.strokeStyle || item.fillStyle;
+  }
+
+  return item.fillStyle || item.strokeStyle;
+}
+
+function normalizeLegendItemStyle(item: LegendItem): LegendItem {
+  const fillColor = resolveLegendSwatchColor(item);
+  if (!fillColor) {
+    return item;
+  }
+
+  return {
+    ...item,
+    lineWidth: 0,
+    fillStyle: fillColor,
+    strokeStyle: fillColor,
+  };
+}
+
 function setLegendCursor(event: ChartEvent, cursor: string): void {
   const target = event.native?.target;
   if (target instanceof HTMLElement) {
@@ -142,12 +194,26 @@ export function createNoDataFilteredGenerateLabels(): LegendGenerateLabels {
   return function generateLabels(this: unknown, chart: Chart): LegendItem[] {
     captureNativeLegendHelpers();
     const items = nativeLegendGenerateLabels!.call(this, chart);
-    return items.filter((item) => {
-      if (item.datasetIndex === undefined) {
-        return false;
-      }
-      return datasetHasComparableData(chart.data.datasets[item.datasetIndex]);
-    });
+    return items
+      .filter((item) => {
+        if (item.datasetIndex === undefined) {
+          return false;
+        }
+        return datasetHasComparableData(chart.data.datasets[item.datasetIndex]);
+      })
+      .map(normalizeLegendItemStyle);
+  };
+}
+
+export function normalizeLegendItems(items: LegendItem[]): LegendItem[] {
+  return items.map(normalizeLegendItemStyle);
+}
+
+export function createFilledRectLegendGenerateLabels(): LegendGenerateLabels {
+  return function generateLabels(this: unknown, chart: Chart): LegendItem[] {
+    captureNativeLegendHelpers();
+    const items = nativeLegendGenerateLabels!.call(this, chart);
+    return normalizeLegendItems(items);
   };
 }
 
@@ -256,6 +322,7 @@ export function withCompareLegendBehavior<T extends { plugins?: object }>(
       legend: {
         ...legend,
         labels: {
+          ...chartLegendLabels,
           ...labels,
           generateLabels: createNoDataFilteredGenerateLabels(),
         },
@@ -269,8 +336,11 @@ export function withCompareLegendBehavior<T extends { plugins?: object }>(
 
 export function installChartLegendDefaults(): void {
   captureNativeLegendHelpers();
-  Chart.defaults.plugins.legend.labels.generateLabels =
-    createNoDataFilteredGenerateLabels();
+  Chart.defaults.plugins.legend.labels = {
+    ...Chart.defaults.plugins.legend.labels,
+    ...chartLegendLabels,
+    generateLabels: createFilledRectLegendGenerateLabels(),
+  };
   Chart.defaults.plugins.legend.onClick = createCompareLegendOnClick();
   Chart.defaults.plugins.legend.onHover = createLegendPointerOnHover();
   Chart.defaults.plugins.legend.onLeave = createLegendPointerOnLeave();
