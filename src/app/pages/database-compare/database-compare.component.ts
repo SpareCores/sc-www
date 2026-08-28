@@ -1129,6 +1129,7 @@ export class DatabaseCompareComponent
     this.lineCompareServers = this.databases.map((database) => ({
       display_name: database.display_name,
       vendor_id: database.vendor_id,
+      vendor_name: database.vendor?.name,
       api_reference: database.api_reference,
       benchmark_scores:
         database.benchmark_scores as LineChartServer["benchmark_scores"],
