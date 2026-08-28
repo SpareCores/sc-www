@@ -338,7 +338,7 @@ describe("BenchmarkLineChartBuilderService", () => {
       chart.isDatasetVisible = (index: number) => index !== 0;
     });
     const show = jasmine.createSpy("show").and.callFake(() => {
-      chart.isDatasetVisible = (index: number) => true;
+      chart.isDatasetVisible = () => true;
     });
     const update = jasmine.createSpy("update");
     const chart = {
