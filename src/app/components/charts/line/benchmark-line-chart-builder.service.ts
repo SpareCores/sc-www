@@ -237,7 +237,12 @@ export class BenchmarkLineChartBuilderService {
 
     const concurrencySet = new Set<number>();
     const pointsByServer = servers.map((server) => {
-      const points: Array<{ concurrency: number; score: number }> = [];
+      const points: Array<{
+        concurrency: number;
+        score: number;
+        note?: string | null;
+        latency?: number;
+      }> = [];
       for (const score of server.benchmark_scores ?? []) {
         if (score.benchmark_id !== PGBENCH_HEAVY_READ_ONLY_ID) {
           continue;
@@ -247,7 +252,12 @@ export class BenchmarkLineChartBuilderService {
           continue;
         }
         concurrencySet.add(concurrency);
-        points.push({ concurrency, score: score.score });
+        points.push({
+          concurrency,
+          score: score.score,
+          note: score.note,
+          latency: this.getLatencyMs((score as PgbenchScore).environment),
+        });
       }
       points.sort((a, b) => a.concurrency - b.concurrency);
       return points;
@@ -268,6 +278,8 @@ export class BenchmarkLineChartBuilderService {
               x: point.concurrency,
               y: point.score,
               unit,
+              note: point.note,
+              latency: point.latency,
             })),
             hidden: points.length === 0,
             label: server.display_name,
@@ -773,6 +785,11 @@ export class BenchmarkLineChartBuilderService {
       },
     };
 
+    options.interaction = {
+      mode: "nearest",
+      intersect: false,
+    };
+
     options.plugins = {
       ...options.plugins,
       legend: {
@@ -784,6 +801,10 @@ export class BenchmarkLineChartBuilderService {
       },
       tooltip: {
         ...options.plugins?.tooltip,
+        mode: "nearest",
+        intersect: false,
+        filter: (_tooltipItem: TooltipItem<"line">, index: number) =>
+          index === 0,
         callbacks: {
           ...options.plugins?.tooltip?.callbacks,
           label: function (
@@ -791,20 +812,35 @@ export class BenchmarkLineChartBuilderService {
             tooltipItem: TooltipItem<"line">,
           ) {
             const raw = tooltipItem.raw as PgbenchDataPoint | null;
-            const identity = getDatasetTooltipIdentity(tooltipItem.dataset);
-            const value = raw?.unit?.trim()
-              ? `${tooltipItem.formattedValue} ${raw.unit.trim()}`
+            const unit = raw?.unit?.trim();
+            const value = unit
+              ? `${tooltipItem.formattedValue} ${unit}`
               : tooltipItem.formattedValue;
-            return identity ? `${identity}: ${value}` : value;
+            return `Performance: ${value}`;
+          },
+          afterLabel: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            const raw = tooltipItem.raw as PgbenchDataPoint | null;
+            if (raw?.latency !== undefined) {
+              return `Connection latency: ${raw.latency} ms`;
+            }
+
+            const note = raw?.note?.trim();
+            return note || "";
           },
           title: function (
             this: TooltipModel<"line">,
             tooltipItems: TooltipItem<"line">[],
           ) {
-            const concurrency =
-              (tooltipItems[0]?.raw as PgbenchDataPoint | null)?.x ??
-              tooltipItems[0]?.parsed?.x;
-            return `${concurrency} concurrency`;
+            const tooltipItem = tooltipItems[0];
+            const raw = tooltipItem?.raw as PgbenchDataPoint | null;
+            const concurrency = raw?.x ?? tooltipItem?.parsed?.x;
+            const identity = getDatasetTooltipIdentity(tooltipItem?.dataset);
+            const context =
+              concurrency !== undefined ? `${concurrency} concurrency` : "";
+            return buildCompareTooltipTitle(identity, context);
           },
         },
       },
