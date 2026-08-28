@@ -36,7 +36,10 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { Button } from "../../components/button/button";
-import { formatBooleanIconHtml } from "../../components/charts/shared/server-compare-table.utils";
+import {
+  formatBooleanIconHtml,
+  formatNumberWithCommas,
+} from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
@@ -1076,15 +1079,21 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   getBenchmark(isMulti: boolean) {
-    return (
-      this.serverDetails.benchmark_scores
-        ?.find(
-          (b: any) =>
-            b.benchmark_id ===
-            (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
-        )
-        ?.score?.toFixed(0) || "-"
-    );
+    const score = this.serverDetails.benchmark_scores?.find(
+      (b: any) =>
+        b.benchmark_id === (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
+    )?.score;
+    if (score == null) {
+      return "-";
+    }
+    return formatNumberWithCommas(Math.round(score));
+  }
+
+  formatScore(value: number | undefined | null) {
+    if (value == null) {
+      return "0";
+    }
+    return formatNumberWithCommas(Math.round(value));
   }
 
   addToCompare() {
