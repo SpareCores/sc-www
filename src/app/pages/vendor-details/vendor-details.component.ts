@@ -8,8 +8,8 @@ import {
   inject,
 } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
-import { ActivatedRoute, RouterModule } from "@angular/router";
-import { LucideCheck } from "@lucide/angular";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { LucideCheck, LucideChevronRight, LucideX } from "@lucide/angular";
 import { Subscription } from "rxjs";
 import {
   Region,
@@ -68,6 +68,8 @@ const VENDOR_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     LoadingSpinnerComponent,
     ServerPropertyCardComponent,
     LucideCheck,
+    LucideChevronRight,
+    LucideX,
     CountryIdtoNamePipe,
   ],
   templateUrl: "./vendor-details.component.html",
@@ -77,6 +79,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private keeperAPI = inject(KeeperAPIService);
   private SEOHandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
@@ -129,6 +132,16 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
 
   toggleCard(cardId: string) {
     this.expandedCards[cardId] = !this.expandedCards[cardId];
+  }
+
+  getVendorRegionFilter(region: Region) {
+    return `${region.vendor_id}~${region.region_id}`;
+  }
+
+  openRegionLink(region: Region) {
+    this.router.navigate(["/servers"], {
+      queryParams: { vendor_regions: this.getVendorRegionFilter(region) },
+    });
   }
 
   private loadVendor(vendorId: string) {

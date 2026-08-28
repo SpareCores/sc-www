@@ -145,6 +145,8 @@
                   <th>REGION</th>
                   <th>COUNTRY</th>
                   <th>FOUNDING YEAR</th>
+                  <th>GREEN ENERGY</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -152,10 +154,35 @@
                   region of vendorRegions;
                   track region.vendor_id + "_" + region.region_id
                 ) {
-                  <tr>
+                  <tr class="cursor-pointer" (click)="openRegionLink(region)">
                     <td>{{ region.display_name }}</td>
                     <td>{{ region.country_id | countryIdtoName }}</td>
                     <td>{{ region.founding_year || "-" }}</td>
+                    <td>
+                      @if (region.green_energy) {
+                        <svg lucideCheck class="h-4 w-4 text-emerald-400"></svg>
+                      } @else {
+                        <svg lucideX class="h-4 w-4 text-white"></svg>
+                      }
+                    </td>
+                    <td>
+                      <div
+                        class="flex justify-end"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <a
+                          routerLink="/servers"
+                          [queryParams]="{
+                            vendor_regions: getVendorRegionFilter(region),
+                          }"
+                        >
+                          <svg
+                            lucideChevronRight
+                            class="h-6 w-6 text-emerald-400"
+                          ></svg>
+                        </a>
+                      </div>
+                    </td>
                   </tr>
                 }
               </tbody>
