@@ -223,6 +223,16 @@ export function resolveCompareFirstColumnWidthPx(
   return maxWidth > 0 ? Math.ceil(maxWidth) : null;
 }
 
+export function resetCompareTableHolderScroll(
+  document: Document,
+  holderId: string,
+): void {
+  const holder = document.getElementById(holderId);
+  if (holder) {
+    holder.scrollLeft = 0;
+  }
+}
+
 export function applyCompareFirstColumnWidth(
   document: Document,
   tableId: string,

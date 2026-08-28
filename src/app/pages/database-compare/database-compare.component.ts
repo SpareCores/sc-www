@@ -310,6 +310,20 @@ export class DatabaseCompareComponent
     this.stickyLayout.scheduleUpdate();
   }
 
+  private refreshCompareTableLayout(): void {
+    if (!this.isBrowser()) {
+      return;
+    }
+
+    const table = this.document.getElementById(DATABASE_COMPARE_TABLE_ID);
+    table?.style.removeProperty("min-width");
+    compareTableLayout.resetCompareTableHolderScroll(
+      this.document,
+      DATABASE_COMPARE_TABLE_HOLDER_ID,
+    );
+    this.stickyLayout.scheduleDeferredUpdate();
+  }
+
   onMirrorScroll(event: Event) {
     this.stickyLayout.syncFromMirror(event.target as HTMLElement);
   }
@@ -685,7 +699,7 @@ export class DatabaseCompareComponent
       .finally(() => {
         if (loadId === this.compareLoadId) {
           this.isLoading = false;
-          this.stickyLayout.scheduleDeferredUpdate();
+          this.refreshCompareTableLayout();
         }
       });
   }
