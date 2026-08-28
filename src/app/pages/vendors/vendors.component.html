@@ -42,14 +42,26 @@
             tabindex="0"
           >
             <td>
-              <img
-                class="bg-white rounded"
-                [src]="vendor.logo"
-                alt="{{ vendor.name }} logo"
-              />
+              <a
+                [routerLink]="['/vendors', vendor.vendor_id]"
+                (click)="$event.stopPropagation()"
+                class="inline-block"
+              >
+                @if (vendor.logo) {
+                  <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                    <img [src]="vendor.logo" alt="{{ vendor.name }} logo" />
+                  </div>
+                }
+              </a>
             </td>
             <td>
-              {{ vendor.name }}
+              <a
+                [routerLink]="['/vendors', vendor.vendor_id]"
+                (click)="$event.stopPropagation()"
+                class="underline decoration-dotted hover:text-gray-500"
+              >
+                {{ vendor.name }}
+              </a>
             </td>
             <td>
               {{ vendor.city }}, {{ vendor.country_id | countryIdtoName }}
