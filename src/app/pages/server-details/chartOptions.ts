@@ -4,6 +4,7 @@ import {
   TooltipItem,
   TooltipModel,
 } from "chart.js";
+import { chartLegendLabels } from "../../components/charts/shared/chart-legend.utils";
 import { formatStaticWebFileSizeTooltipContext } from "../../components/charts/shared/chart-tooltip.utils";
 
 export const barChartOptions: ChartConfiguration<"bar">["options"] = {
@@ -30,9 +31,7 @@ export const barChartOptions: ChartConfiguration<"bar">["options"] = {
   plugins: {
     legend: {
       display: true,
-      labels: {
-        color: "#FFF",
-      },
+      labels: chartLegendLabels,
     },
   },
 };
@@ -459,9 +458,7 @@ export const radarChartOptions: ChartConfiguration<"radar">["options"] = {
     },
     legend: {
       display: false,
-      labels: {
-        color: "#FFF",
-      },
+      labels: chartLegendLabels,
     },
   },
 };
@@ -479,11 +476,7 @@ export const radarDatasetColors = [
 
 export const chartAxisGridColor = "#4B5563";
 
-export const lineChartLegendLabels = {
-  color: "#FFF",
-  usePointStyle: true,
-  pointStyle: "rect" as const,
-};
+export const lineChartLegendLabels = chartLegendLabels;
 
 export const lineChartOptionsBWM: ChartConfiguration<"line">["options"] = {
   maintainAspectRatio: false,

@@ -361,7 +361,7 @@ describe("BenchmarkLineChartBuilderService", () => {
     expect(chart.options.scales?.y?.display).toBeFalse();
     expect(chart.options.scales?.y1?.grid?.drawOnChartArea).toBeTrue();
     expect(update).toHaveBeenCalled();
-    expect(result?.options.plugins?.legend?.labels?.usePointStyle).toBeTrue();
+    expect(result?.options.plugins?.legend?.labels?.usePointStyle).toBeFalse();
   });
 
   it("hides the pgbench chart when there are no matching scores", () => {

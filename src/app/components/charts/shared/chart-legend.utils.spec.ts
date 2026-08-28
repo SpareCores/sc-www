@@ -4,6 +4,7 @@ import {
   captureNativeLegendHelpers,
   countVisibleComparableDatasets,
   createCompareLegendOnClick,
+  createFilledRectLegendGenerateLabels,
   createLegendPointerOnHover,
   createNoDataFilteredGenerateLabels,
   datasetHasComparableData,
@@ -239,6 +240,50 @@ describe("chart-legend.utils", () => {
     expect(datasets[1].hidden).toBeFalse();
   });
 
+  it("keeps solid bar legend colors when the default border is translucent", () => {
+    const generateLabels = createFilledRectLegendGenerateLabels();
+    captureNativeLegendHelpers();
+    spyOn(
+      Chart.defaults.plugins.legend.labels,
+      "generateLabels",
+    ).and.returnValue([
+      {
+        text: "Spot",
+        fillStyle: "#34D399",
+        strokeStyle: "rgba(0, 0, 0, 0.1)",
+      },
+      {
+        text: "Ondemand",
+        fillStyle: "#E5E7EB",
+        strokeStyle: "rgba(0, 0, 0, 0.1)",
+      },
+    ] as never);
+
+    const items = generateLabels.call({}, { data: { datasets: [] } } as never);
+
+    expect(items[0]?.fillStyle).toBe("#34D399");
+    expect(items[1]?.fillStyle).toBe("#E5E7EB");
+  });
+
+  it("uses line border colors when the dataset fill is translucent", () => {
+    const generateLabels = createFilledRectLegendGenerateLabels();
+    captureNativeLegendHelpers();
+    spyOn(
+      Chart.defaults.plugins.legend.labels,
+      "generateLabels",
+    ).and.returnValue([
+      {
+        text: "server-a",
+        fillStyle: "#34D39933",
+        strokeStyle: "#34D399",
+      },
+    ] as never);
+
+    const items = generateLabels.call({}, { data: { datasets: [] } } as never);
+
+    expect(items[0]?.fillStyle).toBe("#34D399");
+  });
+
   it("merges compare legend behavior into options", () => {
     const options = withCompareLegendBehavior(
       { plugins: { legend: { display: true, labels: { color: "#fff" } } } },
@@ -246,10 +291,18 @@ describe("chart-legend.utils", () => {
     );
     const legend = options?.plugins?.legend as {
       onClick?: unknown;
-      labels?: { generateLabels?: unknown; color?: string };
+      labels?: {
+        generateLabels?: unknown;
+        color?: string;
+        usePointStyle?: boolean;
+        pointStyle?: string;
+      };
     };
     expect(legend.onClick).toEqual(jasmine.any(Function));
     expect(legend.labels?.generateLabels).toEqual(jasmine.any(Function));
     expect(legend.labels?.color).toBe("#fff");
+    expect(legend.labels?.usePointStyle).toBeFalse();
+    expect(legend.labels?.boxWidth).toBe(40);
+    expect(legend.labels?.boxHeight).toBe(12);
   });
 });
