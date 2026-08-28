@@ -307,6 +307,61 @@ describe("BenchmarkLineChartBuilderService", () => {
         dataset: { yAxisID: "y1" },
       }),
     ).toBe("Avg latency: 4.5 ms");
+
+    const legendOnClick = result?.options.plugins?.legend?.onClick as
+      | ((
+          event: object,
+          legendItem: { datasetIndex?: number },
+          legend: {
+            chart: {
+              data: { datasets: object[] };
+              isDatasetVisible: (index: number) => boolean;
+              hide: jasmine.Spy;
+              show: jasmine.Spy;
+              options: {
+                scales?: {
+                  y?: {
+                    display?: boolean;
+                    grid?: { drawOnChartArea?: boolean };
+                  };
+                  y1?: {
+                    display?: boolean;
+                    grid?: { drawOnChartArea?: boolean; color?: string };
+                  };
+                };
+              };
+            };
+          },
+        ) => void)
+      | undefined;
+    const hide = jasmine.createSpy("hide").and.callFake(() => {
+      chart.isDatasetVisible = (index: number) => index !== 0;
+    });
+    const show = jasmine.createSpy("show").and.callFake(() => {
+      chart.isDatasetVisible = (index: number) => true;
+    });
+    const update = jasmine.createSpy("update");
+    const chart = {
+      data: { datasets: result?.data.datasets ?? [] },
+      isDatasetVisible: (index: number) => index === 0,
+      hide,
+      show,
+      update,
+      options: {
+        scales: {
+          y: { display: true, grid: { drawOnChartArea: true } },
+          y1: { display: true, grid: { drawOnChartArea: false } },
+        },
+      },
+    };
+
+    legendOnClick?.({}, { datasetIndex: 0 }, { chart });
+
+    expect(hide).toHaveBeenCalledWith(0);
+    expect(chart.options.scales?.y?.display).toBeFalse();
+    expect(chart.options.scales?.y1?.grid?.drawOnChartArea).toBeTrue();
+    expect(update).toHaveBeenCalled();
+    expect(result?.options.plugins?.legend?.labels?.usePointStyle).toBeTrue();
   });
 
   it("hides the pgbench chart when there are no matching scores", () => {
