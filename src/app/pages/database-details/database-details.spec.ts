@@ -221,8 +221,8 @@ describe("DatabaseDetails", () => {
     fixture.detectChanges();
 
     expect(component.hasPgbenchHeaderScores).toBeTrue();
-    expect(component.pgbenchPeakScore).toBe("8868");
-    expect(component.pgbenchSingleScore).toBe("2166");
+    expect(component.pgbenchPeakScore).toBe("8,868");
+    expect(component.pgbenchSingleScore).toBe("2,166");
   });
 
   it("shows cheapest hour and month starts when both units are present", async () => {

@@ -30,6 +30,7 @@ import {
   PgbenchScore,
 } from "../../components/charts/line/benchmark-line-chart.types";
 import { getBenchmarkMetaNote } from "../../components/charts/shared/chart-tooltip.utils";
+import { formatNumberWithCommas } from "../../components/charts/shared/server-compare-table.utils";
 import { lineChartOptionsPgbench } from "../server-details/chartOptions";
 import {
   BreadcrumbSegment,
@@ -661,8 +662,12 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     const single = scores.find(
       (score) => score.benchmark_id === PGBENCH_SINGLE_BENCHMARK_ID,
     );
-    this.pgbenchPeakScore = peak ? peak.score.toFixed(0) : null;
-    this.pgbenchSingleScore = single ? single.score.toFixed(0) : null;
+    this.pgbenchPeakScore = peak
+      ? formatNumberWithCommas(Math.round(peak.score))
+      : null;
+    this.pgbenchSingleScore = single
+      ? formatNumberWithCommas(Math.round(single.score))
+      : null;
 
     const meta = benchmarkMeta.find(
       (item) => item.benchmark_id === PGBENCH_CHART_BENCHMARK_ID,
