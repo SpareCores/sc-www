@@ -205,11 +205,15 @@ export function createNoDataFilteredGenerateLabels(): LegendGenerateLabels {
   };
 }
 
+export function normalizeLegendItems(items: LegendItem[]): LegendItem[] {
+  return items.map(normalizeLegendItemStyle);
+}
+
 export function createFilledRectLegendGenerateLabels(): LegendGenerateLabels {
   return function generateLabels(this: unknown, chart: Chart): LegendItem[] {
     captureNativeLegendHelpers();
     const items = nativeLegendGenerateLabels!.call(this, chart);
-    return items.map(normalizeLegendItemStyle);
+    return normalizeLegendItems(items);
   };
 }
 

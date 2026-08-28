@@ -4,8 +4,8 @@ import {
   captureNativeLegendHelpers,
   countVisibleComparableDatasets,
   createCompareLegendOnClick,
-  createFilledRectLegendGenerateLabels,
   createLegendPointerOnHover,
+  normalizeLegendItems,
   createNoDataFilteredGenerateLabels,
   datasetHasComparableData,
   getCompareDatasetKey,
@@ -241,12 +241,7 @@ describe("chart-legend.utils", () => {
   });
 
   it("keeps solid bar legend colors when the default border is translucent", () => {
-    const generateLabels = createFilledRectLegendGenerateLabels();
-    captureNativeLegendHelpers();
-    spyOn(
-      Chart.defaults.plugins.legend.labels,
-      "generateLabels",
-    ).and.returnValue([
+    const items = normalizeLegendItems([
       {
         text: "Spot",
         fillStyle: "#34D399",
@@ -257,29 +252,20 @@ describe("chart-legend.utils", () => {
         fillStyle: "#E5E7EB",
         strokeStyle: "rgba(0, 0, 0, 0.1)",
       },
-    ] as never);
-
-    const items = generateLabels.call({}, { data: { datasets: [] } } as never);
+    ]);
 
     expect(items[0]?.fillStyle).toBe("#34D399");
     expect(items[1]?.fillStyle).toBe("#E5E7EB");
   });
 
   it("uses line border colors when the dataset fill is translucent", () => {
-    const generateLabels = createFilledRectLegendGenerateLabels();
-    captureNativeLegendHelpers();
-    spyOn(
-      Chart.defaults.plugins.legend.labels,
-      "generateLabels",
-    ).and.returnValue([
+    const items = normalizeLegendItems([
       {
         text: "server-a",
         fillStyle: "#34D39933",
         strokeStyle: "#34D399",
       },
-    ] as never);
-
-    const items = generateLabels.call({}, { data: { datasets: [] } } as never);
+    ]);
 
     expect(items[0]?.fillStyle).toBe("#34D399");
   });
@@ -295,7 +281,8 @@ describe("chart-legend.utils", () => {
         generateLabels?: unknown;
         color?: string;
         usePointStyle?: boolean;
-        pointStyle?: string;
+        boxWidth?: number;
+        boxHeight?: number;
       };
     };
     expect(legend.onClick).toEqual(jasmine.any(Function));
