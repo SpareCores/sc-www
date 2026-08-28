@@ -197,3 +197,55 @@ export function getCompareHeaderSpacerColSpan(itemCount: number): number {
     COMPARE_HEADER_SPACER_MIN_COLSPAN,
   );
 }
+
+export function resolveCompareFirstColumnWidthPx(
+  document: Document,
+  tableId: string,
+): number | null {
+  const table = document.getElementById(tableId);
+  if (!table) {
+    return null;
+  }
+
+  const cells = table.querySelectorAll<HTMLTableCellElement>(
+    "thead th:first-child, tbody > tr > td:first-child",
+  );
+  let maxWidth = 0;
+
+  cells.forEach((cell) => {
+    if (cell.colSpan > 1) {
+      return;
+    }
+
+    maxWidth = Math.max(maxWidth, cell.scrollWidth);
+  });
+
+  return maxWidth > 0 ? Math.ceil(maxWidth) : null;
+}
+
+export function resetCompareTableHolderScroll(
+  document: Document,
+  holderId: string,
+): void {
+  const holder = document.getElementById(holderId);
+  if (holder) {
+    holder.scrollLeft = 0;
+  }
+}
+
+export function applyCompareFirstColumnWidth(
+  document: Document,
+  tableId: string,
+): void {
+  const table = document.getElementById(tableId);
+  if (!table) {
+    return;
+  }
+
+  const widthPx = resolveCompareFirstColumnWidthPx(document, tableId);
+  if (widthPx === null) {
+    return;
+  }
+
+  table.style.setProperty("--compare-first-column-width", `${widthPx}px`);
+}

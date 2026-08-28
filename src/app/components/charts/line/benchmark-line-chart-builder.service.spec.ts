@@ -307,6 +307,61 @@ describe("BenchmarkLineChartBuilderService", () => {
         dataset: { yAxisID: "y1" },
       }),
     ).toBe("Avg latency: 4.5 ms");
+
+    const legendOnClick = result?.options.plugins?.legend?.onClick as
+      | ((
+          event: object,
+          legendItem: { datasetIndex?: number },
+          legend: {
+            chart: {
+              data: { datasets: object[] };
+              isDatasetVisible: (index: number) => boolean;
+              hide: jasmine.Spy;
+              show: jasmine.Spy;
+              options: {
+                scales?: {
+                  y?: {
+                    display?: boolean;
+                    grid?: { drawOnChartArea?: boolean };
+                  };
+                  y1?: {
+                    display?: boolean;
+                    grid?: { drawOnChartArea?: boolean; color?: string };
+                  };
+                };
+              };
+            };
+          },
+        ) => void)
+      | undefined;
+    const hide = jasmine.createSpy("hide").and.callFake(() => {
+      chart.isDatasetVisible = (index: number) => index !== 0;
+    });
+    const show = jasmine.createSpy("show").and.callFake(() => {
+      chart.isDatasetVisible = () => true;
+    });
+    const update = jasmine.createSpy("update");
+    const chart = {
+      data: { datasets: result?.data.datasets ?? [] },
+      isDatasetVisible: (index: number): boolean => index === 0 || index === 1,
+      hide,
+      show,
+      update,
+      options: {
+        scales: {
+          y: { display: true, grid: { drawOnChartArea: true } },
+          y1: { display: true, grid: { drawOnChartArea: false } },
+        },
+      },
+    };
+
+    legendOnClick?.({}, { datasetIndex: 0 }, { chart });
+
+    expect(hide).toHaveBeenCalledWith(0);
+    expect(chart.options.scales?.y?.display).toBeFalse();
+    expect(chart.options.scales?.y1?.grid?.drawOnChartArea).toBeTrue();
+    expect(update).toHaveBeenCalled();
+    expect(result?.options.plugins?.legend?.labels?.usePointStyle).toBeTrue();
   });
 
   it("hides the pgbench chart when there are no matching scores", () => {
@@ -385,5 +440,108 @@ describe("BenchmarkLineChartBuilderService", () => {
       { x: 2, y: 100, unit: "tpm" },
       { x: 4, y: 180, unit: "tpm" },
     ]);
+    expect(result?.options.interaction).toEqual({
+      mode: "nearest",
+      intersect: false,
+    });
+    expect(result?.options.plugins?.tooltip).toEqual(
+      jasmine.objectContaining({
+        mode: "nearest",
+        intersect: false,
+      }),
+    );
+  });
+
+  it("builds compare pgbench tooltips with per-server identity, throughput, and latency", () => {
+    const result = service.buildComparePgbenchChart({
+      servers: [
+        {
+          display_name: "db-a",
+          vendor_id: "aws",
+          api_reference: "db-a",
+          benchmark_scores: [
+            {
+              benchmark_id: "pgbench:heavy_read_only",
+              score: 100,
+              config: { concurrency: 2 },
+              environment: { latency_avg_ms: 4.5 },
+            } as LineBenchmarkScore & {
+              environment?: { latency_avg_ms?: number };
+            },
+            {
+              benchmark_id: "pgbench:heavy_read_only",
+              score: 180,
+              config: { concurrency: 8 },
+              note: "12 ms connection latency",
+            },
+          ],
+        },
+      ],
+      scoreUnit: "tpm",
+      optionsBase: {},
+    });
+
+    expect(result?.data.datasets[0].data).toEqual([
+      { x: 2, y: 100, unit: "tpm", note: undefined, latency: 4.5 },
+      {
+        x: 8,
+        y: 180,
+        unit: "tpm",
+        note: "12 ms connection latency",
+        latency: undefined,
+      },
+    ]);
+
+    const title = result?.options.plugins?.tooltip?.callbacks?.title as
+      | ((
+          items: Array<{
+            parsed?: { x?: number };
+            raw: {
+              x: number;
+              y: number;
+              unit?: string;
+              note?: string;
+              latency?: number;
+            };
+            dataset: { serverTooltipIdentity?: string };
+          }>,
+        ) => string | string[])
+      | undefined;
+    const label = result?.options.plugins?.tooltip?.callbacks?.label as
+      | ((tooltipItem: {
+          formattedValue: string;
+          raw: { unit?: string };
+        }) => string)
+      | undefined;
+    const afterLabel = result?.options.plugins?.tooltip?.callbacks
+      ?.afterLabel as
+      | ((tooltipItem: { raw: { note?: string; latency?: number } }) => string)
+      | undefined;
+
+    expect(
+      title?.([
+        {
+          parsed: { x: 2 },
+          raw: { x: 2, y: 100, unit: "tpm", latency: 4.5 },
+          dataset: { serverTooltipIdentity: "db-a by aws" },
+        },
+      ]),
+    ).toEqual(["db-a by aws", "2 concurrency"]);
+    expect(
+      label?.({
+        formattedValue: "100",
+        raw: { unit: "tpm" },
+      }),
+    ).toBe("Performance: 100 tpm");
+    expect(
+      afterLabel?.({
+        raw: { latency: 4.5 },
+      }),
+    ).toBe("Connection latency: 4.5 ms");
+    expect(
+      afterLabel?.({
+        raw: { note: "12 ms connection latency" },
+      }),
+    ).toBe("12 ms connection latency");
   });
 });

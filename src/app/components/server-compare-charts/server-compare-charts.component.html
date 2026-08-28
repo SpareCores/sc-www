@@ -1,4 +1,4 @@
-<div>
+<div class="w-full">
   <table id="main-table" #mainTable class="items_table">
     <colgroup>
       <col class="compare-first-column-col" />
@@ -6,7 +6,7 @@
         server of servers;
         track server.vendor_id + "_" + server.server_id
       ) {
-        <col />
+        <col [style.minWidth]="getServerColumnWidth(server)" />
       }
     </colgroup>
     @if (isChartShown("generic")) {
@@ -19,7 +19,6 @@
           ) {
             <th
               class="align-baseline compact-number-header-cell compare-table-header-cell"
-              [style.width]="getServerColumnWidth(server)"
               [style.minWidth]="getServerColumnWidth(server)"
               [id]="
                 'main-table-th-' + server.vendor_id + '_' + server.server_id

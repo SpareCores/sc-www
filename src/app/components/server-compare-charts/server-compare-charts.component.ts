@@ -191,6 +191,12 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
       compareTableLayout.resolveCompareUnpinnedRowLayout(this.servers.length);
     this.setup();
     if (isPlatformBrowser(this.platformId)) {
+      const table = this.document.getElementById(SERVER_COMPARE_TABLE_ID);
+      table?.style.removeProperty("min-width");
+      compareTableLayout.resetCompareTableHolderScroll(
+        this.document,
+        SERVER_COMPARE_TABLE_HOLDER_ID,
+      );
       this.schedulePinnedRowLayoutUpdate();
     }
   }
@@ -258,6 +264,10 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
 
     this.pinnedRowLayoutFrameId = requestAnimationFrame(() => {
       this.pinnedRowLayoutFrameId = null;
+      compareTableLayout.applyCompareFirstColumnWidth(
+        this.document,
+        SERVER_COMPARE_TABLE_ID,
+      );
       this.comparePinnedRowLayout =
         compareTableLayout.resolveComparePinnedRowLayout({
           document: this.document,

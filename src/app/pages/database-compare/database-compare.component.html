@@ -222,10 +222,7 @@
               database of databases;
               track database.vendor_id + "_" + database.database_id
             ) {
-              <col
-                [style.width]="getDatabaseColumnWidth(database)"
-                [style.minWidth]="getDatabaseColumnWidth(database)"
-              />
+              <col [style.minWidth]="getDatabaseColumnWidth(database)" />
             }
           </colgroup>
           <thead>
@@ -237,7 +234,6 @@
               ) {
                 <th
                   class="align-baseline compact-number-header-cell compare-table-header-cell"
-                  [style.width]="getDatabaseColumnWidth(database)"
                   [style.minWidth]="getDatabaseColumnWidth(database)"
                 >
                   <div

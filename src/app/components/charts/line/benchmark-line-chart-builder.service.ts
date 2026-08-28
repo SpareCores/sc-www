@@ -1,7 +1,17 @@
 import { Injectable } from "@angular/core";
-import { ChartConfiguration, TooltipItem, TooltipModel } from "chart.js";
+import {
+  Chart,
+  ChartConfiguration,
+  ChartEvent,
+  ChartType,
+  LegendElement,
+  LegendItem,
+  TooltipItem,
+  TooltipModel,
+} from "chart.js";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
+import { datasetHasComparableData } from "../shared/chart-legend.utils";
 import {
   buildCompareTooltipTitle,
   getDatasetTooltipIdentity,
@@ -27,6 +37,10 @@ import {
   StressNgChartData,
   StressNgChartResult,
 } from "./benchmark-line-chart.types";
+import {
+  chartAxisGridColor,
+  lineChartLegendLabels,
+} from "../../../pages/server-details/chartOptions";
 
 const PGBENCH_SCORE_COLOR = radarDatasetColors[0].borderColor;
 const PGBENCH_LATENCY_COLOR = "#EAB308";
@@ -223,7 +237,12 @@ export class BenchmarkLineChartBuilderService {
 
     const concurrencySet = new Set<number>();
     const pointsByServer = servers.map((server) => {
-      const points: Array<{ concurrency: number; score: number }> = [];
+      const points: Array<{
+        concurrency: number;
+        score: number;
+        note?: string | null;
+        latency?: number;
+      }> = [];
       for (const score of server.benchmark_scores ?? []) {
         if (score.benchmark_id !== PGBENCH_HEAVY_READ_ONLY_ID) {
           continue;
@@ -233,7 +252,12 @@ export class BenchmarkLineChartBuilderService {
           continue;
         }
         concurrencySet.add(concurrency);
-        points.push({ concurrency, score: score.score });
+        points.push({
+          concurrency,
+          score: score.score,
+          note: score.note,
+          latency: this.getLatencyMs((score as PgbenchScore).environment),
+        });
       }
       points.sort((a, b) => a.concurrency - b.concurrency);
       return points;
@@ -246,22 +270,23 @@ export class BenchmarkLineChartBuilderService {
     const data: PgbenchChartData = {
       datasets: servers.map((server, index) => {
         const points = pointsByServer[index];
+        const color =
+          radarDatasetColors[index % radarDatasetColors.length].borderColor;
         return withServerTooltipIdentity(
           {
             data: points.map((point) => ({
               x: point.concurrency,
               y: point.score,
               unit,
+              note: point.note,
+              latency: point.latency,
             })),
             hidden: points.length === 0,
             label: server.display_name,
             yAxisID: "y",
             spanGaps: true,
-            borderColor:
-              radarDatasetColors[index % radarDatasetColors.length].borderColor,
-            backgroundColor:
-              radarDatasetColors[index % radarDatasetColors.length]
-                .backgroundColor,
+            borderColor: color,
+            backgroundColor: color,
           },
           server,
         );
@@ -497,6 +522,10 @@ export class BenchmarkLineChartBuilderService {
       legend: {
         ...rawOptions.plugins?.legend,
         display: showLegend,
+        labels: {
+          ...(rawOptions.plugins?.legend?.labels as object),
+          ...(showLegend ? lineChartLegendLabels : {}),
+        },
       },
       tooltip: {
         ...rawOptions.plugins?.tooltip,
@@ -523,6 +552,10 @@ export class BenchmarkLineChartBuilderService {
       legend: {
         ...percentOptions.plugins?.legend,
         display: showLegend,
+        labels: {
+          ...(percentOptions.plugins?.legend?.labels as object),
+          ...(showLegend ? lineChartLegendLabels : {}),
+        },
       },
       tooltip: {
         ...percentOptions.plugins?.tooltip,
@@ -680,6 +713,14 @@ export class BenchmarkLineChartBuilderService {
 
     options.plugins = {
       ...options.plugins,
+      legend: {
+        ...options.plugins?.legend,
+        labels: {
+          ...(options.plugins?.legend?.labels as object),
+          ...lineChartLegendLabels,
+        },
+        onClick: this.createPgbenchDetailsLegendOnClick(),
+      },
       tooltip: {
         ...options.plugins?.tooltip,
         callbacks: {
@@ -718,11 +759,22 @@ export class BenchmarkLineChartBuilderService {
   ): void {
     options.scales = {
       ...options.scales,
+      x: {
+        ...options.scales?.x,
+        grid: {
+          ...options.scales?.x?.grid,
+          color: chartAxisGridColor,
+        },
+      },
       y: {
         ...options.scales?.y,
         ticks: {
           ...options.scales?.y?.ticks,
           color: "#FFF",
+        },
+        grid: {
+          ...options.scales?.y?.grid,
+          color: chartAxisGridColor,
         },
         title: {
           ...options.scales?.y?.title,
@@ -733,13 +785,26 @@ export class BenchmarkLineChartBuilderService {
       },
     };
 
+    options.interaction = {
+      mode: "nearest",
+      intersect: false,
+    };
+
     options.plugins = {
       ...options.plugins,
       legend: {
         ...options.plugins?.legend,
+        labels: {
+          ...(options.plugins?.legend?.labels as object),
+          ...lineChartLegendLabels,
+        },
       },
       tooltip: {
         ...options.plugins?.tooltip,
+        mode: "nearest",
+        intersect: false,
+        filter: (_tooltipItem: TooltipItem<"line">, index: number) =>
+          index === 0,
         callbacks: {
           ...options.plugins?.tooltip?.callbacks,
           label: function (
@@ -747,20 +812,35 @@ export class BenchmarkLineChartBuilderService {
             tooltipItem: TooltipItem<"line">,
           ) {
             const raw = tooltipItem.raw as PgbenchDataPoint | null;
-            const identity = getDatasetTooltipIdentity(tooltipItem.dataset);
-            const value = raw?.unit?.trim()
-              ? `${tooltipItem.formattedValue} ${raw.unit.trim()}`
+            const unit = raw?.unit?.trim();
+            const value = unit
+              ? `${tooltipItem.formattedValue} ${unit}`
               : tooltipItem.formattedValue;
-            return identity ? `${identity}: ${value}` : value;
+            return `Performance: ${value}`;
+          },
+          afterLabel: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            const raw = tooltipItem.raw as PgbenchDataPoint | null;
+            if (raw?.latency !== undefined) {
+              return `Connection latency: ${raw.latency} ms`;
+            }
+
+            const note = raw?.note?.trim();
+            return note || "";
           },
           title: function (
             this: TooltipModel<"line">,
             tooltipItems: TooltipItem<"line">[],
           ) {
-            const concurrency =
-              (tooltipItems[0]?.raw as PgbenchDataPoint | null)?.x ??
-              tooltipItems[0]?.parsed?.x;
-            return `${concurrency} concurrency`;
+            const tooltipItem = tooltipItems[0];
+            const raw = tooltipItem?.raw as PgbenchDataPoint | null;
+            const concurrency = raw?.x ?? tooltipItem?.parsed?.x;
+            const identity = getDatasetTooltipIdentity(tooltipItem?.dataset);
+            const context =
+              concurrency !== undefined ? `${concurrency} concurrency` : "";
+            return buildCompareTooltipTitle(identity, context);
           },
         },
       },
@@ -847,5 +927,71 @@ export class BenchmarkLineChartBuilderService {
     return typeof value === "number" && Number.isFinite(value)
       ? value
       : undefined;
+  }
+
+  private createPgbenchDetailsLegendOnClick() {
+    return (
+      _event: ChartEvent,
+      legendItem: LegendItem,
+      legend: LegendElement<ChartType>,
+    ): void => {
+      const { chart } = legend;
+      const datasetIndex = legendItem.datasetIndex;
+      if (datasetIndex === undefined) {
+        return;
+      }
+
+      const dataset = chart.data.datasets[datasetIndex];
+      if (!datasetHasComparableData(dataset)) {
+        return;
+      }
+
+      if (chart.isDatasetVisible(datasetIndex)) {
+        const visibleCount = chart.data.datasets.reduce((count, ds, index) => {
+          if (!datasetHasComparableData(ds) || !chart.isDatasetVisible(index)) {
+            return count;
+          }
+          return count + 1;
+        }, 0);
+        if (visibleCount <= 1) {
+          return;
+        }
+        chart.hide(datasetIndex);
+      } else {
+        chart.show(datasetIndex);
+      }
+
+      this.syncPgbenchAxisVisibility(chart);
+      chart.update();
+    };
+  }
+
+  private syncPgbenchAxisVisibility(chart: Chart): void {
+    const scales = chart.options.scales;
+    if (!scales) {
+      return;
+    }
+
+    const scoreVisible = chart.isDatasetVisible(0);
+    const latencyVisible = chart.isDatasetVisible(1);
+
+    if (scales.y) {
+      scales.y.display = scoreVisible;
+    }
+    if (scales.y1) {
+      scales.y1.display = latencyVisible;
+      scales.y1.grid = {
+        ...scales.y1.grid,
+        drawOnChartArea: latencyVisible && !scoreVisible,
+        color: chartAxisGridColor,
+      };
+    }
+    if (scales.y?.grid) {
+      scales.y.grid = {
+        ...scales.y.grid,
+        drawOnChartArea: scoreVisible,
+        color: chartAxisGridColor,
+      };
+    }
   }
 }

@@ -83,6 +83,7 @@ export type PgbenchDataPoint = {
   y: number;
   note?: string | null;
   unit?: string;
+  latency?: number;
 };
 
 export type PgbenchScore = {

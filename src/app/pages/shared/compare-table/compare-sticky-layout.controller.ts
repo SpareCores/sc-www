@@ -1,7 +1,10 @@
 import { ElementRef, Signal, WritableSignal } from "@angular/core";
 import { COMPARE_STICKY_DEFERRED_UPDATE_DELAY_MS } from "./compare-sticky-layout.constants";
 import { COMPARE_STICKY_VIEWPORT_TOP_PX } from "./compare-table-layout.constants";
-import { resolveCompareStickyHeaderStyles } from "./compare-table-layout.utils";
+import {
+  applyCompareFirstColumnWidth,
+  resolveCompareStickyHeaderStyles,
+} from "./compare-table-layout.utils";
 import {
   ScrollbarMirrorController,
   ScrollbarMirrorOptions,
@@ -130,6 +133,11 @@ export class CompareStickyLayoutController {
 
   private readonly flushLayout = (): void => {
     this.layoutFrameId = null;
+
+    applyCompareFirstColumnWidth(
+      this.options.document,
+      this.options.ids.tableId,
+    );
 
     const table = this.options.document.getElementById(
       this.options.ids.tableId,
