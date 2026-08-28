@@ -24,9 +24,7 @@
       >
         <div class="flex gap-8 flex-grow min-w-0 lg:max-w-[75%] w-full">
           <div class="flex gap-4 flex-col shrink-0">
-            <div
-              class="vendor-logo min-w-48 w-48 h-48 bg-white rounded-lg"
-            >
+            <div class="vendor-logo min-w-48 w-48 h-48 bg-white rounded-lg">
               @if (vendor.logo) {
                 <img [src]="vendor.logo" [alt]="vendor.name + ' logo'" />
               }
@@ -129,10 +127,7 @@
         </div>
 
         <div class="block_full vendor-map-block">
-          <div
-            class="text-black datamaps_div"
-            id="vendor_datamapdiv"
-          ></div>
+          <div class="text-black datamaps_div" id="vendor_datamapdiv"></div>
         </div>
 
         @if (vendorRegions.length) {

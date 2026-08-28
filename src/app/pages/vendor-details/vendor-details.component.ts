@@ -86,7 +86,8 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   isLoading = true;
   vendor: Vendor | null = null;
   vendorRegions: Region[] = [];
-  keeperResponseErrorMsg = "Failed to load vendor data. Please try again later.";
+  keeperResponseErrorMsg =
+    "Failed to load vendor data. Please try again later.";
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
@@ -388,14 +389,9 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   private updateSeo(vendor: Vendor) {
     const title = `${vendor.name} - Spare Cores`;
     const keywords = `${vendor.name}, ${vendor.vendor_id}, cloud vendor, sparecores`;
-    this.SEOHandler.updateTitleAndMetaTags(
-      title,
-      this.description,
-      keywords,
-    );
+    this.SEOHandler.updateTitleAndMetaTags(title, this.description, keywords);
 
-    const url =
-      this.SEOHandler.getBaseURL() + "/vendors/" + vendor.vendor_id;
+    const url = this.SEOHandler.getBaseURL() + "/vendors/" + vendor.vendor_id;
     this.SEOHandler.updateCanonical(this.document, url);
 
     if (vendor.logo) {
@@ -475,9 +471,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   }
 
   private popupTemplate(_geo: any, data: any) {
-    const countryName = this.countryNamePipe.transform(
-      data.country,
-    ) as string;
+    const countryName = this.countryNamePipe.transform(data.country) as string;
     let html = `<div class="hoverinfo"> <ul>`;
     html += `<li><b>Region ID</b>: ${data.region}</li>`;
     html += `<li><b>Region name</b>: ${data.name}</li>`;
