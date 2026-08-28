@@ -258,6 +258,10 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
 
     this.pinnedRowLayoutFrameId = requestAnimationFrame(() => {
       this.pinnedRowLayoutFrameId = null;
+      compareTableLayout.applyCompareFirstColumnWidth(
+        this.document,
+        SERVER_COMPARE_TABLE_ID,
+      );
       this.comparePinnedRowLayout =
         compareTableLayout.resolveComparePinnedRowLayout({
           document: this.document,
