@@ -100,7 +100,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   metadataSections: ServerPropertySection[] = [];
   billingSections: ServerPropertySection[] = [];
   expandedCards: Record<string, boolean> = {
-    details: true,
+    details: false,
     billing: true,
     regions: false,
   };
@@ -270,7 +270,6 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
         properties: this.rows([
           { id: "vendor_id", name: "Vendor ID", value: vendor.vendor_id },
           { id: "name", name: "Full Name", value: vendor.name },
-          { id: "status", name: "Status", value: vendor.status },
           {
             id: "founding_year",
             name: "Launched",
@@ -303,6 +302,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
               ? `<a class="underline decoration-dotted hover:text-gray-500" href="${vendor.status_page}" target="_blank" rel="noopener">${vendor.status_page}</a>`
               : null,
           },
+          { id: "status", name: "Status", value: vendor.status },
           {
             id: "observed_at",
             name: "Observed At",

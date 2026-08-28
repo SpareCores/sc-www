@@ -22,7 +22,9 @@
         id="vendor_base_info_box"
         class="mx-2 xl:mx-0 flex flex-wrap justify-between items-stretch rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
       >
-        <div class="flex gap-8 flex-grow min-w-0 lg:max-w-[75%] w-full">
+        <div
+          class="flex gap-8 items-start flex-grow min-w-0 lg:max-w-[75%] w-full"
+        >
           <div class="flex gap-4 flex-col shrink-0">
             <div class="vendor-logo min-w-48 w-48 h-48 bg-white rounded-lg">
               @if (vendor.logo) {
@@ -30,32 +32,12 @@
               }
             </div>
           </div>
-          <div class="flex flex-col gap-3 min-w-0 flex-grow">
+          <div class="flex flex-col gap-3 min-w-0 flex-grow min-h-48">
             <h1 class="text-2xl">
               <span class="text-emerald-400 font-bold">{{ vendor.name }}</span>
             </h1>
             <div>{{ description }}</div>
             <div class="vendor-hero-actions flex gap-3 flex-nowrap mt-auto">
-              @if (vendor.homepage) {
-                <sc-button
-                  label="Homepage"
-                  icon="external-link"
-                  size="small"
-                  [href]="vendor.homepage"
-                  target="_blank"
-                  rel="noopener"
-                ></sc-button>
-              }
-              @if (vendor.status_page) {
-                <sc-button
-                  label="Status page"
-                  icon="activity"
-                  size="small"
-                  [href]="vendor.status_page"
-                  target="_blank"
-                  rel="noopener"
-                ></sc-button>
-              }
               @if (serverCount >= 1) {
                 <sc-button
                   label="Browse servers"
@@ -72,6 +54,28 @@
                   size="small"
                   [routerLink]="['/databases']"
                   [queryParams]="{ vendor: vendor.vendor_id }"
+                ></sc-button>
+              }
+              @if (vendor.homepage) {
+                <sc-button
+                  label="Homepage"
+                  icon="external-link"
+                  size="small"
+                  variant="outline"
+                  [href]="vendor.homepage"
+                  target="_blank"
+                  rel="noopener"
+                ></sc-button>
+              }
+              @if (vendor.status_page) {
+                <sc-button
+                  label="Status page"
+                  icon="activity"
+                  size="small"
+                  variant="outline"
+                  [href]="vendor.status_page"
+                  target="_blank"
+                  rel="noopener"
                 ></sc-button>
               }
             </div>
