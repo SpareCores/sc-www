@@ -1,0 +1,199 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16 text-white">
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
+
+    @if (isLoading) {
+      <div class="flex justify-center items-center mt-12">
+        <sc-loading-spinner
+          size="md"
+          text="Loading vendor data..."
+        ></sc-loading-spinner>
+      </div>
+    }
+
+    @if (!isLoading && !vendor) {
+      <div class="flex justify-center items-center mt-12">
+        <div class="text-2xl text-red-400">{{ keeperResponseErrorMsg }}</div>
+      </div>
+    }
+
+    @if (vendor) {
+      <div
+        id="vendor_base_info_box"
+        class="mx-2 xl:mx-0 flex flex-wrap justify-between items-stretch rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+      >
+        <div class="flex gap-8 flex-grow min-w-0 lg:max-w-[75%] w-full">
+          <div class="flex gap-4 flex-col shrink-0">
+            <div
+              class="vendor-logo min-w-48 w-48 h-48 bg-white rounded-lg"
+            >
+              @if (vendor.logo) {
+                <img [src]="vendor.logo" [alt]="vendor.name + ' logo'" />
+              }
+            </div>
+          </div>
+          <div class="flex flex-col gap-3 min-w-0 flex-grow">
+            <h1 class="text-2xl">
+              <span class="text-emerald-400 font-bold">{{ vendor.name }}</span>
+            </h1>
+            <div>{{ description }}</div>
+            <div class="vendor-hero-actions flex gap-3 flex-nowrap mt-auto">
+              @if (vendor.homepage) {
+                <sc-button
+                  label="Homepage"
+                  icon="external-link"
+                  size="small"
+                  [href]="vendor.homepage"
+                  target="_blank"
+                  rel="noopener"
+                ></sc-button>
+              }
+              @if (vendor.status_page) {
+                <sc-button
+                  label="Status page"
+                  icon="activity"
+                  size="small"
+                  [href]="vendor.status_page"
+                  target="_blank"
+                  rel="noopener"
+                ></sc-button>
+              }
+              @if (serverCount >= 1) {
+                <sc-button
+                  label="Browse servers"
+                  icon="pc-case"
+                  size="small"
+                  [routerLink]="['/servers']"
+                  [queryParams]="{ vendor: vendor.vendor_id, limit: 100 }"
+                ></sc-button>
+              }
+              @if (databaseCount !== null && databaseCount >= 1) {
+                <sc-button
+                  label="Browse databases"
+                  icon="database"
+                  size="small"
+                  [routerLink]="['/databases']"
+                  [queryParams]="{ vendor: vendor.vendor_id }"
+                ></sc-button>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="w-full lg:w-auto flex justify-end lg:ml-auto shrink-0">
+          <div class="vendor-hero-stats">
+            @for (feature of features; track feature.name; let i = $index) {
+              <div>
+                @if (i !== 0) {
+                  <div
+                    class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
+                  ></div>
+                }
+                <div class="flex gap-2 text-xl items-center text-gray-200">
+                  <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+                    <svg lucideCheck class="h-4 w-4"></svg>
+                  </div>
+                  <b>{{ feature.value }}</b>
+                  <span>{{ feature.name }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
+        <div class="my-2 w-full">
+          <h2 class="text-3xl font-bold">Details</h2>
+        </div>
+
+        <sc-server-property-card
+          cardTitle="Vendor Metadata"
+          cardId="details"
+          [sections]="metadataSections"
+          [showSectionHeaders]="false"
+          [isOpen]="expandedCards.details"
+          (toggleRequested)="toggleCard('details')"
+        ></sc-server-property-card>
+
+        <sc-server-property-card
+          cardTitle="Billing"
+          cardId="billing"
+          [sections]="billingSections"
+          [showSectionHeaders]="false"
+          [isOpen]="expandedCards.billing"
+          (toggleRequested)="toggleCard('billing')"
+        ></sc-server-property-card>
+
+        <div class="my-2 w-full">
+          <h2 class="text-3xl font-bold">Regions</h2>
+        </div>
+
+        <div class="block_full vendor-map-block">
+          <div
+            class="text-black datamaps_div"
+            id="vendor_datamapdiv"
+          ></div>
+        </div>
+
+        @if (vendorRegions.length) {
+          <div
+            class="block_full vendor-regions-table-block"
+            [class.open]="expandedCards.regions"
+          >
+            <table class="items_table">
+              <thead>
+                <tr>
+                  <th>REGION</th>
+                  <th>COUNTRY</th>
+                  <th>FOUNDING YEAR</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (
+                  region of vendorRegions;
+                  track region.vendor_id + "_" + region.region_id
+                ) {
+                  <tr>
+                    <td>{{ region.display_name }}</td>
+                    <td>{{ region.country_id | countryIdtoName }}</td>
+                    <td>{{ region.founding_year || "-" }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+            @if (vendorRegions.length > 7) {
+              @if (!expandedCards.regions) {
+                <div
+                  class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
+                  style="
+                    background: linear-gradient(
+                      360deg,
+                      #06263a 23.44%,
+                      rgba(6, 38, 58, 0) 100%
+                    );
+                  "
+                >
+                  <sc-button
+                    label="Show more"
+                    size="small"
+                    [ariaExpanded]="false"
+                    (click)="toggleCard('regions')"
+                  ></sc-button>
+                </div>
+              } @else {
+                <div class="w-full pt-3 flex justify-center">
+                  <sc-button
+                    label="Show less"
+                    size="small"
+                    [ariaExpanded]="true"
+                    (click)="toggleCard('regions')"
+                  ></sc-button>
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
