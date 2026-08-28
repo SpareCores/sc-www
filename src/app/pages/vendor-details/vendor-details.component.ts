@@ -105,7 +105,6 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   expandedCards: Record<string, boolean> = {
     details: false,
     billing: true,
-    regions: false,
   };
 
   regionCount = 0;

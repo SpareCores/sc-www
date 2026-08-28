@@ -10,25 +10,6 @@
   overflow-x: auto;
 }
 
-.block_full {
-  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
-  width: 100%;
-}
-
-.vendor-map-block {
-  min-height: 460px;
-}
-
-.vendor-regions-table-block {
-  min-height: unset;
-  height: 460px;
-  overflow: hidden;
-
-  &.open {
-    height: unset;
-  }
-}
-
 .datamaps_div {
   position: relative;
   width: 100%;
@@ -55,6 +36,7 @@
     }
 
     tr {
+      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
       td {
         @apply px-5 py-3 text-left text-sm;
       }
