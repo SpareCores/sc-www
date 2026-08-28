@@ -15,6 +15,17 @@
   @apply block;
 }
 
+.navbar_menu_list {
+  > li,
+  > ul > li {
+    @apply py-2;
+  }
+
+  > hr {
+    @apply mx-3 border-gray-500 my-2;
+  }
+}
+
 li {
   @apply px-3;
 }
