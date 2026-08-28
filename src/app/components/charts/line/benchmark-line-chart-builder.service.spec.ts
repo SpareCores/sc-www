@@ -437,8 +437,8 @@ describe("BenchmarkLineChartBuilderService", () => {
     ).toBeTrue();
     expect(result?.options.scales?.y1).toBeUndefined();
     expect(result?.data.datasets[0].data).toEqual([
-      { x: 2, y: 100, unit: "tpm" },
-      { x: 4, y: 180, unit: "tpm" },
+      { x: 2, y: 100, unit: "tpm", note: undefined, latency: undefined },
+      { x: 4, y: 180, unit: "tpm", note: undefined, latency: undefined },
     ]);
     expect(result?.options.interaction).toEqual({
       mode: "nearest",
