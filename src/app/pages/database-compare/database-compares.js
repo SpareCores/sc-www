@@ -35,7 +35,7 @@ const databaseCompares = [
       {
         vendor: "aws",
         database: "db.m9g.4xlarge",
-      }
+      },
     ],
   },
   {
@@ -64,7 +64,7 @@ const databaseCompares = [
       {
         vendor: "aws",
         database: "db.r8g.4xlarge",
-      }
+      },
     ],
   },
 ];
