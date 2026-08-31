@@ -5,6 +5,10 @@
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
       @apply text-left px-5 py-3 font-normal text-xs;
+
+      &:last-child {
+        text-align: right;
+      }
     }
   }
 
