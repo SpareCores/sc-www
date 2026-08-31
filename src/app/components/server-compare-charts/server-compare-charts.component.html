@@ -94,19 +94,25 @@
           ) {
             <td>
               @if (server.vendor.logo) {
-                <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto">
+                <a
+                  class="block w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto"
+                  [routerLink]="['/vendors', server.vendor_id]"
+                >
                   <img
                     [src]="server.vendor.logo"
                     alt="{{ server.vendor.name }} logo"
                     width="28"
                     height="28"
                   />
-                </div>
+                </a>
               }
               @if (!server.vendor.logo) {
-                <div class="text-white text-sm ml-auto">
+                <a
+                  class="text-white text-sm ml-auto underline decoration-dotted"
+                  [routerLink]="['/vendors', server.vendor_id]"
+                >
                   {{ server.vendor.name }}
-                </div>
+                </a>
               }
             </td>
           }

@@ -124,6 +124,6 @@ export class VendorsComponent implements OnInit {
   }
 
   openLink(item: any) {
-    this.router.navigateByUrl(`/servers?vendor=${item.vendor_id}`);
+    this.router.navigateByUrl(`/vendors/${item.vendor_id}`);
   }
 }

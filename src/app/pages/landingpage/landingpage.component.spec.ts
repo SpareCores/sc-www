@@ -84,9 +84,7 @@ describe("LandingpageComponent", () => {
       .withContext("Expected #slot_region_link to be rendered")
       .not.toBeNull();
 
-    expect(vendorLink.getAttribute("href")).toContain("/servers?vendor=aws");
-    expect(vendorLink.getAttribute("href")).toContain("vcpus_min=8");
-    expect(vendorLink.getAttribute("href")).toContain("memory_min=32");
+    expect(vendorLink.getAttribute("href")).toContain("/vendors/aws");
     expect(serverLink.getAttribute("href")).toContain("/server/aws/m7g.large");
     expect(regionLink.getAttribute("href")).toContain(
       "/servers?vendor_regions=aws~us-east-1",

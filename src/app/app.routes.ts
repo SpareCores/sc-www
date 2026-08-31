@@ -145,6 +145,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: "vendors/:vendorId",
+    loadComponent: () =>
+      import("./pages/vendor-details/vendor-details.component").then(
+        (m) => m.VendorDetailsComponent,
+      ),
+  },
+  {
     path: "storages",
     loadComponent: () =>
       import("./pages/storages/storages.component").then(

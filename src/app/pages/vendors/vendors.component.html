@@ -42,11 +42,11 @@
             tabindex="0"
           >
             <td>
-              <img
-                class="bg-white rounded"
-                [src]="vendor.logo"
-                alt="{{ vendor.name }} logo"
-              />
+              @if (vendor.logo) {
+                <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                  <img [src]="vendor.logo" alt="{{ vendor.name }} logo" />
+                </div>
+              }
             </td>
             <td>
               {{ vendor.name }}

@@ -145,7 +145,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
     { name: "Servers", url: "/servers" },
-    { name: "", url: "" },
   ];
 
   features: any[] = [];
@@ -356,14 +355,22 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 },
               );
 
-              this.breadcrumbs[2] = {
-                name: this.serverDetails.display_name,
-                url:
-                  "/server/" +
-                  this.serverDetails.vendor.vendor_id +
-                  "/" +
-                  this.serverDetails.api_reference,
-              };
+              this.breadcrumbs = [
+                { name: "Home", url: "/" },
+                { name: "Servers", url: "/servers" },
+                {
+                  name: this.serverDetails.vendor.name,
+                  url: "/vendors/" + this.serverDetails.vendor.vendor_id,
+                },
+                {
+                  name: this.serverDetails.display_name,
+                  url:
+                    "/server/" +
+                    this.serverDetails.vendor.vendor_id +
+                    "/" +
+                    this.serverDetails.api_reference,
+                },
+              ];
 
               const url =
                 this.SEOHandler.getBaseURL() +

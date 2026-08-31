@@ -129,8 +129,7 @@
                           id="slot_vendor_link"
                           class="slot_inner slot_link"
                           [style]="getInnerStyle(i)"
-                          routerLink="/servers"
-                          [queryParams]="getVendorQueryParams(spinnerItem)"
+                          [routerLink]="getVendorRouteCommands(spinnerItem)"
                         >
                           @if (!spinnerItem.logo) {
                             <div class="text-center font-bold text-3xl">

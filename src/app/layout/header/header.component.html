@@ -194,6 +194,14 @@
       </a>
     </li>
     <li class="py-2 ml-6">
+      <a class="navbar_link" routerLink="/vendors">
+        <span class="navbar_icon">
+          <svg lucideHouse class="h-4 w-4"></svg>
+        </span>
+        Vendors
+      </a>
+    </li>
+    <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/servers">
         <span class="navbar_icon">
           <svg lucidePcCase class="h-4 w-4"></svg>
@@ -239,14 +247,6 @@
           <svg lucideHotel class="h-4 w-4"></svg>
         </span>
         Regions
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/vendors">
-        <span class="navbar_icon">
-          <svg lucideHouse class="h-4 w-4"></svg>
-        </span>
-        Vendors
       </a>
     </li>
     <li class="py-2 ml-6">
@@ -377,11 +377,11 @@
   class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
 >
   <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
     (click)="closeNavigator()"
   >
-    <li class="py-2">
+    <li>
       <a class="navbar_link" routerLink="/about/navigator">
         <span class="navbar_icon">
           <svg lucideBookText class="h-4 w-4"></svg>
@@ -389,8 +389,17 @@
         Product Info
       </a>
     </li>
-    <hr class="mx-3 border-gray-500 mt-3 mb-3" />
-    <li class="py-2">
+    <hr />
+    <li>
+      <a class="navbar_link" routerLink="/vendors">
+        <span class="navbar_icon">
+          <svg lucideHouse class="h-4 w-4"></svg>
+        </span>
+        Vendors
+      </a>
+    </li>
+    <hr />
+    <li>
       <a class="navbar_link" routerLink="/servers">
         <span class="navbar_icon">
           <svg lucidePcCase class="h-4 w-4"></svg>
@@ -399,7 +408,7 @@
       </a>
     </li>
     <ul>
-      <li class="py-2 ml-6">
+      <li class="ml-6">
         <a class="navbar_link" routerLink="/servers/compare">
           <span class="navbar_icon">
             <svg lucideScale class="h-4 w-4"></svg>
@@ -408,8 +417,8 @@
         </a>
       </li>
     </ul>
-    <hr class="mx-3 border-gray-500 mt-3 mb-3" />
-    <li class="py-2">
+    <hr />
+    <li>
       <a class="navbar_link" routerLink="/server_prices">
         <span class="navbar_icon">
           <svg lucideDollarSign class="h-4 w-4"></svg>
@@ -418,7 +427,7 @@
       </a>
     </li>
     <ul>
-      <li class="py-2 ml-6">
+      <li class="ml-6">
         <a class="navbar_link" routerLink="/vendors">
           <span class="navbar_icon">
             <svg lucideHouse class="h-4 w-4"></svg>
@@ -426,7 +435,7 @@
           By Vendor
         </a>
       </li>
-      <li class="py-2 ml-6">
+      <li class="ml-6">
         <a class="navbar_link" routerLink="/regions">
           <span class="navbar_icon">
             <svg lucideHotel class="h-4 w-4"></svg>
@@ -435,7 +444,7 @@
         </a>
       </li>
     </ul>
-    <li class="py-2">
+    <li>
       <a class="navbar_link" routerLink="/storages">
         <span class="navbar_icon">
           <svg lucideDatabase class="h-4 w-4"></svg>
@@ -443,7 +452,7 @@
         Storage Prices
       </a>
     </li>
-    <li class="py-2">
+    <li>
       <a class="navbar_link" routerLink="/traffic-prices">
         <span class="navbar_icon">
           <svg lucideArrowUpDown class="h-4 w-4"></svg>
@@ -451,8 +460,8 @@
         Traffic Prices
       </a>
     </li>
-    <hr class="mx-3 border-gray-500 mt-3 mb-3" />
-    <li class="py-2">
+    <hr />
+    <li>
       <a class="navbar_link" routerLink="/databases">
         <span class="navbar_icon">
           <svg lucideDatabase class="h-4 w-4"></svg>
@@ -461,7 +470,7 @@
       </a>
     </li>
     <ul>
-      <li class="py-2 ml-6">
+      <li class="ml-6">
         <a class="navbar_link" routerLink="/databases/compare">
           <span class="navbar_icon">
             <svg lucideScale class="h-4 w-4"></svg>
@@ -470,8 +479,8 @@
         </a>
       </li>
     </ul>
-    <hr class="mx-3 border-gray-500 mt-3 mb-3" />
-    <li class="py-2">
+    <hr />
+    <li>
       <a class="navbar_link" routerLink="/navigator/benchmark-workloads">
         <span class="navbar_icon">
           <svg lucideNotebookText class="h-4 w-4"></svg>
@@ -479,7 +488,7 @@
         Workloads
       </a>
     </li>
-    <li class="py-2">
+    <li>
       <a class="navbar_link" routerLink="/navigator/benchmark-coverage">
         <span class="navbar_icon">
           <svg lucideActivity class="h-4 w-4"></svg>
