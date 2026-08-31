@@ -469,6 +469,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
         vendor: region.vendor_id,
         founding_year: region.founding_year,
         green_energy: region.green_energy,
+        status: region.status,
         location: `${region.lat},${region.lon}`,
         radius: 5,
         country: region.country_id,
@@ -493,6 +494,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
       html += `<li><b>Founding year</b>: ${data.founding_year}</li>`;
     }
     html += `<li><b>100% green energy</b>: ${data.green_energy ? "✅" : "🔴"}</li>`;
+    html += `<li><b>Status</b>: ${data.status?.toLowerCase() === "active" ? "✅" : "❌"}</li>`;
     html += `</ul> </div>`;
     return html;
   }
