@@ -100,33 +100,77 @@ export class HeaderComponent {
     return this.serverCompare.compareCount();
   }
 
+  serverCompareCount(): number {
+    return this.serverCompare.serverCompareCount();
+  }
+
+  databaseCompareCount(): number {
+    return this.serverCompare.databaseCompareCount();
+  }
+
+  showCompareMenu(): boolean {
+    return this.serverCompareCount() >= 2 || this.databaseCompareCount() >= 2;
+  }
+
   isOnComparePage(): boolean {
     const path = this.router.url.split("?")[0].split("#")[0];
-    return path.startsWith("/compare");
+    return path.startsWith("/servers/compare");
+  }
+
+  isOnDatabaseComparePage(): boolean {
+    const path = this.router.url.split("?")[0].split("#")[0];
+    return path.startsWith("/databases/compare");
   }
 
   compareServers() {
     this.serverCompare.openCompare();
   }
 
+  compareDatabases() {
+    this.serverCompare.openDatabaseCompare();
+  }
+
   getServersForCompare() {
     return this.serverCompare.selectedForCompare;
+  }
+
+  getDatabasesForCompare() {
+    return this.serverCompare.selectedDatabases;
   }
 
   isBaselineServer(server: { vendor: string; server: string }): boolean {
     return this.serverCompare.isBaselineServer(server);
   }
 
+  isBaselineDatabase(database: { vendor: string; database: string }): boolean {
+    return this.serverCompare.isBaselineDatabase(database);
+  }
+
   toggleBaselineServer(server: { vendor: string; server: string }): void {
     this.serverCompare.toggleBaselineServer(server);
+  }
+
+  toggleBaselineDatabase(database: { vendor: string; database: string }): void {
+    this.serverCompare.toggleBaselineDatabase(database);
   }
 
   removeFromCompare(server: any) {
     this.serverCompare.toggleCompare(false, server);
   }
 
+  removeDatabaseFromCompare(database: any) {
+    this.serverCompare.toggleDatabaseCompare(false, database);
+  }
+
   dropComparedServer(event: CdkDragDrop<unknown>) {
     this.serverCompare.reorderSelectedForCompare(
+      event.previousIndex,
+      event.currentIndex,
+    );
+  }
+
+  dropComparedDatabase(event: CdkDragDrop<unknown>) {
+    this.serverCompare.reorderSelectedDatabases(
       event.previousIndex,
       event.currentIndex,
     );

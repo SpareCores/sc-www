@@ -18,7 +18,7 @@
   ></sc-compression-chart>
 }
 
-@if (isChartShown("ssl")) {
+@if (isChartShown("ssl") && hasSslChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="openssl"
     chartSource="details-ssl"
@@ -199,7 +199,7 @@
   </div>
 }
 
-@if (isChartShown("stress_ng_div16")) {
+@if (isChartShown("stress_ng_div16") && hasStressNgChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="stress_ng"
     chartSource="details-stress-raw"
@@ -216,7 +216,7 @@
   ></sc-benchmark-line-chart>
 }
 
-@if (isChartShown("stress_ng_relative")) {
+@if (isChartShown("stress_ng_relative") && hasStressNgChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="stress_ng"
     chartSource="details-stress-percent"
@@ -245,7 +245,7 @@
   chartItem of multiBarCharts;
   track chartItem.chart.name + "_" + chartItem.chart.id
 ) {
-  @if (isChartShown(chartItem.chart.id)) {
+  @if (isChartShown(chartItem.chart.id) && hasMultiBarChart(chartItem)) {
     <sc-benchmark-multi-bar-chart
       [chartItem]="chartItem"
       [benchmarkMeta]="benchmarkMeta"
@@ -254,7 +254,7 @@
   }
 }
 
-@if (isChartShown("pgbench")) {
+@if (isChartShown("pgbench") && hasPgbenchChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="pgbench"
     chartSource="details-pgbench"

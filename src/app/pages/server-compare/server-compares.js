@@ -1,4 +1,4 @@
-const specialCompares = [
+const serverCompares = [
   {
     type: "section",
     id: "best-multicore-performance-servers",
@@ -917,4 +917,4 @@ LIMIT 25;`,
   },
 ];
 
-module.exports = specialCompares;
+module.exports = serverCompares;

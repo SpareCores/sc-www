@@ -54,8 +54,7 @@ export namespace Servers {
         | "Ampere"
         | "Apple"
         | "Intel"
-        | "Microsoft"
-        | "NVIDIA";
+        | "Microsoft";
       /** Processor family */
       cpu_family?:
         | "ARM"
@@ -63,7 +62,6 @@ export namespace Servers {
         | "ARMv9"
         | "Ampere Altra"
         | "EPYC"
-        | "Grace"
         | "Xeon"
         | "Yitian";
       /**
@@ -254,10 +252,15 @@ export namespace Servers {
         | 25000;
       /**
        * Active only
-       * Filter for active servers only.
-       * @default true
+       * Filter for active resources only.
        */
       only_active?: boolean | null;
+      /**
+       * Orderable only
+       * Filter for orderable (active or planned for retirement) resources only.
+       * @default true
+       */
+      only_orderable?: boolean | null;
       /**
        * Vendor
        * Identifier of the cloud provider vendor.
@@ -376,6 +379,7 @@ export namespace Servers {
         | "centralus"
         | "centraluseuap"
         | "chilecentral"
+        | "cmh"
         | "cn-beijing"
         | "cn-chengdu"
         | "cn-fuzhou"
@@ -457,6 +461,7 @@ export namespace Servers {
         | "mex"
         | "mexicocentral"
         | "mia"
+        | "msp"
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
@@ -495,6 +500,7 @@ export namespace Servers {
         | "southeastasia"
         | "southindia"
         | "spaincentral"
+        | "stl"
         | "sto"
         | "swedencentral"
         | "switzerlandnorth"
@@ -764,6 +770,7 @@ export namespace Servers {
         | "vultr~blr"
         | "vultr~bom"
         | "vultr~cdg"
+        | "vultr~cmh"
         | "vultr~del"
         | "vultr~dfw"
         | "vultr~ewr"
@@ -779,6 +786,7 @@ export namespace Servers {
         | "vultr~mel"
         | "vultr~mex"
         | "vultr~mia"
+        | "vultr~msp"
         | "vultr~mxp"
         | "vultr~nrt"
         | "vultr~ord"
@@ -787,6 +795,7 @@ export namespace Servers {
         | "vultr~sea"
         | "vultr~sgp"
         | "vultr~sjc"
+        | "vultr~stl"
         | "vultr~sto"
         | "vultr~syd"
         | "vultr~tlv"
@@ -937,8 +946,6 @@ export namespace Servers {
         | "Ada Lovelace"
         | "Ampere"
         | "Blackwell"
-        | "CDNA3"
-        | "CDNA4"
         | "Hopper"
         | "Pascal"
         | "Radeon Pro Navi"
@@ -954,15 +961,11 @@ export namespace Servers {
         | "B200"
         | "B300"
         | "GB200"
-        | "GH200"
         | "H100"
         | "H200"
         | "L20"
         | "L4"
         | "L40S"
-        | "MI300X"
-        | "MI325X"
-        | "MI355X"
         | "P100"
         | "P4"
         | "RTX 5000"

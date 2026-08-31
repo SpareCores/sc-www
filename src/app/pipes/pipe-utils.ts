@@ -213,9 +213,20 @@ export function formatIpv4Count(
   return value === null || value === undefined ? emptyValue : value;
 }
 
+const KEBAB_TITLE_ACRONYMS: Record<string, string> = {
+  ip: "IP",
+  tls: "TLS",
+};
+
 export function formatKebabTitle(value: string): string {
   return value
     .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .map((part) => {
+      const acronym = KEBAB_TITLE_ACRONYMS[part.toLowerCase()];
+      if (acronym) {
+        return acronym;
+      }
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
     .join(" ");
 }

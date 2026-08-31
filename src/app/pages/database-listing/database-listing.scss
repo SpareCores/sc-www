@@ -91,3 +91,29 @@
   background-color: #34d399;
   border-radius: 3px;
 }
+
+.fixed_buttons {
+  position: fixed;
+  bottom: 2rem;
+  left: calc(50% + 10rem);
+  transform: translateX(-50%);
+  z-index: 100;
+  sc-button {
+    width: max-content;
+    min-width: 9rem;
+  }
+}
+
+:host ::ng-deep .fixed_buttons .sc-button__label {
+  overflow: visible;
+  text-overflow: clip;
+  min-width: max-content;
+}
+
+.fixed_buttons.fixed_buttons--collapsed {
+  left: 50%;
+}
+
+.checkbox_column {
+  width: 2rem;
+}

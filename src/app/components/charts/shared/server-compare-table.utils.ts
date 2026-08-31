@@ -35,8 +35,13 @@ const NETWORK_SPEED_PROPERTY_IDS = new Set([
 
 const CPU_CACHE_PROPERTY_IDS = new Set([
   "cpu_l1d_cache",
+  "cpu_l1d_cache_total",
+  "cpu_l1i_cache",
+  "cpu_l1i_cache_total",
   "cpu_l2_cache",
+  "cpu_l2_cache_total",
   "cpu_l3_cache",
+  "cpu_l3_cache_total",
 ]);
 
 const TRAFFIC_PROPERTY_IDS = new Set(["inbound_traffic", "outbound_traffic"]);
@@ -92,6 +97,42 @@ export function getBestBenchmarkCellStyle(
   });
 
   return isBest ? bestCellStyle : "";
+}
+
+export function getBestNumericCompareCellStyle(
+  value: number | null | undefined,
+  values: Array<number | null | undefined>,
+  bestCellStyle: string,
+  lowerIsBetter = false,
+): string {
+  if (
+    value === null ||
+    value === undefined ||
+    value === 0 ||
+    !Number.isFinite(value)
+  ) {
+    return "";
+  }
+
+  const candidates = values.filter(
+    (candidate): candidate is number =>
+      candidate !== null &&
+      candidate !== undefined &&
+      Number.isFinite(candidate) &&
+      candidate !== 0,
+  );
+  if (candidates.length < 2) {
+    return "";
+  }
+
+  const min = Math.min(...candidates);
+  const max = Math.max(...candidates);
+  if (min === max) {
+    return "";
+  }
+
+  const best = lowerIsBetter ? min : max;
+  return value === best ? bestCellStyle : "";
 }
 
 export function getBestPropertyCellStyle(

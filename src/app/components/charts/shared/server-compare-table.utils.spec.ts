@@ -176,6 +176,16 @@ describe("server compare table utils", () => {
       } as never),
     ).toBe("256 KiB");
     expect(
+      getServerPropertyValue({ id: "cpu_l2_cache_total" }, {
+        cpu_l2_cache_total: 2048,
+      } as never),
+    ).toBe("2 MiB");
+    expect(
+      getServerPropertyValue({ id: "cpu_l3_cache_total" }, {
+        cpu_l3_cache_total: 131072,
+      } as never),
+    ).toBe("128 MiB");
+    expect(
       getServerPropertyValue({ id: "outbound_traffic" }, {
         outbound_traffic: 2048,
       } as never),

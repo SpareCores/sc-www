@@ -333,6 +333,7 @@ export namespace Table {
         | "centralus"
         | "centraluseuap"
         | "chilecentral"
+        | "cmh"
         | "cn-beijing"
         | "cn-chengdu"
         | "cn-fuzhou"
@@ -414,6 +415,7 @@ export namespace Table {
         | "mex"
         | "mexicocentral"
         | "mia"
+        | "msp"
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
@@ -452,6 +454,7 @@ export namespace Table {
         | "southeastasia"
         | "southindia"
         | "spaincentral"
+        | "stl"
         | "sto"
         | "swedencentral"
         | "switzerlandnorth"
@@ -721,6 +724,7 @@ export namespace Table {
         | "vultr~blr"
         | "vultr~bom"
         | "vultr~cdg"
+        | "vultr~cmh"
         | "vultr~del"
         | "vultr~dfw"
         | "vultr~ewr"
@@ -736,6 +740,7 @@ export namespace Table {
         | "vultr~mel"
         | "vultr~mex"
         | "vultr~mia"
+        | "vultr~msp"
         | "vultr~mxp"
         | "vultr~nrt"
         | "vultr~ord"
@@ -744,6 +749,7 @@ export namespace Table {
         | "vultr~sea"
         | "vultr~sgp"
         | "vultr~sjc"
+        | "vultr~stl"
         | "vultr~sto"
         | "vultr~syd"
         | "vultr~tlv"
@@ -756,7 +762,7 @@ export namespace Table {
       allocation?: "ondemand" | "reserved" | "spot";
       /**
        * Active only
-       * Filter for active servers only.
+       * Filter for active resources only.
        * @default true
        */
       only_active?: boolean | null;
@@ -925,6 +931,7 @@ export namespace Table {
         | "centralus"
         | "centraluseuap"
         | "chilecentral"
+        | "cmh"
         | "cn-beijing"
         | "cn-chengdu"
         | "cn-fuzhou"
@@ -1006,6 +1013,7 @@ export namespace Table {
         | "mex"
         | "mexicocentral"
         | "mia"
+        | "msp"
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
@@ -1044,6 +1052,7 @@ export namespace Table {
         | "southeastasia"
         | "southindia"
         | "spaincentral"
+        | "stl"
         | "sto"
         | "swedencentral"
         | "switzerlandnorth"
@@ -1313,6 +1322,7 @@ export namespace Table {
         | "vultr~blr"
         | "vultr~bom"
         | "vultr~cdg"
+        | "vultr~cmh"
         | "vultr~del"
         | "vultr~dfw"
         | "vultr~ewr"
@@ -1328,6 +1338,7 @@ export namespace Table {
         | "vultr~mel"
         | "vultr~mex"
         | "vultr~mia"
+        | "vultr~msp"
         | "vultr~mxp"
         | "vultr~nrt"
         | "vultr~ord"
@@ -1336,6 +1347,7 @@ export namespace Table {
         | "vultr~sea"
         | "vultr~sgp"
         | "vultr~sjc"
+        | "vultr~stl"
         | "vultr~sto"
         | "vultr~syd"
         | "vultr~tlv"
@@ -1348,7 +1360,7 @@ export namespace Table {
       allocation?: "ondemand" | "reserved" | "spot";
       /**
        * Active only
-       * Filter for active servers only.
+       * Filter for active resources only.
        * @default true
        */
       only_active?: boolean | null;

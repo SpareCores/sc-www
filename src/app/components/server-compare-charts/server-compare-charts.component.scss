@@ -1,5 +1,12 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .items_table {
   @apply w-full text-white;
+
+  min-width: 100%;
 
   --compare-first-column-width: clamp(8rem, 12vw, 12rem);
 

@@ -5,7 +5,6 @@ import {
   ElementRef,
   PLATFORM_ID,
   computed,
-  effect,
   inject,
   input,
   output,
@@ -29,6 +28,11 @@ import {
   lineChartOptionsStressNGPercent,
 } from "../../../pages/server-details/chartOptions";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import {
+  injectCompareLegendVisibility,
+  syncCompareLegendData,
+  syncCompareLegendOptions,
+} from "../shared/compare-chart-legend.bind";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { BenchmarkLineChartBuilderService } from "./benchmark-line-chart-builder.service";
 import {
@@ -43,6 +47,7 @@ import {
   BenchmarkLineSelectorOption,
   CompareSslOption,
   DEFAULT_COMPARE_SSL_OPTIONS,
+  PGBENCH_HEAVY_READ_ONLY_ID,
   LineBenchmarkGroup,
   LineBenchmarkMeta,
   LineChartDetailsServer,
@@ -79,6 +84,7 @@ export class BenchmarkLineChartComponent {
   private platformId = inject(PLATFORM_ID);
   private tooltipService = inject(ChartTooltipService);
   private builder = inject(BenchmarkLineChartBuilderService);
+  private legendVisibility = injectCompareLegendVisibility();
 
   selectorDropdown = viewChild<FlowbiteDropdownDirective>("selectorDropdown");
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
@@ -104,7 +110,6 @@ export class BenchmarkLineChartComponent {
   selectedOptionName = input("");
 
   selectorSelected = output<number>();
-  chartAvailabilityChange = output<boolean>();
 
   tooltipContent = signal("");
   private selectedCompareSslIndex = signal(
@@ -159,7 +164,7 @@ export class BenchmarkLineChartComponent {
     }
 
     const meta = this.benchmarkMeta().find(
-      (item) => item.benchmark_id === "pgbench:heavy_read_only",
+      (item) => item.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID,
     );
 
     return this.builder.buildDetailsPgbenchChart({
@@ -208,6 +213,21 @@ export class BenchmarkLineChartComponent {
       baseOptions: barChartOptionsSSLCompare,
     });
   });
+  readonly comparePgbenchChart = computed(() => {
+    if (this.chartSource() !== "compare-pgbench") {
+      return undefined;
+    }
+
+    const meta = this.benchmarkMeta().find(
+      (item) => item.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID,
+    );
+
+    return this.builder.buildComparePgbenchChart({
+      servers: this.servers(),
+      scoreUnit: meta?.unit,
+      optionsBase: lineChartOptionsPgbench,
+    });
+  });
   readonly compareStressNgChart = computed(() => {
     if (
       this.chartSource() !== "compare-stress-raw" &&
@@ -226,57 +246,88 @@ export class BenchmarkLineChartComponent {
   readonly resolvedChartData = computed<BenchmarkLineChartData | undefined>(
     () => {
       const directChartData = this.chartData();
+      let data: BenchmarkLineChartData | undefined;
       if (directChartData) {
-        return directChartData;
+        data = directChartData;
+      } else {
+        switch (this.chartSource()) {
+          case "details-ssl":
+            data = this.detailsSslChart()?.data;
+            break;
+          case "details-pgbench":
+            data = this.detailsPgbenchChart()?.data;
+            break;
+          case "details-stress-raw":
+          case "details-stress-percent":
+            data = this.detailsStressNgChart()?.data;
+            break;
+          case "compare-ssl":
+            data = this.compareSslChart()?.data;
+            break;
+          case "compare-pgbench":
+            data = this.comparePgbenchChart()?.data;
+            break;
+          case "compare-stress-raw":
+          case "compare-stress-percent":
+            data = this.compareStressNgChart()?.data;
+            break;
+          default:
+            data = undefined;
+        }
       }
 
-      switch (this.chartSource()) {
-        case "details-ssl":
-          return this.detailsSslChart()?.data;
-        case "details-pgbench":
-          return this.detailsPgbenchChart()?.data;
-        case "details-stress-raw":
-        case "details-stress-percent":
-          return this.detailsStressNgChart()?.data;
-        case "compare-ssl":
-          return this.compareSslChart()?.data;
-        case "compare-stress-raw":
-        case "compare-stress-percent":
-          return this.compareStressNgChart()?.data;
-        default:
-          return undefined;
+      if (!data || !this.shouldSyncCompareLegend()) {
+        return data;
       }
+
+      return syncCompareLegendData(data, this.legendVisibility);
     },
   );
   readonly resolvedChartOptions = computed<BenchmarkLineChartOptions>(() => {
     const directChartOptions = this.chartOptions();
+    let options: BenchmarkLineChartOptions;
     if (directChartOptions) {
-      return directChartOptions;
+      options = directChartOptions;
+    } else {
+      switch (this.chartSource()) {
+        case "details-ssl":
+          options = this.detailsSslChart()?.options;
+          break;
+        case "details-pgbench":
+          options = this.detailsPgbenchChart()?.options;
+          break;
+        case "details-stress-raw":
+          options = this.detailsStressNgChart()?.rawOptions;
+          break;
+        case "details-stress-percent":
+          options = this.detailsStressNgChart()?.percentOptions;
+          break;
+        case "compare-ssl":
+          options = this.compareSslChart()?.options;
+          break;
+        case "compare-pgbench":
+          options = this.comparePgbenchChart()?.options;
+          break;
+        case "compare-stress-raw":
+          options = this.compareStressNgChart()?.rawOptions;
+          break;
+        case "compare-stress-percent":
+          options = this.compareStressNgChart()?.percentOptions;
+          break;
+        default:
+          options = undefined;
+      }
     }
 
-    switch (this.chartSource()) {
-      case "details-ssl":
-        return this.detailsSslChart()?.options;
-      case "details-pgbench":
-        return this.detailsPgbenchChart()?.options;
-      case "details-stress-raw":
-        return this.detailsStressNgChart()?.rawOptions;
-      case "details-stress-percent":
-        return this.detailsStressNgChart()?.percentOptions;
-      case "compare-ssl":
-        return this.compareSslChart()?.options;
-      case "compare-stress-raw":
-        return this.compareStressNgChart()?.rawOptions;
-      case "compare-stress-percent":
-        return this.compareStressNgChart()?.percentOptions;
-      default:
-        return undefined;
+    if (!this.shouldSyncCompareLegend()) {
+      return options;
     }
+
+    return syncCompareLegendOptions(options, this.legendVisibility);
   });
   readonly hasSelector = computed(
     () => this.resolvedSelectorOptions().length > 0,
   );
-  readonly hasChartData = computed(() => !!this.resolvedChartData());
   readonly resolvedSelectedOptionName = computed(
     () =>
       this.selectedOptionName() ||
@@ -314,9 +365,12 @@ export class BenchmarkLineChartComponent {
   readonly idBase = `line_chart_${BenchmarkLineChartComponent.nextId++}`;
   readonly buttonId = `${this.idBase}_button`;
   readonly optionsId = `${this.idBase}_options`;
-  private readonly availabilityEffect = effect(() => {
-    this.chartAvailabilityChange.emit(this.hasChartData());
-  });
+
+  private shouldSyncCompareLegend(): boolean {
+    return (
+      this.layout() === "compare" || this.chartSource().startsWith("compare-")
+    );
+  }
 
   selectOption(index: number): void {
     if (!this.resolvedSelectorOptions()[index]) {

@@ -2,6 +2,7 @@ import {
   formatBinaryMemoryDisplay,
   formatBytes,
   formatGpuMemory,
+  formatKebabTitle,
   formatStorageSize,
   formatValue,
   parseBinaryMemoryInput,
@@ -106,5 +107,13 @@ describe("parseBinaryMemoryInput", () => {
   it("rejects invalid numeric strings", () => {
     expect(parseBinaryMemoryInput(".", "GiB")).toBeNull();
     expect(parseBinaryMemoryInput("1e3", "GiB")).toBeNull();
+  });
+});
+
+describe("formatKebabTitle", () => {
+  it("title-cases kebab parts and uppercases known acronyms", () => {
+    expect(formatKebabTitle("ip-filtering")).toBe("IP Filtering");
+    expect(formatKebabTitle("enforced-tls")).toBe("Enforced TLS");
+    expect(formatKebabTitle("private-network")).toBe("Private Network");
   });
 });

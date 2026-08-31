@@ -138,8 +138,15 @@
   transform: translateX(-50%);
   z-index: 100;
   sc-button {
-    width: 9rem;
+    width: max-content;
+    min-width: 9rem;
   }
+}
+
+:host ::ng-deep .fixed_buttons .sc-button__label {
+  overflow: visible;
+  text-overflow: clip;
+  min-width: max-content;
 }
 
 .fixed_buttons.fixed_buttons--collapsed {

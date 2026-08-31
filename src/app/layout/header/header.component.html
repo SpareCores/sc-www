@@ -86,7 +86,7 @@
             class="hidden sm:flex"
             buttonClass="whitespace-nowrap"
           ></sc-button>
-          @if (compareCount() >= 2) {
+          @if (showCompareMenu()) {
             <sc-button
               id="compare_button"
               [scFlowbiteDropdown]="'compare_options'"
@@ -201,12 +201,12 @@
         Servers
       </a>
     </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/compare">
+    <li class="py-2 ml-12">
+      <a class="navbar_link" routerLink="/servers/compare">
         <span class="navbar_icon">
           <svg lucideScale class="h-4 w-4"></svg>
         </span>
-        Compare Guide
+        Compare
       </a>
     </li>
     <li class="py-2 ml-6">
@@ -255,6 +255,14 @@
           <svg lucideDatabase class="h-4 w-4"></svg>
         </span>
         Databases
+      </a>
+    </li>
+    <li class="py-2 ml-12">
+      <a class="navbar_link" routerLink="/databases/compare">
+        <span class="navbar_icon">
+          <svg lucideScale class="h-4 w-4"></svg>
+        </span>
+        Compare
       </a>
     </li>
     <li class="py-2 ml-6">
@@ -390,14 +398,16 @@
         Servers
       </a>
     </li>
-    <li class="py-2">
-      <a class="navbar_link" routerLink="/compare">
-        <span class="navbar_icon">
-          <svg lucideScale class="h-4 w-4"></svg>
-        </span>
-        Compare Guide
-      </a>
-    </li>
+    <ul>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/servers/compare">
+          <span class="navbar_icon">
+            <svg lucideScale class="h-4 w-4"></svg>
+          </span>
+          Compare
+        </a>
+      </li>
+    </ul>
     <hr class="mx-3 border-gray-500 mt-3 mb-3" />
     <li class="py-2">
       <a class="navbar_link" routerLink="/server_prices">
@@ -450,6 +460,16 @@
         Databases
       </a>
     </li>
+    <ul>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/databases/compare">
+          <span class="navbar_icon">
+            <svg lucideScale class="h-4 w-4"></svg>
+          </span>
+          Compare
+        </a>
+      </li>
+    </ul>
     <hr class="mx-3 border-gray-500 mt-3 mb-3" />
     <li class="py-2">
       <a class="navbar_link" routerLink="/navigator/benchmark-workloads">
@@ -474,73 +494,168 @@
   id="compare_options"
   class="compare_dropdown_panel z-10 hidden bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
 >
-  <ul
-    aria-labelledby="dropdownDefaultButton"
-    cdkDropList
-    (cdkDropListDropped)="dropComparedServer($event)"
-  >
-    @for (
-      server of getServersForCompare();
-      track server.server + "_" + server.vendor
-    ) {
-      <li
-        class="compare_dropdown_row"
-        cdkDrag
-        (cdkDragStarted)="setCompareDragCursor(true)"
-        (cdkDragEnded)="setCompareDragCursor(false)"
+  <div class="compare_dropdown_content">
+    @if (serverCompareCount() > 0) {
+      <div class="compare_dropdown_section_title">
+        <span class="navbar_icon">
+          <svg lucidePcCase class="h-4 w-4"></svg>
+        </span>
+        Servers
+      </div>
+      <ul
+        aria-label="Selected servers"
+        cdkDropList
+        (cdkDropListDropped)="dropComparedServer($event)"
       >
-        <button
-          type="button"
-          class="compare_dropdown_handle"
-          cdkDragHandle
-          aria-label="Reorder"
-          (click)="$event.stopPropagation()"
-        >
-          <span class="navbar_icon">
-            <svg lucideArrowUpDown class="h-4 w-4"></svg>
-          </span>
-        </button>
-        <button
-          type="button"
-          class="compare_dropdown_baseline"
-          [class.text-gray-400]="!isBaselineServer(server)"
-          [class.text-emerald-400]="isBaselineServer(server)"
-          aria-label="Toggle baseline server"
-          [attr.aria-pressed]="isBaselineServer(server) ? 'true' : 'false'"
-          (click)="toggleBaselineServer(server); $event.stopPropagation()"
-        >
-          <span class="navbar_icon">
-            <svg lucideTarget class="h-4 w-4"></svg>
-          </span>
-        </button>
-        <a
-          class="navbar_link min-w-0 flex-1 truncate"
-          routerLink="/server/{{ server.vendor }}/{{ server.server }}"
-          (click)="closeCompare()"
-        >
-          {{ server.vendor }}: {{ server.display_name }}
-        </a>
-        <button
-          type="button"
-          class="compare_dropdown_delete"
-          aria-label="Remove from compare"
-          (click)="removeFromCompare(server); $event.stopPropagation()"
-        >
-          <span class="navbar_icon">
-            <svg lucideTrash class="h-4 w-4"></svg>
-          </span>
-        </button>
-      </li>
+        @for (
+          server of getServersForCompare();
+          track server.server + "_" + server.vendor
+        ) {
+          <li
+            class="compare_dropdown_row"
+            cdkDrag
+            (cdkDragStarted)="setCompareDragCursor(true)"
+            (cdkDragEnded)="setCompareDragCursor(false)"
+          >
+            <button
+              type="button"
+              class="compare_dropdown_handle"
+              cdkDragHandle
+              aria-label="Reorder"
+              (click)="$event.stopPropagation()"
+            >
+              <span class="navbar_icon">
+                <svg lucideArrowUpDown class="h-4 w-4"></svg>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="compare_dropdown_baseline"
+              [class.text-gray-400]="!isBaselineServer(server)"
+              [class.text-emerald-400]="isBaselineServer(server)"
+              aria-label="Toggle baseline server"
+              [attr.aria-pressed]="isBaselineServer(server) ? 'true' : 'false'"
+              (click)="toggleBaselineServer(server); $event.stopPropagation()"
+            >
+              <span class="navbar_icon">
+                <svg lucideTarget class="h-4 w-4"></svg>
+              </span>
+            </button>
+            <a
+              class="navbar_link min-w-0 flex-1 truncate"
+              routerLink="/server/{{ server.vendor }}/{{ server.server }}"
+              (click)="closeCompare()"
+            >
+              {{ server.vendor }}: {{ server.display_name }}
+            </a>
+            <button
+              type="button"
+              class="compare_dropdown_delete"
+              aria-label="Remove from compare"
+              (click)="removeFromCompare(server); $event.stopPropagation()"
+            >
+              <span class="navbar_icon">
+                <svg lucideTrash class="h-4 w-4"></svg>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+      @if (!isOnComparePage() && serverCompareCount() >= 2) {
+        <div class="compare_dropdown_action">
+          <sc-button
+            class="w-full"
+            label="Compare servers"
+            size="small"
+            (click)="compareServers(); closeCompare()"
+          ></sc-button>
+        </div>
+      }
     }
-    @if (!isOnComparePage()) {
-      <li class="py-2">
-        <sc-button
-          class="w-full"
-          label="Compare"
-          size="small"
-          (click)="compareServers(); closeCompare()"
-        ></sc-button>
-      </li>
+    @if (databaseCompareCount() > 0) {
+      <div class="compare_dropdown_section_title">
+        <span class="navbar_icon">
+          <svg lucideDatabase class="h-4 w-4"></svg>
+        </span>
+        Databases
+      </div>
+      <ul
+        aria-label="Selected databases"
+        cdkDropList
+        (cdkDropListDropped)="dropComparedDatabase($event)"
+      >
+        @for (
+          database of getDatabasesForCompare();
+          track database.database + "_" + database.vendor
+        ) {
+          <li
+            class="compare_dropdown_row"
+            cdkDrag
+            (cdkDragStarted)="setCompareDragCursor(true)"
+            (cdkDragEnded)="setCompareDragCursor(false)"
+          >
+            <button
+              type="button"
+              class="compare_dropdown_handle"
+              cdkDragHandle
+              aria-label="Reorder"
+              (click)="$event.stopPropagation()"
+            >
+              <span class="navbar_icon">
+                <svg lucideArrowUpDown class="h-4 w-4"></svg>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="compare_dropdown_baseline"
+              [class.text-gray-400]="!isBaselineDatabase(database)"
+              [class.text-emerald-400]="isBaselineDatabase(database)"
+              aria-label="Toggle baseline database"
+              [attr.aria-pressed]="
+                isBaselineDatabase(database) ? 'true' : 'false'
+              "
+              (click)="
+                toggleBaselineDatabase(database); $event.stopPropagation()
+              "
+            >
+              <span class="navbar_icon">
+                <svg lucideTarget class="h-4 w-4"></svg>
+              </span>
+            </button>
+            <a
+              class="navbar_link min-w-0 flex-1 truncate"
+              routerLink="/database/{{ database.vendor }}/{{
+                database.database
+              }}"
+              (click)="closeCompare()"
+            >
+              {{ database.vendor }}: {{ database.display_name }}
+            </a>
+            <button
+              type="button"
+              class="compare_dropdown_delete"
+              aria-label="Remove from compare"
+              (click)="
+                removeDatabaseFromCompare(database); $event.stopPropagation()
+              "
+            >
+              <span class="navbar_icon">
+                <svg lucideTrash class="h-4 w-4"></svg>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+      @if (!isOnDatabaseComparePage() && databaseCompareCount() >= 2) {
+        <div class="compare_dropdown_action">
+          <sc-button
+            class="w-full"
+            label="Compare databases"
+            size="small"
+            (click)="compareDatabases(); closeCompare()"
+          ></sc-button>
+        </div>
+      }
     }
-  </ul>
+  </div>
 </div>

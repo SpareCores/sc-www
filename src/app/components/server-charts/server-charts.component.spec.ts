@@ -137,4 +137,42 @@ describe("ServerChartsComponent", () => {
       (fixture.nativeElement as HTMLElement).querySelector("#pgbench_chart"),
     ).toBeNull();
   });
+
+  it("hides the ssl chart when no openssl scores exist", () => {
+    fixture.componentRef.setInput("showChart", "ssl");
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector("#ssl_chart"),
+    ).toBeNull();
+  });
+
+  it("hides stress-ng charts when no usable scores exist", () => {
+    fixture.componentRef.setInput("showChart", "stress_ng_div16");
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        "#stress_ng_div16_chart",
+      ),
+    ).toBeNull();
+
+    fixture.componentRef.setInput("showChart", "stress_ng_relative");
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        "#stress_ng_relative_chart",
+      ),
+    ).toBeNull();
+  });
+
+  it("hides multi-bar charts when no scores exist", () => {
+    fixture.componentRef.setInput("showChart", "static_web");
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector("#static_web_chart"),
+    ).toBeNull();
+  });
 });

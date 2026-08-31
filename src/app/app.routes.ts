@@ -6,8 +6,36 @@ import { ServerPricesComponent } from "./pages/server-prices/server-prices.compo
 export const routes: Routes = [
   { path: "", component: LandingpageComponent },
 
+  {
+    path: "servers/compare",
+    loadComponent: () =>
+      import("./pages/server-compare/server-compare.component").then(
+        (m) => m.ServerCompareComponent,
+      ),
+  },
+  {
+    path: "servers/compare/:id",
+    loadComponent: () =>
+      import("./pages/server-compare/server-compare.component").then(
+        (m) => m.ServerCompareComponent,
+      ),
+  },
   { path: "servers", component: ServerListingComponent },
   { path: "servers/:id", component: ServerListingComponent },
+  {
+    path: "databases/compare",
+    loadComponent: () =>
+      import("./pages/database-compare/database-compare.component").then(
+        (m) => m.DatabaseCompareComponent,
+      ),
+  },
+  {
+    path: "databases/compare/:id",
+    loadComponent: () =>
+      import("./pages/database-compare/database-compare.component").then(
+        (m) => m.DatabaseCompareComponent,
+      ),
+  },
   {
     path: "databases",
     loadComponent: () =>
@@ -27,20 +55,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import("./pages/advisor/advisor.component").then(
         (m) => m.AdvisorComponent,
-      ),
-  },
-  {
-    path: "compare",
-    loadComponent: () =>
-      import("./pages/server-compare/server-compare.component").then(
-        (m) => m.ServerCompareComponent,
-      ),
-  },
-  {
-    path: "compare/:id",
-    loadComponent: () =>
-      import("./pages/server-compare/server-compare.component").then(
-        (m) => m.ServerCompareComponent,
       ),
   },
   { path: "server_prices", component: ServerPricesComponent },

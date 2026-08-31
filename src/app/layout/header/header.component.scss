@@ -27,14 +27,26 @@ li {
 .compare_dropdown_panel {
   width: max-content;
   max-width: calc(100vw - 2rem);
+}
 
-  ul {
-    @apply flex flex-col divide-y divide-emerald-400/30 py-1 text-sm text-gray-200;
-  }
+.compare_dropdown_content {
+  @apply flex flex-col py-1 text-sm text-gray-200;
+}
+
+.compare_dropdown_content ul {
+  @apply flex flex-col divide-y divide-emerald-400/30;
+}
+
+.compare_dropdown_section_title {
+  @apply flex items-center gap-2 px-3 py-2 text-sm uppercase text-emerald-400 border-b border-emerald-400/30;
+}
+
+.compare_dropdown_action {
+  @apply px-3 py-2;
 }
 
 .compare_dropdown_row {
-  @apply inline-flex w-full items-center gap-x-2 py-2 leading-5;
+  @apply inline-flex w-full items-center gap-x-2 px-3 py-2 leading-5;
 
   button {
     @apply inline-flex shrink-0 items-center justify-center border-0 bg-transparent p-1;

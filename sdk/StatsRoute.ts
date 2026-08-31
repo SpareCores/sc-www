@@ -38,7 +38,7 @@ export namespace Stats {
         | "vultr";
       /**
        * Active only
-       * Filter for active servers only.
+       * Filter for active resources only.
        * @default false
        */
       only_active?: boolean | null;

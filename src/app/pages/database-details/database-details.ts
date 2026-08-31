@@ -30,6 +30,7 @@ import {
   PgbenchScore,
 } from "../../components/charts/line/benchmark-line-chart.types";
 import { getBenchmarkMetaNote } from "../../components/charts/shared/chart-tooltip.utils";
+import { formatNumberWithCommas } from "../../components/charts/shared/server-compare-table.utils";
 import { lineChartOptionsPgbench } from "../server-details/chartOptions";
 import {
   BreadcrumbSegment,
@@ -46,6 +47,7 @@ import {
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
@@ -56,6 +58,8 @@ type LoadedDatabase = Database & {
   underlyingServer?: {
     display_name: string;
     api_reference: string;
+    cpu_cores?: number;
+    vcpus?: number;
   };
 };
 
@@ -105,6 +109,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
+  private serverCompare = inject(ServerCompareService);
 
   isLoading = true;
   databaseDetails: LoadedDatabase | null = null;
@@ -151,6 +156,9 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   pgbenchNoteTooltip = "";
   pgbenchPeakScore: string | null = null;
   pgbenchSingleScore: string | null = null;
+  showUnderlyingServerPerformance = false;
+  underlyingServerPgbenchChart: PgbenchChartResult | undefined;
+  underlyingServerLink: string[] | null = null;
 
   private availabilityCard =
     viewChild<ElementRef<HTMLDivElement>>("availabilityCard");
@@ -224,21 +232,33 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           const regions = (regionsResponse?.body || []) as Region[];
           const prices = (pricesResponse?.body || []) as DatabasePrice[];
           let underlyingServer: LoadedDatabase["underlyingServer"];
+          let underlyingServerScores: PgbenchScore[] = [];
           if (database.server_id) {
             try {
-              const serverResponse = await this.keeperAPI.getServerV2(
-                database.vendor_id,
-                database.server_id,
-              );
+              const [serverResponse, serverBenchmarksResponse] =
+                await Promise.all([
+                  this.keeperAPI.getServerV2(
+                    database.vendor_id,
+                    database.server_id,
+                  ),
+                  this.keeperAPI
+                    .getServerBenchmark(database.vendor_id, database.server_id)
+                    .catch(() => ({ body: [] })),
+                ]);
               const server = serverResponse?.body;
               if (server?.display_name && server?.api_reference) {
                 underlyingServer = {
                   display_name: server.display_name,
                   api_reference: server.api_reference,
+                  cpu_cores: server.cpu_cores,
+                  vcpus: server.vcpus,
                 };
               }
+              underlyingServerScores = (serverBenchmarksResponse?.body ||
+                []) as PgbenchScore[];
             } catch {
               underlyingServer = undefined;
+              underlyingServerScores = [];
             }
           }
 
@@ -329,10 +349,17 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
           this.buildPropertySections(this.databaseDetails);
           this.buildAvailabilityRows();
+          const benchmarkMeta = (benchmarkMetaResponse?.body ||
+            []) as Benchmark[];
           this.applyPgbenchBenchmarks(
             benchmarksResponse?.body || [],
-            (benchmarkMetaResponse?.body || []) as Benchmark[],
+            benchmarkMeta,
             database.vcpus,
+          );
+          this.applyUnderlyingServerBenchmarks(
+            underlyingServer,
+            underlyingServerScores,
+            benchmarkMeta,
           );
 
           this.SEOHandler.updateTitleAndMetaTags(
@@ -595,6 +622,31 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     return this.pgbenchPeakScore !== null && this.pgbenchSingleScore !== null;
   }
 
+  addToCompare() {
+    if (!this.databaseDetails) {
+      return;
+    }
+
+    this.serverCompare.toggleDatabaseCompare(
+      !this.serverCompare.isDatabaseSelected(this.databaseDetails),
+      {
+        database: this.databaseDetails.api_reference,
+        vendor: this.databaseDetails.vendor_id,
+        display_name: this.databaseDetails.display_name,
+      },
+    );
+  }
+
+  compareText() {
+    if (!this.databaseDetails) {
+      return "Compare";
+    }
+
+    return this.serverCompare.isDatabaseSelected(this.databaseDetails)
+      ? "Don't Compare"
+      : "Compare";
+  }
+
   private applyPgbenchBenchmarks(
     scores: PgbenchScore[],
     benchmarkMeta: Benchmark[],
@@ -606,8 +658,12 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     const single = scores.find(
       (score) => score.benchmark_id === PGBENCH_SINGLE_BENCHMARK_ID,
     );
-    this.pgbenchPeakScore = peak ? peak.score.toFixed(0) : null;
-    this.pgbenchSingleScore = single ? single.score.toFixed(0) : null;
+    this.pgbenchPeakScore = peak
+      ? formatNumberWithCommas(Math.round(peak.score))
+      : null;
+    this.pgbenchSingleScore = single
+      ? formatNumberWithCommas(Math.round(single.score))
+      : null;
 
     const meta = benchmarkMeta.find(
       (item) => item.benchmark_id === PGBENCH_CHART_BENCHMARK_ID,
@@ -622,6 +678,46 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       optionsBase: lineChartOptionsPgbench,
       scoreUnit: meta?.unit,
     });
+  }
+
+  private applyUnderlyingServerBenchmarks(
+    underlyingServer: LoadedDatabase["underlyingServer"],
+    scores: PgbenchScore[],
+    benchmarkMeta: Benchmark[],
+  ) {
+    this.showUnderlyingServerPerformance = false;
+    this.underlyingServerPgbenchChart = undefined;
+    this.underlyingServerLink = null;
+
+    if (!underlyingServer) {
+      return;
+    }
+
+    this.underlyingServerLink = [
+      "/server",
+      this.databaseDetails!.vendor_id,
+      underlyingServer.api_reference,
+    ];
+
+    const hasPgbenchScores = scores.some(
+      (score) => score.benchmark_id === PGBENCH_CHART_BENCHMARK_ID,
+    );
+    if (!hasPgbenchScores) {
+      return;
+    }
+
+    const meta = benchmarkMeta.find(
+      (item) => item.benchmark_id === PGBENCH_CHART_BENCHMARK_ID,
+    );
+    this.underlyingServerPgbenchChart =
+      this.lineChartBuilder.buildDetailsPgbenchChart({
+        scores,
+        vcpus: underlyingServer.vcpus ?? underlyingServer.cpu_cores,
+        optionsBase: lineChartOptionsPgbench,
+        scoreUnit: meta?.unit,
+      });
+
+    this.showUnderlyingServerPerformance = !!this.underlyingServerPgbenchChart;
   }
 
   private formatUnderlyingServer(database: LoadedDatabase): {

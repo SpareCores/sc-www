@@ -83,7 +83,6 @@ describe("BenchmarkLineChartComponent", () => {
     fixture.componentRef.setInput("benchmarkMeta", benchmarkMeta);
     fixture.detectChanges();
 
-    expect(component.hasChartData()).toBeTrue();
     expect(component.hasSelector()).toBeTrue();
     expect(component.resolvedSelectedOptionName()).toBe("sha256");
   });
@@ -122,7 +121,6 @@ describe("BenchmarkLineChartComponent", () => {
     ]);
     fixture.detectChanges();
 
-    expect(component.hasChartData()).toBeTrue();
     expect(component.resolvedChartOptions()?.scales?.y?.title?.text).toBe(
       "Transactions per minute (TPM)",
     );

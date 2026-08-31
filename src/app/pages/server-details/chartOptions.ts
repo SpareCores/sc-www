@@ -4,6 +4,7 @@ import {
   TooltipItem,
   TooltipModel,
 } from "chart.js";
+import { chartLegendLabels } from "../../components/charts/shared/chart-legend.utils";
 import { formatStaticWebFileSizeTooltipContext } from "../../components/charts/shared/chart-tooltip.utils";
 
 export const barChartOptions: ChartConfiguration<"bar">["options"] = {
@@ -30,9 +31,7 @@ export const barChartOptions: ChartConfiguration<"bar">["options"] = {
   plugins: {
     legend: {
       display: true,
-      labels: {
-        color: "#FFF",
-      },
+      labels: chartLegendLabels,
     },
   },
 };
@@ -459,9 +458,7 @@ export const radarChartOptions: ChartConfiguration<"radar">["options"] = {
     },
     legend: {
       display: false,
-      labels: {
-        color: "#FFF",
-      },
+      labels: chartLegendLabels,
     },
   },
 };
@@ -476,6 +473,10 @@ export const radarDatasetColors = [
   { borderColor: "#818CF8", backgroundColor: "#818CF833" },
   { borderColor: "#94A3B8", backgroundColor: "#94A3B833" },
 ];
+
+export const chartAxisGridColor = "#4B5563";
+
+export const lineChartLegendLabels = chartLegendLabels;
 
 export const lineChartOptionsBWM: ChartConfiguration<"line">["options"] = {
   maintainAspectRatio: false,
@@ -544,9 +545,7 @@ export const lineChartOptionsBWM: ChartConfiguration<"line">["options"] = {
     annotation: {},
     legend: {
       display: true,
-      labels: {
-        color: "#FFF",
-      },
+      labels: lineChartLegendLabels,
     },
   },
 };
@@ -563,13 +562,16 @@ export const lineChartOptionsComp: ChartConfiguration<"line">["options"] = {
         color: "#FFF",
         text: "Compression Level",
       },
+      grid: {
+        color: chartAxisGridColor,
+      },
     },
     y: {
       ticks: {
         color: "#FFF",
       },
       grid: {
-        color: "#4B5563",
+        color: chartAxisGridColor,
       },
       type: "logarithmic",
       title: {
@@ -597,9 +599,7 @@ export const lineChartOptionsComp: ChartConfiguration<"line">["options"] = {
     },
     legend: {
       display: true,
-      labels: {
-        color: "#FFF",
-      },
+      labels: lineChartLegendLabels,
     },
   },
   parsing: {
@@ -620,13 +620,16 @@ export const lineChartOptionsCompRatio: ChartConfiguration<"line">["options"] =
           color: "#FFF",
           text: "Compression Level",
         },
+        grid: {
+          color: chartAxisGridColor,
+        },
       },
       y: {
         ticks: {
           color: "#FFF",
         },
         grid: {
-          color: "#4B5563",
+          color: chartAxisGridColor,
         },
         type: "linear",
         title: {
@@ -640,9 +643,7 @@ export const lineChartOptionsCompRatio: ChartConfiguration<"line">["options"] =
     plugins: {
       legend: {
         display: true,
-        labels: {
-          color: "#FFF",
-        },
+        labels: lineChartLegendLabels,
       },
     },
   };
@@ -704,9 +705,7 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<"line">["option
       },
       legend: {
         display: true,
-        labels: {
-          color: "#FFF",
-        },
+        labels: lineChartLegendLabels,
       },
       title: {
         display: true,
@@ -777,9 +776,7 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<"line">["opti
       },
       legend: {
         display: true,
-        labels: {
-          color: "#FFF",
-        },
+        labels: lineChartLegendLabels,
       },
       title: {
         display: true,
@@ -805,13 +802,16 @@ export const lineChartOptionsStressNG: ChartConfiguration<"line">["options"] = {
         color: "#FFF",
         text: "vCPUs",
       },
+      grid: {
+        color: chartAxisGridColor,
+      },
     },
     y: {
       ticks: {
         color: "#FFF",
       },
       grid: {
-        color: "#4B5563",
+        color: chartAxisGridColor,
       },
       title: {
         display: true,
@@ -823,9 +823,7 @@ export const lineChartOptionsStressNG: ChartConfiguration<"line">["options"] = {
   plugins: {
     legend: {
       display: true,
-      labels: {
-        color: "#FFF",
-      },
+      labels: lineChartLegendLabels,
     },
     title: {
       display: true,
@@ -852,13 +850,16 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<"line">["option
           color: "#FFF",
           text: "vCPUs",
         },
+        grid: {
+          color: chartAxisGridColor,
+        },
       },
       y: {
         ticks: {
           color: "#FFF",
         },
         grid: {
-          color: "#4B5563",
+          color: chartAxisGridColor,
         },
         title: {
           display: true,
@@ -870,9 +871,7 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<"line">["option
     plugins: {
       legend: {
         display: true,
-        labels: {
-          color: "#FFF",
-        },
+        labels: lineChartLegendLabels,
       },
       title: {
         display: true,
@@ -903,6 +902,9 @@ export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
         color: "#FFF",
         text: "Concurrency",
       },
+      grid: {
+        color: chartAxisGridColor,
+      },
     },
     y: {
       type: "linear",
@@ -912,7 +914,7 @@ export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
         color: "#34D399",
       },
       grid: {
-        color: "#4B5563",
+        color: chartAxisGridColor,
       },
       title: {
         display: true,
@@ -940,9 +942,7 @@ export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
   plugins: {
     legend: {
       display: true,
-      labels: {
-        color: "#FFF",
-      },
+      labels: lineChartLegendLabels,
     },
     title: {
       display: false,

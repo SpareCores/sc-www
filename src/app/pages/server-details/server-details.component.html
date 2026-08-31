@@ -522,12 +522,12 @@
                   }
                   @if (selectedSimilarOption.key === "byScore") {
                     <td>
-                      {{ server.score?.toFixed(0) || "0" }}
+                      {{ formatScore(server.score) }}
                     </td>
                   }
                   @if (selectedSimilarOption.key === "byPerformancePerPrice") {
                     <td>
-                      {{ server.score_per_price?.toFixed(0) || "0" }}
+                      {{ formatScore(server.score_per_price) }}
                     </td>
                   }
                 </tr>

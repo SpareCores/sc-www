@@ -93,7 +93,7 @@ describe("ServerCompareService", () => {
   it("syncs the compare route after selection changes while on compare", () => {
     const router = TestBed.inject(Router);
     spyOnProperty(router, "url", "get").and.returnValue(
-      "/compare?instances=old",
+      "/servers/compare?instances=old",
     );
     const navigateByUrl = spyOn(router, "navigateByUrl");
     service.selectedForCompare = [
@@ -113,6 +113,7 @@ describe("ServerCompareService", () => {
     const navigatedUrl = navigateByUrl.calls.mostRecent().args[0] as string;
     const queryParams = new URL(navigatedUrl, "http://localhost").searchParams;
 
+    expect(navigatedUrl.startsWith("/servers/compare?")).toBeTrue();
     expect(queryParams.get("instances")).toBe(expectedInstances);
     expect(queryParams.get("baseline_vendor")).toBe("aws");
     expect(queryParams.get("baseline_server")).toBe("a1");
@@ -127,5 +128,83 @@ describe("ServerCompareService", () => {
     service.syncCompareRoute();
 
     expect(navigateByUrl).not.toHaveBeenCalled();
+  });
+
+  it("toggles database compare selection", () => {
+    service.toggleDatabaseCompare(true, {
+      display_name: "db-a",
+      vendor: "aws",
+      database: "db-a",
+    });
+    service.toggleDatabaseCompare(true, {
+      display_name: "db-b",
+      vendor: "gcp",
+      database: "db-b",
+    });
+
+    expect(service.selectedDatabases).toEqual([
+      { display_name: "db-a", vendor: "aws", database: "db-a" },
+      { display_name: "db-b", vendor: "gcp", database: "db-b" },
+    ]);
+    expect(service.databaseCompareCount()).toBe(2);
+    expect(service.compareCount()).toBe(5);
+  });
+
+  it("reorders selected databases", () => {
+    service.selectedDatabases = [
+      { display_name: "db-a", vendor: "aws", database: "db-a" },
+      { display_name: "db-b", vendor: "gcp", database: "db-b" },
+      { display_name: "db-c", vendor: "azure", database: "db-c" },
+    ];
+
+    service.reorderSelectedDatabases(0, 2);
+
+    expect(service.selectedDatabases.map((item) => item.database)).toEqual([
+      "db-b",
+      "db-c",
+      "db-a",
+    ]);
+  });
+
+  it("opens database compare with encoded instances", () => {
+    const router = TestBed.inject(Router);
+    const navigateByUrl = spyOn(router, "navigateByUrl");
+    service.selectedDatabases = [
+      { display_name: "db-a", vendor: "aws", database: "db-a" },
+      { display_name: "db-b", vendor: "gcp", database: "db-b" },
+    ];
+    service.setBaselineDatabase({ vendor: "aws", database: "db-a" });
+    const expectedInstances = btoa(JSON.stringify(service.selectedDatabases));
+
+    service.openDatabaseCompare();
+
+    const navigatedUrl = navigateByUrl.calls.mostRecent().args[0] as string;
+    const queryParams = new URL(navigatedUrl, "http://localhost").searchParams;
+
+    expect(navigatedUrl.startsWith("/databases/compare?")).toBeTrue();
+    expect(queryParams.get("instances")).toBe(expectedInstances);
+    expect(queryParams.get("baseline_vendor")).toBe("aws");
+    expect(queryParams.get("baseline_database")).toBe("db-a");
+  });
+
+  it("syncs the database compare route while on databases/compare", () => {
+    const router = TestBed.inject(Router);
+    spyOnProperty(router, "url", "get").and.returnValue(
+      "/databases/compare?instances=old",
+    );
+    const navigateByUrl = spyOn(router, "navigateByUrl");
+    service.selectedDatabases = [
+      { display_name: "db-a", vendor: "aws", database: "db-a" },
+      { display_name: "db-b", vendor: "gcp", database: "db-b" },
+    ];
+
+    service.syncDatabaseCompareRoute();
+
+    expect(navigateByUrl).toHaveBeenCalled();
+    expect(
+      (navigateByUrl.calls.mostRecent().args[0] as string).startsWith(
+        "/databases/compare?",
+      ),
+    ).toBeTrue();
   });
 });

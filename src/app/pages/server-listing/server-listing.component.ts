@@ -182,7 +182,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
-    { name: "Server listing", url: "/servers" },
+    { name: "Servers", url: "/servers" },
   ];
 
   tableColumns: TableColumn[] = [];
@@ -960,7 +960,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   compareCount() {
-    return this.serverCompare.compareCount();
+    return this.serverCompare.serverCompareCount();
   }
 
   clearCompare() {
