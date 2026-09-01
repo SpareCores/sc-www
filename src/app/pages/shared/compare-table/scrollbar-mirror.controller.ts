@@ -1,4 +1,13 @@
 import { ElementRef, Signal, WritableSignal } from "@angular/core";
+import {
+  SCROLLBAR_MIRROR_CONTAINER_HEIGHT_PX,
+  SCROLLBAR_MIRROR_DEFAULT_BOTTOM_ANCHOR_ROW_ID,
+  SCROLLBAR_MIRROR_DEFAULT_FIRST_COL_ID,
+  SCROLLBAR_MIRROR_DEFAULT_TABLE_ID,
+  SCROLLBAR_MIRROR_OVERFLOW_VISIBILITY_THRESHOLD_PX,
+  SCROLLBAR_MIRROR_VIEWPORT_INSET_PX,
+  SCROLLBAR_MIRROR_Z_INDEX,
+} from "./scrollbar-mirror.constants";
 
 export interface ScrollbarMirrorPosition {
   left: number;
@@ -11,27 +20,45 @@ export interface ScrollbarMirrorState {
   innerWidth: number;
 }
 
+export interface ScrollbarMirrorOptions {
+  tableId?: string;
+  firstColId?: string;
+  bottomAnchorRowId?: string;
+}
+
 export const INITIAL_SCROLLBAR_MIRROR_STATE: ScrollbarMirrorState = {
   bottomPosition: null,
   innerWidth: 0,
 };
 
 export class ScrollbarMirrorController {
-  static readonly bottomAnchorRowId = "server-compare-view-server-row";
-  static readonly mirrorContainerHeight = 11;
-  static readonly mirrorZIndex = 41;
-  static readonly mirrorViewportInset = 0;
-  static readonly overflowVisibilityThreshold = 1;
+  static readonly bottomAnchorRowId =
+    SCROLLBAR_MIRROR_DEFAULT_BOTTOM_ANCHOR_ROW_ID;
+  static readonly mirrorContainerHeight = SCROLLBAR_MIRROR_CONTAINER_HEIGHT_PX;
+  static readonly mirrorZIndex = SCROLLBAR_MIRROR_Z_INDEX;
+  static readonly mirrorViewportInset = SCROLLBAR_MIRROR_VIEWPORT_INSET_PX;
+  static readonly overflowVisibilityThreshold =
+    SCROLLBAR_MIRROR_OVERFLOW_VISIBILITY_THRESHOLD_PX;
 
   private syncingFrom: "table" | "mirror" | null = null;
   private captureHandler: (e: Event) => void;
   private syncResetFrameId: number | null = null;
+  private readonly tableId: string;
+  private readonly firstColId: string;
+  private readonly bottomAnchorId: string;
 
   constructor(
     private tableHolderGetter: () => ElementRef | undefined,
     private bottomMirrorSignal: Signal<ElementRef | undefined>,
     private stateSignal: WritableSignal<ScrollbarMirrorState>,
+    options: ScrollbarMirrorOptions = {},
   ) {
+    this.tableId = options.tableId ?? SCROLLBAR_MIRROR_DEFAULT_TABLE_ID;
+    this.firstColId =
+      options.firstColId ?? SCROLLBAR_MIRROR_DEFAULT_FIRST_COL_ID;
+    this.bottomAnchorId =
+      options.bottomAnchorRowId ??
+      SCROLLBAR_MIRROR_DEFAULT_BOTTOM_ANCHOR_ROW_ID;
     this.captureHandler = (e: Event) => {
       const el = this.tableHolderGetter()?.nativeElement;
       if (el && e.target === el) {
@@ -54,7 +81,7 @@ export class ScrollbarMirrorController {
       | HTMLElement
       | undefined;
     const mainTable = document.getElementById(
-      "main-table",
+      this.tableId,
     ) as HTMLElement | null;
     if (!tableHolder || !mainTable) {
       this.stateSignal.set({ ...INITIAL_SCROLLBAR_MIRROR_STATE });
@@ -62,7 +89,7 @@ export class ScrollbarMirrorController {
     }
 
     const tableHolderRect = tableHolder.getBoundingClientRect();
-    const firstCol = document.getElementById("server-compare-table-first-col");
+    const firstCol = document.getElementById(this.firstColId);
     const firstColWidth = firstCol ? firstCol.getBoundingClientRect().width : 0;
     const mirrorLeft = tableHolderRect.left + firstColWidth;
     const mirrorWidth = Math.max(
@@ -176,9 +203,8 @@ export class ScrollbarMirrorController {
 
   private getBottomAnchorRow(mainTable: HTMLElement): HTMLElement | null {
     return (
-      mainTable.querySelector<HTMLElement>(
-        `#${ScrollbarMirrorController.bottomAnchorRowId}`,
-      ) ?? mainTable.querySelector<HTMLElement>("tbody tr:last-of-type")
+      mainTable.querySelector<HTMLElement>(`#${this.bottomAnchorId}`) ??
+      mainTable.querySelector<HTMLElement>("tbody tr:last-of-type")
     );
   }
 

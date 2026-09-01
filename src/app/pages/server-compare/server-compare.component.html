@@ -16,9 +16,6 @@
             icon="copy"
             iconPosition="end"
             variant="outline"
-            size="large"
-            textSize="large"
-            fontWeight="bold"
             (buttonClick)="openModal()"
           ></sc-button>
         }
@@ -26,25 +23,14 @@
       @if (instances.length) {
         <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
         <div class="flex flex-wrap gap-4 items-center justify-end w-full">
-          <button
+          <sc-button
             id="baseline_server_button"
             [scFlowbiteDropdown]="'baseline_server_options'"
             #baselineDropdown="scFlowbiteDropdown"
-            class="dropdown_button"
-            type="button"
-          >
-            <div class="px-4 py-3">
-              {{ getBaselineServerLabel() }}
-            </div>
-            <div
-              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-            >
-              <svg
-                [lucideIcon]="'target'"
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [label]="getBaselineServerLabel()"
+            icon="target"
+            variant="dropdown"
+          ></sc-button>
           <sc-button
             id="currency_button"
             [scFlowbiteDropdown]="'currency_options'"
@@ -52,9 +38,6 @@
             [label]="selectedCurrency.slug"
             icon="credit-card"
             variant="dropdown"
-            size="large"
-            textSize="large"
-            fontWeight="normal"
           ></sc-button>
         </div>
       }
@@ -82,7 +65,7 @@
           of server comparison sets.
         </div>
         <div class="flex flex-col gap-4 mt-4">
-          @for (compare of specialCompares; track compare.title) {
+          @for (compare of serverCompares; track compare.title) {
             <div
               class="flex flex-col py-6 gap-2 text-white"
               [ngClass]="{
@@ -95,7 +78,7 @@
                   <span>{{ compare.title }}</span>
                   <a
                     class="header-anchor"
-                    [href]="'/compare#' + compare.id"
+                    [href]="'/servers/compare#' + compare.id"
                     [attr.aria-label]="'Link to ' + compare.title"
                     [attr.title]="'Link to ' + compare.title"
                   >
@@ -106,7 +89,7 @@
               @if (compare.type === "card") {
                 <h3>
                   <a
-                    routerLink="/compare/{{ compare.id }}"
+                    routerLink="/servers/compare/{{ compare.id }}"
                     class="text-emerald-400 text-xl font-semibold"
                   >
                     {{ compare.title }}
@@ -190,11 +173,11 @@
             we will be happy to review your request and add to our repository!
             Alternatively, open a pull request editing the
             <a
-              href="https://github.com/SpareCores/sc-www/blob/main/src/app/pages/server-compare/special-compares.js"
+              href="https://github.com/SpareCores/sc-www/blob/main/src/app/pages/server-compare/server-compares.js"
               class="text-emerald-400"
               target="_blank"
               rel="noopener"
-              >special-compares.js</a
+              >server-compares.js</a
             >
             file directly.
           </p>
@@ -216,20 +199,21 @@
         id="table_holder"
         #tableHolder
         class="compare_table_holder overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
+        (scroll)="updateMirrorLayout()"
       >
         @if (isBrowser() && isTableOutsideViewport()) {
-          <div class="fixed_thead" [style]="getFixedDivStyle()">
-            <table class="items_table" [style]="getMainTableWidth()">
+          <div class="fixed_thead" [style]="stickyFixedDivStyle()">
+            <table class="items_table" [style]="stickyMainTableStyle()">
               <thead>
                 <tr>
-                  <th [style]="getStickyHeaderFirstColStyle()"></th>
+                  <th [style]="stickyFirstColStyle()"></th>
                   @for (
                     server of servers;
                     track server.vendor_id + "_" + server.server_id;
                     let i = $index
                   ) {
                     <th
-                      [style]="getStyle(i)"
+                      [style]="stickyColumnStyles()[i] || ''"
                       class="compact-number-header-cell compare-table-header-cell"
                     >
                       <div

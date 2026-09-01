@@ -230,26 +230,21 @@ describe("ServerCompareComponent", () => {
   });
 
   it("clears pending mirror layout timeout and animation frame on destroy", () => {
-    const clearTimeout = spyOn(window, "clearTimeout").and.callThrough();
+    const clearTimeoutSpy = spyOn(window, "clearTimeout").and.callThrough();
     const cancelAnimationFrame = spyOn(
       window,
       "cancelAnimationFrame",
     ).and.callThrough();
+    spyOn(window, "requestAnimationFrame").and.returnValue(34);
+    spyOn(window, "setTimeout").and.returnValue(
+      12 as unknown as ReturnType<typeof setTimeout>,
+    );
 
-    Object.defineProperty(component, "mirrorLayoutTimeoutId", {
-      configurable: true,
-      value: 12,
-      writable: true,
-    });
-    Object.defineProperty(component, "mirrorLayoutFrameId", {
-      configurable: true,
-      value: 34,
-      writable: true,
-    });
-
+    component.ngAfterViewInit();
+    component["stickyLayout"].scheduleDeferredUpdate();
     component.ngOnDestroy();
 
-    expect(clearTimeout).toHaveBeenCalledWith(12);
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(12);
     expect(cancelAnimationFrame).toHaveBeenCalledWith(34);
   });
 
@@ -335,7 +330,7 @@ describe("ServerCompareComponent", () => {
     window.history.replaceState(
       null,
       "",
-      "/compare?instances=encoded-instances#benchmark_line_cpu",
+      "/servers/compare?instances=encoded-instances#benchmark_line_cpu",
     );
     component["lastEncodedCompareQuery"] = "";
     const pushState = spyOn(window.history, "pushState");

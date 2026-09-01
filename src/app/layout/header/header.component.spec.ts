@@ -199,15 +199,21 @@ describe("HeaderComponent", () => {
         server: "m7a.4xlarge",
         zonesRegions: [],
       },
+      {
+        display_name: "t2d-standard-16",
+        vendor: "gcp",
+        server: "t2d-standard-16",
+        zonesRegions: [],
+      },
     ];
     spyOn(component, "isOnComparePage").and.returnValue(false);
     fixture.detectChanges();
 
     const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
-      "#compare_options button.bg-emerald-400",
+      "#compare_options sc-button[label='Compare servers'] button",
     );
 
-    expect(compareButton?.textContent?.trim()).toBe("Compare");
+    expect(compareButton?.textContent?.trim()).toBe("Compare servers");
   });
 
   it("hides the Compare button on the compare page", () => {
@@ -219,14 +225,59 @@ describe("HeaderComponent", () => {
         server: "m7a.4xlarge",
         zonesRegions: [],
       },
+      {
+        display_name: "t2d-standard-16",
+        vendor: "gcp",
+        server: "t2d-standard-16",
+        zonesRegions: [],
+      },
     ];
     spyOn(component, "isOnComparePage").and.returnValue(true);
     fixture.detectChanges();
 
     const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
-      "#compare_options button.bg-emerald-400",
+      "#compare_options sc-button[label='Compare servers'] button",
     );
 
     expect(compareButton).toBeNull();
+  });
+
+  it("shows Servers and Databases section titles with Compare databases", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    serverCompare.selectedForCompare = [
+      {
+        display_name: "m7a.4xlarge",
+        vendor: "aws",
+        server: "m7a.4xlarge",
+        zonesRegions: [],
+      },
+      {
+        display_name: "t2d-standard-16",
+        vendor: "gcp",
+        server: "t2d-standard-16",
+        zonesRegions: [],
+      },
+    ];
+    serverCompare.selectedDatabases = [
+      { display_name: "db-a", vendor: "aws", database: "db-a" },
+      { display_name: "db-b", vendor: "gcp", database: "db-b" },
+    ];
+    spyOn(component, "isOnComparePage").and.returnValue(false);
+    spyOn(component, "isOnDatabaseComparePage").and.returnValue(false);
+    fixture.detectChanges();
+
+    const panel = (fixture.nativeElement as HTMLElement).querySelector(
+      "#compare_options",
+    ) as HTMLElement;
+    const titles = Array.from(
+      panel.querySelectorAll(".compare_dropdown_section_title"),
+    ).map((el) => el.textContent?.trim());
+
+    expect(titles).toEqual(["Servers", "Databases"]);
+    expect(
+      panel
+        .querySelector("sc-button[label='Compare databases'] button")
+        ?.textContent?.trim(),
+    ).toBe("Compare databases");
   });
 });

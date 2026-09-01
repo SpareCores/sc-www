@@ -67,8 +67,10 @@
                   <a
                     class="partner-logo-link"
                     [href]="logo.href"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    [attr.target]="logo.href.startsWith('/') ? null : '_blank'"
+                    [attr.rel]="
+                      logo.href.startsWith('/') ? null : 'noopener noreferrer'
+                    "
                     [attr.aria-label]="logo.name"
                   >
                     <img

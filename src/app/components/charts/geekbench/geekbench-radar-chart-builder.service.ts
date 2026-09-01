@@ -128,19 +128,26 @@ export class GeekbenchRadarChartBuilderService {
     );
     const infoTooltipHtml = this.buildInfoTooltipHtml(geekbenchMeta);
 
+    const singleData = this.createCompareData(
+      params.servers,
+      benchmarkIds,
+      labels,
+      "single",
+    );
+    const multiData = this.createCompareData(
+      params.servers,
+      benchmarkIds,
+      labels,
+      "multi",
+    );
+
+    if (!singleData.datasets.length && !multiData.datasets.length) {
+      return undefined;
+    }
+
     return {
-      singleData: this.createCompareData(
-        params.servers,
-        benchmarkIds,
-        labels,
-        "single",
-      ),
-      multiData: this.createCompareData(
-        params.servers,
-        benchmarkIds,
-        labels,
-        "multi",
-      ),
+      singleData,
+      multiData,
       singleOptions: this.createCompareOptions("Single-core performance"),
       multiOptions: this.createCompareOptions("Multi-core performance"),
       infoTooltipHtml,
@@ -271,9 +278,8 @@ export class GeekbenchRadarChartBuilderService {
     labels: string[],
     coreKind: "single" | "multi",
   ): GeekbenchRadarChartData {
-    return {
-      labels,
-      datasets: servers.map((server, index) =>
+    const datasets = servers
+      .map((server, index) =>
         withServerTooltipIdentity(
           {
             data: benchmarkIds.map((benchmarkId) => {
@@ -297,7 +303,12 @@ export class GeekbenchRadarChartBuilderService {
           },
           server,
         ),
-      ),
+      )
+      .filter((dataset) => dataset.data.some((point) => point.value != null));
+
+    return {
+      labels,
+      datasets,
     };
   }
 

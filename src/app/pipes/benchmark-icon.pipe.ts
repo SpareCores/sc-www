@@ -34,6 +34,8 @@ export class BenchmarkIconPipe implements PipeTransform {
         return "earth-lock";
       case lowerCase.includes("redis"):
         return "database-zap";
+      case lowerCase.includes("pgbench"):
+        return "database";
       case lowerCase.includes("static_web"):
         return "image-up";
       case lowerCase.includes("stress_ng"):

@@ -1,59 +1,56 @@
-@if (chartData() && selectedOption()) {
-  <div
-    class="block_full_inline"
-    [class.memory-compare-chart--cache-markers]="hasCacheAnnotations()"
-  >
-    <div class="flex justify-end items-center">
-      <sc-button
-        #memoryCompareDropdown="scFlowbiteDropdown"
-        [id]="buttonId"
-        [scFlowbiteDropdown]="optionsId"
-        [dropdownEnabled]="isBrowser && availableOptions().length > 0"
-        [label]="currentOptionName()"
-        icon="chevron-down"
-        variant="dropdown"
-        size="normal"
-      ></sc-button>
-    </div>
-    @if (isBrowser) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            baseChart
-            [data]="chartData()"
-            [options]="chartOptions()"
-            [type]="lineChartType"
-          >
-          </canvas>
-        </div>
+<div
+  class="block_full_inline"
+  [class.memory-compare-chart--cache-markers]="hasCacheAnnotations()"
+>
+  <div class="flex justify-end items-center">
+    <sc-button
+      #memoryCompareDropdown="scFlowbiteDropdown"
+      [id]="buttonId"
+      [scFlowbiteDropdown]="optionsId"
+      [dropdownEnabled]="isBrowser && availableOptions().length > 0"
+      [label]="currentOptionName()"
+      icon="chevron-down"
+      variant="dropdown"
+    ></sc-button>
+  </div>
+  @if (chartData() && isBrowser) {
+    <div class="h-full">
+      <div class="chart_div" chartType="bar">
+        <canvas
+          baseChart
+          [data]="chartData()"
+          [options]="chartOptions()"
+          [type]="lineChartType"
+        >
+        </canvas>
       </div>
-    }
-  </div>
+    </div>
+  }
+</div>
 
-  <div
-    [id]="optionsId"
-    class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+<div
+  [id]="optionsId"
+  class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    [attr.aria-labelledby]="buttonId"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      [attr.aria-labelledby]="buttonId"
-    >
-      @for (
-        bwMemOperation of availableOptions();
-        track bwMemOperation.id;
-        let i = $index
-      ) {
-        <li>
-          <button
-            type="button"
-            class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
-            (click)="selectMemoryChartOption(i)"
-            [title]="bwMemOperation.name"
-          >
-            <div class="text-white text-sm">{{ bwMemOperation.name }}</div>
-          </button>
-        </li>
-      }
-    </ul>
-  </div>
-}
+    @for (
+      bwMemOperation of availableOptions();
+      track bwMemOperation.id;
+      let i = $index
+    ) {
+      <li>
+        <button
+          type="button"
+          class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+          (click)="selectMemoryChartOption(i)"
+          [title]="bwMemOperation.name"
+        >
+          <div class="text-white text-sm">{{ bwMemOperation.name }}</div>
+        </button>
+      </li>
+    }
+  </ul>
+</div>

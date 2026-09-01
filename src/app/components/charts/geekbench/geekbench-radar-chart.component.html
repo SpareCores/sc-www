@@ -49,38 +49,36 @@
     </div>
   }
 } @else {
-  @if (hasCompareCharts()) {
-    <div class="block_full_short_geekbench">
-      @if (isBrowser) {
-        <div class="charts_div justify-center">
-          @if (showSingle() && resolvedSingleChartData()) {
-            <div chartType="bar" class="chart_div w-full flex justify-center">
-              <canvas
-                style="max-width: 100%; width: 100%"
-                baseChart
-                [data]="resolvedSingleChartData()"
-                [options]="resolvedSingleChartOptions()"
-                [type]="chartType()"
-              >
-              </canvas>
-            </div>
-          }
-          @if (showMulti() && resolvedMultiChartData()) {
-            <div chartType="bar" class="chart_div w-full flex justify-center">
-              <canvas
-                style="max-width: 100%; width: 100%"
-                baseChart
-                [data]="resolvedMultiChartData()"
-                [options]="resolvedMultiChartOptions()"
-                [type]="chartType()"
-              >
-              </canvas>
-            </div>
-          }
-        </div>
-      }
-    </div>
-  }
+  <div class="block_full_short_geekbench">
+    @if (isBrowser) {
+      <div class="charts_div justify-center">
+        @if (showSingle() && resolvedSingleChartData()) {
+          <div chartType="bar" class="chart_div w-full flex justify-center">
+            <canvas
+              style="max-width: 100%; width: 100%"
+              baseChart
+              [data]="resolvedSingleChartData()"
+              [options]="resolvedSingleChartOptions()"
+              [type]="chartType()"
+            >
+            </canvas>
+          </div>
+        }
+        @if (showMulti() && resolvedMultiChartData()) {
+          <div chartType="bar" class="chart_div w-full flex justify-center">
+            <canvas
+              style="max-width: 100%; width: 100%"
+              baseChart
+              [data]="resolvedMultiChartData()"
+              [options]="resolvedMultiChartOptions()"
+              [type]="chartType()"
+            >
+            </canvas>
+          </div>
+        }
+      </div>
+    }
+  </div>
 }
 
 <div

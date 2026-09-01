@@ -42,15 +42,18 @@
           </div>
         </div>
         <div class="flex gap-8 justify-center lg:justify-start">
-          <button routerLink="/servers" class="btn-primary py-5 px-5">
-            Get Started
-          </button>
-          <button
+          <sc-button
+            label="Get Started"
+            size="large"
             routerLink="/servers"
-            class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600"
-          >
-            Explore Server Options and Prices >
-          </button>
+          ></sc-button>
+          <sc-button
+            label="Explore Server Options and Prices >"
+            variant="link"
+            size="large"
+            routerLink="/servers"
+            buttonClass="!text-teal-500 hover:!text-teal-600 focus:!text-teal-600"
+          ></sc-button>
         </div>
       </div>
       <div class="w-full lg:w-1/2 justify-center flex items-center">
@@ -122,7 +125,7 @@
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
-              <b> 7 </b>
+              <b> 8 </b>
               <span>
                 (out of
                 <span
@@ -350,9 +353,11 @@
         </div>
       </div>
       <div class="flex justify-center">
-        <button id="meeting-navigator-caas" class="btn-primary py-5 px-5">
-          Contact Us to Discuss Your Needs
-        </button>
+        <sc-button
+          id="meeting-navigator-caas"
+          label="Contact Us to Discuss Your Needs"
+          size="large"
+        ></sc-button>
       </div>
     </div>
   </div>
@@ -524,22 +529,23 @@
           funding.
         </div>
         <div class="flex gap-8 justify-center lg:justify-start">
-          <a
+          <sc-button
+            label="Check us out on GitHub"
+            icon="github"
+            iconPosition="start"
+            size="large"
             href="https://github.com/SpareCores"
             target="_blank"
             rel="noopener"
-          >
-            <button class="btn-primary py-4 px-4 flex gap-2">
-              <svg lucideIcon="github"></svg> Check us out on GitHub
-            </button>
-          </a>
-          <a [routerLink]="'/articles'" [queryParams]="{ tag: 'funding' }">
-            <button
-              class="bg-transparend text-teal-500 py-4 px-4 font-bold hover:text-teal-600"
-            >
-              Learn more about who is funding us >
-            </button>
-          </a>
+          ></sc-button>
+          <sc-button
+            label="Learn more about who is funding us >"
+            variant="link"
+            size="large"
+            routerLink="/articles"
+            [queryParams]="{ tag: 'funding' }"
+            buttonClass="!text-teal-500 hover:!text-teal-600 focus:!text-teal-600"
+          ></sc-button>
         </div>
       </div>
     </div>

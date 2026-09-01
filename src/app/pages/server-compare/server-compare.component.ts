@@ -16,7 +16,8 @@ import {
   INITIAL_SCROLLBAR_MIRROR_STATE,
   ScrollbarMirrorController,
   ScrollbarMirrorState,
-} from "./scrollbar-mirror.controller";
+} from "../shared/compare-table/scrollbar-mirror.controller";
+import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
@@ -45,7 +46,7 @@ import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PrismService } from "../../services/prism.service";
 import { Subscription } from "rxjs";
-import specialComparesData from "./special-compares.js";
+import serverComparesData from "./server-compares.js";
 import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
 import {
   decodeBase64JsonUrlState,
@@ -58,10 +59,15 @@ import {
   type CompareMemoryChartOption,
 } from "../../components/charts/shared/memory-chart.types";
 import {
+  SERVER_COMPARE_FIRST_COL_ID,
+  SERVER_COMPARE_TABLE_HOLDER_ID,
+  SERVER_COMPARE_TABLE_ID,
+} from "./server-compare.constants";
+import { pushBrowserQueryState } from "./compare-url-state.utils";
+import {
   type MemoryBenchmarkConfig,
   type MemoryBenchmarkMeta,
 } from "../../components/charts/memory/memory-chart.types";
-import { LucideDynamicIcon } from "@lucide/angular";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -72,6 +78,13 @@ const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_COMPARE_URL_TOAST_BODY =
   'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
+const SERVER_COMPARE_GUIDE_TITLE = "Server Compare Guide";
+const SERVER_COMPARISON_TITLE = "Server Comparison";
+const SERVER_COMPARE_BREADCRUMB = "Compare";
+const SERVER_COMPARE_PARENT_BREADCRUMB = "Servers";
+const SERVER_CUSTOM_COMPARISON_BREADCRUMB = "Custom Comparison";
+const SERVER_COMPARE_GUIDE_DESCRIPTION =
+  "Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.";
 
 type CompareTableBenchmarkConfig = {
   config: MemoryBenchmarkConfig;
@@ -89,6 +102,15 @@ type CompareTableBenchmarkMeta = Omit<
   legacyOperation?: CompareMemoryChartOption["legacyOperation"];
 };
 
+function hasMeaningfulCompareTableValue(value: unknown): boolean {
+  if (value === "-" || value == null || value === "") {
+    return false;
+  }
+
+  const numeric = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numeric) && numeric !== 0;
+}
+
 @Component({
   selector: "sc-server-compare",
   imports: [
@@ -102,7 +124,6 @@ type CompareTableBenchmarkMeta = Omit<
     EmbedComparePreviewComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
-    LucideDynamicIcon,
   ],
   templateUrl: "./server-compare.component.html",
   styleUrl: "./server-compare.component.scss",
@@ -129,7 +150,8 @@ export class ServerCompareComponent
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
-    { name: "Compare Servers", url: "/compare" },
+    { name: SERVER_COMPARE_PARENT_BREADCRUMB, url: "/servers" },
+    { name: SERVER_COMPARE_BREADCRUMB, url: "/servers/compare" },
   ];
 
   isLoading = false;
@@ -305,33 +327,33 @@ export class ServerCompareComponent
   readonly scrollbarMirror = signal<ScrollbarMirrorState>({
     ...INITIAL_SCROLLBAR_MIRROR_STATE,
   });
-  private mirrorCtrl?: ScrollbarMirrorController;
-  private mirrorLayoutTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  private mirrorLayoutFrameId: number | null = null;
-  private readonly flushMirrorLayout = () => {
-    this.mirrorLayoutFrameId = null;
-    const isSticky =
-      (this.document.getElementById("main-table")?.getBoundingClientRect()
-        .top ?? 0) < 70;
-    this.isTableOutsideViewport.set(isSticky);
-    this.mirrorCtrl?.update();
-  };
-  private readonly updateMirrorLayout = () => {
-    if (
-      !isPlatformBrowser(this.platformId) ||
-      this.mirrorLayoutFrameId !== null
-    ) {
-      return;
-    }
+  readonly stickyFixedDivStyle = signal("");
+  readonly stickyMainTableStyle = signal("");
+  readonly stickyFirstColStyle = signal<{ width?: string }>({});
+  readonly stickyColumnStyles = signal<string[]>([]);
+  private stickyLayout = new CompareStickyLayoutController({
+    document: this.document,
+    isBrowser: () => this.isBrowser(),
+    tableHolder: () => this.tableHolder,
+    bottomMirror: this.scrollbarMirrorBottomEl,
+    scrollbarMirror: this.scrollbarMirror,
+    isTableOutsideViewport: this.isTableOutsideViewport,
+    stickyStyles: {
+      fixedDivStyle: this.stickyFixedDivStyle,
+      mainTableStyle: this.stickyMainTableStyle,
+      firstColStyle: this.stickyFirstColStyle,
+      columnStyles: this.stickyColumnStyles,
+    },
+    ids: {
+      tableId: SERVER_COMPARE_TABLE_ID,
+      tableHolderId: SERVER_COMPARE_TABLE_HOLDER_ID,
+      firstColId: SERVER_COMPARE_FIRST_COL_ID,
+    },
+    itemCount: () => this.servers.length,
+  });
 
-    this.mirrorLayoutFrameId = window.requestAnimationFrame(
-      this.flushMirrorLayout,
-    );
-  };
-
-  title = "Server Compare Guide";
-  description =
-    "Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.";
+  title = SERVER_COMPARE_GUIDE_TITLE;
+  description = SERVER_COMPARE_GUIDE_DESCRIPTION;
   keywords =
     "compare, servers, server, hosting, cloud, vps, dedicated, comparison";
 
@@ -350,11 +372,12 @@ export class ServerCompareComponent
     { id: "llm_inference", name: "LLM Inference" },
     { id: "static_web", name: "Static Web Server" },
     { id: "redis", name: "Redis" },
+    { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
   ];
 
   modalEmbed: any;
 
-  specialCompares: any[] = specialComparesData;
+  serverCompares: any[] = serverComparesData;
 
   showZoneIds = false;
 
@@ -362,20 +385,6 @@ export class ServerCompareComponent
   private checkExistInterval: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get("id");
-
-    if (id) {
-      const specialCompare = this.specialCompares.find((x: any) => x.id === id);
-      if (specialCompare) {
-        this.title = specialCompare.title;
-        this.description = specialCompare.description;
-        this.breadcrumbs.push({
-          name: specialCompare.title,
-          url: `/compare/${specialCompare.id}`,
-        });
-      }
-    }
-
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
       this.description,
@@ -415,23 +424,7 @@ export class ServerCompareComponent
       this.checkExistInterval = null;
     }
 
-    if (isPlatformBrowser(this.platformId)) {
-      if (this.mirrorLayoutTimeoutId !== null) {
-        clearTimeout(this.mirrorLayoutTimeoutId);
-        this.mirrorLayoutTimeoutId = null;
-      }
-
-      if (this.mirrorLayoutFrameId !== null) {
-        cancelAnimationFrame(this.mirrorLayoutFrameId);
-        this.mirrorLayoutFrameId = null;
-      }
-
-      window.removeEventListener("scroll", this.updateMirrorLayout);
-      window.removeEventListener("resize", this.updateMirrorLayout);
-      window.removeEventListener("orientationchange", this.updateMirrorLayout);
-    }
-
-    this.mirrorCtrl?.destroy();
+    this.stickyLayout.destroy();
   }
 
   setup() {
@@ -441,25 +434,22 @@ export class ServerCompareComponent
 
     this.instances = [];
     this.instancesRaw = "";
+    this.stickyLayout.reset();
 
     if (id) {
-      const specialCompare = this.specialCompares.find((x: any) => x.id === id);
-      if (specialCompare) {
-        this.instances = specialCompare.instances;
+      const serverCompare = this.serverCompares.find((x: any) => x.id === id);
+      if (serverCompare) {
+        this.instances = serverCompare.instances;
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-        let breadcrumb = {
-          name: specialCompare.title,
-          url: `/compare/${specialCompare.id}`,
-        };
-        if (this.breadcrumbs.length < 3) {
-          this.breadcrumbs.push(breadcrumb);
-        } else {
-          this.breadcrumbs[2] = breadcrumb;
-        }
-      } else if (this.breadcrumbs.length > 2) {
+        this.applyComparisonChrome(
+          serverCompare.title,
+          serverCompare.description,
+        );
+        this.setPremadeCompareBreadcrumb(serverCompare.title, serverCompare.id);
+      } else {
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-        this.breadcrumbs.pop();
+        this.applyGuideChrome();
       }
     } else if (param) {
       const decodedInstances = decodeBase64JsonUrlState(
@@ -469,9 +459,7 @@ export class ServerCompareComponent
 
       if (!decodedInstances.value) {
         console.warn("Invalid instances data in URL:", decodedInstances.error);
-        if (this.breadcrumbs.length > 2) {
-          this.breadcrumbs.pop();
-        }
+        this.applyGuideChrome();
         if (isPlatformBrowser(this.platformId)) {
           this.toastService.show({
             title: INVALID_URL_TOAST_TITLE,
@@ -489,24 +477,14 @@ export class ServerCompareComponent
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
 
       if (this.instances?.length) {
-        let breadcrumb = {
-          name: `Compare (${this.instances?.length})`,
-          url: `/compare`,
-          queryParams: { instances: param },
-        };
-        if (this.breadcrumbs.length < 3) {
-          this.breadcrumbs.push(breadcrumb);
-        } else {
-          this.breadcrumbs[2] = breadcrumb;
-        }
-      } else if (this.breadcrumbs.length > 2) {
-        this.breadcrumbs.pop();
+        this.applyComparisonChrome();
+        this.updateCompareBreadcrumb(this.instances.length);
+      } else {
+        this.applyGuideChrome();
       }
     } else {
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-      if (this.breadcrumbs.length > 2) {
-        this.breadcrumbs.pop();
-      }
+      this.applyGuideChrome();
     }
 
     if (this.instances?.length > 0) {
@@ -725,7 +703,10 @@ export class ServerCompareComponent
                     s.benchmark_id === benchmark.benchmark_id &&
                     JSON.stringify(s.config) === JSON.stringify(config.config),
                 );
-                config.values.push(score ? score.score : "-");
+                const rawScore = score?.score;
+                config.values.push(
+                  hasMeaningfulCompareTableValue(rawScore) ? rawScore : "-",
+                );
               });
             });
           });
@@ -734,29 +715,7 @@ export class ServerCompareComponent
             this.benchmarkMeta,
           );
 
-          this.benchmarkCategories.forEach((category) => {
-            category.data = this.benchmarkMeta.filter((b: any) =>
-              category.benchmarks.includes(b.benchmark_id),
-            );
-            category.data?.forEach((d: any) => {
-              d.name = d.name
-                .replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, "$1$2")
-                .replace(/PassMark: (.*?) Test|PassMark: (.*?)/, "$1$2");
-            });
-          });
-
-          // sort the stress_ng and stress_ng_pct by config.cores
-          let ngData: any[] = this.benchmarkCategories.find(
-            (c) => c.id === "stress_ng",
-          ).data;
-          if (ngData?.length > 0) {
-            ngData[0].configs = ngData[0].configs.sort((a: any, b: any) => {
-              return a.config.cores - b.config.cores;
-            });
-          }
-
-          this.benchmarkCategories.find((c) => c.id === "stress_ng_pct").data =
-            ngData;
+          this.refreshBenchmarkCategoryData();
 
           if (isPlatformBrowser(this.platformId)) {
             const targetElModal = document.getElementById(
@@ -786,16 +745,7 @@ export class ServerCompareComponent
 
           this.isLoading = false;
           this.restoreBaselineFromUrl();
-          if (isPlatformBrowser(this.platformId)) {
-            if (this.mirrorLayoutTimeoutId !== null) {
-              clearTimeout(this.mirrorLayoutTimeoutId);
-            }
-
-            this.mirrorLayoutTimeoutId = setTimeout(() => {
-              this.mirrorLayoutTimeoutId = null;
-              this.updateMirrorLayout();
-            }, 150);
-          }
+          this.stickyLayout.scheduleDeferredUpdate();
         });
     } else {
       this.isLoading = false;
@@ -816,17 +766,7 @@ export class ServerCompareComponent
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.mirrorCtrl = new ScrollbarMirrorController(
-        () => this.tableHolder,
-        this.scrollbarMirrorBottomEl,
-        this.scrollbarMirror,
-      );
-
-      window.addEventListener("scroll", this.updateMirrorLayout);
-      window.addEventListener("resize", this.updateMirrorLayout);
-      window.addEventListener("orientationchange", this.updateMirrorLayout);
-      this.updateMirrorLayout();
-
+      this.stickyLayout.init();
       this.adjustScrollForFragment();
     }
   }
@@ -1174,6 +1114,7 @@ export class ServerCompareComponent
     }
 
     this.remapBenchmarkConfigValues(indexMap);
+    this.refreshBenchmarkCategoryData();
     this.servers = nextServers;
     this.instances = selection.map((item) => ({
       display_name: item.display_name,
@@ -1209,28 +1150,101 @@ export class ServerCompareComponent
     });
   }
 
+  private refreshBenchmarkCategoryData(): void {
+    this.benchmarkCategories.forEach((category) => {
+      category.data = (
+        (this.benchmarkMeta ?? []) as CompareTableBenchmarkMeta[]
+      ).filter(
+        (benchmark) =>
+          !!category.benchmarks?.includes(benchmark.benchmark_id) &&
+          !!benchmark.configs?.some(
+            (config) =>
+              !!config.values?.some((value) =>
+                hasMeaningfulCompareTableValue(value),
+              ),
+          ),
+      );
+      category.data.forEach((benchmark: CompareTableBenchmarkMeta) => {
+        if (!benchmark.name) {
+          return;
+        }
+        benchmark.name = benchmark.name
+          .replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, "$1$2")
+          .replace(/PassMark: (.*?) Test|PassMark: (.*?)/, "$1$2");
+      });
+    });
+
+    const stressNgData: CompareTableBenchmarkMeta[] =
+      this.benchmarkCategories.find((category) => category.id === "stress_ng")
+        ?.data ?? [];
+    if (stressNgData.length > 0) {
+      stressNgData[0].configs = stressNgData[0].configs.sort(
+        (left, right) =>
+          Number(left.config.cores ?? 0) - Number(right.config.cores ?? 0),
+      );
+    }
+
+    const stressPctCategory = this.benchmarkCategories.find(
+      (category) => category.id === "stress_ng_pct",
+    );
+    if (stressPctCategory) {
+      stressPctCategory.data = stressNgData;
+    }
+  }
+
+  private applyGuideChrome(): void {
+    this.title = SERVER_COMPARE_GUIDE_TITLE;
+    this.description = SERVER_COMPARE_GUIDE_DESCRIPTION;
+    this.breadcrumbs = this.baseCompareBreadcrumbs();
+    this.seoHandler.updateTitleAndMetaTags(
+      this.title,
+      this.description,
+      this.keywords,
+    );
+  }
+
+  private applyComparisonChrome(title?: string, description?: string): void {
+    this.title = title || SERVER_COMPARISON_TITLE;
+    this.description = description || SERVER_COMPARE_GUIDE_DESCRIPTION;
+    this.breadcrumbs = this.baseCompareBreadcrumbs();
+    this.seoHandler.updateTitleAndMetaTags(
+      this.title,
+      this.description,
+      this.keywords,
+    );
+  }
+
+  private baseCompareBreadcrumbs(): BreadcrumbSegment[] {
+    return [
+      { name: "Home", url: "/" },
+      { name: SERVER_COMPARE_PARENT_BREADCRUMB, url: "/servers" },
+      { name: SERVER_COMPARE_BREADCRUMB, url: "/servers/compare" },
+    ];
+  }
+
+  private setPremadeCompareBreadcrumb(title: string, id: string): void {
+    this.breadcrumbs = [
+      ...this.baseCompareBreadcrumbs(),
+      { name: title, url: `/servers/compare/${id}` },
+    ];
+  }
+
   private updateCompareBreadcrumb(serverCount: number): void {
     if (serverCount > 0) {
-      const breadcrumb = {
-        name: `Compare (${serverCount})`,
-        url: `/compare`,
-        queryParams: this.instancesRaw
-          ? { instances: this.instancesRaw }
-          : undefined,
-      };
-
-      if (this.breadcrumbs.length < 3) {
-        this.breadcrumbs.push(breadcrumb);
-      } else {
-        this.breadcrumbs[2] = breadcrumb;
-      }
-
+      this.breadcrumbs = [
+        ...this.baseCompareBreadcrumbs(),
+        {
+          name: `${SERVER_CUSTOM_COMPARISON_BREADCRUMB} (${serverCount})`,
+          url: `/servers/compare`,
+          queryParams: this.instancesRaw
+            ? { instances: this.instancesRaw }
+            : undefined,
+        },
+      ];
       return;
     }
 
-    if (this.breadcrumbs.length > 2) {
-      this.breadcrumbs.pop();
-    }
+    this.breadcrumbs = this.baseCompareBreadcrumbs();
   }
 
   private syncCompareUrlState(): void {
@@ -1245,64 +1259,19 @@ export class ServerCompareComponent
     }
 
     this.lastEncodedCompareQuery = encodedQuery;
-    const path = window.location.pathname;
-    const hash = window.location.hash;
-
-    if (encodedQuery?.length) {
-      window.history.pushState({}, "", `${path}?${encodedQuery}${hash}`);
-    } else {
-      window.history.pushState({}, "", `${path}${hash}`);
-    }
-  }
-
-  getStyle(index: number) {
-    // lookup the width of the corresponding column in the main table
-    const mainTable = this.document.getElementById("main-table");
-    if (mainTable) {
-      const headerCells = mainTable.querySelectorAll("thead th");
-      // 1st cell (index 0) is the label column, so add 1 to get the correct col
-      if (headerCells && headerCells[index + 1]) {
-        const width = headerCells[index + 1].getBoundingClientRect().width;
-        return `width: ${width}px; min-width: ${width}px; max-width: ${width}px;`;
-      }
-    }
-    // fallback to approximate calculation
-    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`;
-  }
-
-  getMainTableWidth() {
-    const thead = this.document.querySelector("#main-table thead");
-    const rect = this.document
-      .getElementById("main-table")
-      ?.getBoundingClientRect();
-    const rect2 = this.tableHolder?.nativeElement.getBoundingClientRect();
-    const posLeft = rect && rect2 ? rect.x - rect2.x : 0;
-    return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
-  }
-
-  getFixedDivStyle() {
-    const div = this.document.getElementById("table_holder");
-    return `width: ${div?.clientWidth}px; overflow: hidden;`;
+    pushBrowserQueryState(encodedQuery);
   }
 
   onMirrorScroll(event: Event) {
-    this.mirrorCtrl?.syncFromMirror(event.target as HTMLElement);
+    this.stickyLayout.syncFromMirror(event.target as HTMLElement);
   }
 
   onCompareTableLayoutChange(): void {
-    this.updateMirrorLayout();
+    this.stickyLayout.scheduleDeferredUpdate();
   }
 
-  getStickyHeaderFirstColStyle() {
-    const firstColumn = this.document.getElementById(
-      "server-compare-table-first-col",
-    );
-
-    if (firstColumn) {
-      const width = Math.ceil(firstColumn.getBoundingClientRect().width);
-      return { width: `${width}px` };
-    }
-    return {};
+  updateMirrorLayout(): void {
+    this.stickyLayout.scheduleUpdate();
   }
 
   openModal() {

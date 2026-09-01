@@ -431,7 +431,7 @@ In this case, it's clear that the winners are the cheapest tiny servers.
 ## Comparing Servers for LLM Inference
 
 Finally, let's compare the winners of this last listing as an example of
-our <a href="/compare" target="_blank">Compare Guide</a>:
+our <a href="/servers/compare" target="_blank">Compare Guide</a>:
 
 <iframe
  src="/embed/compare/llm_inference?instances=W3siZGlzcGxheV9uYW1lIjoidDJkLXN0YW5kYXJkLTEiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmQtc3RhbmRhcmQtMSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoidDJkLXN0YW5kYXJkLTIiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmQtc3RhbmRhcmQtMiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzhnLm1lZGl1bSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM4Zy5tZWRpdW0iLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6InQyLnNtYWxsIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoidDIuc21hbGwiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6ImNweDExIiwidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3B4MTEiLCJ6b25lc1JlZ2lvbnMiOltdfV0="

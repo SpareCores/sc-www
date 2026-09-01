@@ -23,31 +23,23 @@
             >
               <sc-button
                 [label]="'Compare cloud servers\nfor free'"
-                size="xxx-large"
-                textSize="large"
-                fontWeight="bold"
+                size="large"
                 [routerLink]="'/servers'"
                 class="row-span-2 w-full self-center"
-                buttonClass="!whitespace-pre-line text-center leading-snug"
+                buttonClass="min-h-[5.75rem] text-center leading-snug"
               ></sc-button>
               <sc-button
                 label="Measure AI/ML jobs >"
-                size="normal"
-                variant="transparent"
-                color="emerald"
-                textSize="large"
-                fontWeight="bold"
-                buttonClass="!justify-start pl-4"
+                variant="link"
+                size="small"
+                buttonClass="!justify-start pl-4 !text-teal-500 hover:!text-teal-600 focus:!text-teal-600"
                 (click)="scrollTo('resource-tracker')"
               ></sc-button>
               <sc-button
                 label="Explore Sentinel >"
-                size="normal"
-                variant="transparent"
-                color="emerald"
-                textSize="large"
-                fontWeight="bold"
-                buttonClass="!justify-start pl-4"
+                variant="link"
+                size="small"
+                buttonClass="!justify-start pl-4 !text-teal-500 hover:!text-teal-600 focus:!text-teal-600"
                 (click)="scrollTo('sentinel')"
               ></sc-button>
             </div>
@@ -137,8 +129,7 @@
                           id="slot_vendor_link"
                           class="slot_inner slot_link"
                           [style]="getInnerStyle(i)"
-                          routerLink="/servers"
-                          [queryParams]="getVendorQueryParams(spinnerItem)"
+                          [routerLink]="getVendorRouteCommands(spinnerItem)"
                         >
                           @if (!spinnerItem.logo) {
                             <div class="text-center font-bold text-3xl">
@@ -1112,18 +1103,14 @@
           label="Read more articles"
           icon="notebook-text"
           iconPosition="start"
-          size="x-large"
-          textSize="large"
-          fontWeight="bold"
+          size="large"
           [routerLink]="'/articles'"
         ></sc-button>
         <sc-button
           label="Or check out our conference talks >"
-          size="x-large"
-          textSize="large"
-          fontWeight="bold"
-          variant="transparent"
-          color="emerald"
+          size="large"
+          variant="link"
+          buttonClass="!text-teal-500 hover:!text-teal-600 focus:!text-teal-600"
           [routerLink]="'/talks'"
         ></sc-button>
       </div>

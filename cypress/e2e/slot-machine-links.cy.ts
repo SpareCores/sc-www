@@ -247,9 +247,7 @@ describe("Landing page slot machine links", () => {
 
     cy.get("#slot_vendor_link", { timeout: 10000 })
       .should("have.attr", "href")
-      .and("include", "/servers?vendor=aws")
-      .and("include", "vcpus_min=8")
-      .and("include", "memory_min=32");
+      .and("include", "/vendors/aws");
     cy.get("#slot_server_link")
       .should("have.attr", "href")
       .and("include", "/server/aws/m7g.large");

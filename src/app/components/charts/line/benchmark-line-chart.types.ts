@@ -15,13 +15,18 @@ export type BenchmarkLineChartKind = "bar" | "line";
 export type BenchmarkLineChartSource =
   | "direct"
   | "details-ssl"
+  | "details-pgbench"
   | "details-stress-raw"
   | "details-stress-percent"
   | "compare-ssl"
   | "compare-stress-raw"
-  | "compare-stress-percent";
+  | "compare-stress-percent"
+  | "compare-pgbench";
 
-export type BenchmarkLineChartData = BenchmarkBarChartData | StressNgChartData;
+export type BenchmarkLineChartData =
+  | BenchmarkBarChartData
+  | StressNgChartData
+  | PgbenchChartData;
 
 export type BenchmarkBarChartData = ChartData<"bar">;
 
@@ -44,6 +49,7 @@ export type LineBenchmarkConfig = BenchmarkConfigShape & {
   algo?: string;
   block_size?: number;
   cores?: number;
+  concurrency?: number;
 };
 
 export type LineBenchmarkScore = BenchmarkScoreWithConfig<LineBenchmarkConfig>;
@@ -57,6 +63,7 @@ export type LineChartServer = BenchmarkChartServer<LineBenchmarkScore>;
 export type LineChartDetailsServer = {
   display_name: string;
   cpu_cores?: number;
+  vcpus?: number;
 };
 
 export type StressNgDataPoint = {
@@ -71,18 +78,54 @@ export type StressNgChartData = ChartData<
   number
 >;
 
+export type PgbenchDataPoint = {
+  x: number;
+  y: number;
+  note?: string | null;
+  unit?: string;
+  latency?: number;
+};
+
+export type PgbenchScore = {
+  benchmark_id: string;
+  score: number;
+  note?: string | null;
+  config?: LineBenchmarkConfig | string;
+  environment?: Record<string, unknown> | null;
+};
+
+export type PgbenchChartData = ChartData<
+  "line",
+  Array<PgbenchDataPoint | null>
+>;
+
+export type PgbenchChartResult = {
+  data: PgbenchChartData;
+  options: MutableLineChartOptions;
+};
+
 export type AnnotationLine = {
   type: "line";
   borderWidth: number;
   borderColor: string;
   xMin: number;
   xMax: number;
+  drawTime?:
+    | "beforeDatasetsDraw"
+    | "afterDatasetsDraw"
+    | "beforeDraw"
+    | "afterDraw";
   label: {
     rotation: "auto";
-    position: "start";
+    position: "start" | "center" | "end";
     content: string;
     backgroundColor: string;
     display: true;
+    drawTime?:
+      | "beforeDatasetsDraw"
+      | "afterDatasetsDraw"
+      | "beforeDraw"
+      | "afterDraw";
   };
 };
 
@@ -105,6 +148,8 @@ export type CompareSslOption = {
   name: string;
   value: string;
 };
+
+export const PGBENCH_HEAVY_READ_ONLY_ID = "pgbench:heavy_read_only";
 
 export const DEFAULT_COMPARE_SSL_OPTIONS: CompareSslOption[] = [
   { name: "AES-256-CBC", value: "AES-256-CBC" },

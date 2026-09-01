@@ -1,0 +1,508 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16">
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
+
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <sc-page-header
+        icon="database"
+        [title]="title"
+        [showShare]="true"
+        [shareIcon]="clipboardIcon"
+        shareButtonId="database_listing_share_button"
+        (shareClick)="clipboardURL()"
+      >
+      </sc-page-header>
+      <div class="text-white text-xl pr-16">{{ description }}</div>
+    </div>
+
+    <div class="flex gap-8 mx-2 xl:mx-0">
+      <div
+        class="filter_bar bg-primary"
+        [ngClass]="{
+          collapsed: isCollapsed,
+        }"
+      >
+        <div
+          class="collapser bg-secondary"
+          (click)="toggleCollapse()"
+          tabindex="0"
+          data-ph-capture-attribute-sc-event="database listing toggle sidebar"
+        >
+          <svg lucideChevronLeft class="h-6 w-6 text-emerald-400"></svg>
+        </div>
+
+        <sc-search-bar
+          [query]="query"
+          [filterCategories]="filterCategories"
+          [searchParameters]="searchParameters"
+          [isAuthenticated]="false"
+          AIAssistantType="databases"
+          (searchChanged)="searchBarChanged($event)"
+        >
+        </sc-search-bar>
+      </div>
+      <div
+        class="list_holder flex flex-col gap-4"
+        [ngClass]="{
+          'limited-full': !isCollapsed,
+          'w-full': isCollapsed,
+        }"
+      >
+        <div
+          class="top_buttons w-[calc(100%-60px)] flex justify-end gap-4 items-center ml-auto"
+        >
+          <div class="min-w-0">
+            <sc-button
+              id="benchmark_select_button"
+              data-ph-capture-attribute-sc-event="database listing benchmark select"
+              class="min-w-0 max-w-full"
+              variant="benchmark"
+              [disabled]="true"
+              [icon]="'pgbench' | benchmarkIcon"
+              [label]="selectedBenchmarkName"
+              [sublabel]="selectedBenchmarkConfig"
+            ></sc-button>
+          </div>
+          <div class="min-w-0">
+            <sc-button
+              id="allocation_button"
+              data-ph-capture-attribute-sc-event="database listing price allocation select"
+              [scFlowbiteDropdown]="'allocation_options'"
+              #allocationDropdown="scFlowbiteDropdown"
+              [label]="bestPriceAllocation.name"
+              icon="calendar-search"
+              variant="dropdown"
+              class="min-w-0 max-w-full"
+            ></sc-button>
+          </div>
+          <div>
+            <sc-button
+              id="currency_button"
+              data-ph-capture-attribute-sc-event="database listing currency select"
+              [scFlowbiteDropdown]="'currency_options'"
+              #currencyDropdown="scFlowbiteDropdown"
+              [label]="selectedCurrency.slug"
+              icon="credit-card"
+              variant="dropdown"
+            ></sc-button>
+          </div>
+          <div>
+            <sc-button
+              id="column_button"
+              data-ph-capture-attribute-sc-event="database listing columns select"
+              [scFlowbiteDropdown]="'column_options'"
+              label="Columns"
+              icon="columns-3-cog"
+              variant="dropdown"
+            ></sc-button>
+          </div>
+        </div>
+        <div>
+          <div
+            class="w-full overflow-x-auto relative"
+            [class.min-h-80]="isLoading && !databases.length"
+            style="padding-left: 1px"
+          >
+            @if (isLoading) {
+            <div
+              class="absolute top-0 left-0 w-full h-full"
+              style="background-color: rgba(0, 0, 0, 0.2)"
+            >
+              <div class="flex justify-center mt-16 opacity-100">
+                <sc-loading-spinner size="lg"></sc-loading-spinner>
+              </div>
+            </div>
+            }
+            <table class="items_table" id="databases_table">
+              <thead>
+                <tr>
+                  <th class="checkbox_column"></th>
+                  @for (column of tableColumns; track column.name) {
+                  <th
+                    [ngClass]="{
+                        'cursor-pointer': column.orderField,
+                      }"
+                    (click)="toggleOrdering(column)"
+                  >
+                    <div class="flex gap-1 whitespace-nowrap">
+                      {{ column.name }} @if (column.info) {
+                      <svg
+                        lucideInfo
+                        (mouseenter)="showTooltip($event, column.info)"
+                        (mouseleave)="hideTooltip()"
+                        class="h-4 w-4 text-gray-200"
+                      ></svg>
+                      } @if (getOrderingIcon(column)) {
+                      <svg
+                        [lucideIcon]="getOrderingIcon(column)"
+                        class="h-4 w-4 text-white"
+                      ></svg>
+                      }
+                    </div>
+                  </th>
+                  }
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for ( item of databases; track item.vendor_id + "_" +
+                item.database_id; let i = $index ) {
+                <tr
+                  (click)="openDatabaseDetails(item)"
+                  data-ph-capture-attribute-sc-event="database listing route to database details"
+                  [attr.data-ph-capture-attribute-database-listing-row-vendor]="
+                      item.vendor_id
+                    "
+                  [attr.data-ph-capture-attribute-database-listing-row-index]="
+                      i + 1
+                    "
+                  [attr.data-ph-capture-attribute-database-listing-row-page-size]="
+                      limit
+                    "
+                  class="database_table_data_line"
+                >
+                  <td
+                    (click)="toggleCompare2($event, item)"
+                    class="checkbox_column"
+                  >
+                    <div class="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="database_compare_checkbox_{{ item.database_id }}"
+                        [(ngModel)]="item.selected"
+                        (ngModelChange)="toggleCompare($event, item)"
+                        (click)="$event.stopPropagation()"
+                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                      />
+                    </div>
+                  </td>
+                  @for (column of tableColumns; track column.name) { @if
+                  (column.type === "name") {
+                  <td>
+                    <div (click)="$event.stopPropagation()">
+                      <a
+                        routerLink="/database/{{
+                                item.vendor.vendor_id
+                              }}/{{ item.api_reference }}"
+                      >
+                        <div class="text-sm text-white flex gap-1">
+                          <span class="whitespace-nowrap"
+                            >{{ item.display_name }}
+                          </span>
+                          @if (showAPIReference(item)) {
+                          <span class="text-emerald-400">|</span>
+                          <span class="whitespace-nowrap"
+                            >{{ item.api_reference }}
+                          </span>
+                          }
+                        </div>
+                        <div class="text-xs text-white flex gap-1">
+                          <span>{{ item.vendor_id }}</span>
+                        </div>
+                      </a>
+                    </div>
+                  </td>
+                  } @if (column.type === "processor") {
+                  <td>
+                    <div class="text-sm text-white whitespace-nowrap">
+                      @if (item.vcpus !== null) { {{ item.vcpus }} vCPUs } @else
+                      { - }
+                    </div>
+                  </td>
+                  } @if (column.type === "benchmark") {
+                  <td>
+                    <div class="text-sm text-white whitespace-nowrap">
+                      {{ getScore(item.selected_benchmark_score) }}
+                    </div>
+                    @if (item.selected_benchmark_score) {
+                    <div class="text-xs text-white flex gap-1">
+                      <span class="whitespace-nowrap"
+                        >{{ selectedBenchmarkShortUnit }}</span
+                      >
+                    </div>
+                    }
+                  </td>
+                  } @if (column.type === "benchmark_score_per_price") {
+                  <td>
+                    @if (item.selected_benchmark_score_per_price) {
+                    <span class="whitespace-nowrap"
+                      >{{ getScore(item.selected_benchmark_score_per_price) }}
+                      {{ selectedBenchmarkUnitAbbreviation }}</span
+                    >
+                    <div class="text-xs text-white flex gap-1">
+                      <span class="whitespace-nowrap">for $1/hour</span>
+                    </div>
+                    } @else {
+                    <span>-</span>
+                    }
+                  </td>
+                  } @if (column.type === "price") {
+                  <td>
+                    @let priceValue = getField( item, column.key || "price" );
+                    @if ( priceValue !== null && priceValue !== undefined &&
+                    priceValue !== "" ) {
+                    <div class="text-sm text-white whitespace-nowrap">
+                      {{ priceValue }} {{ displayedCurrency.slug }}
+                    </div>
+                    } @else {
+                    <div class="text-sm text-white">-</div>
+                    }
+                  </td>
+                  } @if (column.type === "memory") {
+                  <td>
+                    <div class="text-sm text-white">{{ getMemory(item) }}</div>
+                  </td>
+                  } @if (column.type === "storage") {
+                  <td>
+                    <div class="text-sm text-white">
+                      {{ item.storage_size | storage }}
+                    </div>
+                  </td>
+                  } @if (column.type === "list" && column.key) {
+                  <td>
+                    <div class="text-sm text-white">
+                      {{ formatList(getField(item, column.key)) }}
+                    </div>
+                  </td>
+                  } @if (column.type === "sla" && column.key) {
+                  <td>
+                    <div class="text-sm text-white whitespace-nowrap">
+                      {{ formatSla(getField(item, column.key)) }}
+                    </div>
+                  </td>
+                  } @if (column.type === "boolean" && column.key) {
+                  <td>
+                    <div class="flex items-center justify-center">
+                      @let fieldValue = getField(item, column.key); @if
+                      (fieldValue === true) {
+                      <svg
+                        lucideCheck
+                        class="h-4 w-4 shrink-0 text-emerald-400"
+                      ></svg>
+                      } @else if (fieldValue === false) {
+                      <svg lucideX class="h-4 w-4 shrink-0 text-white"></svg>
+                      } @else { - }
+                    </div>
+                  </td>
+                  } @if ( column.type === "text" && column.key && column.key !==
+                  "inbound_traffic" && column.key !== "outbound_traffic" &&
+                  column.key !== "ipv4" ) {
+                  <td>
+                    <div class="flex items-center justify-center">
+                      @let fieldValue = getField(item, column.key); @if
+                      (fieldValue === true) {
+                      <svg
+                        lucideCheck
+                        class="h-4 w-4 shrink-0 text-emerald-400"
+                      ></svg>
+                      } @else if (fieldValue === false) {
+                      <svg lucideX class="h-4 w-4 shrink-0 text-white"></svg>
+                      } @else if ( fieldValue === null || fieldValue ===
+                      undefined || (typeof fieldValue === "string" &&
+                      fieldValue.trim().toLowerCase() === "none") ) { - } @else
+                      { {{ fieldValue }} }
+                    </div>
+                  </td>
+                  } @if (column.type === "vendor") {
+                  <td>
+                    @if (item.vendor.logo) {
+                    <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                      <img
+                        [src]="item.vendor.logo"
+                        alt="{{ item.vendor.name }} logo"
+                      />
+                    </div>
+                    } @else {
+                    <div class="text-white text-sm">{{ item.vendor.name }}</div>
+                    }
+                  </td>
+                  } }
+                  <td>
+                    <div (click)="$event.stopPropagation()">
+                      <a
+                        routerLink="/database/{{ item.vendor.vendor_id }}/{{
+                            item.api_reference
+                          }}"
+                      >
+                        <svg
+                          lucideChevronRight
+                          class="h-6 w-6 text-emerald-400"
+                        ></svg>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                } @if (!databases.length && !isLoading) {
+                <tr>
+                  <td
+                    [attr.colspan]="tableColumns.length + 2"
+                    class="px-5 py-6 text-center text-gray-400 text-sm"
+                  >
+                    No databases match the selected filters.
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="flex justify-between mt-4">
+              <div class="flex items-center gap-2">
+                <sc-button
+                  id="pagesize_button"
+                  data-ph-capture-attribute-sc-event="database listing page size select"
+                  [scFlowbiteDropdown]="'pagesize_options'"
+                  [dropdownFlip]="true"
+                  [dropdownPlacement]="'bottom-start'"
+                  #pageDropdown="scFlowbiteDropdown"
+                  [label]="'' + limit"
+                  icon="chevron-down"
+                  variant="dropdown"
+                ></sc-button>
+                <span class="text-white">items per page</span>
+              </div>
+              <div>
+                <sc-pagination
+                  baseURL="/databases"
+                  [currentPage]="page"
+                  [totalPages]="totalPages"
+                  [baseQueryParams]="getQueryObjectBase()"
+                >
+                </sc-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (compareCount() >= 2) {
+<div class="fixed_buttons" [class.fixed_buttons--collapsed]="isCollapsed">
+  <div class="flex gap-4">
+    <sc-button
+      label="Clear"
+      icon="circle-x"
+      iconPosition="start"
+      color="danger"
+      data-ph-capture-attribute-sc-event="database listing compare"
+      data-ph-capture-attribute-database-listing-compare-action="clear"
+      (click)="clearCompare()"
+    ></sc-button>
+    <sc-button
+      [label]="'Compare (' + compareCount() + ')'"
+      icon="scale"
+      iconPosition="start"
+      data-ph-capture-attribute-sc-event="database listing compare"
+      data-ph-capture-attribute-database-listing-compare-action="open"
+      (click)="openCompare()"
+    ></sc-button>
+  </div>
+</div>
+}
+
+<div
+  id="pagesize_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    @for (pageLimit of pageLimits; track $index) {
+    <li
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectPageSize(pageLimit)"
+      (keydown.enter)="selectPageSize(pageLimit)"
+      (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
+      role="option"
+      [attr.aria-selected]="pageLimit === limit"
+      tabindex="0"
+    >
+      <div class="text-white text-sm">{{ pageLimit }}</div>
+    </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="allocation_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="allocation_button"
+  >
+    @for ( allocationType of bestPriceAllocationTypes; track allocationType.name
+    ) {
+    <li
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectAllocation(allocationType)"
+      (keydown.enter)="selectAllocation(allocationType)"
+      (keydown.space)="
+          selectAllocation(allocationType); $event.preventDefault()
+        "
+      role="option"
+      [attr.aria-selected]="allocationType === bestPriceAllocation"
+      tabindex="0"
+    >
+      <div class="text-white text-sm">{{ allocationType.name }}</div>
+    </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="currency_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="currency_button">
+    @for (currency of availableCurrencies; track currency.name) {
+    <li
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectCurrency(currency)"
+      (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
+      (keydown.space)="selectCurrency(currency); $event.preventDefault()"
+      role="option"
+      [attr.aria-selected]="currency === selectedCurrency"
+      tabindex="0"
+    >
+      <div class="text-white text-sm">
+        {{ currency.name }} ({{ currency.symbol }})
+      </div>
+    </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="column_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-3 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    @for (column of possibleColumns; track column.name) {
+    <li class="flex py-1 gap-2 items-center">
+      <input
+        type="checkbox"
+        [(ngModel)]="column.show"
+        (ngModelChange)="refreshColumns()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+      />
+      <div class="text-white text-sm">{{ column.name }}</div>
+    </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="tooltipDefault"
+  #tooltipDefault
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+>
+  {{ tooltipContent }}
+</div>

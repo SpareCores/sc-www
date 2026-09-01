@@ -1,0 +1,818 @@
+/* eslint-disable */
+/* tslint:disable */
+// @ts-nocheck
+/*
+ * ---------------------------------------------------------------
+ * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
+ * ##                                                           ##
+ * ## AUTHOR: acacode                                           ##
+ * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
+ * ---------------------------------------------------------------
+ */
+
+import { OrderDir, SearchDatabasesDatabasesGetData } from "./data-contracts";
+
+export namespace Databases {
+  /**
+   * No description
+   * @tags Query Resources
+   * @name SearchDatabasesDatabasesGet
+   * @summary Search Databases
+   * @request GET:/databases
+   */
+  export namespace SearchDatabasesDatabasesGet {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      /**
+       * Partial name or id
+       * Freetext, case-insensitive search on the database_id, name, api_reference or display_name.
+       */
+      partial_name_or_id?: string | null;
+      /**
+       * Engine version
+       * Required major engine version.
+       */
+      engine_version?: string | null;
+      /**
+       * Minimum vCPUs
+       * Minimum number of virtual CPUs.
+       * @min 1
+       * @max 256
+       * @default 1
+       */
+      vcpus_min?: number;
+      /**
+       * Maximum vCPUs
+       * Maximum number of virtual CPUs.
+       */
+      vcpus_max?: number | null;
+      /**
+       * Required memory
+       * Required amount of memory in GBs.
+       */
+      memory_min?: number | null;
+      /**
+       * Benchmark Id
+       * Benchmark id to use as the main score for the server.
+       * @default "pgbench:heavy_read_only"
+       */
+      benchmark_id?: string;
+      /**
+       * Benchmark Config
+       * Optional benchmark config dict JSON to filter results of a benchmark_id.
+       */
+      benchmark_config?: string | null;
+      /**
+       * Required benchmark score
+       * Required value of the selected benchmark score.
+       */
+      benchmark_score_min?: number | null;
+      /**
+       * Required benchmark score/price
+       * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+       */
+      benchmark_score_per_price_min?: number | null;
+      /**
+       * High availability levels
+       * Required HA levels; all must appear in the database instance's supported list.
+       */
+      ha?: "none" | "single-zone" | "multi-zone" | "multi-region";
+      /**
+       * High availability strategies
+       * Required HA strategies; all must appear in the database instance's supported list.
+       */
+      ha_strategy?:
+        | "none"
+        | "passive-standby"
+        | "readable-cluster"
+        | "multi-master";
+      /**
+       * Minimum max read replicas
+       * Minimum number of read-only replica nodes the database instance must support.
+       */
+      max_read_replicas_min?: number | null;
+      /**
+       * Storage autosize
+       * Filter for database instances that can automatically expand storage as disk usage grows.
+       */
+      storage_extra_autosize?: boolean | null;
+      /**
+       * Disk encryption
+       * Filter for database instances with storage encrypted at rest.
+       */
+      disk_encryption?: boolean | null;
+      /**
+       * Scheduled backups
+       * Filter for database instances that support scheduled/automated backups.
+       */
+      scheduled_backups?: boolean | null;
+      /**
+       * Minimum continuous backup retention
+       * Minimum point-in-time recovery retention in days.
+       */
+      continuous_backups_min?: number | null;
+      /**
+       * Connection pool
+       * Filter for database instances with managed connection proxy support.
+       */
+      connection_pool?: boolean | null;
+      /**
+       * System monitoring
+       * Filter for database instances with host-level CPU, RAM, and disk metrics.
+       */
+      system_monitoring?: boolean | null;
+      /**
+       * Database monitoring
+       * Filter for database instances with engine performance insights (slow queries, locks, execution plans).
+       */
+      database_monitoring?: boolean | null;
+      /**
+       * Auto-upgrade versions
+       * Filter for database instances that support auto-upgrade between minor engine versions.
+       */
+      auto_upgrade_versions?: boolean | null;
+      /**
+       * Autotuning advice
+       * Filter for database instances that analyze workload and generate performance tuning advice.
+       */
+      autotuning_advice?: boolean | null;
+      /**
+       * Autotuning apply
+       * Filter for database instances that automatically apply performance fixes without operator intervention.
+       */
+      autotuning_apply?: boolean | null;
+      /**
+       * Custom configuration
+       * Filter for database instances that support custom configuration.
+       */
+      custom_config?: boolean | null;
+      /**
+       * Custom extensions
+       * Filter for database instances that support custom extensions.
+       */
+      custom_extensions?: boolean | null;
+      /**
+       * Security features
+       * Required security features; all must be supported by the database instance.
+       */
+      security_features?:
+        | "ip-filtering"
+        | "private-network"
+        | "network-peering"
+        | "identity-based-auth"
+        | "client-cert-auth"
+        | "enforced-tls"
+        | "customer-managed-keys"
+        | "audit-logging";
+      /**
+       * Minimum SLA
+       * Minimum service level agreement as a percentage, e.g. 99.95.
+       */
+      sla_min?: number | null;
+      /**
+       * Active only
+       * Filter for active resources only.
+       */
+      only_active?: boolean | null;
+      /**
+       * Orderable only
+       * Filter for orderable (active or planned for retirement) resources only.
+       * @default true
+       */
+      only_orderable?: boolean | null;
+      /**
+       * Vendor
+       * Identifier of the cloud provider vendor.
+       */
+      vendor?:
+        | "alicloud"
+        | "aws"
+        | "azure"
+        | "gcp"
+        | "hcloud"
+        | "ovh"
+        | "upcloud"
+        | "vultr";
+      /**
+       * Region
+       * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
+       */
+      regions?:
+        | "1000"
+        | "1100"
+        | "1210"
+        | "1220"
+        | "1230"
+        | "1250"
+        | "1260"
+        | "1270"
+        | "1280"
+        | "1290"
+        | "1300"
+        | "1310"
+        | "1320"
+        | "1330"
+        | "1340"
+        | "1350"
+        | "1360"
+        | "1370"
+        | "1380"
+        | "1390"
+        | "1410"
+        | "1420"
+        | "1430"
+        | "1440"
+        | "1450"
+        | "1460"
+        | "1470"
+        | "1480"
+        | "1490"
+        | "1510"
+        | "1520"
+        | "1530"
+        | "1540"
+        | "1550"
+        | "1560"
+        | "1570"
+        | "1580"
+        | "1590"
+        | "1600"
+        | "1610"
+        | "1640"
+        | "1650"
+        | "1680"
+        | "2"
+        | "3"
+        | "4"
+        | "5"
+        | "6"
+        | "7"
+        | "af-south-1"
+        | "ams"
+        | "ap-east-1"
+        | "ap-east-2"
+        | "ap-northeast-1"
+        | "ap-northeast-2"
+        | "ap-northeast-3"
+        | "ap-south-1"
+        | "ap-south-2"
+        | "ap-southeast-1"
+        | "ap-southeast-2"
+        | "ap-southeast-3"
+        | "ap-southeast-4"
+        | "ap-southeast-5"
+        | "ap-southeast-6"
+        | "ap-southeast-7"
+        | "ap-southeast-8"
+        | "AP-SOUTHEAST-SYD"
+        | "AP-SOUTHEAST-SYD-2"
+        | "AP-SOUTH-MUM"
+        | "AP-SOUTH-MUM-1"
+        | "atl"
+        | "australiacentral"
+        | "australiacentral2"
+        | "australiaeast"
+        | "australiasoutheast"
+        | "austriaeast"
+        | "au-syd1"
+        | "belgiumcentral"
+        | "BHS"
+        | "BHS5"
+        | "blr"
+        | "bom"
+        | "brazilsouth"
+        | "brazilsoutheast"
+        | "brazilus"
+        | "ca-central-1"
+        | "CA-EAST-TOR"
+        | "canadacentral"
+        | "canadaeast"
+        | "ca-west-1"
+        | "cdg"
+        | "centralindia"
+        | "centralus"
+        | "centraluseuap"
+        | "chilecentral"
+        | "cmh"
+        | "cn-beijing"
+        | "cn-chengdu"
+        | "cn-fuzhou"
+        | "cn-guangzhou"
+        | "cn-hangzhou"
+        | "cn-hangzhou-acdr-ut-3"
+        | "cn-heyuan"
+        | "cn-hongkong"
+        | "cn-huhehaote"
+        | "cn-nanjing"
+        | "cn-north-1"
+        | "cn-northwest-1"
+        | "cn-qingdao"
+        | "cn-shanghai"
+        | "cn-shenzhen"
+        | "cn-wuhan-lr"
+        | "cn-wulanchabu"
+        | "cn-zhangjiakou"
+        | "cn-zhongwei"
+        | "DE"
+        | "DE1"
+        | "de-fra1"
+        | "del"
+        | "denmarkeast"
+        | "dfw"
+        | "dk-cph1"
+        | "eastasia"
+        | "eastus"
+        | "eastus2"
+        | "eastus2euap"
+        | "eastusstg"
+        | "es-mad1"
+        | "eu-central-1"
+        | "eu-central-2"
+        | "eu-north-1"
+        | "eu-south-1"
+        | "eu-south-2"
+        | "EU-SOUTH-MIL"
+        | "eu-west-1"
+        | "eu-west-2"
+        | "eu-west-3"
+        | "EU-WEST-PAR"
+        | "ewr"
+        | "fi-hel1"
+        | "fi-hel2"
+        | "fra"
+        | "francecentral"
+        | "francesouth"
+        | "germanynorth"
+        | "germanywestcentral"
+        | "GRA"
+        | "GRA11"
+        | "GRA7"
+        | "GRA9"
+        | "hnl"
+        | "icn"
+        | "il-central-1"
+        | "indiasouthcentral"
+        | "indonesiacentral"
+        | "israelcentral"
+        | "italynorth"
+        | "itm"
+        | "japaneast"
+        | "japanwest"
+        | "jioindiacentral"
+        | "jioindiawest"
+        | "jnb"
+        | "koreacentral"
+        | "koreasouth"
+        | "lax"
+        | "lhr"
+        | "mad"
+        | "malaysiawest"
+        | "man"
+        | "me-central-1"
+        | "me-east-1"
+        | "mel"
+        | "me-south-1"
+        | "mex"
+        | "mexicocentral"
+        | "mia"
+        | "msp"
+        | "mx-central-1"
+        | "mxp"
+        | "na-south-1"
+        | "newzealandnorth"
+        | "nl-ams1"
+        | "northcentralus"
+        | "northeurope"
+        | "norwayeast"
+        | "norwaywest"
+        | "no-svg1"
+        | "nrt"
+        | "ord"
+        | "pl-waw1"
+        | "polandcentral"
+        | "qatarcentral"
+        | "RBX"
+        | "RBX-A"
+        | "RBX-ARCHIVE"
+        | "sa-east-1"
+        | "sao"
+        | "SBG"
+        | "SBG5"
+        | "SBG7"
+        | "scl"
+        | "sea"
+        | "se-sto1"
+        | "sgp"
+        | "SGP"
+        | "SGP1"
+        | "sg-sin1"
+        | "sjc"
+        | "southafricanorth"
+        | "southafricawest"
+        | "southcentralus"
+        | "southcentralusstg"
+        | "southeastasia"
+        | "southindia"
+        | "spaincentral"
+        | "stl"
+        | "sto"
+        | "swedencentral"
+        | "switzerlandnorth"
+        | "switzerlandwest"
+        | "syd"
+        | "SYD"
+        | "SYD1"
+        | "tlv"
+        | "uaecentral"
+        | "uaenorth"
+        | "UK"
+        | "UK1"
+        | "uk-lon1"
+        | "uksouth"
+        | "ukwest"
+        | "us-chi1"
+        | "us-east-1"
+        | "us-east-2"
+        | "us-nyc1"
+        | "us-sjo1"
+        | "us-west-1"
+        | "us-west-2"
+        | "waw"
+        | "WAW"
+        | "WAW1"
+        | "westcentralus"
+        | "westeurope"
+        | "westindia"
+        | "westus"
+        | "westus2"
+        | "westus3"
+        | "yto";
+      /**
+       * Vendor and region
+       * Identifier of the vendor and region, separated by a tilde.
+       */
+      vendor_regions?:
+        | "alicloud~ap-northeast-1"
+        | "alicloud~ap-northeast-2"
+        | "alicloud~ap-southeast-1"
+        | "alicloud~ap-southeast-3"
+        | "alicloud~ap-southeast-5"
+        | "alicloud~ap-southeast-6"
+        | "alicloud~ap-southeast-7"
+        | "alicloud~ap-southeast-8"
+        | "alicloud~cn-beijing"
+        | "alicloud~cn-chengdu"
+        | "alicloud~cn-fuzhou"
+        | "alicloud~cn-guangzhou"
+        | "alicloud~cn-hangzhou"
+        | "alicloud~cn-hangzhou-acdr-ut-3"
+        | "alicloud~cn-heyuan"
+        | "alicloud~cn-hongkong"
+        | "alicloud~cn-huhehaote"
+        | "alicloud~cn-nanjing"
+        | "alicloud~cn-qingdao"
+        | "alicloud~cn-shanghai"
+        | "alicloud~cn-shenzhen"
+        | "alicloud~cn-wuhan-lr"
+        | "alicloud~cn-wulanchabu"
+        | "alicloud~cn-zhangjiakou"
+        | "alicloud~cn-zhongwei"
+        | "alicloud~eu-central-1"
+        | "alicloud~eu-west-1"
+        | "alicloud~eu-west-2"
+        | "alicloud~me-central-1"
+        | "alicloud~me-east-1"
+        | "alicloud~na-south-1"
+        | "alicloud~sa-east-1"
+        | "alicloud~us-east-1"
+        | "alicloud~us-west-1"
+        | "aws~af-south-1"
+        | "aws~ap-east-1"
+        | "aws~ap-east-2"
+        | "aws~ap-northeast-1"
+        | "aws~ap-northeast-2"
+        | "aws~ap-northeast-3"
+        | "aws~ap-south-1"
+        | "aws~ap-south-2"
+        | "aws~ap-southeast-1"
+        | "aws~ap-southeast-2"
+        | "aws~ap-southeast-3"
+        | "aws~ap-southeast-4"
+        | "aws~ap-southeast-5"
+        | "aws~ap-southeast-6"
+        | "aws~ap-southeast-7"
+        | "aws~ca-central-1"
+        | "aws~ca-west-1"
+        | "aws~cn-north-1"
+        | "aws~cn-northwest-1"
+        | "aws~eu-central-1"
+        | "aws~eu-central-2"
+        | "aws~eu-north-1"
+        | "aws~eu-south-1"
+        | "aws~eu-south-2"
+        | "aws~eu-west-1"
+        | "aws~eu-west-2"
+        | "aws~eu-west-3"
+        | "aws~il-central-1"
+        | "aws~me-central-1"
+        | "aws~me-south-1"
+        | "aws~mx-central-1"
+        | "aws~sa-east-1"
+        | "aws~us-east-1"
+        | "aws~us-east-2"
+        | "aws~us-west-1"
+        | "aws~us-west-2"
+        | "azure~australiacentral"
+        | "azure~australiacentral2"
+        | "azure~australiaeast"
+        | "azure~australiasoutheast"
+        | "azure~austriaeast"
+        | "azure~belgiumcentral"
+        | "azure~brazilsouth"
+        | "azure~brazilsoutheast"
+        | "azure~brazilus"
+        | "azure~canadacentral"
+        | "azure~canadaeast"
+        | "azure~centralindia"
+        | "azure~centralus"
+        | "azure~centraluseuap"
+        | "azure~chilecentral"
+        | "azure~denmarkeast"
+        | "azure~eastasia"
+        | "azure~eastus"
+        | "azure~eastus2"
+        | "azure~eastus2euap"
+        | "azure~eastusstg"
+        | "azure~francecentral"
+        | "azure~francesouth"
+        | "azure~germanynorth"
+        | "azure~germanywestcentral"
+        | "azure~indiasouthcentral"
+        | "azure~indonesiacentral"
+        | "azure~israelcentral"
+        | "azure~italynorth"
+        | "azure~japaneast"
+        | "azure~japanwest"
+        | "azure~jioindiacentral"
+        | "azure~jioindiawest"
+        | "azure~koreacentral"
+        | "azure~koreasouth"
+        | "azure~malaysiawest"
+        | "azure~mexicocentral"
+        | "azure~newzealandnorth"
+        | "azure~northcentralus"
+        | "azure~northeurope"
+        | "azure~norwayeast"
+        | "azure~norwaywest"
+        | "azure~polandcentral"
+        | "azure~qatarcentral"
+        | "azure~southafricanorth"
+        | "azure~southafricawest"
+        | "azure~southcentralus"
+        | "azure~southcentralusstg"
+        | "azure~southeastasia"
+        | "azure~southindia"
+        | "azure~spaincentral"
+        | "azure~swedencentral"
+        | "azure~switzerlandnorth"
+        | "azure~switzerlandwest"
+        | "azure~uaecentral"
+        | "azure~uaenorth"
+        | "azure~uksouth"
+        | "azure~ukwest"
+        | "azure~westcentralus"
+        | "azure~westeurope"
+        | "azure~westindia"
+        | "azure~westus"
+        | "azure~westus2"
+        | "azure~westus3"
+        | "gcp~1000"
+        | "gcp~1100"
+        | "gcp~1210"
+        | "gcp~1220"
+        | "gcp~1230"
+        | "gcp~1250"
+        | "gcp~1260"
+        | "gcp~1270"
+        | "gcp~1280"
+        | "gcp~1290"
+        | "gcp~1300"
+        | "gcp~1310"
+        | "gcp~1320"
+        | "gcp~1330"
+        | "gcp~1340"
+        | "gcp~1350"
+        | "gcp~1360"
+        | "gcp~1370"
+        | "gcp~1380"
+        | "gcp~1390"
+        | "gcp~1410"
+        | "gcp~1420"
+        | "gcp~1430"
+        | "gcp~1440"
+        | "gcp~1450"
+        | "gcp~1460"
+        | "gcp~1470"
+        | "gcp~1480"
+        | "gcp~1490"
+        | "gcp~1510"
+        | "gcp~1520"
+        | "gcp~1530"
+        | "gcp~1540"
+        | "gcp~1550"
+        | "gcp~1560"
+        | "gcp~1570"
+        | "gcp~1580"
+        | "gcp~1590"
+        | "gcp~1600"
+        | "gcp~1610"
+        | "gcp~1640"
+        | "gcp~1650"
+        | "gcp~1680"
+        | "hcloud~2"
+        | "hcloud~3"
+        | "hcloud~4"
+        | "hcloud~5"
+        | "hcloud~6"
+        | "hcloud~7"
+        | "ovh~AP-SOUTH-MUM"
+        | "ovh~AP-SOUTH-MUM-1"
+        | "ovh~AP-SOUTHEAST-SYD"
+        | "ovh~AP-SOUTHEAST-SYD-2"
+        | "ovh~BHS"
+        | "ovh~BHS5"
+        | "ovh~CA-EAST-TOR"
+        | "ovh~DE"
+        | "ovh~DE1"
+        | "ovh~EU-SOUTH-MIL"
+        | "ovh~EU-WEST-PAR"
+        | "ovh~GRA"
+        | "ovh~GRA11"
+        | "ovh~GRA7"
+        | "ovh~GRA9"
+        | "ovh~RBX"
+        | "ovh~RBX-A"
+        | "ovh~RBX-ARCHIVE"
+        | "ovh~SBG"
+        | "ovh~SBG5"
+        | "ovh~SBG7"
+        | "ovh~SGP"
+        | "ovh~SGP1"
+        | "ovh~SYD"
+        | "ovh~SYD1"
+        | "ovh~UK"
+        | "ovh~UK1"
+        | "ovh~WAW"
+        | "ovh~WAW1"
+        | "upcloud~au-syd1"
+        | "upcloud~de-fra1"
+        | "upcloud~dk-cph1"
+        | "upcloud~es-mad1"
+        | "upcloud~fi-hel1"
+        | "upcloud~fi-hel2"
+        | "upcloud~nl-ams1"
+        | "upcloud~no-svg1"
+        | "upcloud~pl-waw1"
+        | "upcloud~se-sto1"
+        | "upcloud~sg-sin1"
+        | "upcloud~uk-lon1"
+        | "upcloud~us-chi1"
+        | "upcloud~us-nyc1"
+        | "upcloud~us-sjo1"
+        | "vultr~ams"
+        | "vultr~atl"
+        | "vultr~blr"
+        | "vultr~bom"
+        | "vultr~cdg"
+        | "vultr~cmh"
+        | "vultr~del"
+        | "vultr~dfw"
+        | "vultr~ewr"
+        | "vultr~fra"
+        | "vultr~hnl"
+        | "vultr~icn"
+        | "vultr~itm"
+        | "vultr~jnb"
+        | "vultr~lax"
+        | "vultr~lhr"
+        | "vultr~mad"
+        | "vultr~man"
+        | "vultr~mel"
+        | "vultr~mex"
+        | "vultr~mia"
+        | "vultr~msp"
+        | "vultr~mxp"
+        | "vultr~nrt"
+        | "vultr~ord"
+        | "vultr~sao"
+        | "vultr~scl"
+        | "vultr~sea"
+        | "vultr~sgp"
+        | "vultr~sjc"
+        | "vultr~stl"
+        | "vultr~sto"
+        | "vultr~syd"
+        | "vultr~tlv"
+        | "vultr~waw"
+        | "vultr~yto";
+      /**
+       * Countries
+       * Filter for regions in the provided list of countries.
+       */
+      countries?:
+        | "AE"
+        | "AT"
+        | "AU"
+        | "BE"
+        | "BH"
+        | "BR"
+        | "CA"
+        | "CH"
+        | "CL"
+        | "CN"
+        | "DE"
+        | "DK"
+        | "ES"
+        | "FI"
+        | "FR"
+        | "GB"
+        | "HK"
+        | "ID"
+        | "IE"
+        | "IL"
+        | "IN"
+        | "IT"
+        | "JP"
+        | "KR"
+        | "MX"
+        | "MY"
+        | "NL"
+        | "NO"
+        | "NZ"
+        | "PH"
+        | "PL"
+        | "QA"
+        | "SA"
+        | "SE"
+        | "SG"
+        | "TH"
+        | "TW"
+        | "US"
+        | "ZA";
+      /**
+       * Required bundled storage size
+       * Required amount of storage (GB) bundled with the database instance.
+       */
+      storage_size?: number | null;
+      /**
+       * Required storage size
+       * Total storage needed in GBs, combining bundled (where applicable) and on-demand database storage. Bundled storage is subtracted; any remainder is billed as extra storage (at least the instance's storage_extra_min). Instances where bundled + storage_extra_max is below this value are excluded.
+       * @default 0
+       */
+      extra_storage_size?: number | null;
+      /**
+       * Currency
+       * Currency used for prices.
+       * @default "USD"
+       */
+      currency?: string | null;
+      /**
+       * Best price allocation strategy
+       * Controls how the database's "best price" is computed: on-demand hourly, monthly, or the lowest available on-demand price.
+       * @default "ANY"
+       */
+      best_price_allocation?: "ANY" | "ONDEMAND_ONLY" | "MONTHLY";
+      /**
+       * Limit
+       * Maximum number of results. Set to -1 for unlimited.
+       * @default 25
+       */
+      limit?: number;
+      /**
+       * Page
+       * Page number.
+       */
+      page?: number | null;
+      /**
+       * Order By
+       * Order by column.
+       * @default "min_price"
+       */
+      order_by?: string;
+      /**
+       * Order direction.
+       * @default "asc"
+       */
+      order_dir?: OrderDir;
+      /**
+       * Add Total Count Header
+       * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+       * @default false
+       */
+      add_total_count_header?: boolean;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = SearchDatabasesDatabasesGetData;
+  }
+}

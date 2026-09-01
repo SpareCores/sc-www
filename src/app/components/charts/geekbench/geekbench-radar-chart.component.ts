@@ -19,6 +19,11 @@ import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
+import {
+  injectCompareLegendVisibility,
+  syncCompareLegendData,
+  syncCompareLegendOptions,
+} from "../shared/compare-chart-legend.bind";
 import { GeekbenchRadarChartBuilderService } from "./geekbench-radar-chart-builder.service";
 import {
   GeekbenchBenchmarkGroup,
@@ -54,6 +59,7 @@ export class GeekbenchRadarChartComponent {
   private platformId = inject(PLATFORM_ID);
   private tooltipService = inject(ChartTooltipService);
   private builder = inject(GeekbenchRadarChartBuilderService);
+  private legendVisibility = injectCompareLegendVisibility();
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
@@ -92,10 +98,28 @@ export class GeekbenchRadarChartComponent {
   });
   readonly compareCharts = computed(() => {
     if (this.layout() !== "compare") return undefined;
-    return this.builder.buildCompareCharts({
+    const built = this.builder.buildCompareCharts({
       servers: this.servers(),
       benchmarkMeta: this.benchmarkMeta(),
     });
+    if (!built) return undefined;
+
+    return {
+      ...built,
+      singleData: syncCompareLegendData(
+        built.singleData,
+        this.legendVisibility,
+      ),
+      multiData: syncCompareLegendData(built.multiData, this.legendVisibility),
+      singleOptions: syncCompareLegendOptions(
+        built.singleOptions,
+        this.legendVisibility,
+      ),
+      multiOptions: syncCompareLegendOptions(
+        built.multiOptions,
+        this.legendVisibility,
+      ),
+    };
   });
   readonly resolvedDetailsChartData = computed(() => {
     const directChartData = this.chartData();
@@ -136,22 +160,43 @@ export class GeekbenchRadarChartComponent {
         .map((benchmark) => benchmark.benchmark_id),
     );
   });
-  readonly resolvedSingleChartData = computed(
-    () => this.singleChartData() ?? this.compareCharts()?.singleData,
-  );
-  readonly resolvedSingleChartOptions = computed(
-    () => this.singleChartOptions() ?? this.compareCharts()?.singleOptions,
-  );
-  readonly resolvedMultiChartData = computed(
-    () => this.multiChartData() ?? this.compareCharts()?.multiData,
-  );
-  readonly resolvedMultiChartOptions = computed(
-    () => this.multiChartOptions() ?? this.compareCharts()?.multiOptions,
-  );
+  readonly resolvedSingleChartData = computed(() => {
+    const direct = this.singleChartData();
+    if (direct) {
+      return this.layout() === "compare"
+        ? syncCompareLegendData(direct, this.legendVisibility)
+        : direct;
+    }
+    return this.compareCharts()?.singleData;
+  });
+  readonly resolvedSingleChartOptions = computed(() => {
+    const direct = this.singleChartOptions();
+    if (direct) {
+      return this.layout() === "compare"
+        ? syncCompareLegendOptions(direct, this.legendVisibility)
+        : direct;
+    }
+    return this.compareCharts()?.singleOptions;
+  });
+  readonly resolvedMultiChartData = computed(() => {
+    const direct = this.multiChartData();
+    if (direct) {
+      return this.layout() === "compare"
+        ? syncCompareLegendData(direct, this.legendVisibility)
+        : direct;
+    }
+    return this.compareCharts()?.multiData;
+  });
+  readonly resolvedMultiChartOptions = computed(() => {
+    const direct = this.multiChartOptions();
+    if (direct) {
+      return this.layout() === "compare"
+        ? syncCompareLegendOptions(direct, this.legendVisibility)
+        : direct;
+    }
+    return this.compareCharts()?.multiOptions;
+  });
   readonly hasDetailsChart = computed(() => !!this.resolvedDetailsChartData());
-  readonly hasCompareCharts = computed(
-    () => !!this.resolvedSingleChartData() || !!this.resolvedMultiChartData(),
-  );
 
   tooltipContent = "";
   tooltipHtml: GeekbenchTooltipHtml = null;

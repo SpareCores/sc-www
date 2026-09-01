@@ -27,12 +27,17 @@ import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart
 import {
   LineBenchmarkGroup,
   LineChartDetailsServer,
+  PGBENCH_HEAVY_READ_ONLY_ID,
 } from "../charts/line/benchmark-line-chart.types";
 import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
 import { MemoryBenchmarkMeta } from "../charts/memory/memory-chart.types";
 import { ServerMemoryChartComponent } from "../charts/memory/server-memory-chart.component";
+import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
-import { BenchmarkMultiBarChartItem } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
+import {
+  BenchmarkMultiBarChartItem,
+  MultiBarBenchmarkGroup,
+} from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 import { getBenchmarkMetaNote } from "../charts/shared/chart-tooltip.utils";
 import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
@@ -61,6 +66,7 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
 })
 export class ServerChartsComponent implements OnChanges {
   private tooltipService = inject(ChartTooltipService);
+  private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef<HTMLElement>;
 
@@ -103,6 +109,47 @@ export class ServerChartsComponent implements OnChanges {
       benchmarkMeta: this.benchmarkMeta ?? [],
       benchmarkScores: this.serverDetails?.benchmark_scores,
     });
+  }
+
+  hasSslChart(): boolean {
+    return !!(this.benchmarksByCategory ?? []).find(
+      (group) => group.benchmark_id === "openssl",
+    )?.benchmarks?.length;
+  }
+
+  hasMultiBarChart(chartItem: BenchmarkMultiBarChartItem): boolean {
+    return !!this.multiBarBuilder.buildDetailsChart(
+      chartItem.chart,
+      this.benchmarksByCategory as MultiBarBenchmarkGroup[],
+    );
+  }
+
+  hasPgbenchChart(): boolean {
+    return (this.benchmarksByCategory ?? []).some((group) =>
+      (group.benchmarks ?? []).some(
+        (score: { benchmark_id?: string; score?: number | null }) =>
+          score.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID &&
+          score.score != null,
+      ),
+    );
+  }
+
+  hasStressNgChart(): boolean {
+    const dataSet = (this.benchmarksByCategory ?? []).find(
+      (group) => group.benchmark_id === "stress_ng:div16",
+    );
+    if (!dataSet?.benchmarks?.length) {
+      return false;
+    }
+
+    const scales: number[] = [];
+    for (const item of dataSet.benchmarks) {
+      const cores = item.config?.cores;
+      if (typeof cores === "number" && !scales.includes(cores)) {
+        scales.push(cores);
+      }
+    }
+    return scales.length > 1;
   }
 
   getBenchmarkCategory(category: string) {
@@ -171,6 +218,14 @@ export class ServerChartsComponent implements OnChanges {
 
   get lineChartDetailsServer(): LineChartDetailsServer {
     return this.serverDetails as LineChartDetailsServer;
+  }
+
+  get pgbenchTitle(): string {
+    return (
+      this.benchmarkMeta?.find(
+        (benchmark) => benchmark.benchmark_id === "pgbench:heavy_read_only",
+      )?.name || "pgbench Heavy Read-Only"
+    );
   }
 
   benchmarkDescription(benchmarkId: string): string {

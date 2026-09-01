@@ -271,6 +271,14 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
       : null;
   }
 
+  getVendorRouteCommands(item: SlotMachineVendorItem) {
+    if (!item.vendorId) {
+      return null;
+    }
+
+    return ["/vendors", item.vendorId];
+  }
+
   getServerRouteCommands(item: SlotMachineServerItem) {
     if (!item.vendorId || !item.apiReference) {
       return null;

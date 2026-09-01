@@ -14,11 +14,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import {
-  LucideCheck,
-  LucideSparkles,
-  LucideTriangleAlert,
-} from "@lucide/angular";
+import { LucideCheck, LucideTriangleAlert } from "@lucide/angular";
 import { Chart, ChartConfiguration, ChartData } from "chart.js";
 import { Modal, ModalOptions } from "flowbite";
 import { BaseChartDirective } from "ng2-charts";
@@ -40,7 +36,10 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { Button } from "../../components/button/button";
-import { formatBooleanIconHtml } from "../../components/charts/shared/server-compare-table.utils";
+import {
+  formatBooleanIconHtml,
+  formatNumberWithCommas,
+} from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
@@ -104,7 +103,6 @@ interface PropertyCategoryDefinition {
     Button,
     BreadcrumbsComponent,
     LucideCheck,
-    LucideSparkles,
     LucideTriangleAlert,
     AccordionComponent,
     FormsModule,
@@ -147,7 +145,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
     { name: "Servers", url: "/servers" },
-    { name: "", url: "" },
   ];
 
   features: any[] = [];
@@ -358,14 +355,22 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 },
               );
 
-              this.breadcrumbs[2] = {
-                name: this.serverDetails.display_name,
-                url:
-                  "/server/" +
-                  this.serverDetails.vendor.vendor_id +
-                  "/" +
-                  this.serverDetails.api_reference,
-              };
+              this.breadcrumbs = [
+                { name: "Home", url: "/" },
+                { name: "Servers", url: "/servers" },
+                {
+                  name: this.serverDetails.vendor.name,
+                  url: "/vendors/" + this.serverDetails.vendor.vendor_id,
+                },
+                {
+                  name: this.serverDetails.display_name,
+                  url:
+                    "/server/" +
+                    this.serverDetails.vendor.vendor_id +
+                    "/" +
+                    this.serverDetails.api_reference,
+                },
+              ];
 
               const url =
                 this.SEOHandler.getBaseURL() +
@@ -546,6 +551,17 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 this.embeddableCharts.push({
                   id: "llm_generation",
                   name: "LLM Text Generation",
+                });
+              }
+
+              if (
+                this.benchmarksByCategory.some(
+                  (c) => c.benchmark_id === "pgbench:heavy_read_only",
+                )
+              ) {
+                this.embeddableCharts.push({
+                  id: "pgbench",
+                  name: "pgbench Heavy Read-Only",
                 });
               }
 
@@ -1070,15 +1086,21 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   getBenchmark(isMulti: boolean) {
-    return (
-      this.serverDetails.benchmark_scores
-        ?.find(
-          (b: any) =>
-            b.benchmark_id ===
-            (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
-        )
-        ?.score?.toFixed(0) || "-"
-    );
+    const score = this.serverDetails.benchmark_scores?.find(
+      (b: any) =>
+        b.benchmark_id === (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
+    )?.score;
+    if (score == null) {
+      return "-";
+    }
+    return formatNumberWithCommas(Math.round(score));
+  }
+
+  formatScore(value: number | undefined | null) {
+    if (value == null) {
+      return "0";
+    }
+    return formatNumberWithCommas(Math.round(value));
   }
 
   addToCompare() {

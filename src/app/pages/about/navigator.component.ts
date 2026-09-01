@@ -28,9 +28,9 @@ import {
   LucideSquareKanban,
 } from "@lucide/angular";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
+import { Button } from "../../components/button/button";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { isPlatformBrowser } from "@angular/common";
-import { RouterLink } from "@angular/router";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 
@@ -60,7 +60,7 @@ interface Quote {
     LucideScale,
     LucideSquareKanban,
     ThemeTextComponent,
-    RouterLink,
+    Button,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: "./navigator.component.html",
@@ -80,26 +80,26 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
     "✅ UpCloud (Done)",
     "✅ OVH Cloud (Done)",
     "✅ Alibaba Cloud (Done)",
-    "⚙️ Vultr (In Progress)",
+    "✅ Vultr (In Progress)",
     "🗓️ Oracle Cloud Infrastructure (Planned)",
     "🗓️ Scaleway (Planned)",
   ];
 
   features: any[] = [
     {
-      count: "540",
+      count: "580",
       text: "availability zones",
     },
     {
-      count: "5,550",
+      count: "5,950",
       text: "server types",
     },
     {
-      count: "2,250,285",
+      count: "2,629,812",
       text: "benchmark scores",
     },
     {
-      count: "542,771",
+      count: "592,330",
       text: "live price records",
     },
     {

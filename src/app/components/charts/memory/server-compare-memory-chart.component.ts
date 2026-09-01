@@ -15,6 +15,10 @@ import { Button } from "../../../components/button/button";
 import { CompareMemoryChartOption } from "../shared/memory-chart.types";
 import { MemoryChartBuilderService } from "./memory-chart-builder.service";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
+import {
+  bindCompareLegendChart,
+  injectCompareLegendVisibility,
+} from "../shared/compare-chart-legend.bind";
 import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 
 @Component({
@@ -40,6 +44,7 @@ export class ServerCompareMemoryChartComponent {
 
   private platformId = inject(PLATFORM_ID);
   private builder = inject(MemoryChartBuilderService);
+  private legendVisibility = injectCompareLegendVisibility();
 
   dropdownBWmem = viewChild(FlowbiteDropdownDirective);
 
@@ -68,11 +73,16 @@ export class ServerCompareMemoryChartComponent {
       return undefined;
     }
 
-    return this.builder.buildServerCompareChart({
+    const built = this.builder.buildServerCompareChart({
       option,
       servers: this.servers(),
       benchmarkMeta: this.benchmarkMeta(),
     });
+    if (!built) {
+      return undefined;
+    }
+
+    return bindCompareLegendChart(built, this.legendVisibility);
   });
   readonly chartData = computed(() => this.chart()?.data);
   readonly chartOptions = computed(() => this.chart()?.options);

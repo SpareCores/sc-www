@@ -3,18 +3,18 @@ import { Component, computed, input, output } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon } from "@lucide/angular";
 
-export type ScButtonSize = "normal" | "large" | "x-large" | "xxx-large";
+export type ScButtonSize = "small" | "default" | "large";
 export type ScButtonVariant =
-  | "primary"
+  | "solid"
   | "outline"
+  | "ghost"
+  | "soft"
+  | "white"
+  | "link"
   | "dropdown"
-  | "benchmark"
-  | "danger"
-  | "transparent";
+  | "benchmark";
 export type ScButtonIconPosition = "start" | "end";
-export type ScButtonColor = "brand" | "dark-grey" | "emerald";
-export type ScButtonTextSize = "normal" | "large";
-export type ScButtonFontWeight = "normal" | "bold";
+export type ScButtonColor = "brand" | "neutral" | "danger" | "inverse";
 
 @Component({
   selector: "sc-button",
@@ -23,11 +23,9 @@ export type ScButtonFontWeight = "normal" | "bold";
   styleUrl: "./button.scss",
 })
 export class Button {
-  size = input<ScButtonSize>("normal");
-  variant = input<ScButtonVariant>("primary");
+  size = input<ScButtonSize>("default");
+  variant = input<ScButtonVariant>("solid");
   color = input<ScButtonColor>("brand");
-  textSize = input<ScButtonTextSize>("normal");
-  fontWeight = input<ScButtonFontWeight>("normal");
   label = input<string>("");
   sublabel = input<string | null>(null);
   icon = input<string | null>(null);
@@ -64,23 +62,13 @@ export class Button {
   showStartIcon = computed(
     () =>
       !!this.icon() &&
-      this.iconPosition() === "start" &&
+      !this.label() &&
       !this.showAvatar() &&
       this.variant() !== "dropdown" &&
       this.variant() !== "benchmark",
   );
 
-  showEndIcon = computed(
-    () =>
-      !!this.icon() &&
-      this.iconPosition() === "end" &&
-      this.variant() !== "dropdown" &&
-      this.variant() !== "benchmark",
-  );
-
-  showDropdownIcon = computed(
-    () => this.variant() === "dropdown" && !!this.icon(),
-  );
+  isMultilineLabel = computed(() => this.label().includes("\n"));
 
   hasBadge = computed(
     () =>

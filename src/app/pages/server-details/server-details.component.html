@@ -24,8 +24,15 @@
       >
         <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
           <div class="flex gap-4 flex-col min-w-32">
-            <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
-              <img [src]="serverDetails.vendor.logo" alt="logo" />
+            <div
+              class="vendor-logo min-w-20 w-20 h-20 bg-white rounded-lg mx-auto"
+            >
+              <a
+                [routerLink]="['/vendors', serverDetails.vendor.vendor_id]"
+                class="block h-full"
+              >
+                <img [src]="serverDetails.vendor.logo" alt="logo" />
+              </a>
             </div>
           </div>
           <div class="flex flex-col gap-3">
@@ -33,7 +40,13 @@
               <span class="text-emerald-400 font-bold">{{
                 serverDetails.display_name
               }}</span>
-              by {{ serverDetails.vendor.name }}
+              by
+              <a
+                [routerLink]="['/vendors', serverDetails.vendor.vendor_id]"
+                class="underline decoration-dotted hover:text-gray-500"
+              >
+                {{ serverDetails.vendor.name }}
+              </a>
             </h1>
             <div>
               {{ description
@@ -41,14 +54,10 @@
                 cardPriceDescription
               }}</span>
             </div>
-            <div class="flex gap-4 flex-wrap">
+            <div class="flex gap-4 flex-wrap mt-2">
               <sc-button
                 label="Summarize"
                 icon="sparkles"
-                iconPosition="start"
-                size="large"
-                textSize="large"
-                fontWeight="bold"
                 [disabled]="!descriptionsAvailable"
                 [title]="
                   descriptionsAvailable
@@ -61,10 +70,6 @@
               <sc-button
                 [label]="compareText()"
                 icon="scale"
-                iconPosition="start"
-                size="large"
-                textSize="large"
-                fontWeight="bold"
                 data-ph-capture-attribute-sc-event="server details compare"
                 (click)="addToCompare()"
               ></sc-button>
@@ -226,9 +231,7 @@
             >
               <sc-button
                 label="Show more"
-                size="normal"
-                textSize="large"
-                fontWeight="bold"
+                size="small"
                 id="availability_more_button"
                 [ariaExpanded]="false"
                 data-ph-capture-attribute-sc-event="server details show more availability"
@@ -240,9 +243,7 @@
             <div class="w-full pt-3 flex justify-center" id="availability_less">
               <sc-button
                 label="Show less"
-                size="normal"
-                textSize="large"
-                fontWeight="bold"
+                size="small"
                 [ariaExpanded]="true"
                 data-ph-capture-attribute-sc-event="server details show less availability"
                 (click)="toggleCard('availability', false)"
@@ -296,11 +297,9 @@
               <h3 class="text-2xl">Server Description</h3>
               <sc-button
                 label="More details"
+                size="small"
                 icon="maximize-2"
                 iconPosition="start"
-                size="normal"
-                textSize="large"
-                fontWeight="bold"
                 ariaLabel="Open full summary"
                 data-ph-capture-attribute-sc-event="server details summarize open"
                 (click)="openSummarizeModal()"
@@ -363,7 +362,7 @@
                 label="Regions"
                 icon="chevron-down"
                 variant="dropdown"
-                size="normal"
+                size="small"
               ></sc-button>
             </div>
           </div>
@@ -407,9 +406,6 @@
               icon="copy"
               iconPosition="end"
               variant="outline"
-              size="large"
-              textSize="large"
-              fontWeight="bold"
               (click)="openModal()"
             ></sc-button>
           </div>
@@ -489,7 +485,7 @@
                 [label]="selectedSimilarOption.name"
                 icon="chevron-down"
                 variant="dropdown"
-                size="normal"
+                size="small"
               ></sc-button>
             </div>
           </div>
@@ -539,12 +535,12 @@
                   }
                   @if (selectedSimilarOption.key === "byScore") {
                     <td>
-                      {{ server.score?.toFixed(0) || "0" }}
+                      {{ formatScore(server.score) }}
                     </td>
                   }
                   @if (selectedSimilarOption.key === "byPerformancePerPrice") {
                     <td>
-                      {{ server.score_per_price?.toFixed(0) || "0" }}
+                      {{ formatScore(server.score_per_price) }}
                     </td>
                   }
                 </tr>
@@ -597,20 +593,21 @@
 
 <div
   id="similar_server_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+  class="z-10 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
 >
   <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="similar_type_button"
   >
     @for (option of similarOptions; track option.key) {
-      <li class="flex py-1 gap-2 items-center">
-        <div
-          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+      <li>
+        <button
+          type="button"
+          class="flex w-full items-center rounded-sm border-0 bg-transparent px-2 py-1 text-left text-sm text-white hover:bg-emerald-500"
           (click)="selectSimilarServerOption(option)"
         >
           {{ option.name }}
-        </div>
+        </button>
       </li>
     }
   </ul>
@@ -672,9 +669,10 @@
 </div>
 
 @if (serverDetails && !isLoading) {
-  <button
-    type="button"
-    class="summarize-fab summarize-fab-to-hide-for-test btn-primary disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-500"
+  <sc-button
+    class="summarize-fab summarize-fab-to-hide-for-test"
+    icon="sparkles"
+    ariaLabel="Summarize server"
     [disabled]="!descriptionsAvailable"
     [title]="
       descriptionsAvailable
@@ -683,10 +681,7 @@
     "
     data-ph-capture-attribute-sc-event="server details summarize fab open"
     (click)="openSummarizeModal()"
-    aria-label="Summarize server"
-  >
-    <svg lucideSparkles class="h-6 w-6"></svg>
-  </button>
+  ></sc-button>
 }
 
 <div

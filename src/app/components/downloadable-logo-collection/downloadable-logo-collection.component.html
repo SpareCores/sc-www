@@ -24,54 +24,41 @@
       </h3>
     </div>
     <div class="mt-auto w-full flex flex-col gap-2 relative">
-      <button
-        type="button"
-        class="w-full h-[42px] px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
+      <sc-button
+        class="w-full min-w-0"
+        label="Downloadable versions"
+        icon="chevron-down"
+        variant="dropdown"
         [id]="downloadsToggleId"
-        [attr.aria-expanded]="isOpen"
-        [attr.aria-controls]="downloadsDropdownId"
+        [ariaExpanded]="isOpen"
+        [ariaControls]="downloadsDropdownId"
+        [buttonClass]="isOpen ? '[&_.sc-button__square-icon]:rotate-180' : ''"
         (click)="onToggleClick()"
-      >
-        Downloadable versions
-        <svg
-          class="shrink-0 size-4 text-white transition-transform duration-300"
-          [class.rotate-180]="isOpen"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="m6 9 6 6 6-6"></path>
-        </svg>
-      </button>
+      ></sc-button>
 
       @if (isOpen) {
         <div
           [id]="downloadsDropdownId"
-          class="absolute left-0 right-0 top-full z-20 mt-2 w-full bg-white border border-emerald-400 rounded-lg shadow-2xs dark:bg-neutral-900 dark:border-emerald-400"
+          class="absolute left-0 right-0 top-full z-20 mt-2 w-full bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
           [attr.aria-labelledby]="downloadsToggleId"
         >
-          <div class="p-2 grid grid-cols-1 gap-2">
+          <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200">
             @for (
               downloadItem of downloadItems;
               track trackByFile($index, downloadItem)
             ) {
-              <a
-                class="py-2 px-4 inline-flex justify-center items-center text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
-                [href]="downloadItem.href"
-                [attr.download]="downloadItem.downloadName"
-                (click)="onDownloadClick($event, downloadItem)"
-              >
-                {{ downloadItem.file }}
-              </a>
+              <li>
+                <a
+                  class="flex w-full items-center rounded-sm border-0 bg-transparent px-2 py-1 text-left text-sm text-white no-underline hover:bg-emerald-500"
+                  [href]="downloadItem.href"
+                  [attr.download]="downloadItem.downloadName"
+                  (click)="onDownloadClick($event, downloadItem)"
+                >
+                  {{ downloadItem.file }}
+                </a>
+              </li>
             }
-          </div>
+          </ul>
         </div>
       }
     </div>

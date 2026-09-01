@@ -36,6 +36,11 @@ import {
 } from "./llm-inference-chart.types";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
+import {
+  injectCompareLegendVisibility,
+  syncCompareLegendData,
+  syncCompareLegendOptions,
+} from "../shared/compare-chart-legend.bind";
 
 @Component({
   selector: "sc-llm-inference-chart",
@@ -66,6 +71,7 @@ export class LlmInferenceChartComponent {
   private platformId = inject(PLATFORM_ID);
   private builder = inject(LlmInferenceChartBuilderService);
   private tooltipService = inject(ChartTooltipService);
+  private legendVisibility = injectCompareLegendVisibility();
 
   modelDropdown = viewChild<FlowbiteDropdownDirective>("modelDropdown");
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
@@ -153,12 +159,35 @@ export class LlmInferenceChartComponent {
       return undefined;
     }
 
-    return this.builder.buildCompareCharts({
+    const built = this.builder.buildCompareCharts({
       servers: this.servers(),
       selectedModel: this.currentModel(),
       promptOptionsBase: barChartOptionsSSLCompare,
       generationOptionsBase: barChartOptionsSSLCompare,
     });
+    if (!built) {
+      return undefined;
+    }
+
+    return {
+      ...built,
+      promptData: syncCompareLegendData(
+        built.promptData,
+        this.legendVisibility,
+      )!,
+      generationData: syncCompareLegendData(
+        built.generationData,
+        this.legendVisibility,
+      )!,
+      promptOptions: syncCompareLegendOptions(
+        built.promptOptions,
+        this.legendVisibility,
+      )!,
+      generationOptions: syncCompareLegendOptions(
+        built.generationOptions,
+        this.legendVisibility,
+      )!,
+    };
   });
   readonly comparePromptData = computed(() => this.compareCharts()?.promptData);
   readonly comparePromptOptions = computed(
@@ -169,9 +198,6 @@ export class LlmInferenceChartComponent {
   );
   readonly compareGenerationOptions = computed(
     () => this.compareCharts()?.generationOptions,
-  );
-  readonly hasCompareData = computed(
-    () => !!(this.comparePromptData() || this.compareGenerationData()),
   );
   readonly hasDetailsData = computed(
     () => !!(this.detailsPromptData() || this.detailsGenerationData()),

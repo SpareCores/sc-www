@@ -1,57 +1,68 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
+import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   ElementRef,
+  inject,
   Input,
+  OnChanges,
+  OnDestroy,
   output,
   PLATFORM_ID,
   ViewChild,
-  OnChanges,
-  inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
-  LucideDynamicIcon,
   LucideCircleArrowUp,
+  LucideDynamicIcon,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
-import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
+import { AdvisorUiService } from "../../pages/advisor/advisor-ui.service";
+import * as compareTableLayout from "../../pages/shared/compare-table/compare-table-layout.utils";
+import {
+  SERVER_COMPARE_TABLE_HOLDER_ID,
+  SERVER_COMPARE_TABLE_ID,
+} from "../../pages/server-compare/server-compare.constants";
 import {
   redisChartTemplate,
   staticWebChartCompareTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
-import { ToastService } from "../../services/toast.service";
+import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { AdvisorUiService } from "../../pages/advisor/advisor-ui.service";
+import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
+import { ToastService } from "../../services/toast.service";
 import { Button } from "../button/button";
-import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
+import { CompressionChartBuilderService } from "../charts/compression/compression-chart-builder.service";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
 import {
   CompressionBenchmarkMeta,
   CompressionServer,
 } from "../charts/compression/compression-chart.types";
-import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
 import { GeekbenchRadarChartBuilderService } from "../charts/geekbench/geekbench-radar-chart-builder.service";
-import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
+import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
 import {
   GeekbenchBenchmarkMeta,
   GeekbenchCompareServer,
 } from "../charts/geekbench/geekbench-radar-chart.types";
+import { BenchmarkLineChartBuilderService } from "../charts/line/benchmark-line-chart-builder.service";
+import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
+import {
+  LineBenchmarkMeta,
+  LineChartServer,
+  PGBENCH_HEAVY_READ_ONLY_ID,
+} from "../charts/line/benchmark-line-chart.types";
+import { LlmInferenceChartBuilderService } from "../charts/llm/llm-inference-chart-builder.service";
+import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
 import { LlmChartServer } from "../charts/llm/llm-inference-chart.types";
-import { ServerCompareMemoryChartComponent } from "../charts/memory/server-compare-memory-chart.component";
+import { MemoryChartBuilderService } from "../charts/memory/memory-chart-builder.service";
 import {
   MemoryBenchmarkMeta,
   MemoryChartServer,
 } from "../charts/memory/memory-chart.types";
-import {
-  LineBenchmarkMeta,
-  LineChartServer,
-} from "../charts/line/benchmark-line-chart.types";
-import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
+import { ServerCompareMemoryChartComponent } from "../charts/memory/server-compare-memory-chart.component";
 import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
+import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import {
   BenchmarkMultiBarChartItem,
   MultiBarBenchmarkMeta,
@@ -62,23 +73,11 @@ import {
   getBenchmarkMetaNote,
   getBenchmarkMetaNotes,
 } from "../charts/shared/chart-tooltip.utils";
+import { CompareChartLegendVisibilityService } from "../charts/shared/compare-chart-legend-visibility.service";
 import {
-  WORKLOAD_PROFILE_INFO_TOOLTIP,
-  formatWorkloadProfileLabel,
-  isWorkloadProfileBenchmark,
-  filterWorkloadProfileBenchmarks,
-  hasWorkloadProfileChartData,
-} from "../charts/workload-profile/workload-profile.utils";
-import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
-import {
-  WorkloadProfileBenchmarkMeta,
-  WorkloadProfileCompareBenchmark,
-  WorkloadProfileCompareServer,
-} from "../charts/workload-profile/workload-profile-radar-chart.types";
-import {
-  formatNumberWithCommas,
   formatCompareDeltaLabel,
   formatCompareSignedPercentageDeltaLabel,
+  formatNumberWithCommas,
   getBestBenchmarkCellStyle,
   getBestPropertyCellStyle,
   getCompareRawNumericPropertyValue,
@@ -91,6 +90,19 @@ import {
   toCompareDeltaView,
   type CompareDeltaView,
 } from "../charts/shared/server-compare-table.utils";
+import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
+import {
+  WorkloadProfileBenchmarkMeta,
+  WorkloadProfileCompareBenchmark,
+  WorkloadProfileCompareServer,
+} from "../charts/workload-profile/workload-profile-radar-chart.types";
+import {
+  filterWorkloadProfileBenchmarks,
+  formatWorkloadProfileLabel,
+  hasWorkloadProfileChartData,
+  isWorkloadProfileBenchmark,
+  WORKLOAD_PROFILE_INFO_TOOLTIP,
+} from "../charts/workload-profile/workload-profile.utils";
 
 @Component({
   selector: "sc-server-compare-charts",
@@ -112,16 +124,23 @@ import {
     WorkloadProfilePanelComponent,
     Button,
   ],
+  providers: [CompareChartLegendVisibilityService],
   templateUrl: "./server-compare-charts.component.html",
   styleUrl: "./server-compare-charts.component.scss",
 })
-export class ServerCompareChartsComponent implements OnChanges {
+export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
+  private document = inject(DOCUMENT);
   private toastService = inject(ToastService);
   private tooltipService = inject(ChartTooltipService);
   private geekbenchBuilder = inject(GeekbenchRadarChartBuilderService);
   private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
+  private memoryBuilder = inject(MemoryChartBuilderService);
+  private compressionBuilder = inject(CompressionChartBuilderService);
+  private lineBuilder = inject(BenchmarkLineChartBuilderService);
+  private llmBuilder = inject(LlmInferenceChartBuilderService);
   private advisorUi = inject(AdvisorUiService);
+  private legendVisibility = inject(CompareChartLegendVisibilityService);
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() baselineServer: ExtendedServerDetails | null = null;
@@ -141,6 +160,9 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   tooltipContent = "";
   tooltipHtml = "";
+  comparePinnedRowLayout =
+    compareTableLayout.resolveCompareUnpinnedRowLayout(0);
+  private pinnedRowLayoutFrameId: number | null = null;
 
   bestCellStyle = "font-weight: 600; color: #34D399";
   SSCoreTooltip =
@@ -165,10 +187,30 @@ export class ServerCompareChartsComponent implements OnChanges {
   workloadProfileShowMore = false;
 
   ngOnChanges() {
+    this.comparePinnedRowLayout =
+      compareTableLayout.resolveCompareUnpinnedRowLayout(this.servers.length);
     this.setup();
+    if (isPlatformBrowser(this.platformId)) {
+      const table = this.document.getElementById(SERVER_COMPARE_TABLE_ID);
+      table?.style.removeProperty("min-width");
+      compareTableLayout.resetCompareTableHolderScroll(
+        this.document,
+        SERVER_COMPARE_TABLE_HOLDER_ID,
+      );
+      this.schedulePinnedRowLayoutUpdate();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.pinnedRowLayoutFrameId !== null) {
+      cancelAnimationFrame(this.pinnedRowLayoutFrameId);
+      this.pinnedRowLayoutFrameId = null;
+    }
   }
 
   setup() {
+    this.legendVisibility.clear();
+
     if (
       this.servers.length === 0 ||
       !this.benchmarkMeta ||
@@ -215,44 +257,34 @@ export class ServerCompareChartsComponent implements OnChanges {
     return `max(10.5rem, ${displayNameLength + 3}ch)`;
   }
 
-  getCompareChartContentStyle() {
-    if (!this.shouldUseSplitCompareRows()) {
-      return "width: 100%; max-width: 100%;";
+  private schedulePinnedRowLayoutUpdate(): void {
+    if (this.pinnedRowLayoutFrameId !== null) {
+      cancelAnimationFrame(this.pinnedRowLayoutFrameId);
     }
 
-    if (!this.isBrowser()) {
-      return "width: 100%; max-width: 100%;";
-    }
-
-    const tableHolder = document.getElementById("table_holder");
-    const chartWidthPx = Math.max(0, tableHolder?.clientWidth ?? 0);
-
-    if (!chartWidthPx) {
-      return "width: 100%; max-width: 100%;";
-    }
-
-    return `width: ${chartWidthPx}px; max-width: ${chartWidthPx}px;`;
+    this.pinnedRowLayoutFrameId = requestAnimationFrame(() => {
+      this.pinnedRowLayoutFrameId = null;
+      compareTableLayout.applyCompareFirstColumnWidth(
+        this.document,
+        SERVER_COMPARE_TABLE_ID,
+      );
+      this.comparePinnedRowLayout =
+        compareTableLayout.resolveComparePinnedRowLayout({
+          document: this.document,
+          holderId: SERVER_COMPARE_TABLE_HOLDER_ID,
+          tableId: SERVER_COMPARE_TABLE_ID,
+          itemCount: this.servers.length,
+          isBrowser: this.isBrowser(),
+          isEmbedded: this.isEmbedded,
+        });
+      this.layoutChanged.emit();
+    });
   }
 
-  shouldUseSplitCompareRows() {
-    if (this.isEmbedded) {
-      return false;
-    }
-
-    if (!this.isBrowser()) {
-      return this.servers.length > 4;
-    }
-
-    const tableHolder = document.getElementById("table_holder");
-    const tableHeader = document.querySelector("#main-table thead");
-    const tableHolderWidth = tableHolder?.clientWidth ?? 0;
-    const tableHeaderWidth = tableHeader?.scrollWidth ?? 0;
-
-    if (tableHolderWidth && tableHeaderWidth) {
-      return tableHeaderWidth - tableHolderWidth > 1;
-    }
-
-    return this.servers.length > 4;
+  getCompareHeaderSpacerColSpan() {
+    return compareTableLayout.getCompareHeaderSpacerColSpan(
+      this.servers.length,
+    );
   }
 
   getBenchmark(server: ExtendedServerDetails, isMulti: boolean) {
@@ -697,11 +729,6 @@ export class ServerCompareChartsComponent implements OnChanges {
     );
   }
 
-  setBenchmarkCategoryHidden(category: { hidden?: boolean }, hidden: boolean) {
-    category.hidden = hidden;
-    this.layoutChanged.emit();
-  }
-
   syncMultiBarHeaderOption(
     chartItem: BenchmarkMultiBarChartItem,
     optionIndex: number,
@@ -726,6 +753,123 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   hasMultipleChartData(chartItem: BenchmarkMultiBarChartItem): boolean {
     return (chartItem.data?.length ?? 0) > 1;
+  }
+
+  isPassmarkBenchmarkCategory(categoryId: string): boolean {
+    return categoryId === "passmark_cpu" || categoryId === "passmark_other";
+  }
+
+  hasCompareChart(categoryId: string): boolean {
+    switch (categoryId) {
+      case "bw_mem":
+        return (
+          this.memoryBuilder.getAvailableCompareOptions(
+            this.memoryCompareServers,
+          ).length > 0
+        );
+      case "openssl":
+        return !!this.lineBenchmarkMeta?.find(
+          (benchmark) => benchmark.benchmark_id === "openssl",
+        )?.configs?.length;
+      case "stress_ng":
+      case "stress_ng_pct": {
+        const dataSet = this.lineBenchmarkMeta?.find(
+          (benchmark) => benchmark.benchmark_id === "stress_ng:div16",
+        );
+        if (!dataSet?.configs?.length) {
+          return false;
+        }
+        const cores = new Set<number>();
+        for (const config of dataSet.configs) {
+          const value = config.config?.cores;
+          if (typeof value === "number") {
+            cores.add(value);
+          }
+        }
+        return cores.size > 1;
+      }
+      case "compress": {
+        const option = this.compressionBuilder.getCompareOptions(
+          this.compressionBenchmarkMeta,
+        )[0];
+        if (!option) {
+          return false;
+        }
+        return !!this.compressionBuilder.buildCompareCharts({
+          servers: this.compressionServers,
+          selectedOption: option,
+          compressOptionsBase: {},
+          decompressOptionsBase: {},
+        });
+      }
+      case "geekbench":
+      case "geekbench_single":
+      case "geekbench_multi":
+        return !!this.geekbenchBuilder.buildCompareCharts({
+          servers: this.geekbenchCompareServers,
+          benchmarkMeta: this.geekbenchBenchmarkMeta ?? [],
+        });
+      case "llm_inference": {
+        const models = new Set(
+          this.llmBuilder
+            .getAvailableModels(this.benchmarkMeta)
+            .map((model) => model.value),
+        );
+        if (!models.size) {
+          return false;
+        }
+        return this.llmCompareServers.some((server) =>
+          (server.benchmark_scores ?? []).some(
+            (score) =>
+              models.has(String(score.config?.model)) &&
+              (score.benchmark_id === "llm_speed:prompt_processing" ||
+                score.benchmark_id === "llm_speed:text_generation") &&
+              typeof score.config?.tokens === "number" &&
+              score.score != null,
+          ),
+        );
+      }
+      default:
+        return false;
+    }
+  }
+
+  hasMultiBarCompareChart(chartItem: BenchmarkMultiBarChartItem): boolean {
+    return !!this.multiBarBuilder.buildCompareChart(
+      chartItem.chart,
+      this.benchmarkMeta as MultiBarBenchmarkMeta[],
+      this.multiBarCompareServers,
+    );
+  }
+
+  hasPgbenchCompareChart(): boolean {
+    if (!this.isChartShown("pgbench")) {
+      return false;
+    }
+    return !!this.lineBuilder.buildComparePgbenchChart({
+      servers: this.lineCompareServers,
+      scoreUnit: this.pgbenchMeta?.unit,
+      optionsBase: {},
+    });
+  }
+
+  private get pgbenchMeta() {
+    return this.benchmarkMeta?.find(
+      (benchmark: { benchmark_id?: string }) =>
+        benchmark.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID,
+    );
+  }
+
+  get pgbenchTitle(): string {
+    return this.pgbenchMeta?.name || "PostgreSQL heavy read-only throughput";
+  }
+
+  get pgbenchInfoTooltip(): string {
+    return this.pgbenchMeta?.description || "";
+  }
+
+  get pgbenchNoteTooltip(): string {
+    return this.getBenchmarkNote(PGBENCH_HEAVY_READ_ONLY_ID, false);
   }
 
   get compressionServers(): CompressionServer[] {
@@ -828,6 +972,8 @@ export class ServerCompareChartsComponent implements OnChanges {
     return (
       !isWorkloadProfileBenchmark(benchmark) &&
       !found &&
+      !String(benchmark.benchmark_id ?? "").startsWith("stress_ng:") &&
+      !String(benchmark.benchmark_id ?? "").startsWith("pgbench:") &&
       !this.benchmarkCategories.some((c: any) =>
         c.benchmarks.includes(benchmark.benchmark_id),
       )
@@ -843,45 +989,6 @@ export class ServerCompareChartsComponent implements OnChanges {
     }
 
     this.layoutChanged.emit();
-  }
-
-  getSectionColSpan() {
-    return Math.max(this.servers.length + 1, 3);
-  }
-
-  getCompareFixedWideContentColSpan() {
-    if (this.isEmbedded) {
-      return this.getSectionColSpan();
-    }
-
-    if (!this.shouldUseSplitCompareRows()) {
-      return this.getSectionColSpan();
-    }
-
-    return Math.min(this.getSectionColSpan() - 1, 3);
-  }
-
-  getCompareFixedWideTrailingColSpan() {
-    if (this.isEmbedded) {
-      return 0;
-    }
-
-    return Math.max(
-      this.getSectionColSpan() - this.getCompareFixedWideContentColSpan(),
-      0,
-    );
-  }
-
-  getCompareFixedWideActionSpacerColSpan() {
-    if (this.isEmbedded) {
-      return 0;
-    }
-
-    return Math.max(this.getCompareFixedWideTrailingColSpan() - 1, 0);
-  }
-
-  getCompareFixedHeaderSpacerColSpan() {
-    return Math.max(this.getSectionColSpan() - 2, 1);
   }
 
   clipboardURL(event: any, fragment?: string) {

@@ -20,8 +20,8 @@
           <sc-button
             [label]="vendor.name"
             [swatchColor]="vendor.color || '#06263a'"
-            variant="transparent"
-            textSize="large"
+            variant="ghost"
+            color="inverse"
             [buttonClass]="
               isVendorSelected(vendor.vendor_id)
                 ? ''
@@ -78,7 +78,7 @@
           <th>
             <div class="flex gap-1">FOUNDING YEAR</div>
           </th>
-          <th></th>
+          <th>SERVERS</th>
         </tr>
       </thead>
       <tbody>

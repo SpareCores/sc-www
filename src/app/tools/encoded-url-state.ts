@@ -1,4 +1,7 @@
-import type { ServerCompare } from "../services/server-compare.service";
+import type {
+  DatabaseCompare,
+  ServerCompare,
+} from "../services/server-compare.service";
 
 export type BenchmarkUrlState = {
   id: string;
@@ -28,6 +31,18 @@ function isZoneAndRegion(
   );
 }
 
+function isCompareItemWithIdKey(
+  value: unknown,
+  idKey: "server" | "database",
+): value is Record<string, unknown> {
+  return (
+    isRecord(value) &&
+    typeof value.vendor === "string" &&
+    typeof value[idKey] === "string" &&
+    isOptionalString(value.display_name)
+  );
+}
+
 export function isServerCompareUrlState(
   value: unknown,
 ): value is ServerCompare[] {
@@ -35,14 +50,20 @@ export function isServerCompareUrlState(
     Array.isArray(value) &&
     value.every(
       (item) =>
-        isRecord(item) &&
-        typeof item.vendor === "string" &&
-        typeof item.server === "string" &&
-        isOptionalString(item.display_name) &&
+        isCompareItemWithIdKey(item, "server") &&
         (item.zonesRegions === undefined ||
           (Array.isArray(item.zonesRegions) &&
             item.zonesRegions.every(isZoneAndRegion))),
     )
+  );
+}
+
+export function isDatabaseCompareUrlState(
+  value: unknown,
+): value is DatabaseCompare[] {
+  return (
+    Array.isArray(value) &&
+    value.every((item) => isCompareItemWithIdKey(item, "database"))
   );
 }
 

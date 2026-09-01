@@ -1,7 +1,17 @@
 import { Injectable } from "@angular/core";
-import { ChartConfiguration, TooltipItem, TooltipModel } from "chart.js";
+import {
+  Chart,
+  ChartConfiguration,
+  ChartEvent,
+  ChartType,
+  LegendElement,
+  LegendItem,
+  TooltipItem,
+  TooltipModel,
+} from "chart.js";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
+import { datasetHasComparableData } from "../shared/chart-legend.utils";
 import {
   buildCompareTooltipTitle,
   getDatasetTooltipIdentity,
@@ -18,10 +28,22 @@ import {
   LineChartServer,
   MutableBarChartOptions,
   MutableLineChartOptions,
+  PGBENCH_HEAVY_READ_ONLY_ID,
+  PgbenchChartData,
+  PgbenchChartResult,
+  PgbenchDataPoint,
+  PgbenchScore,
   SslChartResult,
   StressNgChartData,
   StressNgChartResult,
 } from "./benchmark-line-chart.types";
+import {
+  chartAxisGridColor,
+  lineChartLegendLabels,
+} from "../../../pages/server-details/chartOptions";
+
+const PGBENCH_SCORE_COLOR = radarDatasetColors[0].borderColor;
+const PGBENCH_LATENCY_COLOR = "#EAB308";
 
 type StressNgServerDetails = {
   display_name: string;
@@ -116,6 +138,172 @@ export class BenchmarkLineChartBuilderService {
     return { data, rawOptions, percentOptions };
   }
 
+  buildDetailsPgbenchChart(params: {
+    scores: PgbenchScore[];
+    vcpus?: number | null;
+    optionsBase: ChartConfiguration<"line">["options"];
+    scoreUnit?: string | null;
+  }): PgbenchChartResult | undefined {
+    const { scores, vcpus, optionsBase, scoreUnit } = params;
+
+    const points: Array<{
+      concurrency: number;
+      score: number;
+      latency: number | undefined;
+      note?: string | null;
+    }> = [];
+
+    for (const score of scores) {
+      if (score.benchmark_id !== PGBENCH_HEAVY_READ_ONLY_ID) {
+        continue;
+      }
+
+      const concurrency = this.getConcurrency(score.config);
+      if (concurrency === undefined) {
+        continue;
+      }
+
+      points.push({
+        concurrency,
+        score: score.score,
+        latency: this.getLatencyMs(score.environment),
+        note: score.note,
+      });
+    }
+
+    points.sort((a, b) => a.concurrency - b.concurrency);
+
+    if (!points.length) {
+      return undefined;
+    }
+
+    const unit = scoreUnit?.trim() || undefined;
+    const scoreData: Array<PgbenchDataPoint | null> = points.map((point) => ({
+      x: point.concurrency,
+      y: point.score,
+      note: point.note,
+      unit,
+    }));
+    const latencyData: Array<PgbenchDataPoint | null> = points.map((point) =>
+      point.latency === undefined
+        ? null
+        : {
+            x: point.concurrency,
+            y: point.latency,
+          },
+    );
+
+    const data: PgbenchChartData = {
+      datasets: [
+        {
+          data: scoreData,
+          label: "Score",
+          yAxisID: "y",
+          spanGaps: true,
+          borderColor: PGBENCH_SCORE_COLOR,
+          backgroundColor: PGBENCH_SCORE_COLOR,
+        },
+        {
+          data: latencyData,
+          label: "Avg latency",
+          yAxisID: "y1",
+          spanGaps: true,
+          borderColor: PGBENCH_LATENCY_COLOR,
+          backgroundColor: PGBENCH_LATENCY_COLOR,
+        },
+      ],
+    };
+
+    const options = cloneChartOptions(
+      optionsBase ?? {},
+    ) as MutableLineChartOptions;
+    this.configurePgbenchOptions(options, unit);
+    this.applyPgbenchAnnotation(
+      options,
+      points.map((point) => point.concurrency),
+      vcpus,
+    );
+
+    return { data, options };
+  }
+
+  buildComparePgbenchChart(params: {
+    servers: LineChartServer[];
+    scoreUnit?: string | null;
+    optionsBase: ChartConfiguration<"line">["options"];
+  }): PgbenchChartResult | undefined {
+    const { servers, scoreUnit, optionsBase } = params;
+    const unit = scoreUnit?.trim() || undefined;
+
+    const concurrencySet = new Set<number>();
+    const pointsByServer = servers.map((server) => {
+      const points: Array<{
+        concurrency: number;
+        score: number;
+        note?: string | null;
+        latency?: number;
+      }> = [];
+      for (const score of server.benchmark_scores ?? []) {
+        if (score.benchmark_id !== PGBENCH_HEAVY_READ_ONLY_ID) {
+          continue;
+        }
+        const concurrency = this.getConcurrency(score.config);
+        if (concurrency === undefined) {
+          continue;
+        }
+        concurrencySet.add(concurrency);
+        points.push({
+          concurrency,
+          score: score.score,
+          note: score.note,
+          latency: this.getLatencyMs((score as PgbenchScore).environment),
+        });
+      }
+      points.sort((a, b) => a.concurrency - b.concurrency);
+      return points;
+    });
+
+    if (![...concurrencySet].length || pointsByServer.every((p) => !p.length)) {
+      return undefined;
+    }
+
+    const data: PgbenchChartData = {
+      datasets: servers.map((server, index) => {
+        const points = pointsByServer[index];
+        const color =
+          radarDatasetColors[index % radarDatasetColors.length].borderColor;
+        return withServerTooltipIdentity(
+          {
+            data: points.map((point) => ({
+              x: point.concurrency,
+              y: point.score,
+              unit,
+              note: point.note,
+              latency: point.latency,
+            })),
+            hidden: points.length === 0,
+            label: server.display_name,
+            yAxisID: "y",
+            spanGaps: true,
+            borderColor: color,
+            backgroundColor: color,
+          },
+          server,
+        );
+      }),
+    };
+
+    const options = cloneChartOptions(
+      optionsBase ?? {},
+    ) as MutableLineChartOptions;
+    if (options.scales?.y1) {
+      delete options.scales.y1;
+    }
+    this.configureComparePgbenchOptions(options, unit);
+
+    return { data, options };
+  }
+
   buildCompareStressNgChart(params: {
     servers: LineChartServer[];
     benchmarkMeta: LineBenchmarkMeta[];
@@ -140,8 +328,9 @@ export class BenchmarkLineChartBuilderService {
     const data: StressNgChartData = {
       labels: scales,
       datasets: servers.map((server, index) => {
+        const scores = server.benchmark_scores ?? [];
         const score1 =
-          server.benchmark_scores.find(
+          scores.find(
             (score) =>
               score.benchmark_id === "stress_ng:div16" &&
               score.config.cores === 1,
@@ -150,7 +339,7 @@ export class BenchmarkLineChartBuilderService {
         return withServerTooltipIdentity(
           {
             data: scales.map((size) => {
-              const item = server.benchmark_scores.find(
+              const item = scores.find(
                 (score) =>
                   score.benchmark_id === "stress_ng:div16" &&
                   score.config.cores === size,
@@ -258,7 +447,7 @@ export class BenchmarkLineChartBuilderService {
         withServerTooltipIdentity(
           {
             data: scales.map((size) => {
-              const item = server.benchmark_scores.find(
+              const item = (server.benchmark_scores ?? []).find(
                 (score) =>
                   score.benchmark_id === "openssl" &&
                   score.config.algo === selectedAlgo.value &&
@@ -333,6 +522,10 @@ export class BenchmarkLineChartBuilderService {
       legend: {
         ...rawOptions.plugins?.legend,
         display: showLegend,
+        labels: {
+          ...(rawOptions.plugins?.legend?.labels as object),
+          ...(showLegend ? lineChartLegendLabels : {}),
+        },
       },
       tooltip: {
         ...rawOptions.plugins?.tooltip,
@@ -359,6 +552,10 @@ export class BenchmarkLineChartBuilderService {
       legend: {
         ...percentOptions.plugins?.legend,
         display: showLegend,
+        labels: {
+          ...(percentOptions.plugins?.legend?.labels as object),
+          ...(showLegend ? lineChartLegendLabels : {}),
+        },
       },
       tooltip: {
         ...percentOptions.plugins?.tooltip,
@@ -494,5 +691,307 @@ export class BenchmarkLineChartBuilderService {
     }
 
     return a.localeCompare(b);
+  }
+
+  private configurePgbenchOptions(
+    options: MutableLineChartOptions,
+    unit?: string,
+  ): void {
+    if (unit) {
+      options.scales = {
+        ...options.scales,
+        y: {
+          ...options.scales?.y,
+          title: {
+            ...options.scales?.y?.title,
+            display: true,
+            text: unit,
+          },
+        },
+      };
+    }
+
+    options.plugins = {
+      ...options.plugins,
+      legend: {
+        ...options.plugins?.legend,
+        labels: {
+          ...(options.plugins?.legend?.labels as object),
+          ...lineChartLegendLabels,
+        },
+        onClick: this.createPgbenchDetailsLegendOnClick(),
+      },
+      tooltip: {
+        ...options.plugins?.tooltip,
+        callbacks: {
+          ...options.plugins?.tooltip?.callbacks,
+          label: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            const raw = tooltipItem.raw as PgbenchDataPoint | null;
+            if (tooltipItem.dataset.yAxisID === "y1") {
+              return `Avg latency: ${tooltipItem.formattedValue} ms`;
+            }
+
+            const unit = raw?.unit?.trim();
+            return unit
+              ? `Performance: ${tooltipItem.formattedValue} ${unit}`
+              : `Performance: ${tooltipItem.formattedValue}`;
+          },
+          title: function (
+            this: TooltipModel<"line">,
+            tooltipItems: TooltipItem<"line">[],
+          ) {
+            const concurrency =
+              (tooltipItems[0]?.raw as PgbenchDataPoint | null)?.x ??
+              tooltipItems[0]?.parsed?.x;
+            return `${concurrency} concurrency`;
+          },
+        },
+      },
+    };
+  }
+
+  private configureComparePgbenchOptions(
+    options: MutableLineChartOptions,
+    unit?: string,
+  ): void {
+    options.scales = {
+      ...options.scales,
+      x: {
+        ...options.scales?.x,
+        grid: {
+          ...options.scales?.x?.grid,
+          color: chartAxisGridColor,
+        },
+      },
+      y: {
+        ...options.scales?.y,
+        ticks: {
+          ...options.scales?.y?.ticks,
+          color: "#FFF",
+        },
+        grid: {
+          ...options.scales?.y?.grid,
+          color: chartAxisGridColor,
+        },
+        title: {
+          ...options.scales?.y?.title,
+          display: true,
+          color: "#FFF",
+          ...(unit ? { text: unit } : {}),
+        },
+      },
+    };
+
+    options.interaction = {
+      mode: "nearest",
+      intersect: false,
+    };
+
+    options.plugins = {
+      ...options.plugins,
+      legend: {
+        ...options.plugins?.legend,
+        labels: {
+          ...(options.plugins?.legend?.labels as object),
+          ...lineChartLegendLabels,
+        },
+      },
+      tooltip: {
+        ...options.plugins?.tooltip,
+        mode: "nearest",
+        intersect: false,
+        filter: (_tooltipItem: TooltipItem<"line">, index: number) =>
+          index === 0,
+        callbacks: {
+          ...options.plugins?.tooltip?.callbacks,
+          label: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            const raw = tooltipItem.raw as PgbenchDataPoint | null;
+            const unit = raw?.unit?.trim();
+            const value = unit
+              ? `${tooltipItem.formattedValue} ${unit}`
+              : tooltipItem.formattedValue;
+            return `Performance: ${value}`;
+          },
+          afterLabel: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            const raw = tooltipItem.raw as PgbenchDataPoint | null;
+            if (raw?.latency !== undefined) {
+              return `Connection latency: ${raw.latency} ms`;
+            }
+
+            const note = raw?.note?.trim();
+            return note || "";
+          },
+          title: function (
+            this: TooltipModel<"line">,
+            tooltipItems: TooltipItem<"line">[],
+          ) {
+            const tooltipItem = tooltipItems[0];
+            const raw = tooltipItem?.raw as PgbenchDataPoint | null;
+            const concurrency = raw?.x ?? tooltipItem?.parsed?.x;
+            const identity = getDatasetTooltipIdentity(tooltipItem?.dataset);
+            const context =
+              concurrency !== undefined ? `${concurrency} concurrency` : "";
+            return buildCompareTooltipTitle(identity, context);
+          },
+        },
+      },
+    };
+  }
+
+  private applyPgbenchAnnotation(
+    options: MutableLineChartOptions,
+    concurrencies: number[],
+    vcpus?: number | null,
+  ): void {
+    if (!vcpus) {
+      return;
+    }
+
+    const xValues = [...concurrencies, vcpus];
+    const scales = options.scales ?? {};
+    const xScale = scales.x ?? {};
+    scales.x = {
+      ...xScale,
+      min: Math.min(...xValues),
+      max: Math.max(...xValues),
+    };
+    options.scales = scales;
+
+    const annotationLine: AnnotationLine = {
+      type: "line",
+      borderWidth: 3,
+      borderColor: "#EF4444",
+      drawTime: "beforeDatasetsDraw",
+      xMin: vcpus,
+      xMax: vcpus,
+      label: {
+        rotation: "auto",
+        position: "center",
+        content: "vCPUs",
+        backgroundColor: "#EF4444",
+        display: true,
+        drawTime: "beforeDatasetsDraw",
+      },
+    };
+
+    const plugins = (options.plugins ?? {}) as NonNullable<
+      MutableLineChartOptions["plugins"]
+    > &
+      AnnotationPluginState;
+    plugins.annotation = {
+      ...plugins.annotation,
+      annotations: {
+        ...plugins.annotation?.annotations,
+        line1: annotationLine,
+      },
+    };
+    options.plugins = plugins;
+  }
+
+  private getConcurrency(config: PgbenchScore["config"]): number | undefined {
+    let parsed: unknown = config;
+    if (typeof config === "string") {
+      try {
+        parsed = JSON.parse(config);
+      } catch {
+        return undefined;
+      }
+    }
+    if (!parsed || typeof parsed !== "object") {
+      return undefined;
+    }
+
+    const value = (parsed as { concurrency?: unknown }).concurrency;
+    return typeof value === "number" && Number.isFinite(value)
+      ? value
+      : undefined;
+  }
+
+  private getLatencyMs(
+    environment: PgbenchScore["environment"],
+  ): number | undefined {
+    if (!environment || typeof environment !== "object") {
+      return undefined;
+    }
+
+    const value = environment["latency_avg_ms"];
+    return typeof value === "number" && Number.isFinite(value)
+      ? value
+      : undefined;
+  }
+
+  private createPgbenchDetailsLegendOnClick() {
+    return (
+      _event: ChartEvent,
+      legendItem: LegendItem,
+      legend: LegendElement<ChartType>,
+    ): void => {
+      const { chart } = legend;
+      const datasetIndex = legendItem.datasetIndex;
+      if (datasetIndex === undefined) {
+        return;
+      }
+
+      const dataset = chart.data.datasets[datasetIndex];
+      if (!datasetHasComparableData(dataset)) {
+        return;
+      }
+
+      if (chart.isDatasetVisible(datasetIndex)) {
+        const visibleCount = chart.data.datasets.reduce((count, ds, index) => {
+          if (!datasetHasComparableData(ds) || !chart.isDatasetVisible(index)) {
+            return count;
+          }
+          return count + 1;
+        }, 0);
+        if (visibleCount <= 1) {
+          return;
+        }
+        chart.hide(datasetIndex);
+      } else {
+        chart.show(datasetIndex);
+      }
+
+      this.syncPgbenchAxisVisibility(chart);
+      chart.update();
+    };
+  }
+
+  private syncPgbenchAxisVisibility(chart: Chart): void {
+    const scales = chart.options.scales;
+    if (!scales) {
+      return;
+    }
+
+    const scoreVisible = chart.isDatasetVisible(0);
+    const latencyVisible = chart.isDatasetVisible(1);
+
+    if (scales.y) {
+      scales.y.display = scoreVisible;
+    }
+    if (scales.y1) {
+      scales.y1.display = latencyVisible;
+      scales.y1.grid = {
+        ...scales.y1.grid,
+        drawOnChartArea: latencyVisible && !scoreVisible,
+        color: chartAxisGridColor,
+      };
+    }
+    if (scales.y?.grid) {
+      scales.y.grid = {
+        ...scales.y.grid,
+        drawOnChartArea: scoreVisible,
+        color: chartAxisGridColor,
+      };
+    }
   }
 }

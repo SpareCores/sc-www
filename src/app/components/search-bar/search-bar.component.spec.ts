@@ -428,4 +428,36 @@ describe("SearchBarComponent", () => {
     expect(searchParameters[0].modelValue).toEqual(["aws"]);
     expect(component.isParameterDisabled("vendor")).toBeTrue();
   });
+
+  it("preserves false when initializing a boolean filter from query", () => {
+    const filterCategories = [
+      {
+        category_id: "features",
+        name: "Features",
+        icon: "shield-cog",
+        collapsed: true,
+      },
+    ];
+    const searchParameters: SearchBarParameter[] = [
+      {
+        name: "disk_encryption",
+        modelValue: null,
+        schema: {
+          category_id: "features",
+          title: "Disk encryption",
+          type: "boolean",
+          filter_mode: "tri_state_boolean",
+        },
+      },
+    ];
+    fixture.componentRef.setInput("filterCategories", filterCategories);
+    fixture.componentRef.setInput("searchParameters", searchParameters);
+    fixture.componentRef.setInput("query", {
+      disk_encryption: false,
+    });
+    fixture.detectChanges();
+
+    expect(searchParameters[0].modelValue).toBe(false);
+    expect(filterCategories[0].collapsed).toBeFalse();
+  });
 });

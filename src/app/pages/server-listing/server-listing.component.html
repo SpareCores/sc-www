@@ -17,9 +17,6 @@
           icon="tv-minimal-play"
           iconPosition="start"
           variant="outline"
-          size="large"
-          textSize="large"
-          fontWeight="bold"
           (click)="openIntroductionModal()"
         ></sc-button>
       </sc-page-header>
@@ -142,9 +139,6 @@
               data-ph-capture-attribute-sc-event="server listing benchmark select"
               class="min-w-0 max-w-full"
               variant="benchmark"
-              size="large"
-              textSize="large"
-              fontWeight="normal"
               [icon]="
                 selectedBenchmarkConfig?.benchmarkTemplate?.framework
                   | benchmarkIcon
@@ -167,9 +161,6 @@
               [label]="bestPriceAllocation.name"
               icon="calendar-search"
               variant="dropdown"
-              size="large"
-              textSize="large"
-              fontWeight="normal"
               class="min-w-0 max-w-full"
             ></sc-button>
           </div>
@@ -182,9 +173,6 @@
               [label]="selectedCurrency.slug"
               icon="credit-card"
               variant="dropdown"
-              size="large"
-              textSize="large"
-              fontWeight="normal"
             ></sc-button>
           </div>
           <div>
@@ -195,9 +183,6 @@
               label="Columns"
               icon="columns-3-cog"
               variant="dropdown"
-              size="large"
-              textSize="large"
-              fontWeight="normal"
             ></sc-button>
           </div>
         </div>
@@ -696,7 +681,6 @@
                   [label]="'' + limit"
                   icon="chevron-down"
                   variant="dropdown"
-                  size="normal"
                 ></sc-button>
                 <span class="text-white">items per page</span>
               </div>
@@ -724,9 +708,7 @@
         label="Clear"
         icon="circle-x"
         iconPosition="start"
-        variant="danger"
-        textSize="large"
-        fontWeight="bold"
+        color="danger"
         data-ph-capture-attribute-sc-event="server listing compare"
         data-ph-capture-attribute-server-listing-compare-action="clear"
         (click)="clearCompare()"
@@ -735,8 +717,6 @@
         [label]="'Compare (' + compareCount() + ')'"
         icon="scale"
         iconPosition="start"
-        textSize="large"
-        fontWeight="bold"
         data-ph-capture-attribute-sc-event="server listing compare"
         data-ph-capture-attribute-server-listing-compare-action="open"
         (click)="openCompare()"
@@ -896,21 +876,19 @@
       <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
         @if (!tempSelectedBenchmarkCategory) {
           <div class="flex gap-2 flex-wrap justify-center">
-            <button
+            <sc-button
+              label="All"
+              variant="outline"
+              buttonClass="dropdown_group_button"
               (click)="selectBenchmarkCategory('All')"
-              type="button"
-              class="dropdown_group_button"
-            >
-              All
-            </button>
+            ></sc-button>
             @for (category of benchmarkCategories; track $index) {
-              <button
+              <sc-button
+                [label]="category"
+                variant="outline"
+                buttonClass="dropdown_group_button"
                 (click)="selectBenchmarkCategory(category)"
-                type="button"
-                class="dropdown_group_button"
-              >
-                {{ category }}
-              </button>
+              ></sc-button>
             }
           </div>
         }
@@ -938,19 +916,13 @@
                 track benchmarkConfig.benchmark_id + $index
               ) {
                 <button
-                  (click)="selectBenchmarkConfig(benchmarkConfig)"
                   type="button"
-                  [ngClass]="{
-                    active: benchmarkConfig === selectedBenchmarkConfig,
-                  }"
                   class="button_list_item"
+                  [class.active]="benchmarkConfig === selectedBenchmarkConfig"
+                  (click)="selectBenchmarkConfig(benchmarkConfig)"
                 >
-                  <div>
-                    {{ benchmarkConfig.benchmarkTemplate.name }}
-                  </div>
-                  <div class="text-xs">
-                    {{ benchmarkConfig.config }}
-                  </div>
+                  <div>{{ benchmarkConfig.benchmarkTemplate.name }}</div>
+                  <div class="text-xs">{{ benchmarkConfig.config }}</div>
                 </button>
               }
             </div>
@@ -961,13 +933,13 @@
         <div
           class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b"
         >
-          <button
-            class="flex justify-center border border-emerald-400 text-emerald-400 py-2 px-4 rounded-lg hover:bg-emerald-400 hover:text-white items-center"
+          <sc-button
+            label="Back to benchmark categories"
+            icon="chevron-left"
+            iconPosition="start"
+            variant="outline"
             (click)="selectBenchmarkCategory(null)"
-          >
-            <svg lucideChevronLeft class="h-5 w-5"></svg>
-            Back to benchmark categories
-          </button>
+          ></sc-button>
         </div>
       }
     </div>

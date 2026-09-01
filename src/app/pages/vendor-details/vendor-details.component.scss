@@ -1,0 +1,56 @@
+.content {
+  min-height: 75vh;
+}
+
+.vendor-hero-stats {
+  min-width: 11rem;
+}
+
+.vendor-hero-actions {
+  overflow-x: auto;
+}
+
+.datamaps_div {
+  position: relative;
+  width: 100%;
+  height: min(60vw, 600px);
+  margin: auto;
+}
+
+.items_table {
+  @apply text-white;
+
+  thead {
+    @apply border-b border-gray-200 border-solid bg-secondary;
+    th {
+      @apply text-left px-5 py-3 font-normal text-xs;
+
+      &:last-child {
+        text-align: right;
+      }
+    }
+  }
+
+  tbody {
+    tr:nth-child(2n + 1) {
+      @apply bg-primary;
+    }
+    tr:nth-child(2n) {
+      @apply bg-secondary;
+    }
+
+    tr {
+      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
+      td {
+        @apply px-5 py-3 text-left text-sm;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .datamaps_div {
+    width: calc(100% - 1rem);
+    margin: 0.5rem;
+  }
+}

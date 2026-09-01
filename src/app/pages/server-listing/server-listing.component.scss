@@ -81,12 +81,13 @@
   border: 3px solid #9ca3af; /* creates padding around scroll thumb */
 }
 
-:host ::ng-deep .dropdown_group_button {
-  @apply mx-2 px-2 py-2 text-white bg-emerald-400 items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
+:host ::ng-deep .dropdown_group_button.sc-button {
+  @apply mx-2 w-auto px-2 py-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
   text-wrap: auto;
 }
 
-:host ::ng-deep .dropdown_group_button:hover {
+:host ::ng-deep .dropdown_group_button.sc-button:hover,
+:host ::ng-deep .dropdown_group_button.sc-button:focus {
   @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white;
 }
 
@@ -137,8 +138,15 @@
   transform: translateX(-50%);
   z-index: 100;
   sc-button {
-    width: 9rem;
+    width: max-content;
+    min-width: 9rem;
   }
+}
+
+:host ::ng-deep .fixed_buttons .sc-button__label {
+  overflow: visible;
+  text-overflow: clip;
+  min-width: max-content;
 }
 
 .fixed_buttons.fixed_buttons--collapsed {
@@ -154,7 +162,7 @@
   }
 
   .button_list_item {
-    @apply py-2 text-white border-transparent border hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
+    @apply w-full py-2 text-center text-white border border-transparent hover:border-emerald-400 hover:border-solid cursor-pointer;
   }
 
   .button_list_item.active {

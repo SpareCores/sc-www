@@ -46,6 +46,15 @@
                       [class.text-white]="property.value === 'x'"
                     ></svg>
                   </div>
+                } @else if (property.routerLink) {
+                  <div class="property_value">
+                    <a
+                      class="underline decoration-dotted hover:text-gray-500"
+                      [routerLink]="property.routerLink"
+                    >
+                      {{ property.value }}
+                    </a>
+                  </div>
                 } @else {
                   <div
                     class="property_value"
@@ -74,9 +83,7 @@
       >
         <sc-button
           [label]="moreLabel()"
-          size="normal"
-          textSize="large"
-          fontWeight="bold"
+          size="small"
           [attr.id]="cardId() + '_more_button'"
           [ariaControls]="cardId()"
           [ariaExpanded]="false"
@@ -91,9 +98,7 @@
       >
         <sc-button
           [label]="lessLabel()"
-          size="normal"
-          textSize="large"
-          fontWeight="bold"
+          size="small"
           [attr.id]="cardId() + '_less_button'"
           [ariaControls]="cardId()"
           [ariaExpanded]="true"

@@ -101,63 +101,56 @@
     </div>
   }
 } @else {
-  @if (availableModels().length) {
-    <div class="block_full_short_inline">
-      <div class="flex justify-end items-center mb-4">
-        <div class="flex gap-4">
-          <button
-            #modelDropdown="scFlowbiteDropdown"
-            [id]="buttonId"
-            class="dropdown_button chart-selector-button"
-            type="button"
-            [scFlowbiteDropdown]="optionsId"
-            [dropdownEnabled]="isBrowser && availableModels().length > 0"
-          >
-            <div class="chart-selector-button__label">
-              {{ currentModelName() }}
-            </div>
-            <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
-        </div>
+  <div class="block_full_short_inline">
+    <div class="flex justify-end items-center mb-4">
+      <div class="flex gap-4">
+        <button
+          #modelDropdown="scFlowbiteDropdown"
+          [id]="buttonId"
+          class="dropdown_button chart-selector-button"
+          type="button"
+          [scFlowbiteDropdown]="optionsId"
+          [dropdownEnabled]="isBrowser && availableModels().length > 0"
+        >
+          <div class="chart-selector-button__label">
+            {{ currentModelName() }}
+          </div>
+          <div class="chart-selector-button__icon">
+            <svg
+              lucideChevronDown
+              class="h-6 w-6 shrink-0 text-emerald-400"
+            ></svg>
+          </div>
+        </button>
       </div>
-      @if (isBrowser && hasCompareData()) {
-        <div class="charts_div">
-          @if (comparePromptData()) {
-            <div chartType="bar" class="chart_div">
-              <canvas
-                baseChart
-                [data]="comparePromptData()"
-                [options]="comparePromptOptions()"
-                [type]="barChartType"
-              >
-              </canvas>
-            </div>
-          }
-          @if (compareGenerationData()) {
-            <div chartType="bar" class="chart_div">
-              <canvas
-                baseChart
-                [data]="compareGenerationData()"
-                [options]="compareGenerationOptions()"
-                [type]="barChartType"
-              >
-              </canvas>
-            </div>
-          }
-        </div>
-      }
-      @if (!hasCompareData()) {
-        <div class="text-center py-4 text-gray-500">
-          No data available for the selected model.
-        </div>
-      }
     </div>
-  }
+    @if (isBrowser) {
+      <div class="charts_div">
+        @if (comparePromptData()) {
+          <div chartType="bar" class="chart_div">
+            <canvas
+              baseChart
+              [data]="comparePromptData()"
+              [options]="comparePromptOptions()"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
+        }
+        @if (compareGenerationData()) {
+          <div chartType="bar" class="chart_div">
+            <canvas
+              baseChart
+              [data]="compareGenerationData()"
+              [options]="compareGenerationOptions()"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
+        }
+      </div>
+    }
+  </div>
 
   @if (availableModels().length) {
     <div

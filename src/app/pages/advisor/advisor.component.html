@@ -22,9 +22,6 @@
           icon="dices"
           iconPosition="start"
           variant="outline"
-          size="large"
-          textSize="large"
-          fontWeight="bold"
           [routerLink]="['/advisor']"
           [queryParams]="advisorExampleQueryParams"
         ></sc-button>
@@ -34,9 +31,6 @@
           icon="tv-minimal-play"
           iconPosition="start"
           variant="outline"
-          size="large"
-          textSize="large"
-          fontWeight="bold"
           (click)="openIntroductionModal()"
         ></sc-button>
       </sc-page-header>
@@ -158,8 +152,7 @@
                 label="Clear filters"
                 icon="funnel-x"
                 iconPosition="start"
-                size="large"
-                textSize="large"
+                size="small"
                 class="w-full"
                 (click)="clearFilters()"
               ></sc-button>
@@ -197,10 +190,7 @@
             [label]="baselineCompareButtonLabel()"
             icon="scale"
             iconPosition="start"
-            [variant]="isBaselineSelectedForCompare() ? 'primary' : 'outline'"
-            size="large"
-            textSize="large"
-            fontWeight="bold"
+            [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
             [disabled]="!selectedBaselineServer()"
             (click)="toggleBaselineCompare()"
           ></sc-button>
@@ -214,9 +204,6 @@
                 [label]="selectedCurrency().slug"
                 icon="credit-card"
                 variant="dropdown"
-                size="large"
-                textSize="large"
-                fontWeight="normal"
               ></sc-button>
             </div>
 
@@ -227,9 +214,6 @@
                 label="Columns"
                 icon="columns-3-cog"
                 variant="dropdown"
-                size="large"
-                textSize="large"
-                fontWeight="normal"
               ></sc-button>
             </div>
           </div>
@@ -1348,7 +1332,6 @@
                 [label]="'' + limit()"
                 icon="chevron-down"
                 variant="dropdown"
-                size="normal"
               ></sc-button>
               <span class="text-white">items per page</span>
             </div>
@@ -1441,9 +1424,7 @@
         label="Clear"
         icon="circle-x"
         iconPosition="start"
-        variant="danger"
-        textSize="large"
-        fontWeight="bold"
+        color="danger"
         class="advisor-compare-bar-button"
         (click)="clearCompareSelection()"
       ></sc-button>
@@ -1451,8 +1432,6 @@
         [label]="'Compare (' + compareCount() + ')'"
         icon="scale"
         iconPosition="start"
-        textSize="large"
-        fontWeight="bold"
         class="advisor-compare-bar-button"
         (click)="openCompare()"
       ></sc-button>

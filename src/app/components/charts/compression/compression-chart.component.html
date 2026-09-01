@@ -41,7 +41,7 @@
               [label]="coresLabel()"
               icon="chevron-down"
               variant="dropdown"
-              size="normal"
+              size="small"
             ></sc-button>
           }
           <sc-button
@@ -52,7 +52,7 @@
             [label]="currentDetailsMode().name"
             icon="chevron-down"
             variant="dropdown"
-            size="normal"
+            size="small"
           ></sc-button>
         </div>
       </div>
@@ -73,89 +73,87 @@
     </div>
   }
 } @else {
-  @if (compareOptions().length) {
-    <div class="relative z-30">
-      <div class="block_full_short_inline">
-        <div class="flex justify-end items-center">
-          <div class="flex gap-4">
-            <sc-button
-              #selectorDropdown="scFlowbiteDropdown"
-              [id]="buttonId"
-              [scFlowbiteDropdown]="optionsId"
-              [dropdownEnabled]="isBrowser && hasOptions()"
-              [label]="currentCompareOptionName()"
-              icon="chevron-down"
-              variant="dropdown"
-              size="normal"
-            ></sc-button>
+  <div class="relative z-30">
+    <div class="block_full_short_inline">
+      <div class="flex justify-end items-center">
+        <div class="flex gap-4">
+          <sc-button
+            #selectorDropdown="scFlowbiteDropdown"
+            [id]="buttonId"
+            [scFlowbiteDropdown]="optionsId"
+            [dropdownEnabled]="isBrowser && hasOptions()"
+            [label]="currentCompareOptionName()"
+            icon="chevron-down"
+            variant="dropdown"
+            size="small"
+          ></sc-button>
+        </div>
+      </div>
+      @if (isBrowser && hasOptions()) {
+        <div class="charts_div">
+          <div class="chart_div" [attr.chartType]="compareChartType()">
+            @if (compareChartType() === "line") {
+              <canvas
+                baseChart
+                [data]="compareCompressLineData()"
+                [options]="compareCompressLineOptions()"
+                [type]="'line'"
+              >
+              </canvas>
+            } @else {
+              <canvas
+                baseChart
+                [data]="compareCompressBarData()"
+                [options]="compareCompressBarOptions()"
+                [type]="'bar'"
+              >
+              </canvas>
+            }
+          </div>
+          <div class="chart_div" [attr.chartType]="compareChartType()">
+            @if (compareChartType() === "line") {
+              <canvas
+                baseChart
+                [data]="compareDecompressLineData()"
+                [options]="compareDecompressLineOptions()"
+                [type]="'line'"
+              >
+              </canvas>
+            } @else {
+              <canvas
+                baseChart
+                [data]="compareDecompressBarData()"
+                [options]="compareDecompressBarOptions()"
+                [type]="'bar'"
+              >
+              </canvas>
+            }
           </div>
         </div>
-        @if (isBrowser) {
-          <div class="charts_div">
-            <div class="chart_div" [attr.chartType]="compareChartType()">
-              @if (compareChartType() === "line") {
-                <canvas
-                  baseChart
-                  [data]="compareCompressLineData()"
-                  [options]="compareCompressLineOptions()"
-                  [type]="'line'"
-                >
-                </canvas>
-              } @else {
-                <canvas
-                  baseChart
-                  [data]="compareCompressBarData()"
-                  [options]="compareCompressBarOptions()"
-                  [type]="'bar'"
-                >
-                </canvas>
-              }
-            </div>
-            <div class="chart_div" [attr.chartType]="compareChartType()">
-              @if (compareChartType() === "line") {
-                <canvas
-                  baseChart
-                  [data]="compareDecompressLineData()"
-                  [options]="compareDecompressLineOptions()"
-                  [type]="'line'"
-                >
-                </canvas>
-              } @else {
-                <canvas
-                  baseChart
-                  [data]="compareDecompressBarData()"
-                  [options]="compareDecompressBarOptions()"
-                  [type]="'bar'"
-                >
-                </canvas>
-              }
-            </div>
-          </div>
-        }
-      </div>
-      <div
-        [id]="optionsId"
-        class="z-10 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
-      >
-        <ul
-          class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-          [attr.aria-labelledby]="buttonId"
-        >
-          @for (option of compareOptions(); track option.name; let i = $index) {
-            <li>
-              <button
-                type="button"
-                class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
-                (click)="selectCompareOption(i)"
-              >
-                <div class="text-white text-sm">{{ option.name }}</div>
-              </button>
-            </li>
-          }
-        </ul>
-      </div>
+      }
     </div>
-  }
+    <div
+      [id]="optionsId"
+      class="z-10 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+    >
+      <ul
+        class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+        [attr.aria-labelledby]="buttonId"
+      >
+        @for (option of compareOptions(); track option.name; let i = $index) {
+          <li>
+            <button
+              type="button"
+              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+              (click)="selectCompareOption(i)"
+            >
+              <div class="text-white text-sm">{{ option.name }}</div>
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
 }
 
 @if (layout() === "details" && hasOptions()) {

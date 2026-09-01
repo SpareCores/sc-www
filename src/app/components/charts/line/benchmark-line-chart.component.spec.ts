@@ -83,9 +83,47 @@ describe("BenchmarkLineChartComponent", () => {
     fixture.componentRef.setInput("benchmarkMeta", benchmarkMeta);
     fixture.detectChanges();
 
-    expect(component.hasChartData()).toBeTrue();
     expect(component.hasSelector()).toBeTrue();
     expect(component.resolvedSelectedOptionName()).toBe("sha256");
+  });
+
+  it("builds details pgbench charts from raw inputs", () => {
+    fixture.componentRef.setInput("chartData", undefined);
+    fixture.componentRef.setInput("chartOptions", undefined);
+    fixture.componentRef.setInput("selectorOptions", []);
+    fixture.componentRef.setInput("selectedOptionName", "");
+    fixture.componentRef.setInput("chartSource", "details-pgbench");
+    fixture.componentRef.setInput("chartType", "line");
+    fixture.componentRef.setInput("detailsServer", {
+      display_name: "Server A",
+      vcpus: 4,
+    });
+    fixture.componentRef.setInput("benchmarksByCategory", [
+      {
+        benchmark_id: "pgbench:heavy_read_only",
+        benchmarks: [
+          {
+            vendor_id: "vendor-a",
+            server_id: "server-a",
+            benchmark_id: "pgbench:heavy_read_only",
+            config: { concurrency: 2 },
+            score: 120,
+          },
+        ],
+      },
+    ]);
+    fixture.componentRef.setInput("benchmarkMeta", [
+      {
+        benchmark_id: "pgbench:heavy_read_only",
+        name: "pgbench Heavy Read-Only",
+        unit: "Transactions per minute (TPM)",
+      },
+    ]);
+    fixture.detectChanges();
+
+    expect(component.resolvedChartOptions()?.scales?.y?.title?.text).toBe(
+      "Transactions per minute (TPM)",
+    );
   });
 
   it("renders a content-sized selector with compression-style option buttons", () => {

@@ -74,13 +74,27 @@ export function formatStaticWebFileSizeTooltipContext(
   return formattedSize ? `${formattedSize} file size` : "file size";
 }
 
+export function formatServerCompareKey(
+  server: BenchmarkChartServerIdentity & { display_name?: string },
+): string {
+  const vendor = server.vendor_id?.trim();
+  const apiReference = server.api_reference?.trim();
+
+  if (vendor && apiReference) {
+    return `${vendor}::${apiReference}`;
+  }
+
+  return formatServerTooltipIdentity(server);
+}
+
 export function withServerTooltipIdentity<T extends object>(
   dataset: T,
   server: BenchmarkChartServerIdentity & { display_name?: string },
-): T & { serverTooltipIdentity: string } {
+): T & { serverTooltipIdentity: string; serverCompareKey: string } {
   return {
     ...dataset,
     serverTooltipIdentity: formatServerTooltipIdentity(server),
+    serverCompareKey: formatServerCompareKey(server),
   };
 }
 
