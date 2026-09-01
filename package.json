@@ -120,6 +120,12 @@
     "@sentry/cli@2.58.4": true,
     "@parcel/watcher@2.5.6": true,
     "lmdb@3.4.2": true,
-    "msgpackr-extract@3.0.3": true
+    "msgpackr-extract@3.0.3": true,
+    "core-js@3.47.0": true,
+    "browser-tabs-lock@1.3.0": true,
+    "bufferutil@4.1.0": true,
+    "core-js@3.48.0": true,
+    "protobufjs@7.5.4": true,
+    "utf-8-validate@6.0.6": true
   }
 }
