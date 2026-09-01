@@ -52,10 +52,8 @@
   } @if (label()) {
   <span
     [class]="'sc-button__label' + (labelClass() ? ' ' + labelClass() : '')"
-    
     [class.sc-button__label--multiline]="isMultilineLabel()"
     >{{ label() }}</span
-  
   >
   } @if (icon() && iconPosition() === "end") {
   <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
