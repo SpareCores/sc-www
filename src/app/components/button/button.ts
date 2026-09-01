@@ -77,17 +77,24 @@ export class Button {
       this.badge() !== "",
   );
 
+  isIconOnly = computed(
+    () =>
+      !!this.icon() &&
+      !this.label() &&
+      !this.showAvatar() &&
+      this.variant() !== "dropdown" &&
+      this.variant() !== "benchmark",
+  );
+
   buttonClasses = computed(() => {
     const classes = [
       "sc-button",
       `sc-button--${this.size()}`,
       `sc-button--${this.variant()}`,
-      `sc-button--color-${this.color()}`,
-      `sc-button--text-${this.textSize()}`,
-      `sc-button--weight-${this.fontWeight()}`,
+      `sc-button--${this.color()}`,
     ];
 
-    if (this.variant() === "primary") {
+    if (this.variant() === "solid") {
       classes.push("btn-primary");
     } else if (this.variant() === "outline") {
       classes.push("btn-primary-outline");
@@ -98,23 +105,13 @@ export class Button {
       }
     } else if (this.variant() === "benchmark") {
       classes.push("dropdown_button");
-    } else if (this.variant() === "danger") {
-      classes.push("sc-button--danger-fill");
-    } else if (this.variant() === "transparent") {
-      classes.push("sc-button--transparent-fill");
     }
 
     if (this.buttonClass()) {
       classes.push(this.buttonClass());
     }
 
-    if (
-      this.icon() &&
-      !this.label() &&
-      !this.showAvatar() &&
-      this.variant() !== "dropdown" &&
-      this.variant() !== "benchmark"
-    ) {
+    if (this.isIconOnly()) {
       classes.push("sc-button--icon-only");
     }
 
