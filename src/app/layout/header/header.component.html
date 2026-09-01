@@ -93,7 +93,7 @@
                 icon="key-square"
                 iconPosition="start"
                 variant="outline"
-                color="emerald"
+                color="brand"
                 (buttonClick)="signIn()"
               ></sc-button>
               <sc-button
@@ -107,7 +107,7 @@
             <div class="relative hidden sm:block">
               <sc-button
                 variant="outline"
-                color="emerald"
+                color="brand"
                 [label]="auth.userName()"
                 labelClass="hidden md:inline max-w-40 truncate font-medium text-white"
                 [avatarSrc]="auth.userImageUrl() || null"
@@ -132,7 +132,7 @@
                     label="Edit Profile"
                     icon="user"
                     iconPosition="start"
-                    variant="transparent"
+                    variant="ghost"
                     buttonClass="w-full justify-start gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
                     (buttonClick)="openProfile()"
                   ></sc-button>
@@ -142,7 +142,7 @@
                     label="Sign Out"
                     icon="log-out"
                     iconPosition="start"
-                    variant="transparent"
+                    variant="ghost"
                     buttonClass="w-full justify-start gap-3 px-4 py-2 text-sm text-red-400 hover:bg-white/5 hover:text-red-300"
                     (buttonClick)="signOut()"
                   ></sc-button>
@@ -386,7 +386,7 @@
           label="Log in"
           icon="user"
           iconPosition="start"
-          variant="transparent"
+          variant="ghost"
           buttonClass="navbar_link w-full justify-start"
           (buttonClick)="signIn()"
         ></sc-button>
@@ -397,7 +397,7 @@
           label="Register"
           icon="user"
           iconPosition="start"
-          variant="transparent"
+          variant="ghost"
           buttonClass="navbar_link w-full justify-start"
           (buttonClick)="signUp()"
         ></sc-button>
@@ -409,7 +409,7 @@
           label="Edit Profile"
           icon="user"
           iconPosition="start"
-          variant="transparent"
+          variant="ghost"
           buttonClass="navbar_link w-full justify-start"
           (buttonClick)="openProfile()"
         ></sc-button>
@@ -420,7 +420,7 @@
           label="Sign Out"
           icon="log-out"
           iconPosition="start"
-          variant="transparent"
+          variant="ghost"
           buttonClass="navbar_link w-full justify-start"
           (buttonClick)="signOut()"
         ></sc-button>
