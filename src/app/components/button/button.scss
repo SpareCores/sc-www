@@ -260,6 +260,24 @@
   @apply px-3 py-2;
 }
 
+.sc-button--small:has(.sc-button__avatar) {
+  @apply box-border h-[38px] items-stretch gap-x-2 px-3 py-1;
+}
+
+.sc-button--small:has(.sc-button__avatar) .sc-button__avatar,
+.sc-button--small:has(.sc-button__avatar) .sc-button__avatar--placeholder {
+  @apply aspect-square h-full w-auto shrink-0 self-center object-cover;
+}
+
+.sc-button--small:has(.sc-button__avatar) .sc-button__avatar-icon {
+  @apply h-[55%] w-[55%];
+}
+
+.sc-button--small:has(.sc-button__avatar) .sc-button__label,
+.sc-button--small:has(.sc-button__avatar) .sc-button__icon {
+  @apply self-center;
+}
+
 .sc-button--default .sc-button__extension-label {
   @apply px-4 py-3;
 }

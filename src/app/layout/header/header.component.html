@@ -87,9 +87,10 @@
               class="hidden sm:flex"
               buttonClass="whitespace-nowrap"
             ></sc-button>
-            <div class="hidden sm:flex items-center gap-4">
+            <div class="hidden xl:flex items-center gap-4">
               <sc-button
                 label="Log in"
+                size="small"
                 icon="key-square"
                 iconPosition="start"
                 variant="outline"
@@ -98,56 +99,30 @@
               ></sc-button>
               <sc-button
                 label="Register"
+                size="small"
                 icon="user-plus"
                 iconPosition="start"
                 (buttonClick)="signUp()"
               ></sc-button>
             </div>
           } @else {
-            <div class="relative hidden sm:block">
+            <div class="hidden sm:block">
               <sc-button
+                id="auth_button"
+                [scFlowbiteDropdown]="'auth_options'"
+                [dropdownPlacement]="'bottom-end'"
+                #authDropdown="scFlowbiteDropdown"
+                size="small"
                 variant="outline"
                 color="brand"
                 [label]="auth.userName()"
-                labelClass="hidden md:inline max-w-40 truncate font-medium text-white"
+                labelClass="hidden md:inline max-w-40 truncate"
                 [avatarSrc]="auth.userImageUrl() || null"
                 [avatarAlt]="auth.userName()"
                 icon="chevron-down"
                 iconPosition="end"
-                [ariaExpanded]="authDropdownOpen()"
                 ariaLabel="Account menu"
-                buttonClass="bg-secondary gap-2.5 text-gray-200 hover:text-white"
-                (buttonClick)="toggleAuthDropdown()"
               ></sc-button>
-              @if (authDropdownOpen()) {
-                <div
-                  class="fixed inset-0 z-40"
-                  (click)="closeAuthDropdown()"
-                ></div>
-                <div
-                  class="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border border-gray-600 bg-secondary py-1 shadow-lg"
-                >
-                  <sc-button
-                    class="w-full"
-                    label="Edit Profile"
-                    icon="user"
-                    iconPosition="start"
-                    variant="ghost"
-                    buttonClass="w-full justify-start gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
-                    (buttonClick)="openProfile()"
-                  ></sc-button>
-                  <div class="my-1 border-t border-gray-600"></div>
-                  <sc-button
-                    class="w-full"
-                    label="Sign Out"
-                    icon="log-out"
-                    iconPosition="start"
-                    variant="ghost"
-                    buttonClass="w-full justify-start gap-3 px-4 py-2 text-sm text-red-400 hover:bg-white/5 hover:text-red-300"
-                    (buttonClick)="signOut()"
-                  ></sc-button>
-                </div>
-              }
             </div>
           }
           @if (showCompareMenu()) {
@@ -193,6 +168,31 @@
     aria-labelledby="dropdownDefaultButton"
     (click)="closeMenu()"
   >
+    @if (!auth.isAuthenticated()) {
+      <li class="px-2 py-2">
+        <div class="flex flex-col gap-2">
+          <sc-button
+            label="Log in"
+            size="small"
+            icon="key-square"
+            iconPosition="start"
+            variant="outline"
+            color="brand"
+            class="w-full"
+            (buttonClick)="signIn()"
+          ></sc-button>
+          <sc-button
+            label="Register"
+            size="small"
+            icon="user-plus"
+            iconPosition="start"
+            class="w-full"
+            (buttonClick)="signUp()"
+          ></sc-button>
+        </div>
+      </li>
+      <li class="mx-3 my-1 border-b border-emerald-400/30"></li>
+    }
     <li class="py-2">
       <span class="navbar_link hover:!text-white">
         <span class="navbar_icon">
@@ -379,53 +379,65 @@
         Sentinel
       </a>
     </li>
-    @if (!auth.isAuthenticated()) {
-      <li class="py-2">
-        <sc-button
-          class="w-full"
-          label="Log in"
-          icon="user"
-          iconPosition="start"
-          variant="ghost"
-          buttonClass="navbar_link w-full justify-start"
-          (buttonClick)="signIn()"
-        ></sc-button>
-      </li>
-      <li class="py-2">
-        <sc-button
-          class="w-full"
-          label="Register"
-          icon="user"
-          iconPosition="start"
-          variant="ghost"
-          buttonClass="navbar_link w-full justify-start"
-          (buttonClick)="signUp()"
-        ></sc-button>
-      </li>
-    } @else {
-      <li class="py-2">
+    @if (auth.isAuthenticated()) {
+      <li class="px-2 py-2">
         <sc-button
           class="w-full"
           label="Edit Profile"
+          size="small"
           icon="user"
           iconPosition="start"
-          variant="ghost"
-          buttonClass="navbar_link w-full justify-start"
           (buttonClick)="openProfile()"
         ></sc-button>
       </li>
-      <li class="py-2">
+      <li class="px-2 py-2">
         <sc-button
           class="w-full"
           label="Sign Out"
+          size="small"
           icon="log-out"
           iconPosition="start"
-          variant="ghost"
-          buttonClass="navbar_link w-full justify-start"
+          variant="outline"
+          color="brand"
           (buttonClick)="signOut()"
         ></sc-button>
       </li>
     }
+  </ul>
+</div>
+
+<div
+  id="auth_options"
+  [attr.inert]="authDropdown()?.dropdown?._visible ? null : ''"
+  class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="auth_button"
+    (click)="closeAuth()"
+  >
+    <li class="px-2 py-2">
+      <sc-button
+        class="w-full"
+        label="Edit Profile"
+        size="small"
+        icon="user"
+        iconPosition="start"
+        (buttonClick)="openProfile()"
+      ></sc-button>
+    </li>
+    <li class="px-2 py-2">
+      <sc-button
+        class="w-full"
+        label="Sign Out"
+        size="small"
+        icon="log-out"
+        iconPosition="start"
+        variant="outline"
+        color="brand"
+        (buttonClick)="signOut()"
+      ></sc-button>
+    </li>
   </ul>
 </div>
 
