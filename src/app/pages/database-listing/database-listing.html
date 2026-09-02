@@ -6,14 +6,49 @@
       <sc-page-header
         icon="database"
         [title]="title"
+        [showSavedStar]="!!activeSavedSearch()"
         [showShare]="true"
         [shareIcon]="clipboardIcon"
         shareButtonId="database_listing_share_button"
         (shareClick)="clipboardURL()"
       >
+        @if (isAuthenticated()) { @if (activeSavedSearch()) {
+        <sc-button
+          label="Edit search"
+          icon="square-pen"
+          variant="outline"
+          (buttonClick)="openSaveSearchModal()"
+        ></sc-button>
+        <sc-button
+          label="Delete search"
+          icon="trash-2"
+          variant="outline"
+          color="danger"
+          (buttonClick)="deleteSavedSearch()"
+        ></sc-button>
+        } @else {
+        <sc-button
+          label="Save search"
+          icon="save"
+          variant="outline"
+          [disabled]="!canSaveSearch()"
+          (buttonClick)="openSaveSearchModal()"
+        ></sc-button>
+        } }
       </sc-page-header>
       <div class="text-white text-xl pr-16">{{ description }}</div>
+      @if (!isAuthenticated()) {
+      <sc-guest-collections-banner></sc-guest-collections-banner>
+      }
     </div>
+
+    <sc-collection-save-modal
+      modalId="database-listing-save-search-modal"
+      title="Save search"
+      confirmLabel="Confirm"
+      [saving]="isSaveSearchPending()"
+      (confirmed)="confirmSaveSearch($event)"
+    ></sc-collection-save-modal>
 
     <div class="flex gap-8 mx-2 xl:mx-0">
       <div
@@ -35,7 +70,6 @@
           [query]="query"
           [filterCategories]="filterCategories"
           [searchParameters]="searchParameters"
-          [isAuthenticated]="false"
           AIAssistantType="databases"
           (searchChanged)="searchBarChanged($event)"
         >
@@ -117,7 +151,9 @@
               <thead>
                 <tr>
                   <th class="checkbox_column"></th>
-                  @for (column of tableColumns; track column.name) {
+                  @if (isAuthenticated()) {
+                  <th class="favorite_column"></th>
+                  } @for (column of tableColumns; track column.name) {
                   <th
                     [ngClass]="{
                         'cursor-pointer': column.orderField,
@@ -176,31 +212,51 @@
                       />
                     </div>
                   </td>
-                  @for (column of tableColumns; track column.name) { @if
+                  @if (isAuthenticated()) {
+                  <td
+                    class="favorite_column"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <sc-favorite-star-button
+                      kind="database"
+                      [vendorId]="item.vendor_id"
+                      [entityId]="item.api_reference"
+                      (requireAuth)="promptSignIn()"
+                    ></sc-favorite-star-button>
+                  </td>
+                  } @for (column of tableColumns; track column.name) { @if
                   (column.type === "name") {
                   <td>
-                    <div (click)="$event.stopPropagation()">
-                      <a
-                        routerLink="/database/{{
+                    <sc-instance-favorite-context-menu
+                      kind="database"
+                      [vendorId]="item.vendor_id"
+                      [entityId]="item.api_reference"
+                      [displayName]="item.display_name"
+                      (requireAuth)="promptSignIn()"
+                    >
+                      <div (click)="$event.stopPropagation()">
+                        <a
+                          routerLink="/database/{{
                                 item.vendor.vendor_id
                               }}/{{ item.api_reference }}"
-                      >
-                        <div class="text-sm text-white flex gap-1">
-                          <span class="whitespace-nowrap"
-                            >{{ item.display_name }}
-                          </span>
-                          @if (showAPIReference(item)) {
-                          <span class="text-emerald-400">|</span>
-                          <span class="whitespace-nowrap"
-                            >{{ item.api_reference }}
-                          </span>
-                          }
-                        </div>
-                        <div class="text-xs text-white flex gap-1">
-                          <span>{{ item.vendor_id }}</span>
-                        </div>
-                      </a>
-                    </div>
+                        >
+                          <div class="text-sm text-white flex gap-1">
+                            <span class="whitespace-nowrap"
+                              >{{ item.display_name }}
+                            </span>
+                            @if (showAPIReference(item)) {
+                            <span class="text-emerald-400">|</span>
+                            <span class="whitespace-nowrap"
+                              >{{ item.api_reference }}
+                            </span>
+                            }
+                          </div>
+                          <div class="text-xs text-white flex gap-1">
+                            <span>{{ item.vendor_id }}</span>
+                          </div>
+                        </a>
+                      </div>
+                    </sc-instance-favorite-context-menu>
                   </td>
                   } @if (column.type === "processor") {
                   <td>

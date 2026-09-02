@@ -1,4 +1,5 @@
-import { Component, input, output } from "@angular/core";
+import { Component, inject, input, output } from "@angular/core";
+import { Auth } from "../../services/auth/auth";
 import { FormsModule } from "@angular/forms";
 import {
   LucideChevronDown,
@@ -33,6 +34,8 @@ import { getParameterType } from "./search-bar.utils";
   templateUrl: "./search-bar-geo-filters.component.html",
 })
 export class SearchBarGeoFiltersComponent {
+  protected readonly auth = inject(Auth);
+
   parameter = input.required<SearchBarParameter>();
   filterCategoryId = input.required<string>();
   showParameterTitles = input(true);
@@ -40,7 +43,6 @@ export class SearchBarGeoFiltersComponent {
   continentMetadata = input<ContinentMetadata[]>([]);
   regionMetadata = input<RegionMetadata[]>([]);
   vendorMetadata = input<VendorMetadata[]>([]);
-  isAuthenticated = input(true);
   disabled = input(false);
   vendorRegionCollapsedVendors = input<Record<string, boolean>>({});
   maxVendorRegions = input(3);
@@ -63,7 +65,7 @@ export class SearchBarGeoFiltersComponent {
   }
 
   isCountryCheckboxDisabled(country: CountryMetadata): boolean {
-    if (this.isAuthenticated()) {
+    if (this.auth.isAuthenticated()) {
       return false;
     }
 
@@ -75,7 +77,7 @@ export class SearchBarGeoFiltersComponent {
       return true;
     }
 
-    if (this.isAuthenticated()) {
+    if (this.auth.isAuthenticated()) {
       return false;
     }
 
@@ -85,7 +87,7 @@ export class SearchBarGeoFiltersComponent {
   selectContinent(continent: ContinentMetadata) {
     const countries = this.countryMetadata();
     const shouldSelect = !continent.selected;
-    const maxCountries = this.isAuthenticated() ? Infinity : 1;
+    const maxCountries = this.auth.isAuthenticated() ? Infinity : 1;
     let nextCountries: CountryMetadata[];
 
     if (!shouldSelect) {
@@ -121,7 +123,7 @@ export class SearchBarGeoFiltersComponent {
 
   toggleCountry(country: CountryMetadata) {
     if (
-      !this.isAuthenticated() &&
+      !this.auth.isAuthenticated() &&
       !country.selected &&
       this.selectedCountriesCount() >= 1
     ) {
@@ -211,7 +213,7 @@ export class SearchBarGeoFiltersComponent {
       return true;
     }
 
-    if (this.isAuthenticated()) {
+    if (this.auth.isAuthenticated()) {
       return false;
     }
 
@@ -229,7 +231,7 @@ export class SearchBarGeoFiltersComponent {
       return true;
     }
 
-    if (this.isAuthenticated()) {
+    if (this.auth.isAuthenticated()) {
       return false;
     }
 
@@ -251,7 +253,7 @@ export class SearchBarGeoFiltersComponent {
       );
     } else {
       if (
-        !this.isAuthenticated() &&
+        !this.auth.isAuthenticated() &&
         selectedValues.length >= this.maxVendorRegions()
       ) {
         return;
@@ -275,7 +277,7 @@ export class SearchBarGeoFiltersComponent {
       const newValues = vendorRegions.filter(
         (vendorRegion) => !this.isVendorRegionSelected(parameter, vendorRegion),
       );
-      const remaining = this.isAuthenticated()
+      const remaining = this.auth.isAuthenticated()
         ? newValues
         : newValues.slice(
             0,

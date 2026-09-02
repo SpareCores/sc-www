@@ -134,8 +134,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   vendorRegionCollapsedVendors: Record<string, boolean> = {};
 
-  isAuthenticated = input(true);
-
   modalSearch: Modal | undefined;
   freetextSearchInput: string | null = null;
   modalSubmitted = false;

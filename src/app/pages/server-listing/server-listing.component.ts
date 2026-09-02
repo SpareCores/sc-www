@@ -6,7 +6,9 @@ import {
   viewChild,
   ElementRef,
   OnDestroy,
+  effect,
   inject,
+  signal,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -63,6 +65,13 @@ import { StoragePipe } from "../../pipes/storage.pipe";
 import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 import { formatNumberInputValue } from "../../pipes/pipe-utils";
+import { FavoriteStarButtonComponent } from "../../components/collections/favorite-star-button/favorite-star-button.component";
+import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
+import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
+import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
+import { Auth } from "../../services/auth/auth";
 import {
   BestPriceAllocationType,
   bestPriceAllocationTypes,
@@ -116,6 +125,10 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     GpuMemoryPipe,
     Ipv4CountPipe,
     FlowbiteDropdownDirective,
+    FavoriteStarButtonComponent,
+    InstanceFavoriteContextMenuComponent,
+    CollectionSaveModalComponent,
+    GuestCollectionsBannerComponent,
   ],
   templateUrl: "./server-listing.component.html",
   styleUrl: "./server-listing.component.scss",
@@ -134,6 +147,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
+  private collectionsUi = inject(CollectionsUiService);
+  private auth = inject(Auth);
+  saveSearchModal = viewChild(CollectionSaveModalComponent);
 
   isCollapsed = false;
 
@@ -262,7 +278,44 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   description: string =
     'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
 
+  private readonly defaultTitle = "Cloud Servers Navigator";
+  private readonly defaultDescription = this.description;
+  private readonly pendingSaveSearchClose = signal(false);
+  private readonly editingSearchId = signal<string | null>(null);
+
   private subscription = new Subscription();
+
+  constructor() {
+    effect(() => {
+      this.collectionsUi.store.savedSearches();
+      this.syncSavedSearchChrome();
+    });
+
+    effect(() => {
+      if (!this.pendingSaveSearchClose()) {
+        return;
+      }
+
+      this.collectionsUi.store.savedSearches();
+      const editingId = this.editingSearchId();
+      const saved = this.activeSavedSearch();
+      const saving = this.collectionsUi.isSavingSearch("servers", this.query);
+      const updating = editingId
+        ? this.collectionsUi.isUpdatingSearch(editingId)
+        : saved
+          ? this.collectionsUi.isUpdatingSearch(saved.id)
+          : false;
+
+      if (saving || updating) {
+        return;
+      }
+
+      this.pendingSaveSearchClose.set(false);
+      if (editingId || saved) {
+        this.saveSearchModal()?.close();
+      }
+    });
+  }
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
@@ -295,17 +348,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe(() => {
       this.setSpecialList();
-      if (this.specialList) {
-        this.breadcrumbs.push({
-          name: this.specialList.title,
-          url: `/servers/${this.specialList.id}`,
-        });
-        this.SEOHandler.updateTitleAndMetaTags(
-          `${this.specialList.title} - Spare Cores`,
-          this.specialList.description,
-          "cloud, server, instance, price, comparison, spot, sparecores",
-        );
-      }
+      this.syncSavedSearchChrome();
     });
 
     // initial load is special as we need to decode the benchmark URL param
@@ -393,12 +436,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         // and will do the search after getBenchmarkConfigs is called
         if (!isInitialLoad) {
           this._searchServers(true);
+          this.syncSavedSearchChrome();
           return;
         }
 
         if (!query.benchmark) {
           shouldSearchAfterBenchmarks = true;
         }
+
+        this.syncSavedSearchChrome();
       }),
     );
 
@@ -592,10 +638,50 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
 
     this.specialParameters = this.specialList?.parameters || {};
-    this.title = this.specialList?.title || "Cloud Servers Navigator";
-    this.description =
-      this.specialList?.description ||
-      'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
+  }
+
+  private baseServerListingBreadcrumbs(): BreadcrumbSegment[] {
+    const breadcrumbs: BreadcrumbSegment[] = [
+      { name: "Home", url: "/" },
+      { name: "Servers", url: "/servers" },
+    ];
+
+    if (this.specialList) {
+      breadcrumbs.push({
+        name: this.specialList.title,
+        url: `/servers/${this.specialList.id}`,
+      });
+    }
+
+    return breadcrumbs;
+  }
+
+  private syncSavedSearchChrome(): void {
+    const saved = this.activeSavedSearch();
+
+    if (saved) {
+      this.title = saved.name;
+      this.description = saved.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
+      this.breadcrumbs = [
+        ...this.baseServerListingBreadcrumbs(),
+        { name: saved.name, url: this.router.url },
+      ];
+      this.SEOHandler.updateTitleAndMetaTags(
+        `${saved.name} - Spare Cores`,
+        this.description,
+        "cloud, server, instance, price, comparison, spot, sparecores",
+      );
+      return;
+    }
+
+    this.title = this.specialList?.title || this.defaultTitle;
+    this.description = this.specialList?.description || this.defaultDescription;
+    this.breadcrumbs = this.baseServerListingBreadcrumbs();
+    this.SEOHandler.updateTitleAndMetaTags(
+      `${this.title} - Spare Cores`,
+      this.description,
+      "cloud, server, instance, price, comparison, spot, sparecores",
+    );
   }
 
   toggleCollapse() {
@@ -952,11 +1038,90 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   toggleCompare(event: boolean, server: ServerPKs | any) {
-    this.serverCompare.toggleCompare(event, {
+    const added = this.serverCompare.toggleCompare(event, {
       server: server.api_reference,
       vendor: server.vendor_id,
       display_name: server.display_name,
     });
+    if (!added) {
+      server.selected = false;
+    }
+  }
+
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  promptSignIn(): void {
+    this.collectionsUi.promptSignIn();
+  }
+
+  activeSavedSearch() {
+    return this.collectionsUi.activeSavedSearch("servers", this.query);
+  }
+
+  canSaveSearch(): boolean {
+    return this.collectionsUi.canSaveSearch(this.query);
+  }
+
+  openSaveSearchModal(): void {
+    if (!this.isAuthenticated()) {
+      this.promptSignIn();
+      return;
+    }
+
+    const saved = this.activeSavedSearch();
+    this.editingSearchId.set(saved?.id ?? null);
+    this.saveSearchModal()?.open(saved?.name ?? "", saved?.note ?? "");
+  }
+
+  isSaveSearchPending(): boolean {
+    const editingId = this.editingSearchId();
+    if (editingId) {
+      return this.collectionsUi.isUpdatingSearch(editingId);
+    }
+
+    const saved = this.activeSavedSearch();
+    if (saved) {
+      return this.collectionsUi.isUpdatingSearch(saved.id);
+    }
+
+    return this.collectionsUi.isSavingSearch("servers", this.query);
+  }
+
+  confirmSaveSearch(payload: { name: string; note?: string }): void {
+    const editingId = this.editingSearchId();
+    const saved = this.activeSavedSearch();
+    this.pendingSaveSearchClose.set(true);
+
+    if (editingId || saved) {
+      this.collectionsUi.updateSearch(
+        editingId ?? saved!.id,
+        "servers",
+        this.query,
+        payload.name,
+        payload.note,
+      );
+      return;
+    }
+
+    this.collectionsUi.saveSearch(
+      "servers",
+      this.query,
+      payload.name,
+      payload.note,
+    );
+  }
+
+  deleteSavedSearch(): void {
+    const saved = this.activeSavedSearch();
+    if (saved) {
+      this.collectionsUi.deleteSearch(saved.id);
+    }
+  }
+
+  isFavoriteServer(vendorId: string, serverId: string): boolean {
+    return this.collectionsUi.store.isFavoriteServer(vendorId, serverId);
   }
 
   compareCount() {
