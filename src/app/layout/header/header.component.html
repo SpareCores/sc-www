@@ -116,11 +116,12 @@
                 variant="outline"
                 color="brand"
                 [label]="auth.userName()"
-                labelClass="hidden md:inline max-w-40 truncate"
+                labelClass="hidden xl:inline max-w-40 truncate"
                 [avatarSrc]="auth.userImageUrl() || null"
                 [avatarAlt]="auth.userName()"
                 icon="chevron-down"
                 iconPosition="end"
+                buttonClass="max-xl:gap-0 max-xl:px-1 [&_.sc-button__icon]:max-xl:hidden"
                 ariaLabel="Account menu"
               ></sc-button>
             </div>
@@ -383,6 +384,27 @@
       <li class="px-2 py-2">
         <sc-button
           class="w-full"
+          label="Dashboard"
+          size="small"
+          icon="layout-dashboard"
+          iconPosition="start"
+          routerLink="/dashboard"
+          (buttonClick)="closeMenu()"
+        ></sc-button>
+      </li>
+      <li class="px-2 py-2">
+        <sc-button
+          class="w-full"
+          label="Book a Call"
+          size="small"
+          icon="calendar-days"
+          iconPosition="start"
+          id="meeting-header-auth-mobile"
+        ></sc-button>
+      </li>
+      <li class="px-2 py-2">
+        <sc-button
+          class="w-full"
           label="Edit Profile"
           size="small"
           icon="user"
@@ -416,6 +438,27 @@
     aria-labelledby="auth_button"
     (click)="closeAuth()"
   >
+    <li class="px-2 py-2">
+      <sc-button
+        class="w-full"
+        label="Dashboard"
+        size="small"
+        icon="layout-dashboard"
+        iconPosition="start"
+        routerLink="/dashboard"
+        (buttonClick)="closeAuth()"
+      ></sc-button>
+    </li>
+    <li class="px-2 py-2">
+      <sc-button
+        class="w-full"
+        label="Book a Call"
+        size="small"
+        icon="calendar-days"
+        iconPosition="start"
+        id="meeting-header-auth-menu"
+      ></sc-button>
+    </li>
     <li class="px-2 py-2">
       <sc-button
         class="w-full"
