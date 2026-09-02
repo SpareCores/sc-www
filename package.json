@@ -39,6 +39,8 @@
     "@clerk/shared": "^4.30.2",
     "@clerk/ui": "^1.31.0",
     "@lucide/angular": "1.26.0",
+    "@ngrx/operators": "^20.1.0",
+    "@ngrx/signals": "^20.1.0",
     "@preline/combobox": "^2.5.2",
     "@sentry/angular": "^9.47.1",
     "@sentry/cli": "^2.33.1",
