@@ -31,7 +31,13 @@ jobs:
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
           NG_APP_WWW_API_BASE_URI: https://www-api-staging.sparecores.net
           NG_APP_CLERK_PUBLISHABLE_KEY: ""
+          NG_APP_POSTHOG_KEY: ""
+          NG_APP_POSTHOG_HOST: ""
           NG_APP_SENTRY_DSN: ""
+          NG_APP_SENTRY_TRACE_SAMPLE_RATE: "0"
+          NG_APP_SENTRY_PROFILE_SAMPLE_RATE: "0"
+          NG_APP_SENTRY_ENVIRONMENT: "test"
+          NG_APP_SENTRY_RELEASE: ""
       - uses: actions/upload-artifact@v7.0.1
         if: failure()
         with:
@@ -63,6 +69,13 @@ jobs:
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
           NG_APP_WWW_API_BASE_URI: https://www-api-staging.sparecores.net
           NG_APP_CLERK_PUBLISHABLE_KEY: ""
+          NG_APP_POSTHOG_KEY: ""
+          NG_APP_POSTHOG_HOST: ""
+          NG_APP_SENTRY_DSN: ""
+          NG_APP_SENTRY_TRACE_SAMPLE_RATE: "0"
+          NG_APP_SENTRY_PROFILE_SAMPLE_RATE: "0"
+          NG_APP_SENTRY_ENVIRONMENT: "test"
+          NG_APP_SENTRY_RELEASE: ""
       - uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
