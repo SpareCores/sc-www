@@ -62,7 +62,9 @@ describe("CollectionsService", () => {
     );
 
     const request = http.expectOne((req) =>
-      req.url.includes(`/collections/favorite_servers/${encodeURIComponent(id)}`),
+      req.url.includes(
+        `/collections/favorite_servers/${encodeURIComponent(id)}`,
+      ),
     );
     expect(request.request.method).toBe("GET");
     request.flush({
@@ -189,7 +191,9 @@ describe("CollectionsService", () => {
     );
 
     const request = http.expectOne((req) =>
-      req.url.includes(`/collections/favorite_servers/${encodeURIComponent(id)}`),
+      req.url.includes(
+        `/collections/favorite_servers/${encodeURIComponent(id)}`,
+      ),
     );
     expect(request.request.method).toBe("DELETE");
     request.flush(null, { status: 204, statusText: "No Content" });

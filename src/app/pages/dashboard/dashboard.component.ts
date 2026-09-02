@@ -33,10 +33,7 @@ import type {
   DashboardCardViewModel,
   DashboardFilterKey,
 } from "../../collections/collections.types";
-import {
-  formatMemoryAmount,
-  formatStorageSize,
-} from "../../pipes/pipe-utils";
+import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
 import { mutationKey } from "../../shared/store/with-mutation-status";
@@ -170,7 +167,9 @@ export class DashboardComponent implements OnDestroy {
   constructor() {
     effect(() => {
       const cards = this.cards();
-      const favoriteCards = cards.filter((card) => this.isFavoriteEntityCard(card));
+      const favoriteCards = cards.filter((card) =>
+        this.isFavoriteEntityCard(card),
+      );
 
       if (favoriteCards.length) {
         void this.loadVendorNames();
@@ -374,7 +373,10 @@ export class DashboardComponent implements OnDestroy {
     if (!link) {
       return null;
     }
-    if (Array.isArray(link) && link.some((segment) => segment == null || segment === "")) {
+    if (
+      Array.isArray(link) &&
+      link.some((segment) => segment == null || segment === "")
+    ) {
       return null;
     }
     return link;
@@ -426,9 +428,7 @@ export class DashboardComponent implements OnDestroy {
     });
   }
 
-  private updateMutationScope(
-    kind: DashboardCardViewModel["kind"],
-  ): string {
+  private updateMutationScope(kind: DashboardCardViewModel["kind"]): string {
     switch (kind) {
       case "savedSearches":
         return "update-search";
@@ -511,7 +511,9 @@ export class DashboardComponent implements OnDestroy {
     vendorId: string,
     serverId: string,
   ): Promise<DashboardFeature[]> {
-    const server = this.unwrapBody(await this.keeperAPI.getServerV2(vendorId, serverId));
+    const server = this.unwrapBody(
+      await this.keeperAPI.getServerV2(vendorId, serverId),
+    );
     const features: DashboardFeature[] = [];
 
     if (server?.cpu_cores || server?.vcpus) {
@@ -546,7 +548,9 @@ export class DashboardComponent implements OnDestroy {
     vendorId: string,
     databaseId: string,
   ): Promise<DashboardFeature[]> {
-    const database = this.unwrapBody(await this.keeperAPI.getDatabase(vendorId, databaseId));
+    const database = this.unwrapBody(
+      await this.keeperAPI.getDatabase(vendorId, databaseId),
+    );
     const features: DashboardFeature[] = [
       {
         name: "vCPUs",
@@ -580,13 +584,13 @@ export class DashboardComponent implements OnDestroy {
   }
 
   private isFavoriteEntityCard(card: DashboardCardViewModel): boolean {
-    return (
-      card.kind === "favoriteServers" || card.kind === "favoriteDatabases"
-    );
+    return card.kind === "favoriteServers" || card.kind === "favoriteDatabases";
   }
 
   private favoriteCardVendorId(card: DashboardCardViewModel): string | null {
-    return this.isFavoriteEntityCard(card) && card.subtitle ? card.subtitle : null;
+    return this.isFavoriteEntityCard(card) && card.subtitle
+      ? card.subtitle
+      : null;
   }
 
   private favoriteCardParams(

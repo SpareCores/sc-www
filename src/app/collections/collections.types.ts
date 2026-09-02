@@ -120,7 +120,10 @@ function encodeCollectionItemId(parts: string[]): string {
     .replace(/=+$/, "");
 }
 
-function decodeCollectionItemId(id: string, partCount: number): string[] | null {
+function decodeCollectionItemId(
+  id: string,
+  partCount: number,
+): string[] | null {
   try {
     const normalized = id.replace(/-/g, "+").replace(/_/g, "/");
     const padding = "=".repeat((4 - (normalized.length % 4)) % 4);

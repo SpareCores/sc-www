@@ -78,7 +78,11 @@ export class CompareCollectionsService {
     }
 
     const routeId = this.router.url.split("/").pop()?.split("?")[0];
-    if (routeId && routeId !== "compare" && this.store.savedComparisonById(routeId)) {
+    if (
+      routeId &&
+      routeId !== "compare" &&
+      this.store.savedComparisonById(routeId)
+    ) {
       return routeId;
     }
 

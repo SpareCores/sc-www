@@ -86,7 +86,10 @@ export class InstanceFavoriteContextMenuComponent {
     const vendorId = this.vendorId();
     const entityId = this.entityId();
     if (this.kind() === "server") {
-      this.collectionsStore.toggleFavoriteServer({ vendorId, serverId: entityId });
+      this.collectionsStore.toggleFavoriteServer({
+        vendorId,
+        serverId: entityId,
+      });
     } else {
       this.collectionsStore.toggleFavoriteDatabase({
         vendorId,

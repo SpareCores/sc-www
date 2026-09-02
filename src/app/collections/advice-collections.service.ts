@@ -35,7 +35,12 @@ export class AdviceCollectionsService {
     return this.store.isMutating(mutationKey("update-advice", id));
   }
 
-  saveAdvice(id: string, query: SearchBarQuery, name: string, note?: string): void {
+  saveAdvice(
+    id: string,
+    query: SearchBarQuery,
+    name: string,
+    note?: string,
+  ): void {
     this.store.saveAdvice({ id, query, name, note });
   }
 

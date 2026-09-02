@@ -58,7 +58,9 @@ function normalizeQueryObject(
 export function normalizeSearchQuery(
   query: SearchBarQuery | null | undefined,
 ): Record<string, unknown> {
-  return normalizeQueryObject(query as Record<string, unknown> | null | undefined);
+  return normalizeQueryObject(
+    query as Record<string, unknown> | null | undefined,
+  );
 }
 
 export function stableSearchQueryKey(
@@ -312,10 +314,7 @@ function formatFilterValue(key: string, value: unknown): string {
     }
   }
 
-  if (
-    key === "minimum_memory" ||
-    key === "peak_gpu_memory"
-  ) {
+  if (key === "minimum_memory" || key === "peak_gpu_memory") {
     const numeric = Number(value);
     if (!Number.isNaN(numeric)) {
       return `${numeric} GiB`;
@@ -491,4 +490,3 @@ export function adviceQueriesEqual(
     JSON.stringify(adviceComparableQuery(right))
   );
 }
-

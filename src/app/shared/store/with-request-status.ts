@@ -1,11 +1,7 @@
 import { computed } from "@angular/core";
 import { signalStoreFeature, withComputed, withState } from "@ngrx/signals";
 
-export type RequestStatus =
-  | "idle"
-  | "loading"
-  | "loaded"
-  | { error: string };
+export type RequestStatus = "idle" | "loading" | "loaded" | { error: string };
 
 export type RequestStatusState = {
   requestStatus: RequestStatus;

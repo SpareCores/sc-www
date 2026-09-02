@@ -10,7 +10,10 @@ import { LucideStar } from "@lucide/angular";
 import { Auth } from "../../../services/auth/auth";
 import { CollectionsStore } from "../../../collections/collections.store";
 import { mutationKey } from "../../../shared/store/with-mutation-status";
-import { favoriteDatabaseId, favoriteServerId } from "../../../collections/collections.types";
+import {
+  favoriteDatabaseId,
+  favoriteServerId,
+} from "../../../collections/collections.types";
 import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
 
 export type FavoriteEntityKind = "server" | "database";
@@ -72,7 +75,10 @@ export class FavoriteStarButtonComponent {
     const vendorId = this.vendorId();
     const entityId = this.entityId();
     if (this.kind() === "server") {
-      this.collectionsStore.toggleFavoriteServer({ vendorId, serverId: entityId });
+      this.collectionsStore.toggleFavoriteServer({
+        vendorId,
+        serverId: entityId,
+      });
       return;
     }
 
