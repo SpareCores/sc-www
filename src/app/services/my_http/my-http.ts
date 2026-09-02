@@ -12,8 +12,8 @@ import { Auth } from "../auth/auth";
 const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
 const RETRY_INTERVALS_SSR = [100, 200]; // in milliseconds
 
-const BACKEND_BASE_URI = import.meta.env.NG_APP_BACKEND_BASE_URI;
-const BACKEND_BASE_URI_SSR = import.meta.env.NG_APP_BACKEND_BASE_URI_SSR;
+const BACKEND_BASE_URI = import.meta?.env?.NG_APP_BACKEND_BASE_URI;
+const BACKEND_BASE_URI_SSR = import.meta?.env?.NG_APP_BACKEND_BASE_URI_SSR;
 
 function keeperQueryRequiresAuth(
   query: Record<string, unknown> | undefined,

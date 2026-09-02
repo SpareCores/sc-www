@@ -14,7 +14,7 @@ import type { UserResource } from "@clerk/shared/types";
 import { CLERK_APPEARANCE, CLERK_TEXTS } from "./clerk-configuration";
 
 const CLERK_PUBLISHABLE_KEY =
-  import.meta.env.NG_APP_CLERK_PUBLISHABLE_KEY || "";
+  import.meta?.env?.NG_APP_CLERK_PUBLISHABLE_KEY || "";
 
 @Injectable({ providedIn: "root" })
 export class Auth {

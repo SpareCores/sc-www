@@ -11,7 +11,7 @@ const SENTRY_ENVIRONMENT =
   import.meta?.env?.NG_APP_SENTRY_ENVIRONMENT || "development";
 const SENTRY_RELEASE = import.meta?.env?.NG_APP_SENTRY_RELEASE || undefined;
 
-const BACKEND_BASE_URI = import.meta.env.NG_APP_BACKEND_BASE_URI;
+const BACKEND_BASE_URI = import.meta?.env?.NG_APP_BACKEND_BASE_URI;
 const tracePropagationTargets = ["localhost", /^\//, BACKEND_BASE_URI].filter(
   (target): target is string | RegExp => target !== undefined && target !== "",
 );
