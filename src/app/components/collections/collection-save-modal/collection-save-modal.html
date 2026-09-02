@@ -1,0 +1,67 @@
+<div
+  #modalRoot
+  [id]="modalId()"
+  tabindex="-1"
+  aria-hidden="true"
+  class="fixed inset-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto h-full max-h-full"
+>
+  <div class="relative w-full max-w-lg max-h-full mx-auto">
+    <div
+      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
+    >
+      <div
+        class="flex items-center justify-between p-4 border-b border-gray-600"
+      >
+        <h2 class="text-xl font-medium text-white">{{ title() }}</h2>
+        <button
+          type="button"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+          (click)="close()"
+        >
+          <span class="sr-only">Close modal</span>
+          ×
+        </button>
+      </div>
+      <div class="p-4 flex flex-col gap-4">
+        <label class="flex flex-col gap-2 text-white text-sm">
+          <span>{{ nameLabel() }} *</span>
+          <input
+            type="text"
+            class="rounded-lg border border-gray-600 bg-primary px-3 py-2 text-white"
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+            [minlength]="3"
+            maxlength="120"
+          />
+        </label>
+        <label class="flex flex-col gap-2 text-white text-sm">
+          <span>{{ notesLabel() }}</span>
+          <textarea
+            rows="5"
+            class="rounded-lg border border-gray-600 bg-primary px-3 py-2 text-white"
+            [ngModel]="note()"
+            (ngModelChange)="note.set($event)"
+            [maxlength]="noteMaxLength"
+          ></textarea>
+          <span class="text-xs text-gray-400">
+            {{ note().length }}/{{ noteMaxLength }}
+          </span>
+        </label>
+        <div class="flex justify-end gap-3">
+          <sc-button
+            label="Cancel"
+            variant="outline"
+            color="brand"
+            (buttonClick)="close()"
+          ></sc-button>
+          <sc-button
+            [label]="confirmLabel()"
+            icon="circle-check"
+            [disabled]="!canConfirm() || saving()"
+            (buttonClick)="confirm()"
+          ></sc-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

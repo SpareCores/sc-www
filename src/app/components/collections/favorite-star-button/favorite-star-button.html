@@ -1,0 +1,18 @@
+<button
+  type="button"
+  class="favorite-star-button"
+  [class.favorite-star-button--active]="isFavorite()"
+  [class.favorite-star-button--loading]="isLoading()"
+  [disabled]="disabled() || isLoading()"
+  [attr.aria-label]="
+    isFavorite() ? 'Remove from favorites' : 'Add to favorites'
+  "
+  [attr.aria-pressed]="isFavorite()"
+  (click)="toggle($event)"
+>
+  @if (isLoading()) {
+    <sc-loading-spinner size="sm"></sc-loading-spinner>
+  } @else {
+    <svg lucideStar class="favorite-star-button__icon"></svg>
+  }
+</button>

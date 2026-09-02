@@ -14,6 +14,7 @@ import {
   LucideChevronDown,
   LucideChevronLeft,
   LucideChevronRight,
+  LucideChevronsUpDown,
   LucideMail,
   LucideCpu,
   LucideDatabase,
@@ -92,6 +93,14 @@ import {
   LucideEyeOff,
   LucideSend,
   LucideTarget,
+  LucideLayoutDashboard,
+  LucideSave,
+  LucideSquarePen,
+  LucideSquareArrowOutUpRight,
+  LucideTrash2,
+  LucideStar,
+  LucideStarPlus,
+  LucideStarMinus,
 } from "@lucide/angular";
 import type { LucideIconData } from "@lucide/angular";
 
@@ -190,6 +199,7 @@ export const lucideIcons = [
   LucideChevronDown,
   LucideChevronLeft,
   LucideChevronRight,
+  LucideChevronsUpDown,
   LucideMail,
   LucideCodesandbox,
   LucideCpu,
@@ -274,4 +284,12 @@ export const lucideIcons = [
   LucideEye,
   LucideEyeOff,
   LucideSend,
+  LucideLayoutDashboard,
+  LucideSave,
+  LucideSquarePen,
+  LucideSquareArrowOutUpRight,
+  LucideTrash2,
+  LucideStar,
+  LucideStarPlus,
+  LucideStarMinus,
 ] as const;
