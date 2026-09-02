@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { LandingpageComponent } from "./pages/landingpage/landingpage.component";
 import { ServerListingComponent } from "./pages/server-listing/server-listing.component";
 import { ServerPricesComponent } from "./pages/server-prices/server-prices.component";
+import { authGuard } from "./services/auth/auth.guard";
 
 export const routes: Routes = [
   { path: "", component: LandingpageComponent },
@@ -217,6 +218,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import("./pages/contact/contact.component").then(
         (m) => m.ContactComponent,
+      ),
+  },
+  {
+    path: "dashboard",
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import("./pages/dashboard/dashboard.component").then(
+        (m) => m.DashboardComponent,
       ),
   },
   {

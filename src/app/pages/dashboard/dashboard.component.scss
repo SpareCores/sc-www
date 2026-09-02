@@ -1,0 +1,321 @@
+.dashboard-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-stats__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+  width: max-content;
+  min-width: max-content;
+  box-sizing: border-box;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #34d399;
+  border-radius: 0.5rem;
+  background: var(--color-secondary, #06263a);
+  cursor: pointer;
+}
+
+.dashboard-stats__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: #34d399;
+}
+
+.dashboard-stats__label {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  white-space: nowrap;
+}
+
+.dashboard-stats__badge {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.375rem;
+  border-radius: 9999px;
+  background: #34d399;
+  color: #06263a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@media (max-width: 78rem) {
+  .dashboard-stats {
+    flex-wrap: nowrap;
+    gap: 0.75rem;
+  }
+
+  .dashboard-stats__item {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 0.75rem;
+  }
+
+  .dashboard-stats__label {
+    display: none;
+  }
+
+  .dashboard-stats__badge {
+    display: inline-flex;
+  }
+}
+
+.dashboard-filter__track {
+  position: relative;
+  display: inline-block;
+  width: 2.75rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: rgb(55 65 81);
+}
+
+.dashboard-filter__thumb {
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: white;
+  transition: transform 0.2s ease;
+}
+
+.dashboard-stats__item input:checked + .dashboard-filter__track {
+  background: rgb(16 185 129);
+}
+
+.dashboard-stats__item
+  input:checked
+  + .dashboard-filter__track
+  .dashboard-filter__thumb {
+  transform: translateX(1.25rem);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 1.25rem;
+}
+
+.dashboard-grid.cdk-drop-list-dragging {
+  touch-action: none;
+}
+
+.dashboard-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid #34d399;
+  border-radius: 0.5rem;
+  background: var(--color-secondary, #06263a);
+}
+
+.dashboard-card__kind-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dashboard-card__kind {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.dashboard-card__kind-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  color: #34d399;
+  margin-top: 0.125rem;
+}
+
+.dashboard-card__title {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-card__description {
+  color: #d1d5db;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  white-space: pre-wrap;
+}
+
+.dashboard-card__vendor-logo {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: 0.125rem;
+  background: #ffffff;
+  margin-top: 0.125rem;
+}
+
+.dashboard-card__table-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.dashboard-card__table-wrap .overflow-x-auto {
+  width: 100%;
+}
+
+.dashboard-card__details-more {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  background: linear-gradient(360deg, #06263a 23.44%, rgb(6 38 58 / 0) 100%);
+}
+
+.dashboard-card__details-less {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding-top: 0.75rem;
+}
+
+.dashboard-card__table {
+  width: 100%;
+  color: #ffffff;
+  border-collapse: collapse;
+
+  thead {
+    border-bottom: 1px solid rgb(229 231 235);
+    background: var(--color-secondary, #06263a);
+
+    th {
+      padding: 0.75rem 0.5rem 0.75rem 0.75rem;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+  }
+
+  tbody {
+    tr:nth-child(odd) {
+      background: var(--color-primary, #082f49);
+    }
+
+    tr:nth-child(even) {
+      background: var(--color-secondary, #06263a);
+    }
+
+    tr:hover {
+      outline: 1px solid #34d399;
+      outline-offset: -1px;
+    }
+
+    td {
+      padding: 0.75rem 0.5rem 0.75rem 0.75rem;
+      text-align: left;
+      font-size: 0.875rem;
+      vertical-align: middle;
+      word-break: break-word;
+    }
+  }
+}
+
+.dashboard-card__table-field {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.dashboard-card__table-filter {
+  color: #ffffff;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.dashboard-card__table-value {
+  color: #d1d5db;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.dashboard-card__handle {
+  color: rgb(156 163 175);
+  cursor: grab;
+  font-size: 1rem;
+  line-height: 1;
+  margin-top: 0.125rem;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dashboard-card.cdk-drag-dragging,
+.dashboard-card.cdk-drag-dragging * {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dashboard-card__actions {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: clamp(0.25rem, 1.5vw, 1rem);
+  margin-top: auto;
+  width: 100%;
+}
+
+.dashboard-card__actions > * {
+  flex: 0 0 auto;
+}
+
+.dashboard-card__actions--spread {
+  justify-content: space-between;
+}
+
+.dashboard-note-modal-text {
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.625;
+  white-space: pre-wrap;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 20px rgb(0 0 0 / 0.35);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}

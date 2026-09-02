@@ -1,0 +1,301 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16">
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
+
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <sc-page-header
+        icon="layout-dashboard"
+        title="Dashboard"
+      ></sc-page-header>
+      <p class="text-white text-xl pr-16">
+        Manage your favorites, saved searches, comparisons, and advisor
+        recommendations in one place. Edit their note or rename them to make
+        them easier to find.
+      </p>
+    </div>
+
+    <div class="dashboard-stats mx-2 xl:mx-0">
+      @for (stat of statEntries(); track stat.key) {
+        <label
+          class="dashboard-stats__item"
+          [attr.aria-label]="stat.label + ': ' + stat.value"
+        >
+          <input
+            type="checkbox"
+            class="peer sr-only"
+            [checked]="stat.enabled"
+            (change)="toggleFilter(stat.key, $any($event.target).checked)"
+          />
+          <span class="dashboard-filter__track">
+            <span class="dashboard-filter__thumb"></span>
+          </span>
+          <svg
+            [lucideIcon]="stat.icon"
+            class="dashboard-stats__icon"
+            aria-hidden="true"
+          ></svg>
+          <span class="dashboard-stats__label"
+            >{{ stat.label }}: {{ stat.value }}</span
+          >
+          <span class="dashboard-stats__badge" aria-hidden="true">{{
+            stat.value
+          }}</span>
+        </label>
+      }
+    </div>
+
+    @if (isLoading()) {
+      <div class="flex justify-center py-16">
+        <sc-loading-spinner size="lg"></sc-loading-spinner>
+      </div>
+    } @else if (!cards().length) {
+      <div class="text-center text-gray-400 py-16 mx-2 xl:mx-0">
+        No saved items match the current filters.
+      </div>
+    } @else {
+      <div
+        class="dashboard-grid mx-2 xl:mx-0"
+        cdkDropList
+        cdkDropListOrientation="mixed"
+        (cdkDropListDropped)="drop($event)"
+      >
+        @for (card of cards(); track card.kind + ":" + card.id) {
+          <article class="dashboard-card" cdkDrag>
+            <div class="dashboard-card__kind-row">
+              <div class="dashboard-card__kind">
+                @if (card.icon) {
+                  <svg
+                    [lucideIcon]="card.icon"
+                    class="dashboard-card__kind-icon"
+                    aria-hidden="true"
+                  ></svg>
+                }
+                @if (cardVendorLogo(card); as logo) {
+                  <img
+                    [src]="logo"
+                    [alt]="cardSubtitle(card) || ''"
+                    class="dashboard-card__vendor-logo"
+                  />
+                }
+                <h2 class="dashboard-card__title">{{ card.title }}</h2>
+              </div>
+              <span
+                class="dashboard-card__handle"
+                cdkDragHandle
+                aria-hidden="true"
+                >⋮⋮</span
+              >
+            </div>
+
+            @if (
+              card.kind !== "favoriteServers" &&
+                card.kind !== "favoriteDatabases" &&
+                cardSubtitle(card);
+              as subtitle
+            ) {
+              <p class="dashboard-card__description">{{ subtitle }}</p>
+            }
+
+            @if (cardFeatures(card).length) {
+              <div class="dashboard-card__table-wrap">
+                <div class="overflow-x-auto">
+                  <table class="dashboard-card__table">
+                    <thead>
+                      <tr>
+                        <th>Spec</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (feature of cardFeatures(card); track feature.name) {
+                        <tr>
+                          <td class="dashboard-card__table-filter">
+                            {{ feature.name }}
+                          </td>
+                          <td class="dashboard-card__table-value">
+                            {{ feature.value }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
+
+            @if (card.details?.length) {
+              <div class="dashboard-card__table-wrap">
+                <div class="overflow-x-auto">
+                  <table class="dashboard-card__table">
+                    <thead>
+                      <tr>
+                        @if (card.detailsKind === "instances") {
+                          <th>Vendor</th>
+                          <th>Name</th>
+                        } @else {
+                          <th>Filter</th>
+                          <th>Value</th>
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (row of visibleDetails(card); track $index) {
+                        <tr>
+                          <td
+                            [class.dashboard-card__table-field]="
+                              card.detailsKind === 'instances'
+                            "
+                            [class.dashboard-card__table-filter]="
+                              card.detailsKind !== 'instances'
+                            "
+                          >
+                            {{ row.field }}
+                          </td>
+                          <td class="dashboard-card__table-value">
+                            {{ row.value }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+                @if (detailsNeedToggle(card)) {
+                  @if (!isDetailsExpanded(cardKey(card))) {
+                    <div class="dashboard-card__details-more">
+                      <sc-button
+                        icon="chevron-down"
+                        ariaLabel="Expand list"
+                        color="brand"
+                        (buttonClick)="toggleDetails(cardKey(card))"
+                      ></sc-button>
+                    </div>
+                  } @else {
+                    <div class="dashboard-card__details-less">
+                      <sc-button
+                        icon="chevron-up"
+                        ariaLabel="Collapse list"
+                        color="brand"
+                        (buttonClick)="toggleDetails(cardKey(card))"
+                      ></sc-button>
+                    </div>
+                  }
+                }
+              </div>
+            }
+
+            <div
+              class="dashboard-card__actions"
+              [class.dashboard-card__actions--spread]="
+                cardActionCount(card) > 3
+              "
+            >
+              @if (isEditableCard(card)) {
+                <sc-button
+                  icon="square-pen"
+                  ariaLabel="Edit"
+                  variant="outline"
+                  color="brand"
+                  (buttonClick)="openEditCard(card)"
+                ></sc-button>
+                @if (card.note) {
+                  <sc-button
+                    icon="notebook-text"
+                    ariaLabel="View note"
+                    variant="outline"
+                    color="brand"
+                    (buttonClick)="openNoteCard(card)"
+                  ></sc-button>
+                }
+              }
+              @if (cardLink(card)) {
+                <sc-button
+                  icon="square-arrow-out-up-right"
+                  ariaLabel="Open"
+                  variant="outline"
+                  color="brand"
+                  (buttonClick)="openCard(card)"
+                ></sc-button>
+              }
+              <sc-button
+                icon="trash-2"
+                ariaLabel="Delete"
+                variant="outline"
+                color="danger"
+                (buttonClick)="deleteCard(card)"
+              ></sc-button>
+              @if (cardLink(card)) {
+                <sc-button
+                  [icon]="shareIcon(card)"
+                  ariaLabel="Share"
+                  variant="outline"
+                  (buttonClick)="shareCard(card)"
+                ></sc-button>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<sc-collection-save-modal
+  modalId="dashboard-edit-modal"
+  [title]="editModalTitle()"
+  confirmLabel="Confirm"
+  [saving]="isEditSaving()"
+  (confirmed)="confirmEditCard($event)"
+  (closed)="onEditModalClosed()"
+></sc-collection-save-modal>
+
+<div
+  #noteModal
+  id="dashboard-note-modal"
+  tabindex="-1"
+  class="dashboard-note-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+>
+  <div class="relative w-full max-w-3xl mx-auto my-auto">
+    <div
+      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
+    >
+      <div
+        class="flex items-start justify-between gap-4 p-4 md:p-6 border-b border-gray-600"
+      >
+        <div class="flex flex-col gap-2 min-w-0">
+          <h2 class="text-xl md:text-2xl font-semibold text-white">
+            {{ noteCard()?.title }}
+          </h2>
+        </div>
+        <button
+          type="button"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 shrink-0 inline-flex justify-center items-center"
+          (click)="closeNoteModal()"
+        >
+          <svg
+            class="w-3 h-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+            />
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+      @if (noteCard()?.note && isNoteModalOpen()) {
+        <div
+          class="dashboard-note-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
+        >
+          <p class="dashboard-note-modal-text">{{ noteCard()?.note }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>
