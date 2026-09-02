@@ -5,7 +5,7 @@ import { from, switchMap } from "rxjs";
 import { Auth } from "../../services/auth/auth";
 
 const WWW_API_BASE_URI =
-  import.meta?.env?.NG_APP_WWW_API_BASE_URI?.replace(/\/$/, "") || "";
+  import.meta.env.NG_APP_WWW_API_BASE_URI?.replace(/\/$/, "") || "";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const platformId = inject(PLATFORM_ID);

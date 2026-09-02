@@ -16,7 +16,7 @@ declare global {
   }
 
   interface ImportMeta {
-    readonly env?: ImportMetaEnv;
+    readonly env: ImportMetaEnv;
   }
 
   interface Window {

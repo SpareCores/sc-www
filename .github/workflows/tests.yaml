@@ -29,6 +29,7 @@ jobs:
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
+          NG_APP_WWW_API_BASE_URI: https://www-api-staging.sparecores.net
           NG_APP_CLERK_PUBLISHABLE_KEY: ""
           NG_APP_SENTRY_DSN: ""
       - uses: actions/upload-artifact@v7.0.1
@@ -60,6 +61,7 @@ jobs:
           CYPRESS_BASE_URL: http://localhost:4200
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
+          NG_APP_WWW_API_BASE_URI: https://www-api-staging.sparecores.net
           NG_APP_CLERK_PUBLISHABLE_KEY: ""
       - uses: actions/upload-artifact@v7.0.1
         if: always()
