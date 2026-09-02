@@ -6,10 +6,36 @@
       <sc-page-header
         icon="scale"
         [title]="title"
+        [showSavedStar]="showSavedStar"
         [showShare]="!!instances.length"
         [shareIcon]="clipboardIcon"
         (shareClick)="clipboardURL()"
       >
+        @if (instances.length) {
+          @if (activeSavedComparison()) {
+            <sc-button
+              label="Edit comparison"
+              icon="square-pen"
+              variant="outline"
+              (buttonClick)="openSaveComparisonModal()"
+            ></sc-button>
+            <sc-button
+              label="Delete comparison"
+              icon="trash-2"
+              variant="outline"
+              color="danger"
+              (buttonClick)="deleteSavedComparison()"
+            ></sc-button>
+          } @else {
+            <sc-button
+              label="Save comparison"
+              icon="save"
+              variant="outline"
+              [disabled]="!canSaveComparison()"
+              (buttonClick)="openSaveComparisonModal()"
+            ></sc-button>
+          }
+        }
       </sc-page-header>
       @if (instances.length) {
         <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
@@ -33,6 +59,13 @@
         </div>
       }
     </div>
+
+    <sc-collection-save-modal
+      modalId="database-compare-save-modal"
+      title="Save comparison"
+      confirmLabel="Confirm"
+      (confirmed)="confirmSaveComparison($event)"
+    ></sc-collection-save-modal>
 
     @if (!instances.length) {
       <div class="flex flex-col gap-4 mx-2 xl:mx-0">

@@ -69,6 +69,10 @@ import {
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { CompareCollectionsService } from "../../collections/compare-collections.service";
+import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { Auth } from "../../services/auth/auth";
+import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import {
   decodeBase64JsonUrlState,
   isDatabaseCompareUrlState,
@@ -168,6 +172,7 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
     LucideInfo,
     LucideTriangleAlert,
     LucideX,
+    CollectionSaveModalComponent,
   ],
   templateUrl: "./database-compare.component.html",
   styleUrl: "./database-compare.component.scss",
@@ -187,6 +192,10 @@ export class DatabaseCompareComponent
   private advisorUi = inject(AdvisorUiService);
   private chartTooltip = inject(ChartTooltipService);
   private legendVisibility = inject(CompareChartLegendVisibilityService);
+  private compareCollections = inject(CompareCollectionsService);
+  private auth = inject(Auth);
+  saveComparisonModal = viewChild(CollectionSaveModalComponent);
+  private readonly editingComparisonId = signal<string | null>(null);
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
   chartSectionTooltip = viewChild<ElementRef>("chartSectionTooltip");
@@ -206,6 +215,7 @@ export class DatabaseCompareComponent
 
   title = DATABASE_COMPARE_GUIDE_TITLE;
   description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
+  showSavedStar = false;
   keywords = "cloud, database, dbaas, compare, sparecores";
 
   isLoading = false;
@@ -550,6 +560,7 @@ export class DatabaseCompareComponent
         this.applyGuideChrome();
       }
       this.updateCompareBreadcrumb(this.instances.length);
+      this.syncSavedComparisonChrome();
     } else {
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
       this.applyGuideChrome();
@@ -815,6 +826,7 @@ export class DatabaseCompareComponent
   private applyGuideChrome(): void {
     this.title = DATABASE_COMPARE_GUIDE_TITLE;
     this.description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
+    this.showSavedStar = false;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -826,6 +838,7 @@ export class DatabaseCompareComponent
   private applyComparisonChrome(title?: string, description?: string): void {
     this.title = title || DATABASE_COMPARISON_TITLE;
     this.description = description || DATABASE_COMPARE_GUIDE_DESCRIPTION;
+    this.showSavedStar = false;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -865,6 +878,100 @@ export class DatabaseCompareComponent
     }
 
     this.breadcrumbs = this.baseCompareBreadcrumbs();
+  }
+
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  activeSavedComparison() {
+    return this.compareCollections.activeSavedComparison();
+  }
+
+  canSaveComparison(): boolean {
+    return this.isAuthenticated() && this.instances.length >= 2;
+  }
+
+  openSaveComparisonModal(): void {
+    if (!this.isAuthenticated()) {
+      this.auth.signIn();
+      return;
+    }
+
+    const saved = this.activeSavedComparison();
+    this.editingComparisonId.set(saved?.id ?? null);
+    this.saveComparisonModal()?.open(saved?.name ?? "", saved?.note ?? "");
+  }
+
+  confirmSaveComparison(payload: { name: string; note?: string }): void {
+    const instances = this.getCompareInstancesForSave();
+    const editingId = this.editingComparisonId();
+    const saved = this.activeSavedComparison();
+    const id =
+      editingId ??
+      saved?.id ??
+      this.compareCollections.buildComparisonId(instances);
+
+    if (editingId || saved) {
+      this.compareCollections.updateComparison(
+        id,
+        instances,
+        payload.name,
+        payload.note,
+      );
+    } else {
+      this.compareCollections.saveComparison(
+        id,
+        instances,
+        payload.name,
+        payload.note,
+      );
+    }
+
+    this.syncSavedComparisonChrome();
+  }
+
+  deleteSavedComparison(): void {
+    const saved = this.activeSavedComparison();
+    if (!saved) {
+      return;
+    }
+
+    this.compareCollections.deleteComparison(saved.id);
+    this.applyComparisonChrome();
+    this.updateCompareBreadcrumb(this.instances.length);
+  }
+
+  private getCompareInstancesForSave(): DatabaseCompare[] {
+    return this.instances.map((instance) => ({
+      display_name: instance.display_name,
+      vendor: instance.vendor,
+      database: instance.database,
+    }));
+  }
+
+  private syncSavedComparisonChrome(): void {
+    if (this.route.snapshot.paramMap.get("id")) {
+      return;
+    }
+
+    const saved = this.activeSavedComparison();
+    if (!saved || !this.instances.length) {
+      return;
+    }
+
+    this.title = saved.name;
+    this.description = saved.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
+    this.showSavedStar = true;
+    this.breadcrumbs = [
+      ...this.baseCompareBreadcrumbs(),
+      { name: saved.name, url: saved.compare_url },
+    ];
+    this.seoHandler.updateTitleAndMetaTags(
+      this.title,
+      this.description,
+      this.keywords,
+    );
   }
 
   private buildPropertySections(): void {

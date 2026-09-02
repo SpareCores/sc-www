@@ -67,6 +67,12 @@ import { NeetoCalService } from "../../services/neeto-cal.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { Auth } from "../../services/auth/auth";
+import { AdviceCollectionsService } from "../../collections/advice-collections.service";
+import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
+import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
+import type { SearchBarQuery } from "../../components/search-bar/search-bar.types";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {
@@ -134,6 +140,7 @@ import {
   hasCustomAdvisorColumns,
   isAdvisorOptimizationGoal,
   normalizeAdvisorQueryStringArray,
+  normalizeBenchmarkConfig,
   restoreAdvisorColumnsFromQuery,
   stableStringify,
 } from "./advisor.utils";
@@ -387,6 +394,8 @@ type AdvisorComparableResourceKey =
     GpuMemoryPipe,
     RouterLink,
     SearchBarComponent,
+    CollectionSaveModalComponent,
+    GuestCollectionsBannerComponent,
   ],
   templateUrl: "./advisor.component.html",
   styleUrl: "./advisor.component.scss",
@@ -399,9 +408,12 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private auth = inject(Auth);
+  private adviceCollections = inject(AdviceCollectionsService);
   private neetoCalService = inject(NeetoCalService);
   private uiTooltip = inject(UiTooltipService);
   readonly advisorUi = inject(AdvisorUiService);
+  saveAdviceModal = viewChild(CollectionSaveModalComponent);
   readonly currencyDropdown =
     viewChild<FlowbiteDropdownDirective>("currencyDropdown");
   readonly pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
@@ -428,6 +440,8 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private customControlFocusFrame: number | null = null;
   private customControlFocusAttemptCount = 0;
   private lastPendingCustomControlFocus: string | null = null;
+  private readonly pendingSaveAdviceClose = signal(false);
+  private readonly editingAdviceId = signal<string | null>(null);
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
@@ -789,6 +803,36 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.missingRequiredInputs().length === 0 &&
       this.matchedBaselineBenchmarkScore() !== null,
   );
+  readonly displayTitle = computed(() => {
+    const saved = this.adviceCollections.activeSavedAdvice(
+      this.getAdviceQuery(),
+    );
+    return saved?.name ?? ADVISOR_PAGE_TITLE;
+  });
+  readonly displayDescription = computed(() => {
+    const saved = this.adviceCollections.activeSavedAdvice(
+      this.getAdviceQuery(),
+    );
+    if (saved?.note?.trim()) {
+      return saved.note.trim();
+    }
+    if (saved) {
+      return SAVED_ITEM_FALLBACK_NOTE;
+    }
+    return ADVISOR_PAGE_DESCRIPTION;
+  });
+  readonly showSavedStar = computed(
+    () => !!this.adviceCollections.activeSavedAdvice(this.getAdviceQuery()),
+  );
+  readonly displayBreadcrumbs = computed((): BreadcrumbSegment[] => {
+    const saved = this.adviceCollections.activeSavedAdvice(
+      this.getAdviceQuery(),
+    );
+    if (!saved) {
+      return ADVISOR_BREADCRUMBS;
+    }
+    return [...ADVISOR_BREADCRUMBS, { name: saved.name, url: "/advisor" }];
+  });
   readonly recommendationSummary = computed(() =>
     this.advisorUi.buildRecommendationSummary(this.totalRecommendationCount()),
   );
@@ -1135,6 +1179,33 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     effect(() => {
+      if (!this.pendingSaveAdviceClose()) {
+        return;
+      }
+
+      this.adviceCollections.store.savedAdvices();
+      const editingId = this.editingAdviceId();
+      const query = this.getAdviceQuery();
+      const saved = this.activeSavedAdvice();
+      const id = editingId ?? this.adviceCollections.buildAdviceId(query);
+      const saving = this.adviceCollections.isSavingAdvice(id);
+      const updating = editingId
+        ? this.adviceCollections.isUpdatingAdvice(editingId)
+        : saved
+          ? this.adviceCollections.isUpdatingAdvice(saved.id)
+          : false;
+
+      if (saving || updating) {
+        return;
+      }
+
+      this.pendingSaveAdviceClose.set(false);
+      if (editingId || saved) {
+        this.saveAdviceModal()?.close();
+      }
+    });
+
+    effect(() => {
       const pendingBaselineVendorId = this.pendingBaselineVendorId();
       const pendingBaselineApiReference = this.pendingBaselineApiReference();
 
@@ -1165,8 +1236,19 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       const pendingWorkloadId = this.pendingWorkloadId();
       const pendingWorkloadConfig = this.pendingWorkloadConfig();
 
+      if (!pendingWorkloadId) {
+        return;
+      }
+
+      if (
+        !this.selectedBaselineServer() ||
+        this.isLoadingBaselineBenchmarkScores()
+      ) {
+        return;
+      }
+
       const matchedWorkload = findAdvisorBenchmarkConfigOption(
-        this.benchmarkConfigOptions(),
+        this.baselineBenchmarkConfigOptions(),
         pendingWorkloadId,
         pendingWorkloadConfig,
       );
@@ -1198,7 +1280,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
 
       if (!selectedBaselineServer) {
-        if (selectedBenchmarkConfig) {
+        if (selectedBenchmarkConfig && !this.pendingWorkloadId()) {
           this.selectedBenchmarkConfig.set(null);
           this.benchmarkConfigInput.set("");
         }
@@ -1214,7 +1296,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.baselineBenchmarkConfigOptions();
 
       if (baselineBenchmarkConfigOptions.length === 0) {
-        if (selectedBenchmarkConfig) {
+        if (selectedBenchmarkConfig && !this.pendingWorkloadId()) {
           this.selectedBenchmarkConfig.set(null);
           this.benchmarkConfigInput.set("");
         }
@@ -1817,6 +1899,78 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   clearCompareSelection(): void {
     this.serverCompare.clearCompare();
+  }
+
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  activeSavedAdvice() {
+    return this.adviceCollections.activeSavedAdvice(this.getAdviceQuery());
+  }
+
+  canSaveAdvice(): boolean {
+    return this.isAuthenticated() && this.canRequestRecommendations();
+  }
+
+  openSaveAdviceModal(): void {
+    if (!this.isAuthenticated()) {
+      this.auth.signIn();
+      return;
+    }
+
+    const saved = this.activeSavedAdvice();
+    this.editingAdviceId.set(saved?.id ?? null);
+    this.saveAdviceModal()?.open(saved?.name ?? "", saved?.note ?? "");
+  }
+
+  isSaveAdvicePending(): boolean {
+    const editingId = this.editingAdviceId();
+    if (editingId) {
+      return this.adviceCollections.isUpdatingAdvice(editingId);
+    }
+
+    const saved = this.activeSavedAdvice();
+    if (saved) {
+      return this.adviceCollections.isUpdatingAdvice(saved.id);
+    }
+
+    return this.adviceCollections.isSavingAdvice(
+      this.adviceCollections.buildAdviceId(this.getAdviceQuery()),
+    );
+  }
+
+  confirmSaveAdvice(payload: { name: string; note?: string }): void {
+    const query = this.getAdviceQuery();
+    const editingId = this.editingAdviceId();
+    const saved = this.activeSavedAdvice();
+    const id =
+      editingId ?? saved?.id ?? this.adviceCollections.buildAdviceId(query);
+
+    this.pendingSaveAdviceClose.set(true);
+
+    if (editingId || saved) {
+      this.adviceCollections.updateAdvice(
+        id,
+        query,
+        payload.name,
+        payload.note,
+      );
+      return;
+    }
+
+    this.adviceCollections.saveAdvice(id, query, payload.name, payload.note);
+  }
+
+  deleteSavedAdvice(): void {
+    const saved = this.activeSavedAdvice();
+    if (saved) {
+      this.adviceCollections.deleteAdvice(saved.id);
+    }
+  }
+
+  private getAdviceQuery(): SearchBarQuery {
+    return this.getUrlStateQueryParams() as SearchBarQuery;
   }
 
   async clipboardURL(): Promise<void> {
@@ -2678,8 +2832,9 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (workloadId) {
       queryParams.workload_id = workloadId;
-      queryParams.workload_config =
-        workloadConfig || ADVISOR_DEFAULT_WORKLOAD_CONFIG;
+      queryParams.workload_config = normalizeBenchmarkConfig(
+        workloadConfig ?? ADVISOR_DEFAULT_WORKLOAD_CONFIG,
+      );
     }
 
     if (this.optimizationGoal() !== "cost") {
@@ -2858,8 +3013,17 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
           })
         : {};
 
+    const nextConfig = nextValue.selectedBenchmarkConfig || null;
+
+    if (!nextConfig && this.pendingWorkloadId()) {
+      if (nextValue.inputValue) {
+        this.benchmarkConfigInput.set(nextValue.inputValue);
+      }
+      return;
+    }
+
     this.benchmarkConfigInput.set(nextValue.inputValue || "");
-    this.selectedBenchmarkConfig.set(nextValue.selectedBenchmarkConfig || null);
+    this.selectedBenchmarkConfig.set(nextConfig);
     this.pendingWorkloadId.set(null);
     this.pendingWorkloadConfig.set(null);
   }

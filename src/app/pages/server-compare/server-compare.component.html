@@ -6,11 +6,35 @@
       <sc-page-header
         icon="scale"
         [title]="title"
+        [showSavedStar]="showSavedStar"
         [showShare]="!!instances.length"
         [shareIcon]="clipboardIcon"
         (shareClick)="clipboardURL($event)"
       >
         @if (instances.length) {
+          @if (activeSavedComparison()) {
+            <sc-button
+              label="Edit comparison"
+              icon="square-pen"
+              variant="outline"
+              (buttonClick)="openSaveComparisonModal()"
+            ></sc-button>
+            <sc-button
+              label="Delete comparison"
+              icon="trash-2"
+              variant="outline"
+              color="danger"
+              (buttonClick)="deleteSavedComparison()"
+            ></sc-button>
+          } @else {
+            <sc-button
+              label="Save comparison"
+              icon="save"
+              variant="outline"
+              [disabled]="!canSaveComparison()"
+              (buttonClick)="openSaveComparisonModal()"
+            ></sc-button>
+          }
           <sc-button
             label="Embed chart"
             icon="copy"
@@ -42,6 +66,14 @@
         </div>
       }
     </div>
+
+    <sc-collection-save-modal
+      modalId="server-compare-save-modal"
+      title="Save comparison"
+      confirmLabel="Confirm"
+      [saving]="isSaveComparisonPending()"
+      (confirmed)="confirmSaveComparison($event)"
+    ></sc-collection-save-modal>
 
     @if (!instances.length) {
       <div
