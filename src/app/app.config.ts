@@ -18,12 +18,14 @@ import {
   HttpRequest,
   provideHttpClient,
   withFetch,
+  withInterceptors,
 } from "@angular/common/http";
 import { provideLucideIcons } from "@lucide/angular";
 import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
 import * as Sentry from "@sentry/angular";
 import { provideAppCharts } from "./components/charts/shared/chart-providers";
+import { authInterceptor } from "./shared/interceptors/auth.interceptor";
 import { Auth } from "./services/auth/auth";
 
 function httpFilter(req: HttpRequest<any>): boolean {
@@ -68,7 +70,7 @@ export const appConfig: ApplicationConfig = {
       }),
       withEventReplay(),
     ),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideAppCharts(),
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),

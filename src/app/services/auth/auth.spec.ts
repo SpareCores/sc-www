@@ -1,11 +1,15 @@
 import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
+import { provideRouter } from "@angular/router";
 import { Auth } from "./auth";
 
 describe("Auth", () => {
   function createAuth(platformId: string = "browser"): Auth {
     TestBed.configureTestingModule({
-      providers: [{ provide: PLATFORM_ID, useValue: platformId }],
+      providers: [
+        { provide: PLATFORM_ID, useValue: platformId },
+        provideRouter([]),
+      ],
     });
     return TestBed.inject(Auth);
   }
@@ -134,5 +138,59 @@ describe("Auth", () => {
     expect(() => auth.signUp()).not.toThrow();
     expect(() => auth.openUserProfile()).not.toThrow();
     await expectAsync(auth.signOut()).toBeResolved();
+  });
+
+  it("returns null token outside the browser", async () => {
+    const auth = createAuth("server");
+
+    await expectAsync(auth.getToken()).toBeResolvedTo(null);
+  });
+
+  it("returns null token when Clerk session is unavailable", async () => {
+    const auth = createAuth();
+    (auth as unknown as { initPromise: Promise<void> }).initPromise =
+      Promise.resolve();
+
+    await expectAsync(auth.getToken()).toBeResolvedTo(null);
+  });
+
+  it("returns the Clerk session token when available", async () => {
+    const auth = createAuth();
+    const getToken = jasmine
+      .createSpy("getToken")
+      .and.resolveTo("session-token");
+    (
+      auth as unknown as {
+        clerk: { session: { getToken: typeof getToken } };
+        initPromise: Promise<void>;
+      }
+    ).clerk = {
+      session: { getToken },
+    };
+    (auth as unknown as { initPromise: Promise<void> }).initPromise =
+      Promise.resolve();
+
+    await expectAsync(auth.getToken()).toBeResolvedTo("session-token");
+    expect(getToken).toHaveBeenCalledWith(undefined);
+  });
+
+  it("requests a named Clerk JWT template when provided", async () => {
+    const auth = createAuth();
+    const getToken = jasmine
+      .createSpy("getToken")
+      .and.resolveTo("keeper-token");
+    (
+      auth as unknown as {
+        clerk: { session: { getToken: typeof getToken } };
+        initPromise: Promise<void>;
+      }
+    ).clerk = {
+      session: { getToken },
+    };
+    (auth as unknown as { initPromise: Promise<void> }).initPromise =
+      Promise.resolve();
+
+    await expectAsync(auth.getToken("keeper")).toBeResolvedTo("keeper-token");
+    expect(getToken).toHaveBeenCalledWith({ template: "keeper" });
   });
 });
