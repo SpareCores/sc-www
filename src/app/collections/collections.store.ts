@@ -122,16 +122,10 @@ export const CollectionsStore = signalStore(
   withEntities(comparisonsConfig),
   withEntities(advicesConfig),
   withComputed((store) => ({
-    favoriteServers: computed(() =>
-      sortByOrder(store.serversEntities()),
-    ),
-    favoriteDatabases: computed(() =>
-      sortByOrder(store.databasesEntities()),
-    ),
+    favoriteServers: computed(() => sortByOrder(store.serversEntities())),
+    favoriteDatabases: computed(() => sortByOrder(store.databasesEntities())),
     savedSearches: computed(() => sortByOrder(store.searchesEntities())),
-    savedComparisons: computed(() =>
-      sortByOrder(store.comparisonsEntities()),
-    ),
+    savedComparisons: computed(() => sortByOrder(store.comparisonsEntities())),
     savedAdvices: computed(() => sortByOrder(store.advicesEntities())),
     favoriteServerIds: computed(() => new Set(store.serversIds())),
     favoriteDatabaseIds: computed(() => new Set(store.databasesIds())),
@@ -304,9 +298,7 @@ export const CollectionsStore = signalStore(
     },
     removeFavoriteServerById: rxMethod<string>(
       pipe(
-        tap((id) =>
-          store.startMutation(mutationKey("favorite-server", id)),
-        ),
+        tap((id) => store.startMutation(mutationKey("favorite-server", id))),
         switchMap((id) =>
           collections.deleteFavoriteServerById(id).pipe(
             tapResponse({
@@ -325,9 +317,7 @@ export const CollectionsStore = signalStore(
     ),
     removeFavoriteDatabaseById: rxMethod<string>(
       pipe(
-        tap((id) =>
-          store.startMutation(mutationKey("favorite-database", id)),
-        ),
+        tap((id) => store.startMutation(mutationKey("favorite-database", id))),
         switchMap((id) =>
           collections.deleteFavoriteDatabaseById(id).pipe(
             tapResponse({
@@ -426,7 +416,10 @@ export const CollectionsStore = signalStore(
       pipe(
         tap(({ vendorId, serverId }) => {
           store.startMutation(
-            mutationKey("favorite-server", favoriteServerId(vendorId, serverId)),
+            mutationKey(
+              "favorite-server",
+              favoriteServerId(vendorId, serverId),
+            ),
           );
         }),
         switchMap(({ vendorId, serverId, note }) => {
@@ -495,15 +488,17 @@ export const CollectionsStore = signalStore(
           };
 
           if (isFavorite) {
-            return collections.deleteFavoriteDatabase(vendorId, databaseId).pipe(
-              tapResponse({
-                next: () => {
-                  patchState(store, removeEntity(id, databasesConfig));
-                  finish();
-                },
-                error: onError,
-              }),
-            );
+            return collections
+              .deleteFavoriteDatabase(vendorId, databaseId)
+              .pipe(
+                tapResponse({
+                  next: () => {
+                    patchState(store, removeEntity(id, databasesConfig));
+                    finish();
+                  },
+                  error: onError,
+                }),
+              );
           }
 
           return collections
@@ -534,10 +529,7 @@ export const CollectionsStore = signalStore(
       pipe(
         tap(({ page, query }) => {
           store.startMutation(
-            mutationKey(
-              "save-search",
-              savedSearchIdFromQuery(page, query),
-            ),
+            mutationKey("save-search", savedSearchIdFromQuery(page, query)),
           );
         }),
         switchMap(({ page, query, name, note }) => {
@@ -628,7 +620,9 @@ export const CollectionsStore = signalStore(
       note?: string;
     }>(
       pipe(
-        tap(({ id }) => store.startMutation(mutationKey("save-comparison", id))),
+        tap(({ id }) =>
+          store.startMutation(mutationKey("save-comparison", id)),
+        ),
         switchMap(({ id, compareUrl, instances, name, note }) =>
           collections
             .saveComparison(id, {
