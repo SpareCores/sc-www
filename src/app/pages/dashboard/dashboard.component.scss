@@ -208,6 +208,7 @@
   width: 100%;
   color: #ffffff;
   border-collapse: collapse;
+  table-layout: fixed;
 
   thead {
     border-bottom: 1px solid rgb(229 231 235);
@@ -242,7 +243,6 @@
       text-align: left;
       font-size: 0.875rem;
       vertical-align: middle;
-      word-break: break-word;
     }
   }
 }
@@ -258,13 +258,32 @@
   color: #ffffff;
   font-size: 0.875rem;
   white-space: nowrap;
+  width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dashboard-card__table-value {
   color: #d1d5db;
   font-size: 0.75rem;
-  overflow-wrap: anywhere;
+  width: 60%;
+  max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   word-break: normal;
+  overflow-wrap: normal;
+}
+
+.dashboard-card__table-link {
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.15em;
+}
+
+.dashboard-card__table-link:hover {
+  color: #e5e7eb;
 }
 
 .dashboard-card__handle {

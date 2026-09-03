@@ -36,6 +36,7 @@ import type {
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { mutationKey } from "../../shared/store/with-mutation-status";
 
 type DashboardFeature = {
@@ -100,10 +101,12 @@ export class DashboardComponent implements OnDestroy {
   private keeperAPI = inject(KeeperAPIService);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private uiTooltip = inject(UiTooltipService);
   private platformId = inject(PLATFORM_ID);
 
   private saveModal = viewChild(CollectionSaveModalComponent);
   private noteModalRef = viewChild<ElementRef<HTMLElement>>("noteModal");
+  private tooltipRef = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   private noteFlowbiteModal: Modal | null = null;
   private loadingFavoriteFeatures = new Set<string>();
   private vendorsLoaded = false;
@@ -118,8 +121,10 @@ export class DashboardComponent implements OnDestroy {
   protected editingCard = signal<DashboardCardViewModel | null>(null);
   protected noteCard = signal<DashboardCardViewModel | null>(null);
   protected isNoteModalOpen = signal(false);
+  private readonly pendingEditClose = signal(false);
   private favoriteFeatures = signal<Record<string, DashboardFeature[]>>({});
   private vendorsById = signal<Record<string, DashboardVendor>>({});
+  protected tooltipContent = "";
 
   protected cards = computed(() => this.collectionsStore.dashboardCards());
   protected stats = computed(() => this.collectionsStore.dashboardStats());
@@ -179,6 +184,34 @@ export class DashboardComponent implements OnDestroy {
         void this.loadFavoriteFeatures(card);
       }
     });
+
+    effect(() => {
+      if (!this.pendingEditClose()) {
+        return;
+      }
+
+      const card = this.editingCard();
+      if (!card) {
+        this.pendingEditClose.set(false);
+        return;
+      }
+
+      this.collectionsStore.savedSearches();
+      this.collectionsStore.savedComparisons();
+      this.collectionsStore.savedAdvices();
+
+      if (
+        this.collectionsStore.isMutating(
+          mutationKey(this.updateMutationScope(card.kind), card.id),
+        )
+      ) {
+        return;
+      }
+
+      this.pendingEditClose.set(false);
+      this.saveModal()?.close();
+      this.editingCard.set(null);
+    });
   }
 
   ngOnDestroy(): void {
@@ -218,10 +251,7 @@ export class DashboardComponent implements OnDestroy {
   protected cardActionCount(card: DashboardCardViewModel): number {
     let count = 1;
     if (this.isEditableCard(card)) {
-      count += 1;
-      if (card.note) {
-        count += 1;
-      }
+      count += 2;
     }
     if (this.cardLink(card)) {
       count += 2;
@@ -240,17 +270,40 @@ export class DashboardComponent implements OnDestroy {
     return !!this.expandedDetails()[cardId];
   }
 
+  protected showDetailTooltip(event: MouseEvent, content: string): void {
+    const tooltip = this.tooltipRef()?.nativeElement;
+    const target = event.currentTarget;
+    if (
+      !tooltip ||
+      !content ||
+      !(target instanceof HTMLElement) ||
+      target.scrollWidth <= target.clientWidth
+    ) {
+      return;
+    }
+
+    this.tooltipContent = content;
+    this.uiTooltip.show(tooltip, event, {
+      left: "anchor-right",
+      top: "anchor-below",
+    });
+  }
+
+  protected hideDetailTooltip(): void {
+    const tooltip = this.tooltipRef()?.nativeElement;
+    if (!tooltip) {
+      return;
+    }
+    this.uiTooltip.hide(tooltip);
+  }
+
   protected detailsNeedToggle(card: DashboardCardViewModel): boolean {
-    return (
-      card.detailsKind === "instances" &&
-      (card.details?.length ?? 0) > INSTANCE_PREVIEW_COUNT
-    );
+    return (card.details?.length ?? 0) > INSTANCE_PREVIEW_COUNT;
   }
 
   protected visibleDetails(card: DashboardCardViewModel) {
     const details = card.details ?? [];
     if (
-      card.detailsKind !== "instances" ||
       this.isDetailsExpanded(this.cardKey(card)) ||
       details.length <= INSTANCE_PREVIEW_COUNT
     ) {
@@ -266,6 +319,10 @@ export class DashboardComponent implements OnDestroy {
   }
 
   protected deleteCard(card: DashboardCardViewModel): void {
+    if (this.isDeletingCard(card)) {
+      return;
+    }
+
     switch (card.kind) {
       case "favoriteServers":
         if (card.id) {
@@ -289,6 +346,12 @@ export class DashboardComponent implements OnDestroy {
     }
   }
 
+  protected isDeletingCard(card: DashboardCardViewModel): boolean {
+    return this.collectionsStore.isMutating(
+      mutationKey(this.deleteMutationScope(card.kind), card.id),
+    );
+  }
+
   protected openEditCard(card: DashboardCardViewModel): void {
     this.editingCard.set(card);
     this.saveModal()?.open(card.title, card.note ?? "");
@@ -306,6 +369,7 @@ export class DashboardComponent implements OnDestroy {
         if (!item) {
           return;
         }
+        this.pendingEditClose.set(true);
         this.collectionsStore.updateSearch({
           id: card.id,
           page: item.page,
@@ -320,6 +384,7 @@ export class DashboardComponent implements OnDestroy {
         if (!item) {
           return;
         }
+        this.pendingEditClose.set(true);
         this.collectionsStore.updateComparison({
           id: card.id,
           compareUrl: item.compare_url,
@@ -334,6 +399,7 @@ export class DashboardComponent implements OnDestroy {
         if (!item) {
           return;
         }
+        this.pendingEditClose.set(true);
         this.collectionsStore.updateAdvice({
           id: card.id,
           query: item.query,
@@ -345,9 +411,6 @@ export class DashboardComponent implements OnDestroy {
       default:
         return;
     }
-
-    this.saveModal()?.close();
-    this.editingCard.set(null);
   }
 
   protected onEditModalClosed(): void {
@@ -438,6 +501,23 @@ export class DashboardComponent implements OnDestroy {
         return "update-advice";
       default:
         return "update";
+    }
+  }
+
+  private deleteMutationScope(kind: DashboardCardViewModel["kind"]): string {
+    switch (kind) {
+      case "favoriteServers":
+        return "favorite-server";
+      case "favoriteDatabases":
+        return "favorite-database";
+      case "savedSearches":
+        return "delete-search";
+      case "savedComparisons":
+        return "delete-comparison";
+      case "savedAdvices":
+        return "delete-advice";
+      default:
+        return "delete";
     }
   }
 

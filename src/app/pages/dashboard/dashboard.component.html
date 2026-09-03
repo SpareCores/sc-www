@@ -70,6 +70,13 @@
                     aria-hidden="true"
                   ></svg>
                 }
+                @if (card.secondaryIcon) {
+                  <svg
+                    [lucideIcon]="card.secondaryIcon"
+                    class="dashboard-card__kind-icon"
+                    aria-hidden="true"
+                  ></svg>
+                }
                 @if (cardVendorLogo(card); as logo) {
                   <img
                     [src]="logo"
@@ -148,11 +155,33 @@
                             [class.dashboard-card__table-filter]="
                               card.detailsKind !== 'instances'
                             "
+                            (mouseenter)="showDetailTooltip($event, row.field)"
+                            (mouseleave)="hideDetailTooltip()"
                           >
-                            {{ row.field }}
+                            @if (row.fieldHref) {
+                              <a
+                                class="dashboard-card__table-link"
+                                [routerLink]="row.fieldHref"
+                                >{{ row.field }}</a
+                              >
+                            } @else {
+                              {{ row.field }}
+                            }
                           </td>
-                          <td class="dashboard-card__table-value">
-                            {{ row.value }}
+                          <td
+                            class="dashboard-card__table-value"
+                            (mouseenter)="showDetailTooltip($event, row.value)"
+                            (mouseleave)="hideDetailTooltip()"
+                          >
+                            @if (row.valueHref) {
+                              <a
+                                class="dashboard-card__table-link"
+                                [routerLink]="row.valueHref"
+                                >{{ row.value }}</a
+                              >
+                            } @else {
+                              {{ row.value }}
+                            }
                           </td>
                         </tr>
                       }
@@ -197,15 +226,14 @@
                   color="brand"
                   (buttonClick)="openEditCard(card)"
                 ></sc-button>
-                @if (card.note) {
-                  <sc-button
-                    icon="notebook-text"
-                    ariaLabel="View note"
-                    variant="outline"
-                    color="brand"
-                    (buttonClick)="openNoteCard(card)"
-                  ></sc-button>
-                }
+                <sc-button
+                  icon="notebook-text"
+                  ariaLabel="View note"
+                  variant="outline"
+                  color="brand"
+                  [disabled]="!card.note"
+                  (buttonClick)="openNoteCard(card)"
+                ></sc-button>
               }
               @if (cardLink(card)) {
                 <sc-button
@@ -221,6 +249,7 @@
                 ariaLabel="Delete"
                 variant="outline"
                 color="danger"
+                [loading]="isDeletingCard(card)"
                 (buttonClick)="deleteCard(card)"
               ></sc-button>
               @if (cardLink(card)) {
@@ -298,4 +327,13 @@
       }
     </div>
   </div>
+</div>
+
+<div
+  id="tooltipDefault"
+  #tooltipDefault
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+>
+  {{ tooltipContent }}
 </div>
