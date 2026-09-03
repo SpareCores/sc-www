@@ -14,13 +14,12 @@ import {
   favoriteDatabaseId,
   favoriteServerId,
 } from "../../../collections/collections.types";
-import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
 
 export type FavoriteEntityKind = "server" | "database";
 
 @Component({
   selector: "sc-favorite-star-button",
-  imports: [LucideStar, LoadingSpinnerComponent],
+  imports: [LucideStar],
   templateUrl: "./favorite-star-button.html",
   styleUrl: "./favorite-star-button.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,7 +32,9 @@ export class FavoriteStarButtonComponent {
   vendorId = input.required<string>();
   entityId = input.required<string>();
   disabled = input(false);
+  menuMode = input(false);
   requireAuth = output<void>();
+  menuRequest = output<MouseEvent>();
 
   protected isAuthenticated = computed(() => this.auth.isAuthenticated());
 
@@ -69,6 +70,11 @@ export class FavoriteStarButtonComponent {
 
     if (!this.isAuthenticated()) {
       this.requireAuth.emit();
+      return;
+    }
+
+    if (this.menuMode()) {
+      this.menuRequest.emit(event);
       return;
     }
 

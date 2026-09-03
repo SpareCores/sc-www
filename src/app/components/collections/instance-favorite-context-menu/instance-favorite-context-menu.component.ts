@@ -62,6 +62,10 @@ export class InstanceFavoriteContextMenuComponent {
   }
 
   protected onContextMenu(event: MouseEvent): void {
+    this.openFromEvent(event);
+  }
+
+  openFromEvent(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
 

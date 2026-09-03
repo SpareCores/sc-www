@@ -26,13 +26,23 @@
         <label class="flex flex-col gap-2 text-white text-sm">
           <span>{{ nameLabel() }} *</span>
           <input
+            #nameInput
             type="text"
-            class="rounded-lg border border-gray-600 bg-primary px-3 py-2 text-white"
+            class="rounded-lg border bg-primary px-3 py-2 text-white"
+            [class.border-gray-600]="!showNameWarning()"
+            [class.border-red-500]="showNameWarning()"
             [ngModel]="name()"
-            (ngModelChange)="name.set($event)"
-            [minlength]="3"
+            (ngModelChange)="onNameChange($event)"
+            (keydown.enter)="onNameEnter($event)"
+            [minlength]="nameMinLength"
             maxlength="120"
+            [attr.aria-invalid]="showNameWarning() ? true : null"
           />
+          @if (showNameWarning()) {
+          <span class="text-xs text-red-400">
+            Name must be at least {{ nameMinLength }} characters.
+          </span>
+          }
         </label>
         <label class="flex flex-col gap-2 text-white text-sm">
           <span>{{ notesLabel() }}</span>
@@ -57,7 +67,8 @@
           <sc-button
             [label]="confirmLabel()"
             icon="circle-check"
-            [disabled]="!canConfirm() || saving()"
+            [loading]="saving()"
+            [disabled]="!canConfirm()"
             (buttonClick)="confirm()"
           ></sc-button>
         </div>
