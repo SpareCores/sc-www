@@ -211,6 +211,11 @@
   @apply size-4 shrink-0;
 }
 
+.sc-button__spinner {
+  @apply inline-block size-4 shrink-0 animate-spin rounded-full border-current border-t-transparent;
+  border-width: 3px;
+}
+
 .sc-button__label {
   @apply min-w-0 truncate;
 }

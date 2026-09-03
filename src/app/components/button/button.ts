@@ -48,6 +48,7 @@ export class Button {
   avatarSrc = input<string | null | undefined>(undefined);
   avatarAlt = input<string | null>(null);
   labelClass = input<string>("");
+  loading = input(false);
 
   buttonClick = output<MouseEvent>();
 
@@ -59,9 +60,12 @@ export class Button {
 
   avatarAltText = computed(() => this.avatarAlt() || this.label() || "Avatar");
 
+  isDisabled = computed(() => this.disabled() || this.loading());
+
   showStartIcon = computed(
     () =>
       !!this.icon() &&
+      !this.loading() &&
       !this.label() &&
       !this.showAvatar() &&
       this.variant() !== "dropdown" &&
@@ -119,7 +123,7 @@ export class Button {
   });
 
   onClick(event: MouseEvent) {
-    if (this.disabled()) {
+    if (this.isDisabled()) {
       event.preventDefault();
       event.stopPropagation();
       return;
