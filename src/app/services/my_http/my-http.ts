@@ -15,29 +15,6 @@ const RETRY_INTERVALS_SSR = [100, 200]; // in milliseconds
 const BACKEND_BASE_URI = import.meta.env.NG_APP_BACKEND_BASE_URI;
 const BACKEND_BASE_URI_SSR = import.meta.env.NG_APP_BACKEND_BASE_URI_SSR;
 
-function keeperQueryRequiresAuth(
-  query: Record<string, unknown> | undefined,
-): boolean {
-  if (!query) {
-    return false;
-  }
-
-  const countries = query["countries"];
-  if (Array.isArray(countries) && countries.length > 1) {
-    return true;
-  }
-
-  const vendorRegions = query["vendor_regions"];
-  if (Array.isArray(vendorRegions) && vendorRegions.length > 0) {
-    return true;
-  }
-  if (typeof vendorRegions === "string" && vendorRegions.length > 0) {
-    return true;
-  }
-
-  return false;
-}
-
 // swagger-typescript-api
 export class MYHTTPClient extends HttpClientSDK {
   constructor(
@@ -71,7 +48,7 @@ export class MYHTTPClient extends HttpClientSDK {
       "X-Application-ID": "sc-www",
     };
 
-    if (isPlatformBrowser(this.platformId) && keeperQueryRequiresAuth(query)) {
+    if (isPlatformBrowser(this.platformId)) {
       const token = await this.auth.getToken();
       if (token) {
         headerEntries["Authorization"] = `Bearer ${token}`;
