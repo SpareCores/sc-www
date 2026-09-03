@@ -10,7 +10,6 @@ import { isPlatformBrowser } from "@angular/common";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Model } from "survey-core";
 import { HttpClient } from "@angular/common/http";
-import "survey-core/defaultV2.css";
 import { surveyTheme } from "./survey_theme";
 import { AnalyticsService } from "../../services/analytics.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
