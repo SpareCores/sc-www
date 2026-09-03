@@ -53,7 +53,7 @@ const FILTER_LABELS: Record<DashboardFilterKey, string> = {
   favoriteDatabases: "Databases",
   savedSearches: "Searches",
   savedComparisons: "Comparisons",
-  savedAdvices: "Advices",
+  savedAdvices: "Assessments",
 };
 
 const STAT_ICONS: Record<DashboardFilterKey, string> = {
@@ -136,7 +136,7 @@ export class DashboardComponent implements OnDestroy {
       case "savedComparisons":
         return "Edit comparison";
       case "savedAdvices":
-        return "Edit advice";
+        return "Edit assessment";
       default:
         return "Edit";
     }

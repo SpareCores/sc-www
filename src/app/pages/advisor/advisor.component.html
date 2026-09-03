@@ -20,13 +20,13 @@
         @if (isAuthenticated()) {
           @if (activeSavedAdvice()) {
             <sc-button
-              label="Edit advice"
+              label="Edit assessment"
               icon="square-pen"
               variant="outline"
               (buttonClick)="openSaveAdviceModal()"
             ></sc-button>
             <sc-button
-              label="Delete advice"
+              label="Delete assessment"
               icon="trash-2"
               variant="outline"
               color="danger"
@@ -34,7 +34,7 @@
             ></sc-button>
           } @else {
             <sc-button
-              label="Save advice"
+              label="Save assessment"
               icon="save"
               variant="outline"
               [disabled]="!canSaveAdvice()"
@@ -70,7 +70,7 @@
 
     <sc-collection-save-modal
       modalId="advisor-save-modal"
-      title="Save advice"
+      title="Save assessment"
       confirmLabel="Confirm"
       [saving]="isSaveAdvicePending()"
       (confirmed)="confirmSaveAdvice($event)"
