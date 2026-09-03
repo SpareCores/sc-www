@@ -37,6 +37,10 @@ export class CompareCollectionsService {
     return this.store.isMutating(mutationKey("update-comparison", id));
   }
 
+  isDeletingComparison(id: string): boolean {
+    return this.store.isMutating(mutationKey("delete-comparison", id));
+  }
+
   saveComparison(
     id: string,
     instances: SavedComparisonInstance[],

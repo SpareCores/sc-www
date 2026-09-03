@@ -22,7 +22,18 @@ import {
 } from "@ngrx/signals/entities";
 import { rxMethod } from "@ngrx/signals/rxjs-interop";
 import * as Sentry from "@sentry/angular";
-import { exhaustMap, finalize, forkJoin, of, pipe, switchMap, tap } from "rxjs";
+import {
+  exhaustMap,
+  filter,
+  finalize,
+  forkJoin,
+  map,
+  mergeMap,
+  of,
+  pipe,
+  switchMap,
+  tap,
+} from "rxjs";
 import { Auth } from "../services/auth/auth";
 import {
   mutationKey,
@@ -109,6 +120,34 @@ function mutationError(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
+function normalizedCollectionNote(note?: string): string {
+  return note?.trim() ?? "";
+}
+
+function withCollectionNote<T extends { note?: string }>(
+  saved: T,
+  note?: string,
+): T {
+  return {
+    ...saved,
+    note: normalizedCollectionNote(note),
+  };
+}
+
+function comparisonSecondaryIcon(item: SavedComparisonItem): string {
+  if (item.compare_url.includes("/databases/compare")) {
+    return "database";
+  }
+  if (item.compare_url.includes("/servers/compare")) {
+    return "pc-case";
+  }
+  const first = item.instances?.[0];
+  if (first && "database" in first) {
+    return "database";
+  }
+  return "pc-case";
+}
+
 export const CollectionsStore = signalStore(
   { providedIn: "root" },
   withState<CollectionsState>({
@@ -193,6 +232,7 @@ export const CollectionsStore = signalStore(
             order: item.order ?? cards.length,
             href: collectionItemHref(path, item.query),
             icon: "search",
+            secondaryIcon: item.page === "servers" ? "pc-case" : "database",
             detailsKind: "filters",
             details: savedSearchDetailEntries(item.query),
           });
@@ -209,6 +249,7 @@ export const CollectionsStore = signalStore(
             order: item.order ?? cards.length,
             href: item.compare_url,
             icon: "scale",
+            secondaryIcon: comparisonSecondaryIcon(item),
             detailsKind: "instances",
             details: savedComparisonDetailEntries(item.instances),
           });
@@ -298,17 +339,27 @@ export const CollectionsStore = signalStore(
     },
     removeFavoriteServerById: rxMethod<string>(
       pipe(
-        tap((id) => store.startMutation(mutationKey("favorite-server", id))),
-        switchMap((id) =>
+        filter((id) => !store.isMutating(mutationKey("favorite-server", id))),
+        map((id) => {
+          const previous = store.serversEntityMap()[id] ?? null;
+          store.startMutation(mutationKey("favorite-server", id));
+          if (previous) {
+            patchState(store, removeEntity(id, serversConfig));
+          }
+          return { id, previous };
+        }),
+        mergeMap(({ id, previous }) =>
           collections.deleteFavoriteServerById(id).pipe(
+            finalize(() => {
+              store.finishMutation(mutationKey("favorite-server", id));
+            }),
             tapResponse({
-              next: () => {
-                patchState(store, removeEntity(id, serversConfig));
-                store.finishMutation(mutationKey("favorite-server", id));
-              },
+              next: () => undefined,
               error: (error: unknown) => {
                 Sentry.captureException(error);
-                store.finishMutation(mutationKey("favorite-server", id));
+                if (previous) {
+                  patchState(store, addEntity(previous, serversConfig));
+                }
               },
             }),
           ),
@@ -317,17 +368,27 @@ export const CollectionsStore = signalStore(
     ),
     removeFavoriteDatabaseById: rxMethod<string>(
       pipe(
-        tap((id) => store.startMutation(mutationKey("favorite-database", id))),
-        switchMap((id) =>
+        filter((id) => !store.isMutating(mutationKey("favorite-database", id))),
+        map((id) => {
+          const previous = store.databasesEntityMap()[id] ?? null;
+          store.startMutation(mutationKey("favorite-database", id));
+          if (previous) {
+            patchState(store, removeEntity(id, databasesConfig));
+          }
+          return { id, previous };
+        }),
+        mergeMap(({ id, previous }) =>
           collections.deleteFavoriteDatabaseById(id).pipe(
+            finalize(() => {
+              store.finishMutation(mutationKey("favorite-database", id));
+            }),
             tapResponse({
-              next: () => {
-                patchState(store, removeEntity(id, databasesConfig));
-                store.finishMutation(mutationKey("favorite-database", id));
-              },
+              next: () => undefined,
               error: (error: unknown) => {
                 Sentry.captureException(error);
-                store.finishMutation(mutationKey("favorite-database", id));
+                if (previous) {
+                  patchState(store, addEntity(previous, databasesConfig));
+                }
               },
             }),
           ),
@@ -414,32 +475,55 @@ export const CollectionsStore = signalStore(
       note?: string;
     }>(
       pipe(
-        tap(({ vendorId, serverId }) => {
-          store.startMutation(
-            mutationKey(
-              "favorite-server",
-              favoriteServerId(vendorId, serverId),
-            ),
-          );
-        }),
-        switchMap(({ vendorId, serverId, note }) => {
+        filter(({ vendorId, serverId }) => {
           const id = favoriteServerId(vendorId, serverId);
-          const isFavorite = !!store.serversEntityMap()[id];
+          return !store.isMutating(mutationKey("favorite-server", id));
+        }),
+        map(({ vendorId, serverId, note }) => {
+          const id = favoriteServerId(vendorId, serverId);
+          const previous = store.serversEntityMap()[id] ?? null;
+          const wasFavorite = !!previous;
+          store.startMutation(mutationKey("favorite-server", id));
+
+          if (wasFavorite) {
+            patchState(store, removeEntity(id, serversConfig));
+          } else {
+            const optimistic: FavoriteServerItem = {
+              id,
+              vendor_id: vendorId,
+              server_id: serverId,
+              order: store.serversEntities().length,
+            };
+            if (note !== undefined) {
+              optimistic.note = note;
+            }
+            patchState(store, addEntity(optimistic, serversConfig));
+          }
+
+          return { vendorId, serverId, note, id, previous, wasFavorite };
+        }),
+        mergeMap(({ vendorId, serverId, note, id, previous, wasFavorite }) => {
           const finish = () =>
             store.finishMutation(mutationKey("favorite-server", id));
-          const onError = (error: unknown) => {
-            Sentry.captureException(error);
-            finish();
+          const rollback = () => {
+            if (wasFavorite && previous) {
+              patchState(store, addEntity(previous, serversConfig));
+              return;
+            }
+            if (!wasFavorite) {
+              patchState(store, removeEntity(id, serversConfig));
+            }
           };
 
-          if (isFavorite) {
+          if (wasFavorite) {
             return collections.deleteFavoriteServer(vendorId, serverId).pipe(
+              finalize(finish),
               tapResponse({
-                next: () => {
-                  patchState(store, removeEntity(id, serversConfig));
-                  finish();
+                next: () => undefined,
+                error: (error: unknown) => {
+                  Sentry.captureException(error);
+                  rollback();
                 },
-                error: onError,
               }),
             );
           }
@@ -449,15 +533,20 @@ export const CollectionsStore = signalStore(
               vendor_id: vendorId,
               server_id: serverId,
               note,
-              order: store.serversEntities().length,
+              order:
+                store.serversEntityMap()[id]?.order ??
+                store.serversEntities().length,
             })
             .pipe(
+              finalize(finish),
               tapResponse({
                 next: (saved) => {
-                  patchState(store, addEntity(saved, serversConfig));
-                  finish();
+                  patchState(store, upsertEntity(saved, serversConfig));
                 },
-                error: onError,
+                error: (error: unknown) => {
+                  Sentry.captureException(error);
+                  rollback();
+                },
               }),
             );
         }),
@@ -469,55 +558,85 @@ export const CollectionsStore = signalStore(
       note?: string;
     }>(
       pipe(
-        tap(({ vendorId, databaseId }) => {
-          store.startMutation(
-            mutationKey(
-              "favorite-database",
-              favoriteDatabaseId(vendorId, databaseId),
-            ),
-          );
-        }),
-        switchMap(({ vendorId, databaseId, note }) => {
+        filter(({ vendorId, databaseId }) => {
           const id = favoriteDatabaseId(vendorId, databaseId);
-          const isFavorite = !!store.databasesEntityMap()[id];
-          const finish = () =>
-            store.finishMutation(mutationKey("favorite-database", id));
-          const onError = (error: unknown) => {
-            Sentry.captureException(error);
-            finish();
-          };
+          return !store.isMutating(mutationKey("favorite-database", id));
+        }),
+        map(({ vendorId, databaseId, note }) => {
+          const id = favoriteDatabaseId(vendorId, databaseId);
+          const previous = store.databasesEntityMap()[id] ?? null;
+          const wasFavorite = !!previous;
+          store.startMutation(mutationKey("favorite-database", id));
 
-          if (isFavorite) {
-            return collections
-              .deleteFavoriteDatabase(vendorId, databaseId)
-              .pipe(
-                tapResponse({
-                  next: () => {
-                    patchState(store, removeEntity(id, databasesConfig));
-                    finish();
-                  },
-                  error: onError,
-                }),
-              );
-          }
-
-          return collections
-            .addFavoriteDatabase(vendorId, databaseId, {
+          if (wasFavorite) {
+            patchState(store, removeEntity(id, databasesConfig));
+          } else {
+            const optimistic: FavoriteDatabaseItem = {
+              id,
               vendor_id: vendorId,
               database_id: databaseId,
-              note,
               order: store.databasesEntities().length,
-            })
-            .pipe(
-              tapResponse({
-                next: (saved) => {
-                  patchState(store, addEntity(saved, databasesConfig));
-                  finish();
-                },
-                error: onError,
-              }),
-            );
+            };
+            if (note !== undefined) {
+              optimistic.note = note;
+            }
+            patchState(store, addEntity(optimistic, databasesConfig));
+          }
+
+          return { vendorId, databaseId, note, id, previous, wasFavorite };
         }),
+        mergeMap(
+          ({ vendorId, databaseId, note, id, previous, wasFavorite }) => {
+            const finish = () =>
+              store.finishMutation(mutationKey("favorite-database", id));
+            const rollback = () => {
+              if (wasFavorite && previous) {
+                patchState(store, addEntity(previous, databasesConfig));
+                return;
+              }
+              if (!wasFavorite) {
+                patchState(store, removeEntity(id, databasesConfig));
+              }
+            };
+
+            if (wasFavorite) {
+              return collections
+                .deleteFavoriteDatabase(vendorId, databaseId)
+                .pipe(
+                  finalize(finish),
+                  tapResponse({
+                    next: () => undefined,
+                    error: (error: unknown) => {
+                      Sentry.captureException(error);
+                      rollback();
+                    },
+                  }),
+                );
+            }
+
+            return collections
+              .addFavoriteDatabase(vendorId, databaseId, {
+                vendor_id: vendorId,
+                database_id: databaseId,
+                note,
+                order:
+                  store.databasesEntityMap()[id]?.order ??
+                  store.databasesEntities().length,
+              })
+              .pipe(
+                finalize(finish),
+                tapResponse({
+                  next: (saved) => {
+                    patchState(store, upsertEntity(saved, databasesConfig));
+                  },
+                  error: (error: unknown) => {
+                    Sentry.captureException(error);
+                    rollback();
+                  },
+                }),
+              );
+          },
+        ),
       ),
     ),
     saveSearch: rxMethod<{
@@ -534,18 +653,25 @@ export const CollectionsStore = signalStore(
         }),
         switchMap(({ page, query, name, note }) => {
           const id = savedSearchIdFromQuery(page, query);
+          const normalizedNote = normalizedCollectionNote(note);
           return collections
             .saveSearch(id, {
               page,
               query,
               name: name.trim(),
-              note,
+              note: normalizedNote,
               order: store.savedSearches().length,
             })
             .pipe(
               tapResponse({
                 next: (saved) => {
-                  patchState(store, upsertEntity(saved, searchesConfig));
+                  patchState(
+                    store,
+                    upsertEntity(
+                      withCollectionNote(saved, normalizedNote),
+                      searchesConfig,
+                    ),
+                  );
                   store.finishMutation(mutationKey("save-search", id));
                 },
                 error: (error: unknown) => {
@@ -566,13 +692,14 @@ export const CollectionsStore = signalStore(
     }>(
       pipe(
         tap(({ id }) => store.startMutation(mutationKey("update-search", id))),
-        switchMap(({ id, page, query, name, note }) =>
-          collections
+        switchMap(({ id, page, query, name, note }) => {
+          const normalizedNote = normalizedCollectionNote(note);
+          return collections
             .saveSearch(id, {
               page,
               query,
               name: name.trim(),
-              note,
+              note: normalizedNote,
               order: store.searchesEntityMap()[id]?.order,
             })
             .pipe(
@@ -580,7 +707,13 @@ export const CollectionsStore = signalStore(
                 next: (saved) => {
                   patchState(
                     store,
-                    updateEntity({ id, changes: saved }, searchesConfig),
+                    updateEntity(
+                      {
+                        id,
+                        changes: withCollectionNote(saved, normalizedNote),
+                      },
+                      searchesConfig,
+                    ),
                   );
                   store.finishMutation(mutationKey("update-search", id));
                 },
@@ -589,8 +722,8 @@ export const CollectionsStore = signalStore(
                   store.finishMutation(mutationKey("update-search", id));
                 },
               }),
-            ),
-        ),
+            );
+        }),
       ),
     ),
     deleteSearch: rxMethod<string>(
@@ -623,19 +756,26 @@ export const CollectionsStore = signalStore(
         tap(({ id }) =>
           store.startMutation(mutationKey("save-comparison", id)),
         ),
-        switchMap(({ id, compareUrl, instances, name, note }) =>
-          collections
+        switchMap(({ id, compareUrl, instances, name, note }) => {
+          const normalizedNote = normalizedCollectionNote(note);
+          return collections
             .saveComparison(id, {
               compare_url: compareUrl,
               instances,
               name: name.trim(),
-              note,
+              note: normalizedNote,
               order: store.savedComparisons().length,
             })
             .pipe(
               tapResponse({
                 next: (saved) => {
-                  patchState(store, upsertEntity(saved, comparisonsConfig));
+                  patchState(
+                    store,
+                    upsertEntity(
+                      withCollectionNote(saved, normalizedNote),
+                      comparisonsConfig,
+                    ),
+                  );
                   store.finishMutation(mutationKey("save-comparison", id));
                 },
                 error: (error: unknown) => {
@@ -643,8 +783,8 @@ export const CollectionsStore = signalStore(
                   store.finishMutation(mutationKey("save-comparison", id));
                 },
               }),
-            ),
-        ),
+            );
+        }),
       ),
     ),
     updateComparison: rxMethod<{
@@ -658,13 +798,14 @@ export const CollectionsStore = signalStore(
         tap(({ id }) =>
           store.startMutation(mutationKey("update-comparison", id)),
         ),
-        switchMap(({ id, compareUrl, instances, name, note }) =>
-          collections
+        switchMap(({ id, compareUrl, instances, name, note }) => {
+          const normalizedNote = normalizedCollectionNote(note);
+          return collections
             .saveComparison(id, {
               compare_url: compareUrl,
               instances,
               name: name.trim(),
-              note,
+              note: normalizedNote,
               order: store.comparisonsEntityMap()[id]?.order,
             })
             .pipe(
@@ -672,7 +813,13 @@ export const CollectionsStore = signalStore(
                 next: (saved) => {
                   patchState(
                     store,
-                    updateEntity({ id, changes: saved }, comparisonsConfig),
+                    updateEntity(
+                      {
+                        id,
+                        changes: withCollectionNote(saved, normalizedNote),
+                      },
+                      comparisonsConfig,
+                    ),
                   );
                   store.finishMutation(mutationKey("update-comparison", id));
                 },
@@ -681,8 +828,8 @@ export const CollectionsStore = signalStore(
                   store.finishMutation(mutationKey("update-comparison", id));
                 },
               }),
-            ),
-        ),
+            );
+        }),
       ),
     ),
     deleteComparison: rxMethod<string>(
@@ -712,18 +859,25 @@ export const CollectionsStore = signalStore(
     }>(
       pipe(
         tap(({ id }) => store.startMutation(mutationKey("save-advice", id))),
-        switchMap(({ id, query, name, note }) =>
-          collections
+        switchMap(({ id, query, name, note }) => {
+          const normalizedNote = normalizedCollectionNote(note);
+          return collections
             .saveAdvice(id, {
               query,
               name: name.trim(),
-              note,
+              note: normalizedNote,
               order: store.savedAdvices().length,
             })
             .pipe(
               tapResponse({
                 next: (saved) => {
-                  patchState(store, upsertEntity(saved, advicesConfig));
+                  patchState(
+                    store,
+                    upsertEntity(
+                      withCollectionNote(saved, normalizedNote),
+                      advicesConfig,
+                    ),
+                  );
                   store.finishMutation(mutationKey("save-advice", id));
                 },
                 error: (error: unknown) => {
@@ -731,8 +885,8 @@ export const CollectionsStore = signalStore(
                   store.finishMutation(mutationKey("save-advice", id));
                 },
               }),
-            ),
-        ),
+            );
+        }),
       ),
     ),
     updateAdvice: rxMethod<{
@@ -743,12 +897,13 @@ export const CollectionsStore = signalStore(
     }>(
       pipe(
         tap(({ id }) => store.startMutation(mutationKey("update-advice", id))),
-        switchMap(({ id, query, name, note }) =>
-          collections
+        switchMap(({ id, query, name, note }) => {
+          const normalizedNote = normalizedCollectionNote(note);
+          return collections
             .saveAdvice(id, {
               query,
               name: name.trim(),
-              note,
+              note: normalizedNote,
               order: store.advicesEntityMap()[id]?.order,
             })
             .pipe(
@@ -756,7 +911,13 @@ export const CollectionsStore = signalStore(
                 next: (saved) => {
                   patchState(
                     store,
-                    updateEntity({ id, changes: saved }, advicesConfig),
+                    updateEntity(
+                      {
+                        id,
+                        changes: withCollectionNote(saved, normalizedNote),
+                      },
+                      advicesConfig,
+                    ),
                   );
                   store.finishMutation(mutationKey("update-advice", id));
                 },
@@ -765,8 +926,8 @@ export const CollectionsStore = signalStore(
                   store.finishMutation(mutationKey("update-advice", id));
                 },
               }),
-            ),
-        ),
+            );
+        }),
       ),
     ),
     deleteAdvice: rxMethod<string>(
@@ -790,7 +951,14 @@ export const CollectionsStore = signalStore(
     ),
     reorderDashboardCards: rxMethod<DashboardCardViewModel[]>(
       pipe(
-        tap((cards) => {
+        map((cards) => {
+          const snapshot = {
+            servers: store.serversEntities().slice(),
+            databases: store.databasesEntities().slice(),
+            searches: store.searchesEntities().slice(),
+            comparisons: store.comparisonsEntities().slice(),
+            advices: store.advicesEntities().slice(),
+          };
           store.startMutation(mutationKey("reorder-dashboard"));
           cards.forEach((card, index) => {
             const changes = { order: index };
@@ -827,8 +995,9 @@ export const CollectionsStore = signalStore(
                 break;
             }
           });
+          return { cards, snapshot };
         }),
-        switchMap((cards) => {
+        switchMap(({ cards, snapshot }) => {
           const updates: Array<{
             collectionType: (typeof COLLECTION_TYPES)[keyof typeof COLLECTION_TYPES];
             id: string;
@@ -960,6 +1129,14 @@ export const CollectionsStore = signalStore(
               },
               error: (error: unknown) => {
                 Sentry.captureException(error);
+                patchState(
+                  store,
+                  setAllEntities(snapshot.servers, serversConfig),
+                  setAllEntities(snapshot.databases, databasesConfig),
+                  setAllEntities(snapshot.searches, searchesConfig),
+                  setAllEntities(snapshot.comparisons, comparisonsConfig),
+                  setAllEntities(snapshot.advices, advicesConfig),
+                );
               },
             }),
           );

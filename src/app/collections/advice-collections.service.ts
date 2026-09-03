@@ -35,6 +35,10 @@ export class AdviceCollectionsService {
     return this.store.isMutating(mutationKey("update-advice", id));
   }
 
+  isDeletingAdvice(id: string): boolean {
+    return this.store.isMutating(mutationKey("delete-advice", id));
+  }
+
   saveAdvice(
     id: string,
     query: SearchBarQuery,
