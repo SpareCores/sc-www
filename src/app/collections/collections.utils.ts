@@ -1,9 +1,14 @@
 import type { SearchBarQuery } from "../components/search-bar/search-bar.types";
+import {
+  decodeBase64JsonUrlState,
+  isBenchmarkUrlState,
+} from "../tools/encoded-url-state";
 import { encodeQueryParams } from "../tools/queryParamFunctions";
 import type {
   SavedComparisonInstance,
   SavedSearchPage,
 } from "./collections.types";
+import openApiSpec from "../../../sdk/openapi.json";
 
 export const SAVED_NAME_MIN_LENGTH = 3;
 export const SAVED_NOTE_MAX_LENGTH = 2000;
@@ -28,6 +33,83 @@ export function sortByOrder<T extends { order?: number; id: string }>(
   });
 }
 
+type OpenApiParameter = {
+  name?: string;
+  schema?: {
+    title?: string;
+    type?: string;
+    anyOf?: Array<{ title?: string; type?: string }>;
+  };
+};
+
+const OPENAPI_QUERY_PATHS = [
+  "/servers",
+  "/databases",
+  "/server_prices",
+] as const;
+
+function openApiParameterIsArray(parameter: OpenApiParameter): boolean {
+  if (parameter.schema?.type === "array") {
+    return true;
+  }
+  return (parameter.schema?.anyOf ?? []).some(
+    (option) => option.type === "array",
+  );
+}
+
+function openApiParameterTitle(parameter: OpenApiParameter): string | null {
+  const schemaTitle = parameter.schema?.title?.trim();
+  if (schemaTitle) {
+    return schemaTitle;
+  }
+
+  for (const option of parameter.schema?.anyOf ?? []) {
+    const optionTitle = option.title?.trim();
+    if (optionTitle) {
+      return optionTitle;
+    }
+  }
+
+  return null;
+}
+
+function buildOpenApiQueryMetadata(): {
+  arrayKeys: Set<string>;
+  titles: Record<string, string>;
+} {
+  const arrayKeys = new Set<string>();
+  const titles: Record<string, string> = {};
+
+  for (const path of OPENAPI_QUERY_PATHS) {
+    const parameters = (openApiSpec as any)?.paths?.[path]?.get?.parameters;
+    if (!Array.isArray(parameters)) {
+      continue;
+    }
+
+    for (const parameter of parameters as OpenApiParameter[]) {
+      if (!parameter.name) {
+        continue;
+      }
+
+      if (openApiParameterIsArray(parameter)) {
+        arrayKeys.add(parameter.name);
+      }
+
+      if (!titles[parameter.name]) {
+        const title = openApiParameterTitle(parameter);
+        if (title) {
+          titles[parameter.name] = title;
+        }
+      }
+    }
+  }
+
+  return { arrayKeys, titles };
+}
+
+const { arrayKeys: OPENAPI_ARRAY_QUERY_KEYS, titles: OPENAPI_FILTER_TITLES } =
+  buildOpenApiQueryMetadata();
+
 function normalizeQueryValue(value: unknown): unknown {
   if (Array.isArray(value)) {
     return value.map(normalizeQueryValue);
@@ -36,6 +118,32 @@ function normalizeQueryValue(value: unknown): unknown {
     return normalizeQueryObject(value as Record<string, unknown>);
   }
   return value;
+}
+
+function splitCommaSeparatedQueryValue(value: string): string[] {
+  return value
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function normalizeArrayQueryValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value
+      .flatMap((entry) =>
+        typeof entry === "string"
+          ? splitCommaSeparatedQueryValue(entry)
+          : [entry],
+      )
+      .map(normalizeQueryValue)
+      .filter((entry) => entry !== undefined && entry !== null && entry !== "");
+  }
+
+  if (typeof value === "string") {
+    return splitCommaSeparatedQueryValue(value);
+  }
+
+  return normalizeQueryValue(value);
 }
 
 function normalizeQueryObject(
@@ -50,7 +158,18 @@ function normalizeQueryObject(
     if (value === undefined || value === null || value === "") {
       continue;
     }
-    normalized[key] = normalizeQueryValue(value);
+    const next = OPENAPI_ARRAY_QUERY_KEYS.has(key)
+      ? normalizeArrayQueryValue(value)
+      : normalizeQueryValue(value);
+    if (
+      next === undefined ||
+      next === null ||
+      next === "" ||
+      (Array.isArray(next) && !next.length)
+    ) {
+      continue;
+    }
+    normalized[key] = next;
   }
   return normalized;
 }
@@ -103,17 +222,7 @@ export function truncateNote(note: string | undefined, max = 160): string {
   return `${note.slice(0, max).trimEnd()}…`;
 }
 
-const LISTING_META_QUERY_KEYS = new Set([
-  "page",
-  "limit",
-  "order_by",
-  "order_dir",
-  "columns",
-  "currency",
-  "best_price_allocation",
-  "benchmark",
-  "add_total_count_header",
-]);
+const LISTING_META_QUERY_KEYS = new Set(["page", "add_total_count_header"]);
 
 export function listingSearchQuery(
   query: SearchBarQuery,
@@ -161,13 +270,7 @@ export function isDefaultListingQuery(query: SearchBarQuery): boolean {
 
 const ADVICE_DASHBOARD_HIDDEN_KEYS = new Set([
   "page",
-  "columns",
-  "currency",
-  "order_by",
-  "order_dir",
-  "best_price_allocation",
   "add_total_count_header",
-  "benchmark",
 ]);
 
 const ADVICE_NUMERIC_KEYS = new Set([
@@ -178,7 +281,14 @@ const ADVICE_NUMERIC_KEYS = new Set([
   "page",
 ]);
 
-const DASHBOARD_DETAIL_VALUE_MAX = 64;
+const DASHBOARD_DETAIL_VALUE_MAX = 96;
+
+const DASHBOARD_DETAIL_HIDDEN_KEYS = new Set([
+  "columns",
+  "limit",
+  "currency",
+  "best_price_allocation",
+]);
 
 const DASHBOARD_FILTER_LABELS: Record<string, string> = {
   workload_id: "Workload profile",
@@ -196,6 +306,9 @@ const DASHBOARD_FILTER_LABELS: Record<string, string> = {
   baseline_vendor_region: "Available region",
   workload_config: "Workload config",
   limit: "Results per page",
+  columns: "Columns",
+  benchmark: "Benchmark",
+  order_dir: "Order direction",
 };
 
 const DASHBOARD_FILTER_VALUE_LABELS: Record<string, Record<string, string>> = {
@@ -223,6 +336,7 @@ function toDashboardTitleCase(value: string): string {
 function humanizeFilterKey(key: string): string {
   return (
     DASHBOARD_FILTER_LABELS[key] ||
+    OPENAPI_FILTER_TITLES[key] ||
     toDashboardTitleCase(key.replace(/[_-]+/g, " ").trim())
   );
 }
@@ -294,9 +408,54 @@ function formatQueryDetailValue(value: unknown): string {
   return String(value);
 }
 
+function formatBenchmarkValue(value: unknown): string {
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const id = typeof record.id === "string" ? record.id : "";
+    const config =
+      typeof record.config === "string"
+        ? record.config
+        : record.config
+          ? JSON.stringify(record.config)
+          : "";
+    if (id && config) {
+      return `${id} (${config})`;
+    }
+    if (id) {
+      return id;
+    }
+  }
+
+  if (typeof value !== "string" || !value.trim()) {
+    return "—";
+  }
+
+  const raw = value.trim();
+  let decodedParam = raw;
+  try {
+    decodedParam = decodeURIComponent(raw);
+  } catch {
+    decodedParam = raw;
+  }
+
+  for (const candidate of [decodedParam, raw]) {
+    const decoded = decodeBase64JsonUrlState(candidate, isBenchmarkUrlState);
+    if (decoded.value) {
+      const config = decoded.value.config?.trim();
+      return config ? `${decoded.value.id} (${config})` : decoded.value.id;
+    }
+  }
+
+  return value;
+}
+
 function formatFilterValue(key: string, value: unknown): string {
   if (key === "workload_id") {
     return formatWorkloadProfileValue(value);
+  }
+
+  if (key === "benchmark") {
+    return formatBenchmarkValue(value);
   }
 
   const valueLabels = DASHBOARD_FILTER_VALUE_LABELS[key];
@@ -361,10 +520,14 @@ function formatQueryDetailEntries(
     delete remaining.workload_config;
   }
 
+  for (const key of DASHBOARD_DETAIL_HIDDEN_KEYS) {
+    delete remaining[key];
+  }
+
   for (const [key, value] of Object.entries(remaining)) {
     rows.push({
       field: humanizeFilterKey(key),
-      value: truncateDetailValue(formatFilterValue(key, value)),
+      value: formatFilterValue(key, value),
     });
   }
 
@@ -385,7 +548,7 @@ export function savedAdviceDetailEntries(
 
 export function savedComparisonDetailEntries(
   instances: SavedComparisonInstance[] | null | undefined,
-): { field: string; value: string }[] {
+): { field: string; value: string; fieldHref?: string; valueHref?: string }[] {
   if (!instances?.length) {
     return [];
   }
@@ -394,12 +557,16 @@ export function savedComparisonDetailEntries(
       return {
         field: instance.vendor,
         value: instance.display_name || instance.server,
+        fieldHref: `/vendors/${instance.vendor}`,
+        valueHref: `/server/${instance.vendor}/${instance.server}`,
       };
     }
 
     return {
       field: instance.vendor,
       value: instance.display_name || instance.database,
+      fieldHref: `/vendors/${instance.vendor}`,
+      valueHref: `/database/${instance.vendor}/${instance.database}`,
     };
   });
 }

@@ -88,6 +88,8 @@ export type DashboardCardKind = DashboardFilterKey;
 export type DashboardCardDetailRow = {
   field: string;
   value: string;
+  fieldHref?: string;
+  valueHref?: string;
 };
 
 export type DashboardCardDetailsKind = "filters" | "instances";
@@ -101,6 +103,7 @@ export type DashboardCardViewModel = {
   order: number;
   href?: string | any[];
   icon?: string;
+  secondaryIcon?: string;
   detailsKind?: DashboardCardDetailsKind;
   details?: DashboardCardDetailRow[];
 };
