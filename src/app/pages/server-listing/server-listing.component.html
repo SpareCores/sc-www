@@ -12,6 +12,14 @@
         shareButtonId="server_listing_share_button"
         (shareClick)="clipboardURL()"
       >
+        <sc-button
+          id="server_listing_introduction_button"
+          label="Introduction"
+          icon="tv-minimal-play"
+          iconPosition="start"
+          variant="outline"
+          (click)="openIntroductionModal()"
+        ></sc-button>
         @if (isAuthenticated()) {
           @if (activeSavedSearch()) {
             <sc-button
@@ -25,6 +33,7 @@
               icon="trash-2"
               variant="outline"
               color="danger"
+              [loading]="isDeleteSearchPending()"
               (buttonClick)="deleteSavedSearch()"
             ></sc-button>
           } @else {
@@ -37,14 +46,6 @@
             ></sc-button>
           }
         }
-        <sc-button
-          id="server_listing_introduction_button"
-          label="Introduction"
-          icon="tv-minimal-play"
-          iconPosition="start"
-          variant="outline"
-          (click)="openIntroductionModal()"
-        ></sc-button>
       </sc-page-header>
       <div class="text-white text-xl pr-16">
         {{ description }}
@@ -318,12 +319,23 @@
                         class="favorite_column"
                         (click)="$event.stopPropagation()"
                       >
-                        <sc-favorite-star-button
+                        <sc-instance-favorite-context-menu
+                          #starMenu
                           kind="server"
                           [vendorId]="item.vendor_id"
                           [entityId]="item.api_reference"
+                          [displayName]="item.display_name"
                           (requireAuth)="promptSignIn()"
-                        ></sc-favorite-star-button>
+                        >
+                          <sc-favorite-star-button
+                            kind="server"
+                            [vendorId]="item.vendor_id"
+                            [entityId]="item.api_reference"
+                            [menuMode]="true"
+                            (menuRequest)="starMenu.openFromEvent($event)"
+                            (requireAuth)="promptSignIn()"
+                          ></sc-favorite-star-button>
+                        </sc-instance-favorite-context-menu>
                       </td>
                     }
                     @for (column of tableColumns; track column.name) {

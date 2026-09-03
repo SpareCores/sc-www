@@ -1969,6 +1969,11 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  isDeleteAdvicePending(): boolean {
+    const saved = this.activeSavedAdvice();
+    return !!saved && this.adviceCollections.isDeletingAdvice(saved.id);
+  }
+
   private getAdviceQuery(): SearchBarQuery {
     return this.getUrlStateQueryParams() as SearchBarQuery;
   }

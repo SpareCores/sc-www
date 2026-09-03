@@ -8,6 +8,7 @@ import {
   OnInit,
   PLATFORM_ID,
   ViewChild,
+  effect,
   inject,
   signal,
   viewChild,
@@ -195,6 +196,7 @@ export class DatabaseCompareComponent
   private compareCollections = inject(CompareCollectionsService);
   private auth = inject(Auth);
   saveComparisonModal = viewChild(CollectionSaveModalComponent);
+  private readonly pendingSaveComparisonClose = signal(false);
   private readonly editingComparisonId = signal<string | null>(null);
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
@@ -270,6 +272,43 @@ export class DatabaseCompareComponent
       bottomAnchorRowId: DATABASE_COMPARE_VIEW_SERVER_ROW_ID,
     },
   });
+
+  constructor() {
+    effect(() => {
+      this.compareCollections.store.savedComparisons();
+      this.syncSavedComparisonChrome();
+    });
+
+    effect(() => {
+      if (!this.pendingSaveComparisonClose()) {
+        return;
+      }
+
+      this.compareCollections.store.savedComparisons();
+      const editingId = this.editingComparisonId();
+      const saved = this.activeSavedComparison();
+      const id =
+        editingId ??
+        this.compareCollections.buildComparisonId(
+          this.getCompareInstancesForSave(),
+        );
+      const saving = this.compareCollections.isSavingComparison(id);
+      const updating = editingId
+        ? this.compareCollections.isUpdatingComparison(editingId)
+        : saved
+          ? this.compareCollections.isUpdatingComparison(saved.id)
+          : false;
+
+      if (saving || updating) {
+        return;
+      }
+
+      this.pendingSaveComparisonClose.set(false);
+      if (editingId || saved) {
+        this.saveComparisonModal()?.close();
+      }
+    });
+  }
 
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
@@ -903,6 +942,24 @@ export class DatabaseCompareComponent
     this.saveComparisonModal()?.open(saved?.name ?? "", saved?.note ?? "");
   }
 
+  isSaveComparisonPending(): boolean {
+    const editingId = this.editingComparisonId();
+    if (editingId) {
+      return this.compareCollections.isUpdatingComparison(editingId);
+    }
+
+    const saved = this.activeSavedComparison();
+    const id = this.compareCollections.buildComparisonId(
+      this.getCompareInstancesForSave(),
+    );
+
+    if (saved) {
+      return this.compareCollections.isUpdatingComparison(saved.id);
+    }
+
+    return this.compareCollections.isSavingComparison(id);
+  }
+
   confirmSaveComparison(payload: { name: string; note?: string }): void {
     const instances = this.getCompareInstancesForSave();
     const editingId = this.editingComparisonId();
@@ -911,6 +968,7 @@ export class DatabaseCompareComponent
       editingId ??
       saved?.id ??
       this.compareCollections.buildComparisonId(instances);
+    this.pendingSaveComparisonClose.set(true);
 
     if (editingId || saved) {
       this.compareCollections.updateComparison(
@@ -919,16 +977,15 @@ export class DatabaseCompareComponent
         payload.name,
         payload.note,
       );
-    } else {
-      this.compareCollections.saveComparison(
-        id,
-        instances,
-        payload.name,
-        payload.note,
-      );
+      return;
     }
 
-    this.syncSavedComparisonChrome();
+    this.compareCollections.saveComparison(
+      id,
+      instances,
+      payload.name,
+      payload.note,
+    );
   }
 
   deleteSavedComparison(): void {
@@ -940,6 +997,11 @@ export class DatabaseCompareComponent
     this.compareCollections.deleteComparison(saved.id);
     this.applyComparisonChrome();
     this.updateCompareBreadcrumb(this.instances.length);
+  }
+
+  isDeleteComparisonPending(): boolean {
+    const saved = this.activeSavedComparison();
+    return !!saved && this.compareCollections.isDeletingComparison(saved.id);
   }
 
   private getCompareInstancesForSave(): DatabaseCompare[] {

@@ -24,6 +24,7 @@
               icon="trash-2"
               variant="outline"
               color="danger"
+              [loading]="isDeleteComparisonPending()"
               (buttonClick)="deleteSavedComparison()"
             ></sc-button>
           } @else {
@@ -64,6 +65,7 @@
       modalId="database-compare-save-modal"
       title="Save comparison"
       confirmLabel="Confirm"
+      [saving]="isSaveComparisonPending()"
       (confirmed)="confirmSaveComparison($event)"
     ></sc-collection-save-modal>
 
@@ -346,11 +348,31 @@
                     <td>
                       <div class="compare-table-metric-cell">
                         @if (row.id === "vendor" && value.startsWith("logo:")) {
-                          <div
-                            class="w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto"
+                          <a
+                            class="block w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto"
+                            [routerLink]="[
+                              '/vendors',
+                              databases[$index].vendor_id,
+                            ]"
                           >
-                            <img [src]="value.slice(5)" alt="vendor logo" />
-                          </div>
+                            <img
+                              [src]="value.slice(5)"
+                              [alt]="
+                                (databases[$index].vendor?.name ||
+                                  databases[$index].vendor_id) + ' logo'
+                              "
+                            />
+                          </a>
+                        } @else if (row.id === "vendor") {
+                          <a
+                            class="text-white text-sm ml-auto underline decoration-dotted"
+                            [routerLink]="[
+                              '/vendors',
+                              databases[$index].vendor_id,
+                            ]"
+                          >
+                            {{ value }}
+                          </a>
                         } @else if (value === "check" || value === "x") {
                           @if (value === "check") {
                             <svg

@@ -24,6 +24,7 @@
           icon="trash-2"
           variant="outline"
           color="danger"
+          [loading]="isDeleteSearchPending()"
           (buttonClick)="deleteSavedSearch()"
         ></sc-button>
         } @else {
@@ -217,12 +218,23 @@
                     class="favorite_column"
                     (click)="$event.stopPropagation()"
                   >
-                    <sc-favorite-star-button
+                    <sc-instance-favorite-context-menu
+                      #starMenu
                       kind="database"
                       [vendorId]="item.vendor_id"
                       [entityId]="item.api_reference"
+                      [displayName]="item.display_name"
                       (requireAuth)="promptSignIn()"
-                    ></sc-favorite-star-button>
+                    >
+                      <sc-favorite-star-button
+                        kind="database"
+                        [vendorId]="item.vendor_id"
+                        [entityId]="item.api_reference"
+                        [menuMode]="true"
+                        (menuRequest)="starMenu.openFromEvent($event)"
+                        (requireAuth)="promptSignIn()"
+                      ></sc-favorite-star-button>
+                    </sc-instance-favorite-context-menu>
                   </td>
                   } @for (column of tableColumns; track column.name) { @if
                   (column.type === "name") {

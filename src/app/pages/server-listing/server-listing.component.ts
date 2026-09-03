@@ -70,7 +70,10 @@ import { InstanceFavoriteContextMenuComponent } from "../../components/collectio
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
-import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
+import {
+  SAVED_ITEM_FALLBACK_NOTE,
+  normalizeSearchQuery,
+} from "../../collections/collections.utils";
 import { Auth } from "../../services/auth/auth";
 import {
   BestPriceAllocationType,
@@ -298,8 +301,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
       this.collectionsUi.store.savedSearches();
       const editingId = this.editingSearchId();
-      const saved = this.activeSavedSearch();
-      const saving = this.collectionsUi.isSavingSearch("servers", this.query);
+      const query = this.getQueryObjectBase();
+      const saved = this.collectionsUi.activeSavedSearch("servers", query);
+      const saving = this.collectionsUi.isSavingSearch("servers", query);
       const updating = editingId
         ? this.collectionsUi.isUpdatingSearch(editingId)
         : saved
@@ -311,9 +315,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       }
 
       this.pendingSaveSearchClose.set(false);
-      if (editingId || saved) {
-        this.saveSearchModal()?.close();
-      }
+      this.editingSearchId.set(null);
+      this.saveSearchModal()?.close();
     });
   }
 
@@ -358,7 +361,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.route.queryParams.subscribe((params: Params) => {
-        const query: any = JSON.parse(JSON.stringify(params || "{}"));
+        const query: any = normalizeSearchQuery(
+          JSON.parse(JSON.stringify(params || {})),
+        );
         this.query = query;
 
         if (query.page) {
@@ -1057,11 +1062,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   activeSavedSearch() {
-    return this.collectionsUi.activeSavedSearch("servers", this.query);
+    return this.collectionsUi.activeSavedSearch(
+      "servers",
+      this.getQueryObjectBase(),
+    );
   }
 
   canSaveSearch(): boolean {
-    return this.collectionsUi.canSaveSearch(this.query);
+    return this.collectionsUi.canSaveSearch(this.getQueryObjectBase());
   }
 
   openSaveSearchModal(): void {
@@ -1086,31 +1094,30 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       return this.collectionsUi.isUpdatingSearch(saved.id);
     }
 
-    return this.collectionsUi.isSavingSearch("servers", this.query);
+    return this.collectionsUi.isSavingSearch(
+      "servers",
+      this.getQueryObjectBase(),
+    );
   }
 
   confirmSaveSearch(payload: { name: string; note?: string }): void {
     const editingId = this.editingSearchId();
     const saved = this.activeSavedSearch();
     this.pendingSaveSearchClose.set(true);
+    const query = this.getQueryObjectBase();
 
     if (editingId || saved) {
       this.collectionsUi.updateSearch(
         editingId ?? saved!.id,
         "servers",
-        this.query,
+        query,
         payload.name,
         payload.note,
       );
       return;
     }
 
-    this.collectionsUi.saveSearch(
-      "servers",
-      this.query,
-      payload.name,
-      payload.note,
-    );
+    this.collectionsUi.saveSearch("servers", query, payload.name, payload.note);
   }
 
   deleteSavedSearch(): void {
@@ -1118,6 +1125,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     if (saved) {
       this.collectionsUi.deleteSearch(saved.id);
     }
+  }
+
+  isDeleteSearchPending(): boolean {
+    const saved = this.activeSavedSearch();
+    return !!saved && this.collectionsUi.isDeletingSearch(saved.id);
   }
 
   isFavoriteServer(vendorId: string, serverId: string): boolean {

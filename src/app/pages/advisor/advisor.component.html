@@ -17,6 +17,23 @@
         shareButtonId="advisor_share_button"
         (shareClick)="clipboardURL()"
       >
+        <sc-button
+          id="advisor_introduction_button"
+          label="Introduction"
+          icon="tv-minimal-play"
+          iconPosition="start"
+          variant="outline"
+          (click)="openIntroductionModal()"
+        ></sc-button>
+        <sc-button
+          id="advisor_example_button"
+          label="Example"
+          icon="dices"
+          iconPosition="start"
+          variant="outline"
+          [routerLink]="['/advisor']"
+          [queryParams]="advisorExampleQueryParams"
+        ></sc-button>
         @if (isAuthenticated()) {
           @if (activeSavedAdvice()) {
             <sc-button
@@ -30,6 +47,7 @@
               icon="trash-2"
               variant="outline"
               color="danger"
+              [loading]="isDeleteAdvicePending()"
               (buttonClick)="deleteSavedAdvice()"
             ></sc-button>
           } @else {
@@ -42,23 +60,6 @@
             ></sc-button>
           }
         }
-        <sc-button
-          id="advisor_example_button"
-          label="Example"
-          icon="dices"
-          iconPosition="start"
-          variant="outline"
-          [routerLink]="['/advisor']"
-          [queryParams]="advisorExampleQueryParams"
-        ></sc-button>
-        <sc-button
-          id="advisor_introduction_button"
-          label="Introduction"
-          icon="tv-minimal-play"
-          iconPosition="start"
-          variant="outline"
-          (click)="openIntroductionModal()"
-        ></sc-button>
       </sc-page-header>
       <div class="text-white text-xl lg:pr-16">
         {{ displayDescription() }}

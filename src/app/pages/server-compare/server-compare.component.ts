@@ -1405,6 +1405,11 @@ export class ServerCompareComponent
     this.compareCollections.deleteComparison(saved.id);
   }
 
+  isDeleteComparisonPending(): boolean {
+    const saved = this.activeSavedComparison();
+    return !!saved && this.compareCollections.isDeletingComparison(saved.id);
+  }
+
   private getCompareInstancesForSave(): ServerCompare[] {
     return this.instances.map((instance) => ({
       display_name: instance.display_name,

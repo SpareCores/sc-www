@@ -57,7 +57,10 @@ import { InstanceFavoriteContextMenuComponent } from "../../components/collectio
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
-import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
+import {
+  SAVED_ITEM_FALLBACK_NOTE,
+  normalizeSearchQuery,
+} from "../../collections/collections.utils";
 import { Auth } from "../../services/auth/auth";
 import {
   BestDatabasePriceAllocationType,
@@ -243,8 +246,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
       this.collectionsUi.store.savedSearches();
       const editingId = this.editingSearchId();
-      const saved = this.activeSavedSearch();
-      const saving = this.collectionsUi.isSavingSearch("databases", this.query);
+      const query = this.getQueryObjectBase();
+      const saved = this.collectionsUi.activeSavedSearch("databases", query);
+      const saving = this.collectionsUi.isSavingSearch("databases", query);
       const updating = editingId
         ? this.collectionsUi.isUpdatingSearch(editingId)
         : saved
@@ -256,9 +260,8 @@ export class DatabaseListing implements OnInit, OnDestroy {
       }
 
       this.pendingSaveSearchClose.set(false);
-      if (editingId || saved) {
-        this.saveSearchModal()?.close();
-      }
+      this.editingSearchId.set(null);
+      this.saveSearchModal()?.close();
     });
   }
 
@@ -318,7 +321,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.route.queryParams.subscribe((params: Params) => {
-        const query: DatabaseListingQuery = { ...params };
+        const query: DatabaseListingQuery = normalizeSearchQuery({
+          ...params,
+        }) as DatabaseListingQuery;
         this.query = query;
 
         const parsedPage = parseInt(String(query.page ?? ""));
@@ -771,11 +776,14 @@ export class DatabaseListing implements OnInit, OnDestroy {
   }
 
   activeSavedSearch() {
-    return this.collectionsUi.activeSavedSearch("databases", this.query);
+    return this.collectionsUi.activeSavedSearch(
+      "databases",
+      this.getQueryObjectBase(),
+    );
   }
 
   canSaveSearch(): boolean {
-    return this.collectionsUi.canSaveSearch(this.query);
+    return this.collectionsUi.canSaveSearch(this.getQueryObjectBase());
   }
 
   openSaveSearchModal(): void {
@@ -793,12 +801,13 @@ export class DatabaseListing implements OnInit, OnDestroy {
     const editingId = this.editingSearchId();
     const saved = this.activeSavedSearch();
     this.pendingSaveSearchClose.set(true);
+    const query = this.getQueryObjectBase();
 
     if (editingId || saved) {
       this.collectionsUi.updateSearch(
         editingId ?? saved!.id,
         "databases",
-        this.query,
+        query,
         payload.name,
         payload.note,
       );
@@ -807,7 +816,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
     this.collectionsUi.saveSearch(
       "databases",
-      this.query,
+      query,
       payload.name,
       payload.note,
     );
@@ -824,7 +833,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
       return this.collectionsUi.isUpdatingSearch(saved.id);
     }
 
-    return this.collectionsUi.isSavingSearch("databases", this.query);
+    return this.collectionsUi.isSavingSearch(
+      "databases",
+      this.getQueryObjectBase(),
+    );
   }
 
   private baseDatabaseListingBreadcrumbs(): BreadcrumbSegment[] {
@@ -867,6 +879,11 @@ export class DatabaseListing implements OnInit, OnDestroy {
     if (saved) {
       this.collectionsUi.deleteSearch(saved.id);
     }
+  }
+
+  isDeleteSearchPending(): boolean {
+    const saved = this.activeSavedSearch();
+    return !!saved && this.collectionsUi.isDeletingSearch(saved.id);
   }
 
   compareCount() {

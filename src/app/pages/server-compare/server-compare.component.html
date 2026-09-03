@@ -24,6 +24,7 @@
               icon="trash-2"
               variant="outline"
               color="danger"
+              [loading]="isDeleteComparisonPending()"
               (buttonClick)="deleteSavedComparison()"
             ></sc-button>
           } @else {
