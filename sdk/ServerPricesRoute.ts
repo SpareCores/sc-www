@@ -723,12 +723,13 @@ export namespace ServerPrices {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
         | "Ampere"
         | "Blackwell"
+        | "Gaudi"
         | "Hopper"
         | "Pascal"
         | "Radeon Pro Navi"
@@ -746,6 +747,7 @@ export namespace ServerPrices {
         | "GB200"
         | "H100"
         | "H200"
+        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
