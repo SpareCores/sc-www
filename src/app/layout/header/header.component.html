@@ -169,31 +169,32 @@
     aria-labelledby="dropdownDefaultButton"
     (click)="closeMenu()"
   >
-    @if (!auth.isAuthenticated()) {
-      <li class="px-2 py-2">
-        <div class="flex flex-col gap-2">
-          <sc-button
-            label="Log in"
-            size="small"
-            icon="key-square"
-            iconPosition="start"
-            variant="outline"
-            color="brand"
-            class="w-full"
-            (buttonClick)="signIn()"
-          ></sc-button>
-          <sc-button
-            label="Register"
-            size="small"
-            icon="user-plus"
-            iconPosition="start"
-            class="w-full"
-            (buttonClick)="signUp()"
-          ></sc-button>
-        </div>
-      </li>
-      <li class="mx-3 my-1 border-b border-emerald-400/30"></li>
-    }
+    <li class="px-2 py-2" [class.hidden]="auth.isAuthenticated()">
+      <div class="flex flex-col gap-2">
+        <sc-button
+          label="Log in"
+          size="small"
+          icon="key-square"
+          iconPosition="start"
+          variant="outline"
+          color="brand"
+          class="w-full"
+          (buttonClick)="signIn()"
+        ></sc-button>
+        <sc-button
+          label="Register"
+          size="small"
+          icon="user-plus"
+          iconPosition="start"
+          class="w-full"
+          (buttonClick)="signUp()"
+        ></sc-button>
+      </div>
+    </li>
+    <li
+      class="mx-3 my-1 border-b border-emerald-400/30"
+      [class.hidden]="auth.isAuthenticated()"
+    ></li>
     <li class="py-2">
       <span class="navbar_link hover:!text-white">
         <span class="navbar_icon">
@@ -380,51 +381,6 @@
         Sentinel
       </a>
     </li>
-    @if (auth.isAuthenticated()) {
-      <li class="px-2 py-2">
-        <sc-button
-          class="w-full"
-          label="Dashboard"
-          size="small"
-          icon="layout-dashboard"
-          iconPosition="start"
-          routerLink="/dashboard"
-          (buttonClick)="closeMenu()"
-        ></sc-button>
-      </li>
-      <li class="px-2 py-2">
-        <sc-button
-          class="w-full"
-          label="Book a Call"
-          size="small"
-          icon="calendar-days"
-          iconPosition="start"
-          id="meeting-header-auth-mobile"
-        ></sc-button>
-      </li>
-      <li class="px-2 py-2">
-        <sc-button
-          class="w-full"
-          label="Edit Profile"
-          size="small"
-          icon="user"
-          iconPosition="start"
-          (buttonClick)="openProfile()"
-        ></sc-button>
-      </li>
-      <li class="px-2 py-2">
-        <sc-button
-          class="w-full"
-          label="Sign Out"
-          size="small"
-          icon="log-out"
-          iconPosition="start"
-          variant="outline"
-          color="brand"
-          (buttonClick)="signOut()"
-        ></sc-button>
-      </li>
-    }
   </ul>
 </div>
 
