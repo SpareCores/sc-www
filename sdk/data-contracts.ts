@@ -671,6 +671,7 @@ export enum GpuModels {
   GB200 = "GB200",
   H100 = "H100",
   H200 = "H200",
+  HL205 = "HL-205",
   L20 = "L20",
   L4 = "L4",
   L40S = "L40S",
@@ -692,6 +693,7 @@ export enum GpuModels {
 /** GpuManufacturers */
 export enum GpuManufacturers {
   AMD = "AMD",
+  Habana = "Habana",
   NVIDIA = "NVIDIA",
 }
 
@@ -700,6 +702,7 @@ export enum GpuFamilies {
   AdaLovelace = "Ada Lovelace",
   Ampere = "Ampere",
   Blackwell = "Blackwell",
+  Gaudi = "Gaudi",
   Hopper = "Hopper",
   Pascal = "Pascal",
   RadeonProNavi = "Radeon Pro Navi",
@@ -8528,12 +8531,13 @@ export interface SearchServersServersGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
     | "Ampere"
     | "Blackwell"
+    | "Gaudi"
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
@@ -8551,6 +8555,7 @@ export interface SearchServersServersGetParams {
     | "GB200"
     | "H100"
     | "H200"
+    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
@@ -10103,12 +10108,13 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
     | "Ampere"
     | "Blackwell"
+    | "Gaudi"
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
@@ -10126,6 +10132,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "GB200"
     | "H100"
     | "H200"
+    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
