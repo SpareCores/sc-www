@@ -7,6 +7,10 @@
   @apply text-sm items-center hover:text-emerald-400;
 }
 
+button.navbar_link {
+  @apply w-full border-0 bg-transparent p-0 text-left cursor-pointer;
+}
+
 .navbar_icon {
   @apply shrink-0;
 }

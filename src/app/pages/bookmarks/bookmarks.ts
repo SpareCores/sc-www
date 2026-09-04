@@ -30,8 +30,8 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { CollectionsStore } from "../../collections/collections.store";
 import type {
-  DashboardCardViewModel,
-  DashboardFilterKey,
+  BookmarksCardViewModel,
+  BookmarksFilterKey,
 } from "../../collections/collections.types";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -39,17 +39,17 @@ import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { mutationKey } from "../../shared/store/with-mutation-status";
 
-type DashboardFeature = {
+type BookmarksFeature = {
   name: string;
   value: string;
 };
 
-type DashboardVendor = {
+type BookmarksVendor = {
   name: string;
   logo?: string;
 };
 
-const FILTER_LABELS: Record<DashboardFilterKey, string> = {
+const FILTER_LABELS: Record<BookmarksFilterKey, string> = {
   favoriteServers: "Servers",
   favoriteDatabases: "Databases",
   savedSearches: "Searches",
@@ -57,7 +57,7 @@ const FILTER_LABELS: Record<DashboardFilterKey, string> = {
   savedAdvices: "Assessments",
 };
 
-const STAT_ICONS: Record<DashboardFilterKey, string> = {
+const STAT_ICONS: Record<BookmarksFilterKey, string> = {
   favoriteServers: "pc-case",
   favoriteDatabases: "database",
   savedSearches: "search",
@@ -78,8 +78,12 @@ const noteModalOptions: ModalOptions = {
   closable: true,
 };
 
+function normalizeBookmarksNameQuery(value: string): string {
+  return value.trim().toLocaleLowerCase();
+}
+
 @Component({
-  selector: "sc-dashboard",
+  selector: "sc-bookmarks",
   imports: [
     CommonModule,
     RouterModule,
@@ -92,11 +96,11 @@ const noteModalOptions: ModalOptions = {
     LucideDynamicIcon,
     CollectionSaveModalComponent,
   ],
-  templateUrl: "./dashboard.component.html",
-  styleUrl: "./dashboard.component.scss",
+  templateUrl: "./bookmarks.html",
+  styleUrl: "./bookmarks.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent implements OnDestroy {
+export class Bookmarks implements OnDestroy {
   private collectionsStore = inject(CollectionsStore);
   private keeperAPI = inject(KeeperAPIService);
   private router = inject(Router);
@@ -113,22 +117,34 @@ export class DashboardComponent implements OnDestroy {
 
   protected breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
-    { name: "Dashboard", url: "/dashboard" },
+    { name: "Bookmarks", url: "/bookmarks" },
   ];
 
   protected expandedDetails = signal<Record<string, boolean>>({});
+  protected nameQuery = signal("");
   private shareIcons = signal<Record<string, string>>({});
-  protected editingCard = signal<DashboardCardViewModel | null>(null);
-  protected noteCard = signal<DashboardCardViewModel | null>(null);
+  protected editingCard = signal<BookmarksCardViewModel | null>(null);
+  protected noteCard = signal<BookmarksCardViewModel | null>(null);
   protected isNoteModalOpen = signal(false);
   private readonly pendingEditClose = signal(false);
-  private favoriteFeatures = signal<Record<string, DashboardFeature[]>>({});
-  private vendorsById = signal<Record<string, DashboardVendor>>({});
+  private favoriteFeatures = signal<Record<string, BookmarksFeature[]>>({});
+  private vendorsById = signal<Record<string, BookmarksVendor>>({});
   protected tooltipContent = "";
 
-  protected cards = computed(() => this.collectionsStore.dashboardCards());
-  protected stats = computed(() => this.collectionsStore.dashboardStats());
-  protected filters = computed(() => this.collectionsStore.dashboardFilters());
+  protected cards = computed(() => {
+    const query = normalizeBookmarksNameQuery(this.nameQuery());
+    const cards = this.collectionsStore.bookmarksCards();
+
+    if (!query) {
+      return cards;
+    }
+
+    return cards.filter((card) =>
+      normalizeBookmarksNameQuery(card.title).includes(query),
+    );
+  });
+  protected stats = computed(() => this.collectionsStore.bookmarksStats());
+  protected filters = computed(() => this.collectionsStore.bookmarksFilters());
   protected isLoading = computed(
     () => this.collectionsStore.isLoading() && !this.cards().length,
   );
@@ -160,7 +176,7 @@ export class DashboardComponent implements OnDestroy {
   protected statEntries = computed(() => {
     const stats = this.stats();
     const filters = this.filters();
-    return (Object.keys(FILTER_LABELS) as DashboardFilterKey[]).map((key) => ({
+    return (Object.keys(FILTER_LABELS) as BookmarksFilterKey[]).map((key) => ({
       key,
       label: FILTER_LABELS[key],
       icon: STAT_ICONS[key],
@@ -219,15 +235,24 @@ export class DashboardComponent implements OnDestroy {
     this.noteFlowbiteModal = null;
   }
 
-  protected toggleFilter(key: DashboardFilterKey, enabled: boolean): void {
-    this.collectionsStore.setDashboardFilter(key, enabled);
+  protected toggleFilter(key: BookmarksFilterKey, enabled: boolean): void {
+    this.collectionsStore.setBookmarksFilter(key, enabled);
   }
 
-  protected cardKey(card: DashboardCardViewModel): string {
+  protected onNameQueryInput(event: Event): void {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    this.nameQuery.set(target.value);
+  }
+
+  protected cardKey(card: BookmarksCardViewModel): string {
     return `${card.kind}:${card.id}`;
   }
 
-  protected cardSubtitle(card: DashboardCardViewModel): string | undefined {
+  protected cardSubtitle(card: BookmarksCardViewModel): string | undefined {
     const vendorId = this.favoriteCardVendorId(card);
     if (vendorId) {
       return this.vendorsById()[vendorId]?.name ?? vendorId;
@@ -235,20 +260,20 @@ export class DashboardComponent implements OnDestroy {
     return card.subtitle;
   }
 
-  protected cardVendorLogo(card: DashboardCardViewModel): string | undefined {
+  protected cardVendorLogo(card: BookmarksCardViewModel): string | undefined {
     const vendorId = this.favoriteCardVendorId(card);
     return vendorId ? this.vendorsById()[vendorId]?.logo : undefined;
   }
 
-  protected cardFeatures(card: DashboardCardViewModel): DashboardFeature[] {
+  protected cardFeatures(card: BookmarksCardViewModel): BookmarksFeature[] {
     return this.favoriteFeatures()[this.cardKey(card)] ?? [];
   }
 
-  protected isEditableCard(card: DashboardCardViewModel): boolean {
+  protected isEditableCard(card: BookmarksCardViewModel): boolean {
     return EDITABLE_KINDS.has(card.kind);
   }
 
-  protected cardActionCount(card: DashboardCardViewModel): number {
+  protected cardActionCount(card: BookmarksCardViewModel): number {
     let count = 1;
     if (this.isEditableCard(card)) {
       count += 2;
@@ -297,11 +322,11 @@ export class DashboardComponent implements OnDestroy {
     this.uiTooltip.hide(tooltip);
   }
 
-  protected detailsNeedToggle(card: DashboardCardViewModel): boolean {
+  protected detailsNeedToggle(card: BookmarksCardViewModel): boolean {
     return (card.details?.length ?? 0) > INSTANCE_PREVIEW_COUNT;
   }
 
-  protected visibleDetails(card: DashboardCardViewModel) {
+  protected visibleDetails(card: BookmarksCardViewModel) {
     const details = card.details ?? [];
     if (
       this.isDetailsExpanded(this.cardKey(card)) ||
@@ -312,13 +337,13 @@ export class DashboardComponent implements OnDestroy {
     return details.slice(0, INSTANCE_PREVIEW_COUNT);
   }
 
-  protected drop(event: CdkDragDrop<DashboardCardViewModel[]>): void {
+  protected drop(event: CdkDragDrop<BookmarksCardViewModel[]>): void {
     const next = [...this.cards()];
     moveItemInArray(next, event.previousIndex, event.currentIndex);
-    this.collectionsStore.reorderDashboardCards(next);
+    this.collectionsStore.reorderBookmarksCards(next);
   }
 
-  protected deleteCard(card: DashboardCardViewModel): void {
+  protected deleteCard(card: BookmarksCardViewModel): void {
     if (this.isDeletingCard(card)) {
       return;
     }
@@ -346,13 +371,13 @@ export class DashboardComponent implements OnDestroy {
     }
   }
 
-  protected isDeletingCard(card: DashboardCardViewModel): boolean {
+  protected isDeletingCard(card: BookmarksCardViewModel): boolean {
     return this.collectionsStore.isMutating(
       mutationKey(this.deleteMutationScope(card.kind), card.id),
     );
   }
 
-  protected openEditCard(card: DashboardCardViewModel): void {
+  protected openEditCard(card: BookmarksCardViewModel): void {
     this.editingCard.set(card);
     this.saveModal()?.open(card.title, card.note ?? "");
   }
@@ -417,7 +442,7 @@ export class DashboardComponent implements OnDestroy {
     this.editingCard.set(null);
   }
 
-  protected openNoteCard(card: DashboardCardViewModel): void {
+  protected openNoteCard(card: BookmarksCardViewModel): void {
     if (!card.note || !isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -431,7 +456,7 @@ export class DashboardComponent implements OnDestroy {
     this.noteFlowbiteModal?.hide();
   }
 
-  protected cardLink(card: DashboardCardViewModel): string | any[] | null {
+  protected cardLink(card: BookmarksCardViewModel): string | any[] | null {
     const link = card.href ?? null;
     if (!link) {
       return null;
@@ -445,7 +470,7 @@ export class DashboardComponent implements OnDestroy {
     return link;
   }
 
-  protected openCard(card: DashboardCardViewModel): void {
+  protected openCard(card: BookmarksCardViewModel): void {
     const link = this.cardLink(card);
     if (!link) {
       return;
@@ -459,11 +484,11 @@ export class DashboardComponent implements OnDestroy {
     void this.router.navigate(link);
   }
 
-  protected shareIcon(card: DashboardCardViewModel): string {
-    return this.shareIcons()[`${card.kind}:${card.id}`] ?? "clipboard";
+  protected shareIcon(card: BookmarksCardViewModel): string {
+    return this.shareIcons()[this.cardKey(card)] ?? "clipboard";
   }
 
-  protected shareCard(card: DashboardCardViewModel): void {
+  protected shareCard(card: BookmarksCardViewModel): void {
     if (!isPlatformBrowser(this.platformId) || !navigator.clipboard) {
       return;
     }
@@ -473,7 +498,7 @@ export class DashboardComponent implements OnDestroy {
       return;
     }
 
-    const key = `${card.kind}:${card.id}`;
+    const key = this.cardKey(card);
     void navigator.clipboard.writeText(url).then(() => {
       this.shareIcons.update((state) => ({ ...state, [key]: "check" }));
       this.toastService.show({
@@ -491,7 +516,7 @@ export class DashboardComponent implements OnDestroy {
     });
   }
 
-  private updateMutationScope(kind: DashboardCardViewModel["kind"]): string {
+  private updateMutationScope(kind: BookmarksCardViewModel["kind"]): string {
     switch (kind) {
       case "savedSearches":
         return "update-search";
@@ -504,7 +529,7 @@ export class DashboardComponent implements OnDestroy {
     }
   }
 
-  private deleteMutationScope(kind: DashboardCardViewModel["kind"]): string {
+  private deleteMutationScope(kind: BookmarksCardViewModel["kind"]): string {
     switch (kind) {
       case "favoriteServers":
         return "favorite-server";
@@ -530,7 +555,7 @@ export class DashboardComponent implements OnDestroy {
 
     try {
       const vendors = this.unwrapBody(await this.keeperAPI.getVendors());
-      const nextVendors: Record<string, DashboardVendor> = {};
+      const nextVendors: Record<string, BookmarksVendor> = {};
 
       if (Array.isArray(vendors)) {
         for (const vendor of vendors) {
@@ -549,7 +574,7 @@ export class DashboardComponent implements OnDestroy {
   }
 
   private async loadFavoriteFeatures(
-    card: DashboardCardViewModel,
+    card: BookmarksCardViewModel,
   ): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
       return;
@@ -590,11 +615,11 @@ export class DashboardComponent implements OnDestroy {
   private async fetchServerFeatures(
     vendorId: string,
     serverId: string,
-  ): Promise<DashboardFeature[]> {
+  ): Promise<BookmarksFeature[]> {
     const server = this.unwrapBody(
       await this.keeperAPI.getServerV2(vendorId, serverId),
     );
-    const features: DashboardFeature[] = [];
+    const features: BookmarksFeature[] = [];
 
     if (server?.cpu_cores || server?.vcpus) {
       features.push({
@@ -627,11 +652,11 @@ export class DashboardComponent implements OnDestroy {
   private async fetchDatabaseFeatures(
     vendorId: string,
     databaseId: string,
-  ): Promise<DashboardFeature[]> {
+  ): Promise<BookmarksFeature[]> {
     const database = this.unwrapBody(
       await this.keeperAPI.getDatabase(vendorId, databaseId),
     );
-    const features: DashboardFeature[] = [
+    const features: BookmarksFeature[] = [
       {
         name: "vCPUs",
         value:
@@ -663,18 +688,18 @@ export class DashboardComponent implements OnDestroy {
     return features;
   }
 
-  private isFavoriteEntityCard(card: DashboardCardViewModel): boolean {
+  private isFavoriteEntityCard(card: BookmarksCardViewModel): boolean {
     return card.kind === "favoriteServers" || card.kind === "favoriteDatabases";
   }
 
-  private favoriteCardVendorId(card: DashboardCardViewModel): string | null {
+  private favoriteCardVendorId(card: BookmarksCardViewModel): string | null {
     return this.isFavoriteEntityCard(card) && card.subtitle
       ? card.subtitle
       : null;
   }
 
   private favoriteCardParams(
-    card: DashboardCardViewModel,
+    card: BookmarksCardViewModel,
   ): { vendorId: string; entityId: string } | null {
     const href = card.href;
     if (!Array.isArray(href) || href.length < 3) {
@@ -713,7 +738,7 @@ export class DashboardComponent implements OnDestroy {
     return this.noteFlowbiteModal;
   }
 
-  private cardShareUrl(card: DashboardCardViewModel): string | null {
+  private cardShareUrl(card: BookmarksCardViewModel): string | null {
     const link = this.cardLink(card);
     if (!link) {
       return null;

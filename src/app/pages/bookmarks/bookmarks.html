@@ -4,20 +4,38 @@
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <sc-page-header
-        icon="layout-dashboard"
-        title="Dashboard"
+        icon="folder-bookmark"
+        title="Bookmarks"
       ></sc-page-header>
       <p class="text-white text-xl pr-16">
-        Manage your favorites, saved searches, comparisons, and advisor
+        Manage your bookmarks, saved searches, comparisons, and advisor
         recommendations in one place. Edit their note or rename them to make
         them easier to find.
       </p>
+      <div class="bookmarks-search">
+        <div class="bookmarks-search__input-wrap">
+          <svg
+            [lucideIcon]="'search'"
+            class="bookmarks-search__icon"
+            aria-hidden="true"
+          ></svg>
+          <input
+            id="bookmarks-name-search"
+            type="search"
+            class="bookmarks-search__input"
+            placeholder="Search bookmarks by name"
+            aria-label="Search bookmarks by name"
+            [value]="nameQuery()"
+            (input)="onNameQueryInput($event)"
+          />
+        </div>
+      </div>
     </div>
 
-    <div class="dashboard-stats mx-2 xl:mx-0">
+    <div class="bookmarks-stats mx-2 xl:mx-0">
       @for (stat of statEntries(); track stat.key) {
         <label
-          class="dashboard-stats__item"
+          class="bookmarks-stats__item"
           [attr.aria-label]="stat.label + ': ' + stat.value"
         >
           <input
@@ -26,18 +44,18 @@
             [checked]="stat.enabled"
             (change)="toggleFilter(stat.key, $any($event.target).checked)"
           />
-          <span class="dashboard-filter__track">
-            <span class="dashboard-filter__thumb"></span>
+          <span class="bookmarks-filter__track">
+            <span class="bookmarks-filter__thumb"></span>
           </span>
           <svg
             [lucideIcon]="stat.icon"
-            class="dashboard-stats__icon"
+            class="bookmarks-stats__icon"
             aria-hidden="true"
           ></svg>
-          <span class="dashboard-stats__label"
+          <span class="bookmarks-stats__label"
             >{{ stat.label }}: {{ stat.value }}</span
           >
-          <span class="dashboard-stats__badge" aria-hidden="true">{{
+          <span class="bookmarks-stats__badge" aria-hidden="true">{{
             stat.value
           }}</span>
         </label>
@@ -50,30 +68,30 @@
       </div>
     } @else if (!cards().length) {
       <div class="text-center text-gray-400 py-16 mx-2 xl:mx-0">
-        No saved items match the current filters.
+        No bookmarks match the current filters.
       </div>
     } @else {
       <div
-        class="dashboard-grid mx-2 xl:mx-0"
+        class="bookmarks-grid mx-2 xl:mx-0"
         cdkDropList
         cdkDropListOrientation="mixed"
         (cdkDropListDropped)="drop($event)"
       >
         @for (card of cards(); track card.kind + ":" + card.id) {
-          <article class="dashboard-card" cdkDrag>
-            <div class="dashboard-card__kind-row">
-              <div class="dashboard-card__kind">
+          <article class="bookmarks-card" cdkDrag>
+            <div class="bookmarks-card__kind-row">
+              <div class="bookmarks-card__kind">
                 @if (card.icon) {
                   <svg
                     [lucideIcon]="card.icon"
-                    class="dashboard-card__kind-icon"
+                    class="bookmarks-card__kind-icon"
                     aria-hidden="true"
                   ></svg>
                 }
                 @if (card.secondaryIcon) {
                   <svg
                     [lucideIcon]="card.secondaryIcon"
-                    class="dashboard-card__kind-icon"
+                    class="bookmarks-card__kind-icon"
                     aria-hidden="true"
                   ></svg>
                 }
@@ -81,13 +99,13 @@
                   <img
                     [src]="logo"
                     [alt]="cardSubtitle(card) || ''"
-                    class="dashboard-card__vendor-logo"
+                    class="bookmarks-card__vendor-logo"
                   />
                 }
-                <h2 class="dashboard-card__title">{{ card.title }}</h2>
+                <h2 class="bookmarks-card__title">{{ card.title }}</h2>
               </div>
               <span
-                class="dashboard-card__handle"
+                class="bookmarks-card__handle"
                 cdkDragHandle
                 aria-hidden="true"
                 >⋮⋮</span
@@ -100,13 +118,13 @@
                 cardSubtitle(card);
               as subtitle
             ) {
-              <p class="dashboard-card__description">{{ subtitle }}</p>
+              <p class="bookmarks-card__description">{{ subtitle }}</p>
             }
 
             @if (cardFeatures(card).length) {
-              <div class="dashboard-card__table-wrap">
+              <div class="bookmarks-card__table-wrap">
                 <div class="overflow-x-auto">
-                  <table class="dashboard-card__table">
+                  <table class="bookmarks-card__table">
                     <thead>
                       <tr>
                         <th>Spec</th>
@@ -116,10 +134,10 @@
                     <tbody>
                       @for (feature of cardFeatures(card); track feature.name) {
                         <tr>
-                          <td class="dashboard-card__table-filter">
+                          <td class="bookmarks-card__table-filter">
                             {{ feature.name }}
                           </td>
-                          <td class="dashboard-card__table-value">
+                          <td class="bookmarks-card__table-value">
                             {{ feature.value }}
                           </td>
                         </tr>
@@ -131,36 +149,26 @@
             }
 
             @if (card.details?.length) {
-              <div class="dashboard-card__table-wrap">
+              <div class="bookmarks-card__table-wrap">
                 <div class="overflow-x-auto">
-                  <table class="dashboard-card__table">
+                  <table class="bookmarks-card__table">
                     <thead>
                       <tr>
-                        @if (card.detailsKind === "instances") {
-                          <th>Vendor</th>
-                          <th>Name</th>
-                        } @else {
-                          <th>Filter</th>
-                          <th>Value</th>
-                        }
+                        <th>Filter</th>
+                        <th>Value</th>
                       </tr>
                     </thead>
                     <tbody>
                       @for (row of visibleDetails(card); track $index) {
                         <tr>
                           <td
-                            [class.dashboard-card__table-field]="
-                              card.detailsKind === 'instances'
-                            "
-                            [class.dashboard-card__table-filter]="
-                              card.detailsKind !== 'instances'
-                            "
+                            class="bookmarks-card__table-filter"
                             (mouseenter)="showDetailTooltip($event, row.field)"
                             (mouseleave)="hideDetailTooltip()"
                           >
                             @if (row.fieldHref) {
                               <a
-                                class="dashboard-card__table-link"
+                                class="bookmarks-card__table-link"
                                 [routerLink]="row.fieldHref"
                                 >{{ row.field }}</a
                               >
@@ -169,19 +177,28 @@
                             }
                           </td>
                           <td
-                            class="dashboard-card__table-value"
+                            class="bookmarks-card__table-value"
                             (mouseenter)="showDetailTooltip($event, row.value)"
                             (mouseleave)="hideDetailTooltip()"
                           >
-                            @if (row.valueHref) {
-                              <a
-                                class="dashboard-card__table-link"
-                                [routerLink]="row.valueHref"
-                                >{{ row.value }}</a
-                              >
-                            } @else {
-                              {{ row.value }}
-                            }
+                            <span class="bookmarks-card__table-value-inner">
+                              @if (row.isBaseline) {
+                                <svg
+                                  [lucideIcon]="'target'"
+                                  class="bookmarks-card__baseline-icon"
+                                  aria-label="Baseline"
+                                ></svg>
+                              }
+                              @if (row.valueHref) {
+                                <a
+                                  class="bookmarks-card__table-link"
+                                  [routerLink]="row.valueHref"
+                                  >{{ row.value }}</a
+                                >
+                              } @else {
+                                {{ row.value }}
+                              }
+                            </span>
                           </td>
                         </tr>
                       }
@@ -190,7 +207,7 @@
                 </div>
                 @if (detailsNeedToggle(card)) {
                   @if (!isDetailsExpanded(cardKey(card))) {
-                    <div class="dashboard-card__details-more">
+                    <div class="bookmarks-card__details-more">
                       <sc-button
                         icon="chevron-down"
                         ariaLabel="Expand list"
@@ -199,7 +216,7 @@
                       ></sc-button>
                     </div>
                   } @else {
-                    <div class="dashboard-card__details-less">
+                    <div class="bookmarks-card__details-less">
                       <sc-button
                         icon="chevron-up"
                         ariaLabel="Collapse list"
@@ -213,8 +230,8 @@
             }
 
             <div
-              class="dashboard-card__actions"
-              [class.dashboard-card__actions--spread]="
+              class="bookmarks-card__actions"
+              [class.bookmarks-card__actions--spread]="
                 cardActionCount(card) > 3
               "
             >
@@ -245,7 +262,7 @@
                 ></sc-button>
               }
               <sc-button
-                icon="trash-2"
+                icon="bookmark-off"
                 ariaLabel="Delete"
                 variant="outline"
                 color="danger"
@@ -269,7 +286,7 @@
 </div>
 
 <sc-collection-save-modal
-  modalId="dashboard-edit-modal"
+  modalId="bookmarks-edit-modal"
   [title]="editModalTitle()"
   confirmLabel="Confirm"
   [saving]="isEditSaving()"
@@ -279,9 +296,9 @@
 
 <div
   #noteModal
-  id="dashboard-note-modal"
+  id="bookmarks-note-modal"
   tabindex="-1"
-  class="dashboard-note-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+  class="bookmarks-note-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
 >
   <div class="relative w-full max-w-3xl mx-auto my-auto">
     <div
@@ -320,9 +337,9 @@
       </div>
       @if (noteCard()?.note && isNoteModalOpen()) {
         <div
-          class="dashboard-note-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
+          class="bookmarks-note-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
         >
-          <p class="dashboard-note-modal-text">{{ noteCard()?.note }}</p>
+          <p class="bookmarks-note-modal-text">{{ noteCard()?.note }}</p>
         </div>
       }
     </div>

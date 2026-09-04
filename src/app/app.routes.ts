@@ -6,6 +6,11 @@ import { authGuard } from "./services/auth/auth.guard";
 
 export const routes: Routes = [
   { path: "", component: LandingpageComponent },
+  {
+    path: "auth/callback",
+    loadComponent: () =>
+      import("./pages/auth-callback/auth-callback").then((m) => m.AuthCallback),
+  },
 
   {
     path: "servers/compare",
@@ -221,12 +226,10 @@ export const routes: Routes = [
       ),
   },
   {
-    path: "dashboard",
+    path: "bookmarks",
     canActivate: [authGuard],
     loadComponent: () =>
-      import("./pages/dashboard/dashboard.component").then(
-        (m) => m.DashboardComponent,
-      ),
+      import("./pages/bookmarks/bookmarks").then((m) => m.Bookmarks),
   },
   {
     path: "about/partners",

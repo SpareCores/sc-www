@@ -121,7 +121,7 @@
                 [avatarAlt]="auth.userName()"
                 icon="chevron-down"
                 iconPosition="end"
-                buttonClass="max-xl:gap-0 max-xl:px-1 [&_.sc-button__icon]:max-xl:hidden"
+                buttonClass="!text-white max-xl:gap-0 max-xl:px-1 [&_.sc-button__icon]:max-xl:hidden"
                 ariaLabel="Account menu"
               ></sc-button>
             </div>
@@ -390,52 +390,46 @@
   class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
 >
   <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="auth_button"
     (click)="closeAuth()"
   >
-    <li class="px-2 py-2">
-      <sc-button
-        class="w-full"
-        label="Dashboard"
-        size="small"
-        icon="layout-dashboard"
-        iconPosition="start"
-        routerLink="/dashboard"
-        (buttonClick)="closeAuth()"
-      ></sc-button>
+    <li>
+      <a class="navbar_link" routerLink="/bookmarks" (click)="closeAuth()">
+        <span class="navbar_icon">
+          <svg lucideFolderBookmark class="h-4 w-4"></svg>
+        </span>
+        Bookmarks
+      </a>
     </li>
-    <li class="px-2 py-2">
-      <sc-button
-        class="w-full"
-        label="Book a Call"
-        size="small"
-        icon="calendar-days"
-        iconPosition="start"
-        id="meeting-header-auth-menu"
-      ></sc-button>
+    <li>
+      <button type="button" id="meeting-header-auth-menu" class="navbar_link">
+        <span class="navbar_icon">
+          <svg lucideCalendarDays class="h-4 w-4"></svg>
+        </span>
+        Book a Call
+      </button>
     </li>
-    <li class="px-2 py-2">
-      <sc-button
-        class="w-full"
-        label="Edit Profile"
-        size="small"
-        icon="user"
-        iconPosition="start"
-        (buttonClick)="openProfile()"
-      ></sc-button>
+    <li>
+      <button type="button" class="navbar_link" (click)="openProfile()">
+        <span class="navbar_icon">
+          <svg lucideUser class="h-4 w-4"></svg>
+        </span>
+        Edit Profile
+      </button>
     </li>
-    <li class="px-2 py-2">
-      <sc-button
-        class="w-full"
-        label="Sign Out"
-        size="small"
-        icon="log-out"
-        iconPosition="start"
-        variant="outline"
-        color="brand"
-        (buttonClick)="signOut()"
-      ></sc-button>
+    <hr />
+    <li>
+      <button
+        type="button"
+        class="navbar_link !text-[#EF4444] hover:!text-red-400"
+        (click)="signOut()"
+      >
+        <span class="navbar_icon">
+          <svg lucideLogOut class="h-4 w-4"></svg>
+        </span>
+        Sign Out
+      </button>
     </li>
   </ul>
 </div>
