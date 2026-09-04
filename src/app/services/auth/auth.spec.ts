@@ -83,7 +83,6 @@ describe("Auth", () => {
     const auth = createAuth();
     const clerk = {
       openSignIn: jasmine.createSpy("openSignIn"),
-      openSignUp: jasmine.createSpy("openSignUp"),
       openUserProfile: jasmine.createSpy("openUserProfile"),
       signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
       user: null,
@@ -94,9 +93,9 @@ describe("Auth", () => {
     auth.signUp();
     auth.openUserProfile();
 
-    expect(clerk.openSignIn).toHaveBeenCalledWith({ withSignUp: true });
-    expect(clerk.openSignUp).toHaveBeenCalled();
+    expect(clerk.openSignIn).toHaveBeenCalledWith({ withSignUp: false });
     expect(clerk.openUserProfile).toHaveBeenCalled();
+    expect(auth.signUpModalOpen()).toBeTrue();
   });
 
   it("clears auth state after sign out", async () => {
@@ -109,13 +108,11 @@ describe("Auth", () => {
     };
     const clerk: {
       openSignIn: jasmine.Spy;
-      openSignUp: jasmine.Spy;
       openUserProfile: jasmine.Spy;
       signOut: jasmine.Spy;
       user: typeof signedInUser | null;
     } = {
       openSignIn: jasmine.createSpy("openSignIn"),
-      openSignUp: jasmine.createSpy("openSignUp"),
       openUserProfile: jasmine.createSpy("openUserProfile"),
       signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
       user: signedInUser,
@@ -136,8 +133,10 @@ describe("Auth", () => {
 
     expect(() => auth.signIn()).not.toThrow();
     expect(() => auth.signUp()).not.toThrow();
+    expect(auth.signUpModalOpen()).toBeTrue();
     expect(() => auth.openUserProfile()).not.toThrow();
     await expectAsync(auth.signOut()).toBeResolved();
+    expect(auth.signUpModalOpen()).toBeFalse();
   });
 
   it("returns null token outside the browser", async () => {
