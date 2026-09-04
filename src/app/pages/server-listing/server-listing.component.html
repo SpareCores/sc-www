@@ -6,6 +6,7 @@
       <sc-page-header
         icon="ship-wheel"
         [title]="title"
+        [showSavedBookmark]="!!activeSavedSearch()"
         [showShare]="true"
         [shareIcon]="clipboardIcon"
         shareButtonId="server_listing_share_button"
@@ -19,11 +20,48 @@
           variant="outline"
           (click)="openIntroductionModal()"
         ></sc-button>
+        @if (isAuthenticated()) {
+          @if (activeSavedSearch()) {
+            <sc-button
+              label="Edit search"
+              icon="square-pen"
+              variant="outline"
+              (buttonClick)="openSaveSearchModal()"
+            ></sc-button>
+            <sc-button
+              label="Delete search"
+              icon="bookmark-off"
+              variant="outline"
+              color="danger"
+              [loading]="isDeleteSearchPending()"
+              (buttonClick)="deleteSavedSearch()"
+            ></sc-button>
+          } @else {
+            <sc-button
+              label="Bookmark this search"
+              icon="bookmark-plus"
+              variant="outline"
+              [disabled]="!canSaveSearch()"
+              (buttonClick)="openSaveSearchModal()"
+            ></sc-button>
+          }
+        }
       </sc-page-header>
       <div class="text-white text-xl pr-16">
         {{ description }}
       </div>
+      @if (!isAuthenticated()) {
+        <sc-guest-collections-banner></sc-guest-collections-banner>
+      }
     </div>
+
+    <sc-collection-save-modal
+      modalId="server-listing-save-search-modal"
+      title="Bookmark this search"
+      confirmLabel="Confirm"
+      [saving]="isSaveSearchPending()"
+      (confirmed)="confirmSaveSearch($event)"
+    ></sc-collection-save-modal>
 
     <div
       #introductionModal
@@ -118,7 +156,6 @@
           [filterCategories]="filterCategories"
           [searchParameters]="searchParameters"
           [extraParameters]="specialParameters"
-          [isAuthenticated]="false"
           (searchChanged)="searchBarChanged($event)"
         >
         </sc-search-bar>
@@ -210,6 +247,9 @@
                       <svg lucideScale class="h-4 w-4"></svg>
                     </div>
                   </th>
+                  @if (isAuthenticated()) {
+                    <th class="favorite_column"></th>
+                  }
                   @for (column of tableColumns; track column.name) {
                     <th
                       [ngClass]="{
@@ -274,41 +314,68 @@
                         />
                       </div>
                     </td>
+                    @if (isAuthenticated()) {
+                      <td
+                        class="favorite_column"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <sc-instance-favorite-context-menu
+                          kind="server"
+                          [vendorId]="item.vendor_id"
+                          [entityId]="item.api_reference"
+                          (requireAuth)="promptSignIn()"
+                        >
+                          <sc-bookmark-button
+                            kind="server"
+                            [vendorId]="item.vendor_id"
+                            [entityId]="item.api_reference"
+                            (requireAuth)="promptSignIn()"
+                          ></sc-bookmark-button>
+                        </sc-instance-favorite-context-menu>
+                      </td>
+                    }
                     @for (column of tableColumns; track column.name) {
                       @if (column.type === "name") {
                         <td>
-                          <div (click)="$event.stopPropagation()">
-                            <a
-                              routerLink="/server/{{ item.vendor.vendor_id }}/{{
-                                item.api_reference
-                              }}"
-                              data-ph-capture-attribute-sc-event="server listing route to server details"
-                              [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                                item.vendor_id
-                              "
-                              [attr.data-ph-capture-attribute-server-listing-row-index]="
-                                i + 1
-                              "
-                              [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                                limit
-                              "
-                            >
-                              <div class="text-sm text-white flex gap-1">
-                                <span class="whitespace-nowrap"
-                                  >{{ item.display_name }}
-                                </span>
-                                @if (showAPIReference(item)) {
-                                  <span class="text-emerald-400">|</span>
+                          <sc-instance-favorite-context-menu
+                            kind="server"
+                            [vendorId]="item.vendor_id"
+                            [entityId]="item.api_reference"
+                            (requireAuth)="promptSignIn()"
+                          >
+                            <div (click)="$event.stopPropagation()">
+                              <a
+                                routerLink="/server/{{
+                                  item.vendor.vendor_id
+                                }}/{{ item.api_reference }}"
+                                data-ph-capture-attribute-sc-event="server listing route to server details"
+                                [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                                  item.vendor_id
+                                "
+                                [attr.data-ph-capture-attribute-server-listing-row-index]="
+                                  i + 1
+                                "
+                                [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                                  limit
+                                "
+                              >
+                                <div class="text-sm text-white flex gap-1">
                                   <span class="whitespace-nowrap"
-                                    >{{ item.api_reference }}
+                                    >{{ item.display_name }}
                                   </span>
-                                }
-                              </div>
-                              <div class="text-xs text-white flex gap-1">
-                                <span>{{ item.vendor_id }}</span>
-                              </div>
-                            </a>
-                          </div>
+                                  @if (showAPIReference(item)) {
+                                    <span class="text-emerald-400">|</span>
+                                    <span class="whitespace-nowrap"
+                                      >{{ item.api_reference }}
+                                    </span>
+                                  }
+                                </div>
+                                <div class="text-xs text-white flex gap-1">
+                                  <span>{{ item.vendor_id }}</span>
+                                </div>
+                              </a>
+                            </div>
+                          </sc-instance-favorite-context-menu>
                         </td>
                       }
                       @if (column.type === "processor") {

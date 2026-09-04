@@ -5,17 +5,26 @@
   "
 >
   <div class="content pt-16 pb-16">
-    <sc-breadcrumbs [segments]="breadcrumbs()"></sc-breadcrumbs>
+    <sc-breadcrumbs [segments]="displayBreadcrumbs()"></sc-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <sc-page-header
         icon="bot"
-        [title]="title"
+        [title]="displayTitle()"
+        [showSavedBookmark]="showSavedBookmark()"
         [showShare]="true"
         [shareIcon]="clipboardIcon()"
         shareButtonId="advisor_share_button"
         (shareClick)="clipboardURL()"
       >
+        <sc-button
+          id="advisor_introduction_button"
+          label="Introduction"
+          icon="tv-minimal-play"
+          iconPosition="start"
+          variant="outline"
+          (click)="openIntroductionModal()"
+        ></sc-button>
         <sc-button
           id="advisor_example_button"
           label="Example"
@@ -25,19 +34,48 @@
           [routerLink]="['/advisor']"
           [queryParams]="advisorExampleQueryParams"
         ></sc-button>
-        <sc-button
-          id="advisor_introduction_button"
-          label="Introduction"
-          icon="tv-minimal-play"
-          iconPosition="start"
-          variant="outline"
-          (click)="openIntroductionModal()"
-        ></sc-button>
+        @if (isAuthenticated()) {
+          @if (activeSavedAdvice()) {
+            <sc-button
+              label="Edit assessment"
+              icon="square-pen"
+              variant="outline"
+              (buttonClick)="openSaveAdviceModal()"
+            ></sc-button>
+            <sc-button
+              label="Delete assessment"
+              icon="bookmark-off"
+              variant="outline"
+              color="danger"
+              [loading]="isDeleteAdvicePending()"
+              (buttonClick)="deleteSavedAdvice()"
+            ></sc-button>
+          } @else {
+            <sc-button
+              label="Bookmark this assessment"
+              icon="bookmark-plus"
+              variant="outline"
+              [disabled]="!canSaveAdvice()"
+              (buttonClick)="openSaveAdviceModal()"
+            ></sc-button>
+          }
+        }
       </sc-page-header>
       <div class="text-white text-xl lg:pr-16">
-        {{ description }}
+        {{ displayDescription() }}
       </div>
+      @if (!isAuthenticated()) {
+        <sc-guest-collections-banner></sc-guest-collections-banner>
+      }
     </div>
+
+    <sc-collection-save-modal
+      modalId="advisor-save-modal"
+      title="Bookmark this assessment"
+      confirmLabel="Confirm"
+      [saving]="isSaveAdvicePending()"
+      (confirmed)="confirmSaveAdvice($event)"
+    ></sc-collection-save-modal>
 
     <div
       #introductionModal
@@ -140,7 +178,6 @@
             [customControls]="customControls()"
             [parameterPlacements]="advisorParameterPlacements"
             [showTopSection]="false"
-            [isAuthenticated]="false"
             (searchChanged)="onSearchChanged($event)"
             (customControlChanged)="onCustomControlChanged($event)"
           >

@@ -8,6 +8,7 @@ import {
   OnInit,
   PLATFORM_ID,
   ViewChild,
+  effect,
   inject,
   signal,
   viewChild,
@@ -69,6 +70,10 @@ import {
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { CompareCollectionsService } from "../../collections/compare-collections.service";
+import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { Auth } from "../../services/auth/auth";
+import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import {
   decodeBase64JsonUrlState,
   isDatabaseCompareUrlState,
@@ -168,6 +173,7 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
     LucideInfo,
     LucideTriangleAlert,
     LucideX,
+    CollectionSaveModalComponent,
   ],
   templateUrl: "./database-compare.component.html",
   styleUrl: "./database-compare.component.scss",
@@ -187,6 +193,11 @@ export class DatabaseCompareComponent
   private advisorUi = inject(AdvisorUiService);
   private chartTooltip = inject(ChartTooltipService);
   private legendVisibility = inject(CompareChartLegendVisibilityService);
+  private compareCollections = inject(CompareCollectionsService);
+  private auth = inject(Auth);
+  saveComparisonModal = viewChild(CollectionSaveModalComponent);
+  private readonly pendingSaveComparisonClose = signal(false);
+  private readonly editingComparisonId = signal<string | null>(null);
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
   chartSectionTooltip = viewChild<ElementRef>("chartSectionTooltip");
@@ -206,6 +217,7 @@ export class DatabaseCompareComponent
 
   title = DATABASE_COMPARE_GUIDE_TITLE;
   description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
+  showSavedBookmark = false;
   keywords = "cloud, database, dbaas, compare, sparecores";
 
   isLoading = false;
@@ -260,6 +272,43 @@ export class DatabaseCompareComponent
       bottomAnchorRowId: DATABASE_COMPARE_VIEW_SERVER_ROW_ID,
     },
   });
+
+  constructor() {
+    effect(() => {
+      this.compareCollections.store.savedComparisons();
+      this.syncSavedComparisonChrome();
+    });
+
+    effect(() => {
+      if (!this.pendingSaveComparisonClose()) {
+        return;
+      }
+
+      this.compareCollections.store.savedComparisons();
+      const editingId = this.editingComparisonId();
+      const saved = this.activeSavedComparison();
+      const id =
+        editingId ??
+        this.compareCollections.buildComparisonId(
+          this.getCompareInstancesForSave(),
+        );
+      const saving = this.compareCollections.isSavingComparison(id);
+      const updating = editingId
+        ? this.compareCollections.isUpdatingComparison(editingId)
+        : saved
+          ? this.compareCollections.isUpdatingComparison(saved.id)
+          : false;
+
+      if (saving || updating) {
+        return;
+      }
+
+      this.pendingSaveComparisonClose.set(false);
+      if (editingId || saved) {
+        this.saveComparisonModal()?.close();
+      }
+    });
+  }
 
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
@@ -465,6 +514,7 @@ export class DatabaseCompareComponent
   selectCurrency(currency: CurrencyOption): void {
     this.currencyDropdown()?.hide();
     this.selectedCurrency = currency;
+    this.syncCompareUrlState();
     if (this.instances.length) {
       this.setup();
     }
@@ -499,6 +549,7 @@ export class DatabaseCompareComponent
     this.propertySections = [];
     this.priceRows = [];
     this.stickyLayout.reset();
+    this.restoreCurrencyFromUrl();
 
     if (id) {
       const specialCompare = this.databaseCompares.find(
@@ -550,6 +601,7 @@ export class DatabaseCompareComponent
         this.applyGuideChrome();
       }
       this.updateCompareBreadcrumb(this.instances.length);
+      this.syncSavedComparisonChrome();
     } else {
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
       this.applyGuideChrome();
@@ -750,7 +802,20 @@ export class DatabaseCompareComponent
       params.baseline_database = this.baselineDatabase.api_reference;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      params.currency = this.selectedCurrency.slug;
+    }
+
     return params;
+  }
+
+  private restoreCurrencyFromUrl(): void {
+    const currencySlug = this.route.snapshot.queryParams["currency"];
+
+    this.selectedCurrency =
+      this.availableCurrencies.find(
+        (currency) => currency.slug === currencySlug,
+      ) || this.availableCurrencies[0];
   }
 
   private syncCompareUrlState(): void {
@@ -815,6 +880,7 @@ export class DatabaseCompareComponent
   private applyGuideChrome(): void {
     this.title = DATABASE_COMPARE_GUIDE_TITLE;
     this.description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
+    this.showSavedBookmark = false;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -826,6 +892,7 @@ export class DatabaseCompareComponent
   private applyComparisonChrome(title?: string, description?: string): void {
     this.title = title || DATABASE_COMPARISON_TITLE;
     this.description = description || DATABASE_COMPARE_GUIDE_DESCRIPTION;
+    this.showSavedBookmark = false;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -865,6 +932,124 @@ export class DatabaseCompareComponent
     }
 
     this.breadcrumbs = this.baseCompareBreadcrumbs();
+  }
+
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  activeSavedComparison() {
+    return this.compareCollections.activeSavedComparison();
+  }
+
+  canSaveComparison(): boolean {
+    return this.isAuthenticated() && this.instances.length >= 2;
+  }
+
+  openSaveComparisonModal(): void {
+    if (!this.isAuthenticated()) {
+      this.auth.signIn();
+      return;
+    }
+
+    const saved = this.activeSavedComparison();
+    this.editingComparisonId.set(saved?.id ?? null);
+    this.saveComparisonModal()?.open(saved?.name ?? "", saved?.note ?? "");
+  }
+
+  isSaveComparisonPending(): boolean {
+    const editingId = this.editingComparisonId();
+    if (editingId) {
+      return this.compareCollections.isUpdatingComparison(editingId);
+    }
+
+    const saved = this.activeSavedComparison();
+    const id = this.compareCollections.buildComparisonId(
+      this.getCompareInstancesForSave(),
+    );
+
+    if (saved) {
+      return this.compareCollections.isUpdatingComparison(saved.id);
+    }
+
+    return this.compareCollections.isSavingComparison(id);
+  }
+
+  confirmSaveComparison(payload: { name: string; note?: string }): void {
+    this.syncCompareUrlState();
+    const instances = this.getCompareInstancesForSave();
+    const editingId = this.editingComparisonId();
+    const saved = this.activeSavedComparison();
+    const id =
+      editingId ??
+      saved?.id ??
+      this.compareCollections.buildComparisonId(instances);
+    this.pendingSaveComparisonClose.set(true);
+
+    if (editingId || saved) {
+      this.compareCollections.updateComparison(
+        id,
+        instances,
+        payload.name,
+        payload.note,
+      );
+      return;
+    }
+
+    this.compareCollections.saveComparison(
+      id,
+      instances,
+      payload.name,
+      payload.note,
+    );
+  }
+
+  deleteSavedComparison(): void {
+    const saved = this.activeSavedComparison();
+    if (!saved) {
+      return;
+    }
+
+    this.compareCollections.deleteComparison(saved.id);
+    this.applyComparisonChrome();
+    this.updateCompareBreadcrumb(this.instances.length);
+  }
+
+  isDeleteComparisonPending(): boolean {
+    const saved = this.activeSavedComparison();
+    return !!saved && this.compareCollections.isDeletingComparison(saved.id);
+  }
+
+  private getCompareInstancesForSave(): DatabaseCompare[] {
+    return this.instances.map((instance) => ({
+      display_name: instance.display_name,
+      vendor: instance.vendor,
+      database: instance.database,
+    }));
+  }
+
+  private syncSavedComparisonChrome(): void {
+    if (this.route.snapshot.paramMap.get("id")) {
+      return;
+    }
+
+    const saved = this.activeSavedComparison();
+    if (!saved || !this.instances.length) {
+      return;
+    }
+
+    this.title = saved.name;
+    this.description = saved.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
+    this.showSavedBookmark = true;
+    this.breadcrumbs = [
+      ...this.baseCompareBreadcrumbs(),
+      { name: saved.name, url: saved.compare_url },
+    ];
+    this.seoHandler.updateTitleAndMetaTags(
+      this.title,
+      this.description,
+      this.keywords,
+    );
   }
 
   private buildPropertySections(): void {

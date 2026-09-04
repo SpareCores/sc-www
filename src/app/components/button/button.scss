@@ -211,6 +211,11 @@
   @apply size-4 shrink-0;
 }
 
+.sc-button__spinner {
+  @apply inline-block size-4 shrink-0 animate-spin rounded-full border-current border-t-transparent;
+  border-width: 3px;
+}
+
 .sc-button__label {
   @apply min-w-0 truncate;
 }
@@ -221,6 +226,30 @@
 
 .sc-button__swatch {
   @apply size-2.5 shrink-0 rounded-full;
+}
+
+.sc-button__avatar {
+  @apply inline-block size-7 shrink-0 rounded-full border border-gray-600;
+}
+
+.sc-button__avatar-wrap {
+  @apply relative inline-flex size-7 shrink-0 items-center justify-center;
+}
+
+.sc-button__avatar-spinner {
+  @apply absolute inset-0 m-auto size-4;
+}
+
+.sc-button__avatar--pending {
+  @apply opacity-0;
+}
+
+.sc-button__avatar--placeholder {
+  @apply inline-flex items-center justify-center bg-gray-600 text-white;
+}
+
+.sc-button__avatar-icon {
+  @apply size-4;
 }
 
 .sc-button--swatch-inactive {
@@ -246,6 +275,24 @@
 
 .sc-button--small .sc-button__extension-label {
   @apply px-3 py-2;
+}
+
+.sc-button--small:has(.sc-button__avatar) {
+  @apply box-border h-[38px] items-stretch gap-x-2 px-3 py-1;
+}
+
+.sc-button--small:has(.sc-button__avatar) .sc-button__avatar,
+.sc-button--small:has(.sc-button__avatar) .sc-button__avatar--placeholder {
+  @apply aspect-square h-full w-auto shrink-0 self-center object-cover;
+}
+
+.sc-button--small:has(.sc-button__avatar) .sc-button__avatar-icon {
+  @apply h-[55%] w-[55%];
+}
+
+.sc-button--small:has(.sc-button__avatar) .sc-button__label,
+.sc-button--small:has(.sc-button__avatar) .sc-button__icon {
+  @apply self-center;
 }
 
 .sc-button--default .sc-button__extension-label {

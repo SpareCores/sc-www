@@ -76,16 +76,56 @@
           ></sc-button>
         </div>
         <div class="flex items-center gap-4">
-          <sc-button
-            id="meeting-header-demo"
-            label="Book a Call"
-            icon="calendar-days"
-            iconPosition="start"
-            size="small"
-            ariaLabel="Book a Call"
-            class="hidden sm:flex"
-            buttonClass="whitespace-nowrap"
-          ></sc-button>
+          @if (!auth.isAuthenticated()) {
+            <sc-button
+              id="meeting-header-demo"
+              label="Book a Call"
+              icon="calendar-days"
+              iconPosition="start"
+              size="small"
+              ariaLabel="Book a Call"
+              class="hidden sm:flex"
+              buttonClass="whitespace-nowrap"
+            ></sc-button>
+            <div class="hidden xl:flex items-center gap-4">
+              <sc-button
+                label="Log in"
+                size="small"
+                icon="key-square"
+                iconPosition="start"
+                variant="outline"
+                color="brand"
+                (buttonClick)="signIn()"
+              ></sc-button>
+              <sc-button
+                label="Register"
+                size="small"
+                icon="user-plus"
+                iconPosition="start"
+                (buttonClick)="signUp()"
+              ></sc-button>
+            </div>
+          } @else {
+            <div class="hidden sm:block">
+              <sc-button
+                id="auth_button"
+                [scFlowbiteDropdown]="'auth_options'"
+                [dropdownPlacement]="'bottom-end'"
+                #authDropdown="scFlowbiteDropdown"
+                size="small"
+                variant="outline"
+                color="brand"
+                [label]="auth.userName()"
+                labelClass="hidden xl:inline max-w-40 truncate"
+                [avatarSrc]="auth.userImageUrl() || null"
+                [avatarAlt]="auth.userName()"
+                icon="chevron-down"
+                iconPosition="end"
+                buttonClass="!text-white max-xl:gap-0 max-xl:px-1 [&_.sc-button__icon]:max-xl:hidden"
+                ariaLabel="Account menu"
+              ></sc-button>
+            </div>
+          }
           @if (showCompareMenu()) {
             <sc-button
               id="compare_button"
@@ -129,6 +169,32 @@
     aria-labelledby="dropdownDefaultButton"
     (click)="closeMenu()"
   >
+    <li class="px-2 py-2" [class.hidden]="auth.isAuthenticated()">
+      <div class="flex flex-col gap-2">
+        <sc-button
+          label="Log in"
+          size="small"
+          icon="key-square"
+          iconPosition="start"
+          variant="outline"
+          color="brand"
+          class="w-full"
+          (buttonClick)="signIn()"
+        ></sc-button>
+        <sc-button
+          label="Register"
+          size="small"
+          icon="user-plus"
+          iconPosition="start"
+          class="w-full"
+          (buttonClick)="signUp()"
+        ></sc-button>
+      </div>
+    </li>
+    <li
+      class="mx-3 my-1 border-b border-emerald-400/30"
+      [class.hidden]="auth.isAuthenticated()"
+    ></li>
     <li class="py-2">
       <span class="navbar_link hover:!text-white">
         <span class="navbar_icon">
@@ -314,6 +380,56 @@
         </span>
         Sentinel
       </a>
+    </li>
+  </ul>
+</div>
+
+<div
+  id="auth_options"
+  [attr.inert]="authDropdown()?.dropdown?._visible ? null : ''"
+  class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+>
+  <ul
+    class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="auth_button"
+    (click)="closeAuth()"
+  >
+    <li>
+      <a class="navbar_link" routerLink="/bookmarks" (click)="closeAuth()">
+        <span class="navbar_icon">
+          <svg lucideFolderBookmark class="h-4 w-4"></svg>
+        </span>
+        Bookmarks
+      </a>
+    </li>
+    <li>
+      <button type="button" id="meeting-header-auth-menu" class="navbar_link">
+        <span class="navbar_icon">
+          <svg lucideCalendarDays class="h-4 w-4"></svg>
+        </span>
+        Book a Call
+      </button>
+    </li>
+    <li>
+      <button type="button" class="navbar_link" (click)="openProfile()">
+        <span class="navbar_icon">
+          <svg lucideUser class="h-4 w-4"></svg>
+        </span>
+        Edit Profile
+      </button>
+    </li>
+    <hr />
+    <li>
+      <button
+        type="button"
+        class="navbar_link !text-[#EF4444] hover:!text-red-400"
+        (click)="signOut()"
+      >
+        <span class="navbar_icon">
+          <svg lucideLogOut class="h-4 w-4"></svg>
+        </span>
+        Sign Out
+      </button>
     </li>
   </ul>
 </div>

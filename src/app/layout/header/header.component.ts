@@ -13,6 +13,7 @@ import {
   LucideArrowUpDown,
   LucideBookText,
   LucideBot,
+  LucideCalendarDays,
   LucideDatabase,
   LucideDollarSign,
   LucideGauge,
@@ -20,7 +21,9 @@ import {
   LucideHeartHandshake,
   LucideHouse,
   LucideHotel,
+  LucideFolderBookmark,
   LucideInfo,
+  LucideLogOut,
   LucideMenu,
   LucideNotebookText,
   LucidePalette,
@@ -31,9 +34,11 @@ import {
   LucideShipWheel,
   LucideTarget,
   LucideTrash,
+  LucideUser,
 } from "@lucide/angular";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { Auth } from "../../services/auth/auth";
 
 @Component({
   selector: "sc-header",
@@ -43,6 +48,7 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
     LucideArrowUpDown,
     LucideBookText,
     LucideBot,
+    LucideCalendarDays,
     LucideDatabase,
     LucideDollarSign,
     LucideGauge,
@@ -51,6 +57,8 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
     LucideHouse,
     LucideHotel,
     LucideInfo,
+    LucideFolderBookmark,
+    LucideLogOut,
     LucideMenu,
     LucideNotebookText,
     LucidePalette,
@@ -61,6 +69,7 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
     LucideShipWheel,
     LucideTarget,
     LucideTrash,
+    LucideUser,
     RouterLink,
     CommonModule,
     FlowbiteDropdownDirective,
@@ -74,9 +83,11 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
 export class HeaderComponent {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
+  protected readonly auth = inject(Auth);
 
   menuDropdown = viewChild<FlowbiteDropdownDirective>("menuDropdown");
   aboutDropdown = viewChild<FlowbiteDropdownDirective>("aboutDropdown");
+  authDropdown = viewChild<FlowbiteDropdownDirective>("authDropdown");
   compareDropdown = viewChild<FlowbiteDropdownDirective>("compareDropdown");
   navigatorDropdown = viewChild<FlowbiteDropdownDirective>("navigatorDropdown");
 
@@ -94,6 +105,32 @@ export class HeaderComponent {
 
   closeAbout() {
     this.aboutDropdown()?.hide();
+  }
+
+  closeAuth() {
+    this.authDropdown()?.hide();
+  }
+
+  signIn(): void {
+    this.closeMenu();
+    this.auth.signIn();
+  }
+
+  signUp(): void {
+    this.closeMenu();
+    this.auth.signUp();
+  }
+
+  async signOut(): Promise<void> {
+    this.closeAuth();
+    this.closeMenu();
+    await this.auth.signOut();
+    await this.router.navigate(["/"]);
+  }
+
+  openProfile(): void {
+    this.auth.openUserProfile();
+    this.closeAuth();
   }
 
   compareCount(): number {

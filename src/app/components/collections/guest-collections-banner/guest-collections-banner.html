@@ -1,0 +1,30 @@
+@if (visible()) {
+<div class="guest-collections-banner">
+  <div class="guest-collections-banner__body">
+    <span class="guest-collections-banner__lead">
+      Guests have limited search and geo-filtering.
+    </span>
+    <span class="guest-collections-banner__copy">
+      Register for unlimited comparisons, saved searches, saved comparisons,
+      advisor recommendations, and bookmarks.
+    </span>
+  </div>
+  <div class="guest-collections-banner__actions">
+    <sc-button
+      label="Register"
+      icon="user-plus"
+      iconPosition="start"
+      size="small"
+      (buttonClick)="register()"
+    ></sc-button>
+    <button
+      type="button"
+      class="guest-collections-banner__close"
+      aria-label="Dismiss guest collections banner"
+      (click)="dismiss()"
+    >
+      <svg lucideX class="h-4 w-4"></svg>
+    </button>
+  </div>
+</div>
+}

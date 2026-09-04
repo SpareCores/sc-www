@@ -1,5 +1,12 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { Component, computed, input, output } from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+} from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon } from "@lucide/angular";
 
@@ -45,13 +52,35 @@ export class Button {
   badge = input<string | number | null>(null);
   badgePing = input(false);
   swatchColor = input<string | null>(null);
+  avatarSrc = input<string | null | undefined>(undefined);
+  avatarAlt = input<string | null>(null);
+  labelClass = input<string>("");
+  loading = input(false);
 
   buttonClick = output<MouseEvent>();
 
-  isIconOnly = computed(
+  private readonly avatarImageReady = signal(false);
+
+  showSwatch = computed(() => !!this.swatchColor());
+
+  showAvatar = computed(() => this.avatarSrc() !== undefined);
+
+  hasAvatarImage = computed(() => !!this.avatarSrc());
+
+  showAvatarSpinner = computed(
+    () => this.hasAvatarImage() && !this.avatarImageReady(),
+  );
+
+  avatarAltText = computed(() => this.avatarAlt() || this.label() || "Avatar");
+
+  isDisabled = computed(() => this.disabled() || this.loading());
+
+  showStartIcon = computed(
     () =>
       !!this.icon() &&
+      !this.loading() &&
       !this.label() &&
+      !this.showAvatar() &&
       this.variant() !== "dropdown" &&
       this.variant() !== "benchmark",
   );
@@ -65,8 +94,59 @@ export class Button {
       this.badge() !== "",
   );
 
+  constructor() {
+    effect(() => {
+      this.avatarImageReady.set(!this.avatarSrc());
+    });
+  }
+
+  markAvatarReady(): void {
+    this.avatarImageReady.set(true);
+  }
+
+  isIconOnly = computed(
+    () =>
+      !!this.icon() &&
+      !this.label() &&
+      !this.showAvatar() &&
+      this.variant() !== "dropdown" &&
+      this.variant() !== "benchmark",
+  );
+
+  buttonClasses = computed(() => {
+    const classes = [
+      "sc-button",
+      `sc-button--${this.size()}`,
+      `sc-button--${this.variant()}`,
+      `sc-button--${this.color()}`,
+    ];
+
+    if (this.variant() === "solid") {
+      classes.push("btn-primary");
+    } else if (this.variant() === "outline") {
+      classes.push("btn-primary-outline");
+    } else if (this.variant() === "dropdown") {
+      classes.push("dropdown_button", "chart-selector-button");
+      if (this.size() === "large") {
+        classes.push("chart-selector-button--comfortable");
+      }
+    } else if (this.variant() === "benchmark") {
+      classes.push("dropdown_button");
+    }
+
+    if (this.buttonClass()) {
+      classes.push(this.buttonClass());
+    }
+
+    if (this.isIconOnly()) {
+      classes.push("sc-button--icon-only");
+    }
+
+    return classes.join(" ");
+  });
+
   onClick(event: MouseEvent) {
-    if (this.disabled()) {
+    if (this.isDisabled()) {
       event.preventDefault();
       event.stopPropagation();
       return;

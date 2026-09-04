@@ -49,6 +49,8 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { CollectionsStore } from "../../collections/collections.store";
+import { Auth } from "../../services/auth/auth";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
 
@@ -110,6 +112,8 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
   private serverCompare = inject(ServerCompareService);
+  private collectionsStore = inject(CollectionsStore);
+  private auth = inject(Auth);
 
   isLoading = true;
   databaseDetails: LoadedDatabase | null = null;
@@ -639,6 +643,46 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         display_name: this.databaseDetails.display_name,
       },
     );
+  }
+
+  isFavoriteDatabase(): boolean {
+    if (!this.databaseDetails) {
+      return false;
+    }
+    return this.collectionsStore.isFavoriteDatabase(
+      this.databaseDetails.vendor_id,
+      this.databaseDetails.api_reference,
+    );
+  }
+
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  favoriteButtonLabel(): string {
+    return this.isFavoriteDatabase()
+      ? "Remove from bookmarks"
+      : "Bookmark this database";
+  }
+
+  favoriteButtonIcon(): string {
+    return this.isFavoriteDatabase() ? "bookmark-off" : "bookmark-plus";
+  }
+
+  toggleFavoriteDatabase(): void {
+    if (!this.databaseDetails) {
+      return;
+    }
+
+    if (!this.auth.isAuthenticated()) {
+      this.auth.signIn();
+      return;
+    }
+
+    this.collectionsStore.toggleFavoriteDatabase({
+      vendorId: this.databaseDetails.vendor_id,
+      databaseId: this.databaseDetails.api_reference,
+    });
   }
 
   compareText() {

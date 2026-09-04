@@ -4,6 +4,8 @@ declare global {
   interface ImportMetaEnv {
     NG_APP_BACKEND_BASE_URI?: string;
     NG_APP_BACKEND_BASE_URI_SSR?: string;
+    NG_APP_WWW_API_BASE_URI?: string;
+    NG_APP_CLERK_PUBLISHABLE_KEY?: string;
     NG_APP_POSTHOG_HOST?: string;
     NG_APP_POSTHOG_KEY?: string;
     NG_APP_SENTRY_DSN?: string;

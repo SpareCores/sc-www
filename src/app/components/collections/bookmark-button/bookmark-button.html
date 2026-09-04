@@ -1,0 +1,24 @@
+<button
+  type="button"
+  class="bookmark-button"
+  [class.bookmark-button--active]="isBookmarked()"
+  [class.bookmark-button--can-add]="canAdd()"
+  [class.bookmark-button--can-remove]="canRemove()"
+  [disabled]="disabled() || isLoading()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-pressed]="isBookmarked()"
+  (click)="toggle($event)"
+>
+  <svg
+    lucideBookmark
+    class="bookmark-button__icon bookmark-button__icon--default"
+  ></svg>
+  <svg
+    lucideBookmarkPlus
+    class="bookmark-button__icon bookmark-button__icon--add"
+  ></svg>
+  <svg
+    lucideBookmarkOff
+    class="bookmark-button__icon bookmark-button__icon--remove"
+  ></svg>
+</button>

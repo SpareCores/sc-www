@@ -2,38 +2,47 @@ import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
-  OnInit,
-  OnDestroy,
-  PLATFORM_ID,
   DOCUMENT,
   inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
 } from "@angular/core";
 import { Meta } from "@angular/platform-browser";
 import {
+  Event,
   NavigationEnd,
   Router,
-  Event,
   RouterModule,
   RoutesRecognized,
 } from "@angular/router";
+import { Subscription } from "rxjs";
 import { register } from "swiper/element/bundle";
-import { HeaderComponent } from "./layout/header/header.component";
-import { FooterComponent } from "./layout/footer/footer.component";
+import { CollectionsStore } from "./collections/collections.store";
 import { PromoBanner } from "./components/promo-banner/promo-banner";
+import { RegisterModal } from "./components/register-modal/register-modal";
 import {
   PROMO_BANNER_BY_PATH,
   type PromoBannerDismissalGroup,
   type PromoBannerMessage,
 } from "./components/promo-banner/promo-banner.constants";
+import { FooterComponent } from "./layout/footer/footer.component";
+import { HeaderComponent } from "./layout/header/header.component";
 import { AnalyticsService } from "./services/analytics.service";
-import { Subscription } from "rxjs";
+import { Auth } from "./services/auth/auth";
 import { NeetoCalService } from "./services/neeto-cal.service";
 
 const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
 
 @Component({
   selector: "sc-root",
-  imports: [PromoBanner, HeaderComponent, FooterComponent, RouterModule],
+  imports: [
+    PromoBanner,
+    RegisterModal,
+    HeaderComponent,
+    FooterComponent,
+    RouterModule,
+  ],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })
@@ -44,6 +53,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private metaTagService = inject(Meta);
   private neetoCalService = inject(NeetoCalService);
+  private collectionsStore = inject(CollectionsStore);
+  private auth = inject(Auth);
 
   title = "sc-www";
 
@@ -83,6 +94,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     register();
     this.neetoCalService.initialize();
+    this.openRegisterFromQuery();
+  }
+
+  private openRegisterFromQuery(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("register") !== "1") {
+      return;
+    }
+
+    this.auth.signUp();
+    params.delete("register");
+    const query = params.toString();
+    const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+    window.history.replaceState({}, "", nextUrl);
   }
 
   ngAfterViewInit(): void {

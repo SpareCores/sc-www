@@ -2,6 +2,9 @@ import { Injectable, OnDestroy, inject } from "@angular/core";
 import { ServerPKs } from "../../../sdk/data-contracts";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
+import { Auth } from "./auth/auth";
+import { ToastService } from "./toast.service";
+import { GUEST_COMPARE_LIMIT } from "../collections/collections.utils";
 
 export interface ZoneAndRegion {
   zone: string;
@@ -43,6 +46,8 @@ export interface DatabaseCompareBaseline {
 })
 export class ServerCompareService implements OnDestroy {
   private router = inject(Router);
+  private auth = inject(Auth);
+  private toastService = inject(ToastService);
 
   public selectedForCompare: ServerCompare[] = [];
   public selectedDatabases: DatabaseCompare[] = [];
@@ -55,6 +60,10 @@ export class ServerCompareService implements OnDestroy {
   public baselineDatabase: DatabaseCompareBaseline | null = null;
 
   toggleCompare(event: boolean, server: ServerCompareItem) {
+    if (event && !this.canAddServerToCompare(server)) {
+      return false;
+    }
+
     if (event) {
       let existing = this.selectedForCompare.find(
         (item) =>
@@ -108,9 +117,14 @@ export class ServerCompareService implements OnDestroy {
       }
     }
     this.selectionChanged.next(this.selectedForCompare);
+    return true;
   }
 
   toggleDatabaseCompare(event: boolean, database: DatabaseCompare) {
+    if (event && !this.canAddDatabaseToCompare(database)) {
+      return false;
+    }
+
     if (event) {
       const existing = this.selectedDatabases.find(
         (item) =>
@@ -133,6 +147,58 @@ export class ServerCompareService implements OnDestroy {
       this.clearDatabaseBaselineIfMatches(database);
     }
     this.databaseSelectionChanged.next(this.selectedDatabases);
+    return true;
+  }
+
+  canAddServerToCompare(server: ServerCompareItem): boolean {
+    if (this.auth.isAuthenticated()) {
+      return true;
+    }
+
+    const existing = this.selectedForCompare.find(
+      (item) => item.vendor === server.vendor && item.server === server.server,
+    );
+    if (existing) {
+      return true;
+    }
+
+    if (this.serverCompareCount() >= GUEST_COMPARE_LIMIT) {
+      this.toastService.show({
+        id: "guest-compare-limit",
+        title: "Compare limit reached",
+        body: `Guests can compare up to ${GUEST_COMPARE_LIMIT} instances. Register to compare more.`,
+        type: "warning",
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  canAddDatabaseToCompare(database: DatabaseCompare): boolean {
+    if (this.auth.isAuthenticated()) {
+      return true;
+    }
+
+    const existing = this.selectedDatabases.find(
+      (item) =>
+        item.vendor === database.vendor && item.database === database.database,
+    );
+    if (existing) {
+      return true;
+    }
+
+    if (this.databaseCompareCount() >= GUEST_COMPARE_LIMIT) {
+      this.toastService.show({
+        id: "guest-compare-limit",
+        title: "Compare limit reached",
+        body: `Guests can compare up to ${GUEST_COMPARE_LIMIT} instances. Register to compare more.`,
+        type: "warning",
+      });
+      return false;
+    }
+
+    return true;
   }
 
   compareCount(): number {

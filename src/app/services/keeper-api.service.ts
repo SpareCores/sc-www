@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { Auth } from "./auth/auth";
 import { MYHTTPClient } from "./my_http/my-http";
 import { Server } from "../../../sdk/Server";
 import { Servers } from "../../../sdk/Servers";
@@ -50,8 +51,9 @@ type ServerSelectColumns = ServerSelectColumn[];
 export class KeeperAPIService {
   private platformId = inject(PLATFORM_ID);
   private httpClient = inject(HttpClient);
+  private auth = inject(Auth);
 
-  public myHttp = new MYHTTPClient(this.httpClient, this.platformId);
+  public myHttp = new MYHTTPClient(this.httpClient, this.platformId, this.auth);
 
   public SearchController: Servers = new Servers(this.myHttp);
   public ServerController: Server = new Server(this.myHttp);

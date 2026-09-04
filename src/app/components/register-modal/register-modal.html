@@ -1,0 +1,193 @@
+@if (auth.signUpModalOpen()) {
+<div class="register-modal" (click)="close()">
+  <div class="register-modal__panel" (click)="stopPropagation($event)">
+    <button
+      type="button"
+      class="register-modal__close"
+      aria-label="Close registration modal"
+      (click)="close()"
+    >
+      ×
+    </button>
+
+    @if (step === "details") {
+    <div class="register-modal__body">
+      <div class="register-modal__header">
+        <h2 class="register-modal__title">Create your account</h2>
+        <p class="register-modal__subtitle">
+          Welcome! Please fill in the details to get started.
+        </p>
+      </div>
+
+      <sc-button
+        label="Continue with GitHub"
+        icon="github"
+        iconPosition="start"
+        size="small"
+        variant="outline"
+        color="brand"
+        buttonClass="w-full !justify-center"
+        [loading]="busy === 'github'"
+        [disabled]="!!busy"
+        (buttonClick)="continueWithGithub()"
+      ></sc-button>
+
+      <div class="register-modal__divider">
+        <span>or</span>
+      </div>
+
+      <form class="register-modal__form" (ngSubmit)="submitDetails()">
+        <div class="register-modal__grid">
+          <label class="register-modal__field">
+            <span>First name</span>
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First name"
+              [(ngModel)]="firstName"
+            />
+          </label>
+          <label class="register-modal__field">
+            <span>Last name</span>
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Last name"
+              [(ngModel)]="lastName"
+            />
+          </label>
+        </div>
+
+        <label class="register-modal__field">
+          <span>Email address</span>
+          <input
+            type="email"
+            name="emailAddress"
+            placeholder="Enter your email address"
+            [(ngModel)]="emailAddress"
+          />
+        </label>
+
+        <label class="register-modal__field">
+          <span>Password</span>
+          <input
+            type="password"
+            name="password"
+            placeholder="Create a password"
+            [(ngModel)]="password"
+          />
+        </label>
+
+        <label class="register-modal__checkbox">
+          <input
+            type="checkbox"
+            name="legalAccepted"
+            [(ngModel)]="legalAccepted"
+          />
+          <span>
+            I agree to the
+            <a href="/legal/terms-of-service" target="_blank" rel="noopener"
+              >Terms of Service</a
+            >
+            and
+            <a href="/legal/privacy-policy" target="_blank" rel="noopener"
+              >Privacy Policy</a
+            >
+          </span>
+        </label>
+
+        <label class="register-modal__checkbox">
+          <input
+            type="checkbox"
+            name="newsletterOptIn"
+            [(ngModel)]="newsletterOptIn"
+          />
+          <span>Subscribe me to the Spare Cores newsletter</span>
+        </label>
+
+        @if (errorMessage) {
+        <p class="register-modal__error">{{ errorMessage }}</p>
+        }
+
+        <div
+          id="clerk-captcha"
+          data-cl-theme="dark"
+          data-cl-size="flexible"
+        ></div>
+
+        <sc-button
+          type="submit"
+          label="Continue"
+          icon="chevron-right"
+          size="small"
+          buttonClass="w-full !justify-center"
+          [loading]="busy === 'submit'"
+          [disabled]="!canSubmit() || !!busy"
+        ></sc-button>
+      </form>
+
+      <div class="register-modal__footer">
+        <p>
+          Already have an account?
+          <button
+            type="button"
+            class="register-modal__footer-link"
+            (click)="openSignIn()"
+          >
+            Log in
+          </button>
+        </p>
+      </div>
+    </div>
+    } @else {
+    <div class="register-modal__body">
+      <div class="register-modal__header">
+        <h2 class="register-modal__title">Verify your email</h2>
+        <p class="register-modal__subtitle">
+          Enter the verification code sent to {{ emailAddress.trim() }}.
+        </p>
+      </div>
+
+      <form class="register-modal__form" (ngSubmit)="verifyEmail()">
+        <label class="register-modal__field">
+          <span>Verification code</span>
+          <input
+            type="text"
+            name="verificationCode"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            placeholder="Enter verification code"
+            [(ngModel)]="verificationCode"
+          />
+        </label>
+
+        @if (errorMessage) {
+        <p class="register-modal__error">{{ errorMessage }}</p>
+        }
+
+        <div class="register-modal__verify-actions">
+          <sc-button
+            label="Resend code"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'resend'"
+            [disabled]="!!busy"
+            (buttonClick)="resendCode()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            label="Verify email"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'verify'"
+            [disabled]="!canVerify() || !!busy"
+          ></sc-button>
+        </div>
+      </form>
+    </div>
+    }
+  </div>
+</div>
+}
