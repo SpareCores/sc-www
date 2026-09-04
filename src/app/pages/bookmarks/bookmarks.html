@@ -3,10 +3,7 @@
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
-      <sc-page-header
-        icon="folder-bookmark"
-        title="Bookmarks"
-      ></sc-page-header>
+      <sc-page-header icon="folder-bookmark" title="Bookmarks"></sc-page-header>
       <p class="text-white text-xl pr-16">
         Manage your bookmarks, saved searches, comparisons, and advisor
         recommendations in one place. Edit their note or rename them to make
@@ -34,253 +31,233 @@
 
     <div class="bookmarks-stats mx-2 xl:mx-0">
       @for (stat of statEntries(); track stat.key) {
-        <label
-          class="bookmarks-stats__item"
-          [attr.aria-label]="stat.label + ': ' + stat.value"
+      <label
+        class="bookmarks-stats__item"
+        [attr.aria-label]="stat.label + ': ' + stat.value"
+      >
+        <input
+          type="checkbox"
+          class="peer sr-only"
+          [checked]="stat.enabled"
+          (change)="toggleFilter(stat.key, $any($event.target).checked)"
+        />
+        <span class="bookmarks-filter__track">
+          <span class="bookmarks-filter__thumb"></span>
+        </span>
+        <svg
+          [lucideIcon]="stat.icon"
+          class="bookmarks-stats__icon"
+          aria-hidden="true"
+        ></svg>
+        <span class="bookmarks-stats__label"
+          >{{ stat.label }}: {{ stat.value }}</span
         >
-          <input
-            type="checkbox"
-            class="peer sr-only"
-            [checked]="stat.enabled"
-            (change)="toggleFilter(stat.key, $any($event.target).checked)"
-          />
-          <span class="bookmarks-filter__track">
-            <span class="bookmarks-filter__thumb"></span>
-          </span>
-          <svg
-            [lucideIcon]="stat.icon"
-            class="bookmarks-stats__icon"
-            aria-hidden="true"
-          ></svg>
-          <span class="bookmarks-stats__label"
-            >{{ stat.label }}: {{ stat.value }}</span
-          >
-          <span class="bookmarks-stats__badge" aria-hidden="true">{{
-            stat.value
-          }}</span>
-        </label>
+        <span class="bookmarks-stats__badge" aria-hidden="true"
+          >{{ stat.value }}</span
+        >
+      </label>
       }
     </div>
 
     @if (isLoading()) {
-      <div class="flex justify-center py-16">
-        <sc-loading-spinner size="lg"></sc-loading-spinner>
-      </div>
+    <div class="flex justify-center py-16">
+      <sc-loading-spinner size="lg"></sc-loading-spinner>
+    </div>
     } @else if (!cards().length) {
-      <div class="text-center text-gray-400 py-16 mx-2 xl:mx-0">
-        No bookmarks match the current filters.
-      </div>
+    <div class="text-center text-gray-400 py-16 mx-2 xl:mx-0">
+      No bookmarks match the current filters.
+    </div>
     } @else {
-      <div
-        class="bookmarks-grid mx-2 xl:mx-0"
-        cdkDropList
-        cdkDropListOrientation="mixed"
-        (cdkDropListDropped)="drop($event)"
-      >
-        @for (card of cards(); track card.kind + ":" + card.id) {
-          <article class="bookmarks-card" cdkDrag>
-            <div class="bookmarks-card__kind-row">
-              <div class="bookmarks-card__kind">
-                @if (card.icon) {
-                  <svg
-                    [lucideIcon]="card.icon"
-                    class="bookmarks-card__kind-icon"
-                    aria-hidden="true"
-                  ></svg>
-                }
-                @if (card.secondaryIcon) {
-                  <svg
-                    [lucideIcon]="card.secondaryIcon"
-                    class="bookmarks-card__kind-icon"
-                    aria-hidden="true"
-                  ></svg>
-                }
-                @if (cardVendorLogo(card); as logo) {
-                  <img
-                    [src]="logo"
-                    [alt]="cardSubtitle(card) || ''"
-                    class="bookmarks-card__vendor-logo"
-                  />
-                }
-                <h2 class="bookmarks-card__title">{{ card.title }}</h2>
-              </div>
-              <span
-                class="bookmarks-card__handle"
-                cdkDragHandle
-                aria-hidden="true"
-                >⋮⋮</span
-              >
-            </div>
-
-            @if (
-              card.kind !== "favoriteServers" &&
-                card.kind !== "favoriteDatabases" &&
-                cardSubtitle(card);
-              as subtitle
-            ) {
-              <p class="bookmarks-card__description">{{ subtitle }}</p>
+    <div
+      class="bookmarks-grid mx-2 xl:mx-0"
+      cdkDropList
+      cdkDropListOrientation="mixed"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (card of cards(); track card.kind + ":" + card.id) {
+      <article class="bookmarks-card" cdkDrag>
+        <div class="bookmarks-card__kind-row">
+          <div class="bookmarks-card__kind">
+            @if (card.icon) {
+            <svg
+              [lucideIcon]="card.icon"
+              class="bookmarks-card__kind-icon"
+              aria-hidden="true"
+            ></svg>
+            } @if (card.secondaryIcon) {
+            <svg
+              [lucideIcon]="card.secondaryIcon"
+              class="bookmarks-card__kind-icon"
+              aria-hidden="true"
+            ></svg>
+            } @if (cardVendorLogo(card); as logo) {
+            <img
+              [src]="logo"
+              [alt]="cardSubtitle(card) || ''"
+              class="bookmarks-card__vendor-logo"
+            />
             }
+            <h2 class="bookmarks-card__title">{{ card.title }}</h2>
+          </div>
+          <span class="bookmarks-card__handle" cdkDragHandle aria-hidden="true"
+            >⋮⋮</span
+          >
+        </div>
 
-            @if (cardFeatures(card).length) {
-              <div class="bookmarks-card__table-wrap">
-                <div class="overflow-x-auto">
-                  <table class="bookmarks-card__table">
-                    <thead>
-                      <tr>
-                        <th>Spec</th>
-                        <th>Value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (feature of cardFeatures(card); track feature.name) {
-                        <tr>
-                          <td class="bookmarks-card__table-filter">
-                            {{ feature.name }}
-                          </td>
-                          <td class="bookmarks-card__table-value">
-                            {{ feature.value }}
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            }
-
-            @if (card.details?.length) {
-              <div class="bookmarks-card__table-wrap">
-                <div class="overflow-x-auto">
-                  <table class="bookmarks-card__table">
-                    <thead>
-                      <tr>
-                        <th>Filter</th>
-                        <th>Value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (row of visibleDetails(card); track $index) {
-                        <tr>
-                          <td
-                            class="bookmarks-card__table-filter"
-                            (mouseenter)="showDetailTooltip($event, row.field)"
-                            (mouseleave)="hideDetailTooltip()"
-                          >
-                            @if (row.fieldHref) {
-                              <a
-                                class="bookmarks-card__table-link"
-                                [routerLink]="row.fieldHref"
-                                >{{ row.field }}</a
-                              >
-                            } @else {
-                              {{ row.field }}
-                            }
-                          </td>
-                          <td
-                            class="bookmarks-card__table-value"
-                            (mouseenter)="showDetailTooltip($event, row.value)"
-                            (mouseleave)="hideDetailTooltip()"
-                          >
-                            <span class="bookmarks-card__table-value-inner">
-                              @if (row.isBaseline) {
-                                <svg
-                                  [lucideIcon]="'target'"
-                                  class="bookmarks-card__baseline-icon"
-                                  aria-label="Baseline"
-                                ></svg>
-                              }
-                              @if (row.valueHref) {
-                                <a
-                                  class="bookmarks-card__table-link"
-                                  [routerLink]="row.valueHref"
-                                  >{{ row.value }}</a
-                                >
-                              } @else {
-                                {{ row.value }}
-                              }
-                            </span>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
-                @if (detailsNeedToggle(card)) {
-                  @if (!isDetailsExpanded(cardKey(card))) {
-                    <div class="bookmarks-card__details-more">
-                      <sc-button
-                        icon="chevron-down"
-                        ariaLabel="Expand list"
-                        color="brand"
-                        (buttonClick)="toggleDetails(cardKey(card))"
-                      ></sc-button>
-                    </div>
-                  } @else {
-                    <div class="bookmarks-card__details-less">
-                      <sc-button
-                        icon="chevron-up"
-                        ariaLabel="Collapse list"
-                        color="brand"
-                        (buttonClick)="toggleDetails(cardKey(card))"
-                      ></sc-button>
-                    </div>
-                  }
+        @if ( card.kind !== "favoriteServers" && card.kind !==
+        "favoriteDatabases" && cardSubtitle(card); as subtitle ) {
+        <p class="bookmarks-card__description">{{ subtitle }}</p>
+        } @if (cardFeatures(card).length) {
+        <div class="bookmarks-card__table-wrap">
+          <div class="overflow-x-auto">
+            <table class="bookmarks-card__table">
+              <thead>
+                <tr>
+                  <th>Spec</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (feature of cardFeatures(card); track feature.name) {
+                <tr>
+                  <td class="bookmarks-card__table-filter">
+                    {{ feature.name }}
+                  </td>
+                  <td class="bookmarks-card__table-value">
+                    {{ feature.value }}
+                  </td>
+                </tr>
                 }
-              </div>
-            }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        } @if (card.details?.length) {
+        <div class="bookmarks-card__table-wrap">
+          <div class="overflow-x-auto">
+            <table class="bookmarks-card__table">
+              <thead>
+                <tr>
+                  <th>Filter</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of visibleDetails(card); track $index) {
+                <tr>
+                  <td
+                    class="bookmarks-card__table-filter"
+                    (mouseenter)="showDetailTooltip($event, row.field)"
+                    (mouseleave)="hideDetailTooltip()"
+                  >
+                    @if (row.fieldHref) {
+                    <a
+                      class="bookmarks-card__table-link"
+                      [routerLink]="row.fieldHref"
+                      >{{ row.field }}</a
+                    >
+                    } @else { {{ row.field }} }
+                  </td>
+                  <td
+                    class="bookmarks-card__table-value"
+                    (mouseenter)="showDetailTooltip($event, row.value)"
+                    (mouseleave)="hideDetailTooltip()"
+                  >
+                    <span class="bookmarks-card__table-value-inner">
+                      @if (row.isBaseline) {
+                      <svg
+                        [lucideIcon]="'target'"
+                        class="bookmarks-card__baseline-icon"
+                        aria-label="Baseline"
+                      ></svg>
+                      } @if (row.valueHref) {
+                      <a
+                        class="bookmarks-card__table-link"
+                        [routerLink]="row.valueHref"
+                        >{{ row.value }}</a
+                      >
+                      } @else { {{ row.value }} }
+                    </span>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          @if (detailsNeedToggle(card)) { @if
+          (!isDetailsExpanded(cardKey(card))) {
+          <div class="bookmarks-card__details-more">
+            <sc-button
+              icon="chevron-down"
+              ariaLabel="Expand list"
+              color="brand"
+              (buttonClick)="toggleDetails(cardKey(card))"
+            ></sc-button>
+          </div>
+          } @else {
+          <div class="bookmarks-card__details-less">
+            <sc-button
+              icon="chevron-up"
+              ariaLabel="Collapse list"
+              color="brand"
+              (buttonClick)="toggleDetails(cardKey(card))"
+            ></sc-button>
+          </div>
+          } }
+        </div>
+        }
 
-            <div
-              class="bookmarks-card__actions"
-              [class.bookmarks-card__actions--spread]="
+        <div
+          class="bookmarks-card__actions"
+          [class.bookmarks-card__actions--spread]="
                 cardActionCount(card) > 3
               "
-            >
-              @if (isEditableCard(card)) {
-                <sc-button
-                  icon="square-pen"
-                  ariaLabel="Edit"
-                  variant="outline"
-                  color="brand"
-                  (buttonClick)="openEditCard(card)"
-                ></sc-button>
-                <sc-button
-                  icon="notebook-text"
-                  ariaLabel="View note"
-                  variant="outline"
-                  color="brand"
-                  [disabled]="!card.note"
-                  (buttonClick)="openNoteCard(card)"
-                ></sc-button>
-              }
-              @if (cardLink(card)) {
-                <sc-button
-                  icon="square-arrow-out-up-right"
-                  ariaLabel="Open"
-                  variant="outline"
-                  color="brand"
-                  (buttonClick)="openCard(card)"
-                ></sc-button>
-              }
-              <sc-button
-                icon="bookmark-off"
-                ariaLabel="Delete"
-                variant="outline"
-                color="danger"
-                [loading]="isDeletingCard(card)"
-                (buttonClick)="deleteCard(card)"
-              ></sc-button>
-              @if (cardLink(card)) {
-                <sc-button
-                  [icon]="shareIcon(card)"
-                  ariaLabel="Share"
-                  variant="outline"
-                  (buttonClick)="shareCard(card)"
-                ></sc-button>
-              }
-            </div>
-          </article>
-        }
-      </div>
+        >
+          @if (isEditableCard(card)) {
+          <sc-button
+            icon="square-pen"
+            ariaLabel="Edit"
+            variant="outline"
+            color="brand"
+            (buttonClick)="openEditCard(card)"
+          ></sc-button>
+          <sc-button
+            icon="notebook-text"
+            ariaLabel="View note"
+            variant="outline"
+            color="brand"
+            [disabled]="!card.note"
+            (buttonClick)="openNoteCard(card)"
+          ></sc-button>
+          } @if (cardLink(card)) {
+          <sc-button
+            icon="square-arrow-out-up-right"
+            ariaLabel="Open"
+            variant="outline"
+            color="brand"
+            (buttonClick)="openCard(card)"
+          ></sc-button>
+          }
+          <sc-button
+            icon="bookmark-off"
+            ariaLabel="Delete"
+            variant="outline"
+            color="danger"
+            [loading]="isDeletingCard(card)"
+            (buttonClick)="deleteCard(card)"
+          ></sc-button>
+          @if (cardLink(card)) {
+          <sc-button
+            [icon]="shareIcon(card)"
+            ariaLabel="Share"
+            variant="outline"
+            (buttonClick)="shareCard(card)"
+          ></sc-button>
+          }
+        </div>
+      </article>
+      }
+    </div>
     }
   </div>
 </div>
@@ -336,11 +313,11 @@
         </button>
       </div>
       @if (noteCard()?.note && isNoteModalOpen()) {
-        <div
-          class="bookmarks-note-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
-        >
-          <p class="bookmarks-note-modal-text">{{ noteCard()?.note }}</p>
-        </div>
+      <div
+        class="bookmarks-note-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
+      >
+        <p class="bookmarks-note-modal-text">{{ noteCard()?.note }}</p>
+      </div>
       }
     </div>
   </div>
