@@ -45,16 +45,33 @@
     [style.background-color]="swatchColor()!"
     aria-hidden="true"
   ></span>
-  } @if (showAvatar()) { @if (hasAvatarImage()) {
-  <img class="sc-button__avatar" [src]="avatarSrc()!" [alt]="avatarAltText()" />
-  } @else {
-  <span
-    class="sc-button__avatar sc-button__avatar--placeholder"
-    aria-hidden="true"
-  >
-    <svg [lucideIcon]="'user'" class="sc-button__avatar-icon"></svg>
+  } @if (showAvatar()) {
+  <span class="sc-button__avatar-wrap">
+    @if (showAvatarSpinner()) {
+    <span
+      class="sc-button__spinner sc-button__avatar-spinner"
+      role="status"
+      aria-label="loading"
+    ></span>
+    } @if (hasAvatarImage()) {
+    <img
+      class="sc-button__avatar"
+      [class.sc-button__avatar--pending]="showAvatarSpinner()"
+      [src]="avatarSrc()!"
+      [alt]="avatarAltText()"
+      (load)="markAvatarReady()"
+      (error)="markAvatarReady()"
+    />
+    } @else {
+    <span
+      class="sc-button__avatar sc-button__avatar--placeholder"
+      aria-hidden="true"
+    >
+      <svg [lucideIcon]="'user'" class="sc-button__avatar-icon"></svg>
+    </span>
+    }
   </span>
-  } } @if (icon() && iconPosition() === "start") {
+  } @if (icon() && iconPosition() === "start") {
   <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
   } } @if (label()) {
   <span

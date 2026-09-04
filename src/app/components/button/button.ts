@@ -1,5 +1,12 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { Component, computed, input, output } from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+} from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon } from "@lucide/angular";
 
@@ -52,11 +59,17 @@ export class Button {
 
   buttonClick = output<MouseEvent>();
 
+  private readonly avatarImageReady = signal(false);
+
   showSwatch = computed(() => !!this.swatchColor());
 
   showAvatar = computed(() => this.avatarSrc() !== undefined);
 
   hasAvatarImage = computed(() => !!this.avatarSrc());
+
+  showAvatarSpinner = computed(
+    () => this.hasAvatarImage() && !this.avatarImageReady(),
+  );
 
   avatarAltText = computed(() => this.avatarAlt() || this.label() || "Avatar");
 
@@ -80,6 +93,16 @@ export class Button {
       this.badge() !== undefined &&
       this.badge() !== "",
   );
+
+  constructor() {
+    effect(() => {
+      this.avatarImageReady.set(!this.avatarSrc());
+    });
+  }
+
+  markAvatarReady(): void {
+    this.avatarImageReady.set(true);
+  }
 
   isIconOnly = computed(
     () =>
