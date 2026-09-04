@@ -203,7 +203,9 @@ export class Auth {
     try {
       popup.moveTo(0, 0);
       popup.resizeTo(width, height);
-    } catch {}
+    } catch {
+      console.error("Failed to resize the popup. :(");
+    }
 
     try {
       const signUp = await this.requireSignUp();
