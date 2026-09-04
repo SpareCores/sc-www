@@ -66,16 +66,16 @@ export type CollectionItemPayload<T extends CollectionType> = Omit<
   "id"
 >;
 
-export type DashboardFilterKey =
+export type BookmarksFilterKey =
   | "favoriteServers"
   | "favoriteDatabases"
   | "savedSearches"
   | "savedComparisons"
   | "savedAdvices";
 
-export type DashboardFilters = Record<DashboardFilterKey, boolean>;
+export type BookmarksFilters = Record<BookmarksFilterKey, boolean>;
 
-export const DEFAULT_DASHBOARD_FILTERS: DashboardFilters = {
+export const DEFAULT_BOOKMARKS_FILTERS: BookmarksFilters = {
   favoriteServers: true,
   favoriteDatabases: true,
   savedSearches: true,
@@ -83,19 +83,18 @@ export const DEFAULT_DASHBOARD_FILTERS: DashboardFilters = {
   savedAdvices: true,
 };
 
-export type DashboardCardKind = DashboardFilterKey;
+export type BookmarksCardKind = BookmarksFilterKey;
 
-export type DashboardCardDetailRow = {
+export type BookmarksCardDetailRow = {
   field: string;
   value: string;
   fieldHref?: string;
   valueHref?: string;
+  isBaseline?: boolean;
 };
 
-export type DashboardCardDetailsKind = "filters" | "instances";
-
-export type DashboardCardViewModel = {
-  kind: DashboardCardKind;
+export type BookmarksCardViewModel = {
+  kind: BookmarksCardKind;
   id: string;
   title: string;
   subtitle?: string;
@@ -104,8 +103,7 @@ export type DashboardCardViewModel = {
   href?: string | any[];
   icon?: string;
   secondaryIcon?: string;
-  detailsKind?: DashboardCardDetailsKind;
-  details?: DashboardCardDetailRow[];
+  details?: BookmarksCardDetailRow[];
 };
 
 const COLLECTION_ID_PART_SEPARATOR = "\u001f";

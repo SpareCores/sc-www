@@ -6,7 +6,11 @@ import {
   input,
   output,
 } from "@angular/core";
-import { LucideStar } from "@lucide/angular";
+import {
+  LucideBookmark,
+  LucideBookmarkOff,
+  LucideBookmarkPlus,
+} from "@lucide/angular";
 import { Auth } from "../../../services/auth/auth";
 import { CollectionsStore } from "../../../collections/collections.store";
 import { mutationKey } from "../../../shared/store/with-mutation-status";
@@ -15,30 +19,28 @@ import {
   favoriteServerId,
 } from "../../../collections/collections.types";
 
-export type FavoriteEntityKind = "server" | "database";
+export type BookmarkEntityKind = "server" | "database";
 
 @Component({
-  selector: "sc-favorite-star-button",
-  imports: [LucideStar],
-  templateUrl: "./favorite-star-button.html",
-  styleUrl: "./favorite-star-button.scss",
+  selector: "sc-bookmark-button",
+  imports: [LucideBookmark, LucideBookmarkPlus, LucideBookmarkOff],
+  templateUrl: "./bookmark-button.html",
+  styleUrl: "./bookmark-button.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FavoriteStarButtonComponent {
+export class BookmarkButton {
   private auth = inject(Auth);
   private collectionsStore = inject(CollectionsStore);
 
-  kind = input.required<FavoriteEntityKind>();
+  kind = input.required<BookmarkEntityKind>();
   vendorId = input.required<string>();
   entityId = input.required<string>();
   disabled = input(false);
-  menuMode = input(false);
   requireAuth = output<void>();
-  menuRequest = output<MouseEvent>();
 
   protected isAuthenticated = computed(() => this.auth.isAuthenticated());
 
-  protected isFavorite = computed(() => {
+  protected isBookmarked = computed(() => {
     const vendorId = this.vendorId();
     const entityId = this.entityId();
     return this.kind() === "server"
@@ -60,6 +62,21 @@ export class FavoriteStarButtonComponent {
     return this.collectionsStore.isMutating(key);
   });
 
+  protected canAdd = computed(
+    () => !this.isBookmarked() && !this.disabled() && !this.isLoading(),
+  );
+
+  protected canRemove = computed(
+    () => this.isBookmarked() && !this.disabled() && !this.isLoading(),
+  );
+
+  protected ariaLabel = computed(() => {
+    const noun = this.kind() === "server" ? "server" : "database";
+    return this.isBookmarked()
+      ? "Remove from bookmarks"
+      : `Bookmark this ${noun}`;
+  });
+
   protected toggle(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
@@ -70,11 +87,6 @@ export class FavoriteStarButtonComponent {
 
     if (!this.isAuthenticated()) {
       this.requireAuth.emit();
-      return;
-    }
-
-    if (this.menuMode()) {
-      this.menuRequest.emit(event);
       return;
     }
 

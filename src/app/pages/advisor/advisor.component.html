@@ -11,7 +11,7 @@
       <sc-page-header
         icon="bot"
         [title]="displayTitle()"
-        [showSavedStar]="showSavedStar()"
+        [showSavedBookmark]="showSavedBookmark()"
         [showShare]="true"
         [shareIcon]="clipboardIcon()"
         shareButtonId="advisor_share_button"
@@ -44,7 +44,7 @@
             ></sc-button>
             <sc-button
               label="Delete assessment"
-              icon="trash-2"
+              icon="bookmark-off"
               variant="outline"
               color="danger"
               [loading]="isDeleteAdvicePending()"
@@ -52,8 +52,8 @@
             ></sc-button>
           } @else {
             <sc-button
-              label="Save assessment"
-              icon="save"
+              label="Bookmark this assessment"
+              icon="bookmark-plus"
               variant="outline"
               [disabled]="!canSaveAdvice()"
               (buttonClick)="openSaveAdviceModal()"
@@ -71,7 +71,7 @@
 
     <sc-collection-save-modal
       modalId="advisor-save-modal"
-      title="Save assessment"
+      title="Bookmark this assessment"
       confirmLabel="Confirm"
       [saving]="isSaveAdvicePending()"
       (confirmed)="confirmSaveAdvice($event)"

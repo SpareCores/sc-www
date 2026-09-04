@@ -661,12 +661,12 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
   favoriteButtonLabel(): string {
     return this.isFavoriteDatabase()
-      ? "Remove from favorites"
-      : "Add to favorites";
+      ? "Remove from bookmarks"
+      : "Bookmark this database";
   }
 
   favoriteButtonIcon(): string {
-    return this.isFavoriteDatabase() ? "star-minus" : "star-plus";
+    return this.isFavoriteDatabase() ? "bookmark-off" : "bookmark-plus";
   }
 
   toggleFavoriteDatabase(): void {

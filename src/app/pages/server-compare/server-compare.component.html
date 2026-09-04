@@ -6,7 +6,7 @@
       <sc-page-header
         icon="scale"
         [title]="title"
-        [showSavedStar]="showSavedStar"
+        [showSavedBookmark]="showSavedBookmark"
         [showShare]="!!instances.length"
         [shareIcon]="clipboardIcon"
         (shareClick)="clipboardURL($event)"
@@ -21,7 +21,7 @@
             ></sc-button>
             <sc-button
               label="Delete comparison"
-              icon="trash-2"
+              icon="bookmark-off"
               variant="outline"
               color="danger"
               [loading]="isDeleteComparisonPending()"
@@ -29,8 +29,8 @@
             ></sc-button>
           } @else {
             <sc-button
-              label="Save comparison"
-              icon="save"
+              label="Bookmark this comparison"
+              icon="bookmark-plus"
               variant="outline"
               [disabled]="!canSaveComparison()"
               (buttonClick)="openSaveComparisonModal()"
@@ -70,7 +70,7 @@
 
     <sc-collection-save-modal
       modalId="server-compare-save-modal"
-      title="Save comparison"
+      title="Bookmark this comparison"
       confirmLabel="Confirm"
       [saving]="isSaveComparisonPending()"
       (confirmed)="confirmSaveComparison($event)"

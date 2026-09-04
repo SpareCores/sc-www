@@ -65,7 +65,7 @@ import { StoragePipe } from "../../pipes/storage.pipe";
 import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 import { formatNumberInputValue } from "../../pipes/pipe-utils";
-import { FavoriteStarButtonComponent } from "../../components/collections/favorite-star-button/favorite-star-button.component";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
@@ -128,7 +128,7 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     GpuMemoryPipe,
     Ipv4CountPipe,
     FlowbiteDropdownDirective,
-    FavoriteStarButtonComponent,
+    BookmarkButton,
     InstanceFavoriteContextMenuComponent,
     CollectionSaveModalComponent,
     GuestCollectionsBannerComponent,

@@ -1,4 +1,5 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
 import { Router } from "@angular/router";
 import { CollectionsStore } from "./collections.store";
 import type { SavedComparisonInstance } from "./collections.types";
@@ -8,8 +9,12 @@ import { mutationKey } from "../shared/store/with-mutation-status";
 export class CompareCollectionsService {
   readonly store = inject(CollectionsStore);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
   compareUrl(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return `${window.location.pathname}${window.location.search}`;
+    }
     return this.router.url.split("#")[0];
   }
 

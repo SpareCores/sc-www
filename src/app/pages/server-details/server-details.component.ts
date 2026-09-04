@@ -1134,12 +1134,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   favoriteButtonLabel(): string {
     return this.isFavoriteServer()
-      ? "Remove from favorites"
-      : "Add to favorites";
+      ? "Remove from bookmarks"
+      : "Bookmark this server";
   }
 
   favoriteButtonIcon(): string {
-    return this.isFavoriteServer() ? "star-minus" : "star-plus";
+    return this.isFavoriteServer() ? "bookmark-off" : "bookmark-plus";
   }
 
   toggleFavoriteServer(): void {

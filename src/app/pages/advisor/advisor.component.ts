@@ -821,7 +821,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return ADVISOR_PAGE_DESCRIPTION;
   });
-  readonly showSavedStar = computed(
+  readonly showSavedBookmark = computed(
     () => !!this.adviceCollections.activeSavedAdvice(this.getAdviceQuery()),
   );
   readonly displayBreadcrumbs = computed((): BreadcrumbSegment[] => {

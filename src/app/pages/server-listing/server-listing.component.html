@@ -6,7 +6,7 @@
       <sc-page-header
         icon="ship-wheel"
         [title]="title"
-        [showSavedStar]="!!activeSavedSearch()"
+        [showSavedBookmark]="!!activeSavedSearch()"
         [showShare]="true"
         [shareIcon]="clipboardIcon"
         shareButtonId="server_listing_share_button"
@@ -30,7 +30,7 @@
             ></sc-button>
             <sc-button
               label="Delete search"
-              icon="trash-2"
+              icon="bookmark-off"
               variant="outline"
               color="danger"
               [loading]="isDeleteSearchPending()"
@@ -38,8 +38,8 @@
             ></sc-button>
           } @else {
             <sc-button
-              label="Save search"
-              icon="save"
+              label="Bookmark this search"
+              icon="bookmark-plus"
               variant="outline"
               [disabled]="!canSaveSearch()"
               (buttonClick)="openSaveSearchModal()"
@@ -57,7 +57,7 @@
 
     <sc-collection-save-modal
       modalId="server-listing-save-search-modal"
-      title="Save search"
+      title="Bookmark this search"
       confirmLabel="Confirm"
       [saving]="isSaveSearchPending()"
       (confirmed)="confirmSaveSearch($event)"
@@ -320,21 +320,17 @@
                         (click)="$event.stopPropagation()"
                       >
                         <sc-instance-favorite-context-menu
-                          #starMenu
                           kind="server"
                           [vendorId]="item.vendor_id"
                           [entityId]="item.api_reference"
-                          [displayName]="item.display_name"
                           (requireAuth)="promptSignIn()"
                         >
-                          <sc-favorite-star-button
+                          <sc-bookmark-button
                             kind="server"
                             [vendorId]="item.vendor_id"
                             [entityId]="item.api_reference"
-                            [menuMode]="true"
-                            (menuRequest)="starMenu.openFromEvent($event)"
                             (requireAuth)="promptSignIn()"
-                          ></sc-favorite-star-button>
+                          ></sc-bookmark-button>
                         </sc-instance-favorite-context-menu>
                       </td>
                     }
@@ -345,7 +341,6 @@
                             kind="server"
                             [vendorId]="item.vendor_id"
                             [entityId]="item.api_reference"
-                            [displayName]="item.display_name"
                             (requireAuth)="promptSignIn()"
                           >
                             <div (click)="$event.stopPropagation()">

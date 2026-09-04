@@ -1,8 +1,11 @@
 <div class="page-header">
   <h1 class="page-header__title">
     <svg [lucideIcon]="icon()" class="h-8 w-8 mr-2" aria-hidden="true"></svg>
-    @if (showSavedStar()) {
-    <svg lucideStar class="h-6 w-6 mr-2 text-yellow-400 fill-yellow-400"></svg>
+    @if (showSavedBookmark()) {
+    <svg
+      lucideBookmark
+      class="h-6 w-6 mr-2 text-emerald-400 fill-emerald-400"
+    ></svg>
     } {{ title() }}
   </h1>
   <div class="page-header__actions">

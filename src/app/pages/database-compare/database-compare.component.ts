@@ -217,7 +217,7 @@ export class DatabaseCompareComponent
 
   title = DATABASE_COMPARE_GUIDE_TITLE;
   description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
-  showSavedStar = false;
+  showSavedBookmark = false;
   keywords = "cloud, database, dbaas, compare, sparecores";
 
   isLoading = false;
@@ -514,6 +514,7 @@ export class DatabaseCompareComponent
   selectCurrency(currency: CurrencyOption): void {
     this.currencyDropdown()?.hide();
     this.selectedCurrency = currency;
+    this.syncCompareUrlState();
     if (this.instances.length) {
       this.setup();
     }
@@ -548,6 +549,7 @@ export class DatabaseCompareComponent
     this.propertySections = [];
     this.priceRows = [];
     this.stickyLayout.reset();
+    this.restoreCurrencyFromUrl();
 
     if (id) {
       const specialCompare = this.databaseCompares.find(
@@ -800,7 +802,20 @@ export class DatabaseCompareComponent
       params.baseline_database = this.baselineDatabase.api_reference;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      params.currency = this.selectedCurrency.slug;
+    }
+
     return params;
+  }
+
+  private restoreCurrencyFromUrl(): void {
+    const currencySlug = this.route.snapshot.queryParams["currency"];
+
+    this.selectedCurrency =
+      this.availableCurrencies.find(
+        (currency) => currency.slug === currencySlug,
+      ) || this.availableCurrencies[0];
   }
 
   private syncCompareUrlState(): void {
@@ -865,7 +880,7 @@ export class DatabaseCompareComponent
   private applyGuideChrome(): void {
     this.title = DATABASE_COMPARE_GUIDE_TITLE;
     this.description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
-    this.showSavedStar = false;
+    this.showSavedBookmark = false;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -877,7 +892,7 @@ export class DatabaseCompareComponent
   private applyComparisonChrome(title?: string, description?: string): void {
     this.title = title || DATABASE_COMPARISON_TITLE;
     this.description = description || DATABASE_COMPARE_GUIDE_DESCRIPTION;
-    this.showSavedStar = false;
+    this.showSavedBookmark = false;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -961,6 +976,7 @@ export class DatabaseCompareComponent
   }
 
   confirmSaveComparison(payload: { name: string; note?: string }): void {
+    this.syncCompareUrlState();
     const instances = this.getCompareInstancesForSave();
     const editingId = this.editingComparisonId();
     const saved = this.activeSavedComparison();
@@ -1024,7 +1040,7 @@ export class DatabaseCompareComponent
 
     this.title = saved.name;
     this.description = saved.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
-    this.showSavedStar = true;
+    this.showSavedBookmark = true;
     this.breadcrumbs = [
       ...this.baseCompareBreadcrumbs(),
       { name: saved.name, url: saved.compare_url },

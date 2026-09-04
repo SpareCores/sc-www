@@ -49,13 +49,13 @@ import {
 import { CollectionsService } from "./collections.service";
 import {
   COLLECTION_TYPES,
-  DEFAULT_DASHBOARD_FILTERS,
+  DEFAULT_BOOKMARKS_FILTERS,
   favoriteDatabaseId,
   favoriteServerId,
   resolveFavoriteDatabase,
   resolveFavoriteServer,
-  type DashboardCardViewModel,
-  type DashboardFilters,
+  type BookmarksCardViewModel,
+  type BookmarksFilters,
   type FavoriteDatabaseItem,
   type FavoriteServerItem,
   type SavedAdviceItem,
@@ -77,7 +77,7 @@ import {
 import type { SearchBarQuery } from "../components/search-bar/search-bar.types";
 
 type CollectionsState = {
-  dashboardFilters: DashboardFilters;
+  bookmarksFilters: BookmarksFilters;
 };
 
 const serversConfig = entityConfig({
@@ -151,7 +151,7 @@ function comparisonSecondaryIcon(item: SavedComparisonItem): string {
 export const CollectionsStore = signalStore(
   { providedIn: "root" },
   withState<CollectionsState>({
-    dashboardFilters: { ...DEFAULT_DASHBOARD_FILTERS },
+    bookmarksFilters: { ...DEFAULT_BOOKMARKS_FILTERS },
   }),
   withRequestStatus(),
   withMutationStatus(),
@@ -168,16 +168,16 @@ export const CollectionsStore = signalStore(
     savedAdvices: computed(() => sortByOrder(store.advicesEntities())),
     favoriteServerIds: computed(() => new Set(store.serversIds())),
     favoriteDatabaseIds: computed(() => new Set(store.databasesIds())),
-    dashboardStats: computed(() => ({
+    bookmarksStats: computed(() => ({
       favoriteServers: store.serversEntities().length,
       favoriteDatabases: store.databasesEntities().length,
       savedSearches: store.searchesEntities().length,
       savedComparisons: store.comparisonsEntities().length,
       savedAdvices: store.advicesEntities().length,
     })),
-    dashboardCards: computed((): DashboardCardViewModel[] => {
-      const filters = store.dashboardFilters();
-      const cards: DashboardCardViewModel[] = [];
+    bookmarksCards: computed((): BookmarksCardViewModel[] => {
+      const filters = store.bookmarksFilters();
+      const cards: BookmarksCardViewModel[] = [];
 
       if (filters.favoriteServers) {
         for (const item of sortByOrder(store.serversEntities())) {
@@ -233,7 +233,6 @@ export const CollectionsStore = signalStore(
             href: collectionItemHref(path, item.query),
             icon: "search",
             secondaryIcon: item.page === "servers" ? "pc-case" : "database",
-            detailsKind: "filters",
             details: savedSearchDetailEntries(item.query),
           });
         }
@@ -250,8 +249,10 @@ export const CollectionsStore = signalStore(
             href: item.compare_url,
             icon: "scale",
             secondaryIcon: comparisonSecondaryIcon(item),
-            detailsKind: "instances",
-            details: savedComparisonDetailEntries(item.instances),
+            details: savedComparisonDetailEntries(
+              item.instances,
+              item.compare_url,
+            ),
           });
         }
       }
@@ -266,7 +267,6 @@ export const CollectionsStore = signalStore(
             order: item.order ?? cards.length,
             href: collectionItemHref("/advisor", item.query),
             icon: "bot",
-            detailsKind: "filters",
             details: savedAdviceDetailEntries(item.query),
           });
         }
@@ -315,10 +315,10 @@ export const CollectionsStore = signalStore(
     savedAdviceById(id: string): SavedAdviceItem | null {
       return store.advicesEntityMap()[id] ?? null;
     },
-    setDashboardFilter(key: keyof DashboardFilters, enabled: boolean): void {
+    setBookmarksFilter(key: keyof BookmarksFilters, enabled: boolean): void {
       patchState(store, {
-        dashboardFilters: {
-          ...store.dashboardFilters(),
+        bookmarksFilters: {
+          ...store.bookmarksFilters(),
           [key]: enabled,
         },
       });
@@ -332,7 +332,7 @@ export const CollectionsStore = signalStore(
         removeAllEntities(comparisonsConfig),
         removeAllEntities(advicesConfig),
         {
-          dashboardFilters: { ...DEFAULT_DASHBOARD_FILTERS },
+          bookmarksFilters: { ...DEFAULT_BOOKMARKS_FILTERS },
         },
         setIdle(),
       );
@@ -949,7 +949,7 @@ export const CollectionsStore = signalStore(
         ),
       ),
     ),
-    reorderDashboardCards: rxMethod<DashboardCardViewModel[]>(
+    reorderBookmarksCards: rxMethod<BookmarksCardViewModel[]>(
       pipe(
         map((cards) => {
           const snapshot = {
@@ -959,7 +959,7 @@ export const CollectionsStore = signalStore(
             comparisons: store.comparisonsEntities().slice(),
             advices: store.advicesEntities().slice(),
           };
-          store.startMutation(mutationKey("reorder-dashboard"));
+          store.startMutation(mutationKey("reorder-bookmarks"));
           cards.forEach((card, index) => {
             const changes = { order: index };
             switch (card.kind) {
@@ -1064,13 +1064,13 @@ export const CollectionsStore = signalStore(
           }
 
           if (!updates.length) {
-            store.finishMutation(mutationKey("reorder-dashboard"));
+            store.finishMutation(mutationKey("reorder-bookmarks"));
             return of(null);
           }
 
           return collections.reorderCollectionItems(updates).pipe(
             finalize(() => {
-              store.finishMutation(mutationKey("reorder-dashboard"));
+              store.finishMutation(mutationKey("reorder-bookmarks"));
             }),
             tapResponse({
               next: (savedItems) => {

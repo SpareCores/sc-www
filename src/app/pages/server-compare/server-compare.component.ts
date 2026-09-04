@@ -363,7 +363,7 @@ export class ServerCompareComponent
 
   title = SERVER_COMPARE_GUIDE_TITLE;
   description = SERVER_COMPARE_GUIDE_DESCRIPTION;
-  showSavedStar = false;
+  showSavedBookmark = false;
   keywords =
     "compare, servers, server, hosting, cloud, vps, dedicated, comparison";
 
@@ -484,6 +484,7 @@ export class ServerCompareComponent
     this.instances = [];
     this.instancesRaw = "";
     this.stickyLayout.reset();
+    this.restoreCurrencyFromUrl();
 
     if (id) {
       const serverCompare = this.serverCompares.find((x: any) => x.id === id);
@@ -966,6 +967,7 @@ export class ServerCompareComponent
 
   selectCurrency(currency: any) {
     this.selectedCurrency = currency;
+    this.syncCompareUrlState();
 
     let promises: Promise<any>[] = [];
     this.servers?.forEach((instance: any) => {
@@ -1044,7 +1046,20 @@ export class ServerCompareComponent
       params.baseline_server = this.selectedBaselineServer.api_reference;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      params.currency = this.selectedCurrency.slug;
+    }
+
     return params;
+  }
+
+  private restoreCurrencyFromUrl(): void {
+    const currencySlug = this.route.snapshot.queryParams["currency"];
+
+    this.selectedCurrency =
+      this.availableCurrencies.find(
+        (currency) => currency.slug === currencySlug,
+      ) || this.availableCurrencies[0];
   }
 
   private restoreBaselineFromUrl(): void {
@@ -1243,7 +1258,7 @@ export class ServerCompareComponent
   private applyGuideChrome(): void {
     this.title = SERVER_COMPARE_GUIDE_TITLE;
     this.description = SERVER_COMPARE_GUIDE_DESCRIPTION;
-    this.showSavedStar = false;
+    this.showSavedBookmark = false;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -1255,7 +1270,7 @@ export class ServerCompareComponent
   private applyComparisonChrome(title?: string, description?: string): void {
     this.title = title || SERVER_COMPARISON_TITLE;
     this.description = description || SERVER_COMPARE_GUIDE_DESCRIPTION;
-    this.showSavedStar = false;
+    this.showSavedBookmark = false;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -1289,7 +1304,7 @@ export class ServerCompareComponent
     if (saved && this.instances.length) {
       this.title = saved.name;
       this.description = saved.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
-      this.showSavedStar = true;
+      this.showSavedBookmark = true;
       this.breadcrumbs = [
         ...this.baseCompareBreadcrumbs(),
         { name: saved.name, url: this.compareCollections.compareUrl() },
@@ -1305,7 +1320,7 @@ export class ServerCompareComponent
     if (this.instances.length) {
       this.title = SERVER_COMPARISON_TITLE;
       this.description = SERVER_COMPARE_GUIDE_DESCRIPTION;
-      this.showSavedStar = false;
+      this.showSavedBookmark = false;
       this.breadcrumbs = [
         ...this.baseCompareBreadcrumbs(),
         {
@@ -1369,6 +1384,7 @@ export class ServerCompareComponent
   }
 
   confirmSaveComparison(payload: { name: string; note?: string }): void {
+    this.syncCompareUrlState();
     const instances = this.getCompareInstancesForSave();
     const editingId = this.editingComparisonId();
     const saved = this.activeSavedComparison();

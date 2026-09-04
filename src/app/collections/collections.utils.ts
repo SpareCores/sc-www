@@ -5,6 +5,7 @@ import {
 } from "../tools/encoded-url-state";
 import { encodeQueryParams } from "../tools/queryParamFunctions";
 import type {
+  BookmarksCardDetailRow,
   SavedComparisonInstance,
   SavedSearchPage,
 } from "./collections.types";
@@ -268,7 +269,7 @@ export function isDefaultListingQuery(query: SearchBarQuery): boolean {
   return Object.keys(listingSearchQuery(query)).length === 0;
 }
 
-const ADVICE_DASHBOARD_HIDDEN_KEYS = new Set([
+const ADVICE_BOOKMARKS_HIDDEN_KEYS = new Set([
   "page",
   "add_total_count_header",
 ]);
@@ -281,16 +282,11 @@ const ADVICE_NUMERIC_KEYS = new Set([
   "page",
 ]);
 
-const DASHBOARD_DETAIL_VALUE_MAX = 96;
+const BOOKMARKS_DETAIL_VALUE_MAX = 96;
 
-const DASHBOARD_DETAIL_HIDDEN_KEYS = new Set([
-  "columns",
-  "limit",
-  "currency",
-  "best_price_allocation",
-]);
+const BOOKMARKS_DETAIL_HIDDEN_KEYS = new Set(["columns"]);
 
-const DASHBOARD_FILTER_LABELS: Record<string, string> = {
+const BOOKMARKS_FILTER_LABELS: Record<string, string> = {
   workload_id: "Workload profile",
   baseline_vendor: "Baseline vendor",
   baseline_server: "Baseline server",
@@ -311,7 +307,7 @@ const DASHBOARD_FILTER_LABELS: Record<string, string> = {
   order_dir: "Order direction",
 };
 
-const DASHBOARD_FILTER_VALUE_LABELS: Record<string, Record<string, string>> = {
+const BOOKMARKS_FILTER_VALUE_LABELS: Record<string, Record<string, string>> = {
   optimization_goal: {
     performance: "Performance",
     cost: "Cost",
@@ -319,7 +315,7 @@ const DASHBOARD_FILTER_VALUE_LABELS: Record<string, Record<string, string>> = {
   },
 };
 
-function toDashboardTitleCase(value: string): string {
+function toBookmarksTitleCase(value: string): string {
   return value
     .split(/\s+/)
     .filter(Boolean)
@@ -335,9 +331,9 @@ function toDashboardTitleCase(value: string): string {
 
 function humanizeFilterKey(key: string): string {
   return (
-    DASHBOARD_FILTER_LABELS[key] ||
+    BOOKMARKS_FILTER_LABELS[key] ||
     OPENAPI_FILTER_TITLES[key] ||
-    toDashboardTitleCase(key.replace(/[_-]+/g, " ").trim())
+    toBookmarksTitleCase(key.replace(/[_-]+/g, " ").trim())
   );
 }
 
@@ -366,7 +362,7 @@ function formatWorkloadProfileValue(value: unknown): string {
   }
 
   if (!normalizedValue.toLowerCase().startsWith("workload_profile")) {
-    return toDashboardTitleCase(normalizedValue.replace(/[_-]+/g, " ").trim());
+    return toBookmarksTitleCase(normalizedValue.replace(/[_-]+/g, " ").trim());
   }
 
   const [, ...segments] = normalizedValue.split(":");
@@ -378,7 +374,7 @@ function formatWorkloadProfileValue(value: unknown): string {
   return (
     segments
       .map((segment) =>
-        toDashboardTitleCase(segment.replace(/[_-]+/g, " ").trim()),
+        toBookmarksTitleCase(segment.replace(/[_-]+/g, " ").trim()),
       )
       .filter(Boolean)
       .join(": ") || "—"
@@ -458,7 +454,7 @@ function formatFilterValue(key: string, value: unknown): string {
     return formatBenchmarkValue(value);
   }
 
-  const valueLabels = DASHBOARD_FILTER_VALUE_LABELS[key];
+  const valueLabels = BOOKMARKS_FILTER_VALUE_LABELS[key];
   if (valueLabels && (typeof value === "string" || typeof value === "number")) {
     const mapped = valueLabels[String(value)];
     if (mapped) {
@@ -488,10 +484,10 @@ function formatFilterValue(key: string, value: unknown): string {
 }
 
 function truncateDetailValue(value: string): string {
-  if (value.length <= DASHBOARD_DETAIL_VALUE_MAX) {
+  if (value.length <= BOOKMARKS_DETAIL_VALUE_MAX) {
     return value;
   }
-  return `${value.slice(0, DASHBOARD_DETAIL_VALUE_MAX).trimEnd()}…`;
+  return `${value.slice(0, BOOKMARKS_DETAIL_VALUE_MAX).trimEnd()}…`;
 }
 
 function formatQueryDetailEntries(
@@ -520,7 +516,7 @@ function formatQueryDetailEntries(
     delete remaining.workload_config;
   }
 
-  for (const key of DASHBOARD_DETAIL_HIDDEN_KEYS) {
+  for (const key of BOOKMARKS_DETAIL_HIDDEN_KEYS) {
     delete remaining[key];
   }
 
@@ -548,27 +544,99 @@ export function savedAdviceDetailEntries(
 
 export function savedComparisonDetailEntries(
   instances: SavedComparisonInstance[] | null | undefined,
-): { field: string; value: string; fieldHref?: string; valueHref?: string }[] {
+  compareUrl?: string,
+): BookmarksCardDetailRow[] {
   if (!instances?.length) {
     return [];
   }
-  return instances.map((instance) => {
-    if ("server" in instance) {
-      return {
-        field: instance.vendor,
-        value: instance.display_name || instance.server,
-        fieldHref: `/vendors/${instance.vendor}`,
-        valueHref: `/server/${instance.vendor}/${instance.server}`,
-      };
-    }
 
-    return {
-      field: instance.vendor,
-      value: instance.display_name || instance.database,
-      fieldHref: `/vendors/${instance.vendor}`,
-      valueHref: `/database/${instance.vendor}/${instance.database}`,
-    };
-  });
+  const isDatabaseComparison = comparisonShowsDatabases(compareUrl, instances);
+  const baseline = comparisonBaselineFromUrl(compareUrl);
+  const rows: BookmarksCardDetailRow[] = [];
+
+  if (baseline) {
+    rows.push({
+      field: isDatabaseComparison ? "Baseline database" : "Baseline server",
+      value: `${baseline.vendor} ${baseline.id}`,
+    });
+  }
+
+  const currency = comparisonQueryParam(compareUrl, "currency");
+  if (currency) {
+    rows.push({
+      field: "Currency",
+      value: currency,
+    });
+  }
+
+  rows.push(
+    ...instances.map((instance, index) => {
+      if ("server" in instance) {
+        return {
+          field: `Selected server ${index + 1}`,
+          value: `${instance.vendor} ${instance.display_name || instance.server}`,
+          valueHref: `/server/${instance.vendor}/${instance.server}`,
+          isBaseline:
+            !!baseline &&
+            baseline.vendor === instance.vendor &&
+            baseline.id === instance.server,
+        };
+      }
+
+      return {
+        field: `Selected database ${index + 1}`,
+        value: `${instance.vendor} ${instance.display_name || instance.database}`,
+        valueHref: `/database/${instance.vendor}/${instance.database}`,
+        isBaseline:
+          !!baseline &&
+          baseline.vendor === instance.vendor &&
+          baseline.id === instance.database,
+      };
+    }),
+  );
+
+  return rows;
+}
+
+function comparisonShowsDatabases(
+  compareUrl: string | undefined,
+  instances: SavedComparisonInstance[],
+): boolean {
+  if (compareUrl?.includes("/databases/compare")) {
+    return true;
+  }
+
+  if (compareUrl?.includes("/servers/compare")) {
+    return false;
+  }
+
+  const first = instances[0];
+  return !!first && "database" in first;
+}
+
+function comparisonQueryParam(
+  compareUrl: string | undefined,
+  key: string,
+): string | null {
+  if (!compareUrl) {
+    return null;
+  }
+
+  try {
+    return new URL(compareUrl, "http://localhost").searchParams.get(key);
+  } catch {
+    return null;
+  }
+}
+
+function comparisonBaselineFromUrl(
+  compareUrl?: string,
+): { vendor: string; id: string } | null {
+  const vendor = comparisonQueryParam(compareUrl, "baseline_vendor");
+  const id =
+    comparisonQueryParam(compareUrl, "baseline_server") ||
+    comparisonQueryParam(compareUrl, "baseline_database");
+  return vendor && id ? { vendor, id } : null;
 }
 
 export function collectionItemHref(
@@ -639,7 +707,7 @@ export function adviceComparableQuery(
   const comparable: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(normalized)) {
-    if (ADVICE_DASHBOARD_HIDDEN_KEYS.has(key)) {
+    if (ADVICE_BOOKMARKS_HIDDEN_KEYS.has(key)) {
       continue;
     }
     comparable[key] = coerceAdviceQueryValue(key, value);

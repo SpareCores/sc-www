@@ -20,10 +20,10 @@ export type {
   CollectionItemMap,
   CollectionItemPayload,
   CollectionType,
-  DashboardCardKind,
-  DashboardCardViewModel,
-  DashboardFilterKey,
-  DashboardFilters,
+  BookmarksCardKind,
+  BookmarksCardViewModel,
+  BookmarksFilterKey,
+  BookmarksFilters,
   FavoriteDatabaseItem,
   FavoriteServerItem,
   SavedAdviceItem,
@@ -33,7 +33,7 @@ export type {
   SavedSearchPage,
 } from "./collections.types";
 
-export { DEFAULT_DASHBOARD_FILTERS } from "./collections.types";
+export { DEFAULT_BOOKMARKS_FILTERS } from "./collections.types";
 
 export {
   COLLECTION_TYPES,

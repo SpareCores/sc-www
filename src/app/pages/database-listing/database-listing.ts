@@ -52,7 +52,7 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
-import { FavoriteStarButtonComponent } from "../../components/collections/favorite-star-button/favorite-star-button.component";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
@@ -118,7 +118,7 @@ type DatabaseListingQuery = Params &
     StoragePipe,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
-    FavoriteStarButtonComponent,
+    BookmarkButton,
     InstanceFavoriteContextMenuComponent,
     CollectionSaveModalComponent,
     GuestCollectionsBannerComponent,
