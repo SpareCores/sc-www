@@ -33,14 +33,17 @@ ENV NG_APP_SENTRY_RELEASE=$SENTRY_RELEASE
 
 ARG STATIC_ASSET_BASE_URL
 
+# disable by default to speed up builds, can override if needed
+ARG BUILD_SOURCE_MAP=false
+
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
-      npm run build -- --deploy-url="${STATIC_ASSET_BASE_URL}"; \
+      npm run build -- --source-map="${BUILD_SOURCE_MAP}" --deploy-url="${STATIC_ASSET_BASE_URL}"; \
     else \
-      npm run build; \
+      npm run build -- --source-map="${BUILD_SOURCE_MAP}"; \
     fi
 
 FROM public.ecr.aws/docker/library/node:lts-jod
