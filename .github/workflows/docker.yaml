@@ -46,6 +46,7 @@ jobs:
           build-args: |
             CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
             WWW_API_BASE_URI=${{ vars.WWW_API_BASE_URI }}
+            NG_ALLOWED_HOSTS=${{ vars.NG_ALLOWED_HOSTS }}
             POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
             POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
             SENTRY_DSN=${{ secrets.SENTRY_DSN }}

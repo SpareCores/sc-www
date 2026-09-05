@@ -55,6 +55,10 @@ RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
 
 FROM public.ecr.aws/docker/library/node:lts-jod
 
+# optional Runtime SSR host allowlist for CommonEngine, defaults to localhost if not set
+ARG NG_ALLOWED_HOSTS
+ENV NG_ALLOWED_HOSTS=$NG_ALLOWED_HOSTS
+
 # copy from build stage to avoid parallelization by BuildKit resulting in OOM on small builders
 COPY --from=build /usr/src/app/package*.json ./
 RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund
