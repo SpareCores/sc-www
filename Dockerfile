@@ -45,7 +45,7 @@ ARG BUILD_SOURCE_MAP=false
 
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install
+RUN npm ci --no-audit --no-fund
 COPY . .
 RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
       npm run build -- --source-map="${BUILD_SOURCE_MAP}" --deploy-url="${STATIC_ASSET_BASE_URL}"; \
@@ -54,8 +54,10 @@ RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
     fi
 
 FROM public.ecr.aws/docker/library/node:lts-jod
-COPY package*.json ./
-RUN npm install --omit=dev --no-audit
+
+# copy from build stage to avoid parallelization by BuildKit resulting in OOM on small builders
+COPY --from=build /usr/src/app/package*.json ./
+RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund
 COPY --from=build /usr/src/app/dist/sc-www/server /usr/share/www
 COPY --from=build /usr/src/app/dist/sc-www/browser /usr/share/www/static
 EXPOSE 3000
