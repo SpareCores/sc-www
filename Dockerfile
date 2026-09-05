@@ -33,6 +33,10 @@ ENV NG_APP_SENTRY_RELEASE=$SENTRY_RELEASE
 
 ARG STATIC_ASSET_BASE_URL
 
+# only used by CI and local tooling, not by prod, so skip 800+50 MB
+ENV CYPRESS_INSTALL_BINARY=0
+ENV SENTRYCLI_SKIP_DOWNLOAD=1
+
 # disable by default to speed up builds, can override if needed
 ARG BUILD_SOURCE_MAP=false
 
