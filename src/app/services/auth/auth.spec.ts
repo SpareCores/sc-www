@@ -141,7 +141,8 @@ describe("Auth", () => {
     expect(toastSpy).toHaveBeenCalledTimes(2);
     expect(toastSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        title: "Authentication is not available. Please try again later!",
+        title:
+          "Auth server offline. Please contact support@sparecores.com for assistance.",
         type: "error",
       }),
     );

@@ -433,7 +433,7 @@ export class Auth {
   private toastAuthUnavailable(): void {
     this.toastService.show({
       title:
-        "Authentication is not available due to missing Clerk key configuration. Please try again later!",
+        "Auth server offline. Please contact support@sparecores.com for assistance.",
       type: "error",
       duration: 5000,
     });
