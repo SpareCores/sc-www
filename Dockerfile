@@ -5,6 +5,9 @@ ENV NG_APP_BACKEND_BASE_URI=$BACKEND_BASE_URI
 ARG BACKEND_BASE_URI_SSR=https://keeper.sparecores.net
 ENV NG_APP_BACKEND_BASE_URI_SSR=$BACKEND_BASE_URI_SSR
 
+ARG WWW_API_BASE_URI
+ENV NG_APP_WWW_API_BASE_URI=$WWW_API_BASE_URI
+
 ARG POSTHOG_KEY
 ENV NG_APP_POSTHOG_KEY=$POSTHOG_KEY
 ARG POSTHOG_HOST
@@ -33,19 +36,32 @@ ENV NG_APP_SENTRY_RELEASE=$SENTRY_RELEASE
 
 ARG STATIC_ASSET_BASE_URL
 
+# only used by CI and local tooling, not by prod, so skip 800+50 MB
+ENV CYPRESS_INSTALL_BINARY=0
+ENV SENTRYCLI_SKIP_DOWNLOAD=1
+
+# disable by default to speed up builds, can override if needed
+ARG BUILD_SOURCE_MAP=false
+
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install
+RUN npm ci --no-audit --no-fund
 COPY . .
 RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
-      npm run build -- --deploy-url="${STATIC_ASSET_BASE_URL}"; \
+      npm run build -- --source-map="${BUILD_SOURCE_MAP}" --deploy-url="${STATIC_ASSET_BASE_URL}"; \
     else \
-      npm run build; \
+      npm run build -- --source-map="${BUILD_SOURCE_MAP}"; \
     fi
 
 FROM public.ecr.aws/docker/library/node:lts-jod
-COPY package*.json ./
-RUN npm install --omit=dev --no-audit
+
+# optional Runtime SSR host allowlist for CommonEngine, defaults to localhost if not set
+ARG NG_ALLOWED_HOSTS
+ENV NG_ALLOWED_HOSTS=$NG_ALLOWED_HOSTS
+
+# copy from build stage to avoid parallelization by BuildKit resulting in OOM on small builders
+COPY --from=build /usr/src/app/package*.json ./
+RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund
 COPY --from=build /usr/src/app/dist/sc-www/server /usr/share/www
 COPY --from=build /usr/src/app/dist/sc-www/browser /usr/share/www/static
 EXPOSE 3000
