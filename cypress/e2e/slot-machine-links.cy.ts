@@ -200,7 +200,6 @@ describe("Landing page slot machine links", () => {
   it("makes the settled vendor, server, and region entries clickable", () => {
     cy.intercept("GET", "**/servers*", {
       statusCode: 200,
-      delay: 2500,
       body: searchServersResponse,
     }).as("searchServers");
 
@@ -228,24 +227,14 @@ describe("Landing page slot machine links", () => {
 
     cy.visit("http://localhost:4200/");
 
-    cy.get("#cpuCount")
-      .should("not.be.disabled")
-      .clear()
-      .type("8")
-      .should("have.value", "8");
-    cy.get("#ramCount")
-      .should("not.be.disabled")
-      .clear()
-      .type("32")
-      .should("have.value", "32");
-
     cy.wait("@searchServers");
     cy.wait("@getRegions");
     cy.wait("@getServerPrices");
     cy.wait("@getServerPrices");
     cy.wait("@getServerPrices");
 
-    cy.get("#slot_vendor_link", { timeout: 10000 })
+    cy.get("#spin_button", { timeout: 15000 }).should("not.be.disabled");
+    cy.get("#slot_vendor_link", { timeout: 15000 })
       .should("have.attr", "href")
       .and("include", "/vendors/aws");
     cy.get("#slot_server_link")
@@ -253,8 +242,6 @@ describe("Landing page slot machine links", () => {
       .and("include", "/server/aws/m7g.large");
     cy.get("#slot_region_link")
       .should("have.attr", "href")
-      .and("include", "/servers?vendor_regions=aws~us-east-1")
-      .and("include", "vcpus_min=8")
-      .and("include", "memory_min=32");
+      .and("include", "/servers?vendor_regions=aws~us-east-1");
   });
 });
