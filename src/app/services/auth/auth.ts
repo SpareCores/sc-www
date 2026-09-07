@@ -76,10 +76,18 @@ export class Auth {
   }
 
   signIn(): void {
-    this.clerk?.openSignIn({ withSignUp: false });
+    if (!this.clerk) {
+      this.toastAuthUnavailable();
+      return;
+    }
+    this.clerk.openSignIn({ withSignUp: false });
   }
 
   signUp(): void {
+    if (!this.clerk) {
+      this.toastAuthUnavailable();
+      return;
+    }
     this.signUpModalOpen.set(true);
   }
 
@@ -420,6 +428,15 @@ export class Auth {
       });
       this.newsletterSyncUsers.delete(user.id);
     }
+  }
+
+  private toastAuthUnavailable(): void {
+    this.toastService.show({
+      title:
+        "Authentication is not available due to missing Clerk key configuration. Please try again later!",
+      type: "error",
+      duration: 5000,
+    });
   }
 
   private authErrorMessage(error: unknown, fallback: string): string {

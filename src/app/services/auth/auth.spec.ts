@@ -128,15 +128,25 @@ describe("Auth", () => {
     expect(auth.userName()).toBe("");
   });
 
-  it("does not throw when Clerk is not initialized", async () => {
+  it("toasts when Clerk is not initialized on sign in or sign up", async () => {
     const auth = createAuth();
+    const toastSpy = spyOn(
+      (auth as unknown as { toastService: { show: () => void } }).toastService,
+      "show",
+    );
 
     expect(() => auth.signIn()).not.toThrow();
     expect(() => auth.signUp()).not.toThrow();
-    expect(auth.signUpModalOpen()).toBeTrue();
+    expect(auth.signUpModalOpen()).toBeFalse();
+    expect(toastSpy).toHaveBeenCalledTimes(2);
+    expect(toastSpy).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Authentication is not available. Please try again later!",
+        type: "error",
+      }),
+    );
     expect(() => auth.openUserProfile()).not.toThrow();
     await expectAsync(auth.signOut()).toBeResolved();
-    expect(auth.signUpModalOpen()).toBeFalse();
   });
 
   it("returns null token outside the browser", async () => {
