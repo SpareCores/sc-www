@@ -5,6 +5,8 @@ import { Auth } from "../../services/auth/auth";
 import { Button } from "../button/button";
 
 type RegisterBusy = "submit" | "verify" | "resend" | "github";
+type RegisterStep = "details" | "consent" | "verify";
+type RegisterMethod = "email" | "github";
 
 @Component({
   selector: "sc-register-modal",
@@ -15,7 +17,8 @@ type RegisterBusy = "submit" | "verify" | "resend" | "github";
 export class RegisterModal {
   protected readonly auth = inject(Auth);
 
-  protected step: "details" | "verify" = "details";
+  protected step: RegisterStep = "details";
+  protected method: RegisterMethod = "email";
   protected firstName = "";
   protected lastName = "";
   protected emailAddress = "";
@@ -46,47 +49,65 @@ export class RegisterModal {
     event.stopPropagation();
   }
 
-  protected canSubmit(): boolean {
+  protected canSubmitDetails(): boolean {
     return (
       !!this.firstName.trim() &&
       !!this.lastName.trim() &&
       !!this.emailAddress.trim() &&
-      !!this.password &&
-      this.legalAccepted
+      !!this.password
     );
+  }
+
+  protected canSubmitConsent(): boolean {
+    return this.legalAccepted;
   }
 
   protected canVerify(): boolean {
     return !!this.verificationCode.trim();
   }
 
-  protected async submitDetails(): Promise<void> {
-    if (!this.canSubmit() || this.busy) {
+  protected continueToConsent(): void {
+    if (!this.canSubmitDetails() || this.busy) {
       return;
     }
 
     this.errorMessage = "";
-    this.busy = "submit";
+    this.method = "email";
+    this.step = "consent";
+  }
 
-    const result = await this.auth.submitRegister({
-      firstName: this.firstName,
-      lastName: this.lastName,
-      emailAddress: this.emailAddress,
-      password: this.password,
-      legalAccepted: this.legalAccepted,
-      newsletterOptIn: this.newsletterOptIn,
-    });
-
-    this.busy = null;
-
-    if (result.status === "verify") {
-      this.step = "verify";
+  protected continueWithGithub(): void {
+    if (this.busy) {
       return;
     }
 
-    if (result.status === "error") {
-      this.errorMessage = result.message;
+    this.errorMessage = "";
+    this.method = "github";
+    this.step = "consent";
+  }
+
+  protected backToDetails(): void {
+    if (this.busy) {
+      return;
     }
+
+    this.errorMessage = "";
+    this.step = "details";
+  }
+
+  protected async submitConsent(): Promise<void> {
+    if (!this.canSubmitConsent() || this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+
+    if (this.method === "github") {
+      await this.submitGithub();
+      return;
+    }
+
+    await this.submitEmail();
   }
 
   protected async verifyEmail(): Promise<void> {
@@ -123,18 +144,40 @@ export class RegisterModal {
     }
   }
 
-  protected async continueWithGithub(): Promise<void> {
+  protected openSignIn(): void {
     if (this.busy) {
       return;
     }
 
-    if (!this.legalAccepted) {
-      this.errorMessage =
-        "You must accept the Terms of Service and Privacy Policy.";
+    this.auth.closeSignUp();
+    this.auth.signIn();
+  }
+
+  private async submitEmail(): Promise<void> {
+    this.busy = "submit";
+
+    const result = await this.auth.submitRegister({
+      firstName: this.firstName,
+      lastName: this.lastName,
+      emailAddress: this.emailAddress,
+      password: this.password,
+      legalAccepted: this.legalAccepted,
+      newsletterOptIn: this.newsletterOptIn,
+    });
+
+    this.busy = null;
+
+    if (result.status === "verify") {
+      this.step = "verify";
       return;
     }
 
-    this.errorMessage = "";
+    if (result.status === "error") {
+      this.errorMessage = result.message;
+    }
+  }
+
+  private async submitGithub(): Promise<void> {
     this.busy = "github";
 
     try {
@@ -153,17 +196,9 @@ export class RegisterModal {
     }
   }
 
-  protected openSignIn(): void {
-    if (this.busy) {
-      return;
-    }
-
-    this.auth.closeSignUp();
-    this.auth.signIn();
-  }
-
   private reset(): void {
     this.step = "details";
+    this.method = "email";
     this.firstName = "";
     this.lastName = "";
     this.emailAddress = "";

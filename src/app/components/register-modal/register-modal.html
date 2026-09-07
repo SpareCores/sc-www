@@ -19,24 +19,7 @@
         </p>
       </div>
 
-      <sc-button
-        label="Continue with GitHub"
-        icon="github"
-        iconPosition="start"
-        size="small"
-        variant="outline"
-        color="brand"
-        buttonClass="w-full !justify-center"
-        [loading]="busy === 'github'"
-        [disabled]="!!busy"
-        (buttonClick)="continueWithGithub()"
-      ></sc-button>
-
-      <div class="register-modal__divider">
-        <span>or</span>
-      </div>
-
-      <form class="register-modal__form" (ngSubmit)="submitDetails()">
+      <form class="register-modal__form" (ngSubmit)="continueToConsent()">
         <div class="register-modal__grid">
           <label class="register-modal__field">
             <span>First name</span>
@@ -78,6 +61,61 @@
           />
         </label>
 
+        @if (errorMessage) {
+        <p class="register-modal__error">{{ errorMessage }}</p>
+        }
+
+        <sc-button
+          type="submit"
+          label="Continue"
+          icon="chevron-right"
+          size="small"
+          buttonClass="w-full !justify-center"
+          [disabled]="!canSubmitDetails() || !!busy"
+        ></sc-button>
+      </form>
+
+      <div class="register-modal__divider">
+        <span>or</span>
+      </div>
+
+      <sc-button
+        label="Continue with GitHub"
+        icon="github"
+        iconPosition="start"
+        size="small"
+        variant="outline"
+        color="brand"
+        buttonClass="w-full !justify-center"
+        [disabled]="!!busy"
+        (buttonClick)="continueWithGithub()"
+      ></sc-button>
+
+      <div class="register-modal__footer">
+        <p>
+          Already have an account?
+          <button
+            type="button"
+            class="register-modal__footer-link"
+            (click)="openSignIn()"
+          >
+            Log in
+          </button>
+        </p>
+      </div>
+    </div>
+    } @else if (step === "consent") {
+    <div class="register-modal__body">
+      <div class="register-modal__header">
+        <h2 class="register-modal__title">One last step</h2>
+        <p class="register-modal__subtitle">
+          Accept the Terms of Service and Privacy Policy to finish signing up.
+          Stay in the loop with the Spare Cores newsletter — optional, but
+          recommended.
+        </p>
+      </div>
+
+      <form class="register-modal__form" (ngSubmit)="submitConsent()">
         <label class="register-modal__checkbox">
           <input
             type="checkbox"
@@ -115,29 +153,31 @@
           data-cl-size="flexible"
         ></div>
 
-        <sc-button
-          type="submit"
-          label="Continue"
-          icon="chevron-right"
-          size="small"
-          buttonClass="w-full !justify-center"
-          [loading]="busy === 'submit'"
-          [disabled]="!canSubmit() || !!busy"
-        ></sc-button>
-      </form>
-
-      <div class="register-modal__footer">
-        <p>
-          Already have an account?
-          <button
+        <div class="register-modal__consent-actions">
+          <sc-button
             type="button"
-            class="register-modal__footer-link"
-            (click)="openSignIn()"
-          >
-            Log in
-          </button>
-        </p>
-      </div>
+            label="Back"
+            icon="chevron-left"
+            iconPosition="start"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [disabled]="!!busy"
+            (buttonClick)="backToDetails()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            [label]="method === 'github' ? 'Continue with GitHub' : 'Continue'"
+            [icon]="method === 'github' ? 'github' : 'chevron-right'"
+            [iconPosition]="method === 'github' ? 'start' : 'end'"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'submit' || busy === 'github'"
+            [disabled]="!canSubmitConsent() || !!busy"
+          ></sc-button>
+        </div>
+      </form>
     </div>
     } @else {
     <div class="register-modal__body">
