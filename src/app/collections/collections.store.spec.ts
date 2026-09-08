@@ -93,6 +93,7 @@ describe("CollectionsStore", () => {
         server_id: "t3.nano",
         note: undefined,
         order: undefined,
+        bookmarked_at: undefined,
       },
     ]);
     expect(store.isLoaded()).toBeTrue();

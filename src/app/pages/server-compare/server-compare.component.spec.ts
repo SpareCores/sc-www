@@ -249,10 +249,12 @@ describe("ServerCompareComponent", () => {
   });
 
   it("restores baseline server from URL query params", () => {
-    routeSnapshot.queryParams = {
-      baseline_vendor: "aws",
-      baseline_server: "t3.medium",
-    };
+    const restoreUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}?baseline_vendor=aws&baseline_server=t3.medium`,
+    );
     component.servers = [
       {
         vendor_id: "aws",
@@ -261,13 +263,17 @@ describe("ServerCompareComponent", () => {
       },
     ] as typeof component.servers;
 
-    component["restoreBaselineFromUrl"]();
+    try {
+      component["restoreBaselineFromUrl"]();
 
-    expect(component.selectedBaselineServer?.api_reference).toBe("t3.medium");
-    expect(setBaselineServer).toHaveBeenCalledWith({
-      vendor: "aws",
-      server: "t3.medium",
-    });
+      expect(component.selectedBaselineServer?.api_reference).toBe("t3.medium");
+      expect(setBaselineServer).toHaveBeenCalledWith({
+        vendor: "aws",
+        server: "t3.medium",
+      });
+    } finally {
+      window.history.replaceState({}, "", restoreUrl);
+    }
   });
 
   it("selectBaselineServer updates URL with baseline query params", () => {

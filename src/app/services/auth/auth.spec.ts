@@ -131,7 +131,11 @@ describe("Auth", () => {
   it("toasts when Clerk is not initialized on sign in or sign up", async () => {
     const auth = createAuth();
     const toastSpy = spyOn(
-      (auth as unknown as { toastService: { show: () => void } }).toastService,
+      (
+        auth as unknown as {
+          toastService: { show: (options: unknown) => void };
+        }
+      ).toastService,
       "show",
     );
 
