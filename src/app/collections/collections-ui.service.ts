@@ -1,7 +1,11 @@
 import { Injectable, inject } from "@angular/core";
 import { Auth } from "../services/auth/auth";
 import { CollectionsStore } from "./collections.store";
-import type { SavedSearchPage } from "./collections.types";
+import {
+  favoriteDatabaseId,
+  favoriteServerId,
+  type SavedSearchPage,
+} from "./collections.types";
 import type { SearchBarQuery } from "../components/search-bar/search-bar.types";
 import {
   isDefaultListingQuery,
@@ -9,6 +13,8 @@ import {
   savedSearchIdFromQuery,
 } from "./collections.utils";
 import { mutationKey } from "../shared/store/with-mutation-status";
+
+export type BookmarkEntityKind = "server" | "database";
 
 @Injectable({ providedIn: "root" })
 export class CollectionsUiService {
@@ -25,6 +31,39 @@ export class CollectionsUiService {
 
   activeSavedSearch(page: SavedSearchPage, query: SearchBarQuery) {
     return this.store.savedSearchByQuery(page, query);
+  }
+
+  isFavorite(
+    kind: BookmarkEntityKind,
+    vendorId: string,
+    entityId: string,
+  ): boolean {
+    return kind === "server"
+      ? this.store.isFavoriteServer(vendorId, entityId)
+      : this.store.isFavoriteDatabase(vendorId, entityId);
+  }
+
+  isFavoriteLoading(
+    kind: BookmarkEntityKind,
+    vendorId: string,
+    entityId: string,
+  ): boolean {
+    return this.store.isMutating(
+      this.favoriteMutationKey(kind, vendorId, entityId),
+    );
+  }
+
+  toggleFavorite(
+    kind: BookmarkEntityKind,
+    vendorId: string,
+    entityId: string,
+  ): void {
+    if (kind === "server") {
+      this.store.toggleFavoriteServer({ vendorId, serverId: entityId });
+      return;
+    }
+
+    this.store.toggleFavoriteDatabase({ vendorId, databaseId: entityId });
   }
 
   canSaveSearch(query: SearchBarQuery): boolean {
@@ -77,5 +116,18 @@ export class CollectionsUiService {
 
   deleteSearch(id: string): void {
     this.store.deleteSearch(id);
+  }
+
+  private favoriteMutationKey(
+    kind: BookmarkEntityKind,
+    vendorId: string,
+    entityId: string,
+  ): string {
+    return kind === "server"
+      ? mutationKey("favorite-server", favoriteServerId(vendorId, entityId))
+      : mutationKey(
+          "favorite-database",
+          favoriteDatabaseId(vendorId, entityId),
+        );
   }
 }

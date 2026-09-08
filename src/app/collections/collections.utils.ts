@@ -34,6 +34,29 @@ export function sortByOrder<T extends { order?: number; id: string }>(
   });
 }
 
+export function nowBookmarkedAt(): string {
+  return new Date().toISOString();
+}
+
+export function formatBookmarkedAt(value?: string | null): string {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 type OpenApiParameter = {
   name?: string;
   schema?: {
@@ -570,11 +593,12 @@ export function savedComparisonDetailEntries(
   }
 
   rows.push(
-    ...instances.map((instance, index) => {
+    ...instances.map((instance) => {
       if ("server" in instance) {
         return {
-          field: `Selected server ${index + 1}`,
-          value: `${instance.vendor} ${instance.display_name || instance.server}`,
+          field: instance.vendor,
+          fieldHref: `/vendors/${instance.vendor}`,
+          value: instance.display_name || instance.server,
           valueHref: `/server/${instance.vendor}/${instance.server}`,
           isBaseline:
             !!baseline &&
@@ -584,8 +608,9 @@ export function savedComparisonDetailEntries(
       }
 
       return {
-        field: `Selected database ${index + 1}`,
-        value: `${instance.vendor} ${instance.display_name || instance.database}`,
+        field: instance.vendor,
+        fieldHref: `/vendors/${instance.vendor}`,
+        value: instance.display_name || instance.database,
         valueHref: `/database/${instance.vendor}/${instance.database}`,
         isBaseline:
           !!baseline &&

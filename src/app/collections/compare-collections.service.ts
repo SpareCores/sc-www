@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { CollectionsStore } from "./collections.store";
 import type { SavedComparisonInstance } from "./collections.types";
 import { mutationKey } from "../shared/store/with-mutation-status";
+import { canonicalizeCompareUrl } from "../pages/server-compare/compare-url-state.utils";
 
 @Injectable({ providedIn: "root" })
 export class CompareCollectionsService {
@@ -13,25 +14,11 @@ export class CompareCollectionsService {
 
   compareUrl(): string {
     if (isPlatformBrowser(this.platformId)) {
-      return `${window.location.pathname}${window.location.search}`;
+      return canonicalizeCompareUrl(
+        `${window.location.pathname}${window.location.search}`,
+      );
     }
-    return this.router.url.split("#")[0];
-  }
-
-  activeSavedComparison() {
-    return (
-      this.store.savedComparisonByUrl(this.compareUrl()) ??
-      this.activeSavedComparisonByRouteId(
-        this.router.url.split("/").pop()?.split("?")[0] ?? null,
-      )
-    );
-  }
-
-  activeSavedComparisonByRouteId(id: string | null) {
-    if (!id) {
-      return null;
-    }
-    return this.store.savedComparisonById(id);
+    return canonicalizeCompareUrl(this.router.url.split("#")[0]);
   }
 
   isSavingComparison(id: string): boolean {
@@ -51,10 +38,11 @@ export class CompareCollectionsService {
     instances: SavedComparisonInstance[],
     name: string,
     note?: string,
+    compareUrl = this.compareUrl(),
   ): void {
     this.store.saveComparison({
       id,
-      compareUrl: this.compareUrl(),
+      compareUrl: canonicalizeCompareUrl(compareUrl),
       instances,
       name,
       note,
@@ -66,10 +54,11 @@ export class CompareCollectionsService {
     instances: SavedComparisonInstance[],
     name: string,
     note?: string,
+    compareUrl = this.compareUrl(),
   ): void {
     this.store.updateComparison({
       id,
-      compareUrl: this.compareUrl(),
+      compareUrl: canonicalizeCompareUrl(compareUrl),
       instances,
       name,
       note,
@@ -80,22 +69,31 @@ export class CompareCollectionsService {
     this.store.deleteComparison(id);
   }
 
-  buildComparisonId(instances: SavedComparisonInstance[]): string {
-    const saved = this.activeSavedComparison();
-    if (saved) {
-      return saved.id;
+  savedComparisonByUrls(compareUrl: string, fallbackUrl?: string | null) {
+    const saved = this.store.savedComparisonByUrl(
+      canonicalizeCompareUrl(compareUrl),
+    );
+    if (saved || !fallbackUrl) {
+      return saved ?? null;
     }
 
-    const routeId = this.router.url.split("/").pop()?.split("?")[0];
-    if (
-      routeId &&
-      routeId !== "compare" &&
-      this.store.savedComparisonById(routeId)
-    ) {
-      return routeId;
+    return this.store.savedComparisonByUrl(canonicalizeCompareUrl(fallbackUrl));
+  }
+
+  buildComparisonId(
+    instances: SavedComparisonInstance[],
+    compareUrl = this.compareUrl(),
+  ): string {
+    const canonicalUrl = canonicalizeCompareUrl(compareUrl);
+    const exactByUrl = this.savedComparisonByUrls(canonicalUrl);
+    if (exactByUrl) {
+      return exactByUrl.id;
     }
 
-    const key = JSON.stringify(instances);
+    const key = JSON.stringify({
+      url: canonicalUrl,
+      instances,
+    });
     let hash = 0;
     for (let i = 0; i < key.length; i++) {
       hash = (hash << 5) - hash + key.charCodeAt(i);

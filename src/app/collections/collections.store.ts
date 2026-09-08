@@ -67,6 +67,7 @@ import {
 import {
   adviceQueriesEqual,
   collectionItemHref,
+  nowBookmarkedAt,
   savedAdviceDetailEntries,
   savedComparisonDetailEntries,
   savedSearchDetailEntries,
@@ -191,6 +192,7 @@ export const CollectionsStore = signalStore(
             subtitle: vendorId,
             note: item.note,
             order: item.order ?? cards.length,
+            bookmarkedAt: item.bookmarked_at,
             href:
               vendorId && serverId
                 ? ["/server", vendorId, serverId]
@@ -212,6 +214,7 @@ export const CollectionsStore = signalStore(
             subtitle: vendorId,
             note: item.note,
             order: item.order ?? cards.length,
+            bookmarkedAt: item.bookmarked_at,
             href:
               vendorId && databaseId
                 ? ["/database", vendorId, databaseId]
@@ -230,6 +233,7 @@ export const CollectionsStore = signalStore(
             title: item.name,
             note: item.note,
             order: item.order ?? cards.length,
+            bookmarkedAt: item.bookmarked_at,
             href: collectionItemHref(path, item.query),
             icon: "search",
             secondaryIcon: item.page === "servers" ? "pc-case" : "database",
@@ -246,6 +250,7 @@ export const CollectionsStore = signalStore(
             title: item.name,
             note: item.note,
             order: item.order ?? cards.length,
+            bookmarkedAt: item.bookmarked_at,
             href: item.compare_url,
             icon: "scale",
             secondaryIcon: comparisonSecondaryIcon(item),
@@ -265,6 +270,7 @@ export const CollectionsStore = signalStore(
             title: item.name,
             note: item.note,
             order: item.order ?? cards.length,
+            bookmarkedAt: item.bookmarked_at,
             href: collectionItemHref("/advisor", item.query),
             icon: "bot",
             details: savedAdviceDetailEntries(item.query),
@@ -493,6 +499,7 @@ export const CollectionsStore = signalStore(
               vendor_id: vendorId,
               server_id: serverId,
               order: store.serversEntities().length,
+              bookmarked_at: nowBookmarkedAt(),
             };
             if (note !== undefined) {
               optimistic.note = note;
@@ -536,6 +543,9 @@ export const CollectionsStore = signalStore(
               order:
                 store.serversEntityMap()[id]?.order ??
                 store.serversEntities().length,
+              bookmarked_at:
+                store.serversEntityMap()[id]?.bookmarked_at ??
+                nowBookmarkedAt(),
             })
             .pipe(
               finalize(finish),
@@ -576,6 +586,7 @@ export const CollectionsStore = signalStore(
               vendor_id: vendorId,
               database_id: databaseId,
               order: store.databasesEntities().length,
+              bookmarked_at: nowBookmarkedAt(),
             };
             if (note !== undefined) {
               optimistic.note = note;
@@ -622,6 +633,9 @@ export const CollectionsStore = signalStore(
                 order:
                   store.databasesEntityMap()[id]?.order ??
                   store.databasesEntities().length,
+                bookmarked_at:
+                  store.databasesEntityMap()[id]?.bookmarked_at ??
+                  nowBookmarkedAt(),
               })
               .pipe(
                 finalize(finish),
@@ -661,6 +675,7 @@ export const CollectionsStore = signalStore(
               name: name.trim(),
               note: normalizedNote,
               order: store.savedSearches().length,
+              bookmarked_at: nowBookmarkedAt(),
             })
             .pipe(
               tapResponse({
@@ -701,6 +716,7 @@ export const CollectionsStore = signalStore(
               name: name.trim(),
               note: normalizedNote,
               order: store.searchesEntityMap()[id]?.order,
+              bookmarked_at: store.searchesEntityMap()[id]?.bookmarked_at,
             })
             .pipe(
               tapResponse({
@@ -765,6 +781,7 @@ export const CollectionsStore = signalStore(
               name: name.trim(),
               note: normalizedNote,
               order: store.savedComparisons().length,
+              bookmarked_at: nowBookmarkedAt(),
             })
             .pipe(
               tapResponse({
@@ -807,6 +824,7 @@ export const CollectionsStore = signalStore(
               name: name.trim(),
               note: normalizedNote,
               order: store.comparisonsEntityMap()[id]?.order,
+              bookmarked_at: store.comparisonsEntityMap()[id]?.bookmarked_at,
             })
             .pipe(
               tapResponse({
@@ -867,6 +885,7 @@ export const CollectionsStore = signalStore(
               name: name.trim(),
               note: normalizedNote,
               order: store.savedAdvices().length,
+              bookmarked_at: nowBookmarkedAt(),
             })
             .pipe(
               tapResponse({
@@ -905,6 +924,7 @@ export const CollectionsStore = signalStore(
               name: name.trim(),
               note: normalizedNote,
               order: store.advicesEntityMap()[id]?.order,
+              bookmarked_at: store.advicesEntityMap()[id]?.bookmarked_at,
             })
             .pipe(
               tapResponse({

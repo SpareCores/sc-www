@@ -21,6 +21,7 @@ export type CollectionItemBase = {
   id: string;
   note?: string;
   order?: number;
+  bookmarked_at?: string;
 };
 
 export type FavoriteServerItem = CollectionItemBase & {
@@ -100,6 +101,7 @@ export type BookmarksCardViewModel = {
   subtitle?: string;
   note?: string;
   order: number;
+  bookmarkedAt?: string;
   href?: string | any[];
   icon?: string;
   secondaryIcon?: string;
@@ -219,6 +221,7 @@ export function resolveFavoriteServer(
     server_id,
     note: item.note,
     order: item.order,
+    bookmarked_at: item.bookmarked_at,
   };
 }
 
@@ -238,5 +241,6 @@ export function resolveFavoriteDatabase(
     database_id,
     note: item.note,
     order: item.order,
+    bookmarked_at: item.bookmarked_at,
   };
 }
