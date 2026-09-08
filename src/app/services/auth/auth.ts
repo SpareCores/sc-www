@@ -9,10 +9,14 @@ import {
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { Clerk } from "@clerk/clerk-js";
-import type { SignUpResource, UserResource } from "@clerk/shared/types";
+import type {
+  SignInResource,
+  SignUpResource,
+  UserResource,
+} from "@clerk/shared/types";
 import { ui } from "@clerk/ui/no-rhc";
-import { CLERK_APPEARANCE, CLERK_TEXTS } from "./clerk-configuration";
 import { ToastService } from "../toast.service";
+import { CLERK_APPEARANCE, CLERK_TEXTS } from "./clerk-configuration";
 
 const CLERK_PUBLISHABLE_KEY =
   import.meta.env.NG_APP_CLERK_PUBLISHABLE_KEY || "";
@@ -35,6 +39,20 @@ export type RegisterResult =
   | { status: "verify" }
   | { status: "error"; message: string };
 
+export type LoginPayload = {
+  emailAddress: string;
+  password: string;
+};
+
+export type LoginResult =
+  | { status: "complete" }
+  | { status: "error"; message: string };
+
+export type PasswordResetResult =
+  | { status: "code_sent" }
+  | { status: "complete" }
+  | { status: "error"; message: string };
+
 @Injectable({ providedIn: "root" })
 export class Auth {
   private readonly platformId = inject(PLATFORM_ID);
@@ -47,6 +65,7 @@ export class Auth {
 
   private readonly _user = signal<UserResource | null>(null);
 
+  readonly signInModalOpen = signal(false);
   readonly signUpModalOpen = signal(false);
   readonly isAuthenticated = computed(() => this._user() !== null);
 
@@ -80,7 +99,12 @@ export class Auth {
       this.toastAuthUnavailable();
       return;
     }
-    this.clerk.openSignIn({ withSignUp: false });
+    this.signUpModalOpen.set(false);
+    this.signInModalOpen.set(true);
+  }
+
+  closeSignIn(): void {
+    this.signInModalOpen.set(false);
   }
 
   signUp(): void {
@@ -88,11 +112,168 @@ export class Auth {
       this.toastAuthUnavailable();
       return;
     }
+    this.signInModalOpen.set(false);
     this.signUpModalOpen.set(true);
   }
 
   closeSignUp(): void {
     this.signUpModalOpen.set(false);
+  }
+
+  async submitLogin(payload: LoginPayload): Promise<LoginResult> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return {
+        status: "error",
+        message: "Sign in is only available in the browser.",
+      };
+    }
+
+    const signIn = await this.requireSignIn();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    try {
+      const result = await signIn.create({
+        identifier: payload.emailAddress.trim(),
+        password: payload.password,
+      });
+
+      if (result.status === "complete" && result.createdSessionId) {
+        await this.completeSession(result.createdSessionId);
+        return { status: "complete" };
+      }
+
+      return {
+        status: "error",
+        message: "Additional verification is required to sign in.",
+      };
+    } catch (error) {
+      return {
+        status: "error",
+        message: this.authErrorMessage(error, "Unable to sign in."),
+      };
+    }
+  }
+
+  async startPasswordReset(emailAddress: string): Promise<PasswordResetResult> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return {
+        status: "error",
+        message: "Password reset is only available in the browser.",
+      };
+    }
+
+    const signIn = await this.requireSignIn();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    try {
+      await signIn.create({
+        strategy: "reset_password_email_code",
+        identifier: emailAddress.trim(),
+      });
+      return { status: "code_sent" };
+    } catch (error) {
+      return {
+        status: "error",
+        message: this.authErrorMessage(
+          error,
+          "Unable to send a password reset code.",
+        ),
+      };
+    }
+  }
+
+  async completePasswordReset(payload: {
+    code: string;
+    password: string;
+  }): Promise<PasswordResetResult> {
+    const signIn = await this.requireSignIn();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    try {
+      const result = await signIn.attemptFirstFactor({
+        strategy: "reset_password_email_code",
+        code: payload.code.trim(),
+        password: payload.password,
+      });
+
+      if (result.status === "complete" && result.createdSessionId) {
+        await this.completeSession(result.createdSessionId);
+        return { status: "complete" };
+      }
+
+      return {
+        status: "error",
+        message: "Unable to reset your password.",
+      };
+    } catch (error) {
+      return {
+        status: "error",
+        message: this.authErrorMessage(error, "Unable to reset your password."),
+      };
+    }
+  }
+
+  async resendPasswordResetCode(): Promise<PasswordResetResult> {
+    const signIn = await this.requireSignIn();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    try {
+      const emailFactor = signIn.supportedFirstFactors?.find(
+        (factor) => factor.strategy === "reset_password_email_code",
+      );
+      if (!emailFactor || !("emailAddressId" in emailFactor)) {
+        return {
+          status: "error",
+          message: "Unable to resend the password reset code.",
+        };
+      }
+
+      await signIn.prepareFirstFactor({
+        strategy: "reset_password_email_code",
+        emailAddressId: emailFactor.emailAddressId,
+      });
+      return { status: "code_sent" };
+    } catch (error) {
+      return {
+        status: "error",
+        message: this.authErrorMessage(
+          error,
+          "Unable to resend the password reset code.",
+        ),
+      };
+    }
+  }
+
+  async signInWithGithub(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    await this.withGithubPopup("scGithubSignIn", async (popup) => {
+      const signIn = await this.requireSignIn();
+      if (!signIn) {
+        throw new Error("Authentication is not ready yet.");
+      }
+
+      popup.focus();
+      const urls = this.appUrls();
+      await signIn.authenticateWithPopup({
+        strategy: "oauth_github",
+        redirectUrl: urls.authCallback,
+        redirectUrlComplete: urls.bookmarks,
+        popup,
+      });
+      popup.focus();
+      this.closeSignIn();
+    });
   }
 
   async submitRegister(payload: RegisterPayload): Promise<RegisterResult> {
@@ -105,7 +286,7 @@ export class Auth {
 
     const signUp = await this.requireSignUp();
     if (!signUp) {
-      return { status: "error", message: "Authentication is not ready yet." };
+      return this.authNotReady();
     }
 
     try {
@@ -138,7 +319,7 @@ export class Auth {
   async verifyRegister(code: string): Promise<RegisterResult> {
     const signUp = await this.requireSignUp();
     if (!signUp) {
-      return { status: "error", message: "Authentication is not ready yet." };
+      return this.authNotReady();
     }
 
     try {
@@ -169,7 +350,7 @@ export class Auth {
   async resendRegisterCode(): Promise<RegisterResult> {
     const signUp = await this.requireSignUp();
     if (!signUp) {
-      return { status: "error", message: "Authentication is not ready yet." };
+      return this.authNotReady();
     }
 
     try {
@@ -196,26 +377,7 @@ export class Auth {
       return;
     }
 
-    const width = window.screen.availWidth;
-    const height = window.screen.availHeight;
-    const popup = window.open(
-      "about:blank",
-      "scGithubSignUp",
-      `popup=yes,width=${width},height=${height},left=0,top=0,noopener=no`,
-    );
-    if (!popup) {
-      throw new Error("Enable popups to continue with GitHub.");
-    }
-
-    popup.focus();
-    try {
-      popup.moveTo(0, 0);
-      popup.resizeTo(width, height);
-    } catch {
-      console.error("Failed to resize the popup. :(");
-    }
-
-    try {
+    await this.withGithubPopup("scGithubSignUp", async (popup) => {
       const signUp = await this.requireSignUp();
       if (!signUp) {
         throw new Error("Authentication is not ready yet.");
@@ -232,12 +394,7 @@ export class Auth {
         unsafeMetadata: this.newsletterMetadata(newsletterOptIn),
       });
       popup.focus();
-    } catch (error) {
-      if (!popup.closed) {
-        popup.close();
-      }
-      throw error;
-    }
+    });
   }
 
   async handleRedirectCallback(): Promise<void> {
@@ -252,6 +409,7 @@ export class Auth {
   }
 
   async signOut(): Promise<void> {
+    this.closeSignIn();
     this.closeSignUp();
     await this.clerk?.signOut();
     this.syncState();
@@ -338,9 +496,59 @@ export class Auth {
     };
   }
 
+  private async withGithubPopup(
+    name: string,
+    authenticate: (popup: Window) => Promise<void>,
+  ): Promise<void> {
+    const popup = this.openAuthPopup(name);
+
+    try {
+      await authenticate(popup);
+    } catch (error) {
+      if (!popup.closed) {
+        popup.close();
+      }
+      throw error;
+    }
+  }
+
+  private openAuthPopup(name: string): Window {
+    const width = window.screen.availWidth;
+    const height = window.screen.availHeight;
+    const popup = window.open(
+      "about:blank",
+      name,
+      `popup=yes,width=${width},height=${height},left=0,top=0,noopener=no`,
+    );
+
+    if (!popup) {
+      throw new Error("Enable popups to continue with GitHub.");
+    }
+
+    popup.focus();
+
+    try {
+      popup.moveTo(0, 0);
+      popup.resizeTo(width, height);
+    } catch {
+      return popup;
+    }
+
+    return popup;
+  }
+
+  private async requireSignIn(): Promise<SignInResource | null> {
+    await this.init();
+    return this.clerk?.client?.signIn ?? null;
+  }
+
   private async requireSignUp(): Promise<SignUpResource | null> {
     await this.init();
     return this.clerk?.client?.signUp ?? null;
+  }
+
+  private authNotReady(): { status: "error"; message: string } {
+    return { status: "error", message: "Authentication is not ready yet." };
   }
 
   private newsletterMetadata(
@@ -361,6 +569,7 @@ export class Auth {
     if (isPlatformBrowser(this.platformId)) {
       await this.router.navigateByUrl("/bookmarks", { replaceUrl: true });
     }
+    this.closeSignIn();
     this.closeSignUp();
   }
 

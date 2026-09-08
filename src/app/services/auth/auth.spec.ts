@@ -79,10 +79,9 @@ describe("Auth", () => {
     expect(auth.userImageUrl()).toBe("");
   });
 
-  it("opens Clerk UI only when Clerk is available", () => {
+  it("opens custom auth modals when Clerk is available", () => {
     const auth = createAuth();
     const clerk = {
-      openSignIn: jasmine.createSpy("openSignIn"),
       openUserProfile: jasmine.createSpy("openUserProfile"),
       signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
       user: null,
@@ -90,12 +89,15 @@ describe("Auth", () => {
     (auth as unknown as { clerk: typeof clerk }).clerk = clerk;
 
     auth.signIn();
-    auth.signUp();
-    auth.openUserProfile();
+    expect(auth.signInModalOpen()).toBeTrue();
+    expect(auth.signUpModalOpen()).toBeFalse();
 
-    expect(clerk.openSignIn).toHaveBeenCalledWith({ withSignUp: false });
-    expect(clerk.openUserProfile).toHaveBeenCalled();
+    auth.signUp();
     expect(auth.signUpModalOpen()).toBeTrue();
+    expect(auth.signInModalOpen()).toBeFalse();
+
+    auth.openUserProfile();
+    expect(clerk.openUserProfile).toHaveBeenCalled();
   });
 
   it("clears auth state after sign out", async () => {
@@ -107,12 +109,10 @@ describe("Auth", () => {
       imageUrl: "https://example.com/avatar.png",
     };
     const clerk: {
-      openSignIn: jasmine.Spy;
       openUserProfile: jasmine.Spy;
       signOut: jasmine.Spy;
       user: typeof signedInUser | null;
     } = {
-      openSignIn: jasmine.createSpy("openSignIn"),
       openUserProfile: jasmine.createSpy("openUserProfile"),
       signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
       user: signedInUser,
@@ -137,6 +137,7 @@ describe("Auth", () => {
 
     expect(() => auth.signIn()).not.toThrow();
     expect(() => auth.signUp()).not.toThrow();
+    expect(auth.signInModalOpen()).toBeFalse();
     expect(auth.signUpModalOpen()).toBeFalse();
     expect(toastSpy).toHaveBeenCalledTimes(2);
     expect(toastSpy).toHaveBeenCalledWith(

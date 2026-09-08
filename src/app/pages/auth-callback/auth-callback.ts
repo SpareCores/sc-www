@@ -15,7 +15,7 @@ import { Auth } from "../../services/auth/auth";
           @if (errorMessage()) {
             <p class="text-red-400">{{ errorMessage() }}</p>
           } @else {
-            <p class="text-white text-lg">Finishing sign-up...</p>
+            <p class="text-white text-lg">Finishing sign-in...</p>
           }
         </div>
       </div>
@@ -34,23 +34,28 @@ export class AuthCallback implements OnInit {
       return;
     }
 
+    const inPopup = !!window.opener && !window.opener.closed;
     const params = new URLSearchParams(window.location.search);
+
     if (params.get("error")) {
-      await this.finish(false);
+      await this.finish(false, inPopup);
       return;
     }
 
     try {
       await this.auth.handleRedirectCallback();
-      await this.finish(this.auth.isAuthenticated());
+      await this.finish(this.auth.isAuthenticated(), inPopup);
     } catch {
-      this.errorMessage.set("Unable to complete sign-up.");
-      await this.finish(false);
+      this.errorMessage.set("Unable to complete sign-in.");
+      await this.finish(false, inPopup);
     }
   }
 
-  private async finish(authenticated: boolean): Promise<void> {
-    if (window.opener && !window.opener.closed) {
+  private async finish(
+    authenticated: boolean,
+    inPopup: boolean,
+  ): Promise<void> {
+    if (inPopup) {
       window.close();
       return;
     }
@@ -60,7 +65,6 @@ export class AuthCallback implements OnInit {
       return;
     }
 
-    await this.router.navigateByUrl("/?register=1", { replaceUrl: true });
-    this.auth.signUp();
+    await this.router.navigateByUrl("/", { replaceUrl: true });
   }
 }
