@@ -26,6 +26,23 @@
             (input)="onNameQueryInput($event)"
           />
         </div>
+        <div class="bookmarks-search__sort">
+          <sc-button
+            [icon]="sortDirIcon()"
+            [ariaLabel]="sortDirAriaLabel()"
+            variant="outline"
+            color="brand"
+            (buttonClick)="toggleSortDir()"
+          ></sc-button>
+          <sc-button
+            id="bookmarks_sort_button"
+            [scFlowbiteDropdown]="'bookmarks_sort_options'"
+            #sortDropdown="scFlowbiteDropdown"
+            [label]="sortByLabel()"
+            icon="arrow-up-down"
+            variant="dropdown"
+          ></sc-button>
+        </div>
       </div>
     </div>
 
@@ -72,10 +89,11 @@
       class="bookmarks-grid mx-2 xl:mx-0"
       cdkDropList
       cdkDropListOrientation="mixed"
+      [cdkDropListDisabled]="!canReorder()"
       (cdkDropListDropped)="drop($event)"
     >
       @for (card of cards(); track card.kind + ":" + card.id) {
-      <article class="bookmarks-card" cdkDrag>
+      <article class="bookmarks-card" cdkDrag [cdkDragDisabled]="!canReorder()">
         <div class="bookmarks-card__kind-row">
           <div class="bookmarks-card__kind">
             @if (card.icon) {
@@ -99,9 +117,20 @@
             }
             <h2 class="bookmarks-card__title">{{ card.title }}</h2>
           </div>
-          <span class="bookmarks-card__handle" cdkDragHandle aria-hidden="true"
-            >⋮⋮</span
-          >
+          <div class="bookmarks-card__meta">
+            @if (cardBookmarkedAt(card); as bookmarkedAt) {
+            <span class="bookmarks-card__bookmarked-at"
+              >{{ bookmarkedAt }}</span
+            >
+            } @if (canReorder()) {
+            <span
+              class="bookmarks-card__handle"
+              cdkDragHandle
+              aria-hidden="true"
+              >⋮⋮</span
+            >
+            }
+          </div>
         </div>
 
         @if ( card.kind !== "favoriteServers" && card.kind !==
@@ -138,7 +167,9 @@
             <table class="bookmarks-card__table">
               <thead>
                 <tr>
-                  <th>Filter</th>
+                  <th>
+                    {{ card.kind === "savedComparisons" ? "Vendor" : "Filter" }}
+                  </th>
                   <th>Value</th>
                 </tr>
               </thead>
@@ -260,6 +291,30 @@
     </div>
     }
   </div>
+</div>
+
+<div
+  id="bookmarks_sort_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="bookmarks_sort_button"
+  >
+    @for (option of sortOptions; track option.value) {
+    <li
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectSortBy(option.value)"
+      (keydown.enter)="selectSortBy(option.value); $event.preventDefault()"
+      (keydown.space)="selectSortBy(option.value); $event.preventDefault()"
+      role="option"
+      [attr.aria-selected]="option.value === sortBy()"
+      tabindex="0"
+    >
+      <div class="text-white text-sm">{{ option.label }}</div>
+    </li>
+    }
+  </ul>
 </div>
 
 <sc-collection-save-modal

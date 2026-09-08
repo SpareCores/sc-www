@@ -1,6 +1,7 @@
 .bookmarks-search {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 1.25rem;
   width: 100%;
 }
@@ -9,12 +10,21 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex: 1 1 16rem;
   min-width: 0;
   max-width: 100%;
   padding: 0 1rem;
   border: 1px solid #34d399;
   border-radius: 0.5rem;
   background: #e5e7eb;
+}
+
+.bookmarks-search__sort {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
 }
 
 .bookmarks-search__icon {
@@ -181,6 +191,13 @@
   min-width: 0;
 }
 
+.bookmarks-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 .bookmarks-card__kind-icon {
   width: 1rem;
   height: 1rem;
@@ -203,6 +220,13 @@
   font-size: 0.875rem;
   line-height: 1.625;
   white-space: pre-wrap;
+}
+
+.bookmarks-card__bookmarked-at {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .bookmarks-card__vendor-logo {

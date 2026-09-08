@@ -33,6 +33,8 @@ import type {
   BookmarksCardViewModel,
   BookmarksFilterKey,
 } from "../../collections/collections.types";
+import { formatBookmarkedAt } from "../../collections/collections.utils";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
@@ -67,6 +69,15 @@ const STAT_ICONS: Record<BookmarksFilterKey, string> = {
 
 const INSTANCE_PREVIEW_COUNT = 6;
 
+type BookmarksSortBy = "priority" | "name" | "date";
+type BookmarksSortDir = "asc" | "desc";
+
+const SORT_OPTIONS: { value: BookmarksSortBy; label: string }[] = [
+  { value: "priority", label: "Default priority" },
+  { value: "name", label: "Name" },
+  { value: "date", label: "Date saved" },
+];
+
 const EDITABLE_KINDS = new Set([
   "savedSearches",
   "savedComparisons",
@@ -95,6 +106,7 @@ function normalizeBookmarksNameQuery(value: string): string {
     CdkDrag,
     LucideDynamicIcon,
     CollectionSaveModalComponent,
+    FlowbiteDropdownDirective,
   ],
   templateUrl: "./bookmarks.html",
   styleUrl: "./bookmarks.scss",
@@ -111,6 +123,7 @@ export class Bookmarks implements OnDestroy {
   private saveModal = viewChild(CollectionSaveModalComponent);
   private noteModalRef = viewChild<ElementRef<HTMLElement>>("noteModal");
   private tooltipRef = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
+  private sortDropdown = viewChild<FlowbiteDropdownDirective>("sortDropdown");
   private noteFlowbiteModal: Modal | null = null;
   private loadingFavoriteFeatures = new Set<string>();
   private vendorsLoaded = false;
@@ -122,6 +135,9 @@ export class Bookmarks implements OnDestroy {
 
   protected expandedDetails = signal<Record<string, boolean>>({});
   protected nameQuery = signal("");
+  protected sortBy = signal<BookmarksSortBy>("priority");
+  protected sortDir = signal<BookmarksSortDir>("asc");
+  protected readonly sortOptions = SORT_OPTIONS;
   private shareIcons = signal<Record<string, string>>({});
   protected editingCard = signal<BookmarksCardViewModel | null>(null);
   protected noteCard = signal<BookmarksCardViewModel | null>(null);
@@ -133,16 +149,58 @@ export class Bookmarks implements OnDestroy {
 
   protected cards = computed(() => {
     const query = normalizeBookmarksNameQuery(this.nameQuery());
-    const cards = this.collectionsStore.bookmarksCards();
+    const sortBy = this.sortBy();
+    const sortDir = this.sortDir();
+    let cards = this.collectionsStore.bookmarksCards();
 
-    if (!query) {
-      return cards;
+    if (query) {
+      cards = cards.filter((card) =>
+        normalizeBookmarksNameQuery(card.title).includes(query),
+      );
     }
 
-    return cards.filter((card) =>
-      normalizeBookmarksNameQuery(card.title).includes(query),
+    const direction = sortDir === "asc" ? 1 : -1;
+
+    return [...cards].sort((a, b) => {
+      let result = 0;
+
+      if (sortBy === "priority") {
+        result = a.order - b.order || a.id.localeCompare(b.id);
+      } else if (sortBy === "name") {
+        result =
+          a.title.localeCompare(b.title, undefined, { sensitivity: "base" }) ||
+          a.id.localeCompare(b.id);
+      } else {
+        const dateA = a.bookmarkedAt ? Date.parse(a.bookmarkedAt) : 0;
+        const dateB = b.bookmarkedAt ? Date.parse(b.bookmarkedAt) : 0;
+        result =
+          dateA - dateB ||
+          a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+      }
+
+      return result * direction;
+    });
+  });
+  protected canReorder = computed(
+    () => this.sortBy() === "priority" && this.sortDir() === "asc",
+  );
+  protected sortByLabel = computed(() => {
+    const current = this.sortBy();
+    return (
+      SORT_OPTIONS.find((option) => option.value === current)?.label ??
+      "Default priority"
     );
   });
+  protected sortDirIcon = computed(() =>
+    this.sortDir() === "desc"
+      ? "arrow-down-wide-narrow"
+      : "arrow-down-narrow-wide",
+  );
+  protected sortDirAriaLabel = computed(() =>
+    this.sortDir() === "desc"
+      ? "Sort descending. Click to sort ascending."
+      : "Sort ascending. Click to sort descending.",
+  );
   protected stats = computed(() => this.collectionsStore.bookmarksStats());
   protected filters = computed(() => this.collectionsStore.bookmarksFilters());
   protected isLoading = computed(
@@ -248,8 +306,21 @@ export class Bookmarks implements OnDestroy {
     this.nameQuery.set(target.value);
   }
 
+  protected selectSortBy(value: BookmarksSortBy): void {
+    this.sortBy.set(value);
+    this.sortDropdown()?.hide();
+  }
+
+  protected toggleSortDir(): void {
+    this.sortDir.update((dir) => (dir === "asc" ? "desc" : "asc"));
+  }
+
   protected cardKey(card: BookmarksCardViewModel): string {
     return `${card.kind}:${card.id}`;
+  }
+
+  protected cardBookmarkedAt(card: BookmarksCardViewModel): string {
+    return formatBookmarkedAt(card.bookmarkedAt);
   }
 
   protected cardSubtitle(card: BookmarksCardViewModel): string | undefined {
@@ -338,6 +409,10 @@ export class Bookmarks implements OnDestroy {
   }
 
   protected drop(event: CdkDragDrop<BookmarksCardViewModel[]>): void {
+    if (!this.canReorder()) {
+      return;
+    }
+
     const next = [...this.cards()];
     moveItemInArray(next, event.previousIndex, event.currentIndex);
     this.collectionsStore.reorderBookmarksCards(next);
