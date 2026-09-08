@@ -20,6 +20,7 @@ import { Subscription } from "rxjs";
 import { register } from "swiper/element/bundle";
 import { CollectionsStore } from "./collections/collections.store";
 import { PromoBanner } from "./components/promo-banner/promo-banner";
+import { LoginModal } from "./components/login-modal/login-modal";
 import { RegisterModal } from "./components/register-modal/register-modal";
 import {
   PROMO_BANNER_BY_PATH,
@@ -38,6 +39,7 @@ const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
   selector: "sc-root",
   imports: [
     PromoBanner,
+    LoginModal,
     RegisterModal,
     HeaderComponent,
     FooterComponent,

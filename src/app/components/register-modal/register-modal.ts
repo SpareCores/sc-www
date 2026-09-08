@@ -12,7 +12,7 @@ type RegisterMethod = "email" | "github";
   selector: "sc-register-modal",
   imports: [CommonModule, FormsModule, Button],
   templateUrl: "./register-modal.html",
-  styleUrl: "./register-modal.scss",
+  styleUrl: "../auth-modal.scss",
 })
 export class RegisterModal {
   protected readonly auth = inject(Auth);
@@ -43,10 +43,6 @@ export class RegisterModal {
     }
 
     this.auth.closeSignUp();
-  }
-
-  protected stopPropagation(event: MouseEvent): void {
-    event.stopPropagation();
   }
 
   protected canSubmitDetails(): boolean {
@@ -149,7 +145,6 @@ export class RegisterModal {
       return;
     }
 
-    this.auth.closeSignUp();
     this.auth.signIn();
   }
 
