@@ -36,6 +36,7 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { Button } from "../../components/button/button";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import {
   formatBooleanIconHtml,
   formatNumberWithCommas,
@@ -58,7 +59,6 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
-import { CollectionsStore } from "../../collections/collections.store";
 import { Auth } from "../../services/auth/auth";
 import { initGiscus } from "../../tools/initGiscus";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
@@ -118,6 +118,7 @@ interface PropertyCategoryDefinition {
     EmbedDebugComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    BookmarkButton,
   ],
   templateUrl: "./server-details.component.html",
   styleUrl: "./server-details.component.scss",
@@ -130,7 +131,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private keeperAPI = inject(KeeperAPIService);
   private SEOHandler = inject(SeoHandlerService);
   private serverCompare = inject(ServerCompareService);
-  private collectionsStore = inject(CollectionsStore);
   private auth = inject(Auth);
   private renderer = inject(Renderer2);
   private location = inject(Location);
@@ -1118,44 +1118,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
-  isFavoriteServer(): boolean {
-    if (!this.serverDetails) {
-      return false;
-    }
-    return this.collectionsStore.isFavoriteServer(
-      this.serverDetails.vendor_id,
-      this.serverDetails.api_reference,
-    );
-  }
-
-  isAuthenticated(): boolean {
-    return this.auth.isAuthenticated();
-  }
-
-  favoriteButtonLabel(): string {
-    return this.isFavoriteServer()
-      ? "Remove from bookmarks"
-      : "Bookmark this server";
-  }
-
-  favoriteButtonIcon(): string {
-    return this.isFavoriteServer() ? "bookmark-off" : "bookmark-plus";
-  }
-
-  toggleFavoriteServer(): void {
-    if (!this.serverDetails) {
-      return;
-    }
-
-    if (!this.auth.isAuthenticated()) {
-      this.auth.signIn();
-      return;
-    }
-
-    this.collectionsStore.toggleFavoriteServer({
-      vendorId: this.serverDetails.vendor_id,
-      serverId: this.serverDetails.api_reference,
-    });
+  promptFavoriteSignIn(): void {
+    this.auth.signIn();
   }
 
   compareText() {

@@ -37,6 +37,7 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { Button } from "../../components/button/button";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import {
   ServerPropertyCardComponent,
@@ -49,7 +50,6 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
-import { CollectionsStore } from "../../collections/collections.store";
 import { Auth } from "../../services/auth/auth";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
@@ -99,6 +99,7 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     BenchmarkLineChartComponent,
     LucideCheck,
     ReduceUnitNamePipe,
+    BookmarkButton,
   ],
   templateUrl: "./database-details.html",
   styleUrl: "./database-details.scss",
@@ -112,7 +113,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
   private serverCompare = inject(ServerCompareService);
-  private collectionsStore = inject(CollectionsStore);
   private auth = inject(Auth);
 
   isLoading = true;
@@ -645,44 +645,8 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     );
   }
 
-  isFavoriteDatabase(): boolean {
-    if (!this.databaseDetails) {
-      return false;
-    }
-    return this.collectionsStore.isFavoriteDatabase(
-      this.databaseDetails.vendor_id,
-      this.databaseDetails.api_reference,
-    );
-  }
-
-  isAuthenticated(): boolean {
-    return this.auth.isAuthenticated();
-  }
-
-  favoriteButtonLabel(): string {
-    return this.isFavoriteDatabase()
-      ? "Remove from bookmarks"
-      : "Bookmark this database";
-  }
-
-  favoriteButtonIcon(): string {
-    return this.isFavoriteDatabase() ? "bookmark-off" : "bookmark-plus";
-  }
-
-  toggleFavoriteDatabase(): void {
-    if (!this.databaseDetails) {
-      return;
-    }
-
-    if (!this.auth.isAuthenticated()) {
-      this.auth.signIn();
-      return;
-    }
-
-    this.collectionsStore.toggleFavoriteDatabase({
-      vendorId: this.databaseDetails.vendor_id,
-      databaseId: this.databaseDetails.api_reference,
-    });
+  promptFavoriteSignIn(): void {
+    this.auth.signIn();
   }
 
   compareText() {

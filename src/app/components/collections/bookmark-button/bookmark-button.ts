@@ -11,15 +11,10 @@ import {
   LucideBookmarkOff,
   LucideBookmarkPlus,
 } from "@lucide/angular";
-import { Auth } from "../../../services/auth/auth";
-import { CollectionsStore } from "../../../collections/collections.store";
-import { mutationKey } from "../../../shared/store/with-mutation-status";
 import {
-  favoriteDatabaseId,
-  favoriteServerId,
-} from "../../../collections/collections.types";
-
-export type BookmarkEntityKind = "server" | "database";
+  CollectionsUiService,
+  type BookmarkEntityKind,
+} from "../../../collections/collections-ui.service";
 
 @Component({
   selector: "sc-bookmark-button",
@@ -29,8 +24,7 @@ export type BookmarkEntityKind = "server" | "database";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookmarkButton {
-  private auth = inject(Auth);
-  private collectionsStore = inject(CollectionsStore);
+  private collectionsUi = inject(CollectionsUiService);
 
   kind = input.required<BookmarkEntityKind>();
   vendorId = input.required<string>();
@@ -38,28 +32,24 @@ export class BookmarkButton {
   disabled = input(false);
   requireAuth = output<void>();
 
-  protected isAuthenticated = computed(() => this.auth.isAuthenticated());
+  protected isAuthenticated = computed(() =>
+    this.collectionsUi.isAuthenticated(),
+  );
 
   protected isBookmarked = computed(() => {
-    const vendorId = this.vendorId();
-    const entityId = this.entityId();
-    return this.kind() === "server"
-      ? this.collectionsStore.isFavoriteServer(vendorId, entityId)
-      : this.collectionsStore.isFavoriteDatabase(vendorId, entityId);
+    return this.collectionsUi.isFavorite(
+      this.kind(),
+      this.vendorId(),
+      this.entityId(),
+    );
   });
 
   protected isLoading = computed(() => {
-    const key =
-      this.kind() === "server"
-        ? mutationKey(
-            "favorite-server",
-            favoriteServerId(this.vendorId(), this.entityId()),
-          )
-        : mutationKey(
-            "favorite-database",
-            favoriteDatabaseId(this.vendorId(), this.entityId()),
-          );
-    return this.collectionsStore.isMutating(key);
+    return this.collectionsUi.isFavoriteLoading(
+      this.kind(),
+      this.vendorId(),
+      this.entityId(),
+    );
   });
 
   protected canAdd = computed(
@@ -90,19 +80,10 @@ export class BookmarkButton {
       return;
     }
 
-    const vendorId = this.vendorId();
-    const entityId = this.entityId();
-    if (this.kind() === "server") {
-      this.collectionsStore.toggleFavoriteServer({
-        vendorId,
-        serverId: entityId,
-      });
-      return;
-    }
-
-    this.collectionsStore.toggleFavoriteDatabase({
-      vendorId,
-      databaseId: entityId,
-    });
+    this.collectionsUi.toggleFavorite(
+      this.kind(),
+      this.vendorId(),
+      this.entityId(),
+    );
   }
 }
