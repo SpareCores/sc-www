@@ -77,16 +77,6 @@
         </div>
         <div class="flex items-center gap-4">
           @if (!auth.isAuthenticated()) {
-            <sc-button
-              id="meeting-header-demo"
-              label="Book a Call"
-              icon="calendar-days"
-              iconPosition="start"
-              size="small"
-              ariaLabel="Book a Call"
-              class="hidden sm:flex"
-              buttonClass="whitespace-nowrap"
-            ></sc-button>
             <div class="hidden xl:flex items-center gap-4">
               <sc-button
                 label="Log in"
@@ -242,6 +232,14 @@
         </span>
         Design
       </a>
+    </li>
+    <li class="py-2 ml-6">
+      <button type="button" id="meeting-header-menu" class="navbar_link">
+        <span class="navbar_icon">
+          <svg lucideCalendarDays class="h-4 w-4"></svg>
+        </span>
+        Book a Call
+      </button>
     </li>
     <li class="py-2">
       <span class="navbar_link hover:!text-white">
@@ -403,14 +401,6 @@
       </a>
     </li>
     <li>
-      <button type="button" id="meeting-header-auth-menu" class="navbar_link">
-        <span class="navbar_icon">
-          <svg lucideCalendarDays class="h-4 w-4"></svg>
-        </span>
-        Book a Call
-      </button>
-    </li>
-    <li>
       <button type="button" class="navbar_link" (click)="openProfile()">
         <span class="navbar_icon">
           <svg lucideUser class="h-4 w-4"></svg>
@@ -440,7 +430,7 @@
   class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
 >
   <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
     (click)="closeAbout()"
   >
@@ -483,6 +473,15 @@
         </span>
         Design
       </a>
+    </li>
+    <hr />
+    <li class="py-2">
+      <button type="button" id="meeting-header-demo" class="navbar_link">
+        <span class="navbar_icon">
+          <svg lucideCalendarDays class="h-4 w-4"></svg>
+        </span>
+        Book a Call
+      </button>
     </li>
   </ul>
 </div>
