@@ -58,9 +58,11 @@ import { CollectionSaveModalComponent } from "../../components/collections/colle
 import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
 import {
+  isDefaultListingQuery,
   SAVED_ITEM_FALLBACK_NOTE,
   normalizeSearchQuery,
 } from "../../collections/collections.utils";
+import type { SavedSearchItem } from "../../collections/collections.types";
 import { Auth } from "../../services/auth/auth";
 import {
   BestDatabasePriceAllocationType,
@@ -225,6 +227,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private readonly defaultDescription = this.description;
   private readonly pendingSaveSearchClose = signal(false);
   private readonly editingSearchId = signal<string | null>(null);
+  private bookmarkSource: SavedSearchItem | null = null;
 
   clipboardIcon = "clipboard";
   tooltipContent = "";
@@ -792,9 +795,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
       return;
     }
 
-    const saved = this.activeSavedSearch();
-    this.editingSearchId.set(saved?.id ?? null);
-    this.saveSearchModal()?.open(saved?.name ?? "", saved?.note ?? "");
+    const exact = this.activeSavedSearch();
+    const draft = exact ?? this.bookmarkSource;
+    this.editingSearchId.set(exact?.id ?? null);
+    this.saveSearchModal()?.open(draft?.name ?? "", draft?.note ?? "");
   }
 
   confirmSaveSearch(payload: { name: string; note?: string }): void {
@@ -847,17 +851,22 @@ export class DatabaseListing implements OnInit, OnDestroy {
   }
 
   private syncSavedSearchChrome(): void {
-    const saved = this.activeSavedSearch();
+    const exact = this.activeSavedSearch();
+    if (exact) {
+      this.bookmarkSource = exact;
+    } else if (isDefaultListingQuery(this.getQueryObjectBase())) {
+      this.bookmarkSource = null;
+    }
 
-    if (saved) {
-      this.title = saved.name;
-      this.description = saved.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
+    if (exact) {
+      this.title = exact.name;
+      this.description = exact.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
       this.breadcrumbs = [
         ...this.baseDatabaseListingBreadcrumbs(),
-        { name: saved.name, url: this.router.url },
+        { name: exact.name, url: this.router.url },
       ];
       this.SEOHandler.updateTitleAndMetaTags(
-        `${saved.name} - Spare Cores`,
+        `${exact.name} - Spare Cores`,
         this.description,
         "cloud, database, dbaas, postgres, price, comparison, sparecores",
       );
@@ -878,7 +887,17 @@ export class DatabaseListing implements OnInit, OnDestroy {
     const saved = this.activeSavedSearch();
     if (saved) {
       this.collectionsUi.deleteSearch(saved.id);
+      this.bookmarkSource = null;
     }
+  }
+
+  toggleSavedSearch(): void {
+    if (this.activeSavedSearch()) {
+      this.deleteSavedSearch();
+      return;
+    }
+
+    this.openSaveSearchModal();
   }
 
   isDeleteSearchPending(): boolean {

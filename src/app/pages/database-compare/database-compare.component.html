@@ -6,37 +6,18 @@
       <sc-page-header
         icon="scale"
         [title]="title"
-        [showSavedBookmark]="showSavedBookmark"
+        [showBookmark]="!!instances.length"
+        [bookmarkActive]="!!exactSavedComparison()"
+        [bookmarkDisabled]="!exactSavedComparison() && !canSaveComparison()"
+        [bookmarkLoading]="isDeleteComparisonPending()"
+        [showEdit]="!!exactSavedComparison()"
+        editAriaLabel="Edit comparison"
         [showShare]="!!instances.length"
         [shareIcon]="clipboardIcon"
         (shareClick)="clipboardURL()"
+        (bookmarkClick)="toggleSavedComparison()"
+        (editClick)="openSaveComparisonModal()"
       >
-        @if (instances.length) {
-          @if (activeSavedComparison()) {
-            <sc-button
-              label="Edit comparison"
-              icon="square-pen"
-              variant="outline"
-              (buttonClick)="openSaveComparisonModal()"
-            ></sc-button>
-            <sc-button
-              label="Delete comparison"
-              icon="bookmark-off"
-              variant="outline"
-              color="danger"
-              [loading]="isDeleteComparisonPending()"
-              (buttonClick)="deleteSavedComparison()"
-            ></sc-button>
-          } @else {
-            <sc-button
-              label="Bookmark this comparison"
-              icon="bookmark-plus"
-              variant="outline"
-              [disabled]="!canSaveComparison()"
-              (buttonClick)="openSaveComparisonModal()"
-            ></sc-button>
-          }
-        }
       </sc-page-header>
       @if (instances.length) {
         <div class="text-white text-xl pr-16" [innerHTML]="description"></div>

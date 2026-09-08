@@ -11,11 +11,18 @@
       <sc-page-header
         icon="bot"
         [title]="displayTitle()"
-        [showSavedBookmark]="showSavedBookmark()"
+        [showBookmark]="isAuthenticated()"
+        [bookmarkActive]="!!exactSavedAdvice()"
+        [bookmarkDisabled]="!exactSavedAdvice() && !canSaveAdvice()"
+        [bookmarkLoading]="isDeleteAdvicePending()"
+        [showEdit]="!!exactSavedAdvice()"
+        editAriaLabel="Edit assessment"
         [showShare]="true"
         [shareIcon]="clipboardIcon()"
         shareButtonId="advisor_share_button"
         (shareClick)="clipboardURL()"
+        (bookmarkClick)="toggleSavedAdvice()"
+        (editClick)="openSaveAdviceModal()"
       >
         <sc-button
           id="advisor_introduction_button"
@@ -34,32 +41,6 @@
           [routerLink]="['/advisor']"
           [queryParams]="advisorExampleQueryParams"
         ></sc-button>
-        @if (isAuthenticated()) {
-          @if (activeSavedAdvice()) {
-            <sc-button
-              label="Edit assessment"
-              icon="square-pen"
-              variant="outline"
-              (buttonClick)="openSaveAdviceModal()"
-            ></sc-button>
-            <sc-button
-              label="Delete assessment"
-              icon="bookmark-off"
-              variant="outline"
-              color="danger"
-              [loading]="isDeleteAdvicePending()"
-              (buttonClick)="deleteSavedAdvice()"
-            ></sc-button>
-          } @else {
-            <sc-button
-              label="Bookmark this assessment"
-              icon="bookmark-plus"
-              variant="outline"
-              [disabled]="!canSaveAdvice()"
-              (buttonClick)="openSaveAdviceModal()"
-            ></sc-button>
-          }
-        }
       </sc-page-header>
       <div class="text-white text-xl lg:pr-16">
         {{ displayDescription() }}

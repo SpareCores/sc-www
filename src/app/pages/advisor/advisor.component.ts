@@ -71,6 +71,7 @@ import { Auth } from "../../services/auth/auth";
 import { AdviceCollectionsService } from "../../collections/advice-collections.service";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
+import type { SavedAdviceItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import type { SearchBarQuery } from "../../components/search-bar/search-bar.types";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
@@ -442,6 +443,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private lastPendingCustomControlFocus: string | null = null;
   private readonly pendingSaveAdviceClose = signal(false);
   private readonly editingAdviceId = signal<string | null>(null);
+  private readonly bookmarkSource = signal<SavedAdviceItem | null>(null);
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
@@ -804,34 +806,28 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.matchedBaselineBenchmarkScore() !== null,
   );
   readonly displayTitle = computed(() => {
-    const saved = this.adviceCollections.activeSavedAdvice(
-      this.getAdviceQuery(),
-    );
-    return saved?.name ?? ADVISOR_PAGE_TITLE;
+    return this.exactSavedAdvice()?.name ?? ADVISOR_PAGE_TITLE;
   });
   readonly displayDescription = computed(() => {
-    const saved = this.adviceCollections.activeSavedAdvice(
-      this.getAdviceQuery(),
-    );
-    if (saved?.note?.trim()) {
-      return saved.note.trim();
+    const exact = this.exactSavedAdvice();
+    if (exact?.note?.trim()) {
+      return exact.note.trim();
     }
-    if (saved) {
+    if (exact) {
       return SAVED_ITEM_FALLBACK_NOTE;
     }
     return ADVISOR_PAGE_DESCRIPTION;
   });
-  readonly showSavedBookmark = computed(
-    () => !!this.adviceCollections.activeSavedAdvice(this.getAdviceQuery()),
-  );
   readonly displayBreadcrumbs = computed((): BreadcrumbSegment[] => {
-    const saved = this.adviceCollections.activeSavedAdvice(
-      this.getAdviceQuery(),
-    );
-    if (!saved) {
+    const exact = this.exactSavedAdvice();
+    if (!exact) {
       return ADVISOR_BREADCRUMBS;
     }
-    return [...ADVISOR_BREADCRUMBS, { name: saved.name, url: "/advisor" }];
+    return [...ADVISOR_BREADCRUMBS, { name: exact.name, url: "/advisor" }];
+  });
+  readonly exactSavedAdvice = computed(() => {
+    this.adviceCollections.store.savedAdvices();
+    return this.adviceCollections.activeSavedAdvice(this.getAdviceQuery());
   });
   readonly recommendationSummary = computed(() =>
     this.advisorUi.buildRecommendationSummary(this.totalRecommendationCount()),
@@ -1186,7 +1182,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.adviceCollections.store.savedAdvices();
       const editingId = this.editingAdviceId();
       const query = this.getAdviceQuery();
-      const saved = this.activeSavedAdvice();
+      const saved = this.exactSavedAdvice();
       const id = editingId ?? this.adviceCollections.buildAdviceId(query);
       const saving = this.adviceCollections.isSavingAdvice(id);
       const updating = editingId
@@ -1202,6 +1198,13 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pendingSaveAdviceClose.set(false);
       if (editingId || saved) {
         this.saveAdviceModal()?.close();
+      }
+    });
+
+    effect(() => {
+      const exact = this.exactSavedAdvice();
+      if (exact) {
+        this.bookmarkSource.set(exact);
       }
     });
 
@@ -1906,7 +1909,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   activeSavedAdvice() {
-    return this.adviceCollections.activeSavedAdvice(this.getAdviceQuery());
+    return this.exactSavedAdvice();
   }
 
   canSaveAdvice(): boolean {
@@ -1919,9 +1922,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const saved = this.activeSavedAdvice();
-    this.editingAdviceId.set(saved?.id ?? null);
-    this.saveAdviceModal()?.open(saved?.name ?? "", saved?.note ?? "");
+    const exact = this.exactSavedAdvice();
+    const draft = exact ?? this.bookmarkSource();
+    this.editingAdviceId.set(exact?.id ?? null);
+    this.saveAdviceModal()?.open(draft?.name ?? "", draft?.note ?? "");
   }
 
   isSaveAdvicePending(): boolean {
@@ -1930,7 +1934,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.adviceCollections.isUpdatingAdvice(editingId);
     }
 
-    const saved = this.activeSavedAdvice();
+    const saved = this.exactSavedAdvice();
     if (saved) {
       return this.adviceCollections.isUpdatingAdvice(saved.id);
     }
@@ -1943,7 +1947,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   confirmSaveAdvice(payload: { name: string; note?: string }): void {
     const query = this.getAdviceQuery();
     const editingId = this.editingAdviceId();
-    const saved = this.activeSavedAdvice();
+    const saved = this.exactSavedAdvice();
     const id =
       editingId ?? saved?.id ?? this.adviceCollections.buildAdviceId(query);
 
@@ -1963,14 +1967,24 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSavedAdvice(): void {
-    const saved = this.activeSavedAdvice();
+    const saved = this.exactSavedAdvice();
     if (saved) {
       this.adviceCollections.deleteAdvice(saved.id);
+      this.bookmarkSource.set(null);
     }
   }
 
+  toggleSavedAdvice(): void {
+    if (this.exactSavedAdvice()) {
+      this.deleteSavedAdvice();
+      return;
+    }
+
+    this.openSaveAdviceModal();
+  }
+
   isDeleteAdvicePending(): boolean {
-    const saved = this.activeSavedAdvice();
+    const saved = this.exactSavedAdvice();
     return !!saved && this.adviceCollections.isDeletingAdvice(saved.id);
   }
 

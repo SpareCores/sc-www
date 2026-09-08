@@ -6,11 +6,18 @@
       <sc-page-header
         icon="ship-wheel"
         [title]="title"
-        [showSavedBookmark]="!!activeSavedSearch()"
+        [showBookmark]="isAuthenticated()"
+        [bookmarkActive]="!!activeSavedSearch()"
+        [bookmarkDisabled]="!activeSavedSearch() && !canSaveSearch()"
+        [bookmarkLoading]="isDeleteSearchPending()"
+        [showEdit]="!!activeSavedSearch()"
+        editAriaLabel="Edit search"
         [showShare]="true"
         [shareIcon]="clipboardIcon"
         shareButtonId="server_listing_share_button"
         (shareClick)="clipboardURL()"
+        (bookmarkClick)="toggleSavedSearch()"
+        (editClick)="openSaveSearchModal()"
       >
         <sc-button
           id="server_listing_introduction_button"
@@ -20,32 +27,6 @@
           variant="outline"
           (click)="openIntroductionModal()"
         ></sc-button>
-        @if (isAuthenticated()) {
-          @if (activeSavedSearch()) {
-            <sc-button
-              label="Edit search"
-              icon="square-pen"
-              variant="outline"
-              (buttonClick)="openSaveSearchModal()"
-            ></sc-button>
-            <sc-button
-              label="Delete search"
-              icon="bookmark-off"
-              variant="outline"
-              color="danger"
-              [loading]="isDeleteSearchPending()"
-              (buttonClick)="deleteSavedSearch()"
-            ></sc-button>
-          } @else {
-            <sc-button
-              label="Bookmark this search"
-              icon="bookmark-plus"
-              variant="outline"
-              [disabled]="!canSaveSearch()"
-              (buttonClick)="openSaveSearchModal()"
-            ></sc-button>
-          }
-        }
       </sc-page-header>
       <div class="text-white text-xl pr-16">
         {{ description }}
