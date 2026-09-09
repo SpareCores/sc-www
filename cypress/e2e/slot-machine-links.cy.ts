@@ -228,13 +228,14 @@ describe("Landing page slot machine links", () => {
     cy.visit("http://localhost:4200/");
 
     cy.wait("@searchServers");
+    cy.get("#spin_button", { timeout: 15000 }).should("be.disabled");
     cy.wait("@getRegions");
     cy.wait("@getServerPrices");
     cy.wait("@getServerPrices");
     cy.wait("@getServerPrices");
+    cy.get("#spin_button", { timeout: 20000 }).should("not.be.disabled");
 
-    cy.get("#spin_button", { timeout: 15000 }).should("not.be.disabled");
-    cy.get("#slot_vendor_link", { timeout: 15000 })
+    cy.get("#slot_vendor_link", { timeout: 5000 })
       .should("have.attr", "href")
       .and("include", "/vendors/aws");
     cy.get("#slot_server_link")
