@@ -78,7 +78,7 @@ type BookmarksSortDir = "asc" | "desc";
 const SORT_OPTIONS: { value: BookmarksSortBy; label: string }[] = [
   { value: "manual", label: "Manual order" },
   { value: "name", label: "Name" },
-  { value: "date", label: "Date saved" },
+  { value: "date", label: "Bookmarked at" },
 ];
 
 const EDITABLE_KINDS = new Set([
