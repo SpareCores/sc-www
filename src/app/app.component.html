@@ -1,4 +1,4 @@
-<div class="sc-shell">
+<div class="sc-shell" [class.sc-shell--auth-pending]="auth.authInProgress()">
   @if (showHeader) {
     <div class="sc-shell-chrome">
       <header>

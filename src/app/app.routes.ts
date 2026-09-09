@@ -2,10 +2,17 @@ import { Routes } from "@angular/router";
 import { LandingpageComponent } from "./pages/landingpage/landingpage.component";
 import { ServerListingComponent } from "./pages/server-listing/server-listing.component";
 import { ServerPricesComponent } from "./pages/server-prices/server-prices.component";
-import { authGuard } from "./services/auth/auth.guard";
+import {
+  authGuard,
+  blockLandingDuringAuthGuard,
+} from "./services/auth/auth.guard";
 
 export const routes: Routes = [
-  { path: "", component: LandingpageComponent },
+  {
+    path: "",
+    component: LandingpageComponent,
+    canActivate: [blockLandingDuringAuthGuard],
+  },
   {
     path: "auth/callback",
     loadComponent: () =>

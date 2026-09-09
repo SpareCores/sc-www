@@ -24,6 +24,7 @@ const WWW_API_BASE_URI =
   import.meta.env.NG_APP_WWW_API_BASE_URI?.replace(/\/$/, "") || "";
 const NEWSLETTER_OPT_IN_KEY = "newsletterOptIn";
 const NEWSLETTER_SUBSCRIBED_KEY = "newsletterSubscribed";
+const AUTH_PENDING_KEY = "scAuthPending";
 
 export type RegisterPayload = {
   firstName: string;
@@ -62,11 +63,14 @@ export class Auth {
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
   private readonly newsletterSyncUsers = new Set<string>();
+  private navigatingAfterAuth = false;
 
   private readonly _user = signal<UserResource | null>(null);
 
   readonly signInModalOpen = signal(false);
   readonly signUpModalOpen = signal(false);
+  readonly signUpGithubConsent = signal(false);
+  readonly authInProgress = signal(this.isAuthPending());
   readonly isAuthenticated = computed(() => this._user() !== null);
 
   readonly userName = computed(() => {
@@ -99,6 +103,7 @@ export class Auth {
       this.toastAuthUnavailable();
       return;
     }
+    this.signUpGithubConsent.set(false);
     this.signUpModalOpen.set(false);
     this.signInModalOpen.set(true);
   }
@@ -113,11 +118,106 @@ export class Auth {
       return;
     }
     this.signInModalOpen.set(false);
+    this.signUpGithubConsent.set(false);
     this.signUpModalOpen.set(true);
   }
 
   closeSignUp(): void {
     this.signUpModalOpen.set(false);
+    this.signUpGithubConsent.set(false);
+  }
+
+  openGithubConsentSignUp(): void {
+    if (!this.clerk) {
+      this.toastAuthUnavailable();
+      return;
+    }
+    this.clearAuthPending();
+    this.signInModalOpen.set(false);
+    this.signUpGithubConsent.set(true);
+    this.signUpModalOpen.set(true);
+  }
+
+  syncSession(): void {
+    this.syncState();
+  }
+
+  startAuthPending(): void {
+    this.authInProgress.set(true);
+    if (isPlatformBrowser(this.platformId)) {
+      sessionStorage.setItem(AUTH_PENDING_KEY, "1");
+      this.setAuthOverlayVisible(true);
+    }
+  }
+
+  clearAuthPending(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      sessionStorage.removeItem(AUTH_PENDING_KEY);
+    }
+    this.authInProgress.set(false);
+    this.navigatingAfterAuth = false;
+    this.setAuthOverlayVisible(false);
+  }
+
+  isAuthPending(): boolean {
+    if (typeof sessionStorage === "undefined") {
+      return false;
+    }
+    try {
+      return sessionStorage.getItem(AUTH_PENDING_KEY) === "1";
+    } catch {
+      return false;
+    }
+  }
+
+  async finishAuthRedirect(): Promise<void> {
+    this.startAuthPending();
+    await this.navigateAfterAuth();
+  }
+
+  waitForSignedIn(timeoutMs: number): Promise<boolean> {
+    if (this.isAuthenticated()) {
+      return Promise.resolve(true);
+    }
+
+    return new Promise((resolve) => {
+      const started = Date.now();
+      const timer = window.setInterval(() => {
+        if (!this.isAuthPending()) {
+          window.clearInterval(timer);
+          resolve(this.isAuthenticated());
+          return;
+        }
+
+        this.syncState();
+        if (this.isAuthenticated()) {
+          window.clearInterval(timer);
+          resolve(true);
+          return;
+        }
+        if (Date.now() - started >= timeoutMs) {
+          window.clearInterval(timer);
+          resolve(false);
+        }
+      }, 150);
+    });
+  }
+
+  needsGithubConsent(): boolean {
+    const signIn = this.clerk?.client?.signIn as
+      | (SignInResource & { isTransferable?: boolean })
+      | null
+      | undefined;
+    const signUp = this.clerk?.client?.signUp as
+      | (SignUpResource & { isTransferable?: boolean })
+      | null
+      | undefined;
+
+    return (
+      signIn?.isTransferable === true ||
+      signUp?.status === "missing_requirements" ||
+      signUp?.isTransferable === true
+    );
   }
 
   async submitLogin(payload: LoginPayload): Promise<LoginResult> {
@@ -133,6 +233,8 @@ export class Auth {
       return this.authNotReady();
     }
 
+    this.startAuthPending();
+
     try {
       const result = await signIn.create({
         identifier: payload.emailAddress.trim(),
@@ -144,11 +246,13 @@ export class Auth {
         return { status: "complete" };
       }
 
+      this.clearAuthPending();
       return {
         status: "error",
         message: "Additional verification is required to sign in.",
       };
     } catch (error) {
+      this.clearAuthPending();
       return {
         status: "error",
         message: this.authErrorMessage(error, "Unable to sign in."),
@@ -257,23 +361,29 @@ export class Auth {
       return;
     }
 
-    await this.withGithubPopup("scGithubSignIn", async (popup) => {
-      const signIn = await this.requireSignIn();
-      if (!signIn) {
-        throw new Error("Authentication is not ready yet.");
-      }
+    this.startAuthPending();
+    try {
+      await this.withGithubPopup("scGithubSignIn", async (popup) => {
+        const signIn = await this.requireSignIn();
+        if (!signIn) {
+          throw new Error("Authentication is not ready yet.");
+        }
 
-      popup.focus();
-      const urls = this.appUrls();
-      await signIn.authenticateWithPopup({
-        strategy: "oauth_github",
-        redirectUrl: urls.authCallback,
-        redirectUrlComplete: urls.bookmarks,
-        popup,
+        popup.focus();
+        const urls = this.appUrls();
+        await signIn.authenticateWithPopup({
+          strategy: "oauth_github",
+          redirectUrl: urls.authCallback,
+          redirectUrlComplete: urls.authCallback,
+          popup,
+        });
+        this.closeSignIn();
+        await this.finishGithubPopup();
       });
-      popup.focus();
-      this.closeSignIn();
-    });
+    } catch (error) {
+      this.clearAuthPending();
+      throw error;
+    }
   }
 
   async submitRegister(payload: RegisterPayload): Promise<RegisterResult> {
@@ -377,35 +487,105 @@ export class Auth {
       return;
     }
 
-    await this.withGithubPopup("scGithubSignUp", async (popup) => {
-      const signUp = await this.requireSignUp();
-      if (!signUp) {
-        throw new Error("Authentication is not ready yet.");
+    this.startAuthPending();
+    try {
+      await this.withGithubPopup("scGithubSignUp", async (popup) => {
+        const signUp = await this.requireSignUp();
+        if (!signUp) {
+          throw new Error("Authentication is not ready yet.");
+        }
+
+        popup.focus();
+        const urls = this.appUrls();
+        await signUp.authenticateWithPopup({
+          strategy: "oauth_github",
+          redirectUrl: urls.authCallback,
+          redirectUrlComplete: urls.authCallback,
+          popup,
+          legalAccepted,
+          unsafeMetadata: this.newsletterMetadata(newsletterOptIn),
+        });
+        await this.finishGithubPopup();
+      });
+    } catch (error) {
+      this.clearAuthPending();
+      throw error;
+    }
+  }
+
+  async completePendingGithubSignUp(
+    newsletterOptIn: boolean,
+    legalAccepted: boolean,
+  ): Promise<RegisterResult> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return {
+        status: "error",
+        message: "Registration is only available in the browser.",
+      };
+    }
+
+    const signIn = await this.requireSignIn();
+    let signUp = await this.requireSignUp();
+    if (!signUp) {
+      return this.authNotReady();
+    }
+
+    try {
+      if (
+        (signIn as (SignInResource & { isTransferable?: boolean }) | null)
+          ?.isTransferable === true
+      ) {
+        signUp = await signUp.create({ transfer: true });
       }
 
-      popup.focus();
-      const urls = this.appUrls();
-      await signUp.authenticateWithPopup({
-        strategy: "oauth_github",
-        redirectUrl: urls.authCallback,
-        redirectUrlComplete: urls.bookmarks,
-        popup,
-        legalAccepted,
-        unsafeMetadata: this.newsletterMetadata(newsletterOptIn),
-      });
-      popup.focus();
-    });
+      if (signUp.status === "complete" && signUp.createdSessionId) {
+        await this.completeSession(signUp.createdSessionId);
+        return { status: "complete" };
+      }
+
+      if (signUp.status === "missing_requirements") {
+        const result = await signUp.update({
+          legalAccepted,
+          unsafeMetadata: this.newsletterMetadata(newsletterOptIn),
+        });
+
+        if (result.status === "complete" && result.createdSessionId) {
+          await this.completeSession(result.createdSessionId);
+          return { status: "complete" };
+        }
+      }
+
+      await this.signUpWithGithub(newsletterOptIn, legalAccepted);
+      this.syncState();
+      if (this.isAuthenticated()) {
+        return { status: "complete" };
+      }
+
+      return {
+        status: "error",
+        message: "Unable to complete your GitHub sign-up.",
+      };
+    } catch (error) {
+      return {
+        status: "error",
+        message: this.authErrorMessage(
+          error,
+          "Unable to complete your GitHub sign-up.",
+        ),
+      };
+    }
   }
 
   async handleRedirectCallback(): Promise<void> {
     await this.init();
     const urls = this.appUrls();
     await this.clerk?.handleRedirectCallback({
-      signInUrl: urls.origin,
+      signInUrl: urls.authCallback,
       signUpUrl: urls.signUp,
-      signInFallbackRedirectUrl: urls.origin,
+      signInFallbackRedirectUrl: urls.authCallback,
       signUpFallbackRedirectUrl: urls.signUp,
     });
+    this.syncState();
   }
 
   async signOut(): Promise<void> {
@@ -457,6 +637,12 @@ export class Auth {
     });
 
     this.syncState();
+    if (this.isAuthPending()) {
+      this.startAuthPending();
+      if (this.isAuthenticated()) {
+        void this.navigateAfterAuth();
+      }
+    }
     this.clerk.addListener(() => {
       this.ngZone.run(() => this.syncState(true));
     });
@@ -472,12 +658,20 @@ export class Auth {
     }
 
     if (
-      fromListener &&
-      isPlatformBrowser(this.platformId) &&
-      user &&
-      !previousUser
+      !isPlatformBrowser(this.platformId) ||
+      !user ||
+      window.location.pathname.startsWith("/auth/callback")
     ) {
-      void this.router.navigateByUrl("/bookmarks");
+      return;
+    }
+
+    if (this.isAuthPending()) {
+      void this.navigateAfterAuth();
+      return;
+    }
+
+    if (fromListener && !previousUser && !this.authInProgress()) {
+      void this.router.navigateByUrl("/bookmarks", { replaceUrl: true });
     }
   }
 
@@ -496,6 +690,70 @@ export class Auth {
     };
   }
 
+  private setAuthOverlayVisible(enabled: boolean): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    document.documentElement.classList.toggle("sc-auth-pending", enabled);
+    document
+      .getElementById("sc-auth-pending-overlay")
+      ?.setAttribute("aria-hidden", enabled ? "false" : "true");
+  }
+
+  private async navigateAfterAuth(): Promise<void> {
+    if (this.navigatingAfterAuth) {
+      return;
+    }
+
+    this.navigatingAfterAuth = true;
+    this.startAuthPending();
+    this.closeSignIn();
+    this.closeSignUp();
+
+    try {
+      if (!this.isAuthenticated()) {
+        await this.waitForSignedIn(20000);
+      }
+      if (this.isAuthenticated()) {
+        await this.router.navigateByUrl("/bookmarks", { replaceUrl: true });
+      }
+    } finally {
+      this.navigatingAfterAuth = false;
+      if (this.router.url.startsWith("/bookmarks") && this.isAuthenticated()) {
+        this.clearAuthPending();
+      }
+    }
+  }
+
+  private async finishGithubPopup(): Promise<void> {
+    this.startAuthPending();
+    try {
+      await this.clerk?.client?.reload();
+    } catch {}
+    this.syncState();
+
+    if (this.isAuthenticated()) {
+      await this.navigateAfterAuth();
+      return;
+    }
+
+    if (this.needsGithubConsent()) {
+      this.clearAuthPending();
+      this.openGithubConsentSignUp();
+      return;
+    }
+
+    if (await this.waitForSignedIn(30000)) {
+      await this.navigateAfterAuth();
+      return;
+    }
+
+    if (this.needsGithubConsent()) {
+      this.clearAuthPending();
+      this.openGithubConsentSignUp();
+    }
+  }
+
   private async withGithubPopup(
     name: string,
     authenticate: (popup: Window) => Promise<void>,
@@ -505,6 +763,7 @@ export class Auth {
     try {
       await authenticate(popup);
     } catch (error) {
+      this.clearAuthPending();
       if (!popup.closed) {
         popup.close();
       }
@@ -513,12 +772,20 @@ export class Auth {
   }
 
   private openAuthPopup(name: string): Window {
-    const width = window.screen.availWidth;
-    const height = window.screen.availHeight;
+    const width = 500;
+    const height = 700;
+    const left = Math.max(
+      0,
+      Math.round(window.screenX + (window.outerWidth - width) / 2),
+    );
+    const top = Math.max(
+      0,
+      Math.round(window.screenY + (window.outerHeight - height) / 2),
+    );
     const popup = window.open(
       "about:blank",
       name,
-      `popup=yes,width=${width},height=${height},left=0,top=0,noopener=no`,
+      `popup=yes,width=${width},height=${height},left=${left},top=${top},noopener=no`,
     );
 
     if (!popup) {
@@ -526,14 +793,6 @@ export class Auth {
     }
 
     popup.focus();
-
-    try {
-      popup.moveTo(0, 0);
-      popup.resizeTo(width, height);
-    } catch {
-      return popup;
-    }
-
     return popup;
   }
 
@@ -564,13 +823,12 @@ export class Auth {
   }
 
   private async completeSession(sessionId: string): Promise<void> {
-    await this.clerk?.setActive({ session: sessionId });
-    this.syncState();
-    if (isPlatformBrowser(this.platformId)) {
-      await this.router.navigateByUrl("/bookmarks", { replaceUrl: true });
-    }
+    this.startAuthPending();
     this.closeSignIn();
     this.closeSignUp();
+    await this.clerk?.setActive({ session: sessionId });
+    this.syncState();
+    await this.navigateAfterAuth();
   }
 
   private async subscribeToNewsletterIfNeeded(

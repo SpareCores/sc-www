@@ -56,7 +56,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private metaTagService = inject(Meta);
   private neetoCalService = inject(NeetoCalService);
   private collectionsStore = inject(CollectionsStore);
-  private auth = inject(Auth);
+  protected readonly auth = inject(Auth);
 
   title = "sc-www";
 
@@ -174,7 +174,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     return (
       path.startsWith("/og/") ||
       path.startsWith("/embed/") ||
-      path.startsWith("/hu/")
+      path.startsWith("/hu/") ||
+      path.startsWith("/auth/callback")
     );
   }
 
