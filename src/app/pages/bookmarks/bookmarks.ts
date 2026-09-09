@@ -33,7 +33,10 @@ import type {
   BookmarksCardViewModel,
   BookmarksFilterKey,
 } from "../../collections/collections.types";
-import { formatBookmarkedAt } from "../../collections/collections.utils";
+import {
+  formatBookmarkedAt,
+  formatBookmarkedAtExact,
+} from "../../collections/collections.utils";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -321,6 +324,10 @@ export class Bookmarks implements OnDestroy {
 
   protected cardBookmarkedAt(card: BookmarksCardViewModel): string {
     return formatBookmarkedAt(card.bookmarkedAt);
+  }
+
+  protected cardBookmarkedAtExact(card: BookmarksCardViewModel): string {
+    return formatBookmarkedAtExact(card.bookmarkedAt);
   }
 
   protected cardSubtitle(card: BookmarksCardViewModel): string | undefined {

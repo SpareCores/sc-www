@@ -38,7 +38,7 @@ export function nowBookmarkedAt(): string {
   return new Date().toISOString();
 }
 
-export function formatBookmarkedAt(value?: string | null): string {
+export function formatBookmarkedAtExact(value?: string | null): string {
   if (!value) {
     return "";
   }
@@ -55,6 +55,53 @@ export function formatBookmarkedAt(value?: string | null): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+export function formatBookmarkedAt(
+  value?: string | null,
+  now: Date = new Date(),
+): string {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const diffMs = Math.max(0, now.getTime() - date.getTime());
+  const minuteMs = 60_000;
+  const hourMs = 60 * minuteMs;
+  const dayMs = 24 * hourMs;
+  const monthMs = 30 * dayMs;
+  const yearMs = 365 * dayMs;
+
+  if (diffMs < minuteMs) {
+    return "Bookmarked just now";
+  }
+
+  if (diffMs < hourMs) {
+    return `Bookmarked ${Math.floor(diffMs / minuteMs)}m ago`;
+  }
+
+  if (diffMs < dayMs) {
+    return `Bookmarked ${Math.floor(diffMs / hourMs)}h ago`;
+  }
+
+  if (diffMs < 30 * dayMs) {
+    return `Bookmarked ${Math.floor(diffMs / dayMs)}d ago`;
+  }
+
+  if (diffMs < yearMs) {
+    const months = Math.max(1, Math.floor(diffMs / monthMs));
+    return months === 1
+      ? "Bookmarked last month"
+      : `Bookmarked ${months}mo ago`;
+  }
+
+  const years = Math.max(1, Math.floor(diffMs / yearMs));
+  return years === 1 ? "Bookmarked last year" : `Bookmarked ${years}y ago`;
 }
 
 type OpenApiParameter = {
@@ -573,16 +620,8 @@ export function savedComparisonDetailEntries(
     return [];
   }
 
-  const isDatabaseComparison = comparisonShowsDatabases(compareUrl, instances);
   const baseline = comparisonBaselineFromUrl(compareUrl);
   const rows: BookmarksCardDetailRow[] = [];
-
-  if (baseline) {
-    rows.push({
-      field: isDatabaseComparison ? "Baseline database" : "Baseline server",
-      value: `${baseline.vendor} ${baseline.id}`,
-    });
-  }
 
   const currency = comparisonQueryParam(compareUrl, "currency");
   if (currency) {
@@ -621,22 +660,6 @@ export function savedComparisonDetailEntries(
   );
 
   return rows;
-}
-
-function comparisonShowsDatabases(
-  compareUrl: string | undefined,
-  instances: SavedComparisonInstance[],
-): boolean {
-  if (compareUrl?.includes("/databases/compare")) {
-    return true;
-  }
-
-  if (compareUrl?.includes("/servers/compare")) {
-    return false;
-  }
-
-  const first = instances[0];
-  return !!first && "database" in first;
 }
 
 function comparisonQueryParam(

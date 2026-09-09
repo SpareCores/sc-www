@@ -206,6 +206,13 @@
   margin-top: 0.125rem;
 }
 
+.bookmarks-card__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
 .bookmarks-card__title {
   color: #ffffff;
   font-size: 1rem;
@@ -226,7 +233,6 @@
   color: #9ca3af;
   font-size: 0.75rem;
   line-height: 1.25;
-  white-space: nowrap;
 }
 
 .bookmarks-card__vendor-logo {

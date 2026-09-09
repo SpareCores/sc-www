@@ -115,22 +115,27 @@
               class="bookmarks-card__vendor-logo"
             />
             }
-            <h2 class="bookmarks-card__title">{{ card.title }}</h2>
+            <div class="bookmarks-card__heading">
+              <h2 class="bookmarks-card__title">{{ card.title }}</h2>
+              @if (cardBookmarkedAt(card); as bookmarkedAt) {
+              <span
+                class="bookmarks-card__bookmarked-at"
+                [attr.title]="cardBookmarkedAtExact(card)"
+                >{{ bookmarkedAt }}</span
+              >
+              }
+            </div>
           </div>
+          @if (canReorder()) {
           <div class="bookmarks-card__meta">
-            @if (cardBookmarkedAt(card); as bookmarkedAt) {
-            <span class="bookmarks-card__bookmarked-at"
-              >{{ bookmarkedAt }}</span
-            >
-            } @if (canReorder()) {
             <span
               class="bookmarks-card__handle"
               cdkDragHandle
               aria-hidden="true"
               >⋮⋮</span
             >
-            }
           </div>
+          }
         </div>
 
         @if ( card.kind !== "favoriteServers" && card.kind !==
