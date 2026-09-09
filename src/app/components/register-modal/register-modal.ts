@@ -28,11 +28,20 @@ export class RegisterModal {
   protected verificationCode = "";
   protected errorMessage = "";
   protected busy: RegisterBusy | null = null;
+  protected pendingGithubConsent = false;
 
   constructor() {
     effect(() => {
       if (!this.auth.signUpModalOpen()) {
         this.reset();
+        return;
+      }
+
+      if (this.auth.signUpGithubConsent()) {
+        this.pendingGithubConsent = true;
+        this.method = "github";
+        this.step = "consent";
+        this.errorMessage = "";
       }
     });
   }
@@ -78,12 +87,18 @@ export class RegisterModal {
     }
 
     this.errorMessage = "";
+    this.pendingGithubConsent = false;
     this.method = "github";
     this.step = "consent";
   }
 
   protected backToDetails(): void {
     if (this.busy) {
+      return;
+    }
+
+    if (this.pendingGithubConsent) {
+      this.auth.signIn();
       return;
     }
 
@@ -176,6 +191,19 @@ export class RegisterModal {
     this.busy = "github";
 
     try {
+      if (this.pendingGithubConsent) {
+        const result = await this.auth.completePendingGithubSignUp(
+          this.newsletterOptIn,
+          this.legalAccepted,
+        );
+        if (result.status === "error") {
+          this.errorMessage = result.message;
+          return;
+        }
+        this.auth.closeSignUp();
+        return;
+      }
+
       await this.auth.signUpWithGithub(
         this.newsletterOptIn,
         this.legalAccepted,
@@ -203,5 +231,6 @@ export class RegisterModal {
     this.verificationCode = "";
     this.errorMessage = "";
     this.busy = null;
+    this.pendingGithubConsent = false;
   }
 }

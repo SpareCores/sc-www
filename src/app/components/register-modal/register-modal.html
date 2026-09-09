@@ -156,7 +156,7 @@
         <div class="auth-modal__consent-actions">
           <sc-button
             type="button"
-            label="Back"
+            [label]="pendingGithubConsent ? 'Back to login' : 'Back'"
             icon="chevron-left"
             iconPosition="start"
             variant="outline"
@@ -168,9 +168,27 @@
           ></sc-button>
           <sc-button
             type="submit"
-            [label]="method === 'github' ? 'Continue with GitHub' : 'Continue'"
-            [icon]="method === 'github' ? 'github' : 'chevron-right'"
-            [iconPosition]="method === 'github' ? 'start' : 'end'"
+            [label]="
+              pendingGithubConsent
+                ? 'Continue'
+                : method === 'github'
+                  ? 'Continue with GitHub'
+                  : 'Continue'
+            "
+            [icon]="
+              pendingGithubConsent
+                ? 'chevron-right'
+                : method === 'github'
+                  ? 'github'
+                  : 'chevron-right'
+            "
+            [iconPosition]="
+              pendingGithubConsent
+                ? 'end'
+                : method === 'github'
+                  ? 'start'
+                  : 'end'
+            "
             size="small"
             buttonClass="w-full !justify-center"
             [loading]="busy === 'submit' || busy === 'github'"
