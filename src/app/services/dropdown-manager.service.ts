@@ -16,6 +16,7 @@ export interface DropdownBehaviorOptions {
     | "top-start"
     | "top-end";
   offsetDistance?: number;
+  triggerType?: "click" | "hover" | "none";
 }
 
 const defaultBehavior: DropdownBehaviorOptions = {
@@ -45,7 +46,7 @@ export class DropdownManagerService {
 
       const options: DropdownOptions = {
         placement: merged.placement || "bottom",
-        triggerType: "click",
+        triggerType: merged.triggerType || "click",
         offsetSkidding: 0,
         offsetDistance: merged.offsetDistance ?? 10,
         delay: 300,
