@@ -22,7 +22,7 @@ import {
   LucideTriangleAlert,
   LucideX,
 } from "@lucide/angular";
-import { Subscription } from "rxjs";
+import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
 import {
   Benchmark,
   Database,
@@ -222,10 +222,11 @@ export class DatabaseCompareComponent
   private bookmarkSource: SavedComparisonItem | null = null;
   keywords = "cloud, database, dbaas, compare, sparecores";
 
-  isLoading = false;
+  isLoading = true;
   instances: DatabaseCompare[] = [];
   instancesRaw = "";
   private lastEncodedCompareQuery: string | null = null;
+  private compareDataReady = false;
   databases: LoadedCompareDatabase[] = [];
   lineCompareServers: LineChartServer[] = [];
   propertySections: ComparePropertySection[] = [];
@@ -278,7 +279,14 @@ export class DatabaseCompareComponent
   constructor() {
     effect(() => {
       this.compareCollections.store.savedComparisons();
-      this.syncSavedComparisonChrome();
+      this.compareCollections.store.requestStatus();
+      if (this.compareDataReady && this.isLoading) {
+        this.finishCompareLoadIfReady();
+        return;
+      }
+      if (!this.isLoading) {
+        this.syncSavedComparisonChrome();
+      }
     });
 
     effect(() => {
@@ -321,15 +329,14 @@ export class DatabaseCompareComponent
     );
 
     this.subscription.add(
-      this.route.queryParams.subscribe(() => {
-        this.setup();
-      }),
-    );
-
-    this.subscription.add(
-      this.route.params.subscribe(() => {
-        this.setup();
-      }),
+      merge(this.route.paramMap, this.route.queryParamMap)
+        .pipe(
+          map(() => this.compareRouteKey()),
+          distinctUntilChanged(),
+        )
+        .subscribe(() => {
+          this.setup();
+        }),
     );
 
     this.subscription.add(
@@ -589,8 +596,15 @@ export class DatabaseCompareComponent
     this.legendVisibility.clear();
     this.propertySections = [];
     this.priceRows = [];
+    this.baselineDatabase = null;
+    this.compareDataReady = false;
     this.stickyLayout.reset();
     this.restoreCurrencyFromUrl();
+
+    if (id || param) {
+      this.isLoading = true;
+      this.breadcrumbs = this.baseCompareBreadcrumbs();
+    }
 
     if (id) {
       const specialCompare = this.databaseCompares.find(
@@ -600,18 +614,10 @@ export class DatabaseCompareComponent
         this.instances = specialCompare.instances || [];
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-        this.applyComparisonChrome(
-          specialCompare.title,
-          specialCompare.description,
-        );
-        this.setPremadeCompareBreadcrumb(
-          specialCompare.title,
-          specialCompare.id,
-        );
-        this.syncSavedComparisonChrome();
       } else {
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
+        this.isLoading = false;
       }
     } else if (param) {
       const decodedInstances = decodeBase64JsonUrlState(
@@ -637,13 +643,10 @@ export class DatabaseCompareComponent
       this.instances = decodedInstances.value;
       this.instancesRaw = this.instances.length > 0 ? param : "";
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-      if (this.instances.length) {
-        this.applyComparisonChrome();
-      } else {
+      if (!this.instances.length) {
         this.applyGuideChrome();
+        this.isLoading = false;
       }
-      this.updateCompareBreadcrumb(this.instances.length);
-      this.syncSavedComparisonChrome();
     } else {
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
       this.applyGuideChrome();
@@ -773,7 +776,6 @@ export class DatabaseCompareComponent
         this.buildPropertySections();
         this.buildPriceRows();
         this.refreshLineCompareServers();
-        this.applyBaselineFromQuery();
       })
       .catch((err) => {
         this.analytics.SentryException(err, {
@@ -791,11 +793,66 @@ export class DatabaseCompareComponent
         });
       })
       .finally(() => {
-        if (loadId === this.compareLoadId) {
-          this.isLoading = false;
-          this.refreshCompareTableLayout();
+        if (loadId !== this.compareLoadId) {
+          return;
         }
+
+        this.applyBaselineFromQuery();
+        const specialId = this.route.snapshot.paramMap.get("id");
+        if (specialId && !this.exactSavedComparison()) {
+          const specialCompare = this.databaseCompares.find(
+            (x: any) => x.id === specialId,
+          );
+          if (specialCompare) {
+            this.applyComparisonChrome(
+              specialCompare.title,
+              specialCompare.description,
+            );
+            this.setPremadeCompareBreadcrumb(
+              specialCompare.title,
+              specialCompare.id,
+            );
+          }
+        }
+        this.compareDataReady = true;
+        this.finishCompareLoadIfReady();
       });
+  }
+
+  private compareRouteKey(): string {
+    const snapshot = this.route.snapshot;
+    return [
+      snapshot.paramMap.get("id") ?? "",
+      snapshot.queryParams["instances"] ?? "",
+      snapshot.queryParams["currency"] ?? "",
+      snapshot.queryParams["baseline_vendor"] ?? "",
+      snapshot.queryParams["baseline_database"] ?? "",
+    ].join("|");
+  }
+
+  private collectionsReadyForChrome(): boolean {
+    if (!isPlatformBrowser(this.platformId) || !this.auth.isAuthenticated()) {
+      return true;
+    }
+
+    return (
+      this.compareCollections.store.isLoaded() ||
+      !!this.compareCollections.store.error()
+    );
+  }
+
+  private finishCompareLoadIfReady(): void {
+    if (!this.compareDataReady || !this.collectionsReadyForChrome()) {
+      return;
+    }
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.syncSavedComparisonChrome();
+    this.isLoading = false;
+    this.refreshCompareTableLayout();
   }
 
   private applyBaselineFromQuery(): void {
@@ -810,6 +867,7 @@ export class DatabaseCompareComponent
       this.lastEncodedCompareQuery = encodeQueryParams(
         this.getCompareUrlQueryParams(),
       );
+      this.syncSavedComparisonChrome();
       return;
     }
 
@@ -822,6 +880,7 @@ export class DatabaseCompareComponent
       this.lastEncodedCompareQuery = encodeQueryParams(
         this.getCompareUrlQueryParams(),
       );
+      this.syncSavedComparisonChrome();
       return;
     }
 
@@ -833,6 +892,7 @@ export class DatabaseCompareComponent
     this.lastEncodedCompareQuery = encodeQueryParams(
       this.getCompareUrlQueryParams(),
     );
+    this.syncSavedComparisonChrome();
   }
 
   getCompareUrlQueryParams(): Record<string, string> {

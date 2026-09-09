@@ -2,55 +2,6 @@
   <div class="content pt-16 pb-16">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
-      <sc-page-header
-        icon="scale"
-        [title]="title"
-        [showBookmark]="!!instances.length"
-        [bookmarkActive]="!!exactSavedComparison()"
-        [bookmarkDisabled]="!exactSavedComparison() && !canSaveComparison()"
-        [bookmarkLoading]="isDeleteComparisonPending()"
-        [showEdit]="!!exactSavedComparison()"
-        editAriaLabel="Edit comparison"
-        [showShare]="!!instances.length"
-        [shareIcon]="clipboardIcon"
-        (shareClick)="clipboardURL($event)"
-        (bookmarkClick)="toggleSavedComparison()"
-        (editClick)="openSaveComparisonModal()"
-      >
-        @if (instances.length) {
-          <sc-button
-            label="Embed chart"
-            icon="copy"
-            iconPosition="end"
-            variant="outline"
-            (buttonClick)="openModal()"
-          ></sc-button>
-        }
-      </sc-page-header>
-      @if (instances.length) {
-        <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
-        <div class="flex flex-wrap gap-4 items-center justify-end w-full">
-          <sc-button
-            id="baseline_server_button"
-            [scFlowbiteDropdown]="'baseline_server_options'"
-            #baselineDropdown="scFlowbiteDropdown"
-            [label]="getBaselineServerLabel()"
-            icon="target"
-            variant="dropdown"
-          ></sc-button>
-          <sc-button
-            id="currency_button"
-            [scFlowbiteDropdown]="'currency_options'"
-            #currencyDropdown="scFlowbiteDropdown"
-            [label]="selectedCurrency.slug"
-            icon="credit-card"
-            variant="dropdown"
-          ></sc-button>
-        </div>
-      }
-    </div>
-
     <sc-collection-save-modal
       modalId="server-compare-save-modal"
       title="Bookmark this comparison"
@@ -59,148 +10,6 @@
       (confirmed)="confirmSaveComparison($event)"
     ></sc-collection-save-modal>
 
-    @if (!instances.length) {
-      <div
-        class="flex flex-col gap-4 mx-2 xl:mx-0"
-        id="comparesDiv"
-        #comparesDiv
-      >
-        <div class="text-white text-xl pr-16">
-          Compare cloud servers and their characteristics, such as CPU, GPU,
-          memory, and storage details, and the performance of the instances by
-          various benchmarking workloads to find the optimal compute resource
-          for your needs.
-        </div>
-        <div class="text-white text-xl pr-16">
-          To get started, select at least two servers using the checkboxes in
-          the left column of our
-          <a class="text-emerald-400" routerLink="/servers"
-            >servers listing page</a
-          >, and optionally add/remove servers on their dedicated server details
-          pages as well via the "Compare" button, or find below a curated list
-          of server comparison sets.
-        </div>
-        <div class="flex flex-col gap-4 mt-4">
-          @for (compare of serverCompares; track compare.title) {
-            <div
-              class="flex flex-col py-6 gap-2 text-white"
-              [ngClass]="{
-                'bg-secondary rounded-lg px-6': compare.type === 'card',
-              }"
-            >
-              @if (compare.type === "section") {
-                <div class="section-anchor-target" [attr.id]="compare.id"></div>
-                <h2 class="section_heading text-2xl font-semibold">
-                  <span>{{ compare.title }}</span>
-                  <a
-                    class="header-anchor"
-                    [href]="'/servers/compare#' + compare.id"
-                    [attr.aria-label]="'Link to ' + compare.title"
-                    [attr.title]="'Link to ' + compare.title"
-                  >
-                    #
-                  </a>
-                </h2>
-              }
-              @if (compare.type === "card") {
-                <h3>
-                  <a
-                    routerLink="/servers/compare/{{ compare.id }}"
-                    class="text-emerald-400 text-xl font-semibold"
-                  >
-                    {{ compare.title }}
-                  </a>
-                </h3>
-              }
-              @if (
-                compare.description &&
-                compare.hide_description_in_index !== true
-              ) {
-                <div
-                  class="description_inner_html"
-                  [ngClass]="{
-                    'text-lg space-y-4': compare.type === 'section',
-                  }"
-                  [innerHTML]="compare.description"
-                ></div>
-              }
-              @if (compare.query) {
-                <details
-                  class="flex flex-col gap-2 [&_svg]:open:-rotate-90"
-                  [ngClass]="{ 'mt-4': compare.type === 'section' }"
-                >
-                  <summary class="text-sm list-none cursor-pointer">
-                    SQL query used to select instances
-                    <svg
-                      class="inline fill-current opacity-75 w-4 h-4 -mr-1 rotate-90"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"
-                      />
-                    </svg>
-                  </summary>
-                  <pre class="language-sql"><code>{{compare.query}}</code></pre>
-                </details>
-              }
-              @if (compare.instances) {
-                <div class="text-sm flex flex-wrap gap-2">
-                  Instances:
-                  @for (
-                    instance of compare.instances;
-                    track instance.vendor + "_" + instance.server
-                  ) {
-                    <a
-                      class="underline decoration-dotted whitespace-nowrap"
-                      routerLink="/server/{{ instance.vendor }}/{{
-                        instance.server
-                      }}"
-                    >
-                      {{ instance.server }} ({{ instance.vendor }})
-                    </a>
-                  }
-                </div>
-              }
-            </div>
-          }
-        </div>
-        <hr class="mt-6" />
-        <div class="text-white text-xl pr-16 mt-3">
-          <p>
-            <i
-              >You made it to the bottom of the page and still missing the list
-              of servers you hoped to see?</i
-            >
-          </p>
-          <p class="mt-3">
-            Compile your own comparison as per above on our
-            <a class="text-emerald-400" routerLink="/servers"
-              >servers listing page</a
-            >, then open a
-            <a
-              href="https://github.com/SpareCores/sc-www/issues/new"
-              class="text-emerald-400"
-              target="_blank"
-              rel="noopener"
-              >GitHub ticket</a
-            >
-            with the crafted URL and some details on why you find it useful, and
-            we will be happy to review your request and add to our repository!
-            Alternatively, open a pull request editing the
-            <a
-              href="https://github.com/SpareCores/sc-www/blob/main/src/app/pages/server-compare/server-compares.js"
-              class="text-emerald-400"
-              target="_blank"
-              rel="noopener"
-              >server-compares.js</a
-            >
-            file directly.
-          </p>
-        </div>
-      </div>
-    }
-
     @if (isLoading) {
       <div class="flex justify-center items-center mt-12 text-white">
         <sc-loading-spinner
@@ -208,90 +17,286 @@
           text="Loading comparison data..."
         ></sc-loading-spinner>
       </div>
-    }
-
-    @if (!isLoading && instances.length) {
-      <div
-        id="table_holder"
-        #tableHolder
-        class="compare_table_holder overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
-        (scroll)="updateMirrorLayout()"
-      >
-        @if (isBrowser() && isTableOutsideViewport()) {
-          <div class="fixed_thead" [style]="stickyFixedDivStyle()">
-            <table class="items_table" [style]="stickyMainTableStyle()">
-              <thead>
-                <tr>
-                  <th [style]="stickyFirstColStyle()"></th>
-                  @for (
-                    server of servers;
-                    track server.vendor_id + "_" + server.server_id;
-                    let i = $index
-                  ) {
-                    <th
-                      [style]="stickyColumnStyles()[i] || ''"
-                      class="compact-number-header-cell compare-table-header-cell"
-                    >
-                      <div
-                        class="ml-auto flex flex-col items-end gap-1"
-                        style="width: fit-content"
-                      >
-                        <a
-                          class="underline decoration-dotted whitespace-nowrap"
-                          [href]="
-                            '/server/' +
-                            server.vendor_id +
-                            '/' +
-                            server.api_reference
-                          "
-                          target="_blank"
-                        >
-                          {{ server.display_name | uppercase }}
-                        </a>
-                      </div>
-                      @if (isBaselineServer(server)) {
-                        <div
-                          class="compare-table-header-baseline-marker"
-                          aria-hidden="true"
-                        ></div>
-                      }
-                    </th>
-                  }
-                </tr>
-              </thead>
-            </table>
+    } @else {
+      <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+        <sc-page-header
+          icon="scale"
+          [title]="title"
+          [showBookmark]="!!instances.length"
+          [bookmarkActive]="!!exactSavedComparison()"
+          [bookmarkDisabled]="!exactSavedComparison() && !canSaveComparison()"
+          [bookmarkLoading]="isDeleteComparisonPending()"
+          [showEdit]="!!exactSavedComparison()"
+          editAriaLabel="Edit comparison"
+          [showShare]="!!instances.length"
+          [shareIcon]="clipboardIcon"
+          (shareClick)="clipboardURL($event)"
+          (bookmarkClick)="toggleSavedComparison()"
+          (editClick)="openSaveComparisonModal()"
+        >
+          @if (instances.length) {
+            <sc-button
+              label="Embed chart"
+              icon="copy"
+              iconPosition="end"
+              variant="outline"
+              (buttonClick)="openModal()"
+            ></sc-button>
+          }
+        </sc-page-header>
+        @if (instances.length) {
+          <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
+          <div class="flex flex-wrap gap-4 items-center justify-end w-full">
+            <sc-button
+              id="baseline_server_button"
+              [scFlowbiteDropdown]="'baseline_server_options'"
+              #baselineDropdown="scFlowbiteDropdown"
+              [label]="getBaselineServerLabel()"
+              icon="target"
+              variant="dropdown"
+            ></sc-button>
+            <sc-button
+              id="currency_button"
+              [scFlowbiteDropdown]="'currency_options'"
+              #currencyDropdown="scFlowbiteDropdown"
+              [label]="selectedCurrency.slug"
+              icon="credit-card"
+              variant="dropdown"
+            ></sc-button>
           </div>
         }
-        <div>
-          <sc-server-compare-charts
-            [servers]="servers"
-            [baselineServer]="selectedBaselineServer"
-            [instanceProperties]="instanceProperties"
-            [benchmarkMeta]="benchmarkMeta"
-            [benchmarkCategories]="benchmarkCategories"
-            [instancePropertyCategories]="instancePropertyCategories"
-            [showZone]="showZoneIds"
-            (layoutChanged)="onCompareTableLayoutChange()"
-          >
-          </sc-server-compare-charts>
-        </div>
       </div>
-      @if (isBrowser()) {
-        @if (scrollbarMirror(); as mirror) {
-          @if (mirror.bottomPosition) {
-            <div
-              #scrollbarMirrorBottomRef
-              class="scrollbar_mirror_outer"
-              [ngStyle]="
-                scrollbarMirrorController.toStyle(mirror.bottomPosition)
-              "
-              (scroll)="onMirrorScroll($event)"
-            >
+
+      @if (!instances.length) {
+        <div
+          class="flex flex-col gap-4 mx-2 xl:mx-0"
+          id="comparesDiv"
+          #comparesDiv
+        >
+          <div class="text-white text-xl pr-16">
+            Compare cloud servers and their characteristics, such as CPU, GPU,
+            memory, and storage details, and the performance of the instances by
+            various benchmarking workloads to find the optimal compute resource
+            for your needs.
+          </div>
+          <div class="text-white text-xl pr-16">
+            To get started, select at least two servers using the checkboxes in
+            the left column of our
+            <a class="text-emerald-400" routerLink="/servers"
+              >servers listing page</a
+            >, and optionally add/remove servers on their dedicated server
+            details pages as well via the "Compare" button, or find below a
+            curated list of server comparison sets.
+          </div>
+          <div class="flex flex-col gap-4 mt-4">
+            @for (compare of serverCompares; track compare.title) {
               <div
-                class="scrollbar_mirror_inner"
-                [style.width.px]="mirror.innerWidth"
-              ></div>
+                class="flex flex-col py-6 gap-2 text-white"
+                [ngClass]="{
+                  'bg-secondary rounded-lg px-6': compare.type === 'card',
+                }"
+              >
+                @if (compare.type === "section") {
+                  <div
+                    class="section-anchor-target"
+                    [attr.id]="compare.id"
+                  ></div>
+                  <h2 class="section_heading text-2xl font-semibold">
+                    <span>{{ compare.title }}</span>
+                    <a
+                      class="header-anchor"
+                      [href]="'/servers/compare#' + compare.id"
+                      [attr.aria-label]="'Link to ' + compare.title"
+                      [attr.title]="'Link to ' + compare.title"
+                    >
+                      #
+                    </a>
+                  </h2>
+                }
+                @if (compare.type === "card") {
+                  <h3>
+                    <a
+                      routerLink="/servers/compare/{{ compare.id }}"
+                      class="text-emerald-400 text-xl font-semibold"
+                    >
+                      {{ compare.title }}
+                    </a>
+                  </h3>
+                }
+                @if (
+                  compare.description &&
+                  compare.hide_description_in_index !== true
+                ) {
+                  <div
+                    class="description_inner_html"
+                    [ngClass]="{
+                      'text-lg space-y-4': compare.type === 'section',
+                    }"
+                    [innerHTML]="compare.description"
+                  ></div>
+                }
+                @if (compare.query) {
+                  <details
+                    class="flex flex-col gap-2 [&_svg]:open:-rotate-90"
+                    [ngClass]="{ 'mt-4': compare.type === 'section' }"
+                  >
+                    <summary class="text-sm list-none cursor-pointer">
+                      SQL query used to select instances
+                      <svg
+                        class="inline fill-current opacity-75 w-4 h-4 -mr-1 rotate-90"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"
+                        />
+                      </svg>
+                    </summary>
+                    <pre
+                      class="language-sql"
+                    ><code>{{compare.query}}</code></pre>
+                  </details>
+                }
+                @if (compare.instances) {
+                  <div class="text-sm flex flex-wrap gap-2">
+                    Instances:
+                    @for (
+                      instance of compare.instances;
+                      track instance.vendor + "_" + instance.server
+                    ) {
+                      <a
+                        class="underline decoration-dotted whitespace-nowrap"
+                        routerLink="/server/{{ instance.vendor }}/{{
+                          instance.server
+                        }}"
+                      >
+                        {{ instance.server }} ({{ instance.vendor }})
+                      </a>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          <hr class="mt-6" />
+          <div class="text-white text-xl pr-16 mt-3">
+            <p>
+              <i
+                >You made it to the bottom of the page and still missing the
+                list of servers you hoped to see?</i
+              >
+            </p>
+            <p class="mt-3">
+              Compile your own comparison as per above on our
+              <a class="text-emerald-400" routerLink="/servers"
+                >servers listing page</a
+              >, then open a
+              <a
+                href="https://github.com/SpareCores/sc-www/issues/new"
+                class="text-emerald-400"
+                target="_blank"
+                rel="noopener"
+                >GitHub ticket</a
+              >
+              with the crafted URL and some details on why you find it useful,
+              and we will be happy to review your request and add to our
+              repository! Alternatively, open a pull request editing the
+              <a
+                href="https://github.com/SpareCores/sc-www/blob/main/src/app/pages/server-compare/server-compares.js"
+                class="text-emerald-400"
+                target="_blank"
+                rel="noopener"
+                >server-compares.js</a
+              >
+              file directly.
+            </p>
+          </div>
+        </div>
+      }
+
+      @if (instances.length) {
+        <div
+          id="table_holder"
+          #tableHolder
+          class="compare_table_holder overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
+          (scroll)="updateMirrorLayout()"
+        >
+          @if (isBrowser() && isTableOutsideViewport()) {
+            <div class="fixed_thead" [style]="stickyFixedDivStyle()">
+              <table class="items_table" [style]="stickyMainTableStyle()">
+                <thead>
+                  <tr>
+                    <th [style]="stickyFirstColStyle()"></th>
+                    @for (
+                      server of servers;
+                      track server.vendor_id + "_" + server.server_id;
+                      let i = $index
+                    ) {
+                      <th
+                        [style]="stickyColumnStyles()[i] || ''"
+                        class="compact-number-header-cell compare-table-header-cell"
+                      >
+                        <div
+                          class="ml-auto flex flex-col items-end gap-1"
+                          style="width: fit-content"
+                        >
+                          <a
+                            class="underline decoration-dotted whitespace-nowrap"
+                            [href]="
+                              '/server/' +
+                              server.vendor_id +
+                              '/' +
+                              server.api_reference
+                            "
+                            target="_blank"
+                          >
+                            {{ server.display_name | uppercase }}
+                          </a>
+                        </div>
+                        @if (isBaselineServer(server)) {
+                          <div
+                            class="compare-table-header-baseline-marker"
+                            aria-hidden="true"
+                          ></div>
+                        }
+                      </th>
+                    }
+                  </tr>
+                </thead>
+              </table>
             </div>
+          }
+          <div>
+            <sc-server-compare-charts
+              [servers]="servers"
+              [baselineServer]="selectedBaselineServer"
+              [instanceProperties]="instanceProperties"
+              [benchmarkMeta]="benchmarkMeta"
+              [benchmarkCategories]="benchmarkCategories"
+              [instancePropertyCategories]="instancePropertyCategories"
+              [showZone]="showZoneIds"
+              (layoutChanged)="onCompareTableLayoutChange()"
+            >
+            </sc-server-compare-charts>
+          </div>
+        </div>
+        @if (isBrowser()) {
+          @if (scrollbarMirror(); as mirror) {
+            @if (mirror.bottomPosition) {
+              <div
+                #scrollbarMirrorBottomRef
+                class="scrollbar_mirror_outer"
+                [ngStyle]="
+                  scrollbarMirrorController.toStyle(mirror.bottomPosition)
+                "
+                (scroll)="onMirrorScroll($event)"
+              >
+                <div
+                  class="scrollbar_mirror_inner"
+                  [style.width.px]="mirror.innerWidth"
+                ></div>
+              </div>
+            }
           }
         }
       }
