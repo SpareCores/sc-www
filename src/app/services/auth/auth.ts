@@ -729,7 +729,9 @@ export class Auth {
     this.startAuthPending();
     try {
       await this.clerk?.client?.reload();
-    } catch {}
+    } catch (error) {
+      console.error("Error reloading Clerk client:", error);
+    }
     this.syncState();
 
     if (this.isAuthenticated()) {
