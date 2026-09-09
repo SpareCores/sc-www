@@ -197,20 +197,21 @@
 
 .auth-modal__checkbox a,
 .auth-modal__footer-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
   color: #34d399;
+  font-family: inherit;
+  font-size: 0.875rem;
   font-weight: 600;
+  line-height: 1.4;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .auth-modal__checkbox a:hover,
 .auth-modal__footer-link:hover {
   color: #6ee7b7;
-}
-
-.auth-modal__footer-link {
-  border: 0;
-  background: transparent;
-  cursor: pointer;
 }
 
 .auth-modal__error {
