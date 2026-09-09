@@ -2,7 +2,7 @@
   <div class="content pt-16 pb-16">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+    <div class="flex flex-col gap-4 my-6 mx-2 xl:mx-0">
       <sc-page-header icon="folder-bookmark" title="Bookmarks"></sc-page-header>
       <p class="text-white text-xl pr-16">
         Manage your bookmarks, saved searches, comparisons, and advisor
@@ -27,21 +27,34 @@
           />
         </div>
         <div class="bookmarks-search__sort">
-          <sc-button
-            [icon]="sortDirIcon()"
-            [ariaLabel]="sortDirAriaLabel()"
-            variant="outline"
-            color="brand"
-            (buttonClick)="toggleSortDir()"
-          ></sc-button>
-          <sc-button
-            id="bookmarks_sort_button"
-            [scFlowbiteDropdown]="'bookmarks_sort_options'"
-            #sortDropdown="scFlowbiteDropdown"
-            [label]="sortByLabel()"
-            icon="arrow-up-down"
-            variant="dropdown"
-          ></sc-button>
+          <div class="bookmarks-sort-control">
+            <button
+              type="button"
+              id="bookmarks_sort_button"
+              [scFlowbiteDropdown]="'bookmarks_sort_options'"
+              [dropdownTriggerType]="'none'"
+              #sortDropdown="scFlowbiteDropdown"
+              class="bookmarks-sort-control__label"
+              (click)="toggleSortDropdown($event)"
+            >
+              <span class="bookmarks-sort-control__label-text"
+                >{{ sortByLabel() }}</span
+              >
+            </button>
+            <button
+              type="button"
+              class="bookmarks-sort-control__dir"
+              [disabled]="!canToggleSortDir()"
+              [attr.aria-label]="sortDirAriaLabel()"
+              (click)="onSortDirClick($event)"
+            >
+              <svg
+                [lucideIcon]="sortDirIcon()"
+                class="bookmarks-sort-control__dir-icon"
+                aria-hidden="true"
+              ></svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>

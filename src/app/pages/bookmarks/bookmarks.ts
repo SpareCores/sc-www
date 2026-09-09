@@ -72,11 +72,11 @@ const STAT_ICONS: Record<BookmarksFilterKey, string> = {
 
 const INSTANCE_PREVIEW_COUNT = 6;
 
-type BookmarksSortBy = "priority" | "name" | "date";
+type BookmarksSortBy = "manual" | "name" | "date";
 type BookmarksSortDir = "asc" | "desc";
 
 const SORT_OPTIONS: { value: BookmarksSortBy; label: string }[] = [
-  { value: "priority", label: "Default priority" },
+  { value: "manual", label: "Manual order" },
   { value: "name", label: "Name" },
   { value: "date", label: "Date saved" },
 ];
@@ -138,7 +138,7 @@ export class Bookmarks implements OnDestroy {
 
   protected expandedDetails = signal<Record<string, boolean>>({});
   protected nameQuery = signal("");
-  protected sortBy = signal<BookmarksSortBy>("priority");
+  protected sortBy = signal<BookmarksSortBy>("manual");
   protected sortDir = signal<BookmarksSortDir>("asc");
   protected readonly sortOptions = SORT_OPTIONS;
   private shareIcons = signal<Record<string, string>>({});
@@ -165,11 +165,13 @@ export class Bookmarks implements OnDestroy {
     const direction = sortDir === "asc" ? 1 : -1;
 
     return [...cards].sort((a, b) => {
+      if (sortBy === "manual") {
+        return a.order - b.order || a.id.localeCompare(b.id);
+      }
+
       let result = 0;
 
-      if (sortBy === "priority") {
-        result = a.order - b.order || a.id.localeCompare(b.id);
-      } else if (sortBy === "name") {
+      if (sortBy === "name") {
         result =
           a.title.localeCompare(b.title, undefined, { sensitivity: "base" }) ||
           a.id.localeCompare(b.id);
@@ -184,14 +186,13 @@ export class Bookmarks implements OnDestroy {
       return result * direction;
     });
   });
-  protected canReorder = computed(
-    () => this.sortBy() === "priority" && this.sortDir() === "asc",
-  );
+  protected canReorder = computed(() => this.sortBy() === "manual");
+  protected canToggleSortDir = computed(() => this.sortBy() !== "manual");
   protected sortByLabel = computed(() => {
     const current = this.sortBy();
     return (
       SORT_OPTIONS.find((option) => option.value === current)?.label ??
-      "Default priority"
+      "Manual order"
     );
   });
   protected sortDirIcon = computed(() =>
@@ -199,11 +200,15 @@ export class Bookmarks implements OnDestroy {
       ? "arrow-down-wide-narrow"
       : "arrow-down-narrow-wide",
   );
-  protected sortDirAriaLabel = computed(() =>
-    this.sortDir() === "desc"
+  protected sortDirAriaLabel = computed(() => {
+    if (!this.canToggleSortDir()) {
+      return "Sort direction unavailable for manual order";
+    }
+
+    return this.sortDir() === "desc"
       ? "Sort descending. Click to sort ascending."
-      : "Sort ascending. Click to sort descending.",
-  );
+      : "Sort ascending. Click to sort descending.";
+  });
   protected stats = computed(() => this.collectionsStore.bookmarksStats());
   protected filters = computed(() => this.collectionsStore.bookmarksFilters());
   protected isLoading = computed(
@@ -311,10 +316,30 @@ export class Bookmarks implements OnDestroy {
 
   protected selectSortBy(value: BookmarksSortBy): void {
     this.sortBy.set(value);
+    if (value === "manual") {
+      this.sortDir.set("asc");
+    }
     this.sortDropdown()?.hide();
   }
 
+  protected toggleSortDropdown(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.sortDropdown()?.toggle();
+  }
+
+  protected onSortDirClick(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.sortDropdown()?.hide();
+    this.toggleSortDir();
+  }
+
   protected toggleSortDir(): void {
+    if (!this.canToggleSortDir()) {
+      return;
+    }
+
     this.sortDir.update((dir) => (dir === "asc" ? "desc" : "asc"));
   }
 
