@@ -479,6 +479,8 @@ export class LandingpageComponent implements OnInit {
       console.error(result.reason);
       this.spinnerContents[2][index] = this.getUnavailableRegionItem();
     });
+
+    this.cdr.detectChanges();
   }
 
   spinClicked() {
@@ -530,6 +532,7 @@ export class LandingpageComponent implements OnInit {
     }
 
     this.isSpinning = true;
+    this.cdr.detectChanges();
 
     const spinAnimDiff = Date.now() - this.spinStart;
     const spinAnimEnd = Math.max(0, 4200 - spinAnimDiff);
@@ -573,6 +576,7 @@ export class LandingpageComponent implements OnInit {
       this.priceValue = "$" + animPriceEnd;
       this.isSpinning = false;
       this.hasRealValues = true;
+      this.cdr.detectChanges();
       this.analyticsService.trackEvent("slot machine finished", {
         autostarted: isFake,
       });
