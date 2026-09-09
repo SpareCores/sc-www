@@ -79,6 +79,8 @@ describe("ServerCompareComponent", () => {
             snapshot: routeSnapshot,
             queryParams: EMPTY,
             params: EMPTY,
+            paramMap: EMPTY,
+            queryParamMap: EMPTY,
           },
         },
         {
