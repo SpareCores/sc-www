@@ -45,6 +45,25 @@ const SCROLL_DISABLED_PATHS = [
   "/traffic-prices",
 ];
 
+const SCROLL_TOP_PREFIXES = ["/servers/compare", "/databases/compare"];
+
+function scrollPositionRestoration(): "disabled" | "top" {
+  if (typeof window === "undefined") {
+    return "disabled";
+  }
+
+  const pathname = window.location.pathname;
+  if (SCROLL_TOP_PREFIXES.some((path) => pathname.startsWith(path))) {
+    return "top";
+  }
+
+  const shouldDisableScroll = SCROLL_DISABLED_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+
+  return shouldDisableScroll ? "disabled" : "top";
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -52,13 +71,7 @@ export const appConfig: ApplicationConfig = {
       routes,
       withInMemoryScrolling({
         get scrollPositionRestoration() {
-          if (typeof window === "undefined") return "disabled";
-
-          const shouldDisableScroll = SCROLL_DISABLED_PATHS.some((path) =>
-            window.location.pathname.startsWith(path),
-          );
-
-          return shouldDisableScroll ? "disabled" : "top";
+          return scrollPositionRestoration();
         },
         anchorScrolling: "enabled",
       }),
