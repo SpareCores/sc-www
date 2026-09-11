@@ -1,10 +1,7 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import type {
-  SignInResource,
-  SignUpResource,
-} from "@clerk/shared/types";
+import type { SignInResource, SignUpResource } from "@clerk/shared/types";
 import {
   AUTH_MESSAGES,
   GITHUB_POPUP_TIMEOUT_MS,
@@ -36,13 +33,10 @@ export class GithubService {
   private oauthNeedsSignUp = false;
   private handlingOAuthCallback = false;
   private hostedNavDepth = 0;
-  private hostedNavOriginalNavigate: ((
-    to?: string,
-    options?: unknown,
-  ) => Promise<unknown>) | null = null;
-  private hostedNavOriginalWindow:
-    | ((url: URL | string) => void)
+  private hostedNavOriginalNavigate:
+    | ((to?: string, options?: unknown) => Promise<unknown>)
     | null = null;
+  private hostedNavOriginalWindow: ((url: URL | string) => void) | null = null;
 
   bindHost(host: GithubAuthHost): void {
     this.host = host;
@@ -285,8 +279,7 @@ export class GithubService {
       clerk.navigate = (async (to?: string, options?: unknown) => {
         const href = String(to ?? "");
         const action = resolveHostedNavAction(href, {
-          blockSameOrigin:
-            this.signInInProgress || this.handlingOAuthCallback,
+          blockSameOrigin: this.signInInProgress || this.handlingOAuthCallback,
         });
         if (action === "block") {
           return;
@@ -301,8 +294,7 @@ export class GithubService {
       clerk.__internal_windowNavigate = (url) => {
         const href = url instanceof URL ? url.href : String(url);
         const action = resolveHostedNavAction(href, {
-          blockSameOrigin:
-            this.signInInProgress || this.handlingOAuthCallback,
+          blockSameOrigin: this.signInInProgress || this.handlingOAuthCallback,
         });
         if (action === "block") {
           return;

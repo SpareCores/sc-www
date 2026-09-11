@@ -18,8 +18,7 @@ export function authErrorMessage(error: unknown, fallback: string): string {
       return longMessage;
     }
 
-    const message =
-      errorWithList.errors?.[0]?.message || errorWithList.message;
+    const message = errorWithList.errors?.[0]?.message || errorWithList.message;
     if (message) {
       return message;
     }

@@ -645,10 +645,7 @@ export class AuthStateService implements GithubAuthHost {
         await this.waitForSignedIn(20000);
       }
       if (!this.isAuthenticated()) {
-        if (
-          this.needsGithubConsent() ||
-          this.github.oauthNeedsSignUpFlag
-        ) {
+        if (this.needsGithubConsent() || this.github.oauthNeedsSignUpFlag) {
           this.openGithubConsentSignUp({ transfer: true });
         }
         return;

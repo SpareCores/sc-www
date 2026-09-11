@@ -15,8 +15,7 @@ export const AUTH_OVERLAY_CLASS = "sc-auth-pending";
 export const AUTH_OVERLAY_ID = "sc-auth-pending-overlay";
 
 export const AUTH_MESSAGES = {
-  defaultSignUpSubtitle:
-    "Welcome! Please fill in the details to get started.",
+  defaultSignUpSubtitle: "Welcome! Please fill in the details to get started.",
   authUnavailable:
     "Auth server offline. Please contact support@sparecores.com for assistance.",
   authNotReady: "Authentication is not ready yet.",
