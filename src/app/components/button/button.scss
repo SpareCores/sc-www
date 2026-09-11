@@ -83,8 +83,30 @@
 
 .sc-button--ghost,
 .sc-button--soft,
-.sc-button--link {
+.sc-button--link,
+.sc-button--close {
   @apply border border-transparent;
+}
+
+.sc-button--close,
+.sc-button--close.sc-button--icon-only,
+.sc-button--close.sc-button--icon-only.sc-button--small,
+.sc-button--close.sc-button--icon-only.sc-button--default,
+.sc-button--close.sc-button--icon-only.sc-button--large {
+  @apply size-8 shrink-0 gap-0 rounded-lg border-0 bg-transparent p-1.5 text-sm text-gray-400;
+}
+
+.sc-button--close:hover:not(:disabled),
+.sc-button--close:focus:not(:disabled) {
+  @apply bg-gray-200 text-gray-900;
+}
+
+.sc-button--close .sc-button__icon {
+  @apply size-full;
+}
+
+:host:has(.sc-button--close) {
+  flex-shrink: 0;
 }
 
 .sc-button--link {

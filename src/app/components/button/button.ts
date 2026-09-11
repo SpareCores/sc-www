@@ -19,7 +19,8 @@ export type ScButtonVariant =
   | "white"
   | "link"
   | "dropdown"
-  | "benchmark";
+  | "benchmark"
+  | "close";
 export type ScButtonIconPosition = "start" | "end";
 export type ScButtonColor = "brand" | "neutral" | "danger" | "inverse";
 
