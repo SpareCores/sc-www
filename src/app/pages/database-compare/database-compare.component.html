@@ -23,6 +23,7 @@
           icon="scale"
           [title]="title"
           [showBookmark]="!!instances.length"
+          [bookmarkGuestLocked]="!isAuthenticated()"
           [bookmarkActive]="!!exactSavedComparison()"
           [bookmarkDisabled]="!exactSavedComparison() && !canSaveComparison()"
           [bookmarkLoading]="isDeleteComparisonPending()"

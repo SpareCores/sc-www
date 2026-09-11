@@ -50,7 +50,6 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
-import { Auth } from "../../services/auth/auth";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
 
@@ -113,7 +112,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
   private serverCompare = inject(ServerCompareService);
-  private auth = inject(Auth);
 
   isLoading = true;
   databaseDetails: LoadedDatabase | null = null;
@@ -643,10 +641,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         display_name: this.databaseDetails.display_name,
       },
     );
-  }
-
-  promptFavoriteSignIn(): void {
-    this.auth.signIn();
   }
 
   compareText() {

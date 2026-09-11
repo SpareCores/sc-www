@@ -3,7 +3,6 @@ import {
   Component,
   inject,
   input,
-  output,
   signal,
 } from "@angular/core";
 import { OverlayModule } from "@angular/cdk/overlay";
@@ -26,7 +25,6 @@ export class InstanceFavoriteContextMenuComponent {
   kind = input.required<BookmarkEntityKind>();
   vendorId = input.required<string>();
   entityId = input.required<string>();
-  requireAuth = output<void>();
 
   protected menuOpen = signal(false);
   protected menuPosition = signal({ x: 0, y: 0 });
@@ -61,7 +59,7 @@ export class InstanceFavoriteContextMenuComponent {
     event.stopPropagation();
 
     if (!this.collectionsUi.isAuthenticated()) {
-      this.requireAuth.emit();
+      this.collectionsUi.promptRegisterForFeature();
       return;
     }
 

@@ -67,10 +67,10 @@ import { NeetoCalService } from "../../services/neeto-cal.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
-import { Auth } from "../../services/auth/auth";
+import { AuthStateService } from "../../core/auth";
 import { AdviceCollectionsService } from "../../collections/advice-collections.service";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
-import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
+import { CollectionsUiService } from "../../collections/collections-ui.service";
 import type { SavedAdviceItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import type { SearchBarQuery } from "../../components/search-bar/search-bar.types";
@@ -396,7 +396,6 @@ type AdvisorComparableResourceKey =
     RouterLink,
     SearchBarComponent,
     CollectionSaveModalComponent,
-    GuestCollectionsBannerComponent,
   ],
   templateUrl: "./advisor.component.html",
   styleUrl: "./advisor.component.scss",
@@ -409,8 +408,9 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
-  private auth = inject(Auth);
+  private auth = inject(AuthStateService);
   private adviceCollections = inject(AdviceCollectionsService);
+  private collectionsUi = inject(CollectionsUiService);
   private neetoCalService = inject(NeetoCalService);
   private uiTooltip = inject(UiTooltipService);
   readonly advisorUi = inject(AdvisorUiService);
@@ -1884,7 +1884,24 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleCompareSelection(event: Event, server: ServerPKs): void {
     event.stopPropagation();
+    if (
+      this.isCompareCheckboxDisabled(this.isSelectedForCompare(server), server)
+    ) {
+      return;
+    }
     this.toggleCompare(server);
+  }
+
+  isCompareCheckboxDisabled(
+    selected: boolean,
+    server?: { vendor_id: string; api_reference: string },
+  ): boolean {
+    return this.serverCompare.isServerCompareCheckboxDisabled(
+      selected,
+      server
+        ? { vendor: server.vendor_id, server: server.api_reference }
+        : undefined,
+    );
   }
 
   toggleBaselineCompare(): void {
@@ -1918,7 +1935,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSaveAdviceModal(): void {
     if (!this.isAuthenticated()) {
-      this.auth.signIn();
+      this.collectionsUi.promptRegisterForFeature();
       return;
     }
 

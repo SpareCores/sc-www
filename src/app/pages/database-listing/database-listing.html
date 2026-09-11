@@ -6,7 +6,8 @@
       <sc-page-header
         icon="database"
         [title]="title"
-        [showBookmark]="isAuthenticated()"
+        [showBookmark]="true"
+        [bookmarkGuestLocked]="!isAuthenticated()"
         [bookmarkActive]="!!activeSavedSearch()"
         [bookmarkDisabled]="!activeSavedSearch() && !canSaveSearch()"
         [bookmarkLoading]="isDeleteSearchPending()"
@@ -21,9 +22,6 @@
       >
       </sc-page-header>
       <div class="text-white text-xl pr-16">{{ description }}</div>
-      @if (!isAuthenticated()) {
-      <sc-guest-collections-banner></sc-guest-collections-banner>
-      }
     </div>
 
     <sc-collection-save-modal
@@ -135,9 +133,8 @@
               <thead>
                 <tr>
                   <th class="checkbox_column"></th>
-                  @if (isAuthenticated()) {
                   <th class="favorite_column"></th>
-                  } @for (column of tableColumns; track column.name) {
+                  @for (column of tableColumns; track column.name) {
                   <th
                     [ngClass]="{
                         'cursor-pointer': column.orderField,
@@ -192,11 +189,13 @@
                         [(ngModel)]="item.selected"
                         (ngModelChange)="toggleCompare($event, item)"
                         (click)="$event.stopPropagation()"
-                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                        [disabled]="
+                          isCompareCheckboxDisabled(!!item.selected, item)
+                        "
+                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                       />
                     </div>
                   </td>
-                  @if (isAuthenticated()) {
                   <td
                     class="favorite_column"
                     (click)="$event.stopPropagation()"
@@ -205,24 +204,21 @@
                       kind="database"
                       [vendorId]="item.vendor_id"
                       [entityId]="item.api_reference"
-                      (requireAuth)="promptSignIn()"
                     >
                       <sc-bookmark-button
                         kind="database"
                         [vendorId]="item.vendor_id"
                         [entityId]="item.api_reference"
-                        (requireAuth)="promptSignIn()"
                       ></sc-bookmark-button>
                     </sc-instance-favorite-context-menu>
                   </td>
-                  } @for (column of tableColumns; track column.name) { @if
+                  @for (column of tableColumns; track column.name) { @if
                   (column.type === "name") {
                   <td>
                     <sc-instance-favorite-context-menu
                       kind="database"
                       [vendorId]="item.vendor_id"
                       [entityId]="item.api_reference"
-                      (requireAuth)="promptSignIn()"
                     >
                       <div (click)="$event.stopPropagation()">
                         <a

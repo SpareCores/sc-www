@@ -55,7 +55,6 @@ import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
-import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
 import {
   isDefaultListingQuery,
@@ -63,7 +62,7 @@ import {
   normalizeSearchQuery,
 } from "../../collections/collections.utils";
 import type { SavedSearchItem } from "../../collections/collections.types";
-import { Auth } from "../../services/auth/auth";
+import { AuthStateService } from "../../core/auth";
 import {
   BestDatabasePriceAllocationType,
   CurrencyOption,
@@ -123,7 +122,6 @@ type DatabaseListingQuery = Params &
     BookmarkButton,
     InstanceFavoriteContextMenuComponent,
     CollectionSaveModalComponent,
-    GuestCollectionsBannerComponent,
   ],
   templateUrl: "./database-listing.html",
   styleUrl: "./database-listing.scss",
@@ -142,7 +140,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
   private collectionsUi = inject(CollectionsUiService);
-  private auth = inject(Auth);
+  private auth = inject(AuthStateService);
   saveSearchModal = viewChild(CollectionSaveModalComponent);
   private serverCompare = inject(ServerCompareService);
 
@@ -752,6 +750,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   toggleCompare2(event: Event, database: DatabasePKs & { selected?: boolean }) {
     event.stopPropagation();
+    if (this.isCompareCheckboxDisabled(!!database.selected, database)) {
+      return;
+    }
     database.selected = !database.selected;
     this.toggleCompare(!!database.selected, database);
   }
@@ -770,12 +771,20 @@ export class DatabaseListing implements OnInit, OnDestroy {
     }
   }
 
-  isAuthenticated(): boolean {
-    return this.auth.isAuthenticated();
+  isCompareCheckboxDisabled(
+    selected: boolean,
+    database?: { vendor_id: string; api_reference: string },
+  ): boolean {
+    return this.serverCompare.isDatabaseCompareCheckboxDisabled(
+      selected,
+      database
+        ? { vendor: database.vendor_id, database: database.api_reference }
+        : undefined,
+    );
   }
 
-  promptSignIn(): void {
-    this.collectionsUi.promptSignIn();
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
   }
 
   activeSavedSearch() {
@@ -791,7 +800,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   openSaveSearchModal(): void {
     if (!this.isAuthenticated()) {
-      this.promptSignIn();
+      this.collectionsUi.promptRegisterForFeature();
       return;
     }
 

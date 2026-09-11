@@ -3,6 +3,15 @@
   vertical-align: middle;
 }
 
+.bookmark-button-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.bookmark-button-wrap--locked {
+  cursor: pointer;
+}
+
 .bookmark-button {
   display: inline-flex;
   align-items: center;
@@ -14,6 +23,11 @@
   transition: color 0.15s ease;
   position: relative;
   transform: translateY(-1px);
+}
+
+.bookmark-button--locked {
+  opacity: 0.55;
+  cursor: pointer;
 }
 
 .bookmark-button__icon {
@@ -32,6 +46,10 @@
 }
 
 .bookmark-button--active .bookmark-button__icon--default {
+  fill: currentColor;
+}
+
+.bookmark-button:hover:not(:disabled) .bookmark-button__icon {
   fill: currentColor;
 }
 

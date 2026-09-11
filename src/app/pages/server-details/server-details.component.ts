@@ -59,7 +59,6 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
-import { Auth } from "../../services/auth/auth";
 import { initGiscus } from "../../tools/initGiscus";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
@@ -131,7 +130,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private keeperAPI = inject(KeeperAPIService);
   private SEOHandler = inject(SeoHandlerService);
   private serverCompare = inject(ServerCompareService);
-  private auth = inject(Auth);
   private renderer = inject(Renderer2);
   private location = inject(Location);
   similarDropdown = viewChild<FlowbiteDropdownDirective>("similarDropdown");
@@ -1116,10 +1114,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         display_name: this.serverDetails.display_name,
       },
     );
-  }
-
-  promptFavoriteSignIn(): void {
-    this.auth.signIn();
   }
 
   compareText() {

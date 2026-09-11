@@ -2,9 +2,12 @@ import { Injectable, OnDestroy, inject } from "@angular/core";
 import { ServerPKs } from "../../../sdk/data-contracts";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
-import { Auth } from "./auth/auth";
+import { AuthStateService } from "../core/auth";
 import { ToastService } from "./toast.service";
-import { GUEST_COMPARE_LIMIT } from "../collections/collections.utils";
+import {
+  GUEST_COMPARE_LIMIT,
+  FEATURE_REGISTER_SUBTITLE,
+} from "../collections/collections.utils";
 
 export interface ZoneAndRegion {
   zone: string;
@@ -46,7 +49,7 @@ export interface DatabaseCompareBaseline {
 })
 export class ServerCompareService implements OnDestroy {
   private router = inject(Router);
-  private auth = inject(Auth);
+  private auth = inject(AuthStateService);
   private toastService = inject(ToastService);
 
   public selectedForCompare: ServerCompare[] = [];
@@ -87,6 +90,7 @@ export class ServerCompareService implements OnDestroy {
           server: server.server,
           zonesRegions: server.zoneRegion ? [server.zoneRegion] : [],
         });
+        this.promptGuestServerCompareLimitIfReached(this.serverCompareCount());
       }
     } else {
       if (!server.zoneRegion) {
@@ -137,6 +141,9 @@ export class ServerCompareService implements OnDestroy {
           vendor: database.vendor,
           database: database.database,
         });
+        this.promptGuestDatabaseCompareLimitIfReached(
+          this.databaseCompareCount(),
+        );
       }
     } else {
       this.selectedDatabases = this.selectedDatabases.filter(
@@ -163,12 +170,7 @@ export class ServerCompareService implements OnDestroy {
     }
 
     if (this.serverCompareCount() >= GUEST_COMPARE_LIMIT) {
-      this.toastService.show({
-        id: "guest-compare-limit",
-        title: "Compare limit reached",
-        body: `Guests can compare up to ${GUEST_COMPARE_LIMIT} instances. Register to compare more.`,
-        type: "warning",
-      });
+      this.showGuestServerCompareLimitToast();
       return false;
     }
 
@@ -189,16 +191,100 @@ export class ServerCompareService implements OnDestroy {
     }
 
     if (this.databaseCompareCount() >= GUEST_COMPARE_LIMIT) {
-      this.toastService.show({
-        id: "guest-compare-limit",
-        title: "Compare limit reached",
-        body: `Guests can compare up to ${GUEST_COMPARE_LIMIT} instances. Register to compare more.`,
-        type: "warning",
-      });
+      this.showGuestDatabaseCompareLimitToast();
       return false;
     }
 
     return true;
+  }
+
+  isServerCompareCheckboxDisabled(
+    selected: boolean,
+    item?: { vendor: string; server: string },
+  ): boolean {
+    if (selected || this.auth.isAuthenticated()) {
+      return false;
+    }
+
+    if (
+      item &&
+      this.selectedForCompare.some(
+        (entry) => entry.vendor === item.vendor && entry.server === item.server,
+      )
+    ) {
+      return false;
+    }
+
+    return this.serverCompareCount() >= GUEST_COMPARE_LIMIT;
+  }
+
+  isDatabaseCompareCheckboxDisabled(
+    selected: boolean,
+    item?: { vendor: string; database: string },
+  ): boolean {
+    if (selected || this.auth.isAuthenticated()) {
+      return false;
+    }
+
+    if (
+      item &&
+      this.selectedDatabases.some(
+        (entry) =>
+          entry.vendor === item.vendor && entry.database === item.database,
+      )
+    ) {
+      return false;
+    }
+
+    return this.databaseCompareCount() >= GUEST_COMPARE_LIMIT;
+  }
+
+  private showGuestServerCompareLimitToast(): void {
+    this.toastService.show({
+      id: "guest-server-compare-limit",
+      title: "Server limit reached.",
+      body: `Guests can only compare up to ${GUEST_COMPARE_LIMIT} servers at a time.`,
+      type: "warning",
+      action: {
+        label: "Register for free to unlock unlimited comparisons!",
+        onClick: () =>
+          this.auth.signUp({
+            subtitle: FEATURE_REGISTER_SUBTITLE,
+          }),
+      },
+    });
+  }
+
+  private showGuestDatabaseCompareLimitToast(): void {
+    this.toastService.show({
+      id: "guest-database-compare-limit",
+      title: "Database limit reached.",
+      body: `Guests can only compare up to ${GUEST_COMPARE_LIMIT} databases at a time.`,
+      type: "warning",
+      action: {
+        label: "Register for free to unlock unlimited comparisons!",
+        onClick: () =>
+          this.auth.signUp({
+            subtitle: FEATURE_REGISTER_SUBTITLE,
+          }),
+      },
+    });
+  }
+
+  private promptGuestServerCompareLimitIfReached(count: number): void {
+    if (this.auth.isAuthenticated() || count !== GUEST_COMPARE_LIMIT) {
+      return;
+    }
+
+    this.showGuestServerCompareLimitToast();
+  }
+
+  private promptGuestDatabaseCompareLimitIfReached(count: number): void {
+    if (this.auth.isAuthenticated() || count !== GUEST_COMPARE_LIMIT) {
+      return;
+    }
+
+    this.showGuestDatabaseCompareLimitToast();
   }
 
   compareCount(): number {

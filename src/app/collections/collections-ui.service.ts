@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { Auth } from "../services/auth/auth";
+import { AuthStateService } from "../core/auth";
 import { CollectionsStore } from "./collections.store";
 import {
   favoriteDatabaseId,
@@ -11,6 +11,7 @@ import {
   isDefaultListingQuery,
   listingSearchQuery,
   savedSearchIdFromQuery,
+  FEATURE_REGISTER_SUBTITLE,
 } from "./collections.utils";
 import { mutationKey } from "../shared/store/with-mutation-status";
 
@@ -18,15 +19,17 @@ export type BookmarkEntityKind = "server" | "database";
 
 @Injectable({ providedIn: "root" })
 export class CollectionsUiService {
-  private auth = inject(Auth);
+  private auth = inject(AuthStateService);
   readonly store = inject(CollectionsStore);
 
   isAuthenticated(): boolean {
     return this.auth.isAuthenticated();
   }
 
-  promptSignIn(): void {
-    this.auth.signIn();
+  promptRegisterForFeature(): void {
+    this.auth.signUp({
+      subtitle: FEATURE_REGISTER_SUBTITLE,
+    });
   }
 
   activeSavedSearch(page: SavedSearchPage, query: SearchBarQuery) {

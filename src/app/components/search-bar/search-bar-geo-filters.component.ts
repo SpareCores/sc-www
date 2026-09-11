@@ -1,5 +1,5 @@
 import { Component, inject, input, output } from "@angular/core";
-import { Auth } from "../../services/auth/auth";
+import { AuthStateService } from "../../core/auth";
 import { FormsModule } from "@angular/forms";
 import {
   LucideChevronDown,
@@ -7,8 +7,10 @@ import {
   LucideInfo,
   LucideLeaf,
 } from "@lucide/angular";
+import { FEATURE_REGISTER_SUBTITLE } from "../../collections/collections.utils";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { ToastService } from "../../services/toast.service";
 import type {
   ContinentMetadata,
   CountryMetadata,
@@ -34,7 +36,8 @@ import { getParameterType } from "./search-bar.utils";
   templateUrl: "./search-bar-geo-filters.component.html",
 })
 export class SearchBarGeoFiltersComponent {
-  protected readonly auth = inject(Auth);
+  protected readonly auth = inject(AuthStateService);
+  private readonly toastService = inject(ToastService);
 
   parameter = input.required<SearchBarParameter>();
   filterCategoryId = input.required<string>();
@@ -118,6 +121,9 @@ export class SearchBarGeoFiltersComponent {
     }
 
     this.emitCountryState(nextCountries);
+    this.promptCountryLimitIfReached(
+      nextCountries.filter((country) => country.selected).length,
+    );
     this.filterServers.emit();
   }
 
@@ -137,6 +143,9 @@ export class SearchBarGeoFiltersComponent {
     );
 
     this.emitCountryState(nextCountries);
+    this.promptCountryLimitIfReached(
+      nextCountries.filter((item) => item.selected).length,
+    );
     this.filterServers.emit();
   }
 
@@ -260,6 +269,9 @@ export class SearchBarGeoFiltersComponent {
       }
 
       parameter.modelValue = [...selectedValues, vendorRegion];
+      this.promptRegionLimitIfReached(
+        this.getSelectedVendorRegions(parameter).length,
+      );
     }
 
     this.filterServers.emit();
@@ -277,6 +289,7 @@ export class SearchBarGeoFiltersComponent {
       const newValues = vendorRegions.filter(
         (vendorRegion) => !this.isVendorRegionSelected(parameter, vendorRegion),
       );
+
       const remaining = this.auth.isAuthenticated()
         ? newValues
         : newValues.slice(
@@ -284,6 +297,9 @@ export class SearchBarGeoFiltersComponent {
             Math.max(0, this.maxVendorRegions() - selectedValues.length),
           );
       parameter.modelValue = [...selectedValues, ...remaining];
+      this.promptRegionLimitIfReached(
+        this.getSelectedVendorRegions(parameter).length,
+      );
     }
 
     this.filterServers.emit();
@@ -352,6 +368,54 @@ export class SearchBarGeoFiltersComponent {
 
   private selectedCountriesCount(): number {
     return this.countryMetadata().filter((country) => country.selected).length;
+  }
+
+  private promptCountryLimitIfReached(count: number): void {
+    if (this.auth.isAuthenticated() || count !== 1) {
+      return;
+    }
+
+    this.showCountryLimitToast();
+  }
+
+  private promptRegionLimitIfReached(count: number): void {
+    if (this.auth.isAuthenticated() || count !== this.maxVendorRegions()) {
+      return;
+    }
+
+    this.showRegionLimitToast();
+  }
+
+  private showCountryLimitToast(): void {
+    this.toastService.show({
+      id: "guest-country-limit",
+      title: "Country limit reached.",
+      body: "Guests can only filter by one country at a time.",
+      type: "warning",
+      action: {
+        label: "Register for free to unlock unlimited countries!",
+        onClick: () =>
+          this.auth.signUp({
+            subtitle: FEATURE_REGISTER_SUBTITLE,
+          }),
+      },
+    });
+  }
+
+  private showRegionLimitToast(): void {
+    this.toastService.show({
+      id: "guest-region-limit",
+      title: "Region limit reached.",
+      body: "Guests can only filter by three region at a time.",
+      type: "warning",
+      action: {
+        label: "Register for free to unlock unlimited regions!",
+        onClick: () =>
+          this.auth.signUp({
+            subtitle: FEATURE_REGISTER_SUBTITLE,
+          }),
+      },
+    });
   }
 
   private emitCountryState(countries: CountryMetadata[]) {

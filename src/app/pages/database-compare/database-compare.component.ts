@@ -72,7 +72,8 @@ import {
 import { ToastService } from "../../services/toast.service";
 import { CompareCollectionsService } from "../../collections/compare-collections.service";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
-import { Auth } from "../../services/auth/auth";
+import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { AuthStateService } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import {
@@ -196,7 +197,8 @@ export class DatabaseCompareComponent
   private chartTooltip = inject(ChartTooltipService);
   private legendVisibility = inject(CompareChartLegendVisibilityService);
   private compareCollections = inject(CompareCollectionsService);
-  private auth = inject(Auth);
+  private auth = inject(AuthStateService);
+  private collectionsUi = inject(CollectionsUiService);
   saveComparisonModal = viewChild(CollectionSaveModalComponent);
   private readonly pendingSaveComparisonClose = signal(false);
   private readonly editingComparisonId = signal<string | null>(null);
@@ -1081,7 +1083,7 @@ export class DatabaseCompareComponent
 
   openSaveComparisonModal(): void {
     if (!this.isAuthenticated()) {
-      this.auth.signIn();
+      this.collectionsUi.promptRegisterForFeature();
       return;
     }
 

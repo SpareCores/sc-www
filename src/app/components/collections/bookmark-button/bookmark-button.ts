@@ -2,9 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
   inject,
   input,
-  output,
+  viewChild,
 } from "@angular/core";
 import {
   LucideBookmark,
@@ -15,6 +16,8 @@ import {
   CollectionsUiService,
   type BookmarkEntityKind,
 } from "../../../collections/collections-ui.service";
+import { FEATURE_REGISTER_HINT } from "../../../collections/collections.utils";
+import { UiTooltipService } from "../../../services/ui-tooltip.service";
 
 @Component({
   selector: "sc-bookmark-button",
@@ -25,12 +28,15 @@ import {
 })
 export class BookmarkButton {
   private collectionsUi = inject(CollectionsUiService);
+  private uiTooltip = inject(UiTooltipService);
+  private tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
 
   kind = input.required<BookmarkEntityKind>();
   vendorId = input.required<string>();
   entityId = input.required<string>();
   disabled = input(false);
-  requireAuth = output<void>();
+
+  protected readonly registerHint = FEATURE_REGISTER_HINT;
 
   protected isAuthenticated = computed(() =>
     this.collectionsUi.isAuthenticated(),
@@ -53,14 +59,25 @@ export class BookmarkButton {
   });
 
   protected canAdd = computed(
-    () => !this.isBookmarked() && !this.disabled() && !this.isLoading(),
+    () =>
+      this.isAuthenticated() &&
+      !this.isBookmarked() &&
+      !this.disabled() &&
+      !this.isLoading(),
   );
 
   protected canRemove = computed(
-    () => this.isBookmarked() && !this.disabled() && !this.isLoading(),
+    () =>
+      this.isAuthenticated() &&
+      this.isBookmarked() &&
+      !this.disabled() &&
+      !this.isLoading(),
   );
 
   protected ariaLabel = computed(() => {
+    if (!this.isAuthenticated()) {
+      return this.registerHint;
+    }
     const noun = this.kind() === "server" ? "server" : "database";
     return this.isBookmarked()
       ? "Remove from bookmarks"
@@ -71,12 +88,13 @@ export class BookmarkButton {
     event.preventDefault();
     event.stopPropagation();
 
-    if (this.disabled() || this.isLoading()) {
+    if (!this.isAuthenticated()) {
+      this.hideTooltip();
+      this.collectionsUi.promptRegisterForFeature();
       return;
     }
 
-    if (!this.isAuthenticated()) {
-      this.requireAuth.emit();
+    if (this.disabled() || this.isLoading()) {
       return;
     }
 
@@ -85,5 +103,31 @@ export class BookmarkButton {
       this.vendorId(),
       this.entityId(),
     );
+  }
+
+  protected onMouseEnter(event: MouseEvent): void {
+    if (this.isAuthenticated()) {
+      return;
+    }
+    this.showTooltip(event);
+  }
+
+  protected showTooltip(event: MouseEvent): void {
+    const tooltip = this.tooltip()?.nativeElement;
+    if (!tooltip) {
+      return;
+    }
+    this.uiTooltip.show(tooltip, event, {
+      left: "anchor-right",
+      top: "anchor-below",
+    });
+  }
+
+  protected hideTooltip(): void {
+    const tooltip = this.tooltip()?.nativeElement;
+    if (!tooltip) {
+      return;
+    }
+    this.uiTooltip.hide(tooltip);
   }
 }

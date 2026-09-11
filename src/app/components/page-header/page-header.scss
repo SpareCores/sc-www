@@ -28,6 +28,14 @@
   background: rgb(255 255 255 / 0.08);
 }
 
+.page-header__bookmark:hover:not(:disabled) {
+  background: transparent;
+}
+
+.page-header__bookmark:hover:not(:disabled) .page-header__bookmark-icon {
+  fill: currentColor;
+}
+
 .page-header__edit:hover:not(:disabled) {
   color: #34d399;
 }
@@ -37,9 +45,38 @@
   cursor: not-allowed;
 }
 
+.page-header__bookmark-wrap {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.5rem;
+}
+
+.page-header__bookmark-wrap--locked {
+  cursor: pointer;
+}
+
+.page-header__bookmark-wrap .page-header__icon-btn {
+  margin-right: 0;
+}
+
+.page-header__bookmark {
+  width: 2rem;
+  height: 2rem;
+}
+
+.page-header__bookmark--locked {
+  opacity: 0.55;
+  cursor: pointer;
+}
+
 .page-header__icon-btn-svg {
   width: 1.25rem;
   height: 1.25rem;
+}
+
+.page-header__bookmark-icon {
+  width: 2rem;
+  height: 2rem;
 }
 
 .page-header__bookmark-icon--add,

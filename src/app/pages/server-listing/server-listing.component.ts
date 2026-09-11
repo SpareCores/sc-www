@@ -68,7 +68,6 @@ import { formatNumberInputValue } from "../../pipes/pipe-utils";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
-import { GuestCollectionsBannerComponent } from "../../components/collections/guest-collections-banner/guest-collections-banner.component";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
 import {
   isDefaultListingQuery,
@@ -76,7 +75,7 @@ import {
   normalizeSearchQuery,
 } from "../../collections/collections.utils";
 import type { SavedSearchItem } from "../../collections/collections.types";
-import { Auth } from "../../services/auth/auth";
+import { AuthStateService } from "../../core/auth";
 import {
   BestPriceAllocationType,
   bestPriceAllocationTypes,
@@ -133,7 +132,6 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     BookmarkButton,
     InstanceFavoriteContextMenuComponent,
     CollectionSaveModalComponent,
-    GuestCollectionsBannerComponent,
   ],
   templateUrl: "./server-listing.component.html",
   styleUrl: "./server-listing.component.scss",
@@ -153,7 +151,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
   private collectionsUi = inject(CollectionsUiService);
-  private auth = inject(Auth);
+  private auth = inject(AuthStateService);
   saveSearchModal = viewChild(CollectionSaveModalComponent);
 
   isCollapsed = false;
@@ -1046,6 +1044,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   toggleCompare2(event: any, server: ServerPKs | any) {
     event.stopPropagation();
+    if (this.isCompareCheckboxDisabled(!!server.selected, server)) {
+      return;
+    }
     server.selected = !server.selected;
     this.toggleCompare(server.selected, server);
   }
@@ -1061,12 +1062,20 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
   }
 
-  isAuthenticated(): boolean {
-    return this.auth.isAuthenticated();
+  isCompareCheckboxDisabled(
+    selected: boolean,
+    server?: { vendor_id: string; api_reference: string },
+  ): boolean {
+    return this.serverCompare.isServerCompareCheckboxDisabled(
+      selected,
+      server
+        ? { vendor: server.vendor_id, server: server.api_reference }
+        : undefined,
+    );
   }
 
-  promptSignIn(): void {
-    this.collectionsUi.promptSignIn();
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
   }
 
   activeSavedSearch() {
@@ -1082,7 +1091,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   openSaveSearchModal(): void {
     if (!this.isAuthenticated()) {
-      this.promptSignIn();
+      this.collectionsUi.promptRegisterForFeature();
       return;
     }
 
