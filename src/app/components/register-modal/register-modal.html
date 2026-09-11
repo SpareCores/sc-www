@@ -1,0 +1,250 @@
+@if (auth.signUpModalOpen()) {
+<div class="auth-modal" (click)="close()">
+  <div class="auth-modal__panel" (click)="$event.stopPropagation()">
+    <sc-button
+      class="auth-modal__close"
+      variant="close"
+      icon="x"
+      ariaLabel="Close registration modal"
+      (buttonClick)="close()"
+    ></sc-button>
+
+    @if (step === "details") {
+    <div class="auth-modal__body">
+      <div class="auth-modal__header">
+        <h2 class="auth-modal__title">Create your account</h2>
+        <p class="auth-modal__subtitle">{{ auth.signUpSubtitle() }}</p>
+      </div>
+
+      <form class="auth-modal__form" (ngSubmit)="continueToConsent()">
+        <div class="auth-modal__grid">
+          <label class="auth-modal__field">
+            <span>First name</span>
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First name"
+              [(ngModel)]="firstName"
+            />
+          </label>
+          <label class="auth-modal__field">
+            <span>Last name</span>
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Last name"
+              [(ngModel)]="lastName"
+            />
+          </label>
+        </div>
+
+        <label class="auth-modal__field">
+          <span>Email address</span>
+          <input
+            type="email"
+            name="emailAddress"
+            placeholder="Enter your email address"
+            [(ngModel)]="emailAddress"
+          />
+        </label>
+
+        <label class="auth-modal__field">
+          <span>Password</span>
+          <input
+            type="password"
+            name="password"
+            placeholder="Create a password"
+            [(ngModel)]="password"
+          />
+        </label>
+
+        @if (errorMessage) {
+        <p class="auth-modal__error">{{ errorMessage }}</p>
+        }
+
+        <sc-button
+          type="submit"
+          label="Continue"
+          icon="chevron-right"
+          size="small"
+          buttonClass="w-full !justify-center"
+          [disabled]="!canSubmitDetails() || !!busy"
+        ></sc-button>
+      </form>
+
+      <div class="auth-modal__divider">
+        <span>or</span>
+      </div>
+
+      <sc-button
+        label="Continue with GitHub"
+        icon="github"
+        iconPosition="start"
+        size="small"
+        variant="outline"
+        color="brand"
+        buttonClass="w-full !justify-center"
+        [disabled]="!!busy"
+        (buttonClick)="continueWithGithub()"
+      ></sc-button>
+
+      <div class="auth-modal__footer">
+        <p>
+          Already have an account?
+          <button
+            type="button"
+            class="auth-modal__footer-link"
+            (click)="openSignIn()"
+          >
+            Log in
+          </button>
+        </p>
+      </div>
+    </div>
+    } @else if (step === "consent") {
+    <div class="auth-modal__body">
+      <div class="auth-modal__header">
+        <h2 class="auth-modal__title">One last step</h2>
+        <p class="auth-modal__subtitle">
+          Accept the Terms of Service and Privacy Policy to finish signing up.
+          Stay in the loop with the Spare Cores newsletter — optional, but
+          recommended.
+        </p>
+      </div>
+
+      <form class="auth-modal__form" (ngSubmit)="submitConsent()">
+        <label class="auth-modal__checkbox">
+          <input
+            type="checkbox"
+            name="legalAccepted"
+            [(ngModel)]="legalAccepted"
+          />
+          <span>
+            I agree to the
+            <a href="/legal/terms-of-service" target="_blank" rel="noopener"
+              >Terms of Service</a
+            >
+            and
+            <a href="/legal/privacy-policy" target="_blank" rel="noopener"
+              >Privacy Policy</a
+            >
+          </span>
+        </label>
+
+        <label class="auth-modal__checkbox">
+          <input
+            type="checkbox"
+            name="newsletterOptIn"
+            [(ngModel)]="newsletterOptIn"
+          />
+          <span>Subscribe me to the Spare Cores newsletter</span>
+        </label>
+
+        @if (errorMessage) {
+        <p class="auth-modal__error">{{ errorMessage }}</p>
+        }
+
+        <div
+          id="clerk-captcha"
+          data-cl-theme="dark"
+          data-cl-size="flexible"
+        ></div>
+
+        <div class="auth-modal__consent-actions">
+          <sc-button
+            type="button"
+            [label]="
+              auth.githubConsentReturnToLogin() ? 'Back to login' : 'Back'
+            "
+            icon="chevron-left"
+            iconPosition="start"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [disabled]="!!busy"
+            (buttonClick)="backToDetails()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            [label]="
+              pendingGithubConsent
+                ? 'Continue'
+                : method === 'github'
+                  ? 'Continue with GitHub'
+                  : 'Continue'
+            "
+            [icon]="
+              pendingGithubConsent
+                ? 'chevron-right'
+                : method === 'github'
+                  ? 'github'
+                  : 'chevron-right'
+            "
+            [iconPosition]="
+              pendingGithubConsent
+                ? 'end'
+                : method === 'github'
+                  ? 'start'
+                  : 'end'
+            "
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'submit' || busy === 'github'"
+            [disabled]="!canSubmitConsent() || !!busy"
+          ></sc-button>
+        </div>
+      </form>
+    </div>
+    } @else {
+    <div class="auth-modal__body">
+      <div class="auth-modal__header">
+        <h2 class="auth-modal__title">Verify your email</h2>
+        <p class="auth-modal__subtitle">
+          Enter the verification code sent to {{ emailAddress.trim() }}.
+        </p>
+      </div>
+
+      <form class="auth-modal__form" (ngSubmit)="verifyEmail()">
+        <label class="auth-modal__field">
+          <span>Verification code</span>
+          <input
+            type="text"
+            name="verificationCode"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            placeholder="Enter verification code"
+            [(ngModel)]="verificationCode"
+          />
+        </label>
+
+        @if (errorMessage) {
+        <p class="auth-modal__error">{{ errorMessage }}</p>
+        }
+
+        <div class="auth-modal__verify-actions">
+          <sc-button
+            label="Resend code"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'resend'"
+            [disabled]="!!busy"
+            (buttonClick)="resendCode()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            label="Verify email"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'verify'"
+            [disabled]="!canVerify() || !!busy"
+          ></sc-button>
+        </div>
+      </form>
+    </div>
+    }
+  </div>
+</div>
+}

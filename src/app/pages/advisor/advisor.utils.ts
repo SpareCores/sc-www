@@ -94,15 +94,15 @@ export function findAdvisorBenchmarkConfigOption(
     return null;
   }
 
-  const expectedConfig =
-    typeof config === "string" && config.length
-      ? config
-      : ADVISOR_DEFAULT_WORKLOAD_CONFIG;
+  const expectedConfigKey = normalizeBenchmarkConfig(
+    config ?? ADVISOR_DEFAULT_WORKLOAD_CONFIG,
+  );
 
   return (
     options.find((option) => {
       return (
-        option.benchmark_id === benchmarkId && option.config === expectedConfig
+        option.benchmark_id === benchmarkId &&
+        normalizeBenchmarkConfig(option.config) === expectedConfigKey
       );
     }) || null
   );

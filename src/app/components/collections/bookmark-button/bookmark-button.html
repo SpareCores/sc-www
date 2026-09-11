@@ -1,0 +1,42 @@
+<div
+  class="bookmark-button-wrap"
+  [class.bookmark-button-wrap--locked]="!isAuthenticated()"
+>
+  <button
+    type="button"
+    class="bookmark-button"
+    [class.bookmark-button--active]="isBookmarked()"
+    [class.bookmark-button--can-add]="canAdd()"
+    [class.bookmark-button--can-remove]="canRemove()"
+    [class.bookmark-button--locked]="!isAuthenticated()"
+    [disabled]="isAuthenticated() && (disabled() || isLoading())"
+    [attr.aria-disabled]="!isAuthenticated() || disabled() || isLoading()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-pressed]="isBookmarked()"
+    (mouseenter)="onMouseEnter($event)"
+    (mouseleave)="hideTooltip()"
+    (click)="toggle($event)"
+  >
+    <svg
+      lucideBookmark
+      class="bookmark-button__icon bookmark-button__icon--default"
+    ></svg>
+    <svg
+      lucideBookmarkPlus
+      class="bookmark-button__icon bookmark-button__icon--add"
+    ></svg>
+    <svg
+      lucideBookmarkOff
+      class="bookmark-button__icon bookmark-button__icon--remove"
+    ></svg>
+  </button>
+  @if (!isAuthenticated()) {
+  <div
+    #tooltip
+    style="opacity: 0; display: none"
+    class="tooltip-panel fixed z-100 pointer-events-none"
+  >
+    {{ registerHint }}
+  </div>
+  }
+</div>

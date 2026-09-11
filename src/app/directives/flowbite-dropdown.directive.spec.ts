@@ -56,7 +56,7 @@ describe("FlowbiteDropdownDirective", () => {
     expect(initDropdownSpy.calls.mostRecent().args).toEqual([
       "trigger",
       "target",
-      { flip: false },
+      { flip: false, triggerType: "click" },
     ]);
   });
 

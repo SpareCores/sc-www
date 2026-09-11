@@ -923,7 +923,8 @@
             </ol>
           </div>
           <div class="flex flex-col w-full lg:w-1/2 justify-center">
-            <pre class="language-python line-numbers" data-line="4"><code>
+            @if (showResourceTrackerCode) {
+              <pre class="language-python line-numbers" data-line="4"><code>
                                           from resource_tracker import ResourceTracker
 
                                           # start trackers in the background (non-blocking)
@@ -937,6 +938,7 @@
                                           # or get resource allocation advice for future runs
                                           tracker.suggest()
                                         </code></pre>
+            }
           </div>
         </div>
       </div>

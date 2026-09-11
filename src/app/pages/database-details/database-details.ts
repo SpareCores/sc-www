@@ -37,6 +37,7 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { Button } from "../../components/button/button";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import {
   ServerPropertyCardComponent,
@@ -97,6 +98,7 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     BenchmarkLineChartComponent,
     LucideCheck,
     ReduceUnitNamePipe,
+    BookmarkButton,
   ],
   templateUrl: "./database-details.html",
   styleUrl: "./database-details.scss",

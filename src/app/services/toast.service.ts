@@ -9,6 +9,11 @@ export interface ToastOptions {
   title: string;
   /** Optional body text to display below the title */
   body?: string;
+  /** Optional clickable action rendered below the body */
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
   /** The type/style of toast - 'success', 'error', 'warning', or 'info' (default: 'info') */
   type?: ToastType;
   /** Duration in ms to show the toast. If null, toast requires manual dismissal (default: null) */
@@ -41,7 +46,7 @@ export class ToastService implements OnDestroy {
   show(options: ToastOptions) {
     if (!isPlatformBrowser(this.platformId) || !this.toastContainer) return;
 
-    const { title, body, type = "info", duration = null, id } = options;
+    const { title, body, action, type = "info", duration = null, id } = options;
 
     const toastId =
       id || `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -57,7 +62,7 @@ export class ToastService implements OnDestroy {
           ${
             !duration
               ? `
-            <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8 ${this.getColorClasses(type).hover}" aria-label="Close">
+            <button type="button" data-toast-close class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8 ${this.getColorClasses(type).hover}" aria-label="Close">
               <span class="sr-only">Close</span>
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </button>
@@ -66,13 +71,28 @@ export class ToastService implements OnDestroy {
           }
         </div>
         ${body ? `<div class="ml-3 text-sm font-normal mt-1">${body}</div>` : ""}
+        ${
+          action
+            ? `<button type="button" data-toast-action class="ml-3 mt-1 text-sm font-semibold underline underline-offset-2 cursor-pointer text-left">${action.label}</button>`
+            : ""
+        }
       </div>
     `;
 
     if (!duration) {
-      const closeButton = toast.querySelector("button");
+      const closeButton = toast.querySelector("[data-toast-close]");
       if (closeButton) {
         closeButton.addEventListener("click", () => this.removeToast(toastId));
+      }
+    }
+
+    if (action) {
+      const actionButton = toast.querySelector("[data-toast-action]");
+      if (actionButton) {
+        actionButton.addEventListener("click", () => {
+          this.removeToast(toastId);
+          action.onClick();
+        });
       }
     }
 

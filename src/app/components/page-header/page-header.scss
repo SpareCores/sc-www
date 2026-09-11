@@ -6,6 +6,123 @@
   @apply text-white font-bold text-3xl flex items-center;
 }
 
+.page-header__title-text {
+  @apply mr-2;
+}
+
+.page-header__icon-btn {
+  @apply inline-flex items-center justify-center shrink-0 mr-2 rounded-md;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  background: transparent;
+  color: rgb(156 163 175 / 0.7);
+  cursor: pointer;
+  position: relative;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.page-header__icon-btn:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.08);
+}
+
+.page-header__bookmark:hover:not(:disabled) {
+  background: transparent;
+}
+
+.page-header__bookmark:hover:not(:disabled) .page-header__bookmark-icon {
+  fill: currentColor;
+}
+
+.page-header__edit:hover:not(:disabled) {
+  color: #34d399;
+}
+
+.page-header__icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.page-header__bookmark-wrap {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.5rem;
+}
+
+.page-header__bookmark-wrap--locked {
+  cursor: pointer;
+}
+
+.page-header__bookmark-wrap .page-header__icon-btn {
+  margin-right: 0;
+}
+
+.page-header__bookmark {
+  width: 2rem;
+  height: 2rem;
+}
+
+.page-header__bookmark--locked {
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.page-header__icon-btn-svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.page-header__bookmark-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.page-header__bookmark-icon--add,
+.page-header__bookmark-icon--remove {
+  display: none;
+  position: absolute;
+}
+
+.page-header__bookmark--active {
+  color: #34d399;
+}
+
+.page-header__bookmark--active .page-header__bookmark-icon--default {
+  fill: currentColor;
+}
+
+.page-header__bookmark--can-add:hover:not(:disabled) {
+  color: #34d399;
+}
+
+.page-header__bookmark--can-add:hover:not(:disabled)
+  .page-header__bookmark-icon--default {
+  display: none;
+}
+
+.page-header__bookmark--can-add:hover:not(:disabled)
+  .page-header__bookmark-icon--add {
+  display: block;
+  position: static;
+}
+
+.page-header__bookmark--can-remove:hover:not(:disabled) {
+  color: #ef4444;
+}
+
+.page-header__bookmark--can-remove:hover:not(:disabled)
+  .page-header__bookmark-icon--default {
+  display: none;
+}
+
+.page-header__bookmark--can-remove:hover:not(:disabled)
+  .page-header__bookmark-icon--remove {
+  display: block;
+  position: static;
+}
+
 .page-header__actions {
   @apply flex flex-wrap items-center gap-4 lg:justify-end;
 }

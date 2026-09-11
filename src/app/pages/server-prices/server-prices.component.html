@@ -40,7 +40,6 @@
           [filterCategories]="filterCategories"
           [searchParameters]="searchParameters"
           [selectedCurrency]="selectedCurrency"
-          [isAuthenticated]="true"
           AIAssistantType="server_prices"
           (searchChanged)="searchBarChanged($event)"
         >
@@ -185,7 +184,10 @@
                           [(ngModel)]="server.selected"
                           (ngModelChange)="toggleCompare($event, server)"
                           (click)="$event.stopPropagation()"
-                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                          [disabled]="
+                            isCompareCheckboxDisabled(!!server.selected, server)
+                          "
+                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                           [ngClass]="{
                             partially_selected:
                               server.partiallySelected && !server.selected,

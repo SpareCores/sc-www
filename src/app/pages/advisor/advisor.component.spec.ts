@@ -78,6 +78,9 @@ describe("AdvisorComponent", () => {
     toggleCompare: jasmine.createSpy("toggleCompare"),
     clearCompare: jasmine.createSpy("clearCompare"),
     openCompare: jasmine.createSpy("openCompare"),
+    isServerCompareCheckboxDisabled: jasmine
+      .createSpy("isServerCompareCheckboxDisabled")
+      .and.returnValue(false),
   };
 
   let component: AdvisorComponent;
@@ -106,6 +109,8 @@ describe("AdvisorComponent", () => {
     compareService.toggleCompare.calls.reset();
     compareService.clearCompare.calls.reset();
     compareService.openCompare.calls.reset();
+    compareService.isServerCompareCheckboxDisabled.calls.reset();
+    compareService.isServerCompareCheckboxDisabled.and.returnValue(false);
     compareService.toggleCompare.and.callFake(
       (
         shouldSelect: boolean,

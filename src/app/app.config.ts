@@ -18,12 +18,18 @@ import {
   HttpRequest,
   provideHttpClient,
   withFetch,
+  withInterceptors,
 } from "@angular/common/http";
 import { provideLucideIcons } from "@lucide/angular";
 import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
 import * as Sentry from "@sentry/angular";
 import { provideAppCharts } from "./components/charts/shared/chart-providers";
+import {
+  AuthStateService,
+  authInterceptor,
+  provideAuthFeature,
+} from "./core/auth";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   return req.method === "GET";
@@ -42,6 +48,25 @@ const SCROLL_DISABLED_PATHS = [
   "/traffic-prices",
 ];
 
+const SCROLL_TOP_PREFIXES = ["/servers/compare", "/databases/compare"];
+
+function scrollPositionRestoration(): "disabled" | "top" {
+  if (typeof window === "undefined") {
+    return "disabled";
+  }
+
+  const pathname = window.location.pathname;
+  if (SCROLL_TOP_PREFIXES.some((path) => pathname.startsWith(path))) {
+    return "top";
+  }
+
+  const shouldDisableScroll = SCROLL_DISABLED_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+
+  return shouldDisableScroll ? "disabled" : "top";
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -49,13 +74,7 @@ export const appConfig: ApplicationConfig = {
       routes,
       withInMemoryScrolling({
         get scrollPositionRestoration() {
-          if (typeof window === "undefined") return "disabled";
-
-          const shouldDisableScroll = SCROLL_DISABLED_PATHS.some((path) =>
-            window.location.pathname.startsWith(path),
-          );
-
-          return shouldDisableScroll ? "disabled" : "top";
+          return scrollPositionRestoration();
         },
         anchorScrolling: "enabled",
       }),
@@ -67,7 +86,8 @@ export const appConfig: ApplicationConfig = {
       }),
       withEventReplay(),
     ),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideAuthFeature(),
     provideAppCharts(),
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),
@@ -77,6 +97,13 @@ export const appConfig: ApplicationConfig = {
     },
     provideAppInitializer(() => {
       inject(Sentry.TraceService);
+    }),
+    provideAppInitializer(() => {
+      return inject(AuthStateService)
+        .init()
+        .catch((error) => {
+          console.error("Clerk initialization failed:", error);
+        });
     }),
     {
       provide: ErrorHandler,

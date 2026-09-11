@@ -44,6 +44,9 @@ jobs:
           load: true
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO_NAME }}:latest
           build-args: |
+            CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
+            WWW_API_BASE_URI=${{ vars.WWW_API_BASE_URI }}
+            NG_ALLOWED_HOSTS=${{ vars.NG_ALLOWED_HOSTS }}
             POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
             POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
@@ -55,6 +58,7 @@ jobs:
             SENTRY_TRACE_SAMPLE_RATE=1
             SENTRY_PROFILE_SAMPLE_RATE=1
             STATIC_ASSET_BASE_URL=https://${{ vars.CDN_HOST }}/${{ vars.CDN_PREFIX }}/${{ steps.asset-version.outputs.version }}/
+            BUILD_SOURCE_MAP=true
       - name: Extract static assets from built Docker image
         env:
           IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO_NAME }}:latest
@@ -63,12 +67,28 @@ jobs:
           trap 'docker rm -f "${CONTAINER_ID}" >/dev/null 2>&1 || true' EXIT
           mkdir -p ./dist/sc-www
           docker cp "${CONTAINER_ID}:/usr/share/www/static" "./dist/sc-www/browser"
+      - name: Create Sentry release
+        uses: getsentry/action-release@v3.6.0
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_URL: ${{ secrets.SENTRY_URL }}
+        with:
+          environment: production
+          ignore_missing: true
+          release: ${{ github.sha }}
+          sourcemaps: ./dist/sc-www/browser
+          url_prefix: https://${{ vars.CDN_HOST }}/${{ vars.CDN_PREFIX }}/${{ steps.asset-version.outputs.version }}
       - name: Upload static assets to versioned CDN prefix
         env:
           CDN_BUCKET: ${{ vars.CDN_BUCKET }}
           CDN_PREFIX: ${{ vars.CDN_PREFIX }}
           CDN_ASSET_VERSION: ${{ steps.asset-version.outputs.version }}
         run: |
+          find ./dist/sc-www/browser -name '*.map' -delete
+          find ./dist/sc-www/browser \( -name '*.js' -o -name '*.css' \) -print0 |
+            xargs -0 sed -i '/sourceMappingURL/d'
           aws s3 sync ./dist/sc-www/browser "s3://${CDN_BUCKET}/${CDN_PREFIX}/${CDN_ASSET_VERSION}/" --delete
       - name: Prune old CDN asset versions (keep latest 5)
         env:
@@ -85,17 +105,6 @@ jobs:
             echo "Pruning ${VERSION}"
             aws s3 rm "s3://${CDN_BUCKET}/${CDN_PREFIX}/${VERSION}/" --recursive
           done
-
-      - name: Create Sentry release
-        uses: getsentry/action-release@v3.6.0
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-          SENTRY_URL: ${{ secrets.SENTRY_URL }}
-        with:
-          environment: production
-          ignore_missing: true
 
       - name: Redeploy ECS service
         env:

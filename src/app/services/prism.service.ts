@@ -3,8 +3,6 @@ import { isPlatformBrowser } from "@angular/common";
 
 // Prism core
 import "prismjs";
-// themes
-import "prismjs/themes/prism-tomorrow.css";
 // languages
 import "prismjs/components/prism-markup";
 import "prismjs/components/prism-css";
@@ -16,17 +14,11 @@ import "prismjs/components/prism-r";
 import "prismjs/components/prism-sql";
 // plugins
 import "prismjs/plugins/line-highlight/prism-line-highlight";
-import "prismjs/plugins/line-highlight/prism-line-highlight.css";
 import "prismjs/plugins/line-numbers/prism-line-numbers";
-import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 import "prismjs/plugins/command-line/prism-command-line";
-import "prismjs/plugins/command-line/prism-command-line.css";
 import "prismjs/plugins/normalize-whitespace/prism-normalize-whitespace";
 import "prismjs/plugins/toolbar/prism-toolbar";
-import "prismjs/plugins/toolbar/prism-toolbar.css";
 import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard";
-// custom styles (actually loaded in angular.json with the other CSS files)
-import "../../assets/prism-js-override.css";
 
 @Injectable({
   providedIn: "root",

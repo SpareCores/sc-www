@@ -36,6 +36,7 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { Button } from "../../components/button/button";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import {
   formatBooleanIconHtml,
   formatNumberWithCommas,
@@ -116,6 +117,7 @@ interface PropertyCategoryDefinition {
     EmbedDebugComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    BookmarkButton,
   ],
   templateUrl: "./server-details.component.html",
   styleUrl: "./server-details.component.scss",

@@ -38,7 +38,7 @@
           <div class="flex flex-col gap-3">
             <div class="flex justify-between">
               <div class="flex gap-2 items-center">
-                @if (isAuthenticated()) {
+                @if (auth.isAuthenticated()) {
                   <input
                     type="checkbox"
                     id="filter_continent_{{ continent.continent }}"
@@ -103,7 +103,7 @@
           <div class="flex flex-col gap-3">
             <div class="flex justify-between">
               <div class="flex gap-2 items-center">
-                @if (isAuthenticated()) {
+                @if (auth.isAuthenticated()) {
                   <input
                     type="checkbox"
                     id="filter_vendor_regions_{{ vendorId }}"

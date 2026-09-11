@@ -96,8 +96,39 @@ $content-max-width: 1400px;
   }
 }
 
+.sc-auth-pending-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: #082f49;
+}
+
+.sc-auth-pending-overlay__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.sc-auth-pending-overlay__text {
+  margin: 0;
+  color: #fff;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.sc-auth-pending-overlay__text--error {
+  color: #f87171;
+}
+
 body {
   @apply bg-sky-950;
+  scrollbar-gutter: stable;
 }
 
 :root {
@@ -142,6 +173,16 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none; /* This hides the spinners */
   margin: 0; /* This removes the extra space created by the spinners */
+}
+
+.cl-formFieldInput:not([type="checkbox"]):not([type="radio"]),
+.cl-input:not([type="checkbox"]):not([type="radio"]) {
+  border-radius: 0.5rem !important;
+}
+
+.cl-formFieldInput[type="checkbox"],
+.cl-input[type="checkbox"] {
+  border-radius: 0.25rem !important;
 }
 
 @keyframes spin-slot {

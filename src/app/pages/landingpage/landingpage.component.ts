@@ -1,11 +1,12 @@
 import {
+  ChangeDetectorRef,
   CUSTOM_ELEMENTS_SCHEMA,
   Component,
   PLATFORM_ID,
   OnInit,
   ViewChild,
   ElementRef,
-  AfterViewInit,
+  afterNextRender,
   inject,
 } from "@angular/core";
 import { ArticleMeta, ArticlesService } from "../../services/articles.service";
@@ -63,7 +64,7 @@ import {
   templateUrl: "./landingpage.component.html",
   styleUrl: "./landingpage.component.scss",
 })
-export class LandingpageComponent implements OnInit, AfterViewInit {
+export class LandingpageComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
   private SEOHandler = inject(SeoHandlerService);
@@ -71,6 +72,23 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   private analyticsService = inject(AnalyticsService);
   private neetoCalService = inject(NeetoCalService);
   private prismService = inject(PrismService);
+  private cdr = inject(ChangeDetectorRef);
+
+  showResourceTrackerCode = false;
+
+  constructor() {
+    afterNextRender(() => {
+      if (!isPlatformBrowser(this.platformId)) {
+        return;
+      }
+
+      this.showResourceTrackerCode = true;
+      this.cdr.detectChanges();
+      this.prismService.highlightAll();
+      this.neetoCalService.initialize();
+      this.welcomeAnim();
+    });
+  }
 
   featuredArticles: ArticleMeta[] = [];
 
@@ -118,7 +136,6 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
         spinner2.push({ name: "t4g.nano" });
         spinner3.push({ name: "US East", city: "Ashburn" });
       }
-      this.welcomeAnim();
 
       document
         .getElementById("ramCount")
@@ -135,13 +152,6 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
             e.preventDefault();
           }
         });
-    }
-  }
-
-  ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.prismService.highlightAll();
-      this.neetoCalService.initialize();
     }
   }
 
@@ -469,6 +479,8 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
       console.error(result.reason);
       this.spinnerContents[2][index] = this.getUnavailableRegionItem();
     });
+
+    this.cdr.detectChanges();
   }
 
   spinClicked() {
@@ -520,6 +532,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     }
 
     this.isSpinning = true;
+    this.cdr.detectChanges();
 
     const spinAnimDiff = Date.now() - this.spinStart;
     const spinAnimEnd = Math.max(0, 4200 - spinAnimDiff);
@@ -563,6 +576,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
       this.priceValue = "$" + animPriceEnd;
       this.isSpinning = false;
       this.hasRealValues = true;
+      this.cdr.detectChanges();
       this.analyticsService.trackEvent("slot machine finished", {
         autostarted: isFake,
       });

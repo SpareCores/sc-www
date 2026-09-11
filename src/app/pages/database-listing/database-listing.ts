@@ -5,7 +5,9 @@ import {
   OnInit,
   PLATFORM_ID,
   ViewChild,
+  effect,
   inject,
+  signal,
   viewChild,
 } from "@angular/core";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
@@ -50,6 +52,17 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
+import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
+import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { CollectionsUiService } from "../../collections/collections-ui.service";
+import {
+  isDefaultListingQuery,
+  SAVED_ITEM_FALLBACK_NOTE,
+  normalizeSearchQuery,
+} from "../../collections/collections.utils";
+import type { SavedSearchItem } from "../../collections/collections.types";
+import { AuthStateService } from "../../core/auth";
 import {
   BestDatabasePriceAllocationType,
   CurrencyOption,
@@ -106,6 +119,9 @@ type DatabaseListingQuery = Params &
     StoragePipe,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
+    BookmarkButton,
+    InstanceFavoriteContextMenuComponent,
+    CollectionSaveModalComponent,
   ],
   templateUrl: "./database-listing.html",
   styleUrl: "./database-listing.scss",
@@ -123,6 +139,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
+  private collectionsUi = inject(CollectionsUiService);
+  private auth = inject(AuthStateService);
+  saveSearchModal = viewChild(CollectionSaveModalComponent);
   private serverCompare = inject(ServerCompareService);
 
   isCollapsed = false;
@@ -202,12 +221,50 @@ export class DatabaseListing implements OnInit, OnDestroy {
   description =
     'Explore, search, and evaluate the supported managed database services (DBaaS) in the table below. This comprehensive comparison includes diverse attributes such as database engine, version support, vCPU count, memory, storage capacity, high availability, backup retention, and regional availability. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare database instances by selecting at least two rows using the checkboxes.';
 
+  private readonly defaultTitle = "Cloud Databases Navigator";
+  private readonly defaultDescription = this.description;
+  private readonly pendingSaveSearchClose = signal(false);
+  private readonly editingSearchId = signal<string | null>(null);
+  private bookmarkSource: SavedSearchItem | null = null;
+
   clipboardIcon = "clipboard";
   tooltipContent = "";
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
 
   private subscription = new Subscription();
+
+  constructor() {
+    effect(() => {
+      this.collectionsUi.store.savedSearches();
+      this.syncSavedSearchChrome();
+    });
+
+    effect(() => {
+      if (!this.pendingSaveSearchClose()) {
+        return;
+      }
+
+      this.collectionsUi.store.savedSearches();
+      const editingId = this.editingSearchId();
+      const query = this.getQueryObjectBase();
+      const saved = this.collectionsUi.activeSavedSearch("databases", query);
+      const saving = this.collectionsUi.isSavingSearch("databases", query);
+      const updating = editingId
+        ? this.collectionsUi.isUpdatingSearch(editingId)
+        : saved
+          ? this.collectionsUi.isUpdatingSearch(saved.id)
+          : false;
+
+      if (saving || updating) {
+        return;
+      }
+
+      this.pendingSaveSearchClose.set(false);
+      this.editingSearchId.set(null);
+      this.saveSearchModal()?.close();
+    });
+  }
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
@@ -265,7 +322,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.route.queryParams.subscribe((params: Params) => {
-        const query: DatabaseListingQuery = { ...params };
+        const query: DatabaseListingQuery = normalizeSearchQuery({
+          ...params,
+        }) as DatabaseListingQuery;
         this.query = query;
 
         const parsedPage = parseInt(String(query.page ?? ""));
@@ -329,6 +388,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
         this.refreshColumns(false);
         this._searchDatabases(true);
+        this.syncSavedSearchChrome();
       }),
     );
 
@@ -690,6 +750,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   toggleCompare2(event: Event, database: DatabasePKs & { selected?: boolean }) {
     event.stopPropagation();
+    if (this.isCompareCheckboxDisabled(!!database.selected, database)) {
+      return;
+    }
     database.selected = !database.selected;
     this.toggleCompare(!!database.selected, database);
   }
@@ -698,11 +761,157 @@ export class DatabaseListing implements OnInit, OnDestroy {
     event: boolean,
     database: DatabasePKs & { selected?: boolean },
   ) {
-    this.serverCompare.toggleDatabaseCompare(event, {
+    const added = this.serverCompare.toggleDatabaseCompare(event, {
       database: database.api_reference,
       vendor: database.vendor_id,
       display_name: database.display_name,
     });
+    if (!added) {
+      database.selected = false;
+    }
+  }
+
+  isCompareCheckboxDisabled(
+    selected: boolean,
+    database?: { vendor_id: string; api_reference: string },
+  ): boolean {
+    return this.serverCompare.isDatabaseCompareCheckboxDisabled(
+      selected,
+      database
+        ? { vendor: database.vendor_id, database: database.api_reference }
+        : undefined,
+    );
+  }
+
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  activeSavedSearch() {
+    return this.collectionsUi.activeSavedSearch(
+      "databases",
+      this.getQueryObjectBase(),
+    );
+  }
+
+  canSaveSearch(): boolean {
+    return this.collectionsUi.canSaveSearch(this.getQueryObjectBase());
+  }
+
+  openSaveSearchModal(): void {
+    if (!this.isAuthenticated()) {
+      this.collectionsUi.promptRegisterForFeature();
+      return;
+    }
+
+    const exact = this.activeSavedSearch();
+    const draft = exact ?? this.bookmarkSource;
+    this.editingSearchId.set(exact?.id ?? null);
+    this.saveSearchModal()?.open(draft?.name ?? "", draft?.note ?? "");
+  }
+
+  confirmSaveSearch(payload: { name: string; note?: string }): void {
+    const editingId = this.editingSearchId();
+    const saved = this.activeSavedSearch();
+    this.pendingSaveSearchClose.set(true);
+    const query = this.getQueryObjectBase();
+
+    if (editingId || saved) {
+      this.collectionsUi.updateSearch(
+        editingId ?? saved!.id,
+        "databases",
+        query,
+        payload.name,
+        payload.note,
+      );
+      return;
+    }
+
+    this.collectionsUi.saveSearch(
+      "databases",
+      query,
+      payload.name,
+      payload.note,
+    );
+  }
+
+  isSaveSearchPending(): boolean {
+    const editingId = this.editingSearchId();
+    if (editingId) {
+      return this.collectionsUi.isUpdatingSearch(editingId);
+    }
+
+    const saved = this.activeSavedSearch();
+    if (saved) {
+      return this.collectionsUi.isUpdatingSearch(saved.id);
+    }
+
+    return this.collectionsUi.isSavingSearch(
+      "databases",
+      this.getQueryObjectBase(),
+    );
+  }
+
+  private baseDatabaseListingBreadcrumbs(): BreadcrumbSegment[] {
+    return [
+      { name: "Home", url: "/" },
+      { name: "Databases", url: "/databases" },
+    ];
+  }
+
+  private syncSavedSearchChrome(): void {
+    const exact = this.activeSavedSearch();
+    if (exact) {
+      this.bookmarkSource = exact;
+    } else if (isDefaultListingQuery(this.getQueryObjectBase())) {
+      this.bookmarkSource = null;
+    }
+
+    if (exact) {
+      this.title = exact.name;
+      this.description = exact.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
+      this.breadcrumbs = [
+        ...this.baseDatabaseListingBreadcrumbs(),
+        { name: exact.name, url: this.router.url },
+      ];
+      this.SEOHandler.updateTitleAndMetaTags(
+        `${exact.name} - Spare Cores`,
+        this.description,
+        "cloud, database, dbaas, postgres, price, comparison, sparecores",
+      );
+      return;
+    }
+
+    this.title = this.defaultTitle;
+    this.description = this.defaultDescription;
+    this.breadcrumbs = this.baseDatabaseListingBreadcrumbs();
+    this.SEOHandler.updateTitleAndMetaTags(
+      `${this.defaultTitle} - Spare Cores`,
+      this.description,
+      "cloud, database, dbaas, postgres, price, comparison, sparecores",
+    );
+  }
+
+  deleteSavedSearch(): void {
+    const saved = this.activeSavedSearch();
+    if (saved) {
+      this.collectionsUi.deleteSearch(saved.id);
+      this.bookmarkSource = null;
+    }
+  }
+
+  toggleSavedSearch(): void {
+    if (this.activeSavedSearch()) {
+      this.deleteSavedSearch();
+      return;
+    }
+
+    this.openSaveSearchModal();
+  }
+
+  isDeleteSearchPending(): boolean {
+    const saved = this.activeSavedSearch();
+    return !!saved && this.collectionsUi.isDeletingSearch(saved.id);
   }
 
   compareCount() {

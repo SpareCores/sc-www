@@ -1,0 +1,229 @@
+@if (auth.signInModalOpen()) {
+<div class="auth-modal" (click)="close()">
+  <div class="auth-modal__panel" (click)="$event.stopPropagation()">
+    <sc-button
+      class="auth-modal__close"
+      variant="close"
+      icon="x"
+      ariaLabel="Close sign in modal"
+      (buttonClick)="close()"
+    ></sc-button>
+
+    @if (step === "login") {
+    <div class="auth-modal__body">
+      <div class="auth-modal__header">
+        <h2 class="auth-modal__title">Sign in to Spare Cores</h2>
+        <p class="auth-modal__subtitle">Welcome back!</p>
+      </div>
+
+      <form class="auth-modal__form" (ngSubmit)="submitLogin()">
+        <label class="auth-modal__field">
+          <span>Email address</span>
+          <input
+            type="email"
+            name="emailAddress"
+            placeholder="Enter your email address"
+            autocomplete="email"
+            [(ngModel)]="emailAddress"
+          />
+        </label>
+
+        <label class="auth-modal__field">
+          <span>Password</span>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            [(ngModel)]="password"
+          />
+        </label>
+
+        <div class="auth-modal__forgot">
+          <button
+            type="button"
+            class="auth-modal__footer-link"
+            (click)="openResetRequest()"
+          >
+            Forgot password?
+          </button>
+        </div>
+
+        <div
+          id="clerk-captcha"
+          data-cl-theme="dark"
+          data-cl-size="flexible"
+        ></div>
+
+        @if (errorMessage) {
+        <p class="auth-modal__error">{{ errorMessage }}</p>
+        }
+
+        <sc-button
+          type="submit"
+          label="Continue"
+          icon="chevron-right"
+          size="small"
+          buttonClass="w-full !justify-center"
+          [loading]="busy === 'submit'"
+          [disabled]="!canSubmitLogin() || !!busy"
+        ></sc-button>
+      </form>
+
+      <div class="auth-modal__divider">
+        <span>or</span>
+      </div>
+
+      <sc-button
+        label="Continue with GitHub"
+        icon="github"
+        iconPosition="start"
+        size="small"
+        variant="outline"
+        color="brand"
+        buttonClass="w-full !justify-center"
+        [loading]="busy === 'github'"
+        [disabled]="!!busy"
+        (buttonClick)="continueWithGithub()"
+      ></sc-button>
+
+      <div class="auth-modal__footer">
+        <p>
+          Don't have an account?
+          <button
+            type="button"
+            class="auth-modal__footer-link"
+            (click)="openSignUp()"
+          >
+            Register!
+          </button>
+        </p>
+      </div>
+    </div>
+    } @else if (step === "reset-request") {
+    <div class="auth-modal__body">
+      <div class="auth-modal__header">
+        <h2 class="auth-modal__title">Reset your password</h2>
+        <p class="auth-modal__subtitle">
+          Enter your email address and we'll send you a verification code.
+        </p>
+      </div>
+
+      <form class="auth-modal__form" (ngSubmit)="submitResetRequest()">
+        <label class="auth-modal__field">
+          <span>Email address</span>
+          <input
+            type="email"
+            name="resetEmailAddress"
+            placeholder="Enter your email address"
+            autocomplete="email"
+            [(ngModel)]="emailAddress"
+          />
+        </label>
+
+        @if (errorMessage) {
+        <p class="auth-modal__error">{{ errorMessage }}</p>
+        }
+
+        <div class="auth-modal__actions">
+          <sc-button
+            type="button"
+            label="Back"
+            icon="chevron-left"
+            iconPosition="start"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [disabled]="!!busy"
+            (buttonClick)="backToLogin()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            label="Send code"
+            icon="chevron-right"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'reset'"
+            [disabled]="!canSubmitResetRequest() || !!busy"
+          ></sc-button>
+        </div>
+      </form>
+    </div>
+    } @else {
+    <div class="auth-modal__body">
+      <div class="auth-modal__header">
+        <h2 class="auth-modal__title">Set a new password</h2>
+        <p class="auth-modal__subtitle">
+          Enter the verification code sent to {{ emailAddress.trim() }} and
+          choose a new password.
+        </p>
+      </div>
+
+      <form class="auth-modal__form" (ngSubmit)="submitResetVerify()">
+        <label class="auth-modal__field">
+          <span>Verification code</span>
+          <input
+            type="text"
+            name="verificationCode"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            placeholder="Enter verification code"
+            [(ngModel)]="verificationCode"
+          />
+        </label>
+
+        <label class="auth-modal__field">
+          <span>New password</span>
+          <input
+            type="password"
+            name="newPassword"
+            placeholder="Create a new password"
+            autocomplete="new-password"
+            [(ngModel)]="password"
+          />
+        </label>
+
+        @if (errorMessage) {
+        <p class="auth-modal__error">{{ errorMessage }}</p>
+        }
+
+        <div class="auth-modal__actions">
+          <sc-button
+            type="button"
+            label="Resend code"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'resend'"
+            [disabled]="!!busy"
+            (buttonClick)="resendResetCode()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            label="Reset password"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'reset'"
+            [disabled]="!canSubmitResetVerify() || !!busy"
+          ></sc-button>
+        </div>
+      </form>
+
+      <div class="auth-modal__footer">
+        <p>
+          <button
+            type="button"
+            class="auth-modal__footer-link"
+            (click)="backToLogin()"
+          >
+            Back to sign in
+          </button>
+        </p>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+}

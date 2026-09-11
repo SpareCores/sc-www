@@ -1,0 +1,52 @@
+<div
+  class="instance-favorite-context-menu__target"
+  (contextmenu)="onContextMenu($event)"
+>
+  <ng-content></ng-content>
+</div>
+
+<div
+  #menuTrigger
+  class="instance-favorite-context-menu__trigger"
+  [style.left.px]="menuPosition().x"
+  [style.top.px]="menuPosition().y"
+></div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOpen]="menuOpen()"
+  [cdkConnectedOverlayOrigin]="menuTrigger"
+  [cdkConnectedOverlayPositions]="[
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'top',
+    },
+  ]"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  (backdropClick)="closeMenu()"
+  (detach)="closeMenu()"
+>
+  <div
+    class="instance-favorite-context-menu__panel"
+    role="menu"
+    (keydown.escape)="closeMenu()"
+  >
+    <button
+      type="button"
+      class="instance-favorite-context-menu__item"
+      role="menuitem"
+      [disabled]="isLoading()"
+      (click)="toggleFavorite()"
+    >
+      @if (isBookmarked()) {
+      <svg lucideBookmarkOff class="h-4 w-4"></svg>
+      } @else {
+      <svg lucideBookmarkPlus class="h-4 w-4"></svg>
+      }
+      <span>{{ menuLabel() }}</span>
+    </button>
+  </div>
+</ng-template>

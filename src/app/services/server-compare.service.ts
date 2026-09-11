@@ -2,6 +2,12 @@ import { Injectable, OnDestroy, inject } from "@angular/core";
 import { ServerPKs } from "../../../sdk/data-contracts";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
+import { AuthStateService } from "../core/auth";
+import { ToastService } from "./toast.service";
+import {
+  GUEST_COMPARE_LIMIT,
+  FEATURE_REGISTER_SUBTITLE,
+} from "../collections/collections.utils";
 
 export interface ZoneAndRegion {
   zone: string;
@@ -43,6 +49,8 @@ export interface DatabaseCompareBaseline {
 })
 export class ServerCompareService implements OnDestroy {
   private router = inject(Router);
+  private auth = inject(AuthStateService);
+  private toastService = inject(ToastService);
 
   public selectedForCompare: ServerCompare[] = [];
   public selectedDatabases: DatabaseCompare[] = [];
@@ -55,6 +63,10 @@ export class ServerCompareService implements OnDestroy {
   public baselineDatabase: DatabaseCompareBaseline | null = null;
 
   toggleCompare(event: boolean, server: ServerCompareItem) {
+    if (event && !this.canAddServerToCompare(server)) {
+      return false;
+    }
+
     if (event) {
       let existing = this.selectedForCompare.find(
         (item) =>
@@ -78,6 +90,7 @@ export class ServerCompareService implements OnDestroy {
           server: server.server,
           zonesRegions: server.zoneRegion ? [server.zoneRegion] : [],
         });
+        this.promptGuestServerCompareLimitIfReached(this.serverCompareCount());
       }
     } else {
       if (!server.zoneRegion) {
@@ -108,9 +121,14 @@ export class ServerCompareService implements OnDestroy {
       }
     }
     this.selectionChanged.next(this.selectedForCompare);
+    return true;
   }
 
   toggleDatabaseCompare(event: boolean, database: DatabaseCompare) {
+    if (event && !this.canAddDatabaseToCompare(database)) {
+      return false;
+    }
+
     if (event) {
       const existing = this.selectedDatabases.find(
         (item) =>
@@ -123,6 +141,9 @@ export class ServerCompareService implements OnDestroy {
           vendor: database.vendor,
           database: database.database,
         });
+        this.promptGuestDatabaseCompareLimitIfReached(
+          this.databaseCompareCount(),
+        );
       }
     } else {
       this.selectedDatabases = this.selectedDatabases.filter(
@@ -133,6 +154,137 @@ export class ServerCompareService implements OnDestroy {
       this.clearDatabaseBaselineIfMatches(database);
     }
     this.databaseSelectionChanged.next(this.selectedDatabases);
+    return true;
+  }
+
+  canAddServerToCompare(server: ServerCompareItem): boolean {
+    if (this.auth.isAuthenticated()) {
+      return true;
+    }
+
+    const existing = this.selectedForCompare.find(
+      (item) => item.vendor === server.vendor && item.server === server.server,
+    );
+    if (existing) {
+      return true;
+    }
+
+    if (this.serverCompareCount() >= GUEST_COMPARE_LIMIT) {
+      this.showGuestServerCompareLimitToast();
+      return false;
+    }
+
+    return true;
+  }
+
+  canAddDatabaseToCompare(database: DatabaseCompare): boolean {
+    if (this.auth.isAuthenticated()) {
+      return true;
+    }
+
+    const existing = this.selectedDatabases.find(
+      (item) =>
+        item.vendor === database.vendor && item.database === database.database,
+    );
+    if (existing) {
+      return true;
+    }
+
+    if (this.databaseCompareCount() >= GUEST_COMPARE_LIMIT) {
+      this.showGuestDatabaseCompareLimitToast();
+      return false;
+    }
+
+    return true;
+  }
+
+  isServerCompareCheckboxDisabled(
+    selected: boolean,
+    item?: { vendor: string; server: string },
+  ): boolean {
+    if (selected || this.auth.isAuthenticated()) {
+      return false;
+    }
+
+    if (
+      item &&
+      this.selectedForCompare.some(
+        (entry) => entry.vendor === item.vendor && entry.server === item.server,
+      )
+    ) {
+      return false;
+    }
+
+    return this.serverCompareCount() >= GUEST_COMPARE_LIMIT;
+  }
+
+  isDatabaseCompareCheckboxDisabled(
+    selected: boolean,
+    item?: { vendor: string; database: string },
+  ): boolean {
+    if (selected || this.auth.isAuthenticated()) {
+      return false;
+    }
+
+    if (
+      item &&
+      this.selectedDatabases.some(
+        (entry) =>
+          entry.vendor === item.vendor && entry.database === item.database,
+      )
+    ) {
+      return false;
+    }
+
+    return this.databaseCompareCount() >= GUEST_COMPARE_LIMIT;
+  }
+
+  private showGuestServerCompareLimitToast(): void {
+    this.toastService.show({
+      id: "guest-server-compare-limit",
+      title: "Server limit reached.",
+      body: `Guests can only compare up to ${GUEST_COMPARE_LIMIT} servers at a time.`,
+      type: "warning",
+      action: {
+        label: "Register for free to unlock unlimited comparisons!",
+        onClick: () =>
+          this.auth.signUp({
+            subtitle: FEATURE_REGISTER_SUBTITLE,
+          }),
+      },
+    });
+  }
+
+  private showGuestDatabaseCompareLimitToast(): void {
+    this.toastService.show({
+      id: "guest-database-compare-limit",
+      title: "Database limit reached.",
+      body: `Guests can only compare up to ${GUEST_COMPARE_LIMIT} databases at a time.`,
+      type: "warning",
+      action: {
+        label: "Register for free to unlock unlimited comparisons!",
+        onClick: () =>
+          this.auth.signUp({
+            subtitle: FEATURE_REGISTER_SUBTITLE,
+          }),
+      },
+    });
+  }
+
+  private promptGuestServerCompareLimitIfReached(count: number): void {
+    if (this.auth.isAuthenticated() || count !== GUEST_COMPARE_LIMIT) {
+      return;
+    }
+
+    this.showGuestServerCompareLimitToast();
+  }
+
+  private promptGuestDatabaseCompareLimitIfReached(count: number): void {
+    if (this.auth.isAuthenticated() || count !== GUEST_COMPARE_LIMIT) {
+      return;
+    }
+
+    this.showGuestDatabaseCompareLimitToast();
   }
 
   compareCount(): number {
