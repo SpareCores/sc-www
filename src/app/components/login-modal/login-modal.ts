@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Auth } from "../../services/auth/auth";
+import { AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
 
 type LoginBusy = "submit" | "github" | "reset" | "resend";
@@ -14,7 +14,7 @@ type LoginStep = "login" | "reset-request" | "reset-verify";
   styleUrl: "../auth-modal.scss",
 })
 export class LoginModal {
-  protected readonly auth = inject(Auth);
+  protected readonly auth = inject(AuthStateService);
 
   protected step: LoginStep = "login";
   protected emailAddress = "";

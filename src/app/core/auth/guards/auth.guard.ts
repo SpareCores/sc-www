@@ -1,10 +1,10 @@
 import { isPlatformBrowser } from "@angular/common";
 import { inject, PLATFORM_ID } from "@angular/core";
 import { CanActivateFn, Router } from "@angular/router";
-import { Auth } from "./auth";
+import { AuthStateService } from "../data-access/auth-state.service";
 
 export const authGuard: CanActivateFn = async () => {
-  const auth = inject(Auth);
+  const auth = inject(AuthStateService);
   const router = inject(Router);
   const platformId = inject(PLATFORM_ID);
 
@@ -24,18 +24,23 @@ export const authGuard: CanActivateFn = async () => {
     if (await auth.waitForSignedIn(20000)) {
       return true;
     }
-    return router.createUrlTree(["/auth/callback"]);
+    auth.clearAuthPending();
+    return router.createUrlTree(["/"]);
   }
 
   return router.createUrlTree(["/"]);
 };
 
 export const blockLandingDuringAuthGuard: CanActivateFn = () => {
-  const auth = inject(Auth);
+  const auth = inject(AuthStateService);
   const router = inject(Router);
   const platformId = inject(PLATFORM_ID);
 
   if (!isPlatformBrowser(platformId)) {
+    return true;
+  }
+
+  if (auth.awaitingGithubConsent() || auth.signUpGithubConsent()) {
     return true;
   }
 
@@ -49,5 +54,5 @@ export const blockLandingDuringAuthGuard: CanActivateFn = () => {
     return router.createUrlTree(["/bookmarks"]);
   }
 
-  return router.createUrlTree(["/auth/callback"]);
+  return true;
 };

@@ -1,22 +1,19 @@
 @if (auth.signUpModalOpen()) {
 <div class="auth-modal" (click)="close()">
   <div class="auth-modal__panel" (click)="$event.stopPropagation()">
-    <button
-      type="button"
+    <sc-button
       class="auth-modal__close"
-      aria-label="Close registration modal"
-      (click)="close()"
-    >
-      ×
-    </button>
+      variant="close"
+      icon="x"
+      ariaLabel="Close registration modal"
+      (buttonClick)="close()"
+    ></sc-button>
 
     @if (step === "details") {
     <div class="auth-modal__body">
       <div class="auth-modal__header">
         <h2 class="auth-modal__title">Create your account</h2>
-        <p class="auth-modal__subtitle">
-          Welcome! Please fill in the details to get started.
-        </p>
+        <p class="auth-modal__subtitle">{{ auth.signUpSubtitle() }}</p>
       </div>
 
       <form class="auth-modal__form" (ngSubmit)="continueToConsent()">
@@ -156,7 +153,9 @@
         <div class="auth-modal__consent-actions">
           <sc-button
             type="button"
-            [label]="pendingGithubConsent ? 'Back to login' : 'Back'"
+            [label]="
+              auth.githubConsentReturnToLogin() ? 'Back to login' : 'Back'
+            "
             icon="chevron-left"
             iconPosition="start"
             variant="outline"

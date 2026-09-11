@@ -1,21 +1,25 @@
 import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";
-import { Auth } from "./auth";
+import { AUTH_MESSAGES, AuthStateService, ClerkService } from "./index";
 
-describe("Auth", () => {
-  function createAuth(platformId: string = "browser"): Auth {
+describe("AuthStateService", () => {
+  function createAuth(platformId: string = "browser"): AuthStateService {
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: platformId },
         provideRouter([]),
       ],
     });
-    return TestBed.inject(Auth);
+    return TestBed.inject(AuthStateService);
+  }
+
+  function clerkService(): ClerkService {
+    return TestBed.inject(ClerkService);
   }
 
   function setUser(
-    auth: Auth,
+    auth: AuthStateService,
     user: {
       firstName?: string | null;
       lastName?: string | null;
@@ -23,9 +27,16 @@ describe("Auth", () => {
       imageUrl?: string | null;
     } | null,
   ): void {
-    (auth as unknown as { _user: { set: (value: unknown) => void } })._user.set(
-      user,
-    );
+    auth.setUser(user as never);
+  }
+
+  function setClerkInstance(clerk: unknown, initResolved = true): void {
+    const service = clerkService() as unknown as {
+      clerk: unknown;
+      initPromise: Promise<void> | null;
+    };
+    service.clerk = clerk;
+    service.initPromise = initResolved ? Promise.resolve() : null;
   }
 
   it("should be created", () => {
@@ -86,7 +97,7 @@ describe("Auth", () => {
       signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
       user: null,
     };
-    (auth as unknown as { clerk: typeof clerk }).clerk = clerk;
+    setClerkInstance(clerk);
 
     auth.signIn();
     expect(auth.signInModalOpen()).toBeTrue();
@@ -117,7 +128,7 @@ describe("Auth", () => {
       signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
       user: signedInUser,
     };
-    (auth as unknown as { clerk: typeof clerk }).clerk = clerk;
+    setClerkInstance(clerk);
     setUser(auth, clerk.user);
 
     clerk.user = null;
@@ -146,8 +157,7 @@ describe("Auth", () => {
     expect(toastSpy).toHaveBeenCalledTimes(2);
     expect(toastSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        title:
-          "Auth server offline. Please contact support@sparecores.com for assistance.",
+        title: AUTH_MESSAGES.authUnavailable,
         type: "error",
       }),
     );
@@ -163,8 +173,7 @@ describe("Auth", () => {
 
   it("returns null token when Clerk session is unavailable", async () => {
     const auth = createAuth();
-    (auth as unknown as { initPromise: Promise<void> }).initPromise =
-      Promise.resolve();
+    setClerkInstance(null);
 
     await expectAsync(auth.getToken()).toBeResolvedTo(null);
   });
@@ -174,16 +183,9 @@ describe("Auth", () => {
     const getToken = jasmine
       .createSpy("getToken")
       .and.resolveTo("session-token");
-    (
-      auth as unknown as {
-        clerk: { session: { getToken: typeof getToken } };
-        initPromise: Promise<void>;
-      }
-    ).clerk = {
+    setClerkInstance({
       session: { getToken },
-    };
-    (auth as unknown as { initPromise: Promise<void> }).initPromise =
-      Promise.resolve();
+    });
 
     await expectAsync(auth.getToken()).toBeResolvedTo("session-token");
     expect(getToken).toHaveBeenCalledWith(undefined);
@@ -194,16 +196,9 @@ describe("Auth", () => {
     const getToken = jasmine
       .createSpy("getToken")
       .and.resolveTo("keeper-token");
-    (
-      auth as unknown as {
-        clerk: { session: { getToken: typeof getToken } };
-        initPromise: Promise<void>;
-      }
-    ).clerk = {
+    setClerkInstance({
       session: { getToken },
-    };
-    (auth as unknown as { initPromise: Promise<void> }).initPromise =
-      Promise.resolve();
+    });
 
     await expectAsync(auth.getToken("keeper")).toBeResolvedTo("keeper-token");
     expect(getToken).toHaveBeenCalledWith({ template: "keeper" });

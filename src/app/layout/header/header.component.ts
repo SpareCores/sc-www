@@ -38,7 +38,7 @@ import {
 } from "@lucide/angular";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
-import { Auth } from "../../services/auth/auth";
+import { AuthStateService } from "../../core/auth";
 
 @Component({
   selector: "sc-header",
@@ -83,7 +83,7 @@ import { Auth } from "../../services/auth/auth";
 export class HeaderComponent {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
-  protected readonly auth = inject(Auth);
+  protected readonly auth = inject(AuthStateService);
 
   menuDropdown = viewChild<FlowbiteDropdownDirective>("menuDropdown");
   aboutDropdown = viewChild<FlowbiteDropdownDirective>("aboutDropdown");

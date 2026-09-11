@@ -7,7 +7,7 @@ import {
   HttpResponse,
 } from "../../../../sdk/http-client";
 import { firstValueFrom } from "rxjs";
-import { Auth } from "../auth/auth";
+import { AuthStateService } from "../../core/auth";
 
 const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
 const RETRY_INTERVALS_SSR = [100, 200]; // in milliseconds
@@ -20,7 +20,7 @@ export class MYHTTPClient extends HttpClientSDK {
   constructor(
     private httpClient: HttpClient,
     @Inject(PLATFORM_ID) private platformId: object,
-    private auth: Auth,
+    private auth: AuthStateService,
   ) {
     super();
   }

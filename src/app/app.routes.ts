@@ -2,10 +2,7 @@ import { Routes } from "@angular/router";
 import { LandingpageComponent } from "./pages/landingpage/landingpage.component";
 import { ServerListingComponent } from "./pages/server-listing/server-listing.component";
 import { ServerPricesComponent } from "./pages/server-prices/server-prices.component";
-import {
-  authGuard,
-  blockLandingDuringAuthGuard,
-} from "./services/auth/auth.guard";
+import { authGuard, blockLandingDuringAuthGuard } from "./core/auth";
 
 export const routes: Routes = [
   {

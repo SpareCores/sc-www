@@ -25,8 +25,11 @@ import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
 import * as Sentry from "@sentry/angular";
 import { provideAppCharts } from "./components/charts/shared/chart-providers";
-import { authInterceptor } from "./shared/interceptors/auth.interceptor";
-import { Auth } from "./services/auth/auth";
+import {
+  AuthStateService,
+  authInterceptor,
+  provideAuthFeature,
+} from "./core/auth";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   return req.method === "GET";
@@ -84,6 +87,7 @@ export const appConfig: ApplicationConfig = {
       withEventReplay(),
     ),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideAuthFeature(),
     provideAppCharts(),
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),
@@ -95,7 +99,7 @@ export const appConfig: ApplicationConfig = {
       inject(Sentry.TraceService);
     }),
     provideAppInitializer(() => {
-      return inject(Auth)
+      return inject(AuthStateService)
         .init()
         .catch((error) => {
           console.error("Clerk initialization failed:", error);

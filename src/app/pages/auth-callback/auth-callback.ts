@@ -1,12 +1,13 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { Component, OnInit, PLATFORM_ID, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Auth } from "../../services/auth/auth";
+import { AuthStateService } from "../../core/auth";
 
 @Component({
   selector: "sc-auth-callback",
   imports: [CommonModule],
   template: `
+    <div id="clerk-captcha"></div>
     @if (errorMessage()) {
       <div class="sc-auth-pending-overlay" role="alert">
         <div class="sc-auth-pending-overlay__content">
@@ -26,7 +27,7 @@ import { Auth } from "../../services/auth/auth";
   `,
 })
 export class AuthCallback implements OnInit {
-  private readonly auth = inject(Auth);
+  private readonly auth = inject(AuthStateService);
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -37,51 +38,62 @@ export class AuthCallback implements OnInit {
       return;
     }
 
-    this.auth.startAuthPending();
-
     const inPopup = !!window.opener && !window.opener.closed;
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get("error")) {
-      await this.finish("error", inPopup);
-      return;
-    }
-
-    try {
-      await this.auth.handleRedirectCallback();
-      if (this.auth.isAuthenticated()) {
-        await this.finish("authenticated", inPopup);
-        return;
-      }
-
-      if (this.auth.needsGithubConsent()) {
-        await this.finish("consent", inPopup);
-        return;
-      }
-
-      await this.finish("error", inPopup);
-    } catch {
-      this.errorMessage.set("Unable to complete sign-in.");
-      await this.finish("error", inPopup);
-    }
-  }
-
-  private async finish(
-    outcome: "authenticated" | "consent" | "error",
-    inPopup: boolean,
-  ): Promise<void> {
     if (inPopup) {
       window.close();
       return;
     }
 
+    const params = new URLSearchParams(window.location.search);
+    const fromGithubSignIn =
+      params.get("intent") === "signIn" ||
+      this.auth.isGithubSignInInProgress() ||
+      this.auth.consumeGithubSignInHandoff();
+
+    this.auth.clearAuthPending();
+
+    if (params.get("error")) {
+      await this.finish("error");
+      return;
+    }
+
+    try {
+      await this.auth.handleRedirectCallback({
+        transferable: !fromGithubSignIn,
+      });
+      if (this.auth.isAuthenticated()) {
+        await this.finish("authenticated");
+        return;
+      }
+      const outcome = this.auth.resolveGithubCallbackOutcome();
+      await this.finish(
+        fromGithubSignIn && outcome === "error" ? "consent" : outcome,
+      );
+    } catch {
+      if (this.auth.isAuthenticated()) {
+        await this.finish("authenticated");
+        return;
+      }
+      if (fromGithubSignIn) {
+        await this.finish("consent");
+        return;
+      }
+      this.errorMessage.set("Unable to complete sign-in.");
+      await this.finish("error");
+    }
+  }
+
+  private async finish(
+    outcome: "authenticated" | "consent" | "error",
+  ): Promise<void> {
     if (outcome === "authenticated") {
       await this.auth.finishAuthRedirect();
       return;
     }
 
     if (outcome === "consent") {
-      this.auth.openGithubConsentSignUp();
+      this.auth.clearAuthPending();
+      this.auth.openGithubConsentSignUp({ transfer: true });
       await this.router.navigateByUrl("/", { replaceUrl: true });
       return;
     }

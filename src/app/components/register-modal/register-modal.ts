@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Auth } from "../../services/auth/auth";
+import { AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
 
 type RegisterBusy = "submit" | "verify" | "resend" | "github";
@@ -15,7 +15,7 @@ type RegisterMethod = "email" | "github";
   styleUrl: "../auth-modal.scss",
 })
 export class RegisterModal {
-  protected readonly auth = inject(Auth);
+  protected readonly auth = inject(AuthStateService);
 
   protected step: RegisterStep = "details";
   protected method: RegisterMethod = "email";
@@ -38,7 +38,7 @@ export class RegisterModal {
       }
 
       if (this.auth.signUpGithubConsent()) {
-        this.pendingGithubConsent = true;
+        this.pendingGithubConsent = this.auth.githubConsentIsTransfer();
         this.method = "github";
         this.step = "consent";
         this.errorMessage = "";
@@ -97,7 +97,7 @@ export class RegisterModal {
       return;
     }
 
-    if (this.pendingGithubConsent) {
+    if (this.pendingGithubConsent || this.auth.githubConsentReturnToLogin()) {
       this.auth.signIn();
       return;
     }

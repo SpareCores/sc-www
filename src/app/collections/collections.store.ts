@@ -34,7 +34,7 @@ import {
   switchMap,
   tap,
 } from "rxjs";
-import { Auth } from "../services/auth/auth";
+import { AuthStateService } from "../core/auth";
 import {
   mutationKey,
   withMutationStatus,
@@ -1171,13 +1171,26 @@ export const CollectionsStore = signalStore(
         return;
       }
 
-      const auth = inject(Auth);
+      const auth = inject(AuthStateService);
+      let loadedForUserId: string | null = null;
       effect(() => {
-        if (auth.isAuthenticated()) {
-          store.loadAll();
-        } else {
-          store.clear();
+        if (auth.authInProgress()) {
+          return;
         }
+
+        if (!auth.isAuthenticated()) {
+          loadedForUserId = null;
+          store.clear();
+          return;
+        }
+
+        const userId = auth.userName();
+        if (!userId || loadedForUserId === userId) {
+          return;
+        }
+
+        loadedForUserId = userId;
+        store.loadAll();
       });
     },
   }),

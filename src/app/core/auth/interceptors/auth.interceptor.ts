@@ -2,10 +2,8 @@ import { isPlatformBrowser } from "@angular/common";
 import { HttpInterceptorFn } from "@angular/common/http";
 import { PLATFORM_ID, inject } from "@angular/core";
 import { from, switchMap } from "rxjs";
-import { Auth } from "../../services/auth/auth";
-
-const WWW_API_BASE_URI =
-  import.meta.env.NG_APP_WWW_API_BASE_URI?.replace(/\/$/, "") || "";
+import { WWW_API_BASE_URI } from "../auth.constants";
+import { AuthStateService } from "../data-access/auth-state.service";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const platformId = inject(PLATFORM_ID);
@@ -18,7 +16,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const auth = inject(Auth);
+  const auth = inject(AuthStateService);
 
   return from(auth.getToken()).pipe(
     switchMap((token) => {

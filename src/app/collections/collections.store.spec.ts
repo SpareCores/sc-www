@@ -1,7 +1,7 @@
 import { signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { of, throwError } from "rxjs";
-import { Auth } from "../services/auth/auth";
+import { AuthStateService } from "../core/auth";
 import { CollectionsService } from "./collections.service";
 import { CollectionsStore } from "./collections.store";
 import { favoriteServerId } from "./collections.types";
@@ -46,9 +46,11 @@ describe("CollectionsStore", () => {
       providers: [
         CollectionsStore,
         {
-          provide: Auth,
+          provide: AuthStateService,
           useValue: {
             isAuthenticated: () => isAuthenticated(),
+            authInProgress: () => false,
+            userId: () => (isAuthenticated() ? "user_test" : null),
           },
         },
         {

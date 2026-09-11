@@ -1,14 +1,13 @@
 @if (auth.signInModalOpen()) {
 <div class="auth-modal" (click)="close()">
   <div class="auth-modal__panel" (click)="$event.stopPropagation()">
-    <button
-      type="button"
+    <sc-button
       class="auth-modal__close"
-      aria-label="Close sign in modal"
-      (click)="close()"
-    >
-      ×
-    </button>
+      variant="close"
+      icon="x"
+      ariaLabel="Close sign in modal"
+      (buttonClick)="close()"
+    ></sc-button>
 
     @if (step === "login") {
     <div class="auth-modal__body">
