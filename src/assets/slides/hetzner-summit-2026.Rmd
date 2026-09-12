@@ -29,3 +29,14 @@ format:
     mermaid-format: svg
     theme: neutral
 ---
+
+::: {.notes}
+
+how awesome it is to have a session at a datacenter .. thank you!
+
+How Hetzner Ranks Among 5,000 Instance Types?
+
+
+
+
+:::
