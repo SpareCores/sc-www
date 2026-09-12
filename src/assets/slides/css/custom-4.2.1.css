@@ -215,6 +215,39 @@ color: #34d399;
   padding: 8px;
   box-sizing: border-box;
 }
+
+/* Yoda meme overlay on SQL slide (fragment: show then hide)
+   Do NOT set position:relative on the section — Reveal vertical slides must stay absolute. */
+.reveal .slides section#pydata-london .slide-image-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  background: rgba(8, 47, 73, 0.92);
+  pointer-events: none;
+}
+.reveal .slides section#pydata-london .slide-image-overlay img {
+  display: block;
+  max-width: min(92%, 920px);
+  max-height: 88%;
+  width: auto;
+  height: auto;
+  margin: 0 !important;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.reveal .slides section#pydata-london-date > h2:empty {
+  display: none;
+  margin: 0;
+  height: 0;
+}
+.reveal .slides section#pydata-london-date > p:first-of-type {
+  margin-top: 0;
+}
+
 .reveal .slides section.slide div.centered p img {
     margin-top: -40px;
 }
