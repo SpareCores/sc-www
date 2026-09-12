@@ -30,13 +30,289 @@ format:
     theme: neutral
 ---
 
+
+# {#cover-slide}
+
+<script>
+  // add custom CSS for the speaker view
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+  // remove dummy slide
+  document.getElementById("title-slide").remove();
+</script>
+
+::: {.centered}
+<img src="images/hetzner-summit.png"
+     class="toplogo"
+     style="height: 209px; width: 500px; margin-left: -250px; margin-right: 250px; background-color:transparent; margin-top: 0px;" />
+:::
+
+<h1 class="subtitle" style="color:#eee;font-size:1.25em;text-align: center; margin-top:300px; color:#34d399;">
+  The Cloud Performance Map:<br />How Hetzner Ranks<br />Among 5,000 Instance Types
+</h1>
+
+<h2 class="author" style="color:#eee;padding-top:65px;font-size:0.9em;text-align: center !important;margin-bottom: 0px;">
+  Gergely Daroczi, Spare Cores
+</h2>
+
+<h3 class="author" style="color:#eee;padding-top: 2px; font-size:0.9em;text-align: center !important; font-weight: normal;">
+  Sep 17, 2026 @ Falkenstein, Germany
+</h3>
+
+<h3 class="author onlineMode" style="color:#eee;padding-top:65px;font-size:0.9em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+  Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</h3>
+
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 0px;font-weight: normal;margin-top:30px; ">
+  Press Space or click the green arrow icons to navigate the slides ->
+</p>
+
 ::: {.notes}
+Hi, I'm Gergely from the Spare Cores team,
+and we are an open-source project for cloud transparency, because
+:::
 
-how awesome it is to have a session at a datacenter .. thank you!
+# {#vcpu transition="convex-in slide-out"}  
 
-How Hetzner Ranks Among 5,000 Instance Types?
+::: {.notes}
+WHAT THE HECK is a virtual CPU?!
+
+There's a conceptual uncertainty and visibility problem here,
+as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory,
+versus a dedicated CPU core of a state-of-the-art server -- with massive CPU cache and high memory bandwidth.
+
+Which means your R or Python script runs on the same number of vCPUs e.g. 10x faster or slower.
+:::
+
+::: {.centered}
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+  <img src="images/small-big-computer-annotated.jpg" style="display: block; width: 100%;">
+  <video autoplay muted loop playsinline data-autoplay
+         src="images/vincent-confused.webm"
+         style="position: absolute; left: 45%; bottom: 1.5%;
+                transform: translateX(-50%); width: 50%;
+                background: transparent; pointer-events: none;">
+  </video>
+</div>
+:::
+
+## {#vcpu-benchmarking transition="slide-in slide-out"}
+
+::: {.notes}
+We solve this visibility problem by burning hundreds of thousands of dollars
+(most recently $20k over a single weekend) to
+start servers, measure performance, and calculate cost-efficiency,
+then publish these results and related tooling with open licenses,
+so that you can save money by optimizing your cloud spend.
+:::
+
+::: {.centered}
+<video autoplay muted loop playsinline data-autoplay
+       src="images/launching-benchmarks.webm"
+       style="width: 90%; margin-top: 45px;">
+</video>
+<p style="font-size: 0.8em; text-align: center; margin-top: 10px;">
+  Credit: <a href="https://thecodinglove.com/when-i-launch-a-benchmark" target="_blank">the_coding_love / When I launch a benchmark</a>
+</p>
+:::
+
+## {#vcpu-guess .center}
+
+::: {.notes}
+TODO
+TODO stress ng div16
+:::
+
+::: {.r-stretch}
+<a href="https://www.mentimeter.com/app/presentation/al1uonqkhdqseq3foz4ingoib4wrxabz/edit?question=m9sg4eideek3" target="_blank">
+  <img class="r-stretch" src="images/mentimeter-vcpu-speed-ratio.png">
+</a>
+:::
+
+## {#vcpu-diff-0 .center}
+
+<table style="font-size: 2rem; margin-left: auto; margin-right: auto;">
+  <thead>
+    <tr style="background-color: #06263A;">
+      <th></th>
+      <th class="centered">Server A</th>
+      <th class="centered">Server B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Vendor</td>
+      <td class="centered">Hyperscaler</td>
+      <td class="centered">Hyperscaler</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Server SKU</td>
+      <td class="centered">👻</td>
+      <td class="centered">👻</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">vCPUs</td>
+      <td class="centered">2</td>
+      <td class="centered">2</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Physical cores</td>
+      <td class="centered">1</td>
+      <td class="centered">2</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">CPU allocation</td>
+      <td class="centered">Shared</td>
+      <td class="centered">Dedicated</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">CPU (turbo) frequency</td>
+      <td class="centered">2.2 GHz</td>
+      <td class="centered">5.0 GHz</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">CPU L1D cache</td>
+      <td class="centered">32 KiB</td>
+      <td class="centered">96 KiB</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Memory</td>
+      <td class="centered">1 GiB</td>
+      <td class="centered">8 GiB</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Single-core SCore</td>
+      <td class="centered">133</td>
+      <td class="centered">4,645</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Performance ratio</td>
+      <td class="centered" colspan="2" style="font-weight: bold;">x34.92481</td>
+    </tr>
+  </tbody>
+</table>
 
 
+## {#vcpu-diff-1 .center}
+
+![](images/vcpu-diff-1.png){.r-stretch fig-align="center"}
+
+::: {.notes}
+TODO
+:::
+
+## {#vcpu-diff-2 .center}
+
+![](images/vcpu-diff-2.png){.r-stretch fig-align="center"}
+
+::: {.notes}
+TODO
+:::
+
+## {#vcpu-diff-3 .center}
+
+![](images/vcpu-diff-3.png){.r-stretch fig-align="center"}
+
+::: {.notes}
+TODO
+:::
+
+## {#vcpu-diff-4 .center}
+
+![](images/vcpu-diff-4.png){.r-stretch fig-align="center"}
+
+::: {.notes}
+TODO
+:::
+
+## {#vcpu-difference transition="slide-in slide-out"}  
+
+::: {.notes}
+TODO
+:::
+
+::: {.centered}
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+  <img src="images/smalls-big-computer.jpeg" style="display: block; width: 100%;">
+  <video autoplay muted loop playsinline data-autoplay
+         src="images/vincent-confused.webm"
+         style="position: absolute; left: 45%; bottom: 1.5%;
+                transform: translateX(-50%); width: 50%;
+                background: transparent; pointer-events: none;">
+  </video>
+</div>
+:::
+
+## {#vcpus-2-count .center}
+
+::: {.notes}
+FTR there are 611 instance types with 2 vCPUs across the 8 vendors we monitor.
+Click the chart to zoom out and reveal the answer.
+:::
+
+::: {.r-stretch}
+<div class="vcpu-count-wrapper">
+  <object type="image/svg+xml"
+          data="images/vcpu-2-count-chart.svg"
+          class="r-stretch vcpu-count-chart"
+          aria-label="Guess the number of 2 vCPU servers at the supported vendors. Click to reveal 611.">
+  </object>
+</div>
+:::
+
+<script>
+  (function () {
+    var slide = document.getElementById('vcpus-2-count');
+    if (!slide || slide.dataset.vcpuCountBound) return;
+    slide.dataset.vcpuCountBound = '1';
+
+    slide.addEventListener('click', function (event) {
+      if (!event.target.closest('.vcpu-count-wrapper')) return;
+      event.stopPropagation();
+    }, true);
+  })();
+</script>
+
+# {#recover}
+
+::: {.centered}
+<img src="images/hetzner-summit.png"
+     class="toplogo"
+     style="height: 209px; width: 500px; margin-left: -250px; margin-right: 250px; background-color:transparent; margin-top: 0px;" />
+:::
+
+<h1 class="subtitle" style="color:#eee;font-size:1.25em;text-align: center; margin-top:300px; color:#34d399;">
+  The Cloud Performance Map:<br />How Hetzner Ranks<br />Among 5,000 Instance Types
+</h1>
+
+::: {.notes}
+There's quite a spectrum even when just looking at the 2 vCPU options ...
+FTR there are 611 instance types with 2 vCPUs ... we monitor 8 vendors.
+
+TODO add vendor logos? by alphabetical order?
+
+TODO
+
+
+But to the talk title: how Hetzner ranks among 5,000 instance types?
+
+TODO how awesome it is to have a session at a datacenter .. thank you!
+
+So I might be a bit biased :) 
+
+TODO was not only pumped because of this, but at the time I was
+invited to present here, I was working on my slides for a
+PyData conference and saw some interesting patterns that
+were super relevant and got me excited to share with this group.
 
 
 :::
+
+
+# TODO
+
+::: {.notes}
+
+:::
+

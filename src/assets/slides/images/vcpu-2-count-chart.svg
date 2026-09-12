@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 380" role="img" aria-label="Guess the number of 2 vCPU servers. Click to reveal the answer, 611." id="vcpu-count-chart">
+  <style>
+    #vcpu-count-chart {
+      font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #axis-geometry {
+      transform-box: fill-box;
+      transform-origin: 60px 260px;
+      transform: scaleX(10);
+      transition: transform 1.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #vcpu-count-chart.zoomed #axis-geometry {
+      transform: scaleX(1);
+    }
+    .tick-short {
+      opacity: 1;
+      transition:
+        transform 1.25s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.35s ease 0.85s;
+    }
+    .tick-short-0  { transform: translate(60px, 0); }
+    .tick-short-20 { transform: translate(256px, 0); }
+    .tick-short-40 { transform: translate(452px, 0); }
+    .tick-short-60 { transform: translate(648px, 0); }
+    .tick-short-80 { transform: translate(844px, 0); }
+    .tick-short-100 { transform: translate(1040px, 0); }
+    #vcpu-count-chart.zoomed .tick-short-0  { transform: translate(60px, 0); }
+    #vcpu-count-chart.zoomed .tick-short-20 { transform: translate(79.6px, 0); }
+    #vcpu-count-chart.zoomed .tick-short-40 { transform: translate(99.2px, 0); }
+    #vcpu-count-chart.zoomed .tick-short-60 { transform: translate(118.8px, 0); }
+    #vcpu-count-chart.zoomed .tick-short-80 { transform: translate(138.4px, 0); }
+    #vcpu-count-chart.zoomed .tick-short-100 { transform: translate(158px, 0); }
+    #vcpu-count-chart.zoomed .tick-short {
+      opacity: 0;
+      transition:
+        transform 1.25s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.35s ease 0.85s;
+    }
+    .tick-long,
+    .answer-marker,
+    .answer-label {
+      opacity: 0;
+      transition: opacity 0.45s ease 1.05s;
+    }
+    #vcpu-count-chart.zoomed .tick-long,
+    #vcpu-count-chart.zoomed .answer-marker,
+    #vcpu-count-chart.zoomed .answer-label {
+      opacity: 1;
+    }
+  </style>
+
+  <rect width="1100" height="380" fill="#ffffff" rx="12"/>
+
+  <text x="550" y="56" fill="#111827" font-size="28" font-weight="600" text-anchor="middle">
+    <tspan x="550" dy="0">Guess the number of 2 vCPU servers</tspan>
+    <tspan x="550" dy="36">at the supported (8) vendors!</tspan>
+  </text>
+
+  <defs>
+    <clipPath id="chart-clip">
+      <rect x="60" y="200" width="980" height="130"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#chart-clip)">
+    <g id="axis-geometry">
+      <line x1="60" y1="260" x2="1040" y2="260" stroke="#6366F1" stroke-width="10" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Short-scale ticks: slide left on zoom to show compression -->
+  <g class="tick-short tick-short-0">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">0</text>
+  </g>
+  <g class="tick-short tick-short-20">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">20</text>
+  </g>
+  <g class="tick-short tick-short-40">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">40</text>
+  </g>
+  <g class="tick-short tick-short-60">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">60</text>
+  </g>
+  <g class="tick-short tick-short-80">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">80</text>
+  </g>
+  <g class="tick-short tick-short-100">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">100</text>
+  </g>
+
+  <!-- Long-scale ticks: fade in after compression -->
+  <g class="tick-long" transform="translate(60, 0)">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">0</text>
+  </g>
+  <g class="tick-long" transform="translate(256, 0)">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">200</text>
+  </g>
+  <g class="tick-long" transform="translate(452, 0)">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">400</text>
+  </g>
+  <g class="tick-long" transform="translate(648, 0)">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">600</text>
+  </g>
+  <g class="tick-long" transform="translate(844, 0)">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">800</text>
+  </g>
+  <g class="tick-long" transform="translate(1040, 0)">
+    <line x1="0" y1="260" x2="0" y2="272" stroke="#6B7280" stroke-width="2"/>
+    <text x="0" y="292" fill="#374151" font-size="18" text-anchor="middle">1000</text>
+  </g>
+
+  <g class="answer-marker">
+    <line x1="658.8" y1="234" x2="658.8" y2="286" stroke="#111827" stroke-width="3"/>
+    <circle cx="658.8" cy="260" r="7" fill="#6366F1"/>
+  </g>
+
+  <g class="answer-label">
+    <rect x="610.8" y="210" width="96" height="34" rx="8" fill="#34D399"/>
+    <text x="658.8" y="233" fill="#111827" font-size="20" font-weight="700" text-anchor="middle">611</text>
+  </g>
+
+  <script><![CDATA[
+    (function () {
+      var chart = document.getElementById('vcpu-count-chart');
+      if (!chart || chart.dataset.bound) return;
+      chart.dataset.bound = '1';
+
+      chart.addEventListener('click', function (event) {
+        event.stopPropagation();
+        chart.classList.toggle('zoomed');
+      });
+
+      chart.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          event.stopPropagation();
+          chart.classList.toggle('zoomed');
+        }
+      });
+
+      chart.setAttribute('tabindex', '0');
+    })();
+  ]]></script>
+</svg>
