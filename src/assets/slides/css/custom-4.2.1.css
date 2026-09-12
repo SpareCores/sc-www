@@ -216,9 +216,12 @@ color: #34d399;
   box-sizing: border-box;
 }
 
-/* Yoda meme overlay on SQL slide (fragment: show then hide)
-   Do NOT set position:relative on the section — Reveal vertical slides must stay absolute. */
-.reveal .slides section#pydata-london .slide-image-overlay {
+/* Full-slide image overlay — add to any slide as a Reveal fragment:
+     <div class="slide-image-overlay fragment fade-in-then-out" data-fragment-index="N">
+       <img src="..." alt="">
+     </div>
+   Uses position:fixed (not relative on the section) so vertical slides stay absolute. */
+.reveal .slides .slide-image-overlay {
   position: fixed;
   inset: 0;
   display: flex;
@@ -228,7 +231,7 @@ color: #34d399;
   background: rgba(8, 47, 73, 0.92);
   pointer-events: none;
 }
-.reveal .slides section#pydata-london .slide-image-overlay img {
+.reveal .slides .slide-image-overlay img {
   display: block;
   max-width: min(92%, 920px);
   max-height: 88%;
