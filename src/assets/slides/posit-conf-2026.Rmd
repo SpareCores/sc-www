@@ -5,6 +5,8 @@ date: "2026-09-15"
 conference: "posit::conf(2026)"
 conference_url: "https://conf.posit.co/2026"
 location: "Houston, TX, USA"
+revealjs-plugins:
+  - boxoverlay
 format:
   revealjs:
     theme: [black, css/custom-4.2.1.css]
@@ -219,7 +221,7 @@ Pricing of a single instance type? Depends on spot VS on-demand and reserved pri
 We have actually started all these machines and run over 500 benchmark workloads on each to measure the actual performance.
 :::
 
-```sh {code-line-numbers="1|6-20|22-36|38-71|73-93" style="font-size:36px; margin-top: 50px !important; height: 600px;"}
+```sql {code-line-numbers="1|6-20|22-36|38-71|73-93" style="font-size:36px; margin-top: 50px !important; height: 600px;"}
 $ sqlite3 spare-cores-navigator.db
 SQLite version 3.46.1
 Enter ".help" for usage hints.
@@ -234,7 +236,7 @@ sqlite> SELECT vendor_id, COUNT(*) AS servers, MIN(vcpus), MAX(vcpus),
 | alicloud  | 1967    | 1          | 960        | 16384    |
 | aws       | 1414    | 1          | 896        | 32768    |
 | azure     | 1560    | 1          | 896        | 30400    |
-| gcp       | 573     | 1          | 1920       | 32768    |
+| gcp       | 573     | 1          | @@box+@@1920       | 32768@@box+@@    |
 | hcloud    | 34      | 1          | 48         | 187      |
 | ovh       | 104     | 1          | 224        | 1920     |
 | upcloud   | 145     | 1          | 192        | 1920     |
@@ -315,7 +317,7 @@ sqlite> SELECT category, COUNT(*) FROM benchmark_score
 +---------------------+----------+
 ```
 
-# {#import-sqlite3-2}
+# {#llama-3_3}
 
 ::: {.notes}
 So which server to pick? Let's combine the above with a few CTEs finding the most cost-efficient server when it comes to text generation using the llama 3.3 model with 70B parameters.
@@ -325,12 +327,10 @@ So a query now sorted by dollars spent per million generated tokens.
 - But if you are happy with a smaller model, like the gemma with 2B parameters, you can easily find cheap CPU nodes with reasonable performance at 10 US cents per 1M output token!
 
 Same query -- with a different parameter, very different recommendations for which cloud server to use.
-
-TODO red box around gpu_model on first table
-TODO red box around $ / 1M token on second table
 :::
 
-```sh {code-line-numbers="7-7|21-49|57-57|71-99" style="font-size:25px; margin-top: 50px !important; height: 600px;"}
+
+```sh {code-line-numbers="7-7|21-49" style="font-size:25px; margin-top: 50px !important; height: 600px;"}
 sqlite> WITH prices AS (
   SELECT vendor_id, server_id, ROUND(AVG(price), 2) AS price FROM server_price
   WHERE allocation = 'ONDEMAND' GROUP BY vendor_id, server_id
@@ -351,7 +351,7 @@ WHERE score IS NOT NULL
 ORDER BY 11 ASC
 LIMIT 25;
 
-+-----------+----------------------+-------+--------+-----------+--------------+------+-------+-------+--------------+----------------+
++-----------+----------------------+-------+--------+-----------+@@box+@@--------------+------+-------+-------+--------------+----------------+
 | vendor_id |    api_reference     | vcpus | memory | gpu_count |  gpu_model   | VRAM | score | price | $ efficiency | $ per 1M token |
 +-----------+----------------------+-------+--------+-----------+--------------+------+-------+-------+--------------+----------------+
 | gcp       | a2-ultragpu-1g       | 12    | 170    | 1.0       | A100         | 80   | 24.47 | 1.36  | 17.9959      | 15.4356        |
@@ -379,8 +379,12 @@ LIMIT 25;
 | gcp       | a2-ultragpu-4g       | 48    | 680    | 4.0       | A100         | 320  | 20.78 | 5.42  | 3.8343       | 72.4462        |
 | ovh       | a10-180              | 120   | 170    | 4.0       | A10          | 96   | 10.73 | 3.04  | 3.528        | 78.7359        |
 | ovh       | a10-45               | 30    | 42     | 1.0       | A10          | 24   | 2.39  | 0.76  | 3.1439       | 88.3539        |
-+-----------+----------------------+-------+--------+-----------+--------------+------+-------+-------+--------------+----------------+
++-----------+----------------------+-------+--------+-----------+--------------@@box+@@+------+-------+-------+--------------+----------------+
+```
 
+## {#gemma}
+
+```sh {code-line-numbers="7-7|21-49" style="font-size:25px; margin-top: 50px !important; height: 600px;"}
 sqlite> WITH prices AS (
   SELECT vendor_id, server_id, ROUND(AVG(price), 2) AS price FROM server_price
   WHERE allocation = 'ONDEMAND' GROUP BY vendor_id, server_id
@@ -401,7 +405,7 @@ WHERE score IS NOT NULL
 ORDER BY 11 ASC
 LIMIT 25;
 
-+-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+----------------+
++-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+@@box+@@----------------+
 | vendor_id |     api_reference     | vcpus | memory | gpu_count | gpu_model | VRAM | score  | price | $ efficiency | $ per 1M token |
 +-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+----------------+
 | hcloud    | cx33                  | 4     | 8      | 0.0       |           |      | 26.83  | 0.01  | 2682.7252    | 0.1035         |
@@ -429,7 +433,7 @@ LIMIT 25;
 | hcloud    | ccx13                 | 2     | 8      | 0.0       |           |      | 9.69   | 0.02  | 484.6809     | 0.5731         |
 | ovh       | rtx5000-28            | 4     | 28     | 1.0       | RTX 5000  | 16   | 158.95 | 0.36  | 441.5258     | 0.6291         |
 | hcloud    | cpx51                 | 16    | 32     | 0.0       |           |      | 45.26  | 0.11  | 411.4147     | 0.6752         |
-+-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+----------------+
++-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+----------------@@box+@@+
 
 ```
 
@@ -455,13 +459,11 @@ As a reminder, you can get all this data from sparecores.com ...
 </a>
 :::
 
-## {#from-navigator-www-import-workloads}
+## {#from-navigator-www-import-workloads transition="slide-in none-out"}
 
 ::: {.notes}
 Including augmented workloads so that you don't have to trace hundreds of raw metrics,
 and make it easy to compare which server is the best for e.g. LLM inference speed at low concurrency.
-
-TODO red box around Score and "x" over table at the bottom
 :::
 
 ::: {.centered}
@@ -469,6 +471,20 @@ TODO red box around Score and "x" over table at the bottom
   <img style="width:90%;margin-top: -90px;" src="images/sc-www-workload.png" />
 </a>
 :::
+
+## {#from-navigator-www-import-workloads-highlighted transition="none-in convex-out"}
+
+::: {.notes}
+Including augmented workloads so that you don't have to trace hundreds of raw metrics,
+and make it easy to compare which server is the best for e.g. LLM inference speed at low concurrency.
+:::
+
+::: {.centered}
+<a href="https://sparecores.com/server/aws/gr6.4xlarge" target="_blank">
+  <img style="width:90%;margin-top: -90px;" src="images/sc-www-workload-highlighted.png" />
+</a>
+:::
+
 
 # Q & A {style="margin-bottom: 80px;"}
 
