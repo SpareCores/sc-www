@@ -144,11 +144,17 @@ color: #34d399;
   width: 92%;
   max-width: 1100px;
   height: auto !important;
-  max-height: 75vh;
+  max-height: 85vh;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.reveal .slides section#vcpus-2-count .vcpu-count-slide-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 .reveal .slides section#vcpus-2-count .vcpu-count-wrapper {
   width: 100%;
@@ -166,8 +172,48 @@ color: #34d399;
   width: 100%;
   height: auto;
   aspect-ratio: 1100 / 380;
-  max-height: 75vh;
+  max-height: 52vh;
   margin: 0 auto;
+}
+.reveal .slides section#vcpus-2-count .vendor-logos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  width: 100%;
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.reveal .slides section#vcpus-2-count .vendor-logos-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  column-gap: 1rem;
+}
+.reveal .slides section#vcpus-2-count .vendor-logos-row p {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  column-gap: 1rem;
+}
+.reveal .slides section#vcpus-2-count .vendor-logos img {
+  width: 72px !important;
+  height: 72px !important;
+  max-width: 72px !important;
+  max-height: 72px !important;
+  margin: 0 !important;
+  object-fit: contain;
+  display: block;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 8px;
+  box-sizing: border-box;
 }
 .reveal .slides section.slide div.centered p img {
     margin-top: -40px;
