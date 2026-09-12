@@ -261,16 +261,63 @@ Click the chart to zoom out and reveal the answer.
 </div>
 :::
 
+<span class="fragment vcpu-count-zoom" data-fragment-index="1"></span>
+
 <script>
   (function () {
-    var slide = document.getElementById('vcpus-2-count');
-    if (!slide || slide.dataset.vcpuCountBound) return;
-    slide.dataset.vcpuCountBound = '1';
+    function initVcpuCountSlide() {
+      var reveal = window.Reveal;
+      var slide = document.getElementById('vcpus-2-count');
+      if (!reveal || !slide) return false;
+      if (slide.dataset.vcpuCountBound) return true;
 
-    slide.addEventListener('click', function (event) {
-      if (!event.target.closest('.vcpu-count-wrapper')) return;
-      event.stopPropagation();
-    }, true);
+      slide.dataset.vcpuCountBound = '1';
+
+      function getChartSvg() {
+        var obj = slide.querySelector('object.vcpu-count-chart');
+        if (!obj || !obj.contentDocument) return null;
+        return obj.contentDocument.getElementById('vcpu-count-chart');
+      }
+
+      function syncZoom() {
+        var chart = getChartSvg();
+        var fragment = slide.querySelector('.vcpu-count-zoom');
+        if (!chart || !fragment) return;
+        chart.classList.toggle('zoomed', fragment.classList.contains('visible'));
+      }
+
+      var obj = slide.querySelector('object.vcpu-count-chart');
+      if (obj) {
+        obj.addEventListener('load', syncZoom);
+        if (obj.contentDocument) syncZoom();
+      }
+
+      reveal.on('fragmentshown', function (event) {
+        if (event.fragment && event.fragment.classList.contains('vcpu-count-zoom')) syncZoom();
+      });
+      reveal.on('fragmenthidden', function (event) {
+        if (event.fragment && event.fragment.classList.contains('vcpu-count-zoom')) syncZoom();
+      });
+      reveal.on('slidechanged', function (event) {
+        if (event.currentSlide && event.currentSlide.id === 'vcpus-2-count') syncZoom();
+      });
+
+      window.addEventListener('message', function (event) {
+        if (event.data && event.data.type !== 'vcpu-count-click') return;
+        if (!slide.classList.contains('present')) return;
+        var fragment = slide.querySelector('.vcpu-count-zoom');
+        if (fragment && !fragment.classList.contains('visible')) reveal.nextFragment();
+      });
+
+      return true;
+    }
+
+    if (!initVcpuCountSlide()) {
+      var tries = 0;
+      var timer = setInterval(function () {
+        if (initVcpuCountSlide() || ++tries > 50) clearInterval(timer);
+      }, 100);
+    }
   })();
 </script>
 
