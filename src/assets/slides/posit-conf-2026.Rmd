@@ -81,10 +81,10 @@ and we are an open-source project for cloud transparency, because
 WHAT THE HECK is a virtual CPU?!
 
 There's a conceptual uncertainty and visibility problem here,
-as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory,
+as a cloud CPU could range from an poor-performing, potentially over-provisioned thread of a 15 years-old CPU core with saturated bandwidth to memory,
 versus a dedicated CPU core of a state-of-the-art server -- with massive CPU cache and high memory bandwidth.
 
-Which means your R or Python script runs on the same number of vCPUs e.g. 10x faster or slower.
+Which means your R or Python scripts run on the same number of vCPUs could ultimately finish up to a hundred times (!!!) faster or slower.
 :::
 
 ::: {.centered}
@@ -207,9 +207,6 @@ Now, before I run this actual query ...
 # {#import-sqlite3}
 
 ::: {.notes}
-
-TODO simplify SQL or gray out the not important parts
-
 Let's load the database,
 and ease in with a few descriptive stats on the tracked cloud resources: over 5,000 cloud server types
 ranging from a potato to actual beasts with 2,000 vCPUs and over 30TB of memory!
@@ -221,78 +218,64 @@ Pricing of a single instance type? Depends on spot VS on-demand and reserved pri
 We have actually started all these machines and run over 500 benchmark workloads on each to measure the actual performance.
 :::
 
-```sql {code-line-numbers="1|6-20|22-36|38-71|73-93" style="font-size:36px; margin-top: 50px !important; height: 600px;"}
+```sql {code-line-numbers="1|6-14|16-21|23-28|30-48|51-57|59-79" style="font-size:36px; margin-top: 50px !important; height: 600px;"}
 $ sqlite3 spare-cores-navigator.db
 SQLite version 3.46.1
 Enter ".help" for usage hints.
 
 sqlite> .mode table
-sqlite> SELECT vendor_id, COUNT(*) AS servers, MIN(vcpus), MAX(vcpus),
-               MAX(memory_amount/1024) AS "MAX(RAM)" FROM server GROUP BY 1;
+sqlite> SELECT status, COUNT(*) FROM server GROUP BY status;
++------------------------+----------+
+|         status         | COUNT(*) |
++------------------------+----------+
+| ACTIVE                 | 4677     |
+| INACTIVE               | 1143     |
+| PLANNED_FOR_RETIREMENT | 130      |
+| RETIRED                | 49       |
++------------------------+----------+
 
-+-----------+---------+------------+------------+----------+
-| vendor_id | servers | MIN(vcpus) | MAX(vcpus) | MAX(RAM) |
-+-----------+---------+------------+------------+----------+
-| alicloud  | 1967    | 1          | 960        | 16384    |
-| aws       | 1414    | 1          | 896        | 32768    |
-| azure     | 1560    | 1          | 896        | 30400    |
-| gcp       | 573     | 1          | @@box+@@1920       | 32768@@box+@@    |
-| hcloud    | 34      | 1          | 48         | 187      |
-| ovh       | 104     | 1          | 224        | 1920     |
-| upcloud   | 145     | 1          | 192        | 1920     |
-| vultr     | 202     | 1          | 256        | 3072     |
-+-----------+---------+------------+------------+----------+
+sqlite> SELECT MIN(vcpus), MIN(memory_amount/1024) FROM server;
++------------+-------------------------+
+| MIN(vcpus) | MIN(memory_amount/1024) |
++------------+-------------------------+
+| 1          | 0.5                     |
++------------+-------------------------+
 
-sqlite> SELECT vendor_id, COUNT(DISTINCT(region_id)) AS regions, COUNT(*) AS zones
-        FROM zone GROUP BY 1;
+sqlite> SELECT MAX(vcpus), MAX(memory_amount/1024) FROM server;
++------------+-------------------------+
+| Max(vcpus) | MAX(memory_amount/1024) |
++------------+-------------------------+
+| 1920       | 32768.0                 |
++------------+-------------------------+
 
-+-----------+---------+-------+
-| vendor_id | regions | zones |
-+-----------+---------+-------+
-| alicloud  | 34      | 110   |
-| aws       | 34      | 107   |
-| azure     | 64      | 149   |
-| gcp       | 43      | 132   |
-| hcloud    | 6       | 6     |
-| ovh       | 29      | 33    |
-| upcloud   | 15      | 15    |
-| vultr     | 36      | 36    |
-+-----------+---------+-------+
+sqlite> SELECT z.vendor_id, 
+               COUNT(DISTINCT(continent)) AS continents, 
+               COUNT(DISTINCT(country_id)) AS countries,
+               COUNT(DISTINCT(z.region_id)) AS regions,
+               COUNT(*) AS zones
+        FROM zone AS z JOIN region USING (region_id) JOIN country USING (country_id)
+        GROUP BY 1;
++-----------+------------+-----------+---------+@@box@@-------+
+| vendor_id | continents | countries | regions | zones |
++-----------+------------+-----------+---------+-------+
+| alicloud  | 5          | 19        | 34      | 148   |
+| aws       | 6          | 29        | 34      | 153   |
+| azure     | 6          | 31        | 64      | 149   |
+| gcp       | 6          | 29        | 43      | 132   |
+| hcloud    | 3          | 4         | 6       | 6     |
+| ovh       | 4          | 9         | 29      | 33    |
+| upcloud   | 4          | 12        | 15      | 15    |
+| vultr     | 6          | 20        | 36      | 36    |
++-----------+------------+-----------+---------+-------@@box@@+
 
-sqlite> SELECT country_id, MIN(price), ROUND(AVG(price), 4) AS "AVG(price)", MAX(price)
-        FROM server_price AS sp LEFT JOIN region USING (region_id) LEFT JOIN country USING (country_id)
-        WHERE sp.vendor_id = 'aws' AND sp.server_id = 'm8g.2xlarge' GROUP BY 1;
 
-+------------+------------+------------+------------+
-| country_id | MIN(price) | AVG(price) | MAX(price) |
-+------------+------------+------------+------------+
-| AE         | 0.0539     | 0.2891     | 0.4402     |
-| AU         | 0.0803     | 0.2895     | 0.4488     |
-| BH         | 0.1179     | 0.3145     | 0.4937     |
-| BR         | 0.1015     | 0.3463     | 0.5722     |
-| CA         | 0.089      | 0.2742     | 0.4002     |
-| CH         | 0.1386     | 0.3074     | 0.4731     |
-| DE         | 0.186      | 0.3116     | 0.4302     |
-| ES         | 0.04       | 0.222      | 0.3999     |
-| FR         | 0.0949     | 0.2873     | 0.4189     |
-| GB         | 0.0949     | 0.2912     | 0.4152     |
-| HK         | 0.0799     | 0.2938     | 0.4937     |
-| ID         | 0.0991     | 0.2876     | 0.4488     |
-| IE         | 0.2132     | 0.308      | 0.4002     |
-| IN         | 0.0873     | 0.1841     | 0.2566     |
-| IT         | 0.1315     | 0.2782     | 0.4189     |
-| JP         | 0.1527     | 0.3255     | 0.4638     |
-| KR         | 0.093      | 0.2815     | 0.4414     |
-| MX         | 0.12       | 0.2649     | 0.377      |
-| MY         | 0.0991     | 0.2876     | 0.4488     |
-| SA         | 0.0539     | 0.2891     | 0.4402     |
-| SE         | 0.097      | 0.2504     | 0.3815     |
-| SG         | 0.1858     | 0.3248     | 0.4488     |
-| TH         | 0.112      | 0.2536     | 0.3815     |
-| TW         | 0.12       | 0.2752     | 0.4174     |
-| US         | 0.0894     | 0.2608     | 0.4189     |
-| ZA         | 0.1313     | 0.3062     | 0.475      |
-+------------+------------+------------+------------+
+sqlite> SELECT COUNT(*), MIN(price), ROUND(AVG(price), 4) AS "AVG(price)", MAX(price)
+        FROM server_price WHERE vendor_id = 'aws' AND server_id = 'm8g.2xlarge';
++----------+------------+------------+------------+
+| COUNT(*) | MIN(price) | AVG(price) | MAX(price) |
++----------+------------+------------+------------+
+| 199      | 0.04       | 0.2789     | 0.5722     |
++----------+------------+------------+------------+
 
 sqlite> SELECT category, COUNT(*) FROM benchmark_score
         JOIN benchmark USING (benchmark_id) GROUP BY 1;

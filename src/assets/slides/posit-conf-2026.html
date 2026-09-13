@@ -95,7 +95,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="posit-conf-2026_files/libs/revealjs/dist/theme/quarto-fa01001b5e7e1662760bdbdccfea5ebc.css">
+  <link rel="stylesheet" href="posit-conf-2026_files/libs/revealjs/dist/theme/quarto-ce87408c3cf0609aeb77d65f75b1999e.css">
   <link href="posit-conf-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="posit-conf-2026_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="posit-conf-2026_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -253,8 +253,8 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <h2></h2>
 <aside class="notes">
 <p>WHAT THE HECK is a virtual CPU?!</p>
-<p>There’s a conceptual uncertainty and visibility problem here, as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory, versus a dedicated CPU core of a state-of-the-art server – with massive CPU cache and high memory bandwidth.</p>
-<p>Which means your R or Python script runs on the same number of vCPUs e.g.&nbsp;10x faster or slower.</p>
+<p>There’s a conceptual uncertainty and visibility problem here, as a cloud CPU could range from an poor-performing, potentially over-provisioned thread of a 15 years-old CPU core with saturated bandwidth to memory, versus a dedicated CPU core of a state-of-the-art server – with massive CPU cache and high memory bandwidth.</p>
+<p>Which means your R or Python scripts run on the same number of vCPUs could ultimately finish up to a hundred times (!!!) faster or slower.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -383,7 +383,6 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 <section id="import-sqlite3" class="title-slide slide level1">
 <h1></h1>
 <aside class="notes">
-<p>TODO simplify SQL or gray out the not important parts</p>
 <p>Let’s load the database, and ease in with a few descriptive stats on the tracked cloud resources: over 5,000 cloud server types ranging from a potato to actual beasts with 2,000 vCPUs and over 30TB of memory!</p>
 <p>The number of locations? Almost 300 regions across the globe!</p>
 <p>Pricing of a single instance type? Depends on spot VS on-demand and reserved pricing, also affected by location: 10x diff easily for the same silicon!</p>
@@ -399,99 +398,85 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<div class="sourceCode" id="cb2" style="font-size:36px; margin-top: 50px !important; height: 600px;" data-code-line-numbers="1|6-20|22-36|38-71|73-93"><pre class="sourceCode numberSource sql number-lines"><code class="sourceCode sql"><span id="cb2-1"><a href=""></a>$ sqlite3 spare<span class="op">-</span>cores<span class="op">-</span>navigator.db</span>
+<div class="sourceCode" id="cb2" style="font-size:36px; margin-top: 50px !important; height: 600px;" data-code-line-numbers="1|6-14|16-21|23-28|30-48|51-57|59-79"><pre class="sourceCode numberSource sql number-lines"><code class="sourceCode sql"><span id="cb2-1"><a href=""></a>$ sqlite3 spare<span class="op">-</span>cores<span class="op">-</span>navigator.db</span>
 <span id="cb2-2"><a href=""></a>SQLite version <span class="dv">3</span>.<span class="fl">46.1</span></span>
 <span id="cb2-3"><a href=""></a>Enter <span class="ot">".help"</span> <span class="cf">for</span> <span class="kw">usage</span> hints.</span>
 <span id="cb2-4"><a href=""></a></span>
 <span id="cb2-5"><a href=""></a>sqlite<span class="op">&gt;</span> .<span class="kw">mode</span> <span class="kw">table</span></span>
-<span id="cb2-6"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> vendor_id, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> servers, <span class="fu">MIN</span>(vcpus), <span class="fu">MAX</span>(vcpus),</span>
-<span id="cb2-7"><a href=""></a>               <span class="fu">MAX</span>(memory_amount<span class="op">/</span><span class="dv">1024</span>) <span class="kw">AS</span> <span class="ot">"MAX(RAM)"</span> <span class="kw">FROM</span> server <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span>;</span>
-<span id="cb2-8"><a href=""></a></span>
-<span id="cb2-9"><a href=""></a><span class="op">+</span><span class="co">-----------+---------+------------+------------+----------+</span></span>
-<span id="cb2-10"><a href=""></a>| vendor_id | servers | <span class="fu">MIN</span>(vcpus) | <span class="fu">MAX</span>(vcpus) | <span class="fu">MAX</span>(RAM) |</span>
-<span id="cb2-11"><a href=""></a><span class="op">+</span><span class="co">-----------+---------+------------+------------+----------+</span></span>
-<span id="cb2-12"><a href=""></a>| alicloud  | <span class="dv">1967</span>    | <span class="dv">1</span>          | <span class="dv">960</span>        | <span class="dv">16384</span>    |</span>
-<span id="cb2-13"><a href=""></a>| aws       | <span class="dv">1414</span>    | <span class="dv">1</span>          | <span class="dv">896</span>        | <span class="dv">32768</span>    |</span>
-<span id="cb2-14"><a href=""></a>| azure     | <span class="dv">1560</span>    | <span class="dv">1</span>          | <span class="dv">896</span>        | <span class="dv">30400</span>    |</span>
-<span id="cb2-15"><a href=""></a>| gcp       | <span class="dv">573</span>     | <span class="dv">1</span>          | @@box<span class="op">+</span>@@<span class="dv">1920</span>       | <span class="dv">32768</span>@@box<span class="op">+</span>@@    |</span>
-<span id="cb2-16"><a href=""></a>| hcloud    | <span class="dv">34</span>      | <span class="dv">1</span>          | <span class="dv">48</span>         | <span class="dv">187</span>      |</span>
-<span id="cb2-17"><a href=""></a>| ovh       | <span class="dv">104</span>     | <span class="dv">1</span>          | <span class="dv">224</span>        | <span class="dv">1920</span>     |</span>
-<span id="cb2-18"><a href=""></a>| upcloud   | <span class="dv">145</span>     | <span class="dv">1</span>          | <span class="dv">192</span>        | <span class="dv">1920</span>     |</span>
-<span id="cb2-19"><a href=""></a>| vultr     | <span class="dv">202</span>     | <span class="dv">1</span>          | <span class="dv">256</span>        | <span class="dv">3072</span>     |</span>
-<span id="cb2-20"><a href=""></a><span class="op">+</span><span class="co">-----------+---------+------------+------------+----------+</span></span>
-<span id="cb2-21"><a href=""></a></span>
-<span id="cb2-22"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> vendor_id, <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span>(region_id)) <span class="kw">AS</span> regions, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> zones</span>
-<span id="cb2-23"><a href=""></a>        <span class="kw">FROM</span> <span class="dt">zone</span> <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span>;</span>
-<span id="cb2-24"><a href=""></a></span>
-<span id="cb2-25"><a href=""></a><span class="op">+</span><span class="co">-----------+---------+-------+</span></span>
-<span id="cb2-26"><a href=""></a>| vendor_id | regions | zones |</span>
-<span id="cb2-27"><a href=""></a><span class="op">+</span><span class="co">-----------+---------+-------+</span></span>
-<span id="cb2-28"><a href=""></a>| alicloud  | <span class="dv">34</span>      | <span class="dv">110</span>   |</span>
-<span id="cb2-29"><a href=""></a>| aws       | <span class="dv">34</span>      | <span class="dv">107</span>   |</span>
-<span id="cb2-30"><a href=""></a>| azure     | <span class="dv">64</span>      | <span class="dv">149</span>   |</span>
-<span id="cb2-31"><a href=""></a>| gcp       | <span class="dv">43</span>      | <span class="dv">132</span>   |</span>
-<span id="cb2-32"><a href=""></a>| hcloud    | <span class="dv">6</span>       | <span class="dv">6</span>     |</span>
-<span id="cb2-33"><a href=""></a>| ovh       | <span class="dv">29</span>      | <span class="dv">33</span>    |</span>
-<span id="cb2-34"><a href=""></a>| upcloud   | <span class="dv">15</span>      | <span class="dv">15</span>    |</span>
-<span id="cb2-35"><a href=""></a>| vultr     | <span class="dv">36</span>      | <span class="dv">36</span>    |</span>
-<span id="cb2-36"><a href=""></a><span class="op">+</span><span class="co">-----------+---------+-------+</span></span>
-<span id="cb2-37"><a href=""></a></span>
-<span id="cb2-38"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> country_id, <span class="fu">MIN</span>(price), <span class="fu">ROUND</span>(<span class="fu">AVG</span>(price), <span class="dv">4</span>) <span class="kw">AS</span> <span class="ot">"AVG(price)"</span>, <span class="fu">MAX</span>(price)</span>
-<span id="cb2-39"><a href=""></a>        <span class="kw">FROM</span> server_price <span class="kw">AS</span> sp <span class="kw">LEFT</span> <span class="kw">JOIN</span> region <span class="kw">USING</span> (region_id) <span class="kw">LEFT</span> <span class="kw">JOIN</span> country <span class="kw">USING</span> (country_id)</span>
-<span id="cb2-40"><a href=""></a>        <span class="kw">WHERE</span> sp.vendor_id <span class="op">=</span> <span class="st">'aws'</span> <span class="kw">AND</span> sp.server_id <span class="op">=</span> <span class="st">'m8g.2xlarge'</span> <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span>;</span>
-<span id="cb2-41"><a href=""></a></span>
-<span id="cb2-42"><a href=""></a><span class="op">+</span><span class="co">------------+------------+------------+------------+</span></span>
-<span id="cb2-43"><a href=""></a>| country_id | <span class="fu">MIN</span>(price) | <span class="fu">AVG</span>(price) | <span class="fu">MAX</span>(price) |</span>
-<span id="cb2-44"><a href=""></a><span class="op">+</span><span class="co">------------+------------+------------+------------+</span></span>
-<span id="cb2-45"><a href=""></a>| AE         | <span class="fl">0.0539</span>     | <span class="fl">0.2891</span>     | <span class="fl">0.4402</span>     |</span>
-<span id="cb2-46"><a href=""></a>| AU         | <span class="fl">0.0803</span>     | <span class="fl">0.2895</span>     | <span class="fl">0.4488</span>     |</span>
-<span id="cb2-47"><a href=""></a>| BH         | <span class="fl">0.1179</span>     | <span class="fl">0.3145</span>     | <span class="fl">0.4937</span>     |</span>
-<span id="cb2-48"><a href=""></a>| BR         | <span class="fl">0.1015</span>     | <span class="fl">0.3463</span>     | <span class="fl">0.5722</span>     |</span>
-<span id="cb2-49"><a href=""></a>| CA         | <span class="fl">0.089</span>      | <span class="fl">0.2742</span>     | <span class="fl">0.4002</span>     |</span>
-<span id="cb2-50"><a href=""></a>| CH         | <span class="fl">0.1386</span>     | <span class="fl">0.3074</span>     | <span class="fl">0.4731</span>     |</span>
-<span id="cb2-51"><a href=""></a>| DE         | <span class="fl">0.186</span>      | <span class="fl">0.3116</span>     | <span class="fl">0.4302</span>     |</span>
-<span id="cb2-52"><a href=""></a>| ES         | <span class="fl">0.04</span>       | <span class="fl">0.222</span>      | <span class="fl">0.3999</span>     |</span>
-<span id="cb2-53"><a href=""></a>| FR         | <span class="fl">0.0949</span>     | <span class="fl">0.2873</span>     | <span class="fl">0.4189</span>     |</span>
-<span id="cb2-54"><a href=""></a>| GB         | <span class="fl">0.0949</span>     | <span class="fl">0.2912</span>     | <span class="fl">0.4152</span>     |</span>
-<span id="cb2-55"><a href=""></a>| HK         | <span class="fl">0.0799</span>     | <span class="fl">0.2938</span>     | <span class="fl">0.4937</span>     |</span>
-<span id="cb2-56"><a href=""></a>| <span class="kw">ID</span>         | <span class="fl">0.0991</span>     | <span class="fl">0.2876</span>     | <span class="fl">0.4488</span>     |</span>
-<span id="cb2-57"><a href=""></a>| IE         | <span class="fl">0.2132</span>     | <span class="fl">0.308</span>      | <span class="fl">0.4002</span>     |</span>
-<span id="cb2-58"><a href=""></a>| <span class="kw">IN</span>         | <span class="fl">0.0873</span>     | <span class="fl">0.1841</span>     | <span class="fl">0.2566</span>     |</span>
-<span id="cb2-59"><a href=""></a>| IT         | <span class="fl">0.1315</span>     | <span class="fl">0.2782</span>     | <span class="fl">0.4189</span>     |</span>
-<span id="cb2-60"><a href=""></a>| JP         | <span class="fl">0.1527</span>     | <span class="fl">0.3255</span>     | <span class="fl">0.4638</span>     |</span>
-<span id="cb2-61"><a href=""></a>| KR         | <span class="fl">0.093</span>      | <span class="fl">0.2815</span>     | <span class="fl">0.4414</span>     |</span>
-<span id="cb2-62"><a href=""></a>| MX         | <span class="fl">0.12</span>       | <span class="fl">0.2649</span>     | <span class="fl">0.377</span>      |</span>
-<span id="cb2-63"><a href=""></a>| MY         | <span class="fl">0.0991</span>     | <span class="fl">0.2876</span>     | <span class="fl">0.4488</span>     |</span>
-<span id="cb2-64"><a href=""></a>| SA         | <span class="fl">0.0539</span>     | <span class="fl">0.2891</span>     | <span class="fl">0.4402</span>     |</span>
-<span id="cb2-65"><a href=""></a>| SE         | <span class="fl">0.097</span>      | <span class="fl">0.2504</span>     | <span class="fl">0.3815</span>     |</span>
-<span id="cb2-66"><a href=""></a>| SG         | <span class="fl">0.1858</span>     | <span class="fl">0.3248</span>     | <span class="fl">0.4488</span>     |</span>
-<span id="cb2-67"><a href=""></a>| TH         | <span class="fl">0.112</span>      | <span class="fl">0.2536</span>     | <span class="fl">0.3815</span>     |</span>
-<span id="cb2-68"><a href=""></a>| TW         | <span class="fl">0.12</span>       | <span class="fl">0.2752</span>     | <span class="fl">0.4174</span>     |</span>
-<span id="cb2-69"><a href=""></a>| US         | <span class="fl">0.0894</span>     | <span class="fl">0.2608</span>     | <span class="fl">0.4189</span>     |</span>
-<span id="cb2-70"><a href=""></a>| ZA         | <span class="fl">0.1313</span>     | <span class="fl">0.3062</span>     | <span class="fl">0.475</span>      |</span>
-<span id="cb2-71"><a href=""></a><span class="op">+</span><span class="co">------------+------------+------------+------------+</span></span>
-<span id="cb2-72"><a href=""></a></span>
-<span id="cb2-73"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> <span class="kw">category</span>, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">FROM</span> benchmark_score</span>
-<span id="cb2-74"><a href=""></a>        <span class="kw">JOIN</span> benchmark <span class="kw">USING</span> (benchmark_id) <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span>;</span>
-<span id="cb2-75"><a href=""></a></span>
-<span id="cb2-76"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span>
-<span id="cb2-77"><a href=""></a>|      <span class="kw">category</span>       | <span class="fu">COUNT</span>(<span class="op">*</span>) |</span>
-<span id="cb2-78"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span>
-<span id="cb2-79"><a href=""></a>|                     | <span class="dv">2346</span>     |</span>
-<span id="cb2-80"><a href=""></a>| Compression algos   | <span class="dv">1112565</span>  |</span>
-<span id="cb2-81"><a href=""></a>| <span class="kw">Database</span>            | <span class="dv">4307</span>     |</span>
-<span id="cb2-82"><a href=""></a>| Geekbench           | <span class="dv">199886</span>   |</span>
-<span id="cb2-83"><a href=""></a>| LLM inference speed | <span class="dv">118898</span>   |</span>
-<span id="cb2-84"><a href=""></a>| Memory bandwidth    | <span class="dv">190412</span>   |</span>
-<span id="cb2-85"><a href=""></a>| Memory latency      | <span class="dv">23757</span>    |</span>
-<span id="cb2-86"><a href=""></a>| OpenSSL             | <span class="dv">239118</span>   |</span>
-<span id="cb2-87"><a href=""></a>| Other               | <span class="dv">3629</span>     |</span>
-<span id="cb2-88"><a href=""></a>| Passmark            | <span class="dv">57680</span>    |</span>
-<span id="cb2-89"><a href=""></a>| Redis               | <span class="dv">64980</span>    |</span>
-<span id="cb2-90"><a href=""></a>| <span class="kw">Static</span> web server   | <span class="dv">544505</span>   |</span>
-<span id="cb2-91"><a href=""></a>| Workload <span class="kw">profile</span>    | <span class="dv">25185</span>    |</span>
-<span id="cb2-92"><a href=""></a>| stress<span class="op">-</span>ng           | <span class="dv">74703</span>    |</span>
-<span id="cb2-93"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span></code></pre></div>
+<span id="cb2-6"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> status, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">FROM</span> server <span class="kw">GROUP</span> <span class="kw">BY</span> status;</span>
+<span id="cb2-7"><a href=""></a><span class="op">+</span><span class="co">------------------------+----------+</span></span>
+<span id="cb2-8"><a href=""></a>|         status         | <span class="fu">COUNT</span>(<span class="op">*</span>) |</span>
+<span id="cb2-9"><a href=""></a><span class="op">+</span><span class="co">------------------------+----------+</span></span>
+<span id="cb2-10"><a href=""></a>| ACTIVE                 | <span class="dv">4677</span>     |</span>
+<span id="cb2-11"><a href=""></a>| INACTIVE               | <span class="dv">1143</span>     |</span>
+<span id="cb2-12"><a href=""></a>| PLANNED_FOR_RETIREMENT | <span class="dv">130</span>      |</span>
+<span id="cb2-13"><a href=""></a>| RETIRED                | <span class="dv">49</span>       |</span>
+<span id="cb2-14"><a href=""></a><span class="op">+</span><span class="co">------------------------+----------+</span></span>
+<span id="cb2-15"><a href=""></a></span>
+<span id="cb2-16"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> <span class="fu">MIN</span>(vcpus), <span class="fu">MIN</span>(memory_amount<span class="op">/</span><span class="dv">1024</span>) <span class="kw">FROM</span> server;</span>
+<span id="cb2-17"><a href=""></a><span class="op">+</span><span class="co">------------+-------------------------+</span></span>
+<span id="cb2-18"><a href=""></a>| <span class="fu">MIN</span>(vcpus) | <span class="fu">MIN</span>(memory_amount<span class="op">/</span><span class="dv">1024</span>) |</span>
+<span id="cb2-19"><a href=""></a><span class="op">+</span><span class="co">------------+-------------------------+</span></span>
+<span id="cb2-20"><a href=""></a>| <span class="dv">1</span>          | <span class="fl">0.5</span>                     |</span>
+<span id="cb2-21"><a href=""></a><span class="op">+</span><span class="co">------------+-------------------------+</span></span>
+<span id="cb2-22"><a href=""></a></span>
+<span id="cb2-23"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> <span class="fu">MAX</span>(vcpus), <span class="fu">MAX</span>(memory_amount<span class="op">/</span><span class="dv">1024</span>) <span class="kw">FROM</span> server;</span>
+<span id="cb2-24"><a href=""></a><span class="op">+</span><span class="co">------------+-------------------------+</span></span>
+<span id="cb2-25"><a href=""></a>| <span class="fu">Max</span>(vcpus) | <span class="fu">MAX</span>(memory_amount<span class="op">/</span><span class="dv">1024</span>) |</span>
+<span id="cb2-26"><a href=""></a><span class="op">+</span><span class="co">------------+-------------------------+</span></span>
+<span id="cb2-27"><a href=""></a>| <span class="dv">1920</span>       | <span class="fl">32768.0</span>                 |</span>
+<span id="cb2-28"><a href=""></a><span class="op">+</span><span class="co">------------+-------------------------+</span></span>
+<span id="cb2-29"><a href=""></a></span>
+<span id="cb2-30"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> z.vendor_id, </span>
+<span id="cb2-31"><a href=""></a>               <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span>(continent)) <span class="kw">AS</span> continents, </span>
+<span id="cb2-32"><a href=""></a>               <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span>(country_id)) <span class="kw">AS</span> countries,</span>
+<span id="cb2-33"><a href=""></a>               <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span>(z.region_id)) <span class="kw">AS</span> regions,</span>
+<span id="cb2-34"><a href=""></a>               <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> zones</span>
+<span id="cb2-35"><a href=""></a>        <span class="kw">FROM</span> <span class="dt">zone</span> <span class="kw">AS</span> z <span class="kw">JOIN</span> region <span class="kw">USING</span> (region_id) <span class="kw">JOIN</span> country <span class="kw">USING</span> (country_id)</span>
+<span id="cb2-36"><a href=""></a>        <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span>;</span>
+<span id="cb2-37"><a href=""></a><span class="op">+</span><span class="co">-----------+------------+-----------+---------+@@box@@-------+</span></span>
+<span id="cb2-38"><a href=""></a>| vendor_id | continents | countries | regions | zones |</span>
+<span id="cb2-39"><a href=""></a><span class="op">+</span><span class="co">-----------+------------+-----------+---------+-------+</span></span>
+<span id="cb2-40"><a href=""></a>| alicloud  | <span class="dv">5</span>          | <span class="dv">19</span>        | <span class="dv">34</span>      | <span class="dv">148</span>   |</span>
+<span id="cb2-41"><a href=""></a>| aws       | <span class="dv">6</span>          | <span class="dv">29</span>        | <span class="dv">34</span>      | <span class="dv">153</span>   |</span>
+<span id="cb2-42"><a href=""></a>| azure     | <span class="dv">6</span>          | <span class="dv">31</span>        | <span class="dv">64</span>      | <span class="dv">149</span>   |</span>
+<span id="cb2-43"><a href=""></a>| gcp       | <span class="dv">6</span>          | <span class="dv">29</span>        | <span class="dv">43</span>      | <span class="dv">132</span>   |</span>
+<span id="cb2-44"><a href=""></a>| hcloud    | <span class="dv">3</span>          | <span class="dv">4</span>         | <span class="dv">6</span>       | <span class="dv">6</span>     |</span>
+<span id="cb2-45"><a href=""></a>| ovh       | <span class="dv">4</span>          | <span class="dv">9</span>         | <span class="dv">29</span>      | <span class="dv">33</span>    |</span>
+<span id="cb2-46"><a href=""></a>| upcloud   | <span class="dv">4</span>          | <span class="dv">12</span>        | <span class="dv">15</span>      | <span class="dv">15</span>    |</span>
+<span id="cb2-47"><a href=""></a>| vultr     | <span class="dv">6</span>          | <span class="dv">20</span>        | <span class="dv">36</span>      | <span class="dv">36</span>    |</span>
+<span id="cb2-48"><a href=""></a><span class="op">+</span><span class="co">-----------+------------+-----------+---------+-------@@box@@+</span></span>
+<span id="cb2-49"><a href=""></a></span>
+<span id="cb2-50"><a href=""></a></span>
+<span id="cb2-51"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="op">*</span>), <span class="fu">MIN</span>(price), <span class="fu">ROUND</span>(<span class="fu">AVG</span>(price), <span class="dv">4</span>) <span class="kw">AS</span> <span class="ot">"AVG(price)"</span>, <span class="fu">MAX</span>(price)</span>
+<span id="cb2-52"><a href=""></a>        <span class="kw">FROM</span> server_price <span class="kw">WHERE</span> vendor_id <span class="op">=</span> <span class="st">'aws'</span> <span class="kw">AND</span> server_id <span class="op">=</span> <span class="st">'m8g.2xlarge'</span>;</span>
+<span id="cb2-53"><a href=""></a><span class="op">+</span><span class="co">----------+------------+------------+------------+</span></span>
+<span id="cb2-54"><a href=""></a>| <span class="fu">COUNT</span>(<span class="op">*</span>) | <span class="fu">MIN</span>(price) | <span class="fu">AVG</span>(price) | <span class="fu">MAX</span>(price) |</span>
+<span id="cb2-55"><a href=""></a><span class="op">+</span><span class="co">----------+------------+------------+------------+</span></span>
+<span id="cb2-56"><a href=""></a>| <span class="dv">199</span>      | <span class="fl">0.04</span>       | <span class="fl">0.2789</span>     | <span class="fl">0.5722</span>     |</span>
+<span id="cb2-57"><a href=""></a><span class="op">+</span><span class="co">----------+------------+------------+------------+</span></span>
+<span id="cb2-58"><a href=""></a></span>
+<span id="cb2-59"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> <span class="kw">category</span>, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">FROM</span> benchmark_score</span>
+<span id="cb2-60"><a href=""></a>        <span class="kw">JOIN</span> benchmark <span class="kw">USING</span> (benchmark_id) <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span>;</span>
+<span id="cb2-61"><a href=""></a></span>
+<span id="cb2-62"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span>
+<span id="cb2-63"><a href=""></a>|      <span class="kw">category</span>       | <span class="fu">COUNT</span>(<span class="op">*</span>) |</span>
+<span id="cb2-64"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span>
+<span id="cb2-65"><a href=""></a>|                     | <span class="dv">2346</span>     |</span>
+<span id="cb2-66"><a href=""></a>| Compression algos   | <span class="dv">1112565</span>  |</span>
+<span id="cb2-67"><a href=""></a>| <span class="kw">Database</span>            | <span class="dv">4307</span>     |</span>
+<span id="cb2-68"><a href=""></a>| Geekbench           | <span class="dv">199886</span>   |</span>
+<span id="cb2-69"><a href=""></a>| LLM inference speed | <span class="dv">118898</span>   |</span>
+<span id="cb2-70"><a href=""></a>| Memory bandwidth    | <span class="dv">190412</span>   |</span>
+<span id="cb2-71"><a href=""></a>| Memory latency      | <span class="dv">23757</span>    |</span>
+<span id="cb2-72"><a href=""></a>| OpenSSL             | <span class="dv">239118</span>   |</span>
+<span id="cb2-73"><a href=""></a>| Other               | <span class="dv">3629</span>     |</span>
+<span id="cb2-74"><a href=""></a>| Passmark            | <span class="dv">57680</span>    |</span>
+<span id="cb2-75"><a href=""></a>| Redis               | <span class="dv">64980</span>    |</span>
+<span id="cb2-76"><a href=""></a>| <span class="kw">Static</span> web server   | <span class="dv">544505</span>   |</span>
+<span id="cb2-77"><a href=""></a>| Workload <span class="kw">profile</span>    | <span class="dv">25185</span>    |</span>
+<span id="cb2-78"><a href=""></a>| stress<span class="op">-</span>ng           | <span class="dv">74703</span>    |</span>
+<span id="cb2-79"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span></code></pre></div>
 </section>
 
 <section>
