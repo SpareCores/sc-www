@@ -279,7 +279,6 @@ sqlite> SELECT COUNT(*), MIN(price), ROUND(AVG(price), 4) AS "AVG(price)", MAX(p
 
 sqlite> SELECT category, COUNT(*) FROM benchmark_score
         JOIN benchmark USING (benchmark_id) GROUP BY 1;
-
 +---------------------+----------+
 |      category       | COUNT(*) |
 +---------------------+----------+

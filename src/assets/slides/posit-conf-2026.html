@@ -95,7 +95,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="posit-conf-2026_files/libs/revealjs/dist/theme/quarto-ce87408c3cf0609aeb77d65f75b1999e.css">
+  <link rel="stylesheet" href="posit-conf-2026_files/libs/revealjs/dist/theme/quarto-0ba2550f576cf5de89bd8e81d5f93b5d.css">
   <link href="posit-conf-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="posit-conf-2026_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="posit-conf-2026_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -458,25 +458,24 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 <span id="cb2-58"><a href=""></a></span>
 <span id="cb2-59"><a href=""></a>sqlite<span class="op">&gt;</span> <span class="kw">SELECT</span> <span class="kw">category</span>, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">FROM</span> benchmark_score</span>
 <span id="cb2-60"><a href=""></a>        <span class="kw">JOIN</span> benchmark <span class="kw">USING</span> (benchmark_id) <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span>;</span>
-<span id="cb2-61"><a href=""></a></span>
-<span id="cb2-62"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span>
-<span id="cb2-63"><a href=""></a>|      <span class="kw">category</span>       | <span class="fu">COUNT</span>(<span class="op">*</span>) |</span>
-<span id="cb2-64"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span>
-<span id="cb2-65"><a href=""></a>|                     | <span class="dv">2346</span>     |</span>
-<span id="cb2-66"><a href=""></a>| Compression algos   | <span class="dv">1112565</span>  |</span>
-<span id="cb2-67"><a href=""></a>| <span class="kw">Database</span>            | <span class="dv">4307</span>     |</span>
-<span id="cb2-68"><a href=""></a>| Geekbench           | <span class="dv">199886</span>   |</span>
-<span id="cb2-69"><a href=""></a>| LLM inference speed | <span class="dv">118898</span>   |</span>
-<span id="cb2-70"><a href=""></a>| Memory bandwidth    | <span class="dv">190412</span>   |</span>
-<span id="cb2-71"><a href=""></a>| Memory latency      | <span class="dv">23757</span>    |</span>
-<span id="cb2-72"><a href=""></a>| OpenSSL             | <span class="dv">239118</span>   |</span>
-<span id="cb2-73"><a href=""></a>| Other               | <span class="dv">3629</span>     |</span>
-<span id="cb2-74"><a href=""></a>| Passmark            | <span class="dv">57680</span>    |</span>
-<span id="cb2-75"><a href=""></a>| Redis               | <span class="dv">64980</span>    |</span>
-<span id="cb2-76"><a href=""></a>| <span class="kw">Static</span> web server   | <span class="dv">544505</span>   |</span>
-<span id="cb2-77"><a href=""></a>| Workload <span class="kw">profile</span>    | <span class="dv">25185</span>    |</span>
-<span id="cb2-78"><a href=""></a>| stress<span class="op">-</span>ng           | <span class="dv">74703</span>    |</span>
-<span id="cb2-79"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span></code></pre></div>
+<span id="cb2-61"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span>
+<span id="cb2-62"><a href=""></a>|      <span class="kw">category</span>       | <span class="fu">COUNT</span>(<span class="op">*</span>) |</span>
+<span id="cb2-63"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span>
+<span id="cb2-64"><a href=""></a>|                     | <span class="dv">2346</span>     |</span>
+<span id="cb2-65"><a href=""></a>| Compression algos   | <span class="dv">1112565</span>  |</span>
+<span id="cb2-66"><a href=""></a>| <span class="kw">Database</span>            | <span class="dv">4307</span>     |</span>
+<span id="cb2-67"><a href=""></a>| Geekbench           | <span class="dv">199886</span>   |</span>
+<span id="cb2-68"><a href=""></a>| LLM inference speed | <span class="dv">118898</span>   |</span>
+<span id="cb2-69"><a href=""></a>| Memory bandwidth    | <span class="dv">190412</span>   |</span>
+<span id="cb2-70"><a href=""></a>| Memory latency      | <span class="dv">23757</span>    |</span>
+<span id="cb2-71"><a href=""></a>| OpenSSL             | <span class="dv">239118</span>   |</span>
+<span id="cb2-72"><a href=""></a>| Other               | <span class="dv">3629</span>     |</span>
+<span id="cb2-73"><a href=""></a>| Passmark            | <span class="dv">57680</span>    |</span>
+<span id="cb2-74"><a href=""></a>| Redis               | <span class="dv">64980</span>    |</span>
+<span id="cb2-75"><a href=""></a>| <span class="kw">Static</span> web server   | <span class="dv">544505</span>   |</span>
+<span id="cb2-76"><a href=""></a>| Workload <span class="kw">profile</span>    | <span class="dv">25185</span>    |</span>
+<span id="cb2-77"><a href=""></a>| stress<span class="op">-</span>ng           | <span class="dv">74703</span>    |</span>
+<span id="cb2-78"><a href=""></a><span class="op">+</span><span class="co">---------------------+----------+</span></span></code></pre></div>
 </section>
 
 <section>
