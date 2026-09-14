@@ -81,7 +81,7 @@ and we are an open-source project for cloud transparency, because
 WHAT THE HECK is a virtual CPU?!
 
 There's a conceptual uncertainty and visibility problem here,
-as a cloud CPU could range from an poor-performing, potentially over-provisioned thread of a 15 years-old CPU core with saturated bandwidth to memory,
+as a cloud CPU could range from an poor-performing, potentially over-provisioned thread of a 15 years-old processor with saturated bandwidth to memory,
 versus a dedicated CPU core of a state-of-the-art server -- with massive CPU cache and high memory bandwidth.
 
 Which means your R or Python scripts run on the same number of vCPUs could ultimately finish up to a hundred times (!!!) faster or slower.
@@ -194,7 +194,7 @@ div#cb1 span.kw, div#cb1 span.op {
 </h3>
 
 ::: {.notes}
-The standard way to speak to databases.
+The standard way to speak to databases, such as the Spare Cores Server Navigator data.
 Something like
 
 - we are looking for the most cost-efficient
