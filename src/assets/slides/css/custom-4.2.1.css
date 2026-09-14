@@ -242,6 +242,28 @@ color: #34d399;
   border-radius: 8px;
 }
 
+/* Big label on top of slide content (e.g. highlighting a ratio on a chart):
+     <div class="slide-text-overlay fragment"><span>100x</span></div> */
+.reveal .slides .slide-text-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  pointer-events: none;
+}
+.reveal .slides .slide-text-overlay > span {
+  font-size: 140px;
+  font-weight: bold;
+  line-height: 1;
+  color: #34d399;
+  background: rgba(6, 38, 58, 0.72);
+  padding: 0.1em 0.25em;
+  border-radius: 16px;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+
 .reveal .slides section#pydata-london-date > h2:empty {
   display: none;
   margin: 0;

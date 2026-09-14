@@ -95,7 +95,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="hetzner-summit-2026_files/libs/revealjs/dist/theme/quarto-ce87408c3cf0609aeb77d65f75b1999e.css">
+  <link rel="stylesheet" href="hetzner-summit-2026_files/libs/revealjs/dist/theme/quarto-0ba2550f576cf5de89bd8e81d5f93b5d.css">
   <link href="hetzner-summit-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="hetzner-summit-2026_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="hetzner-summit-2026_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -312,15 +312,15 @@ Credit: <a href="https://thecodinglove.com/when-i-launch-a-benchmark" target="_b
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<p>FIXME menti iframe doesn’t work?</p>
-<div class="r-stretch">
-<div style="position: relative; padding-bottom: 56.25%; padding-top: 35px; height: 0; overflow: hidden;">
-<p><iframe sandbox="allow-popups allow-scripts allow-same-origin allow-presentation" allowfullscreen="true" allowtransparency="true" frameborder="0" height="315" src="https://www.mentimeter.com/app/presentation/al1uonqkhdqseq3foz4ingoib4wrxabz/embed" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" width="420"></iframe></p>
+<div class="centered">
+<p style="font-size: 78px;">
+Guess the Number!
+</p>
+<p style="font-size: 56px; margin-top: 60px;">
+How much better is the highest performing 2-vCPU cloud server’s single-core performance compared to the lowest?
+</p>
 </div>
-</div>
-<p>foo</p>
-
-<img class="r-stretch" src="images/mentimeter-vcpu-speed-ratio.png"></section>
+</section>
 <section id="vcpu-diff-0" class="slide level2 center">
 <h2></h2>
 <table style="font-size: 2rem; margin-left: auto; margin-right: auto;">
@@ -460,9 +460,14 @@ x34.92481
 </section>
 <section id="vcpu-diff-1" class="slide level2 center">
 <h2></h2>
+<!-- 
+https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4ubGFyZ2UiLCJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJtOGF6bi5sYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiZTItbWljcm8iLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJlMi1taWNybyIsInpvbmVzUmVnaW9ucyI6W119XQ%3D%3D
+-->
 
-<img data-src="images/vcpu-diff-1.png" class="r-stretch quarto-figure quarto-figure-center"><aside class="notes">
-<p>TODO add img overlay: 10x</p>
+<img data-src="images/vcpu-diff-1.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
+<span>30-50x</span>
+</div>
+<aside class="notes">
 <p>TODO speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -479,7 +484,10 @@ x34.92481
 <section id="vcpu-diff-2" class="slide level2 center">
 <h2></h2>
 
-<img data-src="images/vcpu-diff-2.png" class="r-stretch quarto-figure quarto-figure-center"><aside class="notes">
+<img data-src="images/vcpu-diff-2.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
+<span>10-20x</span>
+</div>
+<aside class="notes">
 <p>TODO speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -496,7 +504,10 @@ x34.92481
 <section id="vcpu-diff-3" class="slide level2 center">
 <h2></h2>
 
-<img data-src="images/vcpu-diff-3.png" class="r-stretch quarto-figure quarto-figure-center"><aside class="notes">
+<img data-src="images/vcpu-diff-3.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
+<span>100x</span>
+</div>
+<aside class="notes">
 <p>TODO speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -513,7 +524,10 @@ x34.92481
 <section id="vcpu-diff-4" class="slide level2 center">
 <h2></h2>
 
-<img data-src="images/vcpu-diff-4.png" class="r-stretch quarto-figure quarto-figure-center"><aside class="notes">
+<img data-src="images/vcpu-diff-4.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
+<span>10-100x</span>
+</div>
+<aside class="notes">
 <p>TODO speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -694,7 +708,7 @@ The Cloud Performance Map:<br>How Hetzner Ranks<br>Among 5,000 Instance Types
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<div class="sourceCode" id="cb1" data-fragment-index="0" style="font-size:24px; margin-top: 20px !important; height: 640px;" data-code-line-numbers="6-24|7-8|11-12|14-21|23-24|26-54|26-38,40-42,44-54|26-38,40-42,44-54|26-28,39,43,54|56-74|62|76-104|109-110"><pre class="sourceCode numberSource sh number-lines"><code class="sourceCode bash"><span id="cb1-1"><a href=""></a><span class="ex">$</span> sqlite3 spare-cores-navigator.db</span>
+<div class="sourceCode" id="cb1" data-fragment-index="0" style="font-size:24px; margin-top: 20px !important; height: 640px;" data-code-line-numbers="6-24|7-8|11-12|14-21|23-24|26-54|26-38,40-42,44-54|26-28,39,43,54|56-74|62|76-104|109-110"><pre class="sourceCode numberSource sh number-lines"><code class="sourceCode bash"><span id="cb1-1"><a href=""></a><span class="ex">$</span> sqlite3 spare-cores-navigator.db</span>
 <span id="cb1-2"><a href=""></a><span class="ex">SQLite</span> version 3.46.1</span>
 <span id="cb1-3"><a href=""></a><span class="ex">Enter</span> <span class="st">".help"</span> for usage hints.</span>
 <span id="cb1-4"><a href=""></a></span>
@@ -818,7 +832,7 @@ The Cloud Performance Map:<br>How Hetzner Ranks<br>Among 5,000 Instance Types
   })();
 </script>
 <!-- fragment index 4 = 6th code-line-numbers step (23-24); show on click, hide on next -->
-<div class="slide-image-overlay fragment fade-in-then-out" data-fragment-index="6">
+<div class="slide-image-overlay fragment fade-in-then-out" data-fragment-index="5">
   <img src="images/yoda-llm-gpu.jpg" alt="A GPU on the cloud, you need?">
 </div>
 </section>
@@ -837,6 +851,7 @@ The Cloud Performance Map:<br>How Hetzner Ranks<br>Among 5,000 Instance Types
 <h2></h2>
 <aside class="notes">
 <p>Swallow the pill .. or other means of coping with the anxiety of the situation.</p>
+<p>TODO let’s take a deep breath, and dive into the data! and clarify what we actually do here</p>
 <p>BTW if you wondered, I’m the guy in the back.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -856,26 +871,9 @@ Credit: <a href="https://devopsreactions.tumblr.com/post/71190963508/senior-vs-j
 </p>
 </div>
 </section></section>
-<section id="spare-cores-navigator" class="title-slide slide level1">
-<h1></h1>
-<aside class="notes">
-<p>TODO let’s take a deep breath, and dive into the data! and clarify what we actually do here</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
-
 <section>
-<section id="getpass.getuser" class="title-slide slide level1">
-<h1>&gt;&gt;&gt; getpass.getuser()</h1>
+<section id="whoami" class="title-slide slide level1">
+<h1>$ whoami</h1>
 <div class="browser-frame">
   <div class="browser-toolbar">
     <span class="browser-nav">‹ › ↻</span>
@@ -939,7 +937,7 @@ Credit: <a href="https://devopsreactions.tumblr.com/post/71190963508/senior-vs-j
       }</style></aside>
 </section>
 <section id="while-current-destination" class="slide level2">
-<h2>&gt;&gt;&gt; while current != destination:</h2>
+<h2>$ while [[ $current != $destination ]]</h2>
 <div class="centered">
 <img style="width:60%;" src="https://sparecores.com/assets/images/blog/xkcd-1205-is_it_worth_the_time.png">
 <p style="font-size: 1rem; margin-top: 10px;">
@@ -947,8 +945,8 @@ Source: <a href="https://xkcd.com/1205/">xkcd [1025] Is It Worth the Time?</a>
 </p>
 </div>
 </section></section>
-<section id="badges" class="title-slide slide level1" data-transition="convex-in convex-out">
-<h1>&gt;&gt;&gt; from sparecores import badges</h1>
+<section id="whois" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>$ whois sparecores.com</h1>
 <ul style="font-size: 0.9em;">
 <li class="fragment" data-fragment-index="1">
 Funded by NGI Search (EU consortium) in 2024
@@ -995,8 +993,8 @@ This was awesome, thanks for sharing.
       }</style></aside>
 </section>
 
-<section id="intro" class="title-slide slide level1" data-transition="convex-in convex-out">
-<h1>&gt;&gt;&gt; from sparecores import intro</h1>
+<section id="apropos" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>$ apropos sparecores.com</h1>
 <ul style="font-size: 0.9em;">
 <li class="fragment">
 Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance.
@@ -1035,8 +1033,8 @@ Add-on services to scale data science workflows, even without direct vendor enga
 </section>
 
 <section>
-<section id="from-sparecores-import-navigator" class="title-slide slide level1" data-transition="convex-in slide-out">
-<h1>&gt;&gt;&gt; from sparecores import navigator</h1>
+<section id="curl--i-sparecores.comnavigator" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>$ curl -I sparecores.com/navigator</h1>
 
 <img style="width:100%; margin-top: 30px;" src="images/homepage-stats-2026q3.png" class="r-stretch"><p class="centered" style="margin-top: -10px;">
 Source: <a href="https://sparecores.com">sparecores.com</a>
@@ -1055,8 +1053,8 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-sparecores-import-navigator-1" class="slide level2">
-<h2>&gt;&gt;&gt; from sparecores import navigator</h2>
+<section id="curl--i-github.comsparecores" class="slide level2">
+<h2>$ curl -I github.com/sparecores</h2>
 <div class="centered">
 <p><img style="margin-top:-20px; width:80%;" src="images/gha-actions-2025q1.png"></p>
 </div>
@@ -1074,8 +1072,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-search" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import search</h2>
+<section id="curl-sparecores.comsearch" class="slide level2">
+<h2>$ curl sparecores.com/search</h2>
 <div class="centered">
 <p><a href="https://sparecores.com/servers" target="_blank"> <img style="width:95%;" src="images/sc-www-listing-top-2026q2.png"> </a></p>
 </div>
@@ -1105,8 +1103,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-server" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<section id="curl-sparecores.comservergcpg2-standard-16" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
 <div class="centered">
 <p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 90%;" src="images/sc-www-server-details-top-g2-standard-16-2026q2.png"> </a></p>
 </div>
@@ -1124,14 +1122,14 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-server-1" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<section id="curl-sparecores.comservergcpg2-standard-16-1" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
 <div class="centered">
 <p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-details-top-g2-standard-16-1.5-2026q2.png"> <img class="fragment" style="width: 40%; margin-top: -10px;" src="images/sc-www-server-details-top-g2-standard-16-lstopo.png"> </a></p>
 </div>
 </section>
-<section id="from-navigator.www-import-server-2" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<section id="curl-sparecores.comservergcpg2-standard-16-2" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
 <div class="centered">
 <p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-details-prices-g2-standard-16.png"> </a></p>
 </div>
@@ -1149,8 +1147,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-server-3" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<section id="curl-sparecores.comservergcpg2-standard-16-3" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
 <!--
 <iframe
  src="https://sparecores.com/embed/server/gcp/g2-standard-16/bw_mem"
@@ -1179,8 +1177,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-server-4" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<section id="curl-sparecores.comservergcpg2-standard-16-4" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
 <p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-2-g2-standard-16.png"> </a></p>
 <aside class="notes">
 <p>also running test suites like PassMark or …</p>
@@ -1196,8 +1194,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-server-5" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<section id="curl-sparecores.comservergcpg2-standard-16-5" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
 <p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-3-g2-standard-16.png"> </a></p>
 <aside class="notes">
 <p>Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc</p>
@@ -1213,8 +1211,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-server-6" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<section id="curl-sparecores.comservergcpg2-standard-16-6" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
 <p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-4-g2-standard-16.png"> </a></p>
 <aside class="notes">
 <p>visualizations on how well the machine can scale tasks to multiple CPU cores – e.g.&nbsp;showing the diminishing return on this Intel Xeon due to hyperthreading</p>
@@ -1230,8 +1228,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-server-7" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<section id="curl-sparecores.comservergcpg2-standard-16-7" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
 <p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-5-g2-standard-16.png"> </a></p>
 <aside class="notes">
 <p>Or looking at LLM Inference Speed both for prompt processing and text generation, using smaller models with 135M parameters up to 70B larger models.</p>
@@ -1247,7 +1245,7 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-server-8" class="slide level2">
+<section id="from-navigator.www-import-server" class="slide level2">
 <h2>&gt;&gt;&gt; from navigator.www import server</h2>
 <p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-6-g2-standard-16.png"> </a></p>
 <aside class="notes">
@@ -1264,8 +1262,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-servers" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import servers</h2>
+<section id="curl-sparecores.comserverscompare" class="slide level2">
+<h2>$ curl sparecores.com/servers/compare</h2>
 <div class="centered">
 <p><a href="https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-compare-2025-q4.png"> </a></p>
 </div>
@@ -1283,8 +1281,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator.www-import-servers-1" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator.www import servers</h2>
+<section id="curl-sparecores.comserverscompare-1" class="slide level2">
+<h2>$ curl sparecores.com/servers/compare</h2>
 <div class="centered">
 <p><a href="https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D" target="_blank"> <img style="width: 75%;" src="images/sc-www-server-compare-charts.png"> </a></p>
 </div>
@@ -1302,8 +1300,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator-import-api" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator import api</h2>
+<section id="curl-keeper.sparecores.netdocs" class="slide level2">
+<h2>$ curl keeper.sparecores.net/docs</h2>
 <div class="centered">
 <p><img style="width:95%;" src="images/sc-keeper-preview.png"></p>
 </div>
@@ -1321,8 +1319,8 @@ FTR this dataset was generated, collected, standardized, and published in public
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-navigator-import-data" class="slide level2">
-<h2>&gt;&gt;&gt; from navigator import data</h2>
+<section id="pip-install-sparecores-data" class="slide level2">
+<h2>$ pip install sparecores-data</h2>
 <div class="sourceCode" id="cb2" style="margin-top: 20px !important; height: 640px;" data-code-line-numbers="2|3|4-6|7|10-11|16|21-29|30-34|36-39|41-60|53-54|62-69"><pre class="sourceCode numberSource py number-lines"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span> <span class="im">as</span> pp</span>
 <span id="cb2-2"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sc_crawler.tables <span class="im">import</span> Server</span>
 <span id="cb2-3"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sc_data <span class="im">import</span> db</span>
@@ -1408,7 +1406,7 @@ FTR this dataset was generated, collected, standardized, and published in public
       }</style></aside>
 </section></section>
 <section id="components" class="title-slide slide level1" data-transition="convex-in convex-out">
-<h1>&gt;&gt;&gt; sparecores.navigator.__dir__()</h1>
+<h1>$ ls -1 sparecores</h1>
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components-2026.png" class="r-stretch"><aside class="notes">
 <p>As mentioned previously, this is made available via multiple components that you can find on GitHub. We don’t have time to go through all of them, but I’d be happy to answer any related questions on Slack, or ping me on LinkedIn :)</p>
@@ -1427,8 +1425,8 @@ FTR this dataset was generated, collected, standardized, and published in public
 </section>
 
 <section>
-<section id="from-sc_inspector-import-llm" class="title-slide slide level1" data-transition="convex-in slide-out">
-<h1>&gt;&gt;&gt; from sc_inspector import llm</h1>
+<section id="ls-sc-imagesllm-benchmark" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>$ ls sc-images/llm-benchmark</h1>
 <div class="centered">
 <p><img style="margin-top:-30px; width: 80%;" src="images/gh-image-llm-benchmark.png"></p>
 </div>
@@ -1473,8 +1471,8 @@ Download models in a background thread, sequentially from Hugging Face with sane
 </ul>
 </ul>
 </section>
-<section id="from-benchmark-llm-import-models" class="slide level2">
-<h2>&gt;&gt;&gt; from benchmark-llm import models</h2>
+<section id="docker-build--v-benchmark-llm" class="slide level2">
+<h2>$ docker build -v benchmark-llm</h2>
 <style>
 td.file-size span.num {
   display: inline-block;
@@ -1636,8 +1634,8 @@ Describe how <code>ngl</code> was found!
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-benchmark-llm-import-workloads" class="slide level2">
-<h2>&gt;&gt;&gt; from benchmark-llm import workloads</h2>
+<section id="docker-inspect-benchmark-llm" class="slide level2">
+<h2>$ docker inspect benchmark-llm</h2>
 <style>
 .reveal table td.right {
   text-align: right;
@@ -1775,8 +1773,8 @@ Timeout: model load into memory (250 MB/s) + 5 iterations with expected TPS + 1s
 </p>
 </div>
 </section>
-<section id="from-benchmark-llm-import-example" class="slide level2">
-<h2>&gt;&gt;&gt; from benchmark-llm import example</h2>
+<section id="docker-logs-benchmark-llm" class="slide level2">
+<h2>$ docker logs benchmark-llm</h2>
 <div class="sourceCode" id="cb3" style="font-size:24px; margin-top: 50px; height: 620px;" data-code-line-numbers="1-2|3-5,7|6|8-9|10|11|12|13-14|16-17|15,18-19|20-24|25|70-79|80-81"><pre class="sourceCode numberSource shell number-lines"><code class="sourceCode"><span id="cb3-1"><a href=""></a>2025-04-16 13:41:53,991 - INFO - Using CPU-build of llama.cpp</span>
 <span id="cb3-2"><a href=""></a>load_backend: loaded CPU backend from ./libggml-cpu-haswell.so</span>
 <span id="cb3-3"><a href=""></a>2025-04-16 13:41:54,017 - INFO - Benchmarking model SmolLM-135M.Q4_K_M.gguf ...</span>
@@ -1862,8 +1860,8 @@ Timeout: model load into memory (250 MB/s) + 5 iterations with expected TPS + 1s
 Source: <a href="https://github.com/SpareCores/sc-inspector-data/blob/main/data/hcloud/cpx31/llm/stderr">https://github.com/SpareCores/sc-inspector-data/blob/main/data/hcloud/cpx31/llm/stderr</a>
 </p>
 </section>
-<section id="from-benchmark-llm-import-example-1" class="slide level2">
-<h2>&gt;&gt;&gt; from benchmark-llm import example</h2>
+<section id="docker-run--ti-benchmark-llm" class="slide level2">
+<h2>$ docker run -ti benchmark-llm</h2>
 <div class="sourceCode" id="cb4" style="font-size:24px; margin-top: 50px; height: 620px;" data-code-line-numbers="1-1"><pre class="sourceCode numberSource shell number-lines"><code class="sourceCode"><span id="cb4-1"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 16, "n_gen": 0, "test_time": "2025-04-16T13:41:54Z", "avg_ns": 29425803, "stddev_ns": 2633928, "avg_ts": 547.524574, "stddev_ts": 52.956226, "samples_ns": [ 31321572, 31803362, 29934339, 25189353, 28880389 ],"samples_ts": [ 510.83, 503.091, 534.503, 635.189, 554.009 ]}</span>
 <span id="cb4-2"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 128, "n_gen": 0, "test_time": "2025-04-16T13:41:54Z", "avg_ns": 233632645, "stddev_ns": 9120854, "avg_ts": 548.527531, "stddev_ts": 21.101188, "samples_ns": [ 240395549, 227846673, 224613694, 246016255, 229291056 ],"samples_ts": [ 532.456, 561.781, 569.867, 520.291, 558.242 ]}</span>
 <span id="cb4-3"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 512, "n_gen": 0, "test_time": "2025-04-16T13:41:56Z", "avg_ns": 1107877439, "stddev_ns": 34935205, "avg_ts": 462.513620, "stddev_ts": 14.616548, "samples_ns": [ 1127364831, 1064661879, 1081647591, 1114166670, 1151546228 ],"samples_ts": [ 454.156, 480.904, 473.352, 459.536, 444.62 ]}</span>
@@ -1895,8 +1893,8 @@ Source: <a href="https://github.com/SpareCores/sc-inspector-data/blob/main/data/
 Source: <a href="https://github.com/SpareCores/sc-inspector-data/blob/main/data/hcloud/cpx31/llm/stdout">https://github.com/SpareCores/sc-inspector-data/blob/main/data/hcloud/cpx31/llm/stdout</a>
 </p>
 </section>
-<section id="from-benchmark-llm-import-example-2" class="slide level2">
-<h2>&gt;&gt;&gt; from benchmark-llm import example</h2>
+<section id="jq-datahcloudcpx31" class="slide level2">
+<h2>$ jq data/hcloud/cpx31</h2>
 <div class="columns" style="display: block; margin-top:50px;">
 <div class="column">
 <iframe src="https://sparecores.com/embed/server/hcloud/cpx31/llm_prompt" style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
@@ -1946,7 +1944,7 @@ Source: <a href="https://sparecores.com/compare?instances=W3siZGlzcGxheV9uYW1lIj
 </p>
 </div>
 <aside class="notes">
-but when looking at a larger model, although the Azure server is still a bit faster for text generataion than the AWS machine and can even do 512 tokens request (despite older CPU and much less memory), AWS is the clear winner for prompt processing
+but when looking at a larger model, although the Azure server is still a bit faster for text generation than the AWS machine and can even do 512 tokens request (despite older CPU and much less memory), AWS is the clear winner for prompt processing
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1958,10 +1956,19 @@ but when looking at a larger model, although the Azure server is still a bit fas
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
+</section>
+<section id="sqlite-select-from-scores-order-by-price-3" class="slide level2">
+<h2>sqlite&gt; SELECT * FROM scores ORDER BY price;</h2>
+<div class="centered">
+<p><img style="width:100%; margin-top: -30px;" src="images/www-server-search-db-hetzner.png"></p>
+<p>
+Source: <a href="https://sparecores.com/servers?benchmark_score_min=1&amp;memory_min=10&amp;order_by=selected_benchmark_score_per_price&amp;order_dir=desc&amp;best_price_allocation=ONDEMAND_ONLY&amp;columns=604473360&amp;benchmark=eyJpZCI6InBnYmVuY2g6aGVhdnlfcmVhZF9vbmx5OnBlYWsiLCJjb25maWciOiJ7fSJ9" target="_blank">sparecores.com/servers</a>
+</p>
+</div>
 </section></section>
 <section>
-<section id="printllm-benchmarks.disclaimer" class="title-slide slide level1">
-<h1>&gt;&gt;&gt; print(llm-benchmarks.disclaimer)</h1>
+<section id="cat-llm-benchmarksdisclaimer.md" class="title-slide slide level1">
+<h1>$ cat llm-benchmarks/disclaimer.md</h1>
 <aside class="notes">
 extreme portability and efficiency on a wide range of devices, especially consumer-grade hardware. Its advantages lie in its minimal dependencies, fast startup time, and its ability to run almost anywhere
 <style type="text/css">
@@ -1999,10 +2006,11 @@ extreme portability and efficiency on a wide range of devices, especially consum
 </ul>
 </div>
 </section>
-<section id="llm-benchmarks.vllm" class="slide level2">
-<h2>&gt;&gt;&gt; llm-benchmarks.vllm</h2>
-<aside class="notes">
-FIXME insert ggplot
+<section id="xdg-open-vllmstatus.png" class="slide level2 centered">
+<h2>$ xdg-open vllm/status.png</h2>
+
+<img src="images/vllm-a10-45-chat-ttft-e2el-throughput.png" style="width: 100%;" class="centered r-stretch"><aside class="notes">
+TODO
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -2015,20 +2023,22 @@ FIXME insert ggplot
           display:block!important;
       }</style></aside>
 </section></section>
-<section id="pip-show-navigator-grep--i-license" class="title-slide slide level1" data-transition="convex-in none-out">
-<h1>$ pip show navigator | grep -i license</h1>
-<p><span class="fragment">🤓 100% open-source! <span class="fragment"> 🤐 BUT …</span></span></p>
-<div class="fragment">
-<div class="centered">
-<p><img src="images/dontryathome1.png" style="width: 50%; margin-top: 0px;"></p>
-</div>
-</div>
-</section>
-
-<section>
-<section id="assert-dragons.location-here" class="title-slide slide level1">
-<h1>&gt;&gt;&gt; assert dragons.location != “here”</h1>
-<p>FIXME new slide title bash?</p>
+<section id="cat-llm-benchmarksna.md" class="title-slide slide level1">
+<h1>$ cat llm-benchmarks/NA.md</h1>
+<aside class="notes">
+<p>TODO …</p>
+<p>And the last disclaimer: (next)</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 <p>Missing data, e.g.&nbsp;due to:</p>
 <ul>
 <li>
@@ -2047,6 +2057,17 @@ the vendor doesn’t have capacity to start an instance
 <code>pulumi</code> reported that the instance creation failed, but it silently ran for 3 days doing nothing and consumed 1000s of dollars
 </li>
 </ul>
+</section>
+
+<section>
+<section id="pip-show-navigator-grep--i-license" class="title-slide slide level1" data-transition="convex-in none-out">
+<h1>$ pip show navigator | grep -i license</h1>
+<p><span class="fragment">🤓 100% open-source! <span class="fragment"> 🤐 BUT …</span></span></p>
+<div class="fragment">
+<div class="centered">
+<p><img src="images/dontryathome1.png" style="width: 50%; margin-top: 0px;"></p>
+</div>
+</div>
 </section>
 <section id="pip-show-navigator-grep--i-license-1" class="slide level2" data-transition="none-in slide-out">
 <h2>$ pip show navigator | grep -i license</h2>
@@ -2074,11 +2095,10 @@ the vendor doesn’t have capacity to start an instance
 <p><img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZG5vdHcyaWJmeHVhcjZ2Zzl1dTNmZzgxZHd0YXM5Y2F5bDc3cHkyNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/N6mPyicEmayO93TMQt/giphy.gif" style="width:50%;margin-top:-20px;"></p>
 </div>
 </section></section>
-<section id="todo" class="title-slide slide level1">
-<h1>TODO</h1>
-<p>foo</p>
+<section id="bye" class="title-slide slide level1" data-transition="convex-in none-out">
+<h1></h1>
 <aside class="notes">
-<p>TODO Hetzner compare screenshots</p>
+<p>Thank you!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -2090,6 +2110,13 @@ the vendor doesn’t have capacity to start an instance
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
+<!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520Sep%252017%25204%253A25%2520PM%25202026%2520%2520%2520 -->
+<div class="centered">
+<p><img src="images/bye-hetzner-summit-2026.png" style="background: none;" class="mt--60 w-80"></p>
+</div>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-30px; padding-top:0px;">
+Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</p>
 
 </section>
     </div>
