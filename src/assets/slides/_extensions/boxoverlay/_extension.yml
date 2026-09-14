@@ -1,0 +1,11 @@
+title: boxoverlay
+author: Spare Cores
+version: 1.0.0
+quarto-required: ">=1.4.0"
+contributes:
+  revealjs-plugins:
+    - name: RevealBoxOverlay
+      script:
+        - boxoverlay.js
+      stylesheet:
+        - boxoverlay.css
