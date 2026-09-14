@@ -114,6 +114,7 @@ export class GithubService {
         },
         { showPendingOnNavigate: false, waitForSignInOutcome: true },
       );
+      this.signInInProgress = false;
       await this.finishSignIn();
     } catch (error) {
       host.clearAuthPending();
@@ -124,6 +125,7 @@ export class GithubService {
       if (!host.awaitingGithubConsent()) {
         this.clearSignInHandoff();
       }
+      host.syncState(true);
     }
   }
 
