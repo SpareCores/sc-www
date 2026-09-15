@@ -187,6 +187,22 @@
       margin-right: 0; 
     }
   </style>
+  
+  <script>
+    window.addEventListener('load', function() {
+      document.addEventListener('keydown', function(event) {
+        if (['ArrowRight', 'ArrowDown', 'PageDown'].includes(event.key)) {
+          event.preventDefault();
+          event.stopPropagation();
+          Reveal.next();
+        } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) {
+          event.preventDefault();
+          event.stopPropagation();
+          Reveal.prev();
+        }
+      }, true);
+    });
+  </script>
 </head>
 <body class="quarto-dark">
   <div class="reveal">
