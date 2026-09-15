@@ -84,6 +84,7 @@
         variant="outline"
         color="brand"
         buttonClass="w-full !justify-center"
+        [loading]="busy === 'github'"
         [disabled]="!!busy"
         (buttonClick)="continueWithGithub()"
       ></sc-button>
@@ -167,27 +168,8 @@
           ></sc-button>
           <sc-button
             type="submit"
-            [label]="
-              auth.githubConsentActive()
-                ? 'Continue'
-                : method === 'github'
-                  ? 'Continue with GitHub'
-                  : 'Continue'
-            "
-            [icon]="
-              auth.githubConsentActive()
-                ? 'chevron-right'
-                : method === 'github'
-                  ? 'github'
-                  : 'chevron-right'
-            "
-            [iconPosition]="
-              auth.githubConsentActive()
-                ? 'end'
-                : method === 'github'
-                  ? 'start'
-                  : 'end'
-            "
+            label="Continue"
+            icon="chevron-right"
             size="small"
             buttonClass="w-full !justify-center"
             [loading]="busy === 'submit' || busy === 'github'"

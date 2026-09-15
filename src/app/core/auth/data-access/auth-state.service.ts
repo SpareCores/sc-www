@@ -28,8 +28,12 @@ import {
   appUrls,
   authErrorMessage,
   getSessionFlag,
+  isPendingGithubExternalComplete,
   isSecondFactorStatus,
+  isTransferable,
+  needsLegalAcceptance,
   newsletterMetadata,
+  pendingEmailVerification,
   setSessionFlag,
 } from "../auth.utils";
 import { ClerkService } from "./clerk.service";
@@ -139,11 +143,6 @@ export class AuthStateService implements GithubAuthHost {
     this.signUpSubtitle.set(
       options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
     );
-    if (this.githubConsentActive()) {
-      this.signInModalOpen.set(false);
-      this.signUpModalOpen.set(true);
-      return;
-    }
     this.signInModalOpen.set(false);
     this.resetGithubConsent();
     this.signUpModalOpen.set(true);
@@ -250,6 +249,10 @@ export class AuthStateService implements GithubAuthHost {
 
   needsGithubConsent(): boolean {
     return this.github.needsConsent();
+  }
+
+  getPendingEmailVerification(): string | null {
+    return pendingEmailVerification(this.clerk.instance?.client?.signUp);
   }
 
   async submitLogin(payload: LoginPayload): Promise<LoginResult> {
@@ -484,11 +487,17 @@ export class AuthStateService implements GithubAuthHost {
       return this.authNotReady();
     }
 
+    const email = payload.emailAddress.trim();
+    const pendingEmail = pendingEmailVerification(signUp);
+    if (pendingEmail && pendingEmail.toLowerCase() === email.toLowerCase()) {
+      return { status: "verify" };
+    }
+
     try {
       const result = await signUp.create({
         firstName: payload.firstName.trim(),
         lastName: payload.lastName.trim(),
-        emailAddress: payload.emailAddress.trim(),
+        emailAddress: email,
         password: payload.password,
         legalAccepted: payload.legalAccepted,
         unsafeMetadata: newsletterMetadata(payload.newsletterOptIn),
@@ -504,6 +513,12 @@ export class AuthStateService implements GithubAuthHost {
       });
       return { status: "verify" };
     } catch (error) {
+      const stillPending = pendingEmailVerification(
+        this.clerk.instance?.client?.signUp,
+      );
+      if (stillPending) {
+        return { status: "verify" };
+      }
       return {
         status: "error",
         message: authErrorMessage(error, AUTH_MESSAGES.unableToCreateAccount),
@@ -577,11 +592,47 @@ export class AuthStateService implements GithubAuthHost {
     }
 
     try {
+      await this.clerk.reloadClient();
+      const signUp = await this.clerk.requireSignUp();
+
+      if (isTransferable(signUp)) {
+        const result = await this.github.completePendingSignUp(
+          newsletterOptIn,
+          true,
+        );
+        if (result.status !== "error") {
+          this.closeSignUp();
+        }
+        return result;
+      }
+
+      if (isPendingGithubExternalComplete(signUp)) {
+        if (needsLegalAcceptance(signUp)) {
+          this.openGithubConsentSignUp();
+          return { status: "complete" };
+        }
+        const result = await this.github.completePendingSignUp(
+          newsletterOptIn,
+          true,
+        );
+        if (result.status !== "error") {
+          this.closeSignUp();
+        }
+        return result;
+      }
+
       await this.github.signUp(newsletterOptIn, legalAccepted);
       if (this.isAuthenticated()) {
         this.closeSignUp();
+        return { status: "complete" };
       }
-      return { status: "complete" };
+      if (this.githubConsentActive() || this.needsGithubConsent()) {
+        return { status: "complete" };
+      }
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.unableToContinueGithub,
+      };
     } catch (error) {
       return {
         status: "error",

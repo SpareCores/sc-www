@@ -76,6 +76,16 @@ export class RegisterModal {
 
     this.errorMessage = "";
     this.method = "email";
+
+    const pendingEmail = this.auth.getPendingEmailVerification();
+    if (
+      pendingEmail &&
+      pendingEmail.toLowerCase() === this.emailAddress.trim().toLowerCase()
+    ) {
+      this.step = "verify";
+      return;
+    }
+
     this.step = "consent";
   }
 
@@ -86,7 +96,7 @@ export class RegisterModal {
 
     this.errorMessage = "";
     this.method = "github";
-    this.step = "consent";
+    void this.submitGithub();
   }
 
   protected backToDetails(): void {
@@ -189,7 +199,7 @@ export class RegisterModal {
 
     const result = await this.auth.submitGithubConsent(
       this.newsletterOptIn,
-      this.legalAccepted,
+      this.auth.githubConsentActive() ? this.legalAccepted : false,
     );
 
     this.busy = null;
