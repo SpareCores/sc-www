@@ -249,12 +249,31 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 </section>
 
 <section>
-<section id="vcpu" class="title-slide slide level1" data-transition="convex-in slide-out">
+<section id="no-cloud" class="title-slide slide level1 center" data-transition="convex-in slide-out">
 <h1></h1>
+<div class="centered">
+<p><img src="images/no-cloud-just-another-comp.png" style="max-width: 75%; max-height: 50%;"></p>
+</div>
 <aside class="notes">
-<p>WHAT THE HECK is a virtual CPU?!</p>
+<p>although everyone knows that cloud is just another computer, we often don’t really know what kind of computer that is.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="vcpu" class="slide level2">
+<h2></h2>
+<aside class="notes">
+<p>WHAT THE HECK is even a virtual CPU?!</p>
 <p>There’s a conceptual uncertainty and visibility problem here, as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory, versus a dedicated CPU core of a state-of-the-art server – with massive CPU cache and high memory bandwidth.</p>
-<p>Which means your R or Python script runs on the same number of vCPUs e.g.&nbsp;10x faster or slower.</p>
+<p>Which means that your applications could run much much faster!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -272,29 +291,6 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
                 transform: translateX(-50%); width: 50%;
                 background: transparent; pointer-events: none;"> </video></p>
 </div>
-</div>
-</section>
-<section id="vcpu-benchmarking" class="slide level2" data-transition="slide-in slide-out">
-<h2></h2>
-<aside class="notes">
-<p>We solve this visibility problem by burning hundreds of thousands of dollars (most recently $20k over a single weekend) to start servers, measure performance, and calculate cost-efficiency, then publish these results and related tooling with open licenses, so that you can save money by optimizing your cloud spend.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-<div class="centered">
-<video autoplay="" muted="" loop="" playsinline="" data-autoplay="" src="images/launching-benchmarks.webm" style="width: 90%; margin-top: 45px;">
-</video>
-<p style="font-size: 0.8em; text-align: center; margin-top: 10px;">
-Credit: <a href="https://thecodinglove.com/when-i-launch-a-benchmark" target="_blank">the_coding_love / When I launch a benchmark</a>
-</p>
 </div>
 </section>
 <section id="vcpu-guess" class="slide level2 center">
@@ -457,6 +453,31 @@ x34.92481
 </tr>
 </tbody>
 </table>
+</section>
+<section id="vcpu-benchmarking" class="slide level2" data-transition="slide-in slide-out">
+<h2></h2>
+<aside class="notes">
+<p>How do I know? Well, we measured! Not only these 2 servers, but actually 3,800…</p>
+<p>We solve this visibility problem by burning hundreds of thousands of dollars to start servers, measure performance, and calculate cost-efficiency, then publish these results and related tooling with open licenses, so that you can save money by optimizing your cloud spend.</p>
+<p>DATA DRIVEN way</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="centered">
+<video autoplay="" muted="" loop="" playsinline="" data-autoplay="" src="images/launching-benchmarks.webm" style="width: 90%; margin-top: 45px;">
+</video>
+<p style="font-size: 0.8em; text-align: center; margin-top: 10px;">
+Credit: <a href="https://thecodinglove.com/when-i-launch-a-benchmark" target="_blank">the_coding_love / When I launch a benchmark</a>
+</p>
+</div>
 </section>
 <section id="vcpu-diff-1" class="slide level2 center">
 <h2></h2>
@@ -693,7 +714,7 @@ The Cloud Performance Map:<br>How Hetzner Ranks<br>Among 5,000 Instance Types
 </div>
 </section>
 <section id="pydata-london" class="slide level2">
-<h2></h2>
+<h2>&gt;&gt;&gt; from PyData import London</h2>
 <aside class="notes">
 <p>TODO speaker notes</p>
 <p>Basically pick a random Hetzner Cloud server for your smaller LLM serving needs.</p>

@@ -472,10 +472,11 @@ and make it easy to compare which server is the best for e.g. LLM inference spee
 
 :::{.notes}
 Now, I know it's not very typical to have a Q&A session at a 5-mins lightning talk,
-but I wanted to answer a few questions that ..
+but I thought you might wonder if we indeed burned $20k in a single weekend on a benchmarking project:
 
+So, yes, we absolutely did!
 
-TODO
+And no, it was not really planned.
 :::
 
 <style>
