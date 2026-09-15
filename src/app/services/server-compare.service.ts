@@ -4,10 +4,8 @@ import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { AuthStateService } from "../core/auth";
 import { ToastService } from "./toast.service";
-import {
-  GUEST_COMPARE_LIMIT,
-  FEATURE_REGISTER_SUBTITLE,
-} from "../collections/collections.utils";
+import { GUEST_COMPARE_LIMIT } from "../collections/collections.utils";
+import { CollectionsUiService } from "../collections/collections-ui.service";
 
 export interface ZoneAndRegion {
   zone: string;
@@ -51,6 +49,7 @@ export class ServerCompareService implements OnDestroy {
   private router = inject(Router);
   private auth = inject(AuthStateService);
   private toastService = inject(ToastService);
+  private collectionsUi = inject(CollectionsUiService);
 
   public selectedForCompare: ServerCompare[] = [];
   public selectedDatabases: DatabaseCompare[] = [];
@@ -247,10 +246,7 @@ export class ServerCompareService implements OnDestroy {
       type: "warning",
       action: {
         label: "Register for free to unlock unlimited comparisons!",
-        onClick: () =>
-          this.auth.signUp({
-            subtitle: FEATURE_REGISTER_SUBTITLE,
-          }),
+        onClick: () => this.collectionsUi.promptRegisterForFeature(),
       },
     });
   }
@@ -263,10 +259,7 @@ export class ServerCompareService implements OnDestroy {
       type: "warning",
       action: {
         label: "Register for free to unlock unlimited comparisons!",
-        onClick: () =>
-          this.auth.signUp({
-            subtitle: FEATURE_REGISTER_SUBTITLE,
-          }),
+        onClick: () => this.collectionsUi.promptRegisterForFeature(),
       },
     });
   }

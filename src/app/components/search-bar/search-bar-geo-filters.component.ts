@@ -7,10 +7,10 @@ import {
   LucideInfo,
   LucideLeaf,
 } from "@lucide/angular";
-import { FEATURE_REGISTER_SUBTITLE } from "../../collections/collections.utils";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { ToastService } from "../../services/toast.service";
+import { CollectionsUiService } from "../../collections/collections-ui.service";
 import type {
   ContinentMetadata,
   CountryMetadata,
@@ -38,6 +38,7 @@ import { getParameterType } from "./search-bar.utils";
 export class SearchBarGeoFiltersComponent {
   protected readonly auth = inject(AuthStateService);
   private readonly toastService = inject(ToastService);
+  private readonly collectionsUi = inject(CollectionsUiService);
 
   parameter = input.required<SearchBarParameter>();
   filterCategoryId = input.required<string>();
@@ -394,10 +395,7 @@ export class SearchBarGeoFiltersComponent {
       type: "warning",
       action: {
         label: "Register for free to unlock unlimited countries!",
-        onClick: () =>
-          this.auth.signUp({
-            subtitle: FEATURE_REGISTER_SUBTITLE,
-          }),
+        onClick: () => this.collectionsUi.promptRegisterForFeature(),
       },
     });
   }
@@ -406,14 +404,11 @@ export class SearchBarGeoFiltersComponent {
     this.toastService.show({
       id: "guest-region-limit",
       title: "Region limit reached.",
-      body: "Guests can only filter by three region at a time.",
+      body: "Guests can only filter by three regions at a time.",
       type: "warning",
       action: {
         label: "Register for free to unlock unlimited regions!",
-        onClick: () =>
-          this.auth.signUp({
-            subtitle: FEATURE_REGISTER_SUBTITLE,
-          }),
+        onClick: () => this.collectionsUi.promptRegisterForFeature(),
       },
     });
   }
