@@ -154,7 +154,7 @@
           <sc-button
             type="button"
             [label]="
-              auth.githubConsentReturnToLogin() ? 'Back to login' : 'Back'
+              auth.githubConsentActive() ? 'Back to login' : 'Back'
             "
             icon="chevron-left"
             iconPosition="start"
@@ -168,21 +168,21 @@
           <sc-button
             type="submit"
             [label]="
-              pendingGithubConsent
+              auth.githubConsentActive()
                 ? 'Continue'
                 : method === 'github'
                   ? 'Continue with GitHub'
                   : 'Continue'
             "
             [icon]="
-              pendingGithubConsent
+              auth.githubConsentActive()
                 ? 'chevron-right'
                 : method === 'github'
                   ? 'github'
                   : 'chevron-right'
             "
             [iconPosition]="
-              pendingGithubConsent
+              auth.githubConsentActive()
                 ? 'end'
                 : method === 'github'
                   ? 'start'

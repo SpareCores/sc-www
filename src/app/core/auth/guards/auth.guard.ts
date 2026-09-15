@@ -40,7 +40,7 @@ export const blockLandingDuringAuthGuard: CanActivateFn = () => {
     return true;
   }
 
-  if (auth.awaitingGithubConsent() || auth.signUpGithubConsent()) {
+  if (auth.githubConsentActive()) {
     return true;
   }
 

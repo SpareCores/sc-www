@@ -25,6 +25,7 @@ export type LoginPayload = {
 
 export type LoginResult =
   | { status: "complete" }
+  | { status: "second_factor" }
   | { status: "error"; message: string };
 
 export type PasswordResetResult =

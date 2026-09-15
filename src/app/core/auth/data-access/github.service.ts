@@ -30,7 +30,6 @@ export class GithubService {
   private readonly clerk = inject(ClerkService);
   private host: GithubAuthHost | null = null;
   private signInInProgress = false;
-  private oauthNeedsSignUp = false;
   private handlingOAuthCallback = false;
   private hostedNavDepth = 0;
   private hostedNavOriginalNavigate:
@@ -46,14 +45,6 @@ export class GithubService {
     return this.signInInProgress;
   }
 
-  get oauthNeedsSignUpFlag(): boolean {
-    return this.oauthNeedsSignUp;
-  }
-
-  set oauthNeedsSignUpFlag(value: boolean) {
-    this.oauthNeedsSignUp = value;
-  }
-
   consumeSignInHandoff(): boolean {
     if (!this.hasSignInHandoff()) {
       return false;
@@ -67,6 +58,10 @@ export class GithubService {
       return;
     }
     setSessionFlag(GITHUB_SIGNIN_KEY, false);
+  }
+
+  cancelPendingPopupWait(): void {
+    this.stopOutcomeWait();
   }
 
   needsConsent(): boolean {
@@ -91,8 +86,7 @@ export class GithubService {
     this.signInInProgress = true;
     this.markSignInHandoff();
     host.clearAuthPending();
-    host.awaitingGithubConsent.set(false);
-    host.signUpGithubConsent.set(false);
+    host.resetGithubConsent();
 
     const urls = appUrls();
     const oauthParams = {
@@ -122,7 +116,7 @@ export class GithubService {
     } finally {
       restoreNavigation();
       this.signInInProgress = false;
-      if (!host.awaitingGithubConsent()) {
+      if (!host.isGithubConsentActive()) {
         this.clearSignInHandoff();
       }
       host.syncState(true);
@@ -150,6 +144,7 @@ export class GithubService {
       strategy: "oauth_github" as const,
       redirectUrl: urls.authCallback,
       redirectUrlComplete: urls.authCallback,
+      continueSignUp: !!signUp.id,
       legalAccepted,
       unsafeMetadata: newsletterMetadata(newsletterOptIn),
     };
@@ -164,19 +159,30 @@ export class GithubService {
       return;
     }
 
+    const restoreNavigation = this.suppressHostedNavigation();
     try {
-      await this.withPopup("scGithubSignUp", async (popup) => {
-        popup.focus();
-        await signUp.authenticateWithPopup({
-          ...oauthParams,
-          popup,
-        });
-      });
-      host.startAuthPending();
-      await this.finishPopup();
+      await this.withPopup(
+        "scGithubSignUp",
+        async (popup) => {
+          popup.focus();
+          await signUp.authenticateWithPopup({
+            ...oauthParams,
+            popup,
+          });
+        },
+        {
+          showPendingOnNavigate: true,
+          waitForSignInOutcome: true,
+          requireUser: true,
+        },
+      );
+      await this.finishSignIn();
     } catch (error) {
       host.clearAuthPending();
       throw error;
+    } finally {
+      restoreNavigation();
+      host.syncState(true);
     }
   }
 
@@ -192,6 +198,7 @@ export class GithubService {
       };
     }
 
+    await this.clerk.reloadClient();
     const signIn = await this.clerk.requireSignIn();
     let signUp = await this.clerk.requireSignUp();
     if (!signUp) {
@@ -210,26 +217,22 @@ export class GithubService {
       const transferableSignUp = isTransferable(
         signUp as (SignUpResource & { isTransferable?: boolean }) | null,
       );
+      const forceTransfer = host.isGithubConsentActive();
+      const oauthUnverified =
+        signUp.verifications?.externalAccount?.status === "unverified";
+
+      if (oauthUnverified) {
+        return this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
+      }
 
       if (signUp.status === "missing_requirements") {
         signUp = await signUp.update(legalUpdate);
-      } else if (
-        transferableSignIn ||
-        transferableSignUp ||
-        host.githubConsentIsTransfer()
-      ) {
+      } else if (transferableSignIn || transferableSignUp || forceTransfer) {
         signUp = await signUp.create({
           transfer: true,
           ...legalUpdate,
         });
       } else {
-        await this.signUp(newsletterOptIn, legalAccepted);
-        host.syncState();
-        if (host.isAuthenticated()) {
-          host.resetGithubConsentFlags();
-          this.clearSignInHandoff();
-          return { status: "complete" };
-        }
         return {
           status: "error",
           message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
@@ -237,11 +240,14 @@ export class GithubService {
       }
 
       if (signUp.status === "missing_requirements") {
+        if (signUp.verifications?.externalAccount?.status === "unverified") {
+          return this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
+        }
         signUp = await signUp.update(legalUpdate);
       }
 
       if (signUp.status === "complete" && signUp.createdSessionId) {
-        host.resetGithubConsentFlags();
+        host.resetGithubConsent();
         this.clearSignInHandoff();
         await host.completeSession(signUp.createdSessionId);
         return { status: "complete" };
@@ -261,6 +267,25 @@ export class GithubService {
         ),
       };
     }
+  }
+
+  private async finishUnverifiedOauth(
+    newsletterOptIn: boolean,
+    legalAccepted: boolean,
+  ): Promise<RegisterResult> {
+    const host = this.requireHost();
+    host.notifyContinueGithubSignUp();
+    await this.signUp(newsletterOptIn, legalAccepted);
+    host.syncState();
+    if (host.isAuthenticated()) {
+      host.resetGithubConsent();
+      this.clearSignInHandoff();
+      return { status: "complete" };
+    }
+    return {
+      status: "error",
+      message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
+    };
   }
 
   suppressHostedNavigation(): () => void {
@@ -327,23 +352,25 @@ export class GithubService {
     await this.clerk.reloadClient();
     host.setUser(this.clerk.user);
 
-    if (!host.isAuthenticated() && this.clerk.session) {
-      await host.waitForSignedIn(5000);
+    if (!host.isAuthenticated()) {
+      await host.waitForSignedIn(10000);
     }
 
-    if (host.isAuthenticated()) {
+    if (host.isAuthenticated() || this.clerk.user) {
+      if (this.clerk.user) {
+        host.setUser(this.clerk.user);
+      }
       await this.completeSignedInLogin();
       return;
     }
 
-    if (host.awaitingGithubConsent() || host.signUpGithubConsent()) {
+    if (host.isGithubConsentActive()) {
       return;
     }
 
-    if (this.needsConsent() || this.oauthNeedsSignUp) {
-      this.oauthNeedsSignUp = false;
+    if (this.needsConsent()) {
       host.closeSignIn();
-      host.openGithubConsentSignUp({ transfer: true });
+      host.openGithubConsentSignUp();
       if (window.location.pathname.startsWith("/auth/callback")) {
         await this.router.navigateByUrl("/", { replaceUrl: true });
       }
@@ -355,57 +382,13 @@ export class GithubService {
 
   async completeSignedInLogin(): Promise<void> {
     const host = this.requireHost();
-    this.oauthNeedsSignUp = false;
     this.signInInProgress = false;
     this.clearSignInHandoff();
-    host.resetGithubConsentFlags();
+    host.resetGithubConsent();
     host.closeSignIn();
     host.closeSignUp();
     host.startAuthPending();
     await host.navigateAfterAuth();
-  }
-
-  private async finishPopup(): Promise<void> {
-    const host = this.requireHost();
-    host.startAuthPending();
-    await this.clerk.reloadClient();
-
-    if (this.clerk.user) {
-      host.setUser(this.clerk.user);
-    }
-
-    if (this.openConsentIfNeeded()) {
-      return;
-    }
-
-    if (host.isAuthenticated()) {
-      await host.navigateAfterAuth();
-      return;
-    }
-
-    if (await host.waitForSignedIn(10000)) {
-      if (this.openConsentIfNeeded()) {
-        return;
-      }
-      await host.navigateAfterAuth();
-      return;
-    }
-
-    if (this.openConsentIfNeeded()) {
-      return;
-    }
-
-    host.clearAuthPending();
-  }
-
-  private openConsentIfNeeded(): boolean {
-    const host = this.requireHost();
-    if (!this.needsConsent()) {
-      return false;
-    }
-    host.clearAuthPending();
-    host.openGithubConsentSignUp({ transfer: true });
-    return true;
   }
 
   private async consumeOAuthCallback(href: string): Promise<void> {
@@ -432,21 +415,35 @@ export class GithubService {
     }
   }
 
+  private outcomeWaitCleanup: (() => void) | null = null;
+  private outcomeWaitResolve: (() => void) | null = null;
+
+  private stopOutcomeWait(): void {
+    this.outcomeWaitCleanup?.();
+    this.outcomeWaitCleanup = null;
+    const resolve = this.outcomeWaitResolve;
+    this.outcomeWaitResolve = null;
+    resolve?.();
+  }
+
   private async withPopup(
     name: string,
     authenticate: (popup: Window) => Promise<void>,
     options?: {
       showPendingOnNavigate?: boolean;
       waitForSignInOutcome?: boolean;
+      requireUser?: boolean;
     },
   ): Promise<void> {
     const host = this.requireHost();
+    this.stopOutcomeWait();
     const popup = openAuthPopup(name);
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let pollId: ReturnType<typeof setInterval> | undefined;
     let leftBlank = false;
     const showPendingOnNavigate = options?.showPendingOnNavigate !== false;
     const waitForSignInOutcome = options?.waitForSignInOutcome === true;
+    const requireUser = options?.requireUser === true;
 
     const cleanup = (): void => {
       if (timeoutId !== undefined) {
@@ -464,37 +461,50 @@ export class GithubService {
       }
     };
 
-    const stall = new Promise<never>((_, reject) => {
-      timeoutId = setTimeout(() => {
-        reject(new Error(AUTH_MESSAGES.githubPopupTimeout));
-      }, GITHUB_POPUP_TIMEOUT_MS);
+    try {
+      await new Promise<void>((resolve, reject) => {
+        timeoutId = setTimeout(() => {
+          reject(new Error(AUTH_MESSAGES.githubPopupTimeout));
+        }, GITHUB_POPUP_TIMEOUT_MS);
 
-      pollId = setInterval(() => {
-        if (popup.closed) {
-          if (!leftBlank) {
-            reject(new Error(AUTH_MESSAGES.githubPopupCancelled));
+        pollId = setInterval(() => {
+          if (popup.closed) {
+            if (!leftBlank) {
+              reject(new Error(AUTH_MESSAGES.githubPopupCancelled));
+              return;
+            }
+            cleanup();
+            resolve();
+            return;
           }
-          return;
-        }
 
-        try {
-          const href = popup.location.href;
-          if (href && href !== "about:blank") {
+          try {
+            const href = popup.location.href;
+            if (href && href !== "about:blank") {
+              markOAuthStarted();
+            }
+          } catch {
             markOAuthStarted();
           }
-        } catch {
-          markOAuthStarted();
-        }
-      }, 200);
-    });
+        }, 200);
 
-    try {
-      await Promise.race([authenticate(popup), stall]);
+        void authenticate(popup)
+          .then(() => {
+            cleanup();
+            resolve();
+          })
+          .catch((error: unknown) => {
+            cleanup();
+            reject(error);
+          });
+      });
+
       if (waitForSignInOutcome) {
-        await this.waitForSignInOutcome(popup);
+        await this.waitForSignInOutcome(popup, { requireUser });
       }
       host.clearAuthPending();
     } catch (error) {
+      this.stopOutcomeWait();
       host.clearAuthPending();
       if (!popup.closed) {
         popup.close();
@@ -505,53 +515,91 @@ export class GithubService {
     }
   }
 
-  private async waitForSignInOutcome(popup: Window): Promise<void> {
+  private async waitForSignInOutcome(
+    popup: Window,
+    options?: { requireUser?: boolean },
+  ): Promise<void> {
     const host = this.requireHost();
     const started = Date.now();
-    const onMessage = (event: MessageEvent): void => {
-      const origin = event.origin || "";
-      const data = event.data as { session?: string; return_url?: string };
-      if (
-        !(origin.includes("clerk") || origin.includes("accounts.dev")) ||
-        popup.closed
-      ) {
-        return;
-      }
-      if (data?.return_url && !data?.session) {
-        this.oauthNeedsSignUp = true;
-      }
-      if ((data?.session || data?.return_url) && !popup.closed) {
-        popup.close();
-      }
-    };
-    window.addEventListener("message", onMessage);
+    const requireUser = options?.requireUser === true;
 
-    try {
-      while (Date.now() - started < GITHUB_POPUP_TIMEOUT_MS) {
-        await this.clerk.reloadClient();
-        if (
-          this.clerk.user ||
-          this.needsConsent() ||
-          host.awaitingGithubConsent() ||
-          this.oauthNeedsSignUp
-        ) {
-          if (!popup.closed) {
-            popup.close();
+    this.stopOutcomeWait();
+
+    const isReady = (): boolean => {
+      if (this.clerk.user) {
+        return true;
+      }
+      if (requireUser) {
+        return false;
+      }
+      return this.needsConsent() && !host.isGithubConsentActive();
+    };
+
+    await new Promise<void>((resolve) => {
+      const timers: ReturnType<typeof setInterval>[] = [];
+      let unsubscribe: (() => void) | undefined;
+      let settled = false;
+
+      const cleanup = (): void => {
+        for (const timer of timers) {
+          clearInterval(timer);
+        }
+        timers.length = 0;
+        unsubscribe?.();
+        unsubscribe = undefined;
+        if (this.outcomeWaitCleanup === cleanup) {
+          this.outcomeWaitCleanup = null;
+        }
+        if (this.outcomeWaitResolve === finish) {
+          this.outcomeWaitResolve = null;
+        }
+      };
+
+      const finish = (): void => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        cleanup();
+        if (!popup.closed) {
+          popup.close();
+        }
+        void this.clerk.reloadClient().finally(() => resolve());
+      };
+
+      const checkReady = (): void => {
+        if (isReady()) {
+          finish();
+        }
+      };
+
+      this.outcomeWaitCleanup = cleanup;
+      this.outcomeWaitResolve = finish;
+
+      unsubscribe = this.clerk.addListener(checkReady);
+      timers.push(
+        setInterval(() => {
+          if (Date.now() - started >= GITHUB_POPUP_TIMEOUT_MS) {
+            finish();
+            return;
           }
-          return;
-        }
-        if (popup.closed) {
-          await this.clerk.reloadClient();
-          return;
-        }
-        await new Promise((resolve) => window.setTimeout(resolve, 250));
-      }
-      if (!popup.closed) {
-        popup.close();
-      }
-    } finally {
-      window.removeEventListener("message", onMessage);
-    }
+          void this.clerk.reloadClient().then(checkReady);
+        }, 1000),
+      );
+      timers.push(
+        setInterval(() => {
+          if (!popup.closed) {
+            return;
+          }
+          if (requireUser) {
+            void this.clerk.reloadClient().then(checkReady);
+            return;
+          }
+          finish();
+        }, 250),
+      );
+      void this.clerk.reloadClient().then(checkReady);
+    });
   }
 
   private markSignInHandoff(): void {

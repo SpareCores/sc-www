@@ -23,7 +23,12 @@ export const AUTH_MESSAGES = {
   passwordResetBrowserOnly: "Password reset is only available in the browser.",
   registrationBrowserOnly: "Registration is only available in the browser.",
   additionalVerification: "Additional verification is required to sign in.",
+  deviceTrustCodeSent:
+    "We sent a verification code to your email to confirm this device.",
   unableToSignIn: "Unable to sign in.",
+  unableToSendDeviceTrustCode: "Unable to send a verification code.",
+  unableToVerifyDeviceTrust: "Unable to verify the code. Try again.",
+  unableToResendDeviceTrustCode: "Unable to resend the verification code.",
   unableToSendResetCode: "Unable to send a password reset code.",
   unableToResetPassword: "Unable to reset your password.",
   unableToResendResetCode: "Unable to resend the password reset code.",
@@ -37,4 +42,7 @@ export const AUTH_MESSAGES = {
   newsletterSuccess: "Yay, you've just subscribed to our newsletter!",
   newsletterError:
     "Couldn't subscribe to the newsletter. Try again later or contact us.",
+  githubContinueSignUp:
+    "Finishing your earlier GitHub sign-up. Complete authorization in the popup.",
+  unableToContinueGithub: "Unable to continue with GitHub.",
 } as const;

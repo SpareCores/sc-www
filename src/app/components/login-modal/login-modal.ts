@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { AuthStateService } from "../../core/auth";
+import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
 
-type LoginBusy = "submit" | "github" | "reset" | "resend";
-type LoginStep = "login" | "reset-request" | "reset-verify";
+type LoginBusy = "submit" | "github" | "reset" | "resend" | "verify";
+type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
 
 @Component({
   selector: "sc-login-modal",
@@ -21,6 +21,7 @@ export class LoginModal {
   protected password = "";
   protected verificationCode = "";
   protected errorMessage = "";
+  protected infoMessage = "";
   protected busy: LoginBusy | null = null;
 
   constructor() {
@@ -43,6 +44,10 @@ export class LoginModal {
     return !!this.emailAddress.trim() && !!this.password;
   }
 
+  protected canSubmitSecondFactor(): boolean {
+    return !!this.verificationCode.trim();
+  }
+
   protected canSubmitResetRequest(): boolean {
     return !!this.emailAddress.trim();
   }
@@ -57,20 +62,23 @@ export class LoginModal {
     }
 
     this.errorMessage = "";
+    this.infoMessage = "";
     this.password = "";
     this.verificationCode = "";
     this.step = "reset-request";
   }
 
-  protected backToLogin(): void {
+  protected async backToLogin(): Promise<void> {
     if (this.busy) {
       return;
     }
 
     this.errorMessage = "";
+    this.infoMessage = "";
     this.password = "";
     this.verificationCode = "";
     this.step = "login";
+    await this.auth.abandonLoginAttempt();
   }
 
   protected async submitLogin(): Promise<void> {
@@ -79,6 +87,7 @@ export class LoginModal {
     }
 
     this.errorMessage = "";
+    this.infoMessage = "";
     this.busy = "submit";
 
     const result = await this.auth.submitLogin({
@@ -87,6 +96,54 @@ export class LoginModal {
     });
 
     this.busy = null;
+
+    if (result.status === "second_factor") {
+      this.verificationCode = "";
+      this.infoMessage = AUTH_MESSAGES.deviceTrustCodeSent;
+      this.step = "second-factor";
+      return;
+    }
+
+    if (result.status === "error") {
+      this.errorMessage = result.message;
+    }
+  }
+
+  protected async submitSecondFactor(): Promise<void> {
+    if (!this.canSubmitSecondFactor() || this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+    this.busy = "verify";
+
+    const result = await this.auth.completeLoginSecondFactor(
+      this.verificationCode,
+    );
+
+    this.busy = null;
+
+    if (result.status === "error") {
+      this.errorMessage = result.message;
+    }
+  }
+
+  protected async resendSecondFactor(): Promise<void> {
+    if (this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+    this.busy = "resend";
+
+    const result = await this.auth.resendLoginSecondFactor();
+
+    this.busy = null;
+
+    if (result.status === "second_factor") {
+      this.infoMessage = AUTH_MESSAGES.deviceTrustCodeSent;
+      return;
+    }
 
     if (result.status === "error") {
       this.errorMessage = result.message;
@@ -160,6 +217,7 @@ export class LoginModal {
     }
 
     this.errorMessage = "";
+    this.infoMessage = "";
     this.busy = "github";
 
     try {
@@ -168,7 +226,7 @@ export class LoginModal {
       this.errorMessage =
         error instanceof Error
           ? error.message
-          : "Unable to continue with GitHub.";
+          : AUTH_MESSAGES.unableToContinueGithub;
     } finally {
       this.busy = null;
     }
@@ -188,6 +246,7 @@ export class LoginModal {
     this.password = "";
     this.verificationCode = "";
     this.errorMessage = "";
+    this.infoMessage = "";
     this.busy = null;
   }
 }

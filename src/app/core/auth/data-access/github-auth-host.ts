@@ -1,16 +1,10 @@
-import type { Signal, WritableSignal } from "@angular/core";
 import type { UserResource } from "@clerk/shared/types";
 
 export interface GithubAuthHost {
-  awaitingGithubConsent: WritableSignal<boolean>;
-  signUpGithubConsent: WritableSignal<boolean>;
-  githubConsentIsTransfer: Signal<boolean>;
+  isGithubConsentActive(): boolean;
   startAuthPending(): void;
   clearAuthPending(): void;
-  openGithubConsentSignUp(options?: {
-    transfer?: boolean;
-    fromLogin?: boolean;
-  }): void;
+  openGithubConsentSignUp(): void;
   closeSignIn(): void;
   closeSignUp(): void;
   setUser(user: UserResource | null): void;
@@ -19,6 +13,7 @@ export interface GithubAuthHost {
   navigateAfterAuth(): Promise<void>;
   syncState(fromListener?: boolean): void;
   handleRedirectCallback(options?: { transferable?: boolean }): Promise<void>;
-  resetGithubConsentFlags(): void;
+  resetGithubConsent(): void;
   completeSession(sessionId: string): Promise<void>;
+  notifyContinueGithubSignUp(): void;
 }

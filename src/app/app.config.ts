@@ -30,6 +30,7 @@ import {
   authInterceptor,
   provideAuthFeature,
 } from "./core/auth";
+import { provideCollectionsFeature } from "./collections/collections-feature.providers";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   return req.method === "GET";
@@ -88,6 +89,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideAuthFeature(),
+    provideCollectionsFeature(),
     provideAppCharts(),
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),

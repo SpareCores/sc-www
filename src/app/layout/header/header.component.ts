@@ -125,7 +125,6 @@ export class HeaderComponent {
     this.closeAuth();
     this.closeMenu();
     await this.auth.signOut();
-    await this.router.navigate(["/"]);
   }
 
   openProfile(): void {

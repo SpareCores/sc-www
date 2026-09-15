@@ -66,16 +66,10 @@ export class AuthCallback implements OnInit {
         return;
       }
       const outcome = this.auth.resolveGithubCallbackOutcome();
-      await this.finish(
-        fromGithubSignIn && outcome === "error" ? "consent" : outcome,
-      );
+      await this.finish(outcome);
     } catch {
       if (this.auth.isAuthenticated()) {
         await this.finish("authenticated");
-        return;
-      }
-      if (fromGithubSignIn) {
-        await this.finish("consent");
         return;
       }
       this.errorMessage.set("Unable to complete sign-in.");
@@ -93,7 +87,7 @@ export class AuthCallback implements OnInit {
 
     if (outcome === "consent") {
       this.auth.clearAuthPending();
-      this.auth.openGithubConsentSignUp({ transfer: true });
+      this.auth.openGithubConsentSignUp();
       await this.router.navigateByUrl("/", { replaceUrl: true });
       return;
     }

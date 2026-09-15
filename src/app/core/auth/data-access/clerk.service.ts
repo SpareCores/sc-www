@@ -121,8 +121,22 @@ export class ClerkService {
     }
   }
 
-  addListener(listener: () => void): void {
-    this.clerk?.addListener(listener);
+  async abandonSignIn(): Promise<void> {
+    const signIn = this.clerk?.client?.signIn;
+    if (!signIn) {
+      return;
+    }
+
+    const identifier = signIn.identifier ?? undefined;
+    try {
+      await signIn.create(identifier ? { identifier } : {});
+    } catch {
+      await this.reloadClient();
+    }
+  }
+
+  addListener(listener: () => void): (() => void) | undefined {
+    return this.clerk?.addListener(listener) as (() => void) | undefined;
   }
 
   private async loadClerk(): Promise<void> {
@@ -139,6 +153,7 @@ export class ClerkService {
       localization: CLERK_TEXTS,
       signInUrl: urls.origin,
       signUpUrl: urls.origin,
+      telemetry: false,
     });
   }
 }

@@ -19,7 +19,7 @@ export class NewsletterService {
 
   constructor() {
     effect(() => {
-      const user = this.auth.authSessionReady();
+      const user = this.auth.user();
       if (!user || !isPlatformBrowser(this.platformId)) {
         return;
       }

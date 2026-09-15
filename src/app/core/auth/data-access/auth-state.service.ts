@@ -28,6 +28,7 @@ import {
   appUrls,
   authErrorMessage,
   getSessionFlag,
+  isSecondFactorStatus,
   newsletterMetadata,
   setSessionFlag,
 } from "../auth.utils";
@@ -45,17 +46,16 @@ export class AuthStateService implements GithubAuthHost {
   private readonly github = inject(GithubService);
   private navigatingAfterAuth = false;
   private boundHost = false;
+  private boundListener = false;
 
   private readonly _user = signal<UserResource | null>(null);
-  readonly authSessionReady = signal<UserResource | null>(null);
+  readonly user = this._user.asReadonly();
 
   readonly signInModalOpen = signal(false);
   readonly signUpModalOpen = signal(false);
   readonly signUpSubtitle = signal<string>(AUTH_MESSAGES.defaultSignUpSubtitle);
-  readonly signUpGithubConsent = signal(false);
-  readonly githubConsentIsTransfer = signal(false);
-  readonly githubConsentReturnToLogin = signal(false);
-  readonly awaitingGithubConsent = signal(false);
+  private readonly githubConsent = signal(false);
+  readonly githubConsentActive = computed(() => this.githubConsent());
   readonly authInProgress = signal(this.isAuthPending());
   readonly isAuthenticated = computed(() => this._user() !== null);
   readonly userId = computed(() => this._user()?.id ?? null);
@@ -108,9 +108,12 @@ export class AuthStateService implements GithubAuthHost {
         this.clearAuthPending();
       }
     }
-    this.clerk.addListener(() => {
-      this.ngZone.run(() => this.syncState(true));
-    });
+    if (!this.boundListener) {
+      this.clerk.addListener(() => {
+        this.ngZone.run(() => this.syncState(true));
+      });
+      this.boundListener = true;
+    }
   }
 
   signIn(): void {
@@ -118,13 +121,14 @@ export class AuthStateService implements GithubAuthHost {
       this.toastAuthUnavailable();
       return;
     }
-    this.resetGithubConsentFlags();
+    this.resetGithubConsent();
     this.signUpModalOpen.set(false);
     this.signInModalOpen.set(true);
   }
 
   closeSignIn(): void {
     this.signInModalOpen.set(false);
+    this.github.cancelPendingPopupWait();
   }
 
   signUp(options?: { subtitle?: string }): void {
@@ -135,27 +139,25 @@ export class AuthStateService implements GithubAuthHost {
     this.signUpSubtitle.set(
       options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
     );
-    if (this.awaitingGithubConsent() || this.signUpGithubConsent()) {
+    if (this.githubConsentActive()) {
       this.signInModalOpen.set(false);
       this.signUpModalOpen.set(true);
       return;
     }
     this.signInModalOpen.set(false);
-    this.resetGithubConsentFlags();
+    this.resetGithubConsent();
     this.signUpModalOpen.set(true);
   }
 
   closeSignUp(): void {
     this.signUpModalOpen.set(false);
-    this.resetGithubConsentFlags();
+    this.resetGithubConsent();
     this.signUpSubtitle.set(AUTH_MESSAGES.defaultSignUpSubtitle);
+    this.github.cancelPendingPopupWait();
     this.github.clearSignInHandoff();
   }
 
-  openGithubConsentSignUp(options?: {
-    transfer?: boolean;
-    fromLogin?: boolean;
-  }): void {
+  openGithubConsentSignUp(): void {
     if (!this.clerk.isReady()) {
       this.toastAuthUnavailable();
       return;
@@ -164,21 +166,23 @@ export class AuthStateService implements GithubAuthHost {
       void this.github.completeSignedInLogin();
       return;
     }
-    const transfer = options?.transfer === true;
-    const fromLogin = options?.fromLogin === true;
-    this.awaitingGithubConsent.set(true);
-    this.githubConsentIsTransfer.set(transfer);
-    this.githubConsentReturnToLogin.set(transfer || fromLogin);
+    this.githubConsent.set(true);
     this.clearAuthPending();
     this.navigatingAfterAuth = false;
     this.signInModalOpen.set(false);
-    this.signUpGithubConsent.set(true);
     this.signUpModalOpen.set(true);
   }
 
-  startGithubFromLogin(): void {
-    this.clearAuthPending();
-    this.openGithubConsentSignUp({ fromLogin: true });
+  isGithubConsentActive(): boolean {
+    return this.githubConsent();
+  }
+
+  notifyContinueGithubSignUp(): void {
+    this.toastService.show({
+      title: AUTH_MESSAGES.githubContinueSignUp,
+      type: "info",
+      duration: 5000,
+    });
   }
 
   syncSession(): void {
@@ -194,7 +198,7 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   startAuthPending(): void {
-    if (this.awaitingGithubConsent() || this.signUpGithubConsent()) {
+    if (this.githubConsentActive()) {
       return;
     }
     this.authInProgress.set(true);
@@ -272,6 +276,14 @@ export class AuthStateService implements GithubAuthHost {
         return { status: "complete" };
       }
 
+      if (isSecondFactorStatus(result.status)) {
+        const prepared = await this.prepareEmailSecondFactor(signIn);
+        if (prepared.status === "error") {
+          return prepared;
+        }
+        return { status: "second_factor" };
+      }
+
       this.clearAuthPending();
       return {
         status: "error",
@@ -282,6 +294,85 @@ export class AuthStateService implements GithubAuthHost {
       return {
         status: "error",
         message: authErrorMessage(error, AUTH_MESSAGES.unableToSignIn),
+      };
+    }
+  }
+
+  async completeLoginSecondFactor(code: string): Promise<LoginResult> {
+    const signIn = await this.clerk.requireSignIn();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    try {
+      const result = await signIn.attemptSecondFactor({
+        strategy: "email_code",
+        code: code.trim(),
+      });
+
+      if (result.status === "complete" && result.createdSessionId) {
+        await this.completeSession(result.createdSessionId);
+        return { status: "complete" };
+      }
+
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.unableToVerifyDeviceTrust,
+      };
+    } catch (error) {
+      return {
+        status: "error",
+        message: authErrorMessage(
+          error,
+          AUTH_MESSAGES.unableToVerifyDeviceTrust,
+        ),
+      };
+    }
+  }
+
+  async resendLoginSecondFactor(): Promise<LoginResult> {
+    const signIn = await this.clerk.requireSignIn();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    return this.prepareEmailSecondFactor(signIn);
+  }
+
+  async abandonLoginAttempt(): Promise<void> {
+    await this.clerk.abandonSignIn();
+  }
+
+  private async prepareEmailSecondFactor(
+    signIn: NonNullable<Awaited<ReturnType<ClerkService["requireSignIn"]>>>,
+  ): Promise<LoginResult> {
+    const emailCodeFactor = signIn.supportedSecondFactors?.find(
+      (factor) => factor.strategy === "email_code",
+    );
+    if (
+      !emailCodeFactor ||
+      !("emailAddressId" in emailCodeFactor) ||
+      !emailCodeFactor.emailAddressId
+    ) {
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.additionalVerification,
+      };
+    }
+
+    try {
+      await signIn.prepareSecondFactor({
+        strategy: "email_code",
+        emailAddressId: emailCodeFactor.emailAddressId,
+      });
+      return { status: "second_factor" };
+    } catch (error) {
+      return {
+        status: "error",
+        message: authErrorMessage(
+          error,
+          AUTH_MESSAGES.unableToSendDeviceTrustCode,
+        ),
       };
     }
   }
@@ -470,18 +561,33 @@ export class AuthStateService implements GithubAuthHost {
     }
   }
 
-  async signUpWithGithub(
-    newsletterOptIn: boolean,
-    legalAccepted: boolean,
-  ): Promise<void> {
-    await this.github.signUp(newsletterOptIn, legalAccepted);
-  }
-
-  async completePendingGithubSignUp(
+  async submitGithubConsent(
     newsletterOptIn: boolean,
     legalAccepted: boolean,
   ): Promise<RegisterResult> {
-    return this.github.completePendingSignUp(newsletterOptIn, legalAccepted);
+    if (this.githubConsentActive()) {
+      const result = await this.github.completePendingSignUp(
+        newsletterOptIn,
+        legalAccepted,
+      );
+      if (result.status !== "error") {
+        this.closeSignUp();
+      }
+      return result;
+    }
+
+    try {
+      await this.github.signUp(newsletterOptIn, legalAccepted);
+      if (this.isAuthenticated()) {
+        this.closeSignUp();
+      }
+      return { status: "complete" };
+    } catch (error) {
+      return {
+        status: "error",
+        message: authErrorMessage(error, AUTH_MESSAGES.unableToContinueGithub),
+      };
+    }
   }
 
   async handleRedirectCallback(options?: {
@@ -519,14 +625,20 @@ export class AuthStateService implements GithubAuthHost {
       return "authenticated";
     }
 
-    return "consent";
+    return "error";
   }
 
   async signOut(): Promise<void> {
     this.closeSignIn();
     this.closeSignUp();
-    await this.clerk.signOut();
-    this.syncState();
+    try {
+      await this.clerk.signOut();
+    } finally {
+      this.clearAuthPending();
+      this.navigatingAfterAuth = false;
+      this.setUser(null);
+      await this.router.navigateByUrl("/", { replaceUrl: true });
+    }
   }
 
   openUserProfile(): void {
@@ -539,14 +651,10 @@ export class AuthStateService implements GithubAuthHost {
 
   setUser(user: UserResource | null): void {
     this._user.set(user);
-    this.authSessionReady.set(user);
   }
 
-  resetGithubConsentFlags(): void {
-    this.awaitingGithubConsent.set(false);
-    this.signUpGithubConsent.set(false);
-    this.githubConsentIsTransfer.set(false);
-    this.githubConsentReturnToLogin.set(false);
+  resetGithubConsent(): void {
+    this.githubConsent.set(false);
   }
 
   syncState(fromListener = false): void {
@@ -557,7 +665,7 @@ export class AuthStateService implements GithubAuthHost {
       return;
     }
 
-    if (this.awaitingGithubConsent() || this.signUpGithubConsent()) {
+    if (this.githubConsentActive()) {
       if (user) {
         this.setUser(user);
         void this.github.completeSignedInLogin();
@@ -584,6 +692,11 @@ export class AuthStateService implements GithubAuthHost {
       return;
     }
 
+    if (this.signInModalOpen() || this.signUpModalOpen()) {
+      void this.github.completeSignedInLogin();
+      return;
+    }
+
     const path = window.location.pathname;
     if (path.startsWith("/auth/callback")) {
       return;
@@ -598,7 +711,7 @@ export class AuthStateService implements GithubAuthHost {
     }
 
     if (this.needsGithubConsent()) {
-      this.openGithubConsentSignUp({ transfer: true });
+      this.openGithubConsentSignUp();
       return;
     }
 
@@ -627,11 +740,9 @@ export class AuthStateService implements GithubAuthHost {
 
     if (
       !this.isAuthenticated() &&
-      (this.awaitingGithubConsent() ||
-        this.signUpGithubConsent() ||
-        this.needsGithubConsent())
+      (this.githubConsentActive() || this.needsGithubConsent())
     ) {
-      this.openGithubConsentSignUp({ transfer: true });
+      this.openGithubConsentSignUp();
       return;
     }
 
@@ -645,8 +756,8 @@ export class AuthStateService implements GithubAuthHost {
         await this.waitForSignedIn(20000);
       }
       if (!this.isAuthenticated()) {
-        if (this.needsGithubConsent() || this.github.oauthNeedsSignUpFlag) {
-          this.openGithubConsentSignUp({ transfer: true });
+        if (this.needsGithubConsent()) {
+          this.openGithubConsentSignUp();
         }
         return;
       }

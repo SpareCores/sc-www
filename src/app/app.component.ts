@@ -18,7 +18,6 @@ import {
 } from "@angular/router";
 import { Subscription } from "rxjs";
 import { register } from "swiper/element/bundle";
-import { CollectionsStore } from "./collections/collections.store";
 import { PromoBanner } from "./components/promo-banner/promo-banner";
 import { LoginModal } from "./components/login-modal/login-modal";
 import { RegisterModal } from "./components/register-modal/register-modal";
@@ -55,7 +54,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private metaTagService = inject(Meta);
   private neetoCalService = inject(NeetoCalService);
-  private collectionsStore = inject(CollectionsStore);
   protected readonly auth = inject(AuthStateService);
 
   title = "sc-www";
@@ -114,7 +112,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
     window.history.replaceState({}, "", nextUrl);
 
-    if (this.auth.awaitingGithubConsent() || this.auth.signUpGithubConsent()) {
+    if (this.auth.githubConsentActive()) {
       return;
     }
 

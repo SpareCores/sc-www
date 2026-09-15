@@ -100,6 +100,70 @@
         </p>
       </div>
     </div>
+    } @else if (step === "second-factor") {
+    <div class="auth-modal__body">
+      <div class="auth-modal__header">
+        <h2 class="auth-modal__title">Verify this device</h2>
+        <p class="auth-modal__subtitle">
+          Enter the verification code sent to {{ emailAddress.trim() }}.
+        </p>
+      </div>
+
+      <form class="auth-modal__form" (ngSubmit)="submitSecondFactor()">
+        <label class="auth-modal__field">
+          <span>Verification code</span>
+          <input
+            type="text"
+            name="secondFactorCode"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            placeholder="Enter verification code"
+            [(ngModel)]="verificationCode"
+          />
+        </label>
+
+        @if (infoMessage) {
+        <p class="auth-modal__subtitle">{{ infoMessage }}</p>
+        } @if (errorMessage) {
+        <p class="auth-modal__error">{{ errorMessage }}</p>
+        }
+
+        <div class="auth-modal__actions">
+          <sc-button
+            type="button"
+            label="Resend code"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'resend'"
+            [disabled]="!!busy"
+            (buttonClick)="resendSecondFactor()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            label="Verify"
+            icon="chevron-right"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'verify'"
+            [disabled]="!canSubmitSecondFactor() || !!busy"
+          ></sc-button>
+        </div>
+      </form>
+
+      <div class="auth-modal__footer">
+        <p>
+          <button
+            type="button"
+            class="auth-modal__footer-link"
+            (click)="backToLogin()"
+          >
+            Back to sign in
+          </button>
+        </p>
+      </div>
+    </div>
     } @else if (step === "reset-request") {
     <div class="auth-modal__body">
       <div class="auth-modal__header">

@@ -203,4 +203,56 @@ describe("AuthStateService", () => {
     await expectAsync(auth.getToken("keeper")).toBeResolvedTo("keeper-token");
     expect(getToken).toHaveBeenCalledWith({ template: "keeper" });
   });
+
+  it("binds the Clerk listener only once across repeated init calls", async () => {
+    const auth = createAuth();
+    const addListener = jasmine.createSpy("addListener");
+    setClerkInstance({
+      addListener,
+      user: null,
+      session: null,
+    });
+
+    await auth.init();
+    await auth.init();
+
+    expect(addListener).toHaveBeenCalledTimes(1);
+  });
+
+  it("clears pending auth and user when clerk.signOut fails", async () => {
+    const auth = createAuth();
+    const clerk = {
+      signOut: jasmine
+        .createSpy("signOut")
+        .and.rejectWith(new Error("sign-out failed")),
+      user: {
+        id: "user_1",
+        firstName: "Jane",
+        lastName: "Doe",
+        username: "jane",
+        imageUrl: "",
+      },
+      session: {},
+    };
+    setClerkInstance(clerk);
+    setUser(auth, clerk.user);
+    auth.startAuthPending();
+
+    await expectAsync(auth.signOut()).toBeRejectedWithError("sign-out failed");
+
+    expect(auth.isAuthenticated()).toBeFalse();
+    expect(auth.authInProgress()).toBeFalse();
+    expect(auth.userName()).toBe("");
+  });
+
+  it("returns error when GitHub callback has no user and no consent need", () => {
+    const auth = createAuth();
+    setClerkInstance({
+      user: null,
+      session: null,
+    });
+    spyOn(auth, "needsGithubConsent").and.returnValue(false);
+
+    expect(auth.resolveGithubCallbackOutcome()).toBe("error");
+  });
 });

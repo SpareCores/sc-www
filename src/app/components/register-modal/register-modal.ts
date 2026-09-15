@@ -28,7 +28,6 @@ export class RegisterModal {
   protected verificationCode = "";
   protected errorMessage = "";
   protected busy: RegisterBusy | null = null;
-  protected pendingGithubConsent = false;
 
   constructor() {
     effect(() => {
@@ -37,8 +36,7 @@ export class RegisterModal {
         return;
       }
 
-      if (this.auth.signUpGithubConsent()) {
-        this.pendingGithubConsent = this.auth.githubConsentIsTransfer();
+      if (this.auth.githubConsentActive()) {
         this.method = "github";
         this.step = "consent";
         this.errorMessage = "";
@@ -87,7 +85,6 @@ export class RegisterModal {
     }
 
     this.errorMessage = "";
-    this.pendingGithubConsent = false;
     this.method = "github";
     this.step = "consent";
   }
@@ -97,7 +94,7 @@ export class RegisterModal {
       return;
     }
 
-    if (this.pendingGithubConsent || this.auth.githubConsentReturnToLogin()) {
+    if (this.auth.githubConsentActive()) {
       this.auth.signIn();
       return;
     }
@@ -190,32 +187,15 @@ export class RegisterModal {
   private async submitGithub(): Promise<void> {
     this.busy = "github";
 
-    try {
-      if (this.pendingGithubConsent) {
-        const result = await this.auth.completePendingGithubSignUp(
-          this.newsletterOptIn,
-          this.legalAccepted,
-        );
-        if (result.status === "error") {
-          this.errorMessage = result.message;
-          return;
-        }
-        this.auth.closeSignUp();
-        return;
-      }
+    const result = await this.auth.submitGithubConsent(
+      this.newsletterOptIn,
+      this.legalAccepted,
+    );
 
-      await this.auth.signUpWithGithub(
-        this.newsletterOptIn,
-        this.legalAccepted,
-      );
-      this.auth.closeSignUp();
-    } catch (error) {
-      this.errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Unable to continue with GitHub.";
-    } finally {
-      this.busy = null;
+    this.busy = null;
+
+    if (result.status === "error") {
+      this.errorMessage = result.message;
     }
   }
 
@@ -231,6 +211,5 @@ export class RegisterModal {
     this.verificationCode = "";
     this.errorMessage = "";
     this.busy = null;
-    this.pendingGithubConsent = false;
   }
 }

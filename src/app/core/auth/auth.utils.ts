@@ -104,6 +104,17 @@ export function resolveHostedNavAction(
   return "forward";
 }
 
+const SECOND_FACTOR_STATUSES = new Set([
+  "needs_second_factor",
+  "needs_client_trust",
+]);
+
+export function isSecondFactorStatus(
+  status: string | null | undefined,
+): boolean {
+  return !!status && SECOND_FACTOR_STATUSES.has(status);
+}
+
 export function isTransferable(
   resource:
     | (SignInResource & { isTransferable?: boolean })
