@@ -122,7 +122,80 @@ export function isTransferable(
     | null
     | undefined,
 ): boolean {
-  return resource?.isTransferable === true;
+  if (!resource) {
+    return false;
+  }
+  if (resource.isTransferable === true) {
+    return true;
+  }
+
+  const signUpExternal = (
+    resource as SignUpResource & {
+      verifications?: { externalAccount?: { status?: string | null } };
+    }
+  ).verifications?.externalAccount?.status;
+  if (signUpExternal === "transferable") {
+    return true;
+  }
+
+  const firstFactor = (
+    resource as SignInResource & {
+      firstFactorVerification?: { status?: string | null };
+    }
+  ).firstFactorVerification?.status;
+  return firstFactor === "transferable";
+}
+
+export function pendingEmailVerification(
+  signUp: SignUpResource | null | undefined,
+): string | null {
+  if (!signUp?.emailAddress) {
+    return null;
+  }
+
+  const unverified =
+    (
+      signUp as SignUpResource & {
+        unverifiedFields?: string[];
+      }
+    ).unverifiedFields ?? [];
+
+  const needsEmail =
+    unverified.includes("email_address") || unverified.includes("emailAddress");
+  if (!needsEmail) {
+    return null;
+  }
+
+  return signUp.emailAddress;
+}
+
+export function isPendingGithubExternalComplete(
+  signUp: SignUpResource | null | undefined,
+): boolean {
+  return signUp?.verifications?.externalAccount?.status === "verified";
+}
+
+export function needsLegalAcceptance(
+  signUp: SignUpResource | null | undefined,
+): boolean {
+  if (!signUp) {
+    return false;
+  }
+
+  if (signUp.legalAcceptedAt) {
+    return false;
+  }
+
+  const missing =
+    (
+      signUp as SignUpResource & {
+        missingFields?: string[];
+      }
+    ).missingFields ?? [];
+
+  return (
+    missing.includes("legalAccepted") || missing.includes("legal_accepted")
+  );
 }
 
 export function needsGithubConsent(
@@ -134,10 +207,6 @@ export function needsGithubConsent(
     return false;
   }
 
-  const typedSignIn = signIn as
-    | (SignInResource & { isTransferable?: boolean })
-    | null
-    | undefined;
   const typedSignUp = signUp as
     | (SignUpResource & {
         isTransferable?: boolean;
@@ -146,16 +215,17 @@ export function needsGithubConsent(
     | null
     | undefined;
 
-  const firstFactorStatus = (
-    typedSignIn as SignInResource & {
-      firstFactorVerification?: { status?: string | null };
-    }
-  )?.firstFactorVerification?.status;
+  if (isTransferable(signIn) || isTransferable(typedSignUp)) {
+    return true;
+  }
+
+  if (pendingEmailVerification(typedSignUp)) {
+    return false;
+  }
 
   if (
-    isTransferable(typedSignIn) ||
-    isTransferable(typedSignUp) ||
-    firstFactorStatus === "transferable"
+    isPendingGithubExternalComplete(typedSignUp) &&
+    needsLegalAcceptance(typedSignUp)
   ) {
     return true;
   }
