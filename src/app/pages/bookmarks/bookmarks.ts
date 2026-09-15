@@ -1,6 +1,7 @@
 import {
   CdkDrag,
   CdkDragDrop,
+  CdkDragHandle,
   CdkDropList,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
@@ -107,6 +108,7 @@ function normalizeBookmarksNameQuery(value: string): string {
     LoadingSpinnerComponent,
     CdkDropList,
     CdkDrag,
+    CdkDragHandle,
     LucideDynamicIcon,
     CollectionSaveModalComponent,
     FlowbiteDropdownDirective,
