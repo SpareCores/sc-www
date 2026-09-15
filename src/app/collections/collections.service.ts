@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable, forkJoin, of } from "rxjs";
+import { WWW_API_BASE_URI } from "../core/auth/auth.constants";
 import {
   COLLECTION_TYPES,
   favoriteDatabaseId,
@@ -42,9 +43,6 @@ export {
   parseFavoriteDatabaseId,
   parseFavoriteServerId,
 } from "./collections.types";
-
-const WWW_API_BASE_URI =
-  import.meta.env.NG_APP_WWW_API_BASE_URI?.replace(/\/$/, "") || "";
 
 @Injectable({ providedIn: "root" })
 export class CollectionsService {
