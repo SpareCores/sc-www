@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import type { SignInResource, SignUpResource } from "@clerk/shared/types";
+import type { SignInResource } from "@clerk/shared/types";
 import {
   AUTH_MESSAGES,
   GITHUB_POPUP_TIMEOUT_MS,
@@ -12,6 +12,7 @@ import {
   appUrls,
   authErrorMessage,
   getSessionFlag,
+  isSecondFactorStatus,
   isTransferable,
   needsGithubConsent as needsGithubConsentPure,
   newsletterMetadata,
@@ -150,7 +151,7 @@ export class GithubService {
       redirectUrl: urls.authCallback,
       redirectUrlComplete: urls.authCallback,
       continueSignUp: !!signUp.id,
-      legalAccepted,
+      ...(legalAccepted ? { legalAccepted: true } : {}),
       unsafeMetadata: newsletterMetadata(newsletterOptIn),
     };
 
@@ -181,6 +182,9 @@ export class GithubService {
           requireUser: true,
         },
       );
+      if (await this.transferExistingExternalAccount()) {
+        return;
+      }
       await this.finishSignIn();
     } catch (error) {
       host.clearAuthPending();
@@ -216,13 +220,6 @@ export class GithubService {
     };
 
     try {
-      const transferableSignIn = isTransferable(
-        signIn as (SignInResource & { isTransferable?: boolean }) | null,
-      );
-      const transferableSignUp = isTransferable(
-        signUp as (SignUpResource & { isTransferable?: boolean }) | null,
-      );
-      const forceTransfer = host.isGithubConsentActive();
       const oauthUnverified =
         signUp.verifications?.externalAccount?.status === "unverified";
 
@@ -230,13 +227,17 @@ export class GithubService {
         return this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
       }
 
-      if (signUp.status === "missing_requirements") {
-        signUp = await signUp.update(legalUpdate);
-      } else if (transferableSignIn || transferableSignUp || forceTransfer) {
+      if (isTransferable(signUp)) {
+        return this.completeTransferToSignIn(signIn);
+      }
+
+      if (isTransferable(signIn)) {
         signUp = await signUp.create({
           transfer: true,
           ...legalUpdate,
         });
+      } else if (signUp.status === "missing_requirements") {
+        signUp = await signUp.update(legalUpdate);
       } else {
         return {
           status: "error",
@@ -247,6 +248,11 @@ export class GithubService {
       if (signUp.status === "missing_requirements") {
         if (signUp.verifications?.externalAccount?.status === "unverified") {
           return this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
+        }
+        if (isTransferable(signUp)) {
+          return this.completeTransferToSignIn(
+            await this.clerk.requireSignIn(),
+          );
         }
         signUp = await signUp.update(legalUpdate);
       }
@@ -287,6 +293,50 @@ export class GithubService {
       this.clearSignInHandoff();
       return { status: "complete" };
     }
+    if (await this.transferExistingExternalAccount()) {
+      return { status: "complete" };
+    }
+    return {
+      status: "error",
+      message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
+    };
+  }
+
+  private async transferExistingExternalAccount(): Promise<boolean> {
+    await this.clerk.reloadClient();
+    const signUp = await this.clerk.requireSignUp();
+    if (!isTransferable(signUp)) {
+      return false;
+    }
+    const result = await this.completeTransferToSignIn(
+      await this.clerk.requireSignIn(),
+    );
+    return result.status === "complete";
+  }
+
+  private async completeTransferToSignIn(
+    signIn: SignInResource | null,
+  ): Promise<RegisterResult> {
+    const host = this.requireHost();
+    if (!signIn) {
+      return { status: "error", message: AUTH_MESSAGES.authNotReady };
+    }
+
+    const transferred = await signIn.create({ transfer: true });
+    if (transferred.status === "complete" && transferred.createdSessionId) {
+      host.resetGithubConsent();
+      this.clearSignInHandoff();
+      await host.completeSession(transferred.createdSessionId);
+      return { status: "complete" };
+    }
+
+    if (isSecondFactorStatus(transferred.status)) {
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.additionalVerification,
+      };
+    }
+
     return {
       status: "error",
       message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
