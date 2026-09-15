@@ -31,6 +31,9 @@ export class GithubService {
   private host: GithubAuthHost | null = null;
   private signInInProgress = false;
   private handlingOAuthCallback = false;
+  private finishSignInPromise: Promise<void> | null = null;
+  private sessionSyncInFlight: Promise<void> | null = null;
+  private sessionSyncedThisAttempt = false;
   private hostedNavDepth = 0;
   private hostedNavOriginalNavigate:
     | ((to?: string, options?: unknown) => Promise<unknown>)
@@ -84,6 +87,7 @@ export class GithubService {
     }
 
     this.signInInProgress = true;
+    this.sessionSyncedThisAttempt = false;
     this.markSignInHandoff();
     host.clearAuthPending();
     host.resetGithubConsent();
@@ -138,6 +142,7 @@ export class GithubService {
     }
 
     host.clearAuthPending();
+    this.sessionSyncedThisAttempt = false;
 
     const urls = appUrls();
     const oauthParams = {
@@ -347,9 +352,19 @@ export class GithubService {
   }
 
   async finishSignIn(): Promise<void> {
+    if (this.finishSignInPromise) {
+      return this.finishSignInPromise;
+    }
+
+    this.finishSignInPromise = this.runFinishSignIn().finally(() => {
+      this.finishSignInPromise = null;
+    });
+    return this.finishSignInPromise;
+  }
+
+  private async runFinishSignIn(): Promise<void> {
     const host = this.requireHost();
     host.clearAuthPending();
-    await this.clerk.reloadClient();
     host.setUser(this.clerk.user);
 
     if (!host.isAuthenticated()) {
@@ -391,12 +406,40 @@ export class GithubService {
     await host.navigateAfterAuth();
   }
 
+  private outcomeReady(requireUser: boolean): boolean {
+    if (this.clerk.user) {
+      return true;
+    }
+    if (requireUser) {
+      return false;
+    }
+    const host = this.host;
+    return !!host && this.needsConsent() && !host.isGithubConsentActive();
+  }
+
+  private async ensureSession(): Promise<void> {
+    if (this.clerk.user) {
+      return;
+    }
+    if (this.sessionSyncInFlight) {
+      await this.sessionSyncInFlight;
+      return;
+    }
+    if (this.sessionSyncedThisAttempt) {
+      return;
+    }
+    this.sessionSyncedThisAttempt = true;
+    this.sessionSyncInFlight = this.clerk.reloadClient().finally(() => {
+      this.sessionSyncInFlight = null;
+    });
+    await this.sessionSyncInFlight;
+  }
+
   private async consumeOAuthCallback(href: string): Promise<void> {
     if (this.handlingOAuthCallback) {
       return;
     }
 
-    const host = this.requireHost();
     this.handlingOAuthCallback = true;
     try {
       const url = new URL(href, window.location.origin);
@@ -405,10 +448,19 @@ export class GithubService {
         "",
         `${url.pathname}${url.search}${url.hash}`,
       );
-      await this.clerk.reloadClient();
       if (!this.clerk.user) {
-        await host.handleRedirectCallback({ transferable: false });
+        if (this.signInInProgress) {
+          await this.ensureSession();
+        } else {
+          const urls = appUrls();
+          await this.clerk.handleRedirectCallback({
+            transferable: false,
+            origin: urls.origin,
+          });
+          await this.ensureSession();
+        }
       }
+      this.stopOutcomeWait();
       await this.finishSignIn();
     } finally {
       this.handlingOAuthCallback = false;
@@ -519,26 +571,18 @@ export class GithubService {
     popup: Window,
     options?: { requireUser?: boolean },
   ): Promise<void> {
-    const host = this.requireHost();
-    const started = Date.now();
     const requireUser = options?.requireUser === true;
 
     this.stopOutcomeWait();
 
-    const isReady = (): boolean => {
-      if (this.clerk.user) {
-        return true;
-      }
-      if (requireUser) {
-        return false;
-      }
-      return this.needsConsent() && !host.isGithubConsentActive();
-    };
+    const isReady = (): boolean => this.outcomeReady(requireUser);
 
     await new Promise<void>((resolve) => {
       const timers: ReturnType<typeof setInterval>[] = [];
       let unsubscribe: (() => void) | undefined;
       let settled = false;
+      let closeHandled = false;
+      const started = Date.now();
 
       const cleanup = (): void => {
         for (const timer of timers) {
@@ -564,7 +608,7 @@ export class GithubService {
         if (!popup.closed) {
           popup.close();
         }
-        void this.clerk.reloadClient().finally(() => resolve());
+        resolve();
       };
 
       const checkReady = (): void => {
@@ -573,32 +617,37 @@ export class GithubService {
         }
       };
 
+      const handlePopupClosed = (): void => {
+        if (closeHandled || settled) {
+          return;
+        }
+        closeHandled = true;
+        if (isReady()) {
+          finish();
+          return;
+        }
+        void this.ensureSession().finally(() => finish());
+      };
+
       this.outcomeWaitCleanup = cleanup;
       this.outcomeWaitResolve = finish;
 
       unsubscribe = this.clerk.addListener(checkReady);
+      checkReady();
       timers.push(
         setInterval(() => {
           if (Date.now() - started >= GITHUB_POPUP_TIMEOUT_MS) {
             finish();
             return;
           }
-          void this.clerk.reloadClient().then(checkReady);
-        }, 1000),
-      );
-      timers.push(
-        setInterval(() => {
-          if (!popup.closed) {
-            return;
+          if (popup.closed) {
+            handlePopupClosed();
           }
-          if (requireUser) {
-            void this.clerk.reloadClient().then(checkReady);
-            return;
-          }
-          finish();
         }, 250),
       );
-      void this.clerk.reloadClient().then(checkReady);
+      if (popup.closed) {
+        handlePopupClosed();
+      }
     });
   }
 
