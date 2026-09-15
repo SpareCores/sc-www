@@ -106,6 +106,18 @@ jobs:
             aws s3 rm "s3://${CDN_BUCKET}/${CDN_PREFIX}/${VERSION}/" --recursive
           done
 
+      - name: Create Sentry release
+        uses: getsentry/action-release@v3.6.0
+        continue-on-error: true
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_URL: ${{ secrets.SENTRY_URL }}
+        with:
+          environment: production
+          ignore_missing: true
+
       - name: Redeploy ECS service
         env:
           CLUSTER: ${{ secrets.ECS_CLUSTER }}
