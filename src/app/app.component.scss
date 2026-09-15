@@ -9,6 +9,14 @@
   flex-direction: column;
 }
 
+.sc-shell--auth-pending {
+  visibility: hidden;
+  pointer-events: none;
+  overflow: hidden;
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
 .sc-shell-chrome {
   position: sticky;
   top: 0;

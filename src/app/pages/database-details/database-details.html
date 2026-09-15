@@ -34,7 +34,13 @@
           </div>
         </div>
         <div class="flex flex-col gap-3">
-          <h1 class="text-2xl">
+          <h1 class="text-2xl flex items-center gap-2 flex-wrap">
+            <sc-bookmark-button
+              kind="database"
+              [vendorId]="databaseDetails.vendor_id"
+              [entityId]="databaseDetails.api_reference"
+              data-ph-capture-attribute-sc-event="database details favorite"
+            ></sc-bookmark-button>
             <span class="text-emerald-400 font-bold"
               >{{ databaseDetails.display_name }}</span
             >
