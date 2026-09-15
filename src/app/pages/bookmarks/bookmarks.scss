@@ -443,12 +443,20 @@
 .bookmarks-card__handle {
   color: rgb(156 163 175);
   cursor: grab;
-  font-size: 1rem;
+  display: inline-flex;
+  flex-shrink: 0;
   line-height: 1;
   margin-top: 0.125rem;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+}
+
+.bookmarks-card__handle-icon {
+  display: block;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
 }
 
 .bookmarks-card.cdk-drag-dragging,
