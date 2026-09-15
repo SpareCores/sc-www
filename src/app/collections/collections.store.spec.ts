@@ -79,6 +79,16 @@ describe("CollectionsStore", () => {
     expect(listFavoriteServers).not.toHaveBeenCalled();
   });
 
+  it("loads collections when authenticated with a user id", async () => {
+    isAuthenticated.set(true);
+    TestBed.flushEffects();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(listFavoriteServers).toHaveBeenCalled();
+    expect(store.isLoaded()).toBeTrue();
+  });
+
   it("loads collections when loadAll is called", async () => {
     store.loadAll();
     await Promise.resolve();

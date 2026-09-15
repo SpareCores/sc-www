@@ -1184,7 +1184,7 @@ export const CollectionsStore = signalStore(
           return;
         }
 
-        const userId = auth.userName();
+        const userId = auth.userId();
         if (!userId || loadedForUserId === userId) {
           return;
         }
