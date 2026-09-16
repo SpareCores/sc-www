@@ -70,7 +70,7 @@ export class ClerkService {
   }
 
   openUserProfile(): void {
-    this.clerk?.openUserProfile();
+    this.clerk?.openUserProfile({ apiKeysProps: { hide: true } });
   }
 
   async getToken(template?: string): Promise<string | null> {
