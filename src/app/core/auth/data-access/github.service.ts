@@ -429,6 +429,10 @@ export class GithubService {
       return;
     }
 
+    if (await this.transferExistingExternalAccount()) {
+      return;
+    }
+
     if (host.isGithubConsentActive()) {
       return;
     }
@@ -460,11 +464,14 @@ export class GithubService {
     if (this.clerk.user) {
       return true;
     }
+    const host = this.host;
+    if (host?.isGithubConsentActive()) {
+      return true;
+    }
     if (requireUser) {
       return false;
     }
-    const host = this.host;
-    return !!host && this.needsConsent() && !host.isGithubConsentActive();
+    return !!host && this.needsConsent();
   }
 
   private async ensureSession(): Promise<void> {
@@ -504,13 +511,16 @@ export class GithubService {
         } else {
           const urls = appUrls();
           await this.clerk.handleRedirectCallback({
-            transferable: false,
+            transferable: true,
             origin: urls.origin,
           });
           await this.ensureSession();
         }
       }
       this.stopOutcomeWait();
+      if (await this.transferExistingExternalAccount()) {
+        return;
+      }
       await this.finishSignIn();
     } finally {
       this.handlingOAuthCallback = false;

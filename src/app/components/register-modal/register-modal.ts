@@ -59,10 +59,7 @@ export class RegisterModal {
   }
 
   protected close(): void {
-    if (this.busy) {
-      return;
-    }
-
+    this.busy = null;
     this.auth.closeSignUp();
   }
 

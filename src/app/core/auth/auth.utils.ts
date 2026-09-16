@@ -248,7 +248,7 @@ export function needsGithubConsent(
   }
 
   if (isTransferable(signIn) || isTransferable(signUp)) {
-    return true;
+    return false;
   }
 
   if (pendingEmailVerification(signUp)) {
@@ -256,10 +256,6 @@ export function needsGithubConsent(
   }
 
   if (isPendingGithubExternalComplete(signUp) && needsLegalAcceptance(signUp)) {
-    return true;
-  }
-
-  if (signUp?.status === "missing_requirements") {
     return true;
   }
 

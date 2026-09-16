@@ -615,8 +615,9 @@ export class AuthStateService implements GithubAuthHost {
     try {
       await this.clerk.reloadClient();
       const signUp = await this.clerk.requireSignUp();
+      const signIn = await this.clerk.requireSignIn();
 
-      if (isTransferable(signUp)) {
+      if (isTransferable(signUp) || isTransferable(signIn)) {
         const result = await this.github.completePendingSignUp(
           newsletterOptIn,
           true,
