@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
 
@@ -9,7 +10,7 @@ type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
 
 @Component({
   selector: "sc-login-modal",
-  imports: [CommonModule, FormsModule, Button],
+  imports: [CommonModule, FormsModule, Button, LucideDynamicIcon],
   templateUrl: "./login-modal.html",
   styleUrl: "../auth-modal.scss",
 })
@@ -19,6 +20,7 @@ export class LoginModal {
   protected step: LoginStep = "login";
   protected emailAddress = "";
   protected password = "";
+  protected showPassword = false;
   protected verificationCode = "";
   protected errorMessage = "";
   protected infoMessage = "";
@@ -64,6 +66,7 @@ export class LoginModal {
     this.errorMessage = "";
     this.infoMessage = "";
     this.password = "";
+    this.showPassword = false;
     this.verificationCode = "";
     this.step = "reset-request";
   }
@@ -76,6 +79,7 @@ export class LoginModal {
     this.errorMessage = "";
     this.infoMessage = "";
     this.password = "";
+    this.showPassword = false;
     this.verificationCode = "";
     this.step = "login";
     await this.auth.abandonLoginAttempt();
@@ -244,6 +248,7 @@ export class LoginModal {
     this.step = "login";
     this.emailAddress = "";
     this.password = "";
+    this.showPassword = false;
     this.verificationCode = "";
     this.errorMessage = "";
     this.infoMessage = "";

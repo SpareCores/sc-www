@@ -23,20 +23,35 @@
             type="email"
             name="emailAddress"
             placeholder="Enter your email address"
-            autocomplete="email"
+            autocomplete="username"
             [(ngModel)]="emailAddress"
           />
         </label>
 
         <label class="auth-modal__field">
           <span>Password</span>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            autocomplete="current-password"
-            [(ngModel)]="password"
-          />
+          <div class="auth-modal__password">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              [(ngModel)]="password"
+            />
+            <button
+              type="button"
+              class="auth-modal__password-toggle"
+              [attr.aria-label]="
+                showPassword ? 'Hide password' : 'Show password'
+              "
+              (click)="showPassword = !showPassword"
+            >
+              <svg
+                [lucideIcon]="showPassword ? 'eye-off' : 'eye'"
+                aria-hidden="true"
+              ></svg>
+            </button>
+          </div>
         </label>
 
         <div class="auth-modal__forgot">
@@ -239,13 +254,28 @@
 
         <label class="auth-modal__field">
           <span>New password</span>
-          <input
-            type="password"
-            name="newPassword"
-            placeholder="Create a new password"
-            autocomplete="new-password"
-            [(ngModel)]="password"
-          />
+          <div class="auth-modal__password">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="newPassword"
+              placeholder="Create a new password"
+              autocomplete="new-password"
+              [(ngModel)]="password"
+            />
+            <button
+              type="button"
+              class="auth-modal__password-toggle"
+              [attr.aria-label]="
+                showPassword ? 'Hide password' : 'Show password'
+              "
+              (click)="showPassword = !showPassword"
+            >
+              <svg
+                [lucideIcon]="showPassword ? 'eye-off' : 'eye'"
+                aria-hidden="true"
+              ></svg>
+            </button>
+          </div>
         </label>
 
         @if (errorMessage) {
