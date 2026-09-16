@@ -208,12 +208,15 @@ Now, before I run this actual query ...
 
 ::: {.notes}
 Let's load the database,
-and ease in with a few descriptive stats on the tracked cloud resources: over 5,000 cloud server types
+and ease in with a few descriptive stats on the 5,000 cloud server types you can order,
 ranging from a potato to actual beasts with 2,000 vCPUs and over 30TB of memory!
 
-The number of locations? Almost 300 regions across the globe!
+You can deploy these instances across 600 availability zones around the globe!
 
-Pricing of a single instance type? Depends on spot VS on-demand and reserved pricing, also affected by location: 10x diff easily for the same silicon!
+And that heavily affects the pricing of a single instance type,
+besides price allocation of course that could be spot VS on-demand and reserved pricing.
+Overall, you can easily see 10x or even 15x diff for the same silicon!
+As you can see here an AWS example as a tribute to the sponsor of tonight's social event.
 
 We have actually started all these machines and run over 500 benchmark workloads on each to measure the actual performance.
 :::
@@ -299,6 +302,7 @@ sqlite> SELECT category, COUNT(*) FROM benchmark_score
 +---------------------+----------+
 ```
 
+
 # {#llama-3_3}
 
 ::: {.notes}
@@ -306,13 +310,13 @@ So which server to pick? Let's combine the above with a few CTEs finding the mos
 So a query now sorted by dollars spent per million generated tokens.
 
 - It's not a surprise: this list is heavily biased towards GPU instances across multiple vendors
-- But if you are happy with a smaller model, like the gemma with 2B parameters, you can easily find cheap CPU nodes with reasonable performance at 10 US cents per 1M output token!
 
-Same query -- with a different parameter, very different recommendations for which cloud server to use.
+As everyone knows nowadays that you need a GPU to run LLMs, right?
+Except when you don't.
 :::
 
 
-```sh {code-line-numbers="7-7|21-49" style="font-size:25px; margin-top: 50px !important; height: 600px;"}
+```sh {code-line-numbers="7-7|21-49" data-fragment-index="0" style="font-size:25px; margin-top: 50px !important; height: 600px;"}
 sqlite> WITH prices AS (
   SELECT vendor_id, server_id, ROUND(AVG(price), 2) AS price FROM server_price
   WHERE allocation = 'ONDEMAND' GROUP BY vendor_id, server_id
@@ -333,7 +337,7 @@ WHERE score IS NOT NULL
 ORDER BY 11 ASC
 LIMIT 25;
 
-+-----------+----------------------+-------+--------+-----------+@@box+@@--------------+------+-------+-------+--------------+----------------+
++-----------+----------------------+-------+--------+-----------+@@box@@--------------+------+-------+-------+--------------+----------------+
 | vendor_id |    api_reference     | vcpus | memory | gpu_count |  gpu_model   | VRAM | score | price | $ efficiency | $ per 1M token |
 +-----------+----------------------+-------+--------+-----------+--------------+------+-------+-------+--------------+----------------+
 | gcp       | a2-ultragpu-1g       | 12    | 170    | 1.0       | A100         | 80   | 24.47 | 1.36  | 17.9959      | 15.4356        |
@@ -361,10 +365,39 @@ LIMIT 25;
 | gcp       | a2-ultragpu-4g       | 48    | 680    | 4.0       | A100         | 320  | 20.78 | 5.42  | 3.8343       | 72.4462        |
 | ovh       | a10-180              | 120   | 170    | 4.0       | A10          | 96   | 10.73 | 3.04  | 3.528        | 78.7359        |
 | ovh       | a10-45               | 30    | 42     | 1.0       | A10          | 24   | 2.39  | 0.76  | 3.1439       | 88.3539        |
-+-----------+----------------------+-------+--------+-----------+--------------@@box+@@+------+-------+-------+--------------+----------------+
++-----------+----------------------+-------+--------+-----------+--------------@@box@@+------+-------+-------+--------------+----------------+
+```
+
+<script>
+  // Quarto line-highlight reads data-fragment-index from <code>, not the wrapper div.
+  // Starting at 0 keeps overlay/data-fragment-index in sync with code-line-numbers steps.
+  (function () {
+    var slide = document.getElementById('llama-3_3');
+    if (!slide) return;
+    slide.querySelectorAll('div.sourceCode[data-code-line-numbers]').forEach(function (div) {
+      var code = div.querySelector('pre code');
+      if (!code) return;
+      code.setAttribute('data-fragment-index', div.getAttribute('data-fragment-index') || '0');
+    });
+  })();
+</script>
+
+```{=html}
+<!-- fragment index 1 = 2nd code-line-numbers step (21-49 results); show on click, hide on next -->
+<div class="slide-image-overlay fragment fade-in-then-out" data-fragment-index="1">
+  <img src="images/yoda-llm-gpu.jpg" alt="A GPU on the cloud, you need?">
+</div>
 ```
 
 ## {#gemma}
+
+::: {.notes}
+Like when you don't need that many parameters, and you are fine with a small language model, such as the gemma with 2B parameters.
+
+Same query -- with a different parameter, very different recommendations for which cloud server to use.
+
+As you can easily find cheap CPU nodes with reasonable performance at 10 US cents per 1M output token!
+:::
 
 ```sh {code-line-numbers="7-7|21-49" style="font-size:25px; margin-top: 50px !important; height: 600px;"}
 sqlite> WITH prices AS (
