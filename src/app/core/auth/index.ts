@@ -4,7 +4,8 @@ export type {
   LoginPayload,
   LoginResult,
   PasswordResetResult,
-  RegisterPayload,
+  RegisterConsentPayload,
+  RegisterDetailsPayload,
   RegisterResult,
 } from "./auth.types";
 export { AuthStateService } from "./data-access/auth-state.service";

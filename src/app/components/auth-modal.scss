@@ -87,6 +87,10 @@
   padding-top: 1.5rem;
 }
 
+.auth-modal__captcha:empty {
+  display: none;
+}
+
 .auth-modal__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -115,6 +119,46 @@
   line-height: 1.25rem;
   padding: 0.5rem 1rem;
   outline: none;
+}
+
+.auth-modal__password {
+  position: relative;
+}
+
+.auth-modal__password input {
+  padding-inline-end: 2.75rem;
+}
+
+.auth-modal__password-toggle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: rgb(7 89 133 / 0.7);
+  cursor: pointer;
+}
+
+.auth-modal__password-toggle:hover,
+.auth-modal__password-toggle:focus-visible {
+  color: #082f49;
+}
+
+.auth-modal__password-toggle:focus-visible {
+  outline: 2px solid #34d399;
+  outline-offset: -2px;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.auth-modal__password-toggle svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .auth-modal__field input::placeholder {
@@ -208,6 +252,13 @@
 .auth-modal__error {
   margin: 0;
   color: #fca5a5;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.auth-modal__info {
+  margin: 0;
+  color: #6ee7b7;
   font-size: 0.8125rem;
   line-height: 1.4;
 }

@@ -1,16 +1,27 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { AuthStateService } from "../../core/auth";
+import { LucideDynamicIcon } from "@lucide/angular";
+import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
 
 type RegisterBusy = "submit" | "verify" | "resend" | "github";
 type RegisterStep = "details" | "consent" | "verify";
 type RegisterMethod = "email" | "github";
 
+const DETAILS_PARAMS = new Set([
+  "email_address",
+  "emailAddress",
+  "first_name",
+  "firstName",
+  "last_name",
+  "lastName",
+  "password",
+]);
+
 @Component({
   selector: "sc-register-modal",
-  imports: [CommonModule, FormsModule, Button],
+  imports: [CommonModule, FormsModule, Button, LucideDynamicIcon],
   templateUrl: "./register-modal.html",
   styleUrl: "../auth-modal.scss",
 })
@@ -23,10 +34,12 @@ export class RegisterModal {
   protected lastName = "";
   protected emailAddress = "";
   protected password = "";
+  protected showPassword = false;
   protected legalAccepted = false;
   protected newsletterOptIn = false;
   protected verificationCode = "";
   protected errorMessage = "";
+  protected infoMessage = "";
   protected busy: RegisterBusy | null = null;
 
   constructor() {
@@ -40,6 +53,7 @@ export class RegisterModal {
         this.method = "github";
         this.step = "consent";
         this.errorMessage = "";
+        this.infoMessage = "";
       }
     });
   }
@@ -53,11 +67,12 @@ export class RegisterModal {
   }
 
   protected canSubmitDetails(): boolean {
+    const email = this.emailAddress.trim();
     return (
       !!this.firstName.trim() &&
       !!this.lastName.trim() &&
-      !!this.emailAddress.trim() &&
-      !!this.password
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+      this.password.length >= 8
     );
   }
 
@@ -67,26 +82,6 @@ export class RegisterModal {
 
   protected canVerify(): boolean {
     return !!this.verificationCode.trim();
-  }
-
-  protected continueToConsent(): void {
-    if (!this.canSubmitDetails() || this.busy) {
-      return;
-    }
-
-    this.errorMessage = "";
-    this.method = "email";
-
-    const pendingEmail = this.auth.getPendingEmailVerification();
-    if (
-      pendingEmail &&
-      pendingEmail.toLowerCase() === this.emailAddress.trim().toLowerCase()
-    ) {
-      this.step = "verify";
-      return;
-    }
-
-    this.step = "consent";
   }
 
   protected continueWithGithub(): void {
@@ -125,7 +120,7 @@ export class RegisterModal {
       return;
     }
 
-    await this.submitEmail();
+    await this.finishRegister();
   }
 
   protected async verifyEmail(): Promise<void> {
@@ -134,6 +129,7 @@ export class RegisterModal {
     }
 
     this.errorMessage = "";
+    this.infoMessage = "";
     this.busy = "verify";
 
     const result = await this.auth.verifyRegister(this.verificationCode);
@@ -141,7 +137,7 @@ export class RegisterModal {
     this.busy = null;
 
     if (result.status === "error") {
-      this.errorMessage = result.message;
+      this.applyRegisterError(result.message, result.param);
     }
   }
 
@@ -151,6 +147,7 @@ export class RegisterModal {
     }
 
     this.errorMessage = "";
+    this.infoMessage = "";
     this.busy = "resend";
 
     const result = await this.auth.resendRegisterCode();
@@ -158,8 +155,11 @@ export class RegisterModal {
     this.busy = null;
 
     if (result.status === "error") {
-      this.errorMessage = result.message;
+      this.applyRegisterError(result.message, result.param);
+      return;
     }
+
+    this.infoMessage = AUTH_MESSAGES.verificationCodeSent;
   }
 
   protected openSignIn(): void {
@@ -170,14 +170,43 @@ export class RegisterModal {
     this.auth.signIn();
   }
 
-  private async submitEmail(): Promise<void> {
+  protected async submitDetails(): Promise<void> {
+    if (!this.canSubmitDetails() || this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+    this.method = "email";
     this.busy = "submit";
 
-    const result = await this.auth.submitRegister({
+    const result = await this.auth.startRegister({
       firstName: this.firstName,
       lastName: this.lastName,
       emailAddress: this.emailAddress,
       password: this.password,
+    });
+
+    this.busy = null;
+
+    if (result.status === "consent") {
+      this.step = "consent";
+      return;
+    }
+
+    if (result.status === "verify") {
+      this.step = "verify";
+      return;
+    }
+
+    if (result.status === "error") {
+      this.applyRegisterError(result.message, result.param);
+    }
+  }
+
+  private async finishRegister(): Promise<void> {
+    this.busy = "submit";
+
+    const result = await this.auth.completeRegister({
       legalAccepted: this.legalAccepted,
       newsletterOptIn: this.newsletterOptIn,
     });
@@ -190,7 +219,21 @@ export class RegisterModal {
     }
 
     if (result.status === "error") {
-      this.errorMessage = result.message;
+      this.applyRegisterError(result.message, result.param);
+    }
+  }
+
+  private applyRegisterError(message: string, param?: string): void {
+    this.errorMessage = message;
+    this.infoMessage = "";
+
+    if (param === "password") {
+      this.password = "";
+      this.showPassword = false;
+    }
+
+    if (param && DETAILS_PARAMS.has(param)) {
+      this.step = "details";
     }
   }
 
@@ -216,10 +259,12 @@ export class RegisterModal {
     this.lastName = "";
     this.emailAddress = "";
     this.password = "";
+    this.showPassword = false;
     this.legalAccepted = false;
     this.newsletterOptIn = false;
     this.verificationCode = "";
     this.errorMessage = "";
+    this.infoMessage = "";
     this.busy = null;
   }
 }

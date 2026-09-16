@@ -8,7 +8,7 @@ import {
   signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import type { UserResource } from "@clerk/shared/types";
+import type { SignUpResource, UserResource } from "@clerk/shared/types";
 import { ToastService } from "../../../services/toast.service";
 import {
   AUTH_MESSAGES,
@@ -21,12 +21,15 @@ import type {
   LoginPayload,
   LoginResult,
   PasswordResetResult,
-  RegisterPayload,
+  RegisterConsentPayload,
+  RegisterDetailsPayload,
   RegisterResult,
 } from "../auth.types";
 import {
   appUrls,
   authErrorMessage,
+  canResumeEmailVerification,
+  clerkAuthError,
   getSessionFlag,
   isPendingGithubExternalComplete,
   isSecondFactorStatus,
@@ -35,6 +38,7 @@ import {
   newsletterMetadata,
   pendingEmailVerification,
   setSessionFlag,
+  signUpMissingPassword,
 } from "../auth.utils";
 import { ClerkService } from "./clerk.service";
 import type { GithubAuthHost } from "./github-auth-host";
@@ -249,10 +253,6 @@ export class AuthStateService implements GithubAuthHost {
 
   needsGithubConsent(): boolean {
     return this.github.needsConsent();
-  }
-
-  getPendingEmailVerification(): string | null {
-    return pendingEmailVerification(this.clerk.instance?.client?.signUp);
   }
 
   async submitLogin(payload: LoginPayload): Promise<LoginResult> {
@@ -474,7 +474,9 @@ export class AuthStateService implements GithubAuthHost {
     await this.github.signIn();
   }
 
-  async submitRegister(payload: RegisterPayload): Promise<RegisterResult> {
+  async startRegister(
+    payload: RegisterDetailsPayload,
+  ): Promise<RegisterResult> {
     if (!isPlatformBrowser(this.platformId)) {
       return {
         status: "error",
@@ -488,41 +490,51 @@ export class AuthStateService implements GithubAuthHost {
     }
 
     const email = payload.emailAddress.trim();
-    const pendingEmail = pendingEmailVerification(signUp);
-    if (pendingEmail && pendingEmail.toLowerCase() === email.toLowerCase()) {
+    if (canResumeEmailVerification(signUp, email)) {
       return { status: "verify" };
     }
 
+    const details = {
+      firstName: payload.firstName.trim(),
+      lastName: payload.lastName.trim(),
+      emailAddress: email,
+      password: payload.password,
+    };
+
     try {
-      const result = await signUp.create({
-        firstName: payload.firstName.trim(),
-        lastName: payload.lastName.trim(),
-        emailAddress: email,
-        password: payload.password,
+      const result = signUp.id
+        ? await signUp.update(details)
+        : await signUp.create(details);
+
+      return this.resolveRegisterProgress(result, false);
+    } catch (error) {
+      return this.registerClerkError(
+        error,
+        AUTH_MESSAGES.unableToCreateAccount,
+      );
+    }
+  }
+
+  async completeRegister(
+    payload: RegisterConsentPayload,
+  ): Promise<RegisterResult> {
+    const signUp = await this.clerk.requireSignUp();
+    if (!signUp) {
+      return this.authNotReady();
+    }
+
+    try {
+      const result = await signUp.update({
         legalAccepted: payload.legalAccepted,
         unsafeMetadata: newsletterMetadata(payload.newsletterOptIn),
       });
 
-      if (result.status === "complete" && result.createdSessionId) {
-        await this.completeSession(result.createdSessionId);
-        return { status: "complete" };
-      }
-
-      await signUp.prepareEmailAddressVerification({
-        strategy: "email_code",
-      });
-      return { status: "verify" };
+      return this.resolveRegisterProgress(result, true);
     } catch (error) {
-      const stillPending = pendingEmailVerification(
-        this.clerk.instance?.client?.signUp,
+      return this.registerClerkError(
+        error,
+        AUTH_MESSAGES.unableToCreateAccount,
       );
-      if (stillPending) {
-        return { status: "verify" };
-      }
-      return {
-        status: "error",
-        message: authErrorMessage(error, AUTH_MESSAGES.unableToCreateAccount),
-      };
     }
   }
 
@@ -532,25 +544,30 @@ export class AuthStateService implements GithubAuthHost {
       return this.authNotReady();
     }
 
+    if (signUpMissingPassword(signUp)) {
+      return this.missingPasswordError();
+    }
+
     try {
       const result = await signUp.attemptEmailAddressVerification({
         code: code.trim(),
       });
 
-      if (result.status !== "complete" || !result.createdSessionId) {
-        return {
-          status: "error",
-          message: AUTH_MESSAGES.unableToVerifyEmail,
-        };
+      if (result.status === "complete" && result.createdSessionId) {
+        await this.completeSession(result.createdSessionId);
+        return { status: "complete" };
       }
 
-      await this.completeSession(result.createdSessionId);
-      return { status: "complete" };
-    } catch (error) {
+      if (signUpMissingPassword(result)) {
+        return this.missingPasswordError();
+      }
+
       return {
         status: "error",
-        message: authErrorMessage(error, AUTH_MESSAGES.unableToVerifyEmail),
+        message: AUTH_MESSAGES.unableToVerifyEmail,
       };
+    } catch (error) {
+      return this.registerClerkError(error, AUTH_MESSAGES.unableToVerifyEmail);
     }
   }
 
@@ -558,6 +575,10 @@ export class AuthStateService implements GithubAuthHost {
     const signUp = await this.clerk.requireSignUp();
     if (!signUp) {
       return this.authNotReady();
+    }
+
+    if (signUpMissingPassword(signUp)) {
+      return this.missingPasswordError();
     }
 
     try {
@@ -836,6 +857,53 @@ export class AuthStateService implements GithubAuthHost {
     document
       .getElementById(AUTH_OVERLAY_ID)
       ?.setAttribute("aria-hidden", enabled ? "false" : "true");
+  }
+
+  private async resolveRegisterProgress(
+    result: SignUpResource,
+    prepareEmail: boolean,
+  ): Promise<RegisterResult> {
+    if (result.status === "complete" && result.createdSessionId) {
+      await this.completeSession(result.createdSessionId);
+      return { status: "complete" };
+    }
+
+    if (signUpMissingPassword(result)) {
+      return this.missingPasswordError();
+    }
+
+    if (!prepareEmail || needsLegalAcceptance(result)) {
+      return { status: "consent" };
+    }
+
+    if (pendingEmailVerification(result)) {
+      await result.prepareEmailAddressVerification({
+        strategy: "email_code",
+      });
+      return { status: "verify" };
+    }
+
+    return {
+      status: "error",
+      message: AUTH_MESSAGES.unableToCreateAccount,
+    };
+  }
+
+  private registerClerkError(error: unknown, fallback: string): RegisterResult {
+    const parsed = clerkAuthError(error, fallback);
+    return {
+      status: "error",
+      message: parsed.message,
+      param: parsed.paramName,
+    };
+  }
+
+  private missingPasswordError(): RegisterResult {
+    return {
+      status: "error",
+      message: AUTH_MESSAGES.unableToCreateAccount,
+      param: "password",
+    };
   }
 
   private authNotReady(): { status: "error"; message: string } {

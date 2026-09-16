@@ -4,19 +4,23 @@ export type ClerkWithNavigation = Clerk & {
   __internal_windowNavigate: (url: URL | string) => void;
 };
 
-export type RegisterPayload = {
+export type RegisterDetailsPayload = {
   firstName: string;
   lastName: string;
   emailAddress: string;
   password: string;
+};
+
+export type RegisterConsentPayload = {
   legalAccepted: boolean;
   newsletterOptIn: boolean;
 };
 
 export type RegisterResult =
   | { status: "complete" }
+  | { status: "consent" }
   | { status: "verify" }
-  | { status: "error"; message: string };
+  | { status: "error"; message: string; param?: string };
 
 export type LoginPayload = {
   emailAddress: string;

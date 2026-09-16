@@ -7,24 +7,50 @@ import {
 } from "./auth.constants";
 import type { HostedNavAction } from "./auth.types";
 
-export function authErrorMessage(error: unknown, fallback: string): string {
-  if (error && typeof error === "object") {
-    const errorWithList = error as {
-      errors?: Array<{ longMessage?: string; message?: string }>;
-      message?: string;
-    };
-    const longMessage = errorWithList.errors?.[0]?.longMessage;
-    if (longMessage) {
-      return longMessage;
-    }
+export type ClerkAuthError = {
+  message: string;
+  paramName?: string;
+};
 
-    const message = errorWithList.errors?.[0]?.message || errorWithList.message;
-    if (message) {
-      return message;
-    }
+export function clerkAuthError(
+  error: unknown,
+  fallback: string,
+): ClerkAuthError {
+  if (!error || typeof error !== "object") {
+    return { message: fallback };
   }
 
-  return fallback;
+  const errorWithList = error as {
+    errors?: Array<{
+      longMessage?: string;
+      long_message?: string;
+      message?: string;
+      meta?: {
+        paramName?: string;
+        param_name?: string;
+        name?: string;
+      };
+    }>;
+    message?: string;
+  };
+  const first = errorWithList.errors?.[0];
+  const message =
+    first?.longMessage ||
+    first?.long_message ||
+    first?.message ||
+    errorWithList.message ||
+    fallback;
+  const paramName =
+    first?.meta?.paramName || first?.meta?.param_name || first?.meta?.name;
+
+  return {
+    message,
+    paramName,
+  };
+}
+
+export function authErrorMessage(error: unknown, fallback: string): string {
+  return clerkAuthError(error, fallback).message;
 }
 
 export function getSessionFlag(key: string): boolean {
@@ -146,6 +172,25 @@ export function isTransferable(
   return firstFactor === "transferable";
 }
 
+export function signUpMissingFields(
+  signUp: SignUpResource | null | undefined,
+): string[] {
+  return (
+    (
+      signUp as SignUpResource & {
+        missingFields?: string[];
+      }
+    )?.missingFields ?? []
+  );
+}
+
+export function signUpMissingPassword(
+  signUp: SignUpResource | null | undefined,
+): boolean {
+  const missing = signUpMissingFields(signUp);
+  return missing.includes("password");
+}
+
 export function pendingEmailVerification(
   signUp: SignUpResource | null | undefined,
 ): string | null {
@@ -169,6 +214,18 @@ export function pendingEmailVerification(
   return signUp.emailAddress;
 }
 
+export function canResumeEmailVerification(
+  signUp: SignUpResource | null | undefined,
+  email: string,
+): boolean {
+  if (signUpMissingPassword(signUp) || needsLegalAcceptance(signUp)) {
+    return false;
+  }
+
+  const pendingEmail = pendingEmailVerification(signUp);
+  return !!pendingEmail && pendingEmail.toLowerCase() === email.toLowerCase();
+}
+
 export function isPendingGithubExternalComplete(
   signUp: SignUpResource | null | undefined,
 ): boolean {
@@ -178,24 +235,7 @@ export function isPendingGithubExternalComplete(
 export function needsLegalAcceptance(
   signUp: SignUpResource | null | undefined,
 ): boolean {
-  if (!signUp) {
-    return false;
-  }
-
-  if (signUp.legalAcceptedAt) {
-    return false;
-  }
-
-  const missing =
-    (
-      signUp as SignUpResource & {
-        missingFields?: string[];
-      }
-    ).missingFields ?? [];
-
-  return (
-    missing.includes("legalAccepted") || missing.includes("legal_accepted")
-  );
+  return !!signUp && !signUp.legalAcceptedAt;
 }
 
 export function needsGithubConsent(
@@ -207,34 +247,23 @@ export function needsGithubConsent(
     return false;
   }
 
-  const typedSignUp = signUp as
-    | (SignUpResource & {
-        isTransferable?: boolean;
-        missingFields?: string[];
-      })
-    | null
-    | undefined;
-
-  if (isTransferable(signIn) || isTransferable(typedSignUp)) {
+  if (isTransferable(signIn) || isTransferable(signUp)) {
     return true;
   }
 
-  if (pendingEmailVerification(typedSignUp)) {
+  if (pendingEmailVerification(signUp)) {
     return false;
   }
 
-  if (
-    isPendingGithubExternalComplete(typedSignUp) &&
-    needsLegalAcceptance(typedSignUp)
-  ) {
+  if (isPendingGithubExternalComplete(signUp) && needsLegalAcceptance(signUp)) {
     return true;
   }
 
-  if (typedSignUp?.status === "missing_requirements") {
+  if (signUp?.status === "missing_requirements") {
     return true;
   }
 
-  const missing = typedSignUp?.missingFields ?? [];
+  const missing = signUpMissingFields(signUp);
   return (
     missing.includes("legalAccepted") || missing.includes("legal_accepted")
   );

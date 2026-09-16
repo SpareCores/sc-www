@@ -16,7 +16,7 @@
         <p class="auth-modal__subtitle">{{ auth.signUpSubtitle() }}</p>
       </div>
 
-      <form class="auth-modal__form" (ngSubmit)="continueToConsent()">
+      <form class="auth-modal__form" (ngSubmit)="submitDetails()">
         <div class="auth-modal__grid">
           <label class="auth-modal__field">
             <span>First name</span>
@@ -24,6 +24,7 @@
               type="text"
               name="firstName"
               placeholder="First name"
+              autocomplete="given-name"
               [(ngModel)]="firstName"
             />
           </label>
@@ -33,6 +34,7 @@
               type="text"
               name="lastName"
               placeholder="Last name"
+              autocomplete="family-name"
               [(ngModel)]="lastName"
             />
           </label>
@@ -44,23 +46,48 @@
             type="email"
             name="emailAddress"
             placeholder="Enter your email address"
+            autocomplete="username"
             [(ngModel)]="emailAddress"
           />
         </label>
 
         <label class="auth-modal__field">
           <span>Password</span>
-          <input
-            type="password"
-            name="password"
-            placeholder="Create a password"
-            [(ngModel)]="password"
-          />
+          <div class="auth-modal__password">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              name="password"
+              placeholder="Create a password"
+              autocomplete="new-password"
+              minlength="8"
+              [(ngModel)]="password"
+            />
+            <button
+              type="button"
+              class="auth-modal__password-toggle"
+              [attr.aria-label]="
+                showPassword ? 'Hide password' : 'Show password'
+              "
+              (click)="showPassword = !showPassword"
+            >
+              <svg
+                [lucideIcon]="showPassword ? 'eye-off' : 'eye'"
+                aria-hidden="true"
+              ></svg>
+            </button>
+          </div>
         </label>
 
         @if (errorMessage) {
         <p class="auth-modal__error">{{ errorMessage }}</p>
         }
+
+        <div
+          id="clerk-captcha"
+          class="auth-modal__captcha"
+          data-cl-theme="dark"
+          data-cl-size="flexible"
+        ></div>
 
         <sc-button
           type="submit"
@@ -68,6 +95,7 @@
           icon="chevron-right"
           size="small"
           buttonClass="w-full !justify-center"
+          [loading]="busy === 'submit'"
           [disabled]="!canSubmitDetails() || !!busy"
         ></sc-button>
       </form>
@@ -145,12 +173,6 @@
         <p class="auth-modal__error">{{ errorMessage }}</p>
         }
 
-        <div
-          id="clerk-captcha"
-          data-cl-theme="dark"
-          data-cl-size="flexible"
-        ></div>
-
         <div class="auth-modal__consent-actions">
           <sc-button
             type="button"
@@ -215,6 +237,9 @@
             [disabled]="!!busy"
             (buttonClick)="resendCode()"
           ></sc-button>
+          @if (infoMessage) {
+          <p class="auth-modal__info">{{ infoMessage }}</p>
+          }
           <sc-button
             type="submit"
             label="Verify email"

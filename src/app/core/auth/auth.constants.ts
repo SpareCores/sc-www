@@ -35,6 +35,7 @@ export const AUTH_MESSAGES = {
   unableToCreateAccount: "Unable to create your account.",
   unableToVerifyEmail: "Unable to verify your email address.",
   unableToResendVerification: "Unable to resend the verification code.",
+  verificationCodeSent: "Code sent, check your emails!",
   unableToCompleteGithubSignUp: "Unable to complete your GitHub sign-up.",
   githubPopupTimeout: "GitHub sign-in timed out. Try again or use email.",
   githubPopupCancelled: "GitHub sign-in was cancelled.",
