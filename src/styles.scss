@@ -185,6 +185,10 @@ input[type="number"]::-webkit-outer-spin-button {
   border-radius: 0.25rem !important;
 }
 
+.cl-otpCodeFieldInput {
+  border: 1px solid #34d399 !important;
+}
+
 @keyframes spin-slot {
   from {
     transform: rotateX(0deg);
