@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
@@ -63,14 +63,8 @@ export class RegisterModal {
     this.auth.closeSignUp();
   }
 
-  protected canSubmitDetails(): boolean {
-    const email = this.emailAddress.trim();
-    return (
-      !!this.firstName.trim() &&
-      !!this.lastName.trim() &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
-      this.password.length >= 8
-    );
+  protected canSubmitDetails(form: NgForm): boolean {
+    return !!form.valid && !!this.firstName.trim() && !!this.lastName.trim();
   }
 
   protected canSubmitConsent(): boolean {
@@ -167,8 +161,8 @@ export class RegisterModal {
     this.auth.signIn();
   }
 
-  protected async submitDetails(): Promise<void> {
-    if (!this.canSubmitDetails() || this.busy) {
+  protected async submitDetails(form: NgForm): Promise<void> {
+    if (!this.canSubmitDetails(form) || this.busy) {
       return;
     }
 

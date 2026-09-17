@@ -121,12 +121,58 @@
   outline: none;
 }
 
+.auth-modal__field-control {
+  position: relative;
+}
+
+.auth-modal__field input.auth-modal__input--invalid {
+  border-color: #ef4444;
+  padding-inline-end: 2.75rem;
+}
+
+.auth-modal__field input.auth-modal__input--invalid:focus {
+  box-shadow: 0 0 0 2px #ef4444;
+}
+
+.auth-modal__validation-icon {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  pointer-events: none;
+  color: #ef4444;
+}
+
+.auth-modal__validation-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.auth-modal__field-error {
+  margin: 0;
+  color: #ef4444;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 .auth-modal__password {
   position: relative;
 }
 
 .auth-modal__password input {
   padding-inline-end: 2.75rem;
+}
+
+.auth-modal__password input.auth-modal__input--invalid {
+  padding-inline-end: 4.5rem;
+}
+
+.auth-modal__password .auth-modal__validation-icon {
+  inset-inline-end: 2.75rem;
+  width: 1.75rem;
 }
 
 .auth-modal__password-toggle {

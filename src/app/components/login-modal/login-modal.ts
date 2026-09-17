@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
@@ -42,20 +42,8 @@ export class LoginModal {
     this.auth.closeSignIn();
   }
 
-  protected canSubmitLogin(): boolean {
-    return !!this.emailAddress.trim() && !!this.password;
-  }
-
   protected canSubmitSecondFactor(): boolean {
     return !!this.verificationCode.trim();
-  }
-
-  protected canSubmitResetRequest(): boolean {
-    return !!this.emailAddress.trim();
-  }
-
-  protected canSubmitResetVerify(): boolean {
-    return !!this.verificationCode.trim() && !!this.password;
   }
 
   protected openResetRequest(): void {
@@ -85,8 +73,8 @@ export class LoginModal {
     await this.auth.abandonLoginAttempt();
   }
 
-  protected async submitLogin(): Promise<void> {
-    if (!this.canSubmitLogin() || this.busy) {
+  protected async submitLogin(form: NgForm): Promise<void> {
+    if (form.invalid || this.busy) {
       return;
     }
 
@@ -154,8 +142,8 @@ export class LoginModal {
     }
   }
 
-  protected async submitResetRequest(): Promise<void> {
-    if (!this.canSubmitResetRequest() || this.busy) {
+  protected async submitResetRequest(form: NgForm): Promise<void> {
+    if (form.invalid || this.busy) {
       return;
     }
 
@@ -178,8 +166,8 @@ export class LoginModal {
     }
   }
 
-  protected async submitResetVerify(): Promise<void> {
-    if (!this.canSubmitResetVerify() || this.busy) {
+  protected async submitResetVerify(form: NgForm): Promise<void> {
+    if (form.invalid || !this.verificationCode.trim() || this.busy) {
       return;
     }
 
