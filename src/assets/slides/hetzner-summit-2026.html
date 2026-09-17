@@ -187,6 +187,22 @@
       margin-right: 0; 
     }
   </style>
+  
+  <script>
+    window.addEventListener('load', function() {
+      document.addEventListener('keydown', function(event) {
+        if (['ArrowRight', 'ArrowDown', 'PageDown'].includes(event.key)) {
+          event.preventDefault();
+          event.stopPropagation();
+          Reveal.next();
+        } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) {
+          event.preventDefault();
+          event.stopPropagation();
+          Reveal.prev();
+        }
+      }, true);
+    });
+  </script>
 </head>
 <body class="quarto-dark">
   <div class="reveal">
@@ -234,7 +250,8 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p>Hi, I’m Gergely from the Spare Cores team, and we are an open-source project for cloud transparency, because</p>
+<p>Hi, I’m Gergely Daroczi from the Spare Cores team, and we are an open-source project for cloud transparency, so we try to compare cloud resources across vendors in a standardized, objective and transparent way.</p>
+<p>Why do we do that?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -255,7 +272,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <p><img src="images/no-cloud-just-another-comp.png" style="max-width: 75%; max-height: 50%;"></p>
 </div>
 <aside class="notes">
-<p>although everyone knows that cloud is just another computer, we often don’t really know what kind of computer that is.</p>
+<p>While pretty much everyone understands that cloud is still just another computer, at a remote location, that I can spin up quickly and throw away as needed, BUT we often don’t really know what kind of computer that is.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -268,11 +285,40 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
           display:block!important;
       }</style></aside>
 </section>
-<section id="vcpu" class="slide level2">
+<section id="old-vs-new" class="slide level2" data-transition="slide-in fade-out">
 <h2></h2>
 <aside class="notes">
-<p>WHAT THE HECK is even a virtual CPU?!</p>
-<p>There’s a conceptual uncertainty and visibility problem here, as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory, versus a dedicated CPU core of a state-of-the-art server – with massive CPU cache and high memory bandwidth.</p>
+<p>Before the cloud, you could simply walk to the server, and it was not too difficult to say that the computer running your program</p>
+<ul>
+<li>is a potato</li>
+<li>or a commodity PC with a case that has started turning yellow over the years</li>
+<li>or it’s a bleeding edge, high-end server</li>
+<li>or not so new and it still has a turbo button</li>
+</ul>
+<p>You could even open up the case when the system administrator was not watching …</p>
+<p>BUT nowadays</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="centered">
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+<p><img src="images/small-big-computer.jpg" style="display: block; width: 100%;"></p>
+</div>
+</div>
+</section>
+<section id="vcpu" class="slide level2" data-transition="fade-in slide-out">
+<h2></h2>
+<aside class="notes">
+<p>Like what on earth is even a virtual CPU?! Right?</p>
+<p>There’s a conceptual uncertainty and massive visibility problem here, as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory, versus a dedicated CPU core of a state-of-the-art server – with massive CPU cache and high memory bandwidth.</p>
 <p>Which means that your applications could run much much faster!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -296,7 +342,8 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <section id="vcpu-guess" class="slide level2 center">
 <h2></h2>
 <aside class="notes">
-<p>TODO TODO stress ng div16</p>
+<p>Now, I’d like to host a quick guessing game if you don’t mind.</p>
+<p>Any ideas how much faster is the best performing vCPU compared to the slowest? I don’t mean a comparing cloud servers with hundreds of cores with a potato, indeed just focusing on the single-core performance – like doing as many integer divisions in a second as possible.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -319,6 +366,24 @@ How much better is the highest performing 2-vCPU cloud server’s single-core pe
 </section>
 <section id="vcpu-diff-0" class="slide level2 center">
 <h2></h2>
+<aside class="notes">
+<p>Both the slowest and the fastest servers are from a hyperscaler .. not because I picked so, it just happened to be the case.</p>
+<p>Now I’m not going to give away the identity of the actual server types, and shame them publicly … especially in the era of awakening AGI (TODO autonomous general intelligence?).</p>
+<p>But you can easily find out on your own if you are interested, and I’m happy to show how.</p>
+<p>But we do know both comes with 2 vCPUs.</p>
+<p>[…]</p>
+<p>How do I know all this stuff?</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 <table style="font-size: 2rem; margin-left: auto; margin-right: auto;">
 <thead>
 <tr style="background-color: #06263A;">
@@ -457,8 +522,8 @@ x34.92481
 <section id="vcpu-benchmarking" class="slide level2" data-transition="slide-in slide-out">
 <h2></h2>
 <aside class="notes">
-<p>How do I know? Well, we measured! Not only these 2 servers, but actually 3,800…</p>
-<p>We solve this visibility problem by burning hundreds of thousands of dollars to start servers, measure performance, and calculate cost-efficiency, then publish these results and related tooling with open licenses, so that you can save money by optimizing your cloud spend.</p>
+<p>Well, we measured! Not only these 2 servers, but actually close to 4,000 (3,800)!</p>
+<p>So we solve this visibility problem of the cloud by burning hundreds of thousands of dollars to start servers, measure performance, and calculate cost-efficiency, then publish these results and related tooling with open licenses, so that you can save money by optimizing your cloud spend.</p>
 <p>DATA DRIVEN way</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -489,6 +554,8 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>30-50x</span>
 </div>
 <aside class="notes">
+<p>logarithmic scale</p>
+<p>note that this is a syntethic tets</p>
 <p>TODO speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -509,6 +576,8 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>10-20x</span>
 </div>
 <aside class="notes">
+<p>see Server A in the middle with scores around 500 across all dimensions? so left hand side is single core, right hand side is multi core performance … pretty much the same for Server A.</p>
+<p>BUT Server B looking better: jumping from around 35 hundreds to 6000, and in some workloads the diff between Server A and Server B are even larger.</p>
 <p>TODO speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -529,6 +598,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>100x</span>
 </div>
 <aside class="notes">
+<p>now this is not single-core anymore .. we run OpenSSL speed tests, using various cipher and hash functions .. and Server A is hardly visible on this screen ..</p>
 <p>TODO speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -565,7 +635,8 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <section id="vcpu-difference" class="slide level2" data-transition="slide-in slide-out">
 <h2></h2>
 <aside class="notes">
-<p>TODO speaker notes</p>
+<p>Back to Vincent from Pulp Fiction .. who now looks even more confused.</p>
+<p>Because it’s possible that you get a 32 vCPU server, and your app that perfectly scales to multiple cores, runs slower than on a single core of another cloud server type.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -588,9 +659,10 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <section id="vcpus-2-count" class="slide level2 center">
 <h2></h2>
 <aside class="notes">
-<p>There’s quite a spectrum even when just looking at the 2 vCPU options … FTR there are 611 instance types with 2 vCPUs … we monitor 8 vendors (logos on prior slide).</p>
-<p>TODO speaker notes</p>
-<p>FTR there are 611 instance types with 2 vCPUs across the 8 vendors we monitor. Click the chart to zoom out and reveal the answer.</p>
+<p>And there’s quite a spectrum even when just looking at the 2 vCPU options … Any guesses how many?</p>
+<p>[…]</p>
+<p>611 instance types with 2 vCPUs … we monitor 8 vendors (logos on prior slide).</p>
+<p>Click the chart to zoom out and reveal the answer.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -686,12 +758,12 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <section id="recover" class="title-slide slide level1">
 <h1></h1>
 <aside class="notes">
-<p>TODO speaker notes</p>
 <p>But to the talk title: how Hetzner ranks among 5,000 instance types?</p>
-<p>.. when it comes to comparing Hetzner Cloud to other cloud providers, just look around .. having the Summit right at a datacenter is pretty awesome :)</p>
-<p>TODO how awesome it is to have a session at a datacenter .. thank you!</p>
-<p>So I might be a bit biased :)</p>
-<p>TODO was not only pumped because of this, but at the time I was invited to present here, I was working on my slides for a PyData conference and saw some interesting patterns that were super relevant and got me excited to share with this group.</p>
+<p>.. well, swhen it comes to comparing Hetzner Cloud to other cloud providers, just look around .. having the Summit right at a datacenter is pretty damn cool I must say :)</p>
+<p>Haven’t experienced that at other vendors, but I hope others might follow.</p>
+<p>So now I might be a bit biased :)</p>
+<p>But as said previously, we collect data in a transparent way and we don’t have sponsored listings etc Honestly the biggest value of Spare Cores is to remain independent and unbiased, and I think you will also see that from some of this talk as well.</p>
+<p>Anyway, I super excited not only for location, but when I received the invitation to give a talk here, I was working on my slides for a PyData conference and saw some interesting patterns that were super relevant and got me excited to share with this group.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -716,7 +788,7 @@ The Cloud Performance Map:<br>How Hetzner Ranks<br>Among 5,000 Instance Types
 <section id="pydata-london" class="slide level2">
 <h2>&gt;&gt;&gt; from PyData import London</h2>
 <aside class="notes">
-<p>TODO speaker notes</p>
+<p>[…]</p>
 <p>Basically pick a random Hetzner Cloud server for your smaller LLM serving needs.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -859,6 +931,26 @@ The Cloud Performance Map:<br>How Hetzner Ranks<br>Among 5,000 Instance Types
 </section>
 <section id="pydata-london-date-1" class="slide level2 center">
 <h2></h2>
+<aside class="notes">
+<p>But then something happened.</p>
+<p>You were so great at guessing so far, so let me try again: any ideas what happened?</p>
+<ul>
+<li>no, no data issues. we are good :)</li>
+</ul>
+<p>[…]</p>
+<p>April 1st happened! quite a shock, honestly. all my beloved efficiency metrics potentially ruined in a second.</p>
+<p>So you know how that changed the landscape? Are we still rocking the SLM (small language model) world? Well, I don’t know either .</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 <div class="fragment">
 <a href="https://www.hetzner.com/pressroom/statement-price-adjustment/"> <img src="images/hcloud-price-increase-2026-april.png" class="r-stretch"> </a>
 <p></p>
@@ -866,13 +958,25 @@ The Cloud Performance Map:<br>How Hetzner Ranks<br>Among 5,000 Instance Types
 </section>
 <section id="pydata-london-date-2" class="slide level2 center">
 <h2></h2>
+<aside class="notes">
+<p>Because before my PyData London talk, another price increase happened!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 
 <img src="images/hcloud-price-increase-2026-june.png" class="r-stretch"></section>
 <section id="pydata-london-date-3" class="slide level2 center">
 <h2></h2>
 <aside class="notes">
-<p>Swallow the pill .. or other means of coping with the anxiety of the situation.</p>
-<p>TODO let’s take a deep breath, and dive into the data! and clarify what we actually do here</p>
+<p>So it was time to take a deep breath … and swallow the pill .. or other means of coping with the anxiety of the situation.</p>
 <p>BTW if you wondered, I’m the guy in the back.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -944,7 +1048,9 @@ Credit: <a href="https://devopsreactions.tumblr.com/post/71190963508/senior-vs-j
 })();
 </script>
 <aside class="notes">
-<p>I’m personally very interested in optimizing cloud cost and resource utilization, which is important for business success and a greener future as well.</p>
+<p>And it’s a good time to do a proper introduction, and why I’m interested in cloud transparency at all.</p>
+<p>My background has been mostly in data engineer and data science, and managing infrastructure for such teams.</p>
+<p>One example is a US startup spending around $5k/month on training GBM models, doing time-series forecasting etc. And finding the most cost-efficient spot instances for these.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -959,6 +1065,20 @@ Credit: <a href="https://devopsreactions.tumblr.com/post/71190963508/senior-vs-j
 </section>
 <section id="while-current-destination" class="slide level2">
 <h2>$ while [[ $current != $destination ]]</h2>
+<aside class="notes">
+<p>Which was fun! But I often found myself in the upper right quadrant of this chart, which is not a good spot for a for-profit business entity who wants their data scientists and related cloud folks to maximize profit .. and necessarily to find the most elegant solution.</p>
+<p>So actually I went on a 6-months sabbatic in around 2022, and it worked out so well that I decided not coming back to work but stay in that mode, and actually called Spare Cores into life – something I already wanted to do properly with a collegue and friend for a long time. with Attila, who is actually sitting somewhere there.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 <div class="centered">
 <img style="width:60%;" src="https://sparecores.com/assets/images/blog/xkcd-1205-is_it_worth_the_time.png">
 <p style="font-size: 1rem; margin-top: 10px;">
@@ -1978,8 +2098,40 @@ but when looking at a larger model, although the Azure server is still a bit fas
           display:block!important;
       }</style></aside>
 </section>
+<section id="xdg-open-vllmstatus.png" class="slide level2 centered">
+<h2>$ xdg-open vllm/status.png</h2>
+
+<img src="images/vllm-a10-45-chat-ttft-e2el-throughput.png" style="width: 100%;" class="centered r-stretch"><aside class="notes">
+<p>Also, it’s not only througput and speed, but oftentimes you want to pick a server based on other requirements, such as latency. Maybe you need to keep the Time to first token (TTFT) below a given treshold, or similar.</p>
+To help with that, we are taking the LLM benchmarks to the next level, by using vLLM and guideLLM to run multi-concurrent workloads and measure a bunch of related metrics – stay tuned.
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="sqlite-select-from-scores-order-by-price-3" class="slide level2">
 <h2>sqlite&gt; SELECT * FROM scores ORDER BY price;</h2>
+<aside class="notes">
+<p>And just to highlight a few other workloads, as although today everyone is talking about LLMs and AI, we still have databases, websites and other important workloads ..</p>
+<p>So let me show one of our recent projects, that is evluating PostgreSQL performance on various servers. TODO</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 <div class="centered">
 <p><img style="width:100%; margin-top: -30px;" src="images/www-server-search-db-hetzner.png"></p>
 <p>
@@ -1988,10 +2140,10 @@ Source: <a href="https://sparecores.com/servers?benchmark_score_min=1&amp;memory
 </div>
 </section></section>
 <section>
-<section id="cat-llm-benchmarksdisclaimer.md" class="title-slide slide level1">
-<h1>$ cat llm-benchmarks/disclaimer.md</h1>
+<section id="cat-benchmarksna.md" class="title-slide slide level1 centered">
+<h1>$ cat benchmarks/NA.md</h1>
 <aside class="notes">
-extreme portability and efficiency on a wide range of devices, especially consumer-grade hardware. Its advantages lie in its minimal dependencies, fast startup time, and its ability to run almost anywhere
+<p>Although we try hard, unforunately, we don’t have a full coverage of all benchmarks across all vendors and instances.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -2003,35 +2155,17 @@ extreme portability and efficiency on a wide range of devices, especially consum
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<ul>
-<li>Using (single-user/low-concurrency, but highly portable, hardware agnostic and zero-tuning) <code>llama.cpp</code> VS <code>vLLM</code></li>
-</ul>
-<div class="fragment">
-<hr>
-<ul>
-<li>Cannot scale small models to multiple GPUs</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>Needs CUDA for GPU-accelerated inference
-<ul>
-<li>Only CPU is utilized in the AMD, Habana etc. servers</li>
-<li>Even some NVIDIA GPUs (e.g.&nbsp;T4G) are incompatible</li>
-</ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li><code>vLLM</code> benchmarks coming (current status: 1,289 servers)</li>
-</ul>
+<div class="centered">
+<p><img style="width:100%; margin-top: -30px; margin-bottom: -30px;" src="images/www-coverage-vendors.png"></p>
+<p>
+Source: <a href="https://sparecores.com/navigator/benchmark-coverage" target="_blank">sparecores.com/navigator/benchmark-coverage</a>
+</p>
 </div>
 </section>
-<section id="xdg-open-vllmstatus.png" class="slide level2 centered">
-<h2>$ xdg-open vllm/status.png</h2>
-
-<img src="images/vllm-a10-45-chat-ttft-e2el-throughput.png" style="width: 100%;" class="centered r-stretch"><aside class="notes">
-TODO
+<section id="cat-benchmarksna.md-1" class="slide level2 centered">
+<h2>$ cat benchmarks/NA.md</h2>
+<aside class="notes">
+<p>TODO</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -2043,9 +2177,12 @@ TODO
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</section></section>
-<section id="cat-llm-benchmarksna.md" class="title-slide slide level1">
-<h1>$ cat llm-benchmarks/NA.md</h1>
+<div class="centered">
+<p><img style="width:100%; margin-top: -30px; margin-bottom: -30px;" src="images/www-coverage-hetzner.png"></p>
+</div>
+</section>
+<section id="cat-benchmarksna.md-2" class="slide level2">
+<h2>$ cat benchmarks/NA.md</h2>
 <aside class="notes">
 <p>TODO …</p>
 <p>And the last disclaimer: (next)</p>
@@ -2078,8 +2215,7 @@ the vendor doesn’t have capacity to start an instance
 <code>pulumi</code> reported that the instance creation failed, but it silently ran for 3 days doing nothing and consumed 1000s of dollars
 </li>
 </ul>
-</section>
-
+</section></section>
 <section>
 <section id="pip-show-navigator-grep--i-license" class="title-slide slide level1" data-transition="convex-in none-out">
 <h1>$ pip show navigator | grep -i license</h1>

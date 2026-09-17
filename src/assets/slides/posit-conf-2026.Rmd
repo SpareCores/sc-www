@@ -4,6 +4,7 @@ author: Gergely Daroczi
 date: "2026-09-15"
 conference: "posit::conf(2026)"
 conference_url: "https://conf.posit.co/2026"
+conference_talk_slides: "/assets/slides/posit-conf-2026.html#/coverslide"
 location: "Houston, TX, USA"
 revealjs-plugins:
   - boxoverlay
