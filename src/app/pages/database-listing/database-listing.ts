@@ -39,7 +39,7 @@ import { SearchBarComponent } from "../../components/search-bar/search-bar.compo
 import type {
   SearchBarParameter,
   SearchBarQuery,
-} from "../../components/search-bar/search-bar.types";
+} from "../../components/search-bar/types/search-bar.types";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
@@ -151,6 +151,12 @@ export class DatabaseListing implements OnInit, OnDestroy {
       category_id: "storage",
       name: "Storage",
       icon: "layers",
+      collapsed: true,
+    },
+    {
+      category_id: "traffic",
+      name: "Network",
+      icon: "arrow-up-down",
       collapsed: true,
     },
     {
