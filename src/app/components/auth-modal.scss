@@ -197,9 +197,7 @@
 }
 
 .auth-modal__password-toggle:focus-visible {
-  outline: 2px solid #34d399;
-  outline-offset: -2px;
-  border-radius: 0 0.5rem 0.5rem 0;
+  outline: none;
 }
 
 .auth-modal__password-toggle svg {
@@ -297,7 +295,7 @@
 
 .auth-modal__error {
   margin: 0;
-  color: #fca5a5;
+  color: #ef4444;
   font-size: 0.8125rem;
   line-height: 1.4;
 }
