@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
-import { NumbersOnlyDirective } from "../../directives/numbers-only.directive";
-import { SearchBarParameterFieldComponent } from "./search-bar-parameter-field.component";
-import type { SearchBarParameter } from "./search-bar.types";
+import { NumbersOnlyDirective } from "../../../../directives/numbers-only.directive";
+import { SearchBarParameterField } from "./search-bar-parameter-field";
+import type { SearchBarParameter } from "../../types/search-bar.types";
 
-describe("SearchBarParameterFieldComponent", () => {
-  let component: SearchBarParameterFieldComponent;
-  let fixture: ComponentFixture<SearchBarParameterFieldComponent>;
+describe("SearchBarParameterField", () => {
+  let component: SearchBarParameterField;
+  let fixture: ComponentFixture<SearchBarParameterField>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SearchBarParameterFieldComponent],
+      imports: [SearchBarParameterField],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SearchBarParameterFieldComponent);
+    fixture = TestBed.createComponent(SearchBarParameterField);
     component = fixture.componentInstance;
   });
 

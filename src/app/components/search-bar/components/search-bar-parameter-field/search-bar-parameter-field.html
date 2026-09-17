@@ -1,6 +1,6 @@
 @if (parameter(); as parameter) {
   @let parameterType = getParameterType(parameter);
-  <div>
+  <div [style.padding-top]="parameterType === 'enumArraySearch' ? '0.5rem' : null">
     @if (showParameterTitles() && parameterType !== "checkbox") {
       @if (
         filterCategoryId() === "benchmark" &&
@@ -334,6 +334,20 @@
           />
           <span>False</span>
         </label>
+      </div>
+    }
+
+    @if (parameterType === "enumArraySearch") {
+      <div class="mb-4 mt-4">
+        <sc-search-bar-multi-select
+          [options]="getEnumArraySearchOptions(parameter)"
+          [selected]="getEnumArraySearchSelected(parameter)"
+          [disabled]="disabled()"
+          [parameterName]="parameter.name"
+          [filterCategoryId]="filterCategoryId()"
+          placeholder="Search CPU flags"
+          (selectionChange)="setEnumArraySearchSelection($event)"
+        />
       </div>
     }
 

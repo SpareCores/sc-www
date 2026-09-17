@@ -8,7 +8,7 @@ import {
   LucidePlus,
   LucideX,
 } from "@lucide/angular";
-import { formatNumberInputValue } from "../../pipes/pipe-utils";
+import { formatNumberInputValue } from "../../../../pipes/pipe-utils";
 import type {
   SearchBarBenchmarkConfigOption,
   SearchBarCustomControl,
@@ -19,7 +19,7 @@ import type {
   SearchBarParameterTemplateContext,
   SearchBarServerOption,
   SearchBarTooltipEvent,
-} from "./search-bar.types";
+} from "../../types/search-bar.types";
 import {
   POWER_OF_TWO_STEPPER_INPUT_PATTERN,
   getInputElementFromEvent,
@@ -31,7 +31,7 @@ import {
   isDraftValueDirty,
   normalizeCommittedPowerOfTwoStepperValue,
   parsePowerOfTwoStepperNumericValue,
-} from "./search-bar.utils";
+} from "../../utils/search-bar.utils";
 
 @Component({
   selector: "sc-search-bar-custom-controls",
@@ -43,9 +43,9 @@ import {
     LucidePlus,
     LucideX,
   ],
-  templateUrl: "./search-bar-custom-controls.component.html",
+  templateUrl: "./search-bar-custom-controls.html",
 })
-export class SearchBarCustomControlsComponent {
+export class SearchBarCustomControls {
   private platformId = inject(PLATFORM_ID);
 
   controls = input<SearchBarCustomControl[]>([]);
