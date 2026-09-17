@@ -7,7 +7,7 @@ conference_url: "https://www.hetzner.com/hetzner-summit"
 location: "Falkenstein, Germany"
 format:
   revealjs:
-    # embed-resources: true
+    #embed-resources: true
     theme: [black, css/custom-4.2.1.css]
     controls: true
     navigation-mode: vertical
@@ -91,6 +91,8 @@ format:
 Hi, I'm Gergely Daroczi from the Spare Cores team,
 and we are an open-source project for cloud transparency,
 so we try to compare cloud resources across vendors in a standardized, objective and transparent way.
+
+Why do we do that?
 :::
 
 
@@ -101,18 +103,23 @@ so we try to compare cloud resources across vendors in a standardized, objective
 :::
 
 ::: {.notes}
-This is very much needed, as although everyone knows that cloud is just another computer,
-we often don't really know what kind of computer that is.
+While pretty much everyone understands that cloud is still just another computer,
+at a remote location, that I can spin up quickly and throw away as needed,
+BUT we often don't really know what kind of computer that is.
 :::
 
 ## {#old-vs-new transition="slide-in fade-out"}
 
 ::: {.notes}
-Before the cloud, it was not too difficult to say that the computer running your program
+Before the cloud, you could simply walk to the server, and
+it was not too difficult to say that the computer running your program
 
-- might became yellow over the years
-- and if it still had a turbo button
-- you could even open up the housing
+- is a potato
+- or a commodity PC with a case that has started turning yellow over the years
+- or it's a bleeding edge, high-end server
+- or not so new and it still has a turbo button
+
+You could even open up the case when the system administrator was not watching ...
 
 BUT nowadays
 :::
