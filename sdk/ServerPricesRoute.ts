@@ -723,7 +723,7 @@ export namespace ServerPrices {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
@@ -733,6 +733,7 @@ export namespace ServerPrices {
         | "Hopper"
         | "Pascal"
         | "Radeon Pro Navi"
+        | "TPU"
         | "Turing"
         | "Volta";
       /** GPU model */
@@ -745,6 +746,7 @@ export namespace ServerPrices {
         | "B200"
         | "B300"
         | "GB200"
+        | "GB300"
         | "H100"
         | "H200"
         | "HL-205"
@@ -755,6 +757,7 @@ export namespace ServerPrices {
         | "P4"
         | "RTX 5000"
         | "RTX PRO 4500"
+        | "RTX PRO 6000 Blackwell Server Edition"
         | "RTX Pro 6000"
         | "T4"
         | "T4G"
@@ -763,7 +766,11 @@ export namespace ServerPrices {
         | "V520"
         | "V620"
         | "V710"
-        | "nvidia-gb300";
+        | "v3"
+        | "v5e"
+        | "v5p"
+        | "v6e"
+        | "v7x";
       /**
        * Limit
        * Maximum number of results.

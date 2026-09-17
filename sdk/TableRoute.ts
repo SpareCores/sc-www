@@ -23,6 +23,7 @@ import {
   TableServerSelectTableServerSelectGetData,
   TableServerTableServerGetData,
   TableStorageTableStorageGetData,
+  TableVendorComplianceLinkTableVendorComplianceLinkGetData,
   TableVendorTableVendorGetData,
   TableZoneTableZoneGetData,
 } from "./data-contracts";
@@ -72,6 +73,22 @@ export namespace Table {
     export type RequestHeaders = {};
     export type ResponseBody =
       TableComplianceFrameworksTableComplianceFrameworkGetData;
+  }
+
+  /**
+   * @description Return the VendorComplianceLink table as-is, without filtering options or relationships resolved.
+   * @tags Table dumps
+   * @name TableVendorComplianceLinkTableVendorComplianceLinkGet
+   * @summary Table Vendor Compliance Link
+   * @request GET:/table/vendor_compliance_link
+   */
+  export namespace TableVendorComplianceLinkTableVendorComplianceLinkGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody =
+      TableVendorComplianceLinkTableVendorComplianceLinkGetData;
   }
 
   /**

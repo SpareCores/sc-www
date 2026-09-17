@@ -27,6 +27,7 @@ import {
   TableServerSelectTableServerSelectGetParams,
   TableServerTableServerGetData,
   TableStorageTableStorageGetData,
+  TableVendorComplianceLinkTableVendorComplianceLinkGetData,
   TableVendorTableVendorGetData,
   TableZoneTableZoneGetData,
 } from "./data-contracts";
@@ -85,6 +86,26 @@ export class Table<SecurityDataType = unknown> {
       any
     >({
       path: `/table/compliance_framework`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Return the VendorComplianceLink table as-is, without filtering options or relationships resolved.
+   *
+   * @tags Table dumps
+   * @name TableVendorComplianceLinkTableVendorComplianceLinkGet
+   * @summary Table Vendor Compliance Link
+   * @request GET:/table/vendor_compliance_link
+   */
+  tableVendorComplianceLinkTableVendorComplianceLinkGet = (
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      TableVendorComplianceLinkTableVendorComplianceLinkGetData,
+      any
+    >({
+      path: `/table/vendor_compliance_link`,
       method: "GET",
       format: "json",
       ...params,
