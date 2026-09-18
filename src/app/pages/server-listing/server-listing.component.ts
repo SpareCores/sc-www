@@ -41,7 +41,7 @@ import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
-import type { SearchBarParameter } from "../../components/search-bar/search-bar.types";
+import type { SearchBarParameter } from "../../components/search-bar/types/search-bar.types";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import {
   ServerCompare,

@@ -21,9 +21,11 @@ import { Subject, Subscription, debounceTime } from "rxjs";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { Button } from "../button/button";
-import { SearchBarCustomControlsComponent } from "./search-bar-custom-controls.component";
-import { SearchBarGeoFiltersComponent } from "./search-bar-geo-filters.component";
-import { SearchBarParameterFieldComponent } from "./search-bar-parameter-field.component";
+import {
+  SearchBarCustomControls,
+  SearchBarGeoFilters,
+  SearchBarParameterField,
+} from "./components";
 import type {
   ComplianceFrameworkMetadata,
   ContinentMetadata,
@@ -39,7 +41,7 @@ import type {
   SearchBarQuery,
   StorageMetadata,
   VendorMetadata,
-} from "./search-bar.types";
+} from "./types/search-bar.types";
 import {
   draftValueFromUnknown,
   getParameterType as getSearchBarParameterType,
@@ -48,7 +50,7 @@ import {
   normalizeCommittedCpuCacheRangeValue,
   parseNumericDraftValue,
   parseTextDraftValue,
-} from "./search-bar.utils";
+} from "./utils/search-bar.utils";
 
 export type {
   BenchmarkFilterOption,
@@ -69,7 +71,7 @@ export type {
   SearchBarServerOption,
   StorageMetadata,
   VendorMetadata,
-} from "./search-bar.types";
+} from "./types/search-bar.types";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -88,9 +90,9 @@ type ApiResponse<T> = {
     Button,
     LucideDynamicIcon,
     LucideChevronDown,
-    SearchBarCustomControlsComponent,
-    SearchBarGeoFiltersComponent,
-    SearchBarParameterFieldComponent,
+    SearchBarCustomControls,
+    SearchBarGeoFilters,
+    SearchBarParameterField,
   ],
   templateUrl: "./search-bar.component.html",
   styleUrl: "./search-bar.component.scss",
@@ -121,7 +123,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   customControlChanged = output<SearchBarCustomControlChange>();
 
   tooltip = viewChild.required<ElementRef<HTMLElement>>("tooltipDefault");
-  customControlsComponents = viewChildren(SearchBarCustomControlsComponent);
+  customControlsComponents = viewChildren(SearchBarCustomControls);
   tooltipContent = "";
 
   complianceFrameworks: ComplianceFrameworkMetadata[] = [];
@@ -232,7 +234,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       const parameterType = this.getParameterType(item);
 
       if (
-        (parameterType === "enumArray" || parameterType === "vendor_regions") &&
+        (parameterType === "enumArray" ||
+          parameterType === "enumArraySearch" ||
+          parameterType === "vendor_regions") &&
         !item.modelValue
       ) {
         item.modelValue = [];
@@ -262,6 +266,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       if (
         query[item.name] &&
         (parameterType === "enumArray" ||
+          parameterType === "enumArraySearch" ||
           parameterType === "compliance_framework" ||
           parameterType === "vendor" ||
           parameterType === "vendor_regions") &&
@@ -301,6 +306,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         if (
           extraParameters[item.name] &&
           (parameterType === "enumArray" ||
+            parameterType === "enumArraySearch" ||
             parameterType === "compliance_framework" ||
             parameterType === "vendor" ||
             parameterType === "vendor_regions") &&

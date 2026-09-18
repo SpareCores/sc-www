@@ -2,7 +2,7 @@ import type {
   Benchmark,
   BenchmarkConfig,
   Server,
-} from "../../../../sdk/data-contracts";
+} from "../../../../../sdk/data-contracts";
 
 export type SearchBarParameter = {
   name: string;
@@ -164,7 +164,8 @@ export type SearchBarParameterType =
   | "price"
   | "number"
   | "checkbox"
-  | "enumArray";
+  | "enumArray"
+  | "enumArraySearch";
 
 export type BenchmarkFilterOption =
   | string

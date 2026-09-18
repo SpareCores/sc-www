@@ -1,6 +1,8 @@
 .filter_bar {
   position: relative;
   width: 20rem;
+  min-width: 20rem;
+  flex: 0 0 20rem;
   transition: width 0.2s ease-in-out;
 
   .top {
@@ -40,6 +42,7 @@
 .filter_bar.collapsed {
   width: 0rem;
   min-width: unset;
+  flex: 0 0 0;
 }
 
 .top_buttons {

@@ -6,8 +6,8 @@ import {
   LucideInfo,
   LucideLeaf,
 } from "@lucide/angular";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { CountryIdtoNamePipe } from "../../../../pipes/country-idto-name.pipe";
+import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
 import type {
   ContinentMetadata,
   CountryMetadata,
@@ -16,8 +16,8 @@ import type {
   SearchBarParameterType,
   SearchBarTooltipEvent,
   VendorMetadata,
-} from "./search-bar.types";
-import { getParameterType } from "./search-bar.utils";
+} from "../../types/search-bar.types";
+import { getParameterType } from "../../utils/search-bar.utils";
 
 @Component({
   selector: "sc-search-bar-geo-filters",
@@ -30,9 +30,9 @@ import { getParameterType } from "./search-bar.utils";
     CountryIdtoNamePipe,
     BenchmarkIconPipe,
   ],
-  templateUrl: "./search-bar-geo-filters.component.html",
+  templateUrl: "./search-bar-geo-filters.html",
 })
-export class SearchBarGeoFiltersComponent {
+export class SearchBarGeoFilters {
   parameter = input.required<SearchBarParameter>();
   filterCategoryId = input.required<string>();
   showParameterTitles = input(true);
