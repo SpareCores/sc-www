@@ -1,7 +1,78 @@
 <div class="page-header">
   <h1 class="page-header__title">
     <svg [lucideIcon]="icon()" class="h-8 w-8 mr-2" aria-hidden="true"></svg>
-    {{ title() }}
+    @if (showBookmark()) {
+    <span
+      class="page-header__bookmark-wrap"
+      [class.page-header__bookmark-wrap--locked]="bookmarkGuestLocked()"
+    >
+      <button
+        type="button"
+        class="page-header__icon-btn page-header__bookmark"
+        [class.page-header__bookmark--active]="bookmarkActive()"
+        [class.page-header__bookmark--can-add]="
+          !bookmarkGuestLocked() &&
+          !bookmarkActive() &&
+          !bookmarkDisabled() &&
+          !bookmarkLoading()
+        "
+        [class.page-header__bookmark--can-remove]="
+          !bookmarkGuestLocked() &&
+          bookmarkActive() &&
+          !bookmarkDisabled() &&
+          !bookmarkLoading()
+        "
+        [class.page-header__bookmark--locked]="bookmarkGuestLocked()"
+        [disabled]="
+          !bookmarkGuestLocked() && (bookmarkDisabled() || bookmarkLoading())
+        "
+        [attr.aria-label]="
+          bookmarkGuestLocked()
+            ? registerHint
+            : bookmarkActive()
+              ? 'Remove bookmark'
+              : 'Add bookmark'
+        "
+        [attr.aria-pressed]="bookmarkActive()"
+        (mouseenter)="onBookmarkMouseEnter($event)"
+        (mouseleave)="hideTooltip()"
+        (click)="onBookmarkClick($event)"
+      >
+        <svg
+          lucideBookmark
+          class="page-header__icon-btn-svg page-header__bookmark-icon page-header__bookmark-icon--default"
+        ></svg>
+        <svg
+          lucideBookmarkPlus
+          class="page-header__icon-btn-svg page-header__bookmark-icon page-header__bookmark-icon--add"
+        ></svg>
+        <svg
+          lucideBookmarkOff
+          class="page-header__icon-btn-svg page-header__bookmark-icon page-header__bookmark-icon--remove"
+        ></svg>
+      </button>
+      @if (bookmarkGuestLocked()) {
+      <div
+        #tooltip
+        style="opacity: 0; display: none"
+        class="tooltip-panel fixed z-100 pointer-events-none"
+      >
+        {{ registerHint }}
+      </div>
+      }
+    </span>
+    }
+    <span class="page-header__title-text">{{ title() }}</span>
+    @if (showEdit()) {
+    <button
+      type="button"
+      class="page-header__icon-btn page-header__edit"
+      [attr.aria-label]="editAriaLabel()"
+      (click)="editClick.emit($event)"
+    >
+      <svg lucideSquarePen class="page-header__icon-btn-svg"></svg>
+    </button>
+    }
   </h1>
   <div class="page-header__actions">
     <ng-content></ng-content>

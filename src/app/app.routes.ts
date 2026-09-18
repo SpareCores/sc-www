@@ -2,9 +2,19 @@ import { Routes } from "@angular/router";
 import { LandingpageComponent } from "./pages/landingpage/landingpage.component";
 import { ServerListingComponent } from "./pages/server-listing/server-listing.component";
 import { ServerPricesComponent } from "./pages/server-prices/server-prices.component";
+import { authGuard, blockLandingDuringAuthGuard } from "./core/auth";
 
 export const routes: Routes = [
-  { path: "", component: LandingpageComponent },
+  {
+    path: "",
+    component: LandingpageComponent,
+    canActivate: [blockLandingDuringAuthGuard],
+  },
+  {
+    path: "auth/callback",
+    loadComponent: () =>
+      import("./pages/auth-callback/auth-callback").then((m) => m.AuthCallback),
+  },
 
   {
     path: "servers/compare",
@@ -218,6 +228,12 @@ export const routes: Routes = [
       import("./pages/contact/contact.component").then(
         (m) => m.ContactComponent,
       ),
+  },
+  {
+    path: "bookmarks",
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import("./pages/bookmarks/bookmarks").then((m) => m.Bookmarks),
   },
   {
     path: "about/partners",

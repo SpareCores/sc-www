@@ -716,6 +716,9 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   toggleCompare2(event: any, server: ServerPriceWithPKs | any) {
     event.stopPropagation();
+    if (this.isCompareCheckboxDisabled(!!server.selected, server)) {
+      return;
+    }
 
     server.selected = !server.selected;
 
@@ -723,12 +726,15 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   toggleCompare(event: boolean, server: ServerPriceWithPKs | any) {
-    this.serverCompare.toggleCompare(event, {
+    const added = this.serverCompare.toggleCompare(event, {
       server: server.server.api_reference,
       vendor: server.vendor_id,
       zoneRegion: { zone: server.zone_id, region: server.region_id },
       display_name: server.server.display_name,
     });
+    if (!added) {
+      server.selected = false;
+    }
     this.servers.forEach((item) => {
       if (
         this.serverCompare.selectedForCompare.findIndex(
@@ -742,6 +748,21 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
         item.partiallySelected = false;
       }
     });
+  }
+
+  isCompareCheckboxDisabled(
+    selected: boolean,
+    server?: { vendor_id: string; server: { api_reference: string } },
+  ): boolean {
+    return this.serverCompare.isServerCompareCheckboxDisabled(
+      selected,
+      server
+        ? {
+            vendor: server.vendor_id,
+            server: server.server.api_reference,
+          }
+        : undefined,
+    );
   }
 
   compareCount() {

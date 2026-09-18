@@ -6,10 +6,19 @@
       <sc-page-header
         icon="ship-wheel"
         [title]="title"
+        [showBookmark]="true"
+        [bookmarkGuestLocked]="!isAuthenticated()"
+        [bookmarkActive]="!!activeSavedSearch()"
+        [bookmarkDisabled]="!activeSavedSearch() && !canSaveSearch()"
+        [bookmarkLoading]="isDeleteSearchPending()"
+        [showEdit]="!!activeSavedSearch()"
+        editAriaLabel="Edit search"
         [showShare]="true"
         [shareIcon]="clipboardIcon"
         shareButtonId="server_listing_share_button"
         (shareClick)="clipboardURL()"
+        (bookmarkClick)="toggleSavedSearch()"
+        (editClick)="openSaveSearchModal()"
       >
         <sc-button
           id="server_listing_introduction_button"
@@ -24,6 +33,14 @@
         {{ description }}
       </div>
     </div>
+
+    <sc-collection-save-modal
+      modalId="server-listing-save-search-modal"
+      title="Bookmark this search"
+      confirmLabel="Confirm"
+      [saving]="isSaveSearchPending()"
+      (confirmed)="confirmSaveSearch($event)"
+    ></sc-collection-save-modal>
 
     <div
       #introductionModal
@@ -41,29 +58,12 @@
             <h2 class="text-xl font-medium text-white">
               Cloud Servers Navigator introduction
             </h2>
-            <button
-              type="button"
-              class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-              (click)="closeIntroductionModal()"
-            >
-              <svg
-                class="w-3 h-3"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 14"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                />
-              </svg>
-
-              <span class="sr-only">Close modal</span>
-            </button>
+            <sc-button
+              variant="close"
+              icon="x"
+              ariaLabel="Close modal"
+              (buttonClick)="closeIntroductionModal()"
+            ></sc-button>
           </div>
           <div class="p-4">
             @if (showIntroductionVideo) {
@@ -118,7 +118,6 @@
           [filterCategories]="filterCategories"
           [searchParameters]="searchParameters"
           [extraParameters]="specialParameters"
-          [isAuthenticated]="false"
           (searchChanged)="searchBarChanged($event)"
         >
         </sc-search-bar>
@@ -210,6 +209,7 @@
                       <svg lucideScale class="h-4 w-4"></svg>
                     </div>
                   </th>
+                  <th class="favorite_column"></th>
                   @for (column of tableColumns; track column.name) {
                     <th
                       [ngClass]="{
@@ -270,45 +270,70 @@
                           [(ngModel)]="item.selected"
                           (ngModelChange)="toggleCompare($event, item)"
                           (click)="$event.stopPropagation()"
-                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                          [disabled]="
+                            isCompareCheckboxDisabled(!!item.selected, item)
+                          "
+                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                         />
                       </div>
+                    </td>
+                    <td
+                      class="favorite_column"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <sc-instance-favorite-context-menu
+                        kind="server"
+                        [vendorId]="item.vendor_id"
+                        [entityId]="item.api_reference"
+                      >
+                        <sc-bookmark-button
+                          kind="server"
+                          [vendorId]="item.vendor_id"
+                          [entityId]="item.api_reference"
+                        ></sc-bookmark-button>
+                      </sc-instance-favorite-context-menu>
                     </td>
                     @for (column of tableColumns; track column.name) {
                       @if (column.type === "name") {
                         <td>
-                          <div (click)="$event.stopPropagation()">
-                            <a
-                              routerLink="/server/{{ item.vendor.vendor_id }}/{{
-                                item.api_reference
-                              }}"
-                              data-ph-capture-attribute-sc-event="server listing route to server details"
-                              [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                                item.vendor_id
-                              "
-                              [attr.data-ph-capture-attribute-server-listing-row-index]="
-                                i + 1
-                              "
-                              [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                                limit
-                              "
-                            >
-                              <div class="text-sm text-white flex gap-1">
-                                <span class="whitespace-nowrap"
-                                  >{{ item.display_name }}
-                                </span>
-                                @if (showAPIReference(item)) {
-                                  <span class="text-emerald-400">|</span>
+                          <sc-instance-favorite-context-menu
+                            kind="server"
+                            [vendorId]="item.vendor_id"
+                            [entityId]="item.api_reference"
+                          >
+                            <div (click)="$event.stopPropagation()">
+                              <a
+                                routerLink="/server/{{
+                                  item.vendor.vendor_id
+                                }}/{{ item.api_reference }}"
+                                data-ph-capture-attribute-sc-event="server listing route to server details"
+                                [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                                  item.vendor_id
+                                "
+                                [attr.data-ph-capture-attribute-server-listing-row-index]="
+                                  i + 1
+                                "
+                                [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                                  limit
+                                "
+                              >
+                                <div class="text-sm text-white flex gap-1">
                                   <span class="whitespace-nowrap"
-                                    >{{ item.api_reference }}
+                                    >{{ item.display_name }}
                                   </span>
-                                }
-                              </div>
-                              <div class="text-xs text-white flex gap-1">
-                                <span>{{ item.vendor_id }}</span>
-                              </div>
-                            </a>
-                          </div>
+                                  @if (showAPIReference(item)) {
+                                    <span class="text-emerald-400">|</span>
+                                    <span class="whitespace-nowrap"
+                                      >{{ item.api_reference }}
+                                    </span>
+                                  }
+                                </div>
+                                <div class="text-xs text-white flex gap-1">
+                                  <span>{{ item.vendor_id }}</span>
+                                </div>
+                              </a>
+                            </div>
+                          </sc-instance-favorite-context-menu>
                         </td>
                       }
                       @if (column.type === "processor") {
@@ -848,30 +873,14 @@
         <h3 class="text-xl font-medium text-white dark:text-white">
           {{ modalText }}
         </h3>
-        <button
-          type="button"
+        <sc-button
+          variant="close"
+          icon="x"
+          ariaLabel="Close modal"
           data-ph-capture-attribute-sc-event="server listing search prompt close"
           data-ph-capture-attribute-server-listing-search-prompt-action="close"
-          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-          (click)="closeModal()"
-        >
-          <svg
-            class="w-3 h-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 14 14"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-            />
-          </svg>
-          <span class="sr-only">Close modal</span>
-        </button>
+          (buttonClick)="closeModal()"
+        ></sc-button>
       </div>
       <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
         @if (!tempSelectedBenchmarkCategory) {
