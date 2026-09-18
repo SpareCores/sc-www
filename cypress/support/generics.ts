@@ -275,6 +275,14 @@ export abstract class E2EEvent {
     );
   }
 
+  public static hideDatabaseCardPriceForScreenshot() {
+    cy.get(".database-card-price-to-hide-for-test").invoke(
+      "css",
+      "display",
+      "none",
+    );
+  }
+
   public static hideWorkloadProfileChartsForScreenshot() {
     cy.get(".workload-profile-charts-to-hide-for-test").invoke(
       "css",
