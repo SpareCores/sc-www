@@ -48,7 +48,7 @@ export class SearchBarMultiSelect {
       return options;
     }
 
-    return options.filter((option) => option.toLowerCase().startsWith(query));
+    return options.filter((option) => option.toLowerCase().includes(query));
   });
 
   @HostListener("document:mousedown", ["$event"])
