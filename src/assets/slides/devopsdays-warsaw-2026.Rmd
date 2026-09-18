@@ -1,0 +1,51 @@
+---
+title: "What is a vCPU, Really?"
+author: Gergely Daroczi
+date: "2026-11-24"
+conference: "DevOpsDays Warsaw 2026"
+conference_url: "https://devopsdays.pl/"
+location: "Warsaw, Poland"
+format:
+  revealjs:
+    # embed-resources: true
+    # multiplex: true
+    theme: [black, css/custom-4.2.1.css]
+    controls: true
+    navigation-mode: vertical
+    # include-in-header:
+    #   text: |
+    #     <!-- force right arrow key to proceed vertically as well when using older presenter remotes -->
+    #     <script>
+    #       window.addEventListener('load', function() {
+    #         document.addEventListener('keydown', function(event) {
+    #           if (['ArrowRight', 'ArrowDown', 'PageDown'].includes(event.key)) {
+    #             event.preventDefault();
+    #             event.stopPropagation();
+    #             Reveal.next();
+    #           } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) {
+    #             event.preventDefault();
+    #             event.stopPropagation();
+    #             Reveal.prev();
+    #           }
+    #         }, true);
+    #       });
+    #     </script>
+    controls-layout: bottom-right
+    controls-tutorial: true
+    menu: false
+    logo: images/sc-square-dark-300x300.jpg
+    margin: 0.1
+    height: 700
+    width: 1150
+    # width: 1244  # was used at revealjs 3.x
+    center-title-slide: false
+    slide-number: true
+    transition: slide
+    hash-type: title
+    code-copy: false
+    code-line-numbers: false
+    highlight-style: arrow-dark
+  gfm:
+    mermaid-format: svg
+    theme: neutral
+---
