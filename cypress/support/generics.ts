@@ -283,6 +283,10 @@ export abstract class E2EEvent {
     );
   }
 
+  public static hideListingTableResultsForScreenshot(tableId: string) {
+    cy.get(`#${tableId} tbody`).invoke("css", "display", "none");
+  }
+
   public static hideWorkloadProfileChartsForScreenshot() {
     cy.get(".workload-profile-charts-to-hide-for-test").invoke(
       "css",

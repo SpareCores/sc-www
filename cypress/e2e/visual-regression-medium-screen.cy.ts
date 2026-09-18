@@ -40,6 +40,9 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
 
+    // Hide table results for screenshot consistency
+    E2EEvent.hideListingTableResultsForScreenshot("servers_table");
+
     cy.compareSnapshot("servers-hcloud-gpu1-medium");
   });
 
@@ -48,6 +51,9 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
+
+    // Hide table results for screenshot consistency
+    E2EEvent.hideListingTableResultsForScreenshot("databases_table");
 
     cy.compareSnapshot("databases-aws-vcpus2-medium");
   });
