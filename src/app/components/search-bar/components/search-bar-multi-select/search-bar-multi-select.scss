@@ -48,7 +48,7 @@
 }
 
 .search-bar-multi-select__option {
-  @apply flex w-full border-b border-solid border-gray-700 px-3 py-2 text-left text-sm text-white transition-colors duration-150 hover:bg-secondary;
+  @apply flex w-full cursor-pointer border-b border-solid border-gray-700 px-3 py-2 text-left text-sm text-white transition-colors duration-150 hover:bg-secondary;
 }
 
 .search-bar-multi-select__option--active {

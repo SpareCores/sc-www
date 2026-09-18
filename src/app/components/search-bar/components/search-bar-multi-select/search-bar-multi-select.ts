@@ -51,6 +51,23 @@ export class SearchBarMultiSelect {
     return options.filter((option) => option.toLowerCase().includes(query));
   });
 
+  listboxId = computed(
+    () =>
+      `search-bar-multi-select-${this.parameterName() || "options"}-listbox`,
+  );
+
+  activeOptionId = computed(() => {
+    const index = this.activeIndex();
+    if (index < 0 || !this.dropdownOpen() || this.disabled()) {
+      return null;
+    }
+    return this.optionId(index);
+  });
+
+  optionId(index: number): string {
+    return `${this.listboxId()}-option-${index}`;
+  }
+
   @HostListener("document:mousedown", ["$event"])
   onDocumentMouseDown(event: MouseEvent) {
     const target = event.target as Node | null;

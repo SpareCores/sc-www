@@ -30,7 +30,13 @@
     <input
       #searchInput
       type="text"
+      role="combobox"
       class="search-bar-multi-select__input"
+      [attr.aria-label]="placeholder()"
+      [attr.aria-expanded]="dropdownOpen() && !disabled()"
+      [attr.aria-controls]="listboxId()"
+      [attr.aria-activedescendant]="activeOptionId()"
+      aria-autocomplete="list"
       [placeholder]="selected().length ? '' : placeholder()"
       [disabled]="disabled()"
       [ngModel]="searchQuery()"
@@ -48,15 +54,22 @@
   </div>
 
   @if (dropdownOpen() && !disabled()) {
-  <div #optionsPanel class="search-bar-multi-select__panel custom-scrollbar">
+  <div
+    #optionsPanel
+    role="listbox"
+    [id]="listboxId()"
+    class="search-bar-multi-select__panel custom-scrollbar"
+  >
     @if (filteredOptions().length) { @for (option of filteredOptions(); track
     option; let index = $index) {
-    <button
-      type="button"
+    <div
+      role="option"
+      [id]="optionId(index)"
       class="search-bar-multi-select__option"
       [class.search-bar-multi-select__option--active]="
               activeIndex() === index
             "
+      aria-selected="false"
       (mousedown)="$event.preventDefault()"
       (click)="selectOption(option)"
       data-ph-capture-attribute-sc-event="server listing filter"
@@ -69,7 +82,7 @@
             "
     >
       {{ option }}
-    </button>
+    </div>
     } } @else {
     <div class="search-bar-multi-select__hint">No matching flags.</div>
     }
