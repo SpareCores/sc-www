@@ -49,6 +49,7 @@ getParameterType(parameter);
         (ngModelChange)="setParameterDraftValue($event)"
         (keyup.enter)="commitParameterInput($event)"
         (blur)="commitParameterInput($event)"
+        [disabled]="disabled()"
       />
       {{ parameter.schema.unit }}
     </div>
@@ -81,6 +82,7 @@ getParameterType(parameter);
           "
       [(ngModel)]="parameter.modelValue"
       (ngModelChange)="onRangeSliderChanged()"
+      [disabled]="disabled()"
       class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm"
     />
   </div>
