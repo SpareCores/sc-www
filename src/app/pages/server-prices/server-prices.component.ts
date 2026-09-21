@@ -248,7 +248,19 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
     const parameters =
       this.openApiJson.paths["/server_prices"].get.parameters || [];
-    this.searchParameters = parameters.filter((p: any) => p.name !== "regions");
+    this.searchParameters = parameters
+      .filter((p: any) => p.name !== "regions")
+      .map((parameter: any) => {
+        const schema = { ...(parameter.schema ?? {}) };
+        if (parameter.name === "hw_virt") {
+          schema.filter_mode = "tri_state_boolean";
+        }
+        return {
+          name: parameter.name,
+          modelValue: null,
+          schema,
+        };
+      });
 
     let limit = this.searchParameters.find(
       (param: any) => param.name === "limit",
