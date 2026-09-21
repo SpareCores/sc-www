@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
+import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
 
 type RegisterBusy = "submit" | "verify" | "resend" | "github";
 type RegisterStep = "details" | "consent" | "verify";
@@ -21,7 +22,13 @@ const DETAILS_PARAMS = new Set([
 
 @Component({
   selector: "sc-register-modal",
-  imports: [CommonModule, FormsModule, Button, LucideDynamicIcon],
+  imports: [
+    CommonModule,
+    FormsModule,
+    Button,
+    LucideDynamicIcon,
+    LoadingSpinnerComponent,
+  ],
   templateUrl: "./register-modal.html",
   styleUrl: "../auth-modal.scss",
 })
@@ -42,6 +49,13 @@ export class RegisterModal {
   protected infoMessage = "";
   protected busy: RegisterBusy | null = null;
 
+  protected get isAuthPending(): boolean {
+    return (
+      this.step === "details" &&
+      (this.busy === "submit" || this.busy === "github")
+    );
+  }
+
   constructor() {
     effect(() => {
       if (!this.auth.signUpModalOpen()) {
@@ -59,6 +73,10 @@ export class RegisterModal {
   }
 
   protected close(): void {
+    if (this.isAuthPending) {
+      return;
+    }
+
     this.busy = null;
     this.auth.closeSignUp();
   }

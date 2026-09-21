@@ -1,6 +1,7 @@
 @if (auth.signInModalOpen()) {
 <div class="auth-modal" (click)="close()">
   <div class="auth-modal__panel" (click)="$event.stopPropagation()">
+    @if (!isAuthPending) {
     <sc-button
       class="auth-modal__close"
       variant="close"
@@ -8,166 +9,182 @@
       ariaLabel="Close sign in modal"
       (buttonClick)="close()"
     ></sc-button>
-
-    @if (step === "login") {
-    <div class="auth-modal__body">
+    } @if (step === "login") {
+    <div
+      class="auth-modal__body"
+      [class.auth-modal__body--pending]="isAuthPending"
+    >
       <div class="auth-modal__header">
-        <h2 class="auth-modal__title">Sign in to Spare Cores</h2>
+        <h2 class="auth-modal__title">
+          {{ isAuthPending ? "Signing in to your account" : "Sign in to Spare
+          Cores" }}
+        </h2>
         <p class="auth-modal__subtitle">Welcome back!</p>
       </div>
 
-      <form
-        class="auth-modal__form"
-        #loginForm="ngForm"
-        novalidate
-        (ngSubmit)="submitLogin(loginForm)"
-      >
-        <label class="auth-modal__field">
-          <span>Email address</span>
-          <div class="auth-modal__field-control">
-            <input
-              type="email"
-              name="emailAddress"
-              placeholder="Enter your email address"
-              autocomplete="username"
-              required
-              email
-              #emailCtrl="ngModel"
-              [(ngModel)]="emailAddress"
-              [class.auth-modal__input--invalid]="
-                emailCtrl.invalid && emailCtrl.touched
-              "
-              [attr.aria-invalid]="
-                emailCtrl.invalid && emailCtrl.touched ? true : null
-              "
-              [attr.aria-describedby]="
-                emailCtrl.invalid && emailCtrl.touched
-                  ? 'login-email-error'
-                  : null
-              "
-            />
-            @if (emailCtrl.invalid && emailCtrl.touched) {
-            <div class="auth-modal__validation-icon" aria-hidden="true">
-              <svg lucideIcon="circle-alert"></svg>
-            </div>
-            }
-          </div>
-          @if (emailCtrl.invalid && emailCtrl.touched) {
-          <p class="auth-modal__field-error" id="login-email-error">
-            Email address must be a valid email address.
-          </p>
-          }
-        </label>
-
-        <label class="auth-modal__field">
-          <span>Password</span>
-          <div class="auth-modal__password">
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              name="password"
-              placeholder="Enter your password"
-              autocomplete="current-password"
-              required
-              minlength="8"
-              #passwordCtrl="ngModel"
-              [(ngModel)]="password"
-              [class.auth-modal__input--invalid]="
-                passwordCtrl.invalid && passwordCtrl.touched
-              "
-              [attr.aria-invalid]="
-                passwordCtrl.invalid && passwordCtrl.touched ? true : null
-              "
-              [attr.aria-describedby]="
-                passwordCtrl.invalid && passwordCtrl.touched
-                  ? 'login-password-error'
-                  : null
-              "
-            />
-            @if (passwordCtrl.invalid && passwordCtrl.touched) {
-            <div class="auth-modal__validation-icon" aria-hidden="true">
-              <svg lucideIcon="circle-alert"></svg>
-            </div>
-            }
-            <button
-              type="button"
-              class="auth-modal__password-toggle"
-              [attr.aria-label]="
-                showPassword ? 'Hide password' : 'Show password'
-              "
-              (click)="showPassword = !showPassword"
-            >
-              <svg
-                [lucideIcon]="showPassword ? 'eye-off' : 'eye'"
-                aria-hidden="true"
-              ></svg>
-            </button>
-          </div>
-          @if (passwordCtrl.invalid && passwordCtrl.touched) {
-          <p class="auth-modal__field-error" id="login-password-error">
-            Password must be at least 8 characters.
-          </p>
-          }
-        </label>
-
-        <div class="auth-modal__forgot">
-          <button
-            type="button"
-            class="auth-modal__footer-link"
-            (click)="openResetRequest()"
+      <div class="auth-modal__main">
+        <div class="auth-modal__content">
+          <form
+            class="auth-modal__form"
+            #loginForm="ngForm"
+            novalidate
+            (ngSubmit)="submitLogin(loginForm)"
           >
-            Forgot password?
-          </button>
+            <label class="auth-modal__field">
+              <span>Email address</span>
+              <div class="auth-modal__field-control">
+                <input
+                  type="email"
+                  name="emailAddress"
+                  placeholder="Enter your email address"
+                  autocomplete="username"
+                  required
+                  email
+                  #emailCtrl="ngModel"
+                  [(ngModel)]="emailAddress"
+                  [class.auth-modal__input--invalid]="
+                  emailCtrl.invalid && emailCtrl.touched
+                "
+                  [attr.aria-invalid]="
+                  emailCtrl.invalid && emailCtrl.touched ? true : null
+                "
+                  [attr.aria-describedby]="
+                  emailCtrl.invalid && emailCtrl.touched
+                    ? 'login-email-error'
+                    : null
+                "
+                />
+                @if (emailCtrl.invalid && emailCtrl.touched) {
+                <div class="auth-modal__validation-icon" aria-hidden="true">
+                  <svg lucideIcon="circle-alert"></svg>
+                </div>
+                }
+              </div>
+              @if (emailCtrl.invalid && emailCtrl.touched) {
+              <p class="auth-modal__field-error" id="login-email-error">
+                Email address must be a valid email address.
+              </p>
+              }
+            </label>
+
+            <label class="auth-modal__field">
+              <span>Password</span>
+              <div class="auth-modal__password">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  name="password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  required
+                  minlength="8"
+                  #passwordCtrl="ngModel"
+                  [(ngModel)]="password"
+                  [class.auth-modal__input--invalid]="
+                  passwordCtrl.invalid && passwordCtrl.touched
+                "
+                  [attr.aria-invalid]="
+                  passwordCtrl.invalid && passwordCtrl.touched ? true : null
+                "
+                  [attr.aria-describedby]="
+                  passwordCtrl.invalid && passwordCtrl.touched
+                    ? 'login-password-error'
+                    : null
+                "
+                />
+                @if (passwordCtrl.invalid && passwordCtrl.touched) {
+                <div class="auth-modal__validation-icon" aria-hidden="true">
+                  <svg lucideIcon="circle-alert"></svg>
+                </div>
+                }
+                <button
+                  type="button"
+                  class="auth-modal__password-toggle"
+                  [attr.aria-label]="
+                  showPassword ? 'Hide password' : 'Show password'
+                "
+                  (click)="showPassword = !showPassword"
+                >
+                  <svg
+                    [lucideIcon]="showPassword ? 'eye-off' : 'eye'"
+                    aria-hidden="true"
+                  ></svg>
+                </button>
+              </div>
+              @if (passwordCtrl.invalid && passwordCtrl.touched) {
+              <p class="auth-modal__field-error" id="login-password-error">
+                Password must be at least 8 characters.
+              </p>
+              }
+            </label>
+
+            <div class="auth-modal__forgot">
+              <button
+                type="button"
+                class="auth-modal__footer-link"
+                (click)="openResetRequest()"
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            <div
+              id="clerk-captcha"
+              data-cl-theme="dark"
+              data-cl-size="flexible"
+            ></div>
+
+            @if (errorMessage) {
+            <p class="auth-modal__error">{{ errorMessage }}</p>
+            }
+
+            <sc-button
+              type="submit"
+              label="Continue"
+              icon="chevron-right"
+              size="small"
+              buttonClass="w-full !justify-center"
+              [loading]="busy === 'submit'"
+              [disabled]="loginForm.invalid || !!busy"
+            ></sc-button>
+          </form>
+
+          <div class="auth-modal__divider">
+            <span>or</span>
+          </div>
+
+          <sc-button
+            label="Continue with GitHub"
+            icon="github"
+            iconPosition="start"
+            size="small"
+            variant="outline"
+            color="brand"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'github'"
+            [disabled]="!!busy"
+            (buttonClick)="continueWithGithub()"
+          ></sc-button>
+
+          <div class="auth-modal__footer">
+            <p>
+              Don't have an account?
+              <button
+                type="button"
+                class="auth-modal__footer-link"
+                (click)="openSignUp()"
+              >
+                Register!
+              </button>
+            </p>
+          </div>
         </div>
 
-        <div
-          id="clerk-captcha"
-          data-cl-theme="dark"
-          data-cl-size="flexible"
-        ></div>
-
-        @if (errorMessage) {
-        <p class="auth-modal__error">{{ errorMessage }}</p>
+        @if (isAuthPending) {
+        <div class="auth-modal__pending" role="status" aria-live="polite">
+          <sc-loading-spinner size="lg"></sc-loading-spinner>
+          <p class="auth-modal__pending-text">Benchmarking your patience...</p>
+        </div>
         }
-
-        <sc-button
-          type="submit"
-          label="Continue"
-          icon="chevron-right"
-          size="small"
-          buttonClass="w-full !justify-center"
-          [loading]="busy === 'submit'"
-          [disabled]="loginForm.invalid || !!busy"
-        ></sc-button>
-      </form>
-
-      <div class="auth-modal__divider">
-        <span>or</span>
-      </div>
-
-      <sc-button
-        label="Continue with GitHub"
-        icon="github"
-        iconPosition="start"
-        size="small"
-        variant="outline"
-        color="brand"
-        buttonClass="w-full !justify-center"
-        [loading]="busy === 'github'"
-        [disabled]="!!busy"
-        (buttonClick)="continueWithGithub()"
-      ></sc-button>
-
-      <div class="auth-modal__footer">
-        <p>
-          Don't have an account?
-          <button
-            type="button"
-            class="auth-modal__footer-link"
-            (click)="openSignUp()"
-          >
-            Register!
-          </button>
-        </p>
       </div>
     </div>
     } @else if (step === "second-factor") {

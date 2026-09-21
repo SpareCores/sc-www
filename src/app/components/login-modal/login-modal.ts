@@ -4,13 +4,20 @@ import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
+import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
 
 type LoginBusy = "submit" | "github" | "reset" | "resend" | "verify";
 type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
 
 @Component({
   selector: "sc-login-modal",
-  imports: [CommonModule, FormsModule, Button, LucideDynamicIcon],
+  imports: [
+    CommonModule,
+    FormsModule,
+    Button,
+    LucideDynamicIcon,
+    LoadingSpinnerComponent,
+  ],
   templateUrl: "./login-modal.html",
   styleUrl: "../auth-modal.scss",
 })
@@ -25,6 +32,13 @@ export class LoginModal {
   protected errorMessage = "";
   protected infoMessage = "";
   protected busy: LoginBusy | null = null;
+
+  protected get isAuthPending(): boolean {
+    return (
+      this.step === "login" &&
+      (this.busy === "submit" || this.busy === "github")
+    );
+  }
 
   constructor() {
     effect(() => {

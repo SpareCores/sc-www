@@ -1,6 +1,7 @@
 @if (auth.signUpModalOpen()) {
 <div class="auth-modal" (click)="close()">
   <div class="auth-modal__panel" (click)="$event.stopPropagation()">
+    @if (!isAuthPending) {
     <sc-button
       class="auth-modal__close"
       variant="close"
@@ -8,182 +9,197 @@
       ariaLabel="Close registration modal"
       (buttonClick)="close()"
     ></sc-button>
-
-    @if (step === "details") {
-    <div class="auth-modal__body">
+    } @if (step === "details") {
+    <div
+      class="auth-modal__body"
+      [class.auth-modal__body--pending]="isAuthPending"
+    >
       <div class="auth-modal__header">
-        <h2 class="auth-modal__title">Create your account</h2>
+        <h2 class="auth-modal__title">
+          {{ isAuthPending ? "Creating your account" : "Create your account" }}
+        </h2>
         <p class="auth-modal__subtitle">{{ auth.signUpSubtitle() }}</p>
       </div>
 
-      <form
-        class="auth-modal__form"
-        #detailsForm="ngForm"
-        novalidate
-        (ngSubmit)="submitDetails(detailsForm)"
-      >
-        <div class="auth-modal__grid">
-          <label class="auth-modal__field">
-            <span>First name</span>
-            <input
-              type="text"
-              name="firstName"
-              placeholder="First name"
-              autocomplete="given-name"
-              required
-              [(ngModel)]="firstName"
-            />
-          </label>
-          <label class="auth-modal__field">
-            <span>Last name</span>
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Last name"
-              autocomplete="family-name"
-              required
-              [(ngModel)]="lastName"
-            />
-          </label>
+      <div class="auth-modal__main">
+        <div class="auth-modal__content">
+          <form
+            class="auth-modal__form"
+            #detailsForm="ngForm"
+            novalidate
+            (ngSubmit)="submitDetails(detailsForm)"
+          >
+            <div class="auth-modal__grid">
+              <label class="auth-modal__field">
+                <span>First name</span>
+                <input
+                  type="text"
+                  name="firstName"
+                  placeholder="First name"
+                  autocomplete="given-name"
+                  required
+                  [(ngModel)]="firstName"
+                />
+              </label>
+              <label class="auth-modal__field">
+                <span>Last name</span>
+                <input
+                  type="text"
+                  name="lastName"
+                  placeholder="Last name"
+                  autocomplete="family-name"
+                  required
+                  [(ngModel)]="lastName"
+                />
+              </label>
+            </div>
+
+            <label class="auth-modal__field">
+              <span>Email address</span>
+              <div class="auth-modal__field-control">
+                <input
+                  type="email"
+                  name="emailAddress"
+                  placeholder="Enter your email address"
+                  autocomplete="username"
+                  required
+                  email
+                  #emailCtrl="ngModel"
+                  [(ngModel)]="emailAddress"
+                  [class.auth-modal__input--invalid]="
+                  emailCtrl.invalid && emailCtrl.touched
+                "
+                  [attr.aria-invalid]="
+                  emailCtrl.invalid && emailCtrl.touched ? true : null
+                "
+                  [attr.aria-describedby]="
+                  emailCtrl.invalid && emailCtrl.touched
+                    ? 'register-email-error'
+                    : null
+                "
+                />
+                @if (emailCtrl.invalid && emailCtrl.touched) {
+                <div class="auth-modal__validation-icon" aria-hidden="true">
+                  <svg lucideIcon="circle-alert"></svg>
+                </div>
+                }
+              </div>
+              @if (emailCtrl.invalid && emailCtrl.touched) {
+              <p class="auth-modal__field-error" id="register-email-error">
+                Email address must be a valid email address.
+              </p>
+              }
+            </label>
+
+            <label class="auth-modal__field">
+              <span>Password</span>
+              <div class="auth-modal__password">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  name="password"
+                  placeholder="Create a password"
+                  autocomplete="new-password"
+                  required
+                  minlength="8"
+                  #passwordCtrl="ngModel"
+                  [(ngModel)]="password"
+                  [class.auth-modal__input--invalid]="
+                  passwordCtrl.invalid && passwordCtrl.touched
+                "
+                  [attr.aria-invalid]="
+                  passwordCtrl.invalid && passwordCtrl.touched ? true : null
+                "
+                  [attr.aria-describedby]="
+                  passwordCtrl.invalid && passwordCtrl.touched
+                    ? 'register-password-error'
+                    : null
+                "
+                />
+                @if (passwordCtrl.invalid && passwordCtrl.touched) {
+                <div class="auth-modal__validation-icon" aria-hidden="true">
+                  <svg lucideIcon="circle-alert"></svg>
+                </div>
+                }
+                <button
+                  type="button"
+                  class="auth-modal__password-toggle"
+                  [attr.aria-label]="
+                  showPassword ? 'Hide password' : 'Show password'
+                "
+                  (click)="showPassword = !showPassword"
+                >
+                  <svg
+                    [lucideIcon]="showPassword ? 'eye-off' : 'eye'"
+                    aria-hidden="true"
+                  ></svg>
+                </button>
+              </div>
+              @if (passwordCtrl.invalid && passwordCtrl.touched) {
+              <p class="auth-modal__field-error" id="register-password-error">
+                Password must be at least 8 characters.
+              </p>
+              }
+            </label>
+
+            @if (errorMessage) {
+            <p class="auth-modal__error">{{ errorMessage }}</p>
+            }
+
+            <div
+              id="clerk-captcha"
+              class="auth-modal__captcha"
+              data-cl-theme="dark"
+              data-cl-size="flexible"
+            ></div>
+
+            <sc-button
+              type="submit"
+              label="Continue"
+              icon="chevron-right"
+              size="small"
+              buttonClass="w-full !justify-center"
+              [loading]="busy === 'submit'"
+              [disabled]="!canSubmitDetails(detailsForm) || !!busy"
+            ></sc-button>
+          </form>
+
+          <div class="auth-modal__divider">
+            <span>or</span>
+          </div>
+
+          <sc-button
+            label="Continue with GitHub"
+            icon="github"
+            iconPosition="start"
+            size="small"
+            variant="outline"
+            color="brand"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'github'"
+            [disabled]="!!busy"
+            (buttonClick)="continueWithGithub()"
+          ></sc-button>
+
+          <div class="auth-modal__footer">
+            <p>
+              Already have an account?
+              <button
+                type="button"
+                class="auth-modal__footer-link"
+                (click)="openSignIn()"
+              >
+                Log in
+              </button>
+            </p>
+          </div>
         </div>
 
-        <label class="auth-modal__field">
-          <span>Email address</span>
-          <div class="auth-modal__field-control">
-            <input
-              type="email"
-              name="emailAddress"
-              placeholder="Enter your email address"
-              autocomplete="username"
-              required
-              email
-              #emailCtrl="ngModel"
-              [(ngModel)]="emailAddress"
-              [class.auth-modal__input--invalid]="
-                emailCtrl.invalid && emailCtrl.touched
-              "
-              [attr.aria-invalid]="
-                emailCtrl.invalid && emailCtrl.touched ? true : null
-              "
-              [attr.aria-describedby]="
-                emailCtrl.invalid && emailCtrl.touched
-                  ? 'register-email-error'
-                  : null
-              "
-            />
-            @if (emailCtrl.invalid && emailCtrl.touched) {
-            <div class="auth-modal__validation-icon" aria-hidden="true">
-              <svg lucideIcon="circle-alert"></svg>
-            </div>
-            }
-          </div>
-          @if (emailCtrl.invalid && emailCtrl.touched) {
-          <p class="auth-modal__field-error" id="register-email-error">
-            Email address must be a valid email address.
-          </p>
-          }
-        </label>
-
-        <label class="auth-modal__field">
-          <span>Password</span>
-          <div class="auth-modal__password">
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              name="password"
-              placeholder="Create a password"
-              autocomplete="new-password"
-              required
-              minlength="8"
-              #passwordCtrl="ngModel"
-              [(ngModel)]="password"
-              [class.auth-modal__input--invalid]="
-                passwordCtrl.invalid && passwordCtrl.touched
-              "
-              [attr.aria-invalid]="
-                passwordCtrl.invalid && passwordCtrl.touched ? true : null
-              "
-              [attr.aria-describedby]="
-                passwordCtrl.invalid && passwordCtrl.touched
-                  ? 'register-password-error'
-                  : null
-              "
-            />
-            @if (passwordCtrl.invalid && passwordCtrl.touched) {
-            <div class="auth-modal__validation-icon" aria-hidden="true">
-              <svg lucideIcon="circle-alert"></svg>
-            </div>
-            }
-            <button
-              type="button"
-              class="auth-modal__password-toggle"
-              [attr.aria-label]="
-                showPassword ? 'Hide password' : 'Show password'
-              "
-              (click)="showPassword = !showPassword"
-            >
-              <svg
-                [lucideIcon]="showPassword ? 'eye-off' : 'eye'"
-                aria-hidden="true"
-              ></svg>
-            </button>
-          </div>
-          @if (passwordCtrl.invalid && passwordCtrl.touched) {
-          <p class="auth-modal__field-error" id="register-password-error">
-            Password must be at least 8 characters.
-          </p>
-          }
-        </label>
-
-        @if (errorMessage) {
-        <p class="auth-modal__error">{{ errorMessage }}</p>
+        @if (isAuthPending) {
+        <div class="auth-modal__pending" role="status" aria-live="polite">
+          <sc-loading-spinner size="lg"></sc-loading-spinner>
+          <p class="auth-modal__pending-text">Benchmarking your patience...</p>
+        </div>
         }
-
-        <div
-          id="clerk-captcha"
-          class="auth-modal__captcha"
-          data-cl-theme="dark"
-          data-cl-size="flexible"
-        ></div>
-
-        <sc-button
-          type="submit"
-          label="Continue"
-          icon="chevron-right"
-          size="small"
-          buttonClass="w-full !justify-center"
-          [loading]="busy === 'submit'"
-          [disabled]="!canSubmitDetails(detailsForm) || !!busy"
-        ></sc-button>
-      </form>
-
-      <div class="auth-modal__divider">
-        <span>or</span>
-      </div>
-
-      <sc-button
-        label="Continue with GitHub"
-        icon="github"
-        iconPosition="start"
-        size="small"
-        variant="outline"
-        color="brand"
-        buttonClass="w-full !justify-center"
-        [loading]="busy === 'github'"
-        [disabled]="!!busy"
-        (buttonClick)="continueWithGithub()"
-      ></sc-button>
-
-      <div class="auth-modal__footer">
-        <p>
-          Already have an account?
-          <button
-            type="button"
-            class="auth-modal__footer-link"
-            (click)="openSignIn()"
-          >
-            Log in
-          </button>
-        </p>
       </div>
     </div>
     } @else if (step === "consent") {
