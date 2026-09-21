@@ -18,10 +18,10 @@
       id="database_base_info_box"
       class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
     >
-      <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
-        <div class="flex gap-4 flex-col min-w-32">
+      <div class="flex gap-6 flex-grow lg:w-1/2 w-full">
+        <div class="flex gap-4 flex-col shrink-0">
           <div
-            class="vendor-logo min-w-20 w-20 h-20 bg-white rounded-lg mx-auto"
+            class="vendor-logo w-28 h-28 min-w-28 xl:w-20 xl:h-20 xl:min-w-20 bg-white rounded-lg"
           >
             @if (databaseDetails.vendor?.logo) {
             <a
@@ -44,13 +44,17 @@
             <span class="text-emerald-400 font-bold"
               >{{ databaseDetails.display_name }}</span
             >
-            by
-            <a
-              [routerLink]="['/vendors', databaseDetails.vendor_id]"
-              class="underline decoration-dotted hover:text-gray-500"
+            <span
+              class="inline-flex items-center gap-x-2 basis-full xl:basis-auto"
             >
-              {{ databaseDetails.vendor?.name || databaseDetails.vendor_id }}
-            </a>
+              by
+              <a
+                [routerLink]="['/vendors', databaseDetails.vendor_id]"
+                class="underline decoration-dotted hover:text-gray-500"
+              >
+                {{ databaseDetails.vendor?.name || databaseDetails.vendor_id }}
+              </a>
+            </span>
           </h1>
           <div>{{ description }}<span>{{ cardPriceDescription }}</span></div>
           <div class="flex gap-4 flex-wrap mt-2">
