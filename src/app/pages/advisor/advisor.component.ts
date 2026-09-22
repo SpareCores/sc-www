@@ -74,7 +74,7 @@ import { CollectionSaveModalComponent } from "../../components/collections/colle
 import { CollectionsUiService } from "../../collections/collections-ui.service";
 import type { SavedAdviceItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
-import type { SearchBarQuery } from "../../components/search-bar/search-bar.types";
+import type { SearchBarQuery } from "../../components/search-bar/types/search-bar.types";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {

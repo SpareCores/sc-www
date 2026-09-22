@@ -1,4 +1,4 @@
-import type { SearchBarQuery } from "../components/search-bar/search-bar.types";
+import type { SearchBarQuery } from "../components/search-bar/types/search-bar.types";
 import type {
   DatabaseCompare,
   ServerCompare,

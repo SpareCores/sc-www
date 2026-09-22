@@ -13,7 +13,7 @@ import {
   favoriteServerId,
   type SavedSearchPage,
 } from "./collections.types";
-import type { SearchBarQuery } from "../components/search-bar/search-bar.types";
+import type { SearchBarQuery } from "../components/search-bar/types/search-bar.types";
 import {
   isDefaultListingQuery,
   listingSearchQuery,

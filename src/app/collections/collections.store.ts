@@ -75,7 +75,7 @@ import {
   sortByOrder,
   stableSearchQueryKey,
 } from "./collections.utils";
-import type { SearchBarQuery } from "../components/search-bar/search-bar.types";
+import type { SearchBarQuery } from "../components/search-bar/types/search-bar.types";
 
 type CollectionsState = {
   bookmarksFilters: BookmarksFilters;
