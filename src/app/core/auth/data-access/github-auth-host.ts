@@ -11,6 +11,7 @@ export interface GithubAuthHost {
   waitForSignedIn(timeoutMs: number): Promise<boolean>;
   isAuthenticated(): boolean;
   navigateAfterAuth(): Promise<void>;
+  leaveAuthCallback(): Promise<void>;
   syncState(fromListener?: boolean): void;
   handleRedirectCallback(options?: { transferable?: boolean }): Promise<void>;
   resetGithubConsent(): void;

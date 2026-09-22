@@ -1,6 +1,5 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { Component, OnInit, PLATFORM_ID, inject, signal } from "@angular/core";
-import { Router } from "@angular/router";
 import { AuthStateService } from "../../core/auth";
 
 @Component({
@@ -28,7 +27,6 @@ import { AuthStateService } from "../../core/auth";
 })
 export class AuthCallback implements OnInit {
   private readonly auth = inject(AuthStateService);
-  private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
 
   protected errorMessage = signal<string | null>(null);
@@ -88,11 +86,11 @@ export class AuthCallback implements OnInit {
     if (outcome === "consent") {
       this.auth.clearAuthPending();
       this.auth.openGithubConsentSignUp();
-      await this.router.navigateByUrl("/", { replaceUrl: true });
+      await this.auth.leaveAuthCallback();
       return;
     }
 
     this.auth.clearAuthPending();
-    await this.router.navigateByUrl("/", { replaceUrl: true });
+    await this.auth.leaveAuthCallback();
   }
 }

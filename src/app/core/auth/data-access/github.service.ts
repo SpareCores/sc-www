@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
-import { Router } from "@angular/router";
 import type { SignInResource } from "@clerk/shared/types";
 import {
   AUTH_MESSAGES,
@@ -27,7 +26,6 @@ import type { GithubAuthHost } from "./github-auth-host";
 @Injectable({ providedIn: "root" })
 export class GithubService {
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly router = inject(Router);
   private readonly clerk = inject(ClerkService);
   private host: GithubAuthHost | null = null;
   private signInInProgress = false;
@@ -440,9 +438,7 @@ export class GithubService {
     if (this.needsConsent()) {
       host.closeSignIn();
       host.openGithubConsentSignUp();
-      if (window.location.pathname.startsWith("/auth/callback")) {
-        await this.router.navigateByUrl("/", { replaceUrl: true });
-      }
+      await host.leaveAuthCallback();
       return;
     }
 

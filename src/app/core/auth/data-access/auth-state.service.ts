@@ -231,6 +231,18 @@ export class AuthStateService implements GithubAuthHost {
     await this.navigateAfterAuth();
   }
 
+  async leaveAuthCallback(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    if (!window.location.pathname.startsWith("/auth/callback")) {
+      return;
+    }
+    await this.router.navigateByUrl(this.consumeReturnUrl(), {
+      replaceUrl: true,
+    });
+  }
+
   waitForSignedIn(timeoutMs: number): Promise<boolean> {
     if (this.isAuthenticated()) {
       return Promise.resolve(true);
