@@ -247,21 +247,20 @@ export function needsGithubConsent(
     return false;
   }
 
-  if (isTransferable(signIn) || isTransferable(signUp)) {
+  if (isTransferable(signUp)) {
     return false;
+  }
+
+  if (isTransferable(signIn)) {
+    return true;
   }
 
   if (pendingEmailVerification(signUp)) {
     return false;
   }
 
-  if (isPendingGithubExternalComplete(signUp) && needsLegalAcceptance(signUp)) {
-    return true;
-  }
-
-  const missing = signUpMissingFields(signUp);
   return (
-    missing.includes("legalAccepted") || missing.includes("legal_accepted")
+    isPendingGithubExternalComplete(signUp) && needsLegalAcceptance(signUp)
   );
 }
 
