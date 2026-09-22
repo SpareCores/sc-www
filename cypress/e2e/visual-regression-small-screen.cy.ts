@@ -39,7 +39,22 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
 
+    // Hide table results for screenshot consistency
+    E2EEvent.hideListingTableResultsForScreenshot("servers_table");
+
     cy.compareSnapshot("servers-hcloud-gpu1-small");
+  });
+
+  it("should compare screenshot of databases list (AWS / 2 vCPUs)", () => {
+    E2EEvent.visitURL("/databases?vendor=aws&vcpus_min=2&vcpus_max=2");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
+
+    // Hide table results for screenshot consistency
+    E2EEvent.hideListingTableResultsForScreenshot("databases_table");
+
+    cy.compareSnapshot("databases-aws-vcpus2-small");
   });
 
   it("should compare screenshot of design page", () => {
@@ -85,6 +100,20 @@ describe("Visual regression tests (small screen - 800px)", () => {
     E2EEvent.hideWorkloadProfileChartsForScreenshot();
 
     cy.compareSnapshot("server-details-gcp-t2d-standard-1-small");
+  });
+
+  it("should compare screenshot of database details page", () => {
+    E2EEvent.visitURL("/database/gcp/db-c4a-highmem-48");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
+
+    // Hide availability section for screenshot consistency
+    cy.get("#availability").invoke("css", "display", "none");
+
+    E2EEvent.hideDatabaseCardPriceForScreenshot();
+
+    cy.compareSnapshot("database-details-gcp-db-c4a-highmem-48-small");
   });
 
   it("should compare screenshot of server comparison page", () => {

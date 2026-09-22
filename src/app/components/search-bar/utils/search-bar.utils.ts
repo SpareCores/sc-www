@@ -2,13 +2,13 @@ import {
   formatBinaryMemoryDisplay,
   formatNumberInputValue,
   parseBinaryMemoryInput,
-} from "../../pipes/pipe-utils";
+} from "../../../pipes/pipe-utils";
 import type {
   BenchmarkFilterOption,
   SearchBarCustomControl,
   SearchBarParameter,
   SearchBarParameterType,
-} from "./search-bar.types";
+} from "../types/search-bar.types";
 
 export const POWER_OF_TWO_STEPPER_INPUT_PATTERN = /^\d*\.?\d*$/;
 const POWER_OF_TWO_STEPPER_BASE_VALUE = 0.5;
@@ -41,6 +41,10 @@ export function getParameterType(
 
   if (name === "storage_id") {
     return "storage_id";
+  }
+
+  if (name === "cpu_flags") {
+    return "enumArraySearch";
   }
 
   if (

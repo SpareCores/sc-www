@@ -41,7 +41,7 @@ import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
-import type { SearchBarParameter } from "../../components/search-bar/search-bar.types";
+import type { SearchBarParameter } from "../../components/search-bar/types/search-bar.types";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import {
   ServerCompare,
@@ -277,7 +277,22 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     const parameters = this.openApiJson.paths["/servers"].get.parameters || [];
 
-    this.searchParameters = parameters.filter((p: any) => p.name !== "regions");
+    this.searchParameters = parameters
+      .filter((p: any) => p.name !== "regions")
+      .map((parameter: any): SearchBarParameter => {
+        const schema = { ...(parameter.schema ?? {}) };
+        if (
+          parameter.name === "hw_virt" ||
+          parameter.name === "cpu_hyperthreading"
+        ) {
+          schema.filter_mode = "tri_state_boolean";
+        }
+        return {
+          name: parameter.name,
+          modelValue: null,
+          schema,
+        };
+      });
 
     let limit = this.searchParameters.find(
       (param: any) => param.name === "limit",

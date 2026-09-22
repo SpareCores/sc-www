@@ -9,9 +9,9 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
-import { NumbersOnlyDirective } from "../../directives/numbers-only.directive";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { ToastService } from "../../services/toast.service";
+import { NumbersOnlyDirective } from "../../../../directives/numbers-only.directive";
+import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
+import { ToastService } from "../../../../services/toast.service";
 import type {
   BenchmarkFilterOption,
   ComplianceFrameworkMetadata,
@@ -21,7 +21,7 @@ import type {
   SearchBarTooltipEvent,
   StorageMetadata,
   VendorMetadata,
-} from "./search-bar.types";
+} from "../../types/search-bar.types";
 import {
   benchmarkFilterOptionKey,
   benchmarkFilterOptionLabel,
@@ -41,8 +41,9 @@ import {
   normalizeOptionId,
   parseNumericDraftValue,
   parseTextDraftValue,
-} from "./search-bar.utils";
-import { formatKebabTitle } from "../../pipes/pipe-utils";
+} from "../../utils/search-bar.utils";
+import { SearchBarMultiSelect } from "../search-bar-multi-select/search-bar-multi-select";
+import { formatKebabTitle } from "../../../../pipes/pipe-utils";
 
 type CpuCacheRangeFocusLossSkip = {
   target: HTMLInputElement | null;
@@ -58,10 +59,11 @@ type CpuCacheRangeFocusLossSkip = {
     LucideInfo,
     BenchmarkIconPipe,
     NumbersOnlyDirective,
+    SearchBarMultiSelect,
   ],
-  templateUrl: "./search-bar-parameter-field.component.html",
+  templateUrl: "./search-bar-parameter-field.html",
 })
-export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
+export class SearchBarParameterField implements DoCheck, OnDestroy {
   private toastService = inject(ToastService);
   private readonly cpuCacheRangeErrorToastId = "cpu-cache-input-error";
   private parameterDraftValue: string | undefined;
@@ -339,6 +341,29 @@ export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
       index !== -1
         ? selectedValues.filter((_, selectedIndex) => selectedIndex !== index)
         : [...selectedValues, value];
+    this.lastModelValue = parameter.modelValue;
+    this.filterServers.emit();
+  }
+
+  getEnumArraySearchOptions(parameter: SearchBarParameter): string[] {
+    return (parameter.schema.enum || [])
+      .map((option) => normalizeOptionId(option))
+      .filter((option): option is string => !!option);
+  }
+
+  getEnumArraySearchSelected(parameter: SearchBarParameter): string[] {
+    if (!Array.isArray(parameter.modelValue)) {
+      return [];
+    }
+
+    return parameter.modelValue
+      .map((value) => normalizeOptionId(value as BenchmarkFilterOption))
+      .filter((value): value is string => !!value);
+  }
+
+  setEnumArraySearchSelection(selected: string[]) {
+    const parameter = this.parameter();
+    parameter.modelValue = selected;
     this.lastModelValue = parameter.modelValue;
     this.filterServers.emit();
   }

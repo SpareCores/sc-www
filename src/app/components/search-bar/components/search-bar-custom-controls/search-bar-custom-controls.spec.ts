@@ -1,23 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import { SearchBarCustomControlsComponent } from "./search-bar-custom-controls.component";
+import { sharedTestingProviders } from "../../../../../testing/testbed.providers";
+import { SearchBarCustomControls } from "./search-bar-custom-controls";
 import type {
   SearchBarCustomControl,
   SearchBarParameterTemplateContext,
-} from "./search-bar.types";
+} from "../../types/search-bar.types";
 import type { TemplateRef } from "@angular/core";
 
-describe("SearchBarCustomControlsComponent", () => {
-  let component: SearchBarCustomControlsComponent;
-  let fixture: ComponentFixture<SearchBarCustomControlsComponent>;
+describe("SearchBarCustomControls", () => {
+  let component: SearchBarCustomControls;
+  let fixture: ComponentFixture<SearchBarCustomControls>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SearchBarCustomControlsComponent],
+      imports: [SearchBarCustomControls],
       providers: [...sharedTestingProviders],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SearchBarCustomControlsComponent);
+    fixture = TestBed.createComponent(SearchBarCustomControls);
     component = fixture.componentInstance;
     fixture.componentRef.setInput("filterCategoryId", "advisor");
     fixture.componentRef.setInput(

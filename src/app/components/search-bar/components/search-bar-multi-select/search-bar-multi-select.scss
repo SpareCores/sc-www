@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.search-bar-multi-select {
+  position: relative;
+}
+
+.search-bar-multi-select__control {
+  @apply flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-emerald-400 bg-gray-200 px-2 py-1.5 outline-none focus-within:ring-2 focus-within:ring-emerald-400;
+  cursor: text;
+}
+
+.search-bar-multi-select--disabled .search-bar-multi-select__control {
+  @apply cursor-not-allowed border-gray-500 bg-gray-400;
+}
+
+.search-bar-multi-select__badge {
+  @apply inline-flex max-w-full items-center gap-x-1 rounded-lg bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-900;
+}
+
+.search-bar-multi-select__badge-remove {
+  @apply inline-flex size-4 shrink-0 items-center justify-center rounded-full text-emerald-900 hover:bg-emerald-500/30 focus:outline-none focus:bg-emerald-500/30 disabled:pointer-events-none disabled:opacity-50;
+}
+
+.search-bar-multi-select__input {
+  @apply min-w-[6rem] flex-1 border-0 bg-transparent p-0 text-sm text-sky-950 outline-none placeholder:text-sky-800/70 disabled:cursor-not-allowed disabled:text-gray-600;
+}
+
+.search-bar-multi-select__panel {
+  @apply absolute left-0 right-0 z-20 mt-1 max-h-64 overflow-y-auto rounded-lg border border-solid border-emerald-400 bg-primary;
+  scrollbar-width: thin;
+  scrollbar-color: #34d399 #374151;
+}
+
+.search-bar-multi-select__panel::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.search-bar-multi-select__panel::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.search-bar-multi-select__panel::-webkit-scrollbar-thumb {
+  background-color: #34d399;
+  border-radius: 20px;
+}
+
+.search-bar-multi-select__option {
+  @apply flex w-full cursor-pointer border-b border-solid border-gray-700 px-3 py-2 text-left text-sm text-white transition-colors duration-150 hover:bg-secondary;
+}
+
+.search-bar-multi-select__option--active {
+  @apply bg-emerald-500/30;
+}
+
+.search-bar-multi-select__option:last-child {
+  border-bottom: 0;
+}
+
+.search-bar-multi-select__hint {
+  @apply px-3 py-2 text-xs text-gray-300;
+}
