@@ -4,10 +4,12 @@ author: Gergely Daroczi
 date: "2026-09-17"
 conference: "Hetzner Summit"
 conference_url: "https://www.hetzner.com/hetzner-summit"
+conference_talk_slides: "/assets/slides/hetzner-summit-2026.html#/coverslide"
 location: "Falkenstein, Germany"
 format:
   revealjs:
     #embed-resources: true
+    multiplex: true
     theme: [black, css/custom-4.2.1.css]
     controls: true
     navigation-mode: vertical

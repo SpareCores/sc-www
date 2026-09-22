@@ -56,7 +56,12 @@
               </a>
             </span>
           </h1>
-          <div>{{ description }}<span>{{ cardPriceDescription }}</span></div>
+          <div>
+            {{ description }}
+            <span class="database-card-price-to-hide-for-test">
+              {{ cardPriceDescription }}
+            </span>
+          </div>
           <div class="flex gap-4 flex-wrap mt-2">
             <sc-button
               [label]="compareText()"

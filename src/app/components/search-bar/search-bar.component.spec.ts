@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { SearchBarComponent } from "./search-bar.component";
-import { SearchBarParameterFieldComponent } from "./search-bar-parameter-field.component";
+import { SearchBarParameterField } from "./components";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import type { SearchBarParameter } from "./search-bar.types";
+import type { SearchBarParameter } from "./types/search-bar.types";
 
 describe("SearchBarComponent", () => {
   let component: SearchBarComponent;
@@ -382,8 +382,8 @@ describe("SearchBarComponent", () => {
 
     const emitSpy = spyOn(component.searchChanged, "emit");
     const field = fixture.debugElement.query(
-      By.directive(SearchBarParameterFieldComponent),
-    ).componentInstance as SearchBarParameterFieldComponent;
+      By.directive(SearchBarParameterField),
+    ).componentInstance as SearchBarParameterField;
 
     field.setParameterDraftValue("4");
     expect(emitSpy).not.toHaveBeenCalled();

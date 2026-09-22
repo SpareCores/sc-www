@@ -1,5 +1,5 @@
 import { Component, inject, input, output } from "@angular/core";
-import { AuthStateService } from "../../core/auth";
+import { AuthStateService } from "../../../../core/auth";
 import { FormsModule } from "@angular/forms";
 import {
   LucideChevronDown,
@@ -7,10 +7,10 @@ import {
   LucideInfo,
   LucideLeaf,
 } from "@lucide/angular";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { ToastService } from "../../services/toast.service";
-import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { CountryIdtoNamePipe } from "../../../../pipes/country-idto-name.pipe";
+import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
+import { ToastService } from "../../../../services/toast.service";
+import { CollectionsUiService } from "../../../../collections/collections-ui.service";
 import type {
   ContinentMetadata,
   CountryMetadata,
@@ -19,8 +19,8 @@ import type {
   SearchBarParameterType,
   SearchBarTooltipEvent,
   VendorMetadata,
-} from "./search-bar.types";
-import { getParameterType } from "./search-bar.utils";
+} from "../../types/search-bar.types";
+import { getParameterType } from "../../utils/search-bar.utils";
 
 @Component({
   selector: "sc-search-bar-geo-filters",
@@ -33,9 +33,9 @@ import { getParameterType } from "./search-bar.utils";
     CountryIdtoNamePipe,
     BenchmarkIconPipe,
   ],
-  templateUrl: "./search-bar-geo-filters.component.html",
+  templateUrl: "./search-bar-geo-filters.html",
 })
-export class SearchBarGeoFiltersComponent {
+export class SearchBarGeoFilters {
   protected readonly auth = inject(AuthStateService);
   private readonly toastService = inject(ToastService);
   private readonly collectionsUi = inject(CollectionsUiService);

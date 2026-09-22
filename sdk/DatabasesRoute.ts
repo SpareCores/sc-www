@@ -47,14 +47,107 @@ export namespace Databases {
        */
       vcpus_max?: number | null;
       /**
+       * Processor architecture
+       * Processor architecture.
+       */
+      architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+      /**
+       * CPU allocation
+       * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
+       */
+      cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
+      /**
        * Required memory
        * Required amount of memory in GBs.
        */
       memory_min?: number | null;
       /**
+       * Required baseline network speed
+       * Required baseline network speed in Gbps.
+       */
+      network_speed_baseline_min?:
+        | 0.01
+        | 0.05
+        | 0.1
+        | 0.5
+        | 1
+        | 5
+        | 10
+        | 25
+        | 50
+        | 100
+        | 500
+        | 1000
+        | 10000
+        | 25000;
+      /**
+       * Required maximum network speed
+       * Required maximum network speed in Gbps.
+       */
+      network_speed_max_min?:
+        | 0.01
+        | 0.05
+        | 0.1
+        | 0.5
+        | 1
+        | 5
+        | 10
+        | 25
+        | 50
+        | 100
+        | 500
+        | 1000
+        | 10000
+        | 25000;
+      /**
+       * Required baseline network storage speed
+       * Required baseline network storage speed in Gbps.
+       */
+      network_storage_speed_baseline_min?:
+        | 0.01
+        | 0.05
+        | 0.1
+        | 0.2
+        | 0.5
+        | 0.75
+        | 1
+        | 2
+        | 5
+        | 10
+        | 15
+        | 20
+        | 25
+        | 50
+        | 75
+        | 100
+        | 150
+        | 300;
+      /**
+       * Required maximum network storage speed
+       * Required maximum network storage speed in Gbps.
+       */
+      network_storage_speed_max_min?:
+        | 0.01
+        | 0.05
+        | 0.1
+        | 0.2
+        | 0.5
+        | 0.75
+        | 1
+        | 2
+        | 5
+        | 10
+        | 15
+        | 20
+        | 25
+        | 50
+        | 75
+        | 100
+        | 150
+        | 300;
+      /**
        * Benchmark Id
        * Benchmark id to use as the main score for the server.
-       * @default "pgbench:heavy_read_only"
        */
       benchmark_id?: string;
       /**
@@ -69,7 +162,7 @@ export namespace Databases {
       benchmark_score_min?: number | null;
       /**
        * Required benchmark score/price
-       * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+       * Required value of the selected benchmark score per USD/hr (using the best on-demand price).
        */
       benchmark_score_per_price_min?: number | null;
       /**

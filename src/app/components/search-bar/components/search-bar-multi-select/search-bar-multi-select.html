@@ -1,0 +1,91 @@
+<div
+  class="search-bar-multi-select"
+  [class.search-bar-multi-select--disabled]="disabled()"
+  (click)="focusSearch()"
+>
+  <div class="search-bar-multi-select__control">
+    @for (option of selected(); track option) {
+    <span class="search-bar-multi-select__badge">
+      {{ option }}
+      <button
+        type="button"
+        class="search-bar-multi-select__badge-remove"
+        (click)="removeOption(option, $event)"
+        [disabled]="disabled()"
+        [attr.aria-label]="'Remove ' + option"
+        data-ph-capture-attribute-sc-event="server listing filter"
+        data-ph-capture-attribute-server-listing-filter-type="multi-select-remove"
+        [attr.data-ph-capture-attribute-server-listing-filter-id]="
+            parameterName()
+          "
+        [attr.data-ph-capture-attribute-server-listing-filter-category]="
+            filterCategoryId()
+          "
+      >
+        <svg lucideX class="h-3 w-3"></svg>
+      </button>
+    </span>
+    }
+
+    <input
+      #searchInput
+      type="text"
+      role="combobox"
+      class="search-bar-multi-select__input"
+      [attr.aria-label]="placeholder()"
+      [attr.aria-expanded]="dropdownOpen() && !disabled()"
+      [attr.aria-controls]="listboxId()"
+      [attr.aria-activedescendant]="activeOptionId()"
+      aria-autocomplete="list"
+      [placeholder]="selected().length ? '' : placeholder()"
+      [disabled]="disabled()"
+      [ngModel]="searchQuery()"
+      (ngModelChange)="onSearchInput($event)"
+      (focus)="openDropdown()"
+      (keydown)="onSearchKeydown($event)"
+      data-ph-capture-attribute-sc-event="server listing filter"
+      data-ph-capture-attribute-server-listing-filter-type="multi-select-search"
+      [attr.data-ph-capture-attribute-server-listing-filter-id]="parameterName()"
+      [attr.data-ph-capture-attribute-server-listing-filter-category]="
+        filterCategoryId()
+      "
+      (click)="$event.stopPropagation()"
+    />
+  </div>
+
+  @if (dropdownOpen() && !disabled()) {
+  <div
+    #optionsPanel
+    role="listbox"
+    [id]="listboxId()"
+    class="search-bar-multi-select__panel custom-scrollbar"
+  >
+    @if (filteredOptions().length) { @for (option of filteredOptions(); track
+    option; let index = $index) {
+    <div
+      role="option"
+      [id]="optionId(index)"
+      class="search-bar-multi-select__option"
+      [class.search-bar-multi-select__option--active]="
+              activeIndex() === index
+            "
+      aria-selected="false"
+      (mousedown)="$event.preventDefault()"
+      (click)="selectOption(option)"
+      data-ph-capture-attribute-sc-event="server listing filter"
+      data-ph-capture-attribute-server-listing-filter-type="multi-select-option"
+      [attr.data-ph-capture-attribute-server-listing-filter-id]="
+              parameterName()
+            "
+      [attr.data-ph-capture-attribute-server-listing-filter-category]="
+              filterCategoryId()
+            "
+    >
+      {{ option }}
+    </div>
+    } } @else {
+    <div class="search-bar-multi-select__hint">No matching flags.</div>
+    }
+  </div>
+  }
+</div>

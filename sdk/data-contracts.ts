@@ -669,6 +669,7 @@ export enum GpuModels {
   B200 = "B200",
   B300 = "B300",
   GB200 = "GB200",
+  GB300 = "GB300",
   H100 = "H100",
   H200 = "H200",
   HL205 = "HL-205",
@@ -679,6 +680,7 @@ export enum GpuModels {
   P4 = "P4",
   RTX5000 = "RTX 5000",
   RTXPRO4500 = "RTX PRO 4500",
+  RTXPRO6000BlackwellServerEdition = "RTX PRO 6000 Blackwell Server Edition",
   RTXPro6000 = "RTX Pro 6000",
   T4 = "T4",
   T4G = "T4G",
@@ -687,12 +689,17 @@ export enum GpuModels {
   V520 = "V520",
   V620 = "V620",
   V710 = "V710",
-  NvidiaGb300 = "nvidia-gb300",
+  V3 = "v3",
+  V5E = "v5e",
+  V5P = "v5p",
+  V6E = "v6e",
+  V7X = "v7x",
 }
 
 /** GpuManufacturers */
 export enum GpuManufacturers {
   AMD = "AMD",
+  Google = "Google",
   Habana = "Habana",
   NVIDIA = "NVIDIA",
 }
@@ -706,6 +713,7 @@ export enum GpuFamilies {
   Hopper = "Hopper",
   Pascal = "Pascal",
   RadeonProNavi = "Radeon Pro Navi",
+  TPU = "TPU",
   Turing = "Turing",
   Volta = "Volta",
 }
@@ -791,6 +799,304 @@ export enum CpuManufacturers {
   Apple = "Apple",
   Intel = "Intel",
   Microsoft = "Microsoft",
+}
+
+/** CpuFlags */
+export enum CpuFlags {
+  Value3Dnowprefetch = "3dnowprefetch",
+  Abm = "abm",
+  Acpi = "acpi",
+  Adx = "adx",
+  Aes = "aes",
+  Afp = "afp",
+  AmdDcm = "amd_dcm",
+  AmdIbpbRet = "amd_ibpb_ret",
+  AmdLbrPmcFreeze = "amd_lbr_pmc_freeze",
+  AmdLbrV2 = "amd_lbr_v2",
+  AmdPpin = "amd_ppin",
+  AmxBf16 = "amx_bf16",
+  AmxInt8 = "amx_int8",
+  AmxTile = "amx_tile",
+  Aperfmperf = "aperfmperf",
+  Apic = "apic",
+  Arat = "arat",
+  ArchCapabilities = "arch_capabilities",
+  ArchLbr = "arch_lbr",
+  ArchPerfmon = "arch_perfmon",
+  Art = "art",
+  Asimd = "asimd",
+  Asimddp = "asimddp",
+  Asimdfhm = "asimdfhm",
+  Asimdhp = "asimdhp",
+  Asimdrdm = "asimdrdm",
+  Atomics = "atomics",
+  Avic = "avic",
+  Avx = "avx",
+  Avx2 = "avx2",
+  Avx512Bf16 = "avx512_bf16",
+  Avx512Bitalg = "avx512_bitalg",
+  Avx512Fp16 = "avx512_fp16",
+  Avx512Vbmi2 = "avx512_vbmi2",
+  Avx512Vnni = "avx512_vnni",
+  Avx512Vp2Intersect = "avx512_vp2intersect",
+  Avx512Vpopcntdq = "avx512_vpopcntdq",
+  Avx512Bw = "avx512bw",
+  Avx512Cd = "avx512cd",
+  Avx512Dq = "avx512dq",
+  Avx512F = "avx512f",
+  Avx512Ifma = "avx512ifma",
+  Avx512Vbmi = "avx512vbmi",
+  Avx512Vl = "avx512vl",
+  AvxVnni = "avx_vnni",
+  Bf16 = "bf16",
+  Bmi1 = "bmi1",
+  Bmi2 = "bmi2",
+  Bpext = "bpext",
+  Brs = "brs",
+  Bti = "bti",
+  Bts = "bts",
+  BusLockDetect = "bus_lock_detect",
+  CatL2 = "cat_l2",
+  CatL3 = "cat_l3",
+  CdpL2 = "cdp_l2",
+  CdpL3 = "cdp_l3",
+  Cldemote = "cldemote",
+  Clflush = "clflush",
+  Clflushopt = "clflushopt",
+  Clwb = "clwb",
+  Clzero = "clzero",
+  Cmov = "cmov",
+  CmpLegacy = "cmp_legacy",
+  ConstantTsc = "constant_tsc",
+  Cpb = "cpb",
+  Cppc = "cppc",
+  Cpuid = "cpuid",
+  CpuidFault = "cpuid_fault",
+  Cqm = "cqm",
+  CqmLlc = "cqm_llc",
+  CqmMbmLocal = "cqm_mbm_local",
+  CqmMbmTotal = "cqm_mbm_total",
+  CqmOccupLlc = "cqm_occup_llc",
+  Cr8Legacy = "cr8_legacy",
+  Crc32 = "crc32",
+  Cx16 = "cx16",
+  Cx8 = "cx8",
+  Dca = "dca",
+  Dcpodp = "dcpodp",
+  Dcpop = "dcpop",
+  De = "de",
+  DebugSwap = "debug_swap",
+  Decodeassists = "decodeassists",
+  Dgh = "dgh",
+  Dit = "dit",
+  DsCpl = "ds_cpl",
+  Dtes64 = "dtes64",
+  Dtherm = "dtherm",
+  Dts = "dts",
+  Ecv = "ecv",
+  Enqcmd = "enqcmd",
+  Epb = "epb",
+  Ept = "ept",
+  EptAd = "ept_ad",
+  Erms = "erms",
+  Est = "est",
+  Evtstrm = "evtstrm",
+  Extapic = "extapic",
+  ExtdApicid = "extd_apicid",
+  F16C = "f16c",
+  Fcma = "fcma",
+  Flagm = "flagm",
+  Flagm2 = "flagm2",
+  Flexpriority = "flexpriority",
+  FlushL1D = "flush_l1d",
+  Flushbyasid = "flushbyasid",
+  Fma = "fma",
+  Fp = "fp",
+  Fphp = "fphp",
+  Fpu = "fpu",
+  Frint = "frint",
+  Fsgsbase = "fsgsbase",
+  Fsrm = "fsrm",
+  Fxsr = "fxsr",
+  FxsrOpt = "fxsr_opt",
+  Gfni = "gfni",
+  Hfi = "hfi",
+  Hle = "hle",
+  Ht = "ht",
+  HwPstate = "hw_pstate",
+  Hwp = "hwp",
+  HwpActWindow = "hwp_act_window",
+  HwpEpp = "hwp_epp",
+  HwpNotify = "hwp_notify",
+  HwpPkgReq = "hwp_pkg_req",
+  Hypervisor = "hypervisor",
+  I8Mm = "i8mm",
+  Ibpb = "ibpb",
+  IbpbExitToUser = "ibpb_exit_to_user",
+  Ibrs = "ibrs",
+  IbrsEnhanced = "ibrs_enhanced",
+  Ibs = "ibs",
+  Ibt = "ibt",
+  Ida = "ida",
+  Ilrcpc = "ilrcpc",
+  IntelPpin = "intel_ppin",
+  IntelPt = "intel_pt",
+  Invpcid = "invpcid",
+  InvpcidSingle = "invpcid_single",
+  Irperf = "irperf",
+  Jscvt = "jscvt",
+  La57 = "la57",
+  LahfLm = "lahf_lm",
+  Lbrv = "lbrv",
+  Lm = "lm",
+  Lrcpc = "lrcpc",
+  Mba = "mba",
+  Mca = "mca",
+  Mce = "mce",
+  MdClear = "md_clear",
+  Misalignsse = "misalignsse",
+  Mmx = "mmx",
+  Mmxext = "mmxext",
+  Monitor = "monitor",
+  Movbe = "movbe",
+  Movdir64B = "movdir64b",
+  Movdiri = "movdiri",
+  Mpx = "mpx",
+  Msr = "msr",
+  Mtrr = "mtrr",
+  Mwaitx = "mwaitx",
+  NonstopTsc = "nonstop_tsc",
+  Nopl = "nopl",
+  Npt = "npt",
+  NripSave = "nrip_save",
+  Nx = "nx",
+  Ospke = "ospke",
+  Osvw = "osvw",
+  OverflowRecov = "overflow_recov",
+  Paca = "paca",
+  Pacg = "pacg",
+  Pae = "pae",
+  Pat = "pat",
+  Pausefilter = "pausefilter",
+  Pbe = "pbe",
+  Pcid = "pcid",
+  Pclmulqdq = "pclmulqdq",
+  Pconfig = "pconfig",
+  Pdcm = "pdcm",
+  Pdpe1Gb = "pdpe1gb",
+  Pebs = "pebs",
+  PerfctrCore = "perfctr_core",
+  PerfctrLlc = "perfctr_llc",
+  PerfctrNb = "perfctr_nb",
+  PerfmonV2 = "perfmon_v2",
+  Pfthreshold = "pfthreshold",
+  Pge = "pge",
+  Pku = "pku",
+  Pln = "pln",
+  Pmull = "pmull",
+  Pni = "pni",
+  Popcnt = "popcnt",
+  Pse = "pse",
+  Pse36 = "pse36",
+  Pti = "pti",
+  Pts = "pts",
+  Rapl = "rapl",
+  Rdpid = "rdpid",
+  Rdpru = "rdpru",
+  Rdrand = "rdrand",
+  Rdseed = "rdseed",
+  RdtA = "rdt_a",
+  Rdtscp = "rdtscp",
+  RepGood = "rep_good",
+  Rng = "rng",
+  Rtm = "rtm",
+  Sb = "sb",
+  Sdbg = "sdbg",
+  Sep = "sep",
+  Serialize = "serialize",
+  Sev = "sev",
+  SevEs = "sev_es",
+  SevSnp = "sev_snp",
+  Sgx = "sgx",
+  SgxLc = "sgx_lc",
+  Sha1 = "sha1",
+  Sha2 = "sha2",
+  Sha3 = "sha3",
+  Sha512 = "sha512",
+  ShaNi = "sha_ni",
+  Skinit = "skinit",
+  Sm3 = "sm3",
+  Sm4 = "sm4",
+  Smap = "smap",
+  Smca = "smca",
+  Smep = "smep",
+  Smx = "smx",
+  SplitLockDetect = "split_lock_detect",
+  SrsoUserKernelNo = "srso_user_kernel_no",
+  Ss = "ss",
+  Ssbd = "ssbd",
+  Ssbs = "ssbs",
+  Sse = "sse",
+  Sse2 = "sse2",
+  Sse41 = "sse4_1",
+  Sse42 = "sse4_2",
+  Sse4A = "sse4a",
+  Ssse3 = "ssse3",
+  Stibp = "stibp",
+  Succor = "succor",
+  Sve = "sve",
+  Sve2 = "sve2",
+  Sveaes = "sveaes",
+  Svebf16 = "svebf16",
+  Svebitperm = "svebitperm",
+  Svei8Mm = "svei8mm",
+  Svepmull = "svepmull",
+  Svesha3 = "svesha3",
+  Svesm4 = "svesm4",
+  Svm = "svm",
+  SvmLock = "svm_lock",
+  Syscall = "syscall",
+  Tce = "tce",
+  Tm = "tm",
+  Tm2 = "tm2",
+  Tme = "tme",
+  Topoext = "topoext",
+  TprShadow = "tpr_shadow",
+  Tsc = "tsc",
+  TscAdjust = "tsc_adjust",
+  TscDeadlineTimer = "tsc_deadline_timer",
+  TscKnownFreq = "tsc_known_freq",
+  TscReliable = "tsc_reliable",
+  TscScale = "tsc_scale",
+  Tsxldtrk = "tsxldtrk",
+  Umip = "umip",
+  Uscat = "uscat",
+  UserShstk = "user_shstk",
+  VSpecCtrl = "v_spec_ctrl",
+  VVmsaveVmload = "v_vmsave_vmload",
+  Vaes = "vaes",
+  Vgif = "vgif",
+  VmcbClean = "vmcb_clean",
+  Vme = "vme",
+  Vmmcall = "vmmcall",
+  Vmx = "vmx",
+  Vnmi = "vnmi",
+  Vpclmulqdq = "vpclmulqdq",
+  Vpid = "vpid",
+  Waitpkg = "waitpkg",
+  Wbnoinvd = "wbnoinvd",
+  Wdt = "wdt",
+  Wfxt = "wfxt",
+  X2Apic = "x2apic",
+  X2Avic = "x2avic",
+  Xgetbv1 = "xgetbv1",
+  Xsave = "xsave",
+  Xsavec = "xsavec",
+  Xsaveerptr = "xsaveerptr",
+  Xsaveopt = "xsaveopt",
+  Xsaves = "xsaves",
+  Xtopology = "xtopology",
+  Xtpr = "xtpr",
 }
 
 /** CpuFamilies */
@@ -4766,6 +5072,46 @@ export interface VendorBase {
 }
 
 /**
+ * VendorComplianceLink
+ * List of known Compliance Frameworks paired with vendors.
+ *
+ * Attributes:
+ *     vendor_id (str): Reference to the Vendor.
+ *     compliance_framework_id (str): Reference to the Compliance Framework.
+ *     comment (typing.Optional[str]): Optional references, such as dates, URLs, and additional information/evidence.
+ *     status (Status): Status of the resource (active or inactive).
+ *     observed_at (datetime): Timestamp of the last observation.
+ */
+export interface VendorComplianceLink {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Compliance Framework Id
+   * Reference to the Compliance Framework.
+   */
+  compliance_framework_id: string;
+  /**
+   * Comment
+   * Optional references, such as dates, URLs, and additional information/evidence.
+   */
+  comment?: string | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
+/**
  * VendorDebugInfo
  * Per-vendor benchmark coverage statistics.
  *
@@ -4968,6 +5314,10 @@ export type TableCountryTableCountryGetData = Country[];
 /** Response Table Compliance Frameworks Table Compliance Framework Get */
 export type TableComplianceFrameworksTableComplianceFrameworkGetData =
   ComplianceFramework[];
+
+/** Response Table Vendor Compliance Link Table Vendor Compliance Link Get */
+export type TableVendorComplianceLinkTableVendorComplianceLinkGetData =
+  VendorComplianceLink[];
 
 /** Response Table Vendor Table Vendor Get */
 export type TableVendorTableVendorGetData = Vendor[];
@@ -7769,6 +8119,310 @@ export interface SearchServersServersGetParams {
    */
   hw_virt?: boolean | null;
   /**
+   * Hyperthreading
+   * Whether CPU hyperthreading is enabled or not. Calculated based on the "ht" CPU flag, with a fallback to comparing the number of vCPUs with physical CPU cores.
+   */
+  cpu_hyperthreading?: boolean | null;
+  /**
+   * CPU flags
+   * Required CPU flags.
+   */
+  cpu_flags?:
+    | "3dnowprefetch"
+    | "abm"
+    | "acpi"
+    | "adx"
+    | "aes"
+    | "afp"
+    | "amd_dcm"
+    | "amd_ibpb_ret"
+    | "amd_lbr_pmc_freeze"
+    | "amd_lbr_v2"
+    | "amd_ppin"
+    | "amx_bf16"
+    | "amx_int8"
+    | "amx_tile"
+    | "aperfmperf"
+    | "apic"
+    | "arat"
+    | "arch_capabilities"
+    | "arch_lbr"
+    | "arch_perfmon"
+    | "art"
+    | "asimd"
+    | "asimddp"
+    | "asimdfhm"
+    | "asimdhp"
+    | "asimdrdm"
+    | "atomics"
+    | "avic"
+    | "avx"
+    | "avx2"
+    | "avx512_bf16"
+    | "avx512_bitalg"
+    | "avx512_fp16"
+    | "avx512_vbmi2"
+    | "avx512_vnni"
+    | "avx512_vp2intersect"
+    | "avx512_vpopcntdq"
+    | "avx512bw"
+    | "avx512cd"
+    | "avx512dq"
+    | "avx512f"
+    | "avx512ifma"
+    | "avx512vbmi"
+    | "avx512vl"
+    | "avx_vnni"
+    | "bf16"
+    | "bmi1"
+    | "bmi2"
+    | "bpext"
+    | "brs"
+    | "bti"
+    | "bts"
+    | "bus_lock_detect"
+    | "cat_l2"
+    | "cat_l3"
+    | "cdp_l2"
+    | "cdp_l3"
+    | "cldemote"
+    | "clflush"
+    | "clflushopt"
+    | "clwb"
+    | "clzero"
+    | "cmov"
+    | "cmp_legacy"
+    | "constant_tsc"
+    | "cpb"
+    | "cppc"
+    | "cpuid"
+    | "cpuid_fault"
+    | "cqm"
+    | "cqm_llc"
+    | "cqm_mbm_local"
+    | "cqm_mbm_total"
+    | "cqm_occup_llc"
+    | "cr8_legacy"
+    | "crc32"
+    | "cx16"
+    | "cx8"
+    | "dca"
+    | "dcpodp"
+    | "dcpop"
+    | "de"
+    | "debug_swap"
+    | "decodeassists"
+    | "dgh"
+    | "dit"
+    | "ds_cpl"
+    | "dtes64"
+    | "dtherm"
+    | "dts"
+    | "ecv"
+    | "enqcmd"
+    | "epb"
+    | "ept"
+    | "ept_ad"
+    | "erms"
+    | "est"
+    | "evtstrm"
+    | "extapic"
+    | "extd_apicid"
+    | "f16c"
+    | "fcma"
+    | "flagm"
+    | "flagm2"
+    | "flexpriority"
+    | "flush_l1d"
+    | "flushbyasid"
+    | "fma"
+    | "fp"
+    | "fphp"
+    | "fpu"
+    | "frint"
+    | "fsgsbase"
+    | "fsrm"
+    | "fxsr"
+    | "fxsr_opt"
+    | "gfni"
+    | "hfi"
+    | "hle"
+    | "ht"
+    | "hw_pstate"
+    | "hwp"
+    | "hwp_act_window"
+    | "hwp_epp"
+    | "hwp_notify"
+    | "hwp_pkg_req"
+    | "hypervisor"
+    | "i8mm"
+    | "ibpb"
+    | "ibpb_exit_to_user"
+    | "ibrs"
+    | "ibrs_enhanced"
+    | "ibs"
+    | "ibt"
+    | "ida"
+    | "ilrcpc"
+    | "intel_ppin"
+    | "intel_pt"
+    | "invpcid"
+    | "invpcid_single"
+    | "irperf"
+    | "jscvt"
+    | "la57"
+    | "lahf_lm"
+    | "lbrv"
+    | "lm"
+    | "lrcpc"
+    | "mba"
+    | "mca"
+    | "mce"
+    | "md_clear"
+    | "misalignsse"
+    | "mmx"
+    | "mmxext"
+    | "monitor"
+    | "movbe"
+    | "movdir64b"
+    | "movdiri"
+    | "mpx"
+    | "msr"
+    | "mtrr"
+    | "mwaitx"
+    | "nonstop_tsc"
+    | "nopl"
+    | "npt"
+    | "nrip_save"
+    | "nx"
+    | "ospke"
+    | "osvw"
+    | "overflow_recov"
+    | "paca"
+    | "pacg"
+    | "pae"
+    | "pat"
+    | "pausefilter"
+    | "pbe"
+    | "pcid"
+    | "pclmulqdq"
+    | "pconfig"
+    | "pdcm"
+    | "pdpe1gb"
+    | "pebs"
+    | "perfctr_core"
+    | "perfctr_llc"
+    | "perfctr_nb"
+    | "perfmon_v2"
+    | "pfthreshold"
+    | "pge"
+    | "pku"
+    | "pln"
+    | "pmull"
+    | "pni"
+    | "popcnt"
+    | "pse"
+    | "pse36"
+    | "pti"
+    | "pts"
+    | "rapl"
+    | "rdpid"
+    | "rdpru"
+    | "rdrand"
+    | "rdseed"
+    | "rdt_a"
+    | "rdtscp"
+    | "rep_good"
+    | "rng"
+    | "rtm"
+    | "sb"
+    | "sdbg"
+    | "sep"
+    | "serialize"
+    | "sev"
+    | "sev_es"
+    | "sev_snp"
+    | "sgx"
+    | "sgx_lc"
+    | "sha1"
+    | "sha2"
+    | "sha3"
+    | "sha512"
+    | "sha_ni"
+    | "skinit"
+    | "sm3"
+    | "sm4"
+    | "smap"
+    | "smca"
+    | "smep"
+    | "smx"
+    | "split_lock_detect"
+    | "srso_user_kernel_no"
+    | "ss"
+    | "ssbd"
+    | "ssbs"
+    | "sse"
+    | "sse2"
+    | "sse4_1"
+    | "sse4_2"
+    | "sse4a"
+    | "ssse3"
+    | "stibp"
+    | "succor"
+    | "sve"
+    | "sve2"
+    | "sveaes"
+    | "svebf16"
+    | "svebitperm"
+    | "svei8mm"
+    | "svepmull"
+    | "svesha3"
+    | "svesm4"
+    | "svm"
+    | "svm_lock"
+    | "syscall"
+    | "tce"
+    | "tm"
+    | "tm2"
+    | "tme"
+    | "topoext"
+    | "tpr_shadow"
+    | "tsc"
+    | "tsc_adjust"
+    | "tsc_deadline_timer"
+    | "tsc_known_freq"
+    | "tsc_reliable"
+    | "tsc_scale"
+    | "tsxldtrk"
+    | "umip"
+    | "uscat"
+    | "user_shstk"
+    | "v_spec_ctrl"
+    | "v_vmsave_vmload"
+    | "vaes"
+    | "vgif"
+    | "vmcb_clean"
+    | "vme"
+    | "vmmcall"
+    | "vmx"
+    | "vnmi"
+    | "vpclmulqdq"
+    | "vpid"
+    | "waitpkg"
+    | "wbnoinvd"
+    | "wdt"
+    | "wfxt"
+    | "x2apic"
+    | "x2avic"
+    | "xgetbv1"
+    | "xsave"
+    | "xsavec"
+    | "xsaveerptr"
+    | "xsaveopt"
+    | "xsaves"
+    | "xtopology"
+    | "xtpr";
+  /**
    * Required SCore
    * Required stress-ng div16 CPU workload score.
    */
@@ -8531,7 +9185,7 @@ export interface SearchServersServersGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
@@ -8541,6 +9195,7 @@ export interface SearchServersServersGetParams {
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
+    | "TPU"
     | "Turing"
     | "Volta";
   /** GPU model */
@@ -8553,6 +9208,7 @@ export interface SearchServersServersGetParams {
     | "B200"
     | "B300"
     | "GB200"
+    | "GB300"
     | "H100"
     | "H200"
     | "HL-205"
@@ -8563,6 +9219,7 @@ export interface SearchServersServersGetParams {
     | "P4"
     | "RTX 5000"
     | "RTX PRO 4500"
+    | "RTX PRO 6000 Blackwell Server Edition"
     | "RTX Pro 6000"
     | "T4"
     | "T4G"
@@ -8571,7 +9228,11 @@ export interface SearchServersServersGetParams {
     | "V520"
     | "V620"
     | "V710"
-    | "nvidia-gb300";
+    | "v3"
+    | "v5e"
+    | "v5p"
+    | "v6e"
+    | "v7x";
   /**
    * Currency
    * Currency used for prices.
@@ -8642,14 +9303,107 @@ export interface SearchDatabasesDatabasesGetParams {
    */
   vcpus_max?: number | null;
   /**
+   * Processor architecture
+   * Processor architecture.
+   */
+  architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+  /**
+   * CPU allocation
+   * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
+   */
+  cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
+  /**
    * Required memory
    * Required amount of memory in GBs.
    */
   memory_min?: number | null;
   /**
+   * Required baseline network speed
+   * Required baseline network speed in Gbps.
+   */
+  network_speed_baseline_min?:
+    | 0.01
+    | 0.05
+    | 0.1
+    | 0.5
+    | 1
+    | 5
+    | 10
+    | 25
+    | 50
+    | 100
+    | 500
+    | 1000
+    | 10000
+    | 25000;
+  /**
+   * Required maximum network speed
+   * Required maximum network speed in Gbps.
+   */
+  network_speed_max_min?:
+    | 0.01
+    | 0.05
+    | 0.1
+    | 0.5
+    | 1
+    | 5
+    | 10
+    | 25
+    | 50
+    | 100
+    | 500
+    | 1000
+    | 10000
+    | 25000;
+  /**
+   * Required baseline network storage speed
+   * Required baseline network storage speed in Gbps.
+   */
+  network_storage_speed_baseline_min?:
+    | 0.01
+    | 0.05
+    | 0.1
+    | 0.2
+    | 0.5
+    | 0.75
+    | 1
+    | 2
+    | 5
+    | 10
+    | 15
+    | 20
+    | 25
+    | 50
+    | 75
+    | 100
+    | 150
+    | 300;
+  /**
+   * Required maximum network storage speed
+   * Required maximum network storage speed in Gbps.
+   */
+  network_storage_speed_max_min?:
+    | 0.01
+    | 0.05
+    | 0.1
+    | 0.2
+    | 0.5
+    | 0.75
+    | 1
+    | 2
+    | 5
+    | 10
+    | 15
+    | 20
+    | 25
+    | 50
+    | 75
+    | 100
+    | 150
+    | 300;
+  /**
    * Benchmark Id
    * Benchmark id to use as the main score for the server.
-   * @default "pgbench:heavy_read_only"
    */
   benchmark_id?: string;
   /**
@@ -8664,7 +9418,7 @@ export interface SearchDatabasesDatabasesGetParams {
   benchmark_score_min?: number | null;
   /**
    * Required benchmark score/price
-   * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+   * Required value of the selected benchmark score per USD/hr (using the best on-demand price).
    */
   benchmark_score_per_price_min?: number | null;
   /**
@@ -10108,7 +10862,7 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
@@ -10118,6 +10872,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
+    | "TPU"
     | "Turing"
     | "Volta";
   /** GPU model */
@@ -10130,6 +10885,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "B200"
     | "B300"
     | "GB200"
+    | "GB300"
     | "H100"
     | "H200"
     | "HL-205"
@@ -10140,6 +10896,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "P4"
     | "RTX 5000"
     | "RTX PRO 4500"
+    | "RTX PRO 6000 Blackwell Server Edition"
     | "RTX Pro 6000"
     | "T4"
     | "T4G"
@@ -10148,7 +10905,11 @@ export interface SearchServerPricesServerPricesGetParams {
     | "V520"
     | "V620"
     | "V710"
-    | "nvidia-gb300";
+    | "v3"
+    | "v5e"
+    | "v5p"
+    | "v6e"
+    | "v7x";
   /**
    * Limit
    * Maximum number of results.
