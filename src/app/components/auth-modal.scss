@@ -91,6 +91,44 @@
   display: none;
 }
 
+.auth-modal__challenge {
+  position: relative;
+}
+
+.auth-modal__challenge:not(.auth-modal__challenge--pending):not(
+    :has(.auth-modal__captcha:not(:empty))
+  ) {
+  display: none;
+}
+
+.auth-modal__challenge--pending {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  pointer-events: auto;
+}
+
+.auth-modal__challenge--pending .auth-modal__pending {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.auth-modal__challenge--pending .auth-modal__captcha:not(:empty) {
+  flex: 0 0 auto;
+  width: min(100%, 18.75rem);
+}
+
+.auth-modal__challenge--pending:has(.auth-modal__captcha:not(:empty))
+  .auth-modal__pending-text--wait,
+.auth-modal__challenge--pending:not(:has(.auth-modal__captcha:not(:empty)))
+  .auth-modal__pending-text--verify {
+  display: none;
+}
+
 .auth-modal__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -337,14 +375,11 @@
 }
 
 .auth-modal__pending {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  padding-top: 3rem;
   text-align: center;
 }
 

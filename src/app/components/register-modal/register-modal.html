@@ -145,13 +145,6 @@
             <p class="auth-modal__error">{{ errorMessage }}</p>
             }
 
-            <div
-              id="clerk-captcha"
-              class="auth-modal__captcha"
-              data-cl-theme="dark"
-              data-cl-size="flexible"
-            ></div>
-
             <sc-button
               type="submit"
               label="Continue"
@@ -194,12 +187,30 @@
           </div>
         </div>
 
-        @if (isAuthPending) {
-        <div class="auth-modal__pending" role="status" aria-live="polite">
-          <sc-loading-spinner size="lg"></sc-loading-spinner>
-          <p class="auth-modal__pending-text">Benchmarking your patience...</p>
+        <div
+          class="auth-modal__challenge"
+          [class.auth-modal__challenge--pending]="isAuthPending"
+        >
+          @if (isAuthPending) {
+          <div class="auth-modal__pending" role="status" aria-live="polite">
+            <sc-loading-spinner size="lg"></sc-loading-spinner>
+            <p class="auth-modal__pending-text auth-modal__pending-text--wait">
+              Benchmarking your patience...
+            </p>
+            <p
+              class="auth-modal__pending-text auth-modal__pending-text--verify"
+            >
+              Verifying...
+            </p>
+          </div>
+          }
+          <div
+            id="clerk-captcha"
+            class="auth-modal__captcha"
+            data-cl-theme="dark"
+            data-cl-size="flexible"
+          ></div>
         </div>
-        }
       </div>
     </div>
     } @else if (step === "consent") {
