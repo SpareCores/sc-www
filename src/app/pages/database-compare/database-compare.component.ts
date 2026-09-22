@@ -11,6 +11,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
@@ -289,6 +290,20 @@ export class DatabaseCompareComponent
       if (!this.isLoading) {
         this.syncSavedComparisonChrome();
       }
+    });
+
+    effect(() => {
+      if (!this.isAuthenticated()) {
+        return;
+      }
+      const modal = this.saveComparisonModal();
+      if (!modal) {
+        return;
+      }
+      if (!this.collectionsUi.takePendingOpenSave("compare-databases")) {
+        return;
+      }
+      untracked(() => this.openSaveComparisonModal());
     });
 
     effect(() => {
@@ -1083,7 +1098,10 @@ export class DatabaseCompareComponent
 
   openSaveComparisonModal(): void {
     if (!this.isAuthenticated()) {
-      this.collectionsUi.promptRegisterForFeature();
+      this.collectionsUi.promptRegisterForFeature({
+        type: "open-save",
+        target: "compare-databases",
+      });
       return;
     }
 

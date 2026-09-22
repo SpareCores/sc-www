@@ -8,6 +8,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from "@angular/core";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
@@ -238,6 +239,20 @@ export class DatabaseListing implements OnInit, OnDestroy {
     effect(() => {
       this.collectionsUi.store.savedSearches();
       this.syncSavedSearchChrome();
+    });
+
+    effect(() => {
+      if (!this.isAuthenticated()) {
+        return;
+      }
+      const modal = this.saveSearchModal();
+      if (!modal) {
+        return;
+      }
+      if (!this.collectionsUi.takePendingOpenSave("search-databases")) {
+        return;
+      }
+      untracked(() => this.openSaveSearchModal());
     });
 
     effect(() => {
@@ -800,7 +815,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   openSaveSearchModal(): void {
     if (!this.isAuthenticated()) {
-      this.collectionsUi.promptRegisterForFeature();
+      this.collectionsUi.promptRegisterForFeature({
+        type: "open-save",
+        target: "search-databases",
+      });
       return;
     }
 

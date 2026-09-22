@@ -59,7 +59,12 @@ export class InstanceFavoriteContextMenuComponent {
     event.stopPropagation();
 
     if (!this.collectionsUi.isAuthenticated()) {
-      this.collectionsUi.promptRegisterForFeature();
+      this.collectionsUi.promptRegisterForFeature({
+        type: "favorite",
+        kind: this.kind(),
+        vendorId: this.vendorId(),
+        entityId: this.entityId(),
+      });
       return;
     }
 

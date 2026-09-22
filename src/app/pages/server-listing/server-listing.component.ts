@@ -9,6 +9,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -293,6 +294,20 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     effect(() => {
       this.collectionsUi.store.savedSearches();
       this.syncSavedSearchChrome();
+    });
+
+    effect(() => {
+      if (!this.isAuthenticated()) {
+        return;
+      }
+      const modal = this.saveSearchModal();
+      if (!modal) {
+        return;
+      }
+      if (!this.collectionsUi.takePendingOpenSave("search-servers")) {
+        return;
+      }
+      untracked(() => this.openSaveSearchModal());
     });
 
     effect(() => {
@@ -1091,7 +1106,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   openSaveSearchModal(): void {
     if (!this.isAuthenticated()) {
-      this.collectionsUi.promptRegisterForFeature();
+      this.collectionsUi.promptRegisterForFeature({
+        type: "open-save",
+        target: "search-servers",
+      });
       return;
     }
 

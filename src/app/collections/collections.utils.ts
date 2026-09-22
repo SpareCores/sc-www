@@ -18,6 +18,7 @@ export const FEATURE_REGISTER_SUBTITLE =
   "This feature needs a free registration! Please fill in the details to get started.";
 export const FEATURE_REGISTER_HINT =
   "This feature is only available after registration!";
+export const PENDING_FEATURE_ACTION_KEY = "scPendingFeatureAction";
 export const SAVED_ITEM_FALLBACK_NOTE =
   "You can change this short note when saving or editing this item.";
 

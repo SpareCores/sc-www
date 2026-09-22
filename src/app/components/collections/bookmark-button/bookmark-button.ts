@@ -90,7 +90,12 @@ export class BookmarkButton {
 
     if (!this.isAuthenticated()) {
       this.hideTooltip();
-      this.collectionsUi.promptRegisterForFeature();
+      this.collectionsUi.promptRegisterForFeature({
+        type: "favorite",
+        kind: this.kind(),
+        vendorId: this.vendorId(),
+        entityId: this.entityId(),
+      });
       return;
     }
 

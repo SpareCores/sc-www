@@ -12,6 +12,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from "@angular/core";
 import {
   INITIAL_SCROLLBAR_MIRROR_STATE,
@@ -412,6 +413,20 @@ export class ServerCompareComponent
       if (!this.isLoading) {
         this.syncSavedComparisonChrome();
       }
+    });
+
+    effect(() => {
+      if (!this.isAuthenticated()) {
+        return;
+      }
+      const modal = this.saveComparisonModal();
+      if (!modal) {
+        return;
+      }
+      if (!this.collectionsUi.takePendingOpenSave("compare-servers")) {
+        return;
+      }
+      untracked(() => this.openSaveComparisonModal());
     });
 
     effect(() => {
@@ -1444,7 +1459,10 @@ export class ServerCompareComponent
 
   openSaveComparisonModal(): void {
     if (!this.isAuthenticated()) {
-      this.collectionsUi.promptRegisterForFeature();
+      this.collectionsUi.promptRegisterForFeature({
+        type: "open-save",
+        target: "compare-servers",
+      });
       return;
     }
 

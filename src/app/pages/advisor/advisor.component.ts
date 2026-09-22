@@ -11,6 +11,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from "@angular/core";
 import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
@@ -1202,6 +1203,20 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     effect(() => {
+      if (!this.isAuthenticated()) {
+        return;
+      }
+      const modal = this.saveAdviceModal();
+      if (!modal) {
+        return;
+      }
+      if (!this.collectionsUi.takePendingOpenSave("advice")) {
+        return;
+      }
+      untracked(() => this.openSaveAdviceModal());
+    });
+
+    effect(() => {
       const exact = this.exactSavedAdvice();
       if (exact) {
         this.bookmarkSource.set(exact);
@@ -1935,7 +1950,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSaveAdviceModal(): void {
     if (!this.isAuthenticated()) {
-      this.collectionsUi.promptRegisterForFeature();
+      this.collectionsUi.promptRegisterForFeature({
+        type: "open-save",
+        target: "advice",
+      });
       return;
     }
 
