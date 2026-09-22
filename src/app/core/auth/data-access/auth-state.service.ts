@@ -15,6 +15,7 @@ import {
   AUTH_OVERLAY_CLASS,
   AUTH_OVERLAY_ID,
   AUTH_PENDING_KEY,
+  AUTH_RETURN_URL_KEY,
 } from "../auth.constants";
 import type {
   GithubCallbackOutcome,
@@ -129,6 +130,7 @@ export class AuthStateService implements GithubAuthHost {
       this.toastAuthUnavailable();
       return;
     }
+    this.rememberReturnUrl();
     this.resetGithubConsent();
     this.signUpModalOpen.set(false);
     this.signInModalOpen.set(true);
@@ -144,6 +146,7 @@ export class AuthStateService implements GithubAuthHost {
       this.toastAuthUnavailable();
       return;
     }
+    this.rememberReturnUrl();
     this.signUpSubtitle.set(
       options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
     );
@@ -710,7 +713,6 @@ export class AuthStateService implements GithubAuthHost {
       this.clearAuthPending();
       this.navigatingAfterAuth = false;
       this.setUser(null);
-      await this.router.navigateByUrl("/", { replaceUrl: true });
     }
   }
 
@@ -775,10 +777,6 @@ export class AuthStateService implements GithubAuthHost {
       return;
     }
 
-    if (path.startsWith("/bookmarks")) {
-      return;
-    }
-
     if (this.navigatingAfterAuth) {
       return;
     }
@@ -800,14 +798,6 @@ export class AuthStateService implements GithubAuthHost {
 
   async navigateAfterAuth(): Promise<void> {
     if (this.navigatingAfterAuth || this.github.isSignInInProgress()) {
-      return;
-    }
-
-    if (
-      this.isAuthenticated() &&
-      window.location.pathname.startsWith("/bookmarks")
-    ) {
-      this.clearAuthPending();
       return;
     }
 
@@ -834,7 +824,13 @@ export class AuthStateService implements GithubAuthHost {
         }
         return;
       }
-      await this.router.navigateByUrl("/bookmarks", { replaceUrl: true });
+      if (window.location.pathname.startsWith("/auth/callback")) {
+        await this.router.navigateByUrl(this.consumeReturnUrl(), {
+          replaceUrl: true,
+        });
+      } else {
+        this.clearReturnUrl();
+      }
       this.clearAuthPending();
     } finally {
       this.navigatingAfterAuth = false;
@@ -858,6 +854,48 @@ export class AuthStateService implements GithubAuthHost {
     document
       .getElementById(AUTH_OVERLAY_ID)
       ?.setAttribute("aria-hidden", enabled ? "false" : "true");
+  }
+
+  private rememberReturnUrl(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (path.startsWith("/auth/callback")) {
+      return;
+    }
+    try {
+      sessionStorage.setItem(AUTH_RETURN_URL_KEY, path);
+    } catch {
+      return;
+    }
+  }
+
+  private clearReturnUrl(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    try {
+      sessionStorage.removeItem(AUTH_RETURN_URL_KEY);
+    } catch {
+      return;
+    }
+  }
+
+  private consumeReturnUrl(): string {
+    if (!isPlatformBrowser(this.platformId)) {
+      return "/";
+    }
+    try {
+      const value = sessionStorage.getItem(AUTH_RETURN_URL_KEY);
+      sessionStorage.removeItem(AUTH_RETURN_URL_KEY);
+      if (value?.startsWith("/") && !value.startsWith("//")) {
+        return value;
+      }
+    } catch {
+      return "/";
+    }
+    return "/";
   }
 
   private async resolveRegisterProgress(

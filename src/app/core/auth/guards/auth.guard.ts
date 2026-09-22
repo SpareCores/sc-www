@@ -33,7 +33,6 @@ export const authGuard: CanActivateFn = async () => {
 
 export const blockLandingDuringAuthGuard: CanActivateFn = () => {
   const auth = inject(AuthStateService);
-  const router = inject(Router);
   const platformId = inject(PLATFORM_ID);
 
   if (!isPlatformBrowser(platformId)) {
@@ -49,10 +48,5 @@ export const blockLandingDuringAuthGuard: CanActivateFn = () => {
   }
 
   auth.startAuthPending();
-
-  if (auth.isAuthenticated()) {
-    return router.createUrlTree(["/bookmarks"]);
-  }
-
   return true;
 };

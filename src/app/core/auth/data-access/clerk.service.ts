@@ -66,7 +66,7 @@ export class ClerkService {
   }
 
   async signOut(): Promise<void> {
-    await this.clerk?.signOut();
+    await this.clerk?.signOut(() => undefined);
   }
 
   openUserProfile(): void {

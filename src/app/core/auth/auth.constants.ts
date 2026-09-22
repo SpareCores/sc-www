@@ -7,6 +7,7 @@ export const WWW_API_BASE_URI =
 export const NEWSLETTER_OPT_IN_KEY = "newsletterOptIn";
 export const NEWSLETTER_SUBSCRIBED_KEY = "newsletterSubscribed";
 export const AUTH_PENDING_KEY = "scAuthPending";
+export const AUTH_RETURN_URL_KEY = "scAuthReturnUrl";
 export const GITHUB_SIGNIN_KEY = "scGithubSignIn";
 export const GITHUB_POPUP_TIMEOUT_MS = 45_000;
 export const AUTH_POPUP_WIDTH = 500;
