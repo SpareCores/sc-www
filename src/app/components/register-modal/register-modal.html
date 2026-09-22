@@ -1,7 +1,7 @@
 @if (auth.signUpModalOpen()) {
 <div class="auth-modal" (click)="close()">
   <div class="auth-modal__panel" (click)="$event.stopPropagation()">
-    @if (!isAuthPending) {
+    @if (!isAuthPending && step === "details") {
     <sc-button
       class="auth-modal__close"
       variant="close"
@@ -256,31 +256,15 @@
         <p class="auth-modal__error">{{ errorMessage }}</p>
         }
 
-        <div class="auth-modal__consent-actions">
-          <sc-button
-            type="button"
-            [label]="
-              auth.githubConsentActive() ? 'Back to login' : 'Back'
-            "
-            icon="chevron-left"
-            iconPosition="start"
-            variant="outline"
-            color="brand"
-            size="small"
-            buttonClass="w-full !justify-center"
-            [disabled]="!!busy"
-            (buttonClick)="backToDetails()"
-          ></sc-button>
-          <sc-button
-            type="submit"
-            label="Continue"
-            icon="chevron-right"
-            size="small"
-            buttonClass="w-full !justify-center"
-            [loading]="busy === 'submit' || busy === 'github'"
-            [disabled]="!canSubmitConsent() || !!busy"
-          ></sc-button>
-        </div>
+        <sc-button
+          type="submit"
+          label="Continue"
+          icon="chevron-right"
+          size="small"
+          buttonClass="w-full !justify-center"
+          [loading]="busy === 'submit' || busy === 'github'"
+          [disabled]="!canSubmitConsent() || !!busy"
+        ></sc-button>
       </form>
     </div>
     } @else {
