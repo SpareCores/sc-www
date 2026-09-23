@@ -89,7 +89,7 @@ jobs:
           find ./dist/sc-www/browser -name '*.map' -delete
           find ./dist/sc-www/browser \( -name '*.js' -o -name '*.css' \) -print0 |
             xargs -0 sed -i '/sourceMappingURL/d'
-          aws s3 sync ./dist/sc-www/browser "s3://${CDN_BUCKET}/${CDN_PREFIX}/${CDN_ASSET_VERSION}/" --delete
+          aws s3 sync ./dist/sc-www/browser "s3://${CDN_BUCKET}/${CDN_PREFIX}/${CDN_ASSET_VERSION}/" --delete --exclude "assets/slides/*"
       - name: Prune old CDN asset versions (keep latest 5)
         env:
           CDN_BUCKET: ${{ vars.CDN_BUCKET }}
