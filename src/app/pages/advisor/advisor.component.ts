@@ -68,6 +68,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {
   availableCurrencies as AVAILABLE_CURRENCIES,
@@ -1376,20 +1377,19 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
-      const encodedQuery = encodeQueryParams(this.getUrlStateQueryParams());
+      const queryParams = this.getUrlStateQueryParams();
+      const encodedQuery = encodeQueryParams(queryParams);
 
       if (encodedQuery === this.lastEncodedQuery) {
         return;
       }
 
       this.lastEncodedQuery = encodedQuery;
-      const path = window.location.pathname || "/advisor";
 
-      if (encodedQuery?.length) {
-        window.history.pushState({}, "", `${path}?${encodedQuery}`);
-      } else {
-        window.history.pushState({}, "", path);
-      }
+      navigateListingQuery(this.router, this.route, queryParams as Params, {
+        params: "replace",
+        history: "push",
+      });
     });
 
     effect(() => {
