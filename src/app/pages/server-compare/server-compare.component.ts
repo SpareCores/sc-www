@@ -19,7 +19,7 @@ import {
 } from "../shared/compare-table/scrollbar-mirror.controller";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ActivatedRoute, RouterModule } from "@angular/router";
+import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -52,6 +52,7 @@ import {
   decodeBase64JsonUrlState,
   isServerCompareUrlState,
 } from "../../tools/encoded-url-state";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { isCompareBaselineServer } from "../../components/charts/shared/server-compare-table.utils";
 import {
@@ -63,7 +64,6 @@ import {
   SERVER_COMPARE_TABLE_HOLDER_ID,
   SERVER_COMPARE_TABLE_ID,
 } from "./server-compare.constants";
-import { pushBrowserQueryState } from "./compare-url-state.utils";
 import {
   type MemoryBenchmarkConfig,
   type MemoryBenchmarkMeta,
@@ -141,6 +141,7 @@ export class ServerCompareComponent
   baselineDropdown = viewChild<FlowbiteDropdownDirective>("baselineDropdown");
   private analytics = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private toastService = inject(ToastService);
   private tooltipService = inject(ChartTooltipService);
 
@@ -392,7 +393,15 @@ export class ServerCompareComponent
     );
 
     this.subscription.add(
-      this.route.queryParams.subscribe(() => {
+      this.route.queryParams.subscribe((params) => {
+        const encodedQuery = encodeQueryParams(
+          this.compareUrlParamsFromRoute(params),
+        );
+
+        if (encodedQuery === this.lastEncodedCompareQuery) {
+          return;
+        }
+
         this.setup();
       }),
     );
@@ -1247,19 +1256,42 @@ export class ServerCompareComponent
     this.breadcrumbs = this.baseCompareBreadcrumbs();
   }
 
+  private compareUrlParamsFromRoute(params: Params): Record<string, string> {
+    const queryParams: Record<string, string> = {};
+
+    if (params["instances"]) {
+      queryParams.instances = String(params["instances"]);
+    }
+
+    if (params["baseline_vendor"]) {
+      queryParams.baseline_vendor = String(params["baseline_vendor"]);
+    }
+
+    if (params["baseline_server"]) {
+      queryParams.baseline_server = String(params["baseline_server"]);
+    }
+
+    return queryParams;
+  }
+
   private syncCompareUrlState(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    const encodedQuery = encodeQueryParams(this.getCompareUrlQueryParams());
+    const queryParams = this.getCompareUrlQueryParams();
+    const encodedQuery = encodeQueryParams(queryParams);
 
     if (encodedQuery === this.lastEncodedCompareQuery) {
       return;
     }
 
     this.lastEncodedCompareQuery = encodedQuery;
-    pushBrowserQueryState(encodedQuery);
+    navigateListingQuery(this.router, this.route, queryParams, {
+      params: "replace",
+      history: "push",
+      preserveFragment: true,
+    });
   }
 
   onMirrorScroll(event: Event) {
