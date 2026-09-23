@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 
+import { CollectionsUiService } from "../collections/collections-ui.service";
 import { ServerCompare, ServerCompareService } from "./server-compare.service";
 
 describe("ServerCompareService", () => {
@@ -26,7 +27,18 @@ describe("ServerCompareService", () => {
   };
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: CollectionsUiService,
+          useValue: {
+            promptRegisterForFeature: jasmine.createSpy(
+              "promptRegisterForFeature",
+            ),
+          },
+        },
+      ],
+    });
     service = TestBed.inject(ServerCompareService);
     service.selectedForCompare = [serverA, serverB, serverC];
   });

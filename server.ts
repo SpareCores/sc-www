@@ -102,6 +102,9 @@ export function app(): express.Express {
   const commonEngine = new CommonEngine({
     enablePerformanceProfiler:
       process.env["ENABLE_PERFORMANCE_PROFILER"] === "true",
+    // Angular SSR rejects Host headers missing from this allowlist to prevent SSRF since v20.3.17.
+    // Set comma-separated NG_ALLOWED_HOSTS to override.
+    allowedHosts: ["localhost", "127.0.0.1"],
   });
 
   server.set("view engine", "html");

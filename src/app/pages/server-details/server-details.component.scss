@@ -2,6 +2,14 @@
   min-height: 75vh;
 }
 
+:host ::ng-deep #server_base_info_box {
+  .bookmark-button,
+  .bookmark-button__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
 .bounce-3 {
   animation: server-details-warning-icon-bounce 0.8s ease 3;
 }
