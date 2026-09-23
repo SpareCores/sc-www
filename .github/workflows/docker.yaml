@@ -87,8 +87,9 @@ jobs:
           CDN_ASSET_VERSION: ${{ steps.asset-version.outputs.version }}
         run: |
           find ./dist/sc-www/browser -name '*.map' -delete
+          # TODO better switch to "sourceMap": { "scripts": true, "hidden": true } in angular.json
           find ./dist/sc-www/browser \( -name '*.js' -o -name '*.css' \) -print0 |
-            xargs -0 sed -i '/sourceMappingURL/d'
+            xargs -0 sed -i -E '/^\/\/# sourceMappingURL=[^ ]*$/d; /^\/\*# sourceMappingURL=[^ ]* ?\*\/$/d'
           aws s3 sync ./dist/sc-www/browser "s3://${CDN_BUCKET}/${CDN_PREFIX}/${CDN_ASSET_VERSION}/" --delete --exclude "assets/slides/*"
       - name: Prune old CDN asset versions (keep latest 5)
         env:
