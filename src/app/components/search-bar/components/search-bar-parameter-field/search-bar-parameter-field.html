@@ -252,7 +252,7 @@ getParameterType(parameter);
             filterCategoryId()
           "
       [(ngModel)]="parameter.modelValue"
-      (ngModelChange)="filterServers.emit()"
+      (ngModelChange)="onCheckboxChanged()"
       [disabled]="disabled()"
       class="checkbox"
     />

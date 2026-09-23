@@ -156,9 +156,21 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
 
   onRangeSliderChanged() {
     const parameter = this.parameter();
+    if (Object.is(this.lastModelValue, parameter.modelValue)) {
+      return;
+    }
     this.lastModelValue = parameter.modelValue;
     this.syncParameterDraftValue(parameter);
     this.valueChanged.emit();
+  }
+
+  onCheckboxChanged() {
+    const parameter = this.parameter();
+    if (Object.is(this.lastModelValue, parameter.modelValue)) {
+      return;
+    }
+    this.lastModelValue = parameter.modelValue;
+    this.filterServers.emit();
   }
 
   getCpuCacheRangeStops(parameter: SearchBarParameter): number[] {
