@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from "@angular/common";
+import { DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
   Injectable,
   NgZone,
@@ -9,6 +9,7 @@ import {
 } from "@angular/core";
 import { Router } from "@angular/router";
 import type { SignUpResource, UserResource } from "@clerk/shared/types";
+import { AnalyticsService } from "../../../services/analytics.service";
 import { ToastService } from "../../../services/toast.service";
 import {
   AUTH_MESSAGES,
@@ -48,14 +49,17 @@ import { GithubService } from "./github.service";
 @Injectable({ providedIn: "root" })
 export class AuthStateService implements GithubAuthHost {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly document = inject(DOCUMENT);
   private readonly ngZone = inject(NgZone);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+  private readonly analytics = inject(AnalyticsService);
   private readonly clerk = inject(ClerkService);
   private readonly github = inject(GithubService);
   private navigatingAfterAuth = false;
   private boundHost = false;
   private boundListener = false;
+  private signedOutIdentityCleared = false;
 
   private readonly _user = signal<UserResource | null>(null);
   readonly user = this._user.asReadonly();
@@ -210,8 +214,8 @@ export class AuthStateService implements GithubAuthHost {
     this.authInProgress.set(true);
     if (isPlatformBrowser(this.platformId)) {
       setSessionFlag(AUTH_PENDING_KEY, true);
-      this.setAuthOverlayVisible(true);
     }
+    this.setAuthOverlayVisible(true);
   }
 
   clearAuthPending(): void {
@@ -729,7 +733,22 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   openUserProfile(): void {
-    this.clerk.openUserProfile();
+    this.clerk.openUserProfile(() => this.deleteAccount());
+  }
+
+  async deleteAccount(): Promise<void> {
+    const user = this.clerk.user;
+    if (!user) {
+      return;
+    }
+
+    await user.delete();
+    try {
+      this.analytics.identify(user.id);
+      this.analytics.trackEvent("auth account deleted", {});
+    } finally {
+      this.analytics.reset();
+    }
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -737,7 +756,37 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   setUser(user: UserResource | null): void {
+    const previousUser = this._user();
     this._user.set(user);
+
+    if (user) {
+      this.identifyAnalyticsUser(user);
+      return;
+    }
+
+    if (!previousUser) {
+      if (
+        isPlatformBrowser(this.platformId) &&
+        !this.signedOutIdentityCleared
+      ) {
+        this.signedOutIdentityCleared = true;
+        this.analytics.reset();
+      }
+      return;
+    }
+
+    this.analytics.reset();
+    this.leaveBookmarks();
+  }
+
+  private leaveBookmarks(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    if (!window.location.pathname.startsWith("/bookmarks")) {
+      return;
+    }
+    void this.router.navigateByUrl("/");
   }
 
   resetGithubConsent(): void {
@@ -850,20 +899,22 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   async completeSession(sessionId: string): Promise<void> {
+    const eventName =
+      this.signUpModalOpen() || this.githubConsentActive()
+        ? "auth register"
+        : "auth login";
     this.startAuthPending();
     this.closeSignIn();
     this.closeSignUp();
     await this.clerk.setActive(sessionId);
     this.syncState();
+    this.analytics.trackEvent(eventName, {});
     await this.navigateAfterAuth();
   }
 
   private setAuthOverlayVisible(enabled: boolean): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-    document.documentElement.classList.toggle(AUTH_OVERLAY_CLASS, enabled);
-    document
+    this.document.documentElement.classList.toggle(AUTH_OVERLAY_CLASS, enabled);
+    this.document
       .getElementById(AUTH_OVERLAY_ID)
       ?.setAttribute("aria-hidden", enabled ? "false" : "true");
   }
@@ -966,6 +1017,23 @@ export class AuthStateService implements GithubAuthHost {
       title: AUTH_MESSAGES.authUnavailable,
       type: "error",
       duration: 5000,
+    });
+  }
+
+  private identifyAnalyticsUser(user: UserResource | null): void {
+    if (!user) {
+      return;
+    }
+
+    const email = user.primaryEmailAddress?.emailAddress;
+    const name =
+      [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+      user.username ||
+      undefined;
+
+    this.analytics.identify(user.id, {
+      ...(email ? { email } : {}),
+      ...(name ? { name } : {}),
     });
   }
 }

@@ -36,6 +36,7 @@ import {
   LucideTrash,
   LucideUser,
 } from "@lucide/angular";
+import { AnalyticsService } from "../../services/analytics.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { AuthStateService } from "../../core/auth";
@@ -83,6 +84,7 @@ import { AuthStateService } from "../../core/auth";
 export class HeaderComponent {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
+  private analytics = inject(AnalyticsService);
   protected readonly auth = inject(AuthStateService);
 
   menuDropdown = viewChild<FlowbiteDropdownDirective>("menuDropdown");
@@ -112,16 +114,19 @@ export class HeaderComponent {
   }
 
   signIn(): void {
+    this.analytics.trackEvent("auth login open", {});
     this.closeMenu();
     this.auth.signIn();
   }
 
   signUp(): void {
+    this.analytics.trackEvent("auth register open", {});
     this.closeMenu();
     this.auth.signUp();
   }
 
   async signOut(): Promise<void> {
+    this.analytics.trackEvent("auth sign out", {});
     this.closeAuth();
     this.closeMenu();
     await this.auth.signOut();

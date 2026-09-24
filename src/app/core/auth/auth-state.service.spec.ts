@@ -1,6 +1,7 @@
 import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";
+import { AnalyticsService } from "../../services/analytics.service";
 import { AUTH_MESSAGES, AuthStateService, ClerkService } from "./index";
 
 describe("AuthStateService", () => {
@@ -18,13 +19,19 @@ describe("AuthStateService", () => {
     return TestBed.inject(ClerkService);
   }
 
+  function analyticsService(): AnalyticsService {
+    return TestBed.inject(AnalyticsService);
+  }
+
   function setUser(
     auth: AuthStateService,
     user: {
+      id?: string;
       firstName?: string | null;
       lastName?: string | null;
       username?: string | null;
       imageUrl?: string | null;
+      delete?: jasmine.Spy;
     } | null,
   ): void {
     auth.setUser(user as never);
@@ -254,5 +261,101 @@ describe("AuthStateService", () => {
     spyOn(auth, "needsGithubConsent").and.returnValue(false);
 
     expect(auth.resolveGithubCallbackOutcome()).toBe("error");
+  });
+
+  it("resets analytics on sign out without tracking account deletion", async () => {
+    const auth = createAuth();
+    const analytics = analyticsService();
+    const trackSpy = spyOn(analytics, "trackEvent");
+    const resetSpy = spyOn(analytics, "reset");
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    const clerk = {
+      signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
+      user: signedInUser as typeof signedInUser | null,
+    };
+    setClerkInstance(clerk);
+    setUser(auth, signedInUser);
+
+    clerk.user = null;
+    await auth.signOut();
+
+    expect(resetSpy).toHaveBeenCalled();
+    expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
+  });
+
+  it("tracks account deletion only after a successful deleteAccount call", async () => {
+    const auth = createAuth();
+    const analytics = analyticsService();
+    const trackSpy = spyOn(analytics, "trackEvent");
+    const resetSpy = spyOn(analytics, "reset");
+    const deleteSpy = jasmine.createSpy("delete").and.resolveTo(undefined);
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+      delete: deleteSpy,
+    };
+    setClerkInstance({ user: signedInUser });
+    setUser(auth, signedInUser);
+
+    await auth.deleteAccount();
+    auth.setUser(null);
+
+    expect(deleteSpy).toHaveBeenCalled();
+    expect(trackSpy).toHaveBeenCalledWith("auth account deleted", {});
+    expect(resetSpy).toHaveBeenCalled();
+  });
+
+  it("does not track account deletion when deleteAccount fails", async () => {
+    const auth = createAuth();
+    const analytics = analyticsService();
+    const trackSpy = spyOn(analytics, "trackEvent");
+    const deleteSpy = jasmine
+      .createSpy("delete")
+      .and.rejectWith(new Error("delete failed"));
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+      delete: deleteSpy,
+    };
+    setClerkInstance({ user: signedInUser });
+    setUser(auth, signedInUser);
+
+    await expectAsync(auth.deleteAccount()).toBeRejectedWithError(
+      "delete failed",
+    );
+
+    expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
+    expect(auth.isAuthenticated()).toBeTrue();
+  });
+
+  it("resets analytics when the user disappears without explicit deletion", () => {
+    const auth = createAuth();
+    const analytics = analyticsService();
+    const trackSpy = spyOn(analytics, "trackEvent");
+    const resetSpy = spyOn(analytics, "reset");
+    setUser(auth, {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    });
+
+    auth.setUser(null);
+
+    expect(resetSpy).toHaveBeenCalled();
+    expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
   });
 });
