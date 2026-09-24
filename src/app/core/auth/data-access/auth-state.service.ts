@@ -743,7 +743,12 @@ export class AuthStateService implements GithubAuthHost {
     }
 
     await user.delete();
-    this.analytics.trackEvent("auth account deleted", {});
+    try {
+      this.analytics.identify(user.id);
+      this.analytics.trackEvent("auth account deleted", {});
+    } finally {
+      this.analytics.reset();
+    }
   }
 
   async getToken(template?: string): Promise<string | null> {
