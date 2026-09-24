@@ -3,9 +3,6 @@ import { Injectable, NgZone, PLATFORM_ID, inject } from "@angular/core";
 import * as Sentry from "@sentry/angular";
 import posthog from "posthog-js";
 
-const POSTHOG_KEY = import.meta.env.NG_APP_POSTHOG_KEY;
-const POSTHOG_HOST = import.meta.env.NG_APP_POSTHOG_HOST;
-
 const SENTRY_DSN = import.meta.env.NG_APP_SENTRY_DSN;
 
 type PendingIdentify = {
@@ -20,6 +17,7 @@ export class AnalyticsService {
   private platformId = inject(PLATFORM_ID);
   private ngZone = inject(NgZone);
   private pendingIdentify: PendingIdentify | null = null;
+  private pendingReset = false;
 
   trackingInitialized = false;
 
@@ -27,6 +25,9 @@ export class AnalyticsService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+
+    const POSTHOG_KEY = import.meta.env.NG_APP_POSTHOG_KEY;
+    const POSTHOG_HOST = import.meta.env.NG_APP_POSTHOG_HOST;
 
     if (
       !this.trackingInitialized &&
@@ -43,6 +44,7 @@ export class AnalyticsService {
         });
       });
       this.trackingInitialized = true;
+      this.flushPendingReset();
       this.flushPendingIdentify();
     }
   }
@@ -73,8 +75,11 @@ export class AnalyticsService {
     this.pendingIdentify = null;
 
     if (!this.trackingInitialized) {
+      this.pendingReset = true;
       return;
     }
+
+    this.pendingReset = false;
 
     this.ngZone.runOutsideAngular(() => {
       posthog.reset();
@@ -126,5 +131,16 @@ export class AnalyticsService {
 
     this.pendingIdentify = null;
     this.identify(pending.distinctId, pending.properties);
+  }
+
+  private flushPendingReset(): void {
+    if (!this.pendingReset) {
+      return;
+    }
+
+    this.pendingReset = false;
+    this.ngZone.runOutsideAngular(() => {
+      posthog.reset();
+    });
   }
 }
