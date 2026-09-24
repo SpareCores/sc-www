@@ -1321,18 +1321,28 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   selectBenchmarkConfig(config: any) {
     this.tempSelectedBenchmarkCategory = null;
+    const benchmarkColumn = this.possibleColumns.find(
+      (column) => column.type === "benchmark",
+    );
+    const enableBenchmarkColumn = !!benchmarkColumn && !benchmarkColumn.show;
     this.selectedBenchmarkConfig = config;
 
     this.modalBenchmarkSelect?.hide();
     this.modalFilterTerm = null;
-    this.updateQueryParams({
+    const query: Params = {
       benchmark: btoa(
         JSON.stringify({
           id: config.benchmark_id,
           config: config.config,
         }),
       ),
-    });
+    };
+    if (enableBenchmarkColumn && this.hasCustomColumns) {
+      query.columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+    }
+    this.updateQueryParams(query);
   }
 
   updateFilterTerm() {
