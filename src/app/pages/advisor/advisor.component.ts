@@ -2473,6 +2473,14 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.compareSubscription.add(
       this.route.queryParams.subscribe((params: Params) => {
         const queryParams = JSON.parse(JSON.stringify(params || {}));
+
+        if (
+          this.hasRestoredRouteState() &&
+          encodeQueryParams(queryParams) === this.lastEncodedQuery
+        ) {
+          return;
+        }
+
         const restoredPage = this.parsePositiveIntParam(queryParams.page, 1);
         const restoredLimit = this.parsePositiveIntParam(
           queryParams.limit,
