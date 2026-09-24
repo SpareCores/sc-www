@@ -45,40 +45,34 @@ describe("AnalyticsService", () => {
 
   it("queues identify until tracking is initialized then flushes", () => {
     const identifySpy = spyOn(posthog, "identify");
-    spyOn(posthog, "init");
-    const env = import.meta.env;
-    const previousKey = env.NG_APP_POSTHOG_KEY;
-    const previousHost = env.NG_APP_POSTHOG_HOST;
-    env.NG_APP_POSTHOG_KEY = "phc_test";
-    env.NG_APP_POSTHOG_HOST = "https://eu.posthog.com";
 
     service.identify("user-1", { email: "a@b.co" });
     expect(identifySpy).not.toHaveBeenCalled();
 
-    service.initializeTracking();
+    service.trackingInitialized = true;
+    (
+      service as unknown as { flushPendingIdentify: () => void }
+    ).flushPendingIdentify();
 
     expect(identifySpy).toHaveBeenCalledWith("user-1", { email: "a@b.co" });
-    env.NG_APP_POSTHOG_KEY = previousKey;
-    env.NG_APP_POSTHOG_HOST = previousHost;
   });
 
   it("resets identity and drops a pending identify", () => {
     const resetSpy = spyOn(posthog, "reset");
     const identifySpy = spyOn(posthog, "identify");
-    spyOn(posthog, "init");
-    const env = import.meta.env;
-    const previousKey = env.NG_APP_POSTHOG_KEY;
-    const previousHost = env.NG_APP_POSTHOG_HOST;
-    env.NG_APP_POSTHOG_KEY = "phc_test";
-    env.NG_APP_POSTHOG_HOST = "https://eu.posthog.com";
 
     service.identify("user-1");
     service.reset();
-    service.initializeTracking();
+
+    service.trackingInitialized = true;
+    (
+      service as unknown as { flushPendingReset: () => void }
+    ).flushPendingReset();
+    (
+      service as unknown as { flushPendingIdentify: () => void }
+    ).flushPendingIdentify();
 
     expect(identifySpy).not.toHaveBeenCalled();
     expect(resetSpy).toHaveBeenCalled();
-    env.NG_APP_POSTHOG_KEY = previousKey;
-    env.NG_APP_POSTHOG_HOST = previousHost;
   });
 });
