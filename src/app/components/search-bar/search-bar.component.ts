@@ -19,6 +19,7 @@ import { LucideChevronDown, LucideDynamicIcon } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { Button } from "../button/button";
 import {
@@ -101,6 +102,7 @@ type ApiResponse<T> = {
 export class SearchBarComponent implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
 
   query = input<SearchBarQuery>({});
@@ -852,6 +854,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             return [];
           }
           return response.body;
+        })
+        .catch((error: unknown) => {
+          this.countriesRequest = null;
+          console.error(error);
+          this.toastService.show({
+            title: "Failed to load countries",
+            body: "Please try again later.",
+            type: "error",
+            id: "search-bar-countries-error",
+          });
+          return [] as CountryMetadata[];
         });
     }
 
