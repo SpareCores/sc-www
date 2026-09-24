@@ -70,7 +70,24 @@ export class ClerkService {
   }
 
   openUserProfile(): void {
-    this.clerk?.openUserProfile({ apiKeysProps: { hide: true } });
+    const user = this.clerk?.user;
+    const hidePasswordSection =
+      !!user &&
+      !user.passwordEnabled &&
+      !!user.externalAccounts?.some((account) => account.provider === "github");
+
+    this.clerk?.openUserProfile({
+      apiKeysProps: { hide: true },
+      ...(hidePasswordSection
+        ? {
+            appearance: {
+              elements: {
+                profileSection__password: { display: "none" },
+              },
+            },
+          }
+        : {}),
+    });
   }
 
   async getToken(template?: string): Promise<string | null> {
