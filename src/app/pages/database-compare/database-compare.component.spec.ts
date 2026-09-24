@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, convertToParamMap } from "@angular/router";
 import { of } from "rxjs";
 
 import { DatabaseCompareComponent } from "./database-compare.component";
@@ -43,7 +43,12 @@ describe("DatabaseCompareComponent", () => {
           useValue: {
             queryParams: of({}),
             params: of({}),
-            snapshot: { queryParams: {}, paramMap: { get: () => null } },
+            paramMap: of(convertToParamMap({})),
+            queryParamMap: of(convertToParamMap({})),
+            snapshot: {
+              queryParams: {},
+              paramMap: convertToParamMap({}),
+            },
           },
         },
         {
@@ -75,7 +80,12 @@ describe("DatabaseCompareComponent", () => {
     const show = spyOn(toastService, "show");
     const route = TestBed.inject(ActivatedRoute) as any;
     route.snapshot.queryParams = { instances: "not-valid-base64" };
+    route.snapshot.paramMap = convertToParamMap({});
     route.queryParams = of({ instances: "not-valid-base64" });
+    route.queryParamMap = of(
+      convertToParamMap({ instances: "not-valid-base64" }),
+    );
+    route.paramMap = of(convertToParamMap({}));
 
     fixture = TestBed.createComponent(DatabaseCompareComponent);
     component = fixture.componentInstance;
@@ -134,7 +144,10 @@ describe("DatabaseCompareComponent", () => {
 
     const route = TestBed.inject(ActivatedRoute) as any;
     route.snapshot.queryParams = { instances };
+    route.snapshot.paramMap = convertToParamMap({});
     route.queryParams = of({ instances });
+    route.queryParamMap = of(convertToParamMap({ instances }));
+    route.paramMap = of(convertToParamMap({}));
 
     fixture = TestBed.createComponent(DatabaseCompareComponent);
     component = fixture.componentInstance;
@@ -171,7 +184,10 @@ describe("DatabaseCompareComponent", () => {
 
     const route = TestBed.inject(ActivatedRoute) as any;
     route.snapshot.queryParams = { instances };
+    route.snapshot.paramMap = convertToParamMap({});
     route.queryParams = of({ instances });
+    route.queryParamMap = of(convertToParamMap({ instances }));
+    route.paramMap = of(convertToParamMap({}));
 
     fixture = TestBed.createComponent(DatabaseCompareComponent);
     component = fixture.componentInstance;

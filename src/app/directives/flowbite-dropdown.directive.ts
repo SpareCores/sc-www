@@ -30,6 +30,7 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
   dropdownEnabled = input(true);
   dropdownFlip = input(false);
   dropdownPlacement = input<DropdownBehaviorOptions["placement"]>();
+  dropdownTriggerType = input<DropdownBehaviorOptions["triggerType"]>("click");
 
   dropdown: Dropdown | undefined;
   private initializedKey = "";
@@ -50,7 +51,6 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
       const targetId = this.scFlowbiteDropdown();
       const key = `${triggerId}:${targetId}`;
       if (this.initializedKey === key) {
-        this.dropdown?.show();
         return;
       }
 
@@ -70,9 +70,14 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
     this.dropdown?.hide();
   }
 
+  toggle() {
+    this.dropdown?.toggle();
+  }
+
   private getBehaviorOptions(): DropdownBehaviorOptions {
     const behaviorOptions: DropdownBehaviorOptions = {
       flip: this.dropdownFlip(),
+      triggerType: this.dropdownTriggerType(),
     };
     const placement = this.dropdownPlacement();
     if (placement) {

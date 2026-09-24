@@ -8,11 +8,13 @@ import {
   OnInit,
   PLATFORM_ID,
   ViewChild,
+  effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from "@angular/core";
-import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import {
   LucideCheck,
   LucideCircleArrowUp,
@@ -21,7 +23,7 @@ import {
   LucideTriangleAlert,
   LucideX,
 } from "@lucide/angular";
-import { Subscription } from "rxjs";
+import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
 import {
   Benchmark,
   Database,
@@ -69,12 +71,18 @@ import {
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { CompareCollectionsService } from "../../collections/compare-collections.service";
+import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { AuthStateService } from "../../core/auth";
+import type { SavedComparisonItem } from "../../collections/collections.types";
+import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import {
   decodeBase64JsonUrlState,
   isDatabaseCompareUrlState,
 } from "../../tools/encoded-url-state";
-import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { AdvisorUiService } from "../advisor/advisor-ui.service";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
@@ -168,6 +176,7 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
     LucideInfo,
     LucideTriangleAlert,
     LucideX,
+    CollectionSaveModalComponent,
   ],
   templateUrl: "./database-compare.component.html",
   styleUrl: "./database-compare.component.scss",
@@ -188,6 +197,12 @@ export class DatabaseCompareComponent
   private advisorUi = inject(AdvisorUiService);
   private chartTooltip = inject(ChartTooltipService);
   private legendVisibility = inject(CompareChartLegendVisibilityService);
+  private compareCollections = inject(CompareCollectionsService);
+  private auth = inject(AuthStateService);
+  private collectionsUi = inject(CollectionsUiService);
+  saveComparisonModal = viewChild(CollectionSaveModalComponent);
+  private readonly pendingSaveComparisonClose = signal(false);
+  private readonly editingComparisonId = signal<string | null>(null);
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
   chartSectionTooltip = viewChild<ElementRef>("chartSectionTooltip");
@@ -207,12 +222,14 @@ export class DatabaseCompareComponent
 
   title = DATABASE_COMPARE_GUIDE_TITLE;
   description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
+  private bookmarkSource: SavedComparisonItem | null = null;
   keywords = "cloud, database, dbaas, compare, sparecores";
 
-  isLoading = false;
+  isLoading = true;
   instances: DatabaseCompare[] = [];
   instancesRaw = "";
   private lastEncodedCompareQuery: string | null = null;
+  private compareDataReady = false;
   databases: LoadedCompareDatabase[] = [];
   lineCompareServers: LineChartServer[] = [];
   propertySections: ComparePropertySection[] = [];
@@ -262,6 +279,65 @@ export class DatabaseCompareComponent
     },
   });
 
+  constructor() {
+    effect(() => {
+      this.compareCollections.store.savedComparisons();
+      this.compareCollections.store.requestStatus();
+      if (this.compareDataReady && this.isLoading) {
+        this.finishCompareLoadIfReady();
+        return;
+      }
+      if (!this.isLoading) {
+        this.syncSavedComparisonChrome();
+      }
+    });
+
+    effect(() => {
+      if (!this.isAuthenticated()) {
+        return;
+      }
+      const modal = this.saveComparisonModal();
+      if (!modal) {
+        return;
+      }
+      if (!this.collectionsUi.takePendingOpenSave("compare-databases")) {
+        return;
+      }
+      untracked(() => this.openSaveComparisonModal());
+    });
+
+    effect(() => {
+      if (!this.pendingSaveComparisonClose()) {
+        return;
+      }
+
+      this.compareCollections.store.savedComparisons();
+      const editingId = this.editingComparisonId();
+      const saved = this.activeSavedComparison();
+      const id =
+        editingId ??
+        this.compareCollections.buildComparisonId(
+          this.getCompareInstancesForSave(),
+          this.buildCanonicalCompareUrl(),
+        );
+      const saving = this.compareCollections.isSavingComparison(id);
+      const updating = editingId
+        ? this.compareCollections.isUpdatingComparison(editingId)
+        : saved
+          ? this.compareCollections.isUpdatingComparison(saved.id)
+          : false;
+
+      if (saving || updating) {
+        return;
+      }
+
+      this.pendingSaveComparisonClose.set(false);
+      if (editingId || saved) {
+        this.saveComparisonModal()?.close();
+      }
+    });
+  }
+
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -270,23 +346,14 @@ export class DatabaseCompareComponent
     );
 
     this.subscription.add(
-      this.route.queryParams.subscribe((params) => {
-        const encodedQuery = encodeQueryParams(
-          this.compareUrlParamsFromRoute(params),
-        );
-
-        if (encodedQuery === this.lastEncodedCompareQuery) {
-          return;
-        }
-
-        this.setup();
-      }),
-    );
-
-    this.subscription.add(
-      this.route.params.subscribe(() => {
-        this.setup();
-      }),
+      merge(this.route.paramMap, this.route.queryParamMap)
+        .pipe(
+          map(() => this.compareRouteKey()),
+          distinctUntilChanged(),
+        )
+        .subscribe(() => {
+          this.setup();
+        }),
     );
 
     this.subscription.add(
@@ -474,9 +541,48 @@ export class DatabaseCompareComponent
   selectCurrency(currency: CurrencyOption): void {
     this.currencyDropdown()?.hide();
     this.selectedCurrency = currency;
-    if (this.instances.length) {
-      this.setup();
+    this.syncCompareUrlState();
+
+    if (!this.databases.length) {
+      return;
     }
+
+    Promise.all(
+      this.databases.map((database) =>
+        this.keeperAPI.getDatabasePrices(
+          database.vendor_id,
+          database.api_reference,
+          { currency: this.selectedCurrency.slug },
+        ),
+      ),
+    ).then((responses) => {
+      responses.forEach((response, index) => {
+        const database = this.databases[index];
+        const prices = ((response.body || []) as DatabasePrice[])
+          .map((price) => ({
+            ...price,
+            region: database.prices?.find(
+              (existing) =>
+                existing.vendor_id === price.vendor_id &&
+                existing.region_id === price.region_id,
+            )?.region,
+          }))
+          .sort((a, b) => a.price - b.price);
+
+        database.prices = prices;
+        const hourPrices = prices.filter(
+          (price) => price.unit === PriceUnit.Hour,
+        );
+        const monthPrices = prices.filter(
+          (price) => price.unit === PriceUnit.Month,
+        );
+        database.bestHourPrice = hourPrices[0];
+        database.bestMonthPrice = monthPrices[0];
+      });
+
+      this.buildPriceRows();
+      this.refreshCompareTableLayout();
+    });
   }
 
   clipboardURL(): void {
@@ -507,7 +613,15 @@ export class DatabaseCompareComponent
     this.legendVisibility.clear();
     this.propertySections = [];
     this.priceRows = [];
+    this.baselineDatabase = null;
+    this.compareDataReady = false;
     this.stickyLayout.reset();
+    this.restoreCurrencyFromUrl();
+
+    if (id || param) {
+      this.isLoading = true;
+      this.breadcrumbs = this.baseCompareBreadcrumbs();
+    }
 
     if (id) {
       const specialCompare = this.databaseCompares.find(
@@ -517,17 +631,10 @@ export class DatabaseCompareComponent
         this.instances = specialCompare.instances || [];
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-        this.applyComparisonChrome(
-          specialCompare.title,
-          specialCompare.description,
-        );
-        this.setPremadeCompareBreadcrumb(
-          specialCompare.title,
-          specialCompare.id,
-        );
       } else {
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
+        this.isLoading = false;
       }
     } else if (param) {
       const decodedInstances = decodeBase64JsonUrlState(
@@ -553,12 +660,10 @@ export class DatabaseCompareComponent
       this.instances = decodedInstances.value;
       this.instancesRaw = this.instances.length > 0 ? param : "";
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-      if (this.instances.length) {
-        this.applyComparisonChrome();
-      } else {
+      if (!this.instances.length) {
         this.applyGuideChrome();
+        this.isLoading = false;
       }
-      this.updateCompareBreadcrumb(this.instances.length);
     } else {
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
       this.applyGuideChrome();
@@ -688,7 +793,6 @@ export class DatabaseCompareComponent
         this.buildPropertySections();
         this.buildPriceRows();
         this.refreshLineCompareServers();
-        this.applyBaselineFromQuery();
       })
       .catch((err) => {
         this.analytics.SentryException(err, {
@@ -706,22 +810,81 @@ export class DatabaseCompareComponent
         });
       })
       .finally(() => {
-        if (loadId === this.compareLoadId) {
-          this.isLoading = false;
-          this.refreshCompareTableLayout();
+        if (loadId !== this.compareLoadId) {
+          return;
         }
+
+        this.applyBaselineFromQuery();
+        const specialId = this.route.snapshot.paramMap.get("id");
+        if (specialId && !this.exactSavedComparison()) {
+          const specialCompare = this.databaseCompares.find(
+            (x: any) => x.id === specialId,
+          );
+          if (specialCompare) {
+            this.applyComparisonChrome(
+              specialCompare.title,
+              specialCompare.description,
+            );
+            this.setPremadeCompareBreadcrumb(
+              specialCompare.title,
+              specialCompare.id,
+            );
+          }
+        }
+        this.compareDataReady = true;
+        this.finishCompareLoadIfReady();
       });
   }
 
+  private compareRouteKey(): string {
+    const snapshot = this.route.snapshot;
+    return [
+      snapshot.paramMap.get("id") ?? "",
+      snapshot.queryParams["instances"] ?? "",
+      snapshot.queryParams["currency"] ?? "",
+      snapshot.queryParams["baseline_vendor"] ?? "",
+      snapshot.queryParams["baseline_database"] ?? "",
+    ].join("|");
+  }
+
+  private collectionsReadyForChrome(): boolean {
+    if (!isPlatformBrowser(this.platformId) || !this.auth.isAuthenticated()) {
+      return true;
+    }
+
+    return (
+      this.compareCollections.store.isLoaded() ||
+      !!this.compareCollections.store.error()
+    );
+  }
+
+  private finishCompareLoadIfReady(): void {
+    if (!this.compareDataReady || !this.collectionsReadyForChrome()) {
+      return;
+    }
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.syncSavedComparisonChrome();
+    this.isLoading = false;
+    this.refreshCompareTableLayout();
+  }
+
   private applyBaselineFromQuery(): void {
-    const vendor = this.route.snapshot.queryParams["baseline_vendor"];
-    const database = this.route.snapshot.queryParams["baseline_database"];
+    const params = isPlatformBrowser(this.platformId)
+      ? Object.fromEntries(new URLSearchParams(window.location.search))
+      : this.route.snapshot.queryParams;
+    const vendor = params["baseline_vendor"];
+    const database = params["baseline_database"];
     if (!vendor || !database) {
       this.baselineDatabase = null;
       this.serverCompare.setBaselineDatabase(null);
       this.lastEncodedCompareQuery = encodeQueryParams(
         this.getCompareUrlQueryParams(),
       );
+      this.syncSavedComparisonChrome();
       return;
     }
 
@@ -734,6 +897,7 @@ export class DatabaseCompareComponent
       this.lastEncodedCompareQuery = encodeQueryParams(
         this.getCompareUrlQueryParams(),
       );
+      this.syncSavedComparisonChrome();
       return;
     }
 
@@ -745,6 +909,7 @@ export class DatabaseCompareComponent
     this.lastEncodedCompareQuery = encodeQueryParams(
       this.getCompareUrlQueryParams(),
     );
+    this.syncSavedComparisonChrome();
   }
 
   getCompareUrlQueryParams(): Record<string, string> {
@@ -759,25 +924,22 @@ export class DatabaseCompareComponent
       params.baseline_database = this.baselineDatabase.api_reference;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      params.currency = this.selectedCurrency.slug;
+    }
+
     return params;
   }
 
-  private compareUrlParamsFromRoute(params: Params): Record<string, string> {
-    const queryParams: Record<string, string> = {};
+  private restoreCurrencyFromUrl(): void {
+    const currencySlug = isPlatformBrowser(this.platformId)
+      ? new URLSearchParams(window.location.search).get("currency")
+      : this.route.snapshot.queryParams["currency"];
 
-    if (params["instances"]) {
-      queryParams.instances = String(params["instances"]);
-    }
-
-    if (params["baseline_vendor"]) {
-      queryParams.baseline_vendor = String(params["baseline_vendor"]);
-    }
-
-    if (params["baseline_database"]) {
-      queryParams.baseline_database = String(params["baseline_database"]);
-    }
-
-    return queryParams;
+    this.selectedCurrency =
+      this.availableCurrencies.find(
+        (currency) => currency.slug === currencySlug,
+      ) || this.availableCurrencies[0];
   }
 
   private syncCompareUrlState(): void {
@@ -787,6 +949,16 @@ export class DatabaseCompareComponent
 
     const queryParams = this.getCompareUrlQueryParams();
     const encodedQuery = encodeQueryParams(queryParams);
+    const canonicalUrl = encodedQuery
+      ? `/databases/compare?${encodedQuery}`
+      : "/databases/compare";
+
+    if (this.route.snapshot.paramMap.get("id")) {
+      this.lastEncodedCompareQuery = encodedQuery;
+      void this.router.navigateByUrl(canonicalUrl, { replaceUrl: true });
+      this.syncSavedComparisonChrome();
+      return;
+    }
 
     if (encodedQuery === this.lastEncodedCompareQuery) {
       return;
@@ -798,6 +970,14 @@ export class DatabaseCompareComponent
       history: "push",
       preserveFragment: true,
     });
+    this.syncSavedComparisonChrome();
+  }
+
+  private buildCanonicalCompareUrl(): string {
+    const encodedQuery = encodeQueryParams(this.getCompareUrlQueryParams());
+    return encodedQuery
+      ? `/databases/compare?${encodedQuery}`
+      : "/databases/compare";
   }
 
   private applySelectionFromService(selection: DatabaseCompare[]): void {
@@ -818,6 +998,7 @@ export class DatabaseCompareComponent
       this.priceRows = [];
       this.baselineDatabase = null;
       this.updateCompareBreadcrumb(0);
+      this.syncSavedComparisonChrome();
       if (this.route.snapshot.paramMap.get("id")) {
         this.serverCompare.syncDatabaseCompareRoute();
       } else {
@@ -911,6 +1092,7 @@ export class DatabaseCompareComponent
   private applyGuideChrome(): void {
     this.title = DATABASE_COMPARE_GUIDE_TITLE;
     this.description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
+    this.bookmarkSource = null;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -922,6 +1104,7 @@ export class DatabaseCompareComponent
   private applyComparisonChrome(title?: string, description?: string): void {
     this.title = title || DATABASE_COMPARISON_TITLE;
     this.description = description || DATABASE_COMPARE_GUIDE_DESCRIPTION;
+    this.bookmarkSource = null;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -961,6 +1144,160 @@ export class DatabaseCompareComponent
     }
 
     this.breadcrumbs = this.baseCompareBreadcrumbs();
+  }
+
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  exactSavedComparison() {
+    const specialId = this.route.snapshot.paramMap.get("id");
+    return this.compareCollections.savedComparisonByUrls(
+      this.buildCanonicalCompareUrl(),
+      specialId ? `/databases/compare/${specialId}` : null,
+    );
+  }
+
+  activeSavedComparison() {
+    return this.exactSavedComparison();
+  }
+
+  canSaveComparison(): boolean {
+    return this.isAuthenticated() && this.instances.length >= 2;
+  }
+
+  openSaveComparisonModal(): void {
+    if (!this.isAuthenticated()) {
+      this.collectionsUi.promptRegisterForFeature({
+        type: "open-save",
+        target: "compare-databases",
+      });
+      return;
+    }
+
+    const exact = this.exactSavedComparison();
+    const draft = exact ?? this.bookmarkSource;
+    this.editingComparisonId.set(exact?.id ?? null);
+    this.saveComparisonModal()?.open(draft?.name ?? "", draft?.note ?? "");
+  }
+
+  isSaveComparisonPending(): boolean {
+    const editingId = this.editingComparisonId();
+    if (editingId) {
+      return this.compareCollections.isUpdatingComparison(editingId);
+    }
+
+    const saved = this.activeSavedComparison();
+    const id = this.compareCollections.buildComparisonId(
+      this.getCompareInstancesForSave(),
+      this.buildCanonicalCompareUrl(),
+    );
+
+    if (saved) {
+      return this.compareCollections.isUpdatingComparison(saved.id);
+    }
+
+    return this.compareCollections.isSavingComparison(id);
+  }
+
+  confirmSaveComparison(payload: { name: string; note?: string }): void {
+    this.syncCompareUrlState();
+    const instances = this.getCompareInstancesForSave();
+    const compareUrl = this.buildCanonicalCompareUrl();
+    const editingId = this.editingComparisonId();
+    this.pendingSaveComparisonClose.set(true);
+
+    if (editingId) {
+      this.compareCollections.updateComparison(
+        editingId,
+        instances,
+        payload.name,
+        payload.note,
+        compareUrl,
+      );
+      return;
+    }
+
+    this.compareCollections.saveComparison(
+      this.compareCollections.buildComparisonId(instances, compareUrl),
+      instances,
+      payload.name,
+      payload.note,
+      compareUrl,
+    );
+  }
+
+  deleteSavedComparison(): void {
+    const saved = this.exactSavedComparison();
+    if (!saved) {
+      return;
+    }
+
+    this.compareCollections.deleteComparison(saved.id);
+    this.bookmarkSource = null;
+    this.applyComparisonChrome();
+    this.updateCompareBreadcrumb(this.instances.length);
+  }
+
+  toggleSavedComparison(): void {
+    if (this.exactSavedComparison()) {
+      this.deleteSavedComparison();
+      return;
+    }
+
+    this.openSaveComparisonModal();
+  }
+
+  isDeleteComparisonPending(): boolean {
+    const saved = this.exactSavedComparison();
+    return !!saved && this.compareCollections.isDeletingComparison(saved.id);
+  }
+
+  private getCompareInstancesForSave(): DatabaseCompare[] {
+    return this.instances.map((instance) => ({
+      display_name: instance.display_name,
+      vendor: instance.vendor,
+      database: instance.database,
+    }));
+  }
+
+  private syncSavedComparisonChrome(): void {
+    const exact = this.exactSavedComparison();
+    if (exact) {
+      this.bookmarkSource = exact;
+    } else if (!this.instances.length) {
+      this.bookmarkSource = null;
+    }
+
+    if (exact && this.instances.length) {
+      this.title = exact.name;
+      this.description = exact.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
+      this.breadcrumbs = [
+        ...this.baseCompareBreadcrumbs(),
+        { name: exact.name, url: exact.compare_url },
+      ];
+      this.seoHandler.updateTitleAndMetaTags(
+        this.title,
+        this.description,
+        this.keywords,
+      );
+      return;
+    }
+
+    if (this.route.snapshot.paramMap.get("id")) {
+      return;
+    }
+
+    if (this.instances.length) {
+      this.title = DATABASE_COMPARISON_TITLE;
+      this.description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
+      this.updateCompareBreadcrumb(this.instances.length);
+      this.seoHandler.updateTitleAndMetaTags(
+        this.title,
+        this.description,
+        this.keywords,
+      );
+    }
   }
 
   private buildPropertySections(): void {

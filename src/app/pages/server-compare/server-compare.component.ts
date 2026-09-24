@@ -9,8 +9,10 @@ import {
   viewChild,
   OnDestroy,
   DOCUMENT,
+  effect,
   inject,
   signal,
+  untracked,
 } from "@angular/core";
 import {
   INITIAL_SCROLLBAR_MIRROR_STATE,
@@ -19,7 +21,7 @@ import {
 } from "../shared/compare-table/scrollbar-mirror.controller";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -45,7 +47,7 @@ import { Allocation } from "../../../../sdk/data-contracts";
 import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PrismService } from "../../services/prism.service";
-import { Subscription } from "rxjs";
+import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
 import serverComparesData from "./server-compares.js";
 import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
 import {
@@ -68,6 +70,12 @@ import {
   type MemoryBenchmarkConfig,
   type MemoryBenchmarkMeta,
 } from "../../components/charts/memory/memory-chart.types";
+import { CompareCollectionsService } from "../../collections/compare-collections.service";
+import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { AuthStateService } from "../../core/auth";
+import type { SavedComparisonItem } from "../../collections/collections.types";
+import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -124,6 +132,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     EmbedComparePreviewComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    CollectionSaveModalComponent,
   ],
   templateUrl: "./server-compare.component.html",
   styleUrl: "./server-compare.component.scss",
@@ -144,6 +153,10 @@ export class ServerCompareComponent
   private router = inject(Router);
   private toastService = inject(ToastService);
   private tooltipService = inject(ChartTooltipService);
+  private compareCollections = inject(CompareCollectionsService);
+  private auth = inject(AuthStateService);
+  private collectionsUi = inject(CollectionsUiService);
+  saveComparisonModal = viewChild(CollectionSaveModalComponent);
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
@@ -155,7 +168,7 @@ export class ServerCompareComponent
     { name: SERVER_COMPARE_BREADCRUMB, url: "/servers/compare" },
   ];
 
-  isLoading = false;
+  isLoading = true;
 
   servers: ExtendedServerDetails[] = [];
 
@@ -196,6 +209,7 @@ export class ServerCompareComponent
 
   private lastEncodedCompareQuery: string | null = null;
   private compareLoadId = 0;
+  private compareDataReady = false;
 
   benchmarkCategories: any[] = [
     {
@@ -355,6 +369,7 @@ export class ServerCompareComponent
 
   title = SERVER_COMPARE_GUIDE_TITLE;
   description = SERVER_COMPARE_GUIDE_DESCRIPTION;
+  private bookmarkSource: SavedComparisonItem | null = null;
   keywords =
     "compare, servers, server, hosting, cloud, vps, dedicated, comparison";
 
@@ -384,6 +399,67 @@ export class ServerCompareComponent
 
   private subscription = new Subscription();
   private checkExistInterval: ReturnType<typeof setInterval> | null = null;
+  private readonly pendingSaveComparisonClose = signal(false);
+  private readonly editingComparisonId = signal<string | null>(null);
+
+  constructor() {
+    effect(() => {
+      this.compareCollections.store.savedComparisons();
+      this.compareCollections.store.requestStatus();
+      if (this.compareDataReady && this.isLoading) {
+        this.finishCompareLoadIfReady();
+        return;
+      }
+      if (!this.isLoading) {
+        this.syncSavedComparisonChrome();
+      }
+    });
+
+    effect(() => {
+      if (!this.isAuthenticated()) {
+        return;
+      }
+      const modal = this.saveComparisonModal();
+      if (!modal) {
+        return;
+      }
+      if (!this.collectionsUi.takePendingOpenSave("compare-servers")) {
+        return;
+      }
+      untracked(() => this.openSaveComparisonModal());
+    });
+
+    effect(() => {
+      if (!this.pendingSaveComparisonClose()) {
+        return;
+      }
+
+      this.compareCollections.store.savedComparisons();
+      const editingId = this.editingComparisonId();
+      const saved = this.activeSavedComparison();
+      const id =
+        editingId ??
+        this.compareCollections.buildComparisonId(
+          this.getCompareInstancesForSave(),
+          this.buildCanonicalCompareUrl(),
+        );
+      const saving = this.compareCollections.isSavingComparison(id);
+      const updating = editingId
+        ? this.compareCollections.isUpdatingComparison(editingId)
+        : saved
+          ? this.compareCollections.isUpdatingComparison(saved.id)
+          : false;
+
+      if (saving || updating) {
+        return;
+      }
+
+      this.pendingSaveComparisonClose.set(false);
+      if (editingId || saved) {
+        this.saveComparisonModal()?.close();
+      }
+    });
+  }
 
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
@@ -393,23 +469,14 @@ export class ServerCompareComponent
     );
 
     this.subscription.add(
-      this.route.queryParams.subscribe((params) => {
-        const encodedQuery = encodeQueryParams(
-          this.compareUrlParamsFromRoute(params),
-        );
-
-        if (encodedQuery === this.lastEncodedCompareQuery) {
-          return;
-        }
-
-        this.setup();
-      }),
-    );
-
-    this.subscription.add(
-      this.route.params.subscribe(() => {
-        this.setup();
-      }),
+      merge(this.route.paramMap, this.route.queryParamMap)
+        .pipe(
+          map(() => this.compareRouteKey()),
+          distinctUntilChanged(),
+        )
+        .subscribe(() => {
+          this.setup();
+        }),
     );
 
     this.subscription.add(
@@ -443,7 +510,20 @@ export class ServerCompareComponent
 
     this.instances = [];
     this.instancesRaw = "";
+    this.servers = [];
+    this.selectedBaselineServer = null;
+    this.benchmarkMeta = [];
+    this.compareDataReady = false;
+    this.benchmarkCategories.forEach((category) => {
+      category.data = [];
+    });
     this.stickyLayout.reset();
+    this.restoreCurrencyFromUrl();
+
+    if (id || param) {
+      this.isLoading = true;
+      this.breadcrumbs = this.baseCompareBreadcrumbs();
+    }
 
     if (id) {
       const serverCompare = this.serverCompares.find((x: any) => x.id === id);
@@ -451,14 +531,10 @@ export class ServerCompareComponent
         this.instances = serverCompare.instances;
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
-        this.applyComparisonChrome(
-          serverCompare.title,
-          serverCompare.description,
-        );
-        this.setPremadeCompareBreadcrumb(serverCompare.title, serverCompare.id);
       } else {
         this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
+        this.isLoading = false;
       }
     } else if (param) {
       const decodedInstances = decodeBase64JsonUrlState(
@@ -485,15 +561,14 @@ export class ServerCompareComponent
       this.instancesRaw = this.instances.length > 0 ? param : "";
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
 
-      if (this.instances?.length) {
-        this.applyComparisonChrome();
-        this.updateCompareBreadcrumb(this.instances.length);
-      } else {
+      if (!this.instances?.length) {
         this.applyGuideChrome();
+        this.isLoading = false;
       }
     } else {
       this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
       this.applyGuideChrome();
+      this.isLoading = false;
     }
 
     if (this.instances?.length > 0) {
@@ -752,9 +827,25 @@ export class ServerCompareComponent
             return;
           }
 
-          this.isLoading = false;
           this.restoreBaselineFromUrl();
-          this.stickyLayout.scheduleDeferredUpdate();
+          const specialId = this.route.snapshot.paramMap.get("id");
+          if (specialId && !this.exactSavedComparison()) {
+            const serverCompare = this.serverCompares.find(
+              (x: any) => x.id === specialId,
+            );
+            if (serverCompare) {
+              this.applyComparisonChrome(
+                serverCompare.title,
+                serverCompare.description,
+              );
+              this.setPremadeCompareBreadcrumb(
+                serverCompare.title,
+                serverCompare.id,
+              );
+            }
+          }
+          this.compareDataReady = true;
+          this.finishCompareLoadIfReady();
         });
     } else {
       this.isLoading = false;
@@ -927,6 +1018,7 @@ export class ServerCompareComponent
 
   selectCurrency(currency: any) {
     this.selectedCurrency = currency;
+    this.syncCompareUrlState();
 
     let promises: Promise<any>[] = [];
     this.servers?.forEach((instance: any) => {
@@ -1005,13 +1097,66 @@ export class ServerCompareComponent
       params.baseline_server = this.selectedBaselineServer.api_reference;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      params.currency = this.selectedCurrency.slug;
+    }
+
     return params;
   }
 
+  private restoreCurrencyFromUrl(): void {
+    const currencySlug = isPlatformBrowser(this.platformId)
+      ? new URLSearchParams(window.location.search).get("currency")
+      : this.route.snapshot.queryParams["currency"];
+
+    this.selectedCurrency =
+      this.availableCurrencies.find(
+        (currency) => currency.slug === currencySlug,
+      ) || this.availableCurrencies[0];
+  }
+
+  private compareRouteKey(): string {
+    const snapshot = this.route.snapshot;
+    return [
+      snapshot.paramMap.get("id") ?? "",
+      snapshot.queryParams["instances"] ?? "",
+      snapshot.queryParams["currency"] ?? "",
+      snapshot.queryParams["baseline_vendor"] ?? "",
+      snapshot.queryParams["baseline_server"] ?? "",
+    ].join("|");
+  }
+
+  private collectionsReadyForChrome(): boolean {
+    if (!isPlatformBrowser(this.platformId) || !this.auth.isAuthenticated()) {
+      return true;
+    }
+
+    return (
+      this.compareCollections.store.isLoaded() ||
+      !!this.compareCollections.store.error()
+    );
+  }
+
+  private finishCompareLoadIfReady(): void {
+    if (!this.compareDataReady || !this.collectionsReadyForChrome()) {
+      return;
+    }
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.syncSavedComparisonChrome();
+    this.isLoading = false;
+    this.stickyLayout.scheduleDeferredUpdate();
+  }
+
   private restoreBaselineFromUrl(): void {
-    const baselineVendor = this.route.snapshot.queryParams["baseline_vendor"];
-    const baselineServerRef =
-      this.route.snapshot.queryParams["baseline_server"];
+    const params = isPlatformBrowser(this.platformId)
+      ? Object.fromEntries(new URLSearchParams(window.location.search))
+      : this.route.snapshot.queryParams;
+    const baselineVendor = params["baseline_vendor"];
+    const baselineServerRef = params["baseline_server"];
 
     if (baselineVendor && baselineServerRef && this.servers.length) {
       this.selectedBaselineServer =
@@ -1028,6 +1173,7 @@ export class ServerCompareComponent
     this.lastEncodedCompareQuery = encodeQueryParams(
       this.getCompareUrlQueryParams(),
     );
+    this.syncSavedComparisonChrome();
   }
 
   private syncBaselineToCompareService(): void {
@@ -1087,6 +1233,7 @@ export class ServerCompareComponent
       });
       this.selectedBaselineServer = null;
       this.updateCompareBreadcrumb(0);
+      this.syncSavedComparisonChrome();
       if (this.route.snapshot.paramMap.get("id")) {
         this.serverCompare.syncCompareRoute();
       } else {
@@ -1136,7 +1283,7 @@ export class ServerCompareComponent
       zonesRegions: item.zonesRegions ? [...item.zonesRegions] : [],
     }));
     this.instancesRaw = btoa(JSON.stringify(this.instances));
-    this.updateCompareBreadcrumb(this.servers.length);
+    this.syncSavedComparisonChrome();
 
     if (
       this.selectedBaselineServer &&
@@ -1210,6 +1357,7 @@ export class ServerCompareComponent
   private applyGuideChrome(): void {
     this.title = SERVER_COMPARE_GUIDE_TITLE;
     this.description = SERVER_COMPARE_GUIDE_DESCRIPTION;
+    this.bookmarkSource = null;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -1221,6 +1369,7 @@ export class ServerCompareComponent
   private applyComparisonChrome(title?: string, description?: string): void {
     this.title = title || SERVER_COMPARISON_TITLE;
     this.description = description || SERVER_COMPARE_GUIDE_DESCRIPTION;
+    this.bookmarkSource = null;
     this.breadcrumbs = this.baseCompareBreadcrumbs();
     this.seoHandler.updateTitleAndMetaTags(
       this.title,
@@ -1244,40 +1393,176 @@ export class ServerCompareComponent
     ];
   }
 
-  private updateCompareBreadcrumb(serverCount: number): void {
-    if (serverCount > 0) {
+  private syncSavedComparisonChrome(): void {
+    const exact = this.exactSavedComparison();
+    if (exact) {
+      this.bookmarkSource = exact;
+    } else if (!this.instances.length) {
+      this.bookmarkSource = null;
+    }
+
+    if (exact && this.instances.length) {
+      this.title = exact.name;
+      this.description = exact.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
+      this.breadcrumbs = [
+        ...this.baseCompareBreadcrumbs(),
+        { name: exact.name, url: exact.compare_url },
+      ];
+      this.seoHandler.updateTitleAndMetaTags(
+        `${exact.name} - Spare Cores`,
+        this.description,
+        this.keywords,
+      );
+      return;
+    }
+
+    if (this.route.snapshot.paramMap.get("id")) {
+      return;
+    }
+
+    if (this.instances.length) {
+      this.title = SERVER_COMPARISON_TITLE;
+      this.description = SERVER_COMPARE_GUIDE_DESCRIPTION;
       this.breadcrumbs = [
         ...this.baseCompareBreadcrumbs(),
         {
-          name: `${SERVER_CUSTOM_COMPARISON_BREADCRUMB} (${serverCount})`,
+          name: `${SERVER_CUSTOM_COMPARISON_BREADCRUMB} (${this.instances.length})`,
           url: `/servers/compare`,
           queryParams: this.instancesRaw
             ? { instances: this.instancesRaw }
             : undefined,
         },
       ];
+      this.seoHandler.updateTitleAndMetaTags(
+        `${this.title} - Spare Cores`,
+        this.description,
+        this.keywords,
+      );
       return;
     }
 
-    this.breadcrumbs = this.baseCompareBreadcrumbs();
+    this.applyGuideChrome();
   }
 
-  private compareUrlParamsFromRoute(params: Params): Record<string, string> {
-    const queryParams: Record<string, string> = {};
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
 
-    if (params["instances"]) {
-      queryParams.instances = String(params["instances"]);
+  exactSavedComparison() {
+    const specialId = this.route.snapshot.paramMap.get("id");
+    return this.compareCollections.savedComparisonByUrls(
+      this.buildCanonicalCompareUrl(),
+      specialId ? `/servers/compare/${specialId}` : null,
+    );
+  }
+
+  activeSavedComparison() {
+    return this.exactSavedComparison();
+  }
+
+  canSaveComparison(): boolean {
+    return this.isAuthenticated() && this.instances.length >= 2;
+  }
+
+  openSaveComparisonModal(): void {
+    if (!this.isAuthenticated()) {
+      this.collectionsUi.promptRegisterForFeature({
+        type: "open-save",
+        target: "compare-servers",
+      });
+      return;
     }
 
-    if (params["baseline_vendor"]) {
-      queryParams.baseline_vendor = String(params["baseline_vendor"]);
+    const exact = this.exactSavedComparison();
+    const draft = exact ?? this.bookmarkSource;
+    this.editingComparisonId.set(exact?.id ?? null);
+    this.saveComparisonModal()?.open(draft?.name ?? "", draft?.note ?? "");
+  }
+
+  isSaveComparisonPending(): boolean {
+    const editingId = this.editingComparisonId();
+    if (editingId) {
+      return this.compareCollections.isUpdatingComparison(editingId);
     }
 
-    if (params["baseline_server"]) {
-      queryParams.baseline_server = String(params["baseline_server"]);
+    const saved = this.activeSavedComparison();
+    const id = this.compareCollections.buildComparisonId(
+      this.getCompareInstancesForSave(),
+      this.buildCanonicalCompareUrl(),
+    );
+
+    if (saved) {
+      return this.compareCollections.isUpdatingComparison(saved.id);
     }
 
-    return queryParams;
+    return this.compareCollections.isSavingComparison(id);
+  }
+
+  confirmSaveComparison(payload: { name: string; note?: string }): void {
+    this.syncCompareUrlState();
+    const instances = this.getCompareInstancesForSave();
+    const compareUrl = this.buildCanonicalCompareUrl();
+    const editingId = this.editingComparisonId();
+    this.pendingSaveComparisonClose.set(true);
+
+    if (editingId) {
+      this.compareCollections.updateComparison(
+        editingId,
+        instances,
+        payload.name,
+        payload.note,
+        compareUrl,
+      );
+      return;
+    }
+
+    this.compareCollections.saveComparison(
+      this.compareCollections.buildComparisonId(instances, compareUrl),
+      instances,
+      payload.name,
+      payload.note,
+      compareUrl,
+    );
+  }
+
+  deleteSavedComparison(): void {
+    const saved = this.exactSavedComparison();
+    if (!saved) {
+      return;
+    }
+
+    this.compareCollections.deleteComparison(saved.id);
+    this.bookmarkSource = null;
+  }
+
+  toggleSavedComparison(): void {
+    if (this.exactSavedComparison()) {
+      this.deleteSavedComparison();
+      return;
+    }
+
+    this.openSaveComparisonModal();
+  }
+
+  isDeleteComparisonPending(): boolean {
+    const saved = this.exactSavedComparison();
+    return !!saved && this.compareCollections.isDeletingComparison(saved.id);
+  }
+
+  private getCompareInstancesForSave(): ServerCompare[] {
+    return this.instances.map((instance) => ({
+      display_name: instance.display_name,
+      vendor: instance.vendor,
+      server: instance.server,
+      zonesRegions: instance.zonesRegions ?? [],
+    }));
+  }
+
+  private buildCanonicalCompareUrl(): string {
+    const encodedQuery = encodeQueryParams(this.getCompareUrlQueryParams());
+    return encodedQuery
+      ? `/servers/compare?${encodedQuery}`
+      : "/servers/compare";
   }
 
   private syncCompareUrlState(): void {
@@ -1287,6 +1572,16 @@ export class ServerCompareComponent
 
     const queryParams = this.getCompareUrlQueryParams();
     const encodedQuery = encodeQueryParams(queryParams);
+    const canonicalUrl = encodedQuery
+      ? `/servers/compare?${encodedQuery}`
+      : "/servers/compare";
+
+    if (this.route.snapshot.paramMap.get("id")) {
+      this.lastEncodedCompareQuery = encodedQuery;
+      void this.router.navigateByUrl(canonicalUrl, { replaceUrl: true });
+      this.syncSavedComparisonChrome();
+      return;
+    }
 
     if (encodedQuery === this.lastEncodedCompareQuery) {
       return;
@@ -1298,6 +1593,7 @@ export class ServerCompareComponent
       history: "push",
       preserveFragment: true,
     });
+    this.syncSavedComparisonChrome();
   }
 
   onMirrorScroll(event: Event) {

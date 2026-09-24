@@ -3,6 +3,14 @@ sc-database-details {
     min-height: 75vh;
   }
 
+  #database_base_info_box {
+    .bookmark-button,
+    .bookmark-button__icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
   sc-benchmark-line-chart {
     display: contents;
   }
