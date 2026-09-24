@@ -475,6 +475,9 @@ export class ServerCompareComponent
           distinctUntilChanged(),
         )
         .subscribe(() => {
+          if (this.isOwnCompareUrlWrite()) {
+            return;
+          }
           this.setup();
         }),
     );
@@ -1124,6 +1127,22 @@ export class ServerCompareComponent
       snapshot.queryParams["baseline_vendor"] ?? "",
       snapshot.queryParams["baseline_server"] ?? "",
     ].join("|");
+  }
+
+  private isOwnCompareUrlWrite(): boolean {
+    const snapshot = this.route.snapshot;
+    if (!this.compareDataReady || snapshot.paramMap.get("id")) {
+      return false;
+    }
+    const q = snapshot.queryParams;
+    return (
+      encodeQueryParams({
+        instances: q["instances"],
+        baseline_vendor: q["baseline_vendor"],
+        baseline_server: q["baseline_server"],
+        currency: q["currency"],
+      }) === this.lastEncodedCompareQuery
+    );
   }
 
   private collectionsReadyForChrome(): boolean {
