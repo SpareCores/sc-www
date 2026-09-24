@@ -59,7 +59,8 @@ export class AuthStateService implements GithubAuthHost {
   private navigatingAfterAuth = false;
   private boundHost = false;
   private boundListener = false;
-  private signingOut = false;
+  private accountDeleted = false;
+  private signedOutIdentityCleared = false;
 
   private readonly _user = signal<UserResource | null>(null);
   readonly user = this._user.asReadonly();
@@ -723,14 +724,12 @@ export class AuthStateService implements GithubAuthHost {
   async signOut(): Promise<void> {
     this.closeSignIn();
     this.closeSignUp();
-    this.signingOut = true;
     try {
       await this.clerk.signOut();
     } finally {
       this.clearAuthPending();
       this.navigatingAfterAuth = false;
       this.setUser(null);
-      this.signingOut = false;
     }
   }
 
@@ -747,19 +746,49 @@ export class AuthStateService implements GithubAuthHost {
     this._user.set(user);
 
     if (user) {
+      this.watchAccountDeletion(user);
       this.identifyAnalyticsUser(user);
       return;
     }
 
+    const accountDeleted = this.accountDeleted;
+    this.accountDeleted = false;
+
     if (!previousUser) {
+      if (
+        isPlatformBrowser(this.platformId) &&
+        !this.signedOutIdentityCleared
+      ) {
+        this.signedOutIdentityCleared = true;
+        this.analytics.reset();
+      }
       return;
     }
 
-    if (!this.signingOut) {
+    if (accountDeleted) {
       this.analytics.trackEvent("auth account deleted", {});
     }
     this.analytics.reset();
     this.leaveBookmarks();
+  }
+
+  private watchAccountDeletion(user: UserResource): void {
+    const target = user as UserResource & { __scDeleteWrapped?: boolean };
+    if (target.__scDeleteWrapped || typeof user.delete !== "function") {
+      return;
+    }
+
+    const originalDelete = user.delete.bind(user);
+    user.delete = async () => {
+      this.accountDeleted = true;
+      try {
+        await originalDelete();
+      } catch (error) {
+        this.accountDeleted = false;
+        throw error;
+      }
+    };
+    target.__scDeleteWrapped = true;
   }
 
   private leaveBookmarks(): void {
