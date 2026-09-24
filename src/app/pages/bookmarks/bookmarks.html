@@ -270,6 +270,7 @@
           <sc-button
             icon="square-pen"
             ariaLabel="Edit"
+            title="Edit"
             variant="outline"
             color="brand"
             (buttonClick)="openEditCard(card)"
@@ -277,6 +278,7 @@
           <sc-button
             icon="notebook-text"
             ariaLabel="View note"
+            title="View note"
             variant="outline"
             color="brand"
             [disabled]="!card.note"
@@ -286,6 +288,7 @@
           <sc-button
             icon="square-arrow-out-up-right"
             ariaLabel="Open"
+            title="Open"
             variant="outline"
             color="brand"
             (buttonClick)="openCard(card)"
@@ -294,6 +297,7 @@
           <sc-button
             icon="bookmark-off"
             ariaLabel="Delete"
+            title="Delete"
             variant="outline"
             color="danger"
             [loading]="isDeletingCard(card)"
@@ -303,6 +307,7 @@
           <sc-button
             [icon]="shareIcon(card)"
             ariaLabel="Share"
+            title="Share"
             variant="outline"
             (buttonClick)="shareCard(card)"
           ></sc-button>
