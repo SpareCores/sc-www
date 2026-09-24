@@ -818,7 +818,11 @@ export class DatabaseCompareComponent
       this.priceRows = [];
       this.baselineDatabase = null;
       this.updateCompareBreadcrumb(0);
-      this.syncCompareUrlState();
+      if (this.route.snapshot.paramMap.get("id")) {
+        this.serverCompare.syncDatabaseCompareRoute();
+      } else {
+        this.syncCompareUrlState();
+      }
       return;
     }
 
@@ -876,7 +880,9 @@ export class DatabaseCompareComponent
     this.buildPropertySections();
     this.buildPriceRows();
     this.refreshLineCompareServers();
-    this.syncCompareUrlState();
+    if (!this.route.snapshot.paramMap.get("id")) {
+      this.syncCompareUrlState();
+    }
     this.refreshCompareTableLayout();
   }
 

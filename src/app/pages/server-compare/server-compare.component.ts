@@ -1087,7 +1087,11 @@ export class ServerCompareComponent
       });
       this.selectedBaselineServer = null;
       this.updateCompareBreadcrumb(0);
-      this.syncCompareUrlState();
+      if (this.route.snapshot.paramMap.get("id")) {
+        this.serverCompare.syncCompareRoute();
+      } else {
+        this.syncCompareUrlState();
+      }
       return;
     }
 
@@ -1143,7 +1147,9 @@ export class ServerCompareComponent
       this.selectedBaselineServer = null;
     }
 
-    this.syncCompareUrlState();
+    if (!this.route.snapshot.paramMap.get("id")) {
+      this.syncCompareUrlState();
+    }
     this.onCompareTableLayoutChange();
   }
 
