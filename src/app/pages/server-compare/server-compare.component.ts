@@ -1232,7 +1232,6 @@ export class ServerCompareComponent
         category.data = [];
       });
       this.selectedBaselineServer = null;
-      this.updateCompareBreadcrumb(0);
       this.syncSavedComparisonChrome();
       if (this.route.snapshot.paramMap.get("id")) {
         this.serverCompare.syncCompareRoute();
