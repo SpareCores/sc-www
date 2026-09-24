@@ -9,7 +9,7 @@ export const authGuard: CanActivateFn = async () => {
   const platformId = inject(PLATFORM_ID);
 
   if (!isPlatformBrowser(platformId)) {
-    return router.createUrlTree(["/"]);
+    return true;
   }
 
   await auth.init();
@@ -19,13 +19,11 @@ export const authGuard: CanActivateFn = async () => {
     return true;
   }
 
-  if (auth.isAuthPending() || auth.authInProgress()) {
-    auth.startAuthPending();
-    if (await auth.waitForSignedIn(20000)) {
-      return true;
-    }
-    auth.clearAuthPending();
-    return router.createUrlTree(["/"]);
+  if (
+    (auth.isAuthPending() || auth.authInProgress()) &&
+    (await auth.waitForSignedIn(20000))
+  ) {
+    return true;
   }
 
   return router.createUrlTree(["/"]);
