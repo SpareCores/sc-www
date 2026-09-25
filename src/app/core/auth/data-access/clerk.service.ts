@@ -69,88 +69,22 @@ export class ClerkService {
     await this.clerk?.signOut(() => undefined);
   }
 
-  openUserProfile(onDeleteAccount?: () => Promise<void>): void {
+  openUserProfile(): void {
     const user = this.clerk?.user;
     const hidePasswordSection =
       !!user &&
       !user.passwordEnabled &&
       !!user.externalAccounts?.some((account) => account.provider === "github");
 
-    const elements: Record<string, { display: string }> = {
-      profileSection__danger: { display: "none" },
-    };
+    const elements: Record<string, { display: string }> = {};
     if (hidePasswordSection) {
       elements["profileSection__password"] = { display: "none" };
     }
 
     this.clerk?.openUserProfile({
       apiKeysProps: { hide: true },
-      appearance: { elements },
-      customPages: onDeleteAccount
-        ? [this.createDeleteAccountPage(onDeleteAccount)]
-        : undefined,
+      appearance: Object.keys(elements).length ? { elements } : undefined,
     });
-  }
-
-  private createDeleteAccountPage(onDeleteAccount: () => Promise<void>) {
-    return {
-      label: "Delete account",
-      url: "delete-account",
-      mount: (el: HTMLDivElement) => {
-        el.replaceChildren();
-
-        const title = document.createElement("h1");
-        title.textContent = "Delete account";
-        title.style.cssText =
-          "margin:0 0 0.5rem;font-size:1.125rem;font-weight:600;color:#fff";
-
-        const description = document.createElement("p");
-        description.textContent =
-          "Permanently delete your account and all associated data. This cannot be undone.";
-        description.style.cssText =
-          "margin:0 0 1rem;font-size:0.875rem;color:#9ca3af;line-height:1.4";
-
-        const error = document.createElement("p");
-        error.style.cssText =
-          "display:none;margin:0 0 0.75rem;font-size:0.875rem;color:#EF4444";
-
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = "Delete account";
-        button.style.cssText =
-          "appearance:none;border:0;border-radius:0.5rem;padding:0.5rem 1rem;background:#EF4444;color:#fff;font-size:0.875rem;font-weight:500;cursor:pointer";
-
-        button.addEventListener("click", () => {
-          if (
-            !window.confirm(
-              "Delete your account permanently? This cannot be undone.",
-            )
-          ) {
-            return;
-          }
-
-          error.style.display = "none";
-          error.textContent = "";
-          button.disabled = true;
-          button.textContent = "Deleting…";
-
-          void onDeleteAccount().catch((err: unknown) => {
-            error.textContent =
-              err instanceof Error
-                ? err.message
-                : "Unable to delete account. Please try again.";
-            error.style.display = "block";
-            button.disabled = false;
-            button.textContent = "Delete account";
-          });
-        });
-
-        el.append(title, description, error, button);
-      },
-      unmount: (el?: HTMLDivElement) => {
-        el?.replaceChildren();
-      },
-    };
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -178,19 +112,22 @@ export class ClerkService {
     transferable: boolean;
     origin: string;
   }): Promise<void> {
-    await this.clerk?.handleRedirectCallback({
-      signInUrl: options.origin,
-      signUpUrl: options.origin,
-      continueSignUpUrl: options.origin,
-      firstFactorUrl: options.origin,
-      secondFactorUrl: options.origin,
-      resetPasswordUrl: options.origin,
-      signInProtectCheckUrl: options.origin,
-      signUpProtectCheckUrl: options.origin,
-      signInFallbackRedirectUrl: options.origin,
-      signUpFallbackRedirectUrl: options.origin,
-      transferable: options.transferable,
-    });
+    await this.clerk?.handleRedirectCallback(
+      {
+        signInUrl: options.origin,
+        signUpUrl: options.origin,
+        continueSignUpUrl: options.origin,
+        firstFactorUrl: options.origin,
+        secondFactorUrl: options.origin,
+        resetPasswordUrl: options.origin,
+        signInProtectCheckUrl: options.origin,
+        signUpProtectCheckUrl: options.origin,
+        signInFallbackRedirectUrl: options.origin,
+        signUpFallbackRedirectUrl: options.origin,
+        transferable: options.transferable,
+      },
+      async () => undefined,
+    );
   }
 
   async reloadClient(): Promise<void> {

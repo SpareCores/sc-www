@@ -68,6 +68,14 @@ export class RegisterModal {
         this.step = "consent";
         this.errorMessage = "";
         this.infoMessage = "";
+        return;
+      }
+
+      if (this.step === "consent" && this.method === "github") {
+        this.step = "details";
+        this.method = "email";
+        this.errorMessage = "";
+        this.infoMessage = "";
       }
     });
   }
@@ -254,10 +262,24 @@ export class RegisterModal {
       this.auth.githubConsentActive() ? this.legalAccepted : false,
     );
 
+    if (
+      result.status === "complete" &&
+      this.method === "github" &&
+      !this.auth.githubConsentActive() &&
+      !this.auth.isAuthenticated()
+    ) {
+      return;
+    }
+
     this.busy = null;
 
     if (result.status === "error") {
       this.errorMessage = result.message;
+      if (!this.auth.githubConsentActive()) {
+        this.step = "details";
+        this.method = "email";
+        this.errorMessage = "";
+      }
     }
   }
 

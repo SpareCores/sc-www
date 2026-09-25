@@ -59,14 +59,23 @@ export class AuthCallback implements OnInit {
       await this.auth.handleRedirectCallback({
         transferable: !fromGithubSignIn,
       });
-      if (this.auth.isAuthenticated()) {
+      const outcome = this.auth.resolveGithubCallbackOutcome();
+      if (outcome === "consent") {
+        await this.finish("consent");
+        return;
+      }
+      if (this.auth.isAuthenticated() || outcome === "authenticated") {
         await this.finish("authenticated");
         return;
       }
-      const outcome = this.auth.resolveGithubCallbackOutcome();
       await this.finish(outcome);
     } catch {
-      if (this.auth.isAuthenticated()) {
+      const outcome = this.auth.resolveGithubCallbackOutcome();
+      if (this.auth.needsGithubConsent() || outcome === "consent") {
+        await this.finish("consent");
+        return;
+      }
+      if (this.auth.isAuthenticated() || outcome === "authenticated") {
         await this.finish("authenticated");
         return;
       }
@@ -84,9 +93,8 @@ export class AuthCallback implements OnInit {
     }
 
     if (outcome === "consent") {
-      this.auth.clearAuthPending();
-      this.auth.openGithubConsentSignUp();
       await this.auth.leaveAuthCallback();
+      this.auth.openGithubConsentSignUp();
       return;
     }
 

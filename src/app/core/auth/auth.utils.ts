@@ -276,13 +276,6 @@ export function newsletterMetadata(
   };
 }
 
-export function prefersGithubRedirect(): boolean {
-  return (
-    window.matchMedia("(max-width: 768px)").matches ||
-    window.matchMedia("(pointer: coarse)").matches
-  );
-}
-
 export function openAuthPopup(name: string): Window {
   const width = AUTH_POPUP_WIDTH;
   const height = AUTH_POPUP_HEIGHT;
