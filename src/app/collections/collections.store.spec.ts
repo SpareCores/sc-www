@@ -2,6 +2,7 @@ import { signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { of, throwError } from "rxjs";
 import { AuthStateService } from "../core/auth";
+import { AnalyticsService } from "../services/analytics.service";
 import { CollectionsService } from "./collections.service";
 import { CollectionsStore } from "./collections.store";
 import { favoriteServerId } from "./collections.types";
@@ -14,6 +15,11 @@ describe("CollectionsStore", () => {
   let listSavedSearches: jasmine.Spy;
   let listSavedComparisons: jasmine.Spy;
   let listSavedAdvices: jasmine.Spy;
+  let addFavoriteServer: jasmine.Spy;
+  let deleteFavoriteServer: jasmine.Spy;
+  let saveSearch: jasmine.Spy;
+  let deleteSavedSearch: jasmine.Spy;
+  let trackEvent: jasmine.Spy;
 
   beforeEach(() => {
     isAuthenticated = signal(false);
@@ -41,6 +47,29 @@ describe("CollectionsStore", () => {
     listSavedAdvices = jasmine
       .createSpy("listSavedAdvices")
       .and.returnValue(of([]));
+    addFavoriteServer = jasmine
+      .createSpy("addFavoriteServer")
+      .and.callFake(
+        (vendorId: string, serverId: string, body: Record<string, unknown>) =>
+          of({
+            id: favoriteServerId(vendorId, serverId),
+            vendor_id: vendorId,
+            server_id: serverId,
+            ...body,
+          }),
+      );
+    deleteFavoriteServer = jasmine
+      .createSpy("deleteFavoriteServer")
+      .and.returnValue(of(undefined));
+    saveSearch = jasmine
+      .createSpy("saveSearch")
+      .and.callFake((id: string, body: Record<string, unknown>) =>
+        of({ id, ...body }),
+      );
+    deleteSavedSearch = jasmine
+      .createSpy("deleteSavedSearch")
+      .and.returnValue(of(undefined));
+    trackEvent = jasmine.createSpy("trackEvent");
 
     TestBed.configureTestingModule({
       providers: [
@@ -54,6 +83,10 @@ describe("CollectionsStore", () => {
           },
         },
         {
+          provide: AnalyticsService,
+          useValue: { trackEvent },
+        },
+        {
           provide: CollectionsService,
           useValue: {
             listFavoriteServers,
@@ -61,6 +94,10 @@ describe("CollectionsStore", () => {
             listSavedSearches,
             listSavedComparisons,
             listSavedAdvices,
+            addFavoriteServer,
+            deleteFavoriteServer,
+            saveSearch,
+            deleteSavedSearch,
           },
         },
       ],
@@ -133,5 +170,59 @@ describe("CollectionsStore", () => {
 
     expect(store.isLoaded()).toBeFalse();
     expect(store.error()).toBe("network down");
+  });
+
+  it("tracks bookmark saved for a favorite server", async () => {
+    store.toggleFavoriteServer({ vendorId: "aws", serverId: "t3.nano" });
+    await Promise.resolve();
+
+    expect(trackEvent).toHaveBeenCalledWith("bookmark saved", {
+      target_url: "/server/aws/t3.nano",
+    });
+  });
+
+  it("tracks bookmark deleted for a favorite server", async () => {
+    store.loadAll();
+    await Promise.resolve();
+    trackEvent.calls.reset();
+
+    store.toggleFavoriteServer({ vendorId: "aws", serverId: "t3.nano" });
+    await Promise.resolve();
+
+    expect(trackEvent).toHaveBeenCalledWith("bookmark deleted", {
+      target_url: "/server/aws/t3.nano",
+    });
+  });
+
+  it("tracks bookmark saved for a saved search with query target_url", async () => {
+    store.saveSearch({
+      page: "servers",
+      query: { vendor_id: "foo" },
+      name: "AWS servers",
+    });
+    await Promise.resolve();
+
+    expect(trackEvent).toHaveBeenCalledWith("bookmark saved", {
+      target_url: "/servers?vendor_id=foo",
+    });
+  });
+
+  it("tracks bookmark deleted for a saved search", async () => {
+    store.saveSearch({
+      page: "servers",
+      query: { vendor_id: "foo" },
+      name: "AWS servers",
+    });
+    await Promise.resolve();
+    const savedId = store.savedSearches()[0]?.id;
+    expect(savedId).toBeTruthy();
+    trackEvent.calls.reset();
+
+    store.deleteSearch(savedId!);
+    await Promise.resolve();
+
+    expect(trackEvent).toHaveBeenCalledWith("bookmark deleted", {
+      target_url: "/servers?vendor_id=foo",
+    });
   });
 });

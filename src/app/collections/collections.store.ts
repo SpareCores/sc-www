@@ -35,6 +35,7 @@ import {
   tap,
 } from "rxjs";
 import { AuthStateService } from "../core/auth";
+import { AnalyticsService } from "../services/analytics.service";
 import {
   mutationKey,
   withMutationStatus,
@@ -80,6 +81,39 @@ import type { SearchBarQuery } from "../components/search-bar/types/search-bar.t
 type CollectionsState = {
   bookmarksFilters: BookmarksFilters;
 };
+
+function trackBookmark(
+  analytics: AnalyticsService,
+  event: "bookmark saved" | "bookmark deleted",
+  targetUrl: string,
+): void {
+  analytics.trackEvent(event, { target_url: targetUrl });
+}
+
+function favoriteServerTargetUrl(vendorId: string, serverId: string): string {
+  return `/server/${vendorId}/${serverId}`;
+}
+
+function favoriteDatabaseTargetUrl(
+  vendorId: string,
+  databaseId: string,
+): string {
+  return `/database/${vendorId}/${databaseId}`;
+}
+
+function savedSearchTargetUrl(
+  page: SavedSearchPage,
+  query: SearchBarQuery,
+): string {
+  return collectionItemHref(
+    page === "servers" ? "/servers" : "/databases",
+    query,
+  );
+}
+
+function savedAdviceTargetUrl(query: SearchBarQuery): string {
+  return collectionItemHref("/advisor", query);
+}
 
 const serversConfig = entityConfig({
   entity: type<FavoriteServerItem>(),
@@ -281,889 +315,993 @@ export const CollectionsStore = signalStore(
       return sortByOrder(cards);
     }),
   })),
-  withMethods((store, collections = inject(CollectionsService)) => ({
-    isFavoriteServer(vendorId: string, serverId: string): boolean {
-      return !!store.serversEntityMap()[favoriteServerId(vendorId, serverId)];
-    },
-    isFavoriteDatabase(vendorId: string, databaseId: string): boolean {
-      return !!store.databasesEntityMap()[
-        favoriteDatabaseId(vendorId, databaseId)
-      ];
-    },
-    savedSearchByQuery(
-      page: SavedSearchPage,
-      query: SearchBarQuery,
-    ): SavedSearchItem | null {
-      const targetKey = stableSearchQueryKey(page, query);
-      return (
-        store.searchesEntities().find((item) => {
-          return stableSearchQueryKey(item.page, item.query) === targetKey;
-        }) ?? null
-      );
-    },
-    savedComparisonByUrl(compareUrl: string): SavedComparisonItem | null {
-      return (
-        store
-          .comparisonsEntities()
-          .find((item) => item.compare_url === compareUrl) ?? null
-      );
-    },
-    savedComparisonById(id: string): SavedComparisonItem | null {
-      return store.comparisonsEntityMap()[id] ?? null;
-    },
-    savedAdviceByQuery(query: SearchBarQuery): SavedAdviceItem | null {
-      return (
-        store
-          .advicesEntities()
-          .find((item) => adviceQueriesEqual(item.query, query)) ?? null
-      );
-    },
-    savedAdviceById(id: string): SavedAdviceItem | null {
-      return store.advicesEntityMap()[id] ?? null;
-    },
-    setBookmarksFilter(key: keyof BookmarksFilters, enabled: boolean): void {
-      patchState(store, {
-        bookmarksFilters: {
-          ...store.bookmarksFilters(),
-          [key]: enabled,
-        },
-      });
-    },
-    clear(): void {
-      patchState(
-        store,
-        removeAllEntities(serversConfig),
-        removeAllEntities(databasesConfig),
-        removeAllEntities(searchesConfig),
-        removeAllEntities(comparisonsConfig),
-        removeAllEntities(advicesConfig),
-        {
-          bookmarksFilters: { ...DEFAULT_BOOKMARKS_FILTERS },
-        },
-        setIdle(),
-      );
-    },
-    removeFavoriteServerById: rxMethod<string>(
-      pipe(
-        filter((id) => !store.isMutating(mutationKey("favorite-server", id))),
-        map((id) => {
-          const previous = store.serversEntityMap()[id] ?? null;
-          store.startMutation(mutationKey("favorite-server", id));
-          if (previous) {
-            patchState(store, removeEntity(id, serversConfig));
-          }
-          return { id, previous };
-        }),
-        mergeMap(({ id, previous }) =>
-          collections.deleteFavoriteServerById(id).pipe(
-            finalize(() => {
-              store.finishMutation(mutationKey("favorite-server", id));
-            }),
-            tapResponse({
-              next: () => undefined,
-              error: (error: unknown) => {
-                Sentry.captureException(error);
-                if (previous) {
-                  patchState(store, addEntity(previous, serversConfig));
-                }
-              },
-            }),
-          ),
-        ),
-      ),
-    ),
-    removeFavoriteDatabaseById: rxMethod<string>(
-      pipe(
-        filter((id) => !store.isMutating(mutationKey("favorite-database", id))),
-        map((id) => {
-          const previous = store.databasesEntityMap()[id] ?? null;
-          store.startMutation(mutationKey("favorite-database", id));
-          if (previous) {
-            patchState(store, removeEntity(id, databasesConfig));
-          }
-          return { id, previous };
-        }),
-        mergeMap(({ id, previous }) =>
-          collections.deleteFavoriteDatabaseById(id).pipe(
-            finalize(() => {
-              store.finishMutation(mutationKey("favorite-database", id));
-            }),
-            tapResponse({
-              next: () => undefined,
-              error: (error: unknown) => {
-                Sentry.captureException(error);
-                if (previous) {
-                  patchState(store, addEntity(previous, databasesConfig));
-                }
-              },
-            }),
-          ),
-        ),
-      ),
-    ),
-    loadAll: rxMethod<void>(
-      pipe(
-        exhaustMap(() => {
-          patchState(store, setLoading());
-          return forkJoin({
-            servers: collections.listFavoriteServers(),
-            databases: collections.listFavoriteDatabases(),
-            searches: collections.listSavedSearches(),
-            comparisons: collections.listSavedComparisons(),
-            advices: collections.listSavedAdvices(),
-          }).pipe(
-            tapResponse({
-              next: ({
-                servers,
-                databases,
-                searches,
-                comparisons,
-                advices,
-              }) => {
-                const normalizedServers = servers
-                  .map((item) => {
-                    return (
-                      resolveFavoriteServer(item) ??
-                      (item.id
-                        ? {
-                            id: item.id,
-                            vendor_id: item.vendor_id || "",
-                            server_id: item.server_id || "",
-                            note: item.note,
-                            order: item.order,
-                          }
-                        : null)
-                    );
-                  })
-                  .filter((item): item is FavoriteServerItem => !!item);
-                const normalizedDatabases = databases
-                  .map((item) => {
-                    return (
-                      resolveFavoriteDatabase(item) ??
-                      (item.id
-                        ? {
-                            id: item.id,
-                            vendor_id: item.vendor_id || "",
-                            database_id: item.database_id || "",
-                            note: item.note,
-                            order: item.order,
-                          }
-                        : null)
-                    );
-                  })
-                  .filter((item): item is FavoriteDatabaseItem => !!item);
-
-                patchState(
-                  store,
-                  setAllEntities(normalizedServers, serversConfig),
-                  setAllEntities(normalizedDatabases, databasesConfig),
-                  setAllEntities(searches, searchesConfig),
-                  setAllEntities(comparisons, comparisonsConfig),
-                  setAllEntities(advices, advicesConfig),
-                  setLoaded(),
-                );
-              },
-              error: (error: unknown) => {
-                Sentry.captureException(error);
-                patchState(
-                  store,
-                  setError(mutationError(error, "Failed to load collections")),
-                );
-              },
-            }),
-          );
-        }),
-      ),
-    ),
-    toggleFavoriteServer: rxMethod<{
-      vendorId: string;
-      serverId: string;
-      note?: string;
-    }>(
-      pipe(
-        filter(({ vendorId, serverId }) => {
-          const id = favoriteServerId(vendorId, serverId);
-          return !store.isMutating(mutationKey("favorite-server", id));
-        }),
-        map(({ vendorId, serverId, note }) => {
-          const id = favoriteServerId(vendorId, serverId);
-          const previous = store.serversEntityMap()[id] ?? null;
-          const wasFavorite = !!previous;
-          store.startMutation(mutationKey("favorite-server", id));
-
-          if (wasFavorite) {
-            patchState(store, removeEntity(id, serversConfig));
-          } else {
-            const optimistic: FavoriteServerItem = {
-              id,
-              vendor_id: vendorId,
-              server_id: serverId,
-              order: store.serversEntities().length,
-              bookmarked_at: nowBookmarkedAt(),
-            };
-            if (note !== undefined) {
-              optimistic.note = note;
-            }
-            patchState(store, addEntity(optimistic, serversConfig));
-          }
-
-          return { vendorId, serverId, note, id, previous, wasFavorite };
-        }),
-        mergeMap(({ vendorId, serverId, note, id, previous, wasFavorite }) => {
-          const finish = () =>
-            store.finishMutation(mutationKey("favorite-server", id));
-          const rollback = () => {
-            if (wasFavorite && previous) {
-              patchState(store, addEntity(previous, serversConfig));
-              return;
-            }
-            if (!wasFavorite) {
+  withMethods(
+    (
+      store,
+      collections = inject(CollectionsService),
+      analytics = inject(AnalyticsService),
+    ) => ({
+      isFavoriteServer(vendorId: string, serverId: string): boolean {
+        return !!store.serversEntityMap()[favoriteServerId(vendorId, serverId)];
+      },
+      isFavoriteDatabase(vendorId: string, databaseId: string): boolean {
+        return !!store.databasesEntityMap()[
+          favoriteDatabaseId(vendorId, databaseId)
+        ];
+      },
+      savedSearchByQuery(
+        page: SavedSearchPage,
+        query: SearchBarQuery,
+      ): SavedSearchItem | null {
+        const targetKey = stableSearchQueryKey(page, query);
+        return (
+          store.searchesEntities().find((item) => {
+            return stableSearchQueryKey(item.page, item.query) === targetKey;
+          }) ?? null
+        );
+      },
+      savedComparisonByUrl(compareUrl: string): SavedComparisonItem | null {
+        return (
+          store
+            .comparisonsEntities()
+            .find((item) => item.compare_url === compareUrl) ?? null
+        );
+      },
+      savedComparisonById(id: string): SavedComparisonItem | null {
+        return store.comparisonsEntityMap()[id] ?? null;
+      },
+      savedAdviceByQuery(query: SearchBarQuery): SavedAdviceItem | null {
+        return (
+          store
+            .advicesEntities()
+            .find((item) => adviceQueriesEqual(item.query, query)) ?? null
+        );
+      },
+      savedAdviceById(id: string): SavedAdviceItem | null {
+        return store.advicesEntityMap()[id] ?? null;
+      },
+      setBookmarksFilter(key: keyof BookmarksFilters, enabled: boolean): void {
+        patchState(store, {
+          bookmarksFilters: {
+            ...store.bookmarksFilters(),
+            [key]: enabled,
+          },
+        });
+      },
+      clear(): void {
+        patchState(
+          store,
+          removeAllEntities(serversConfig),
+          removeAllEntities(databasesConfig),
+          removeAllEntities(searchesConfig),
+          removeAllEntities(comparisonsConfig),
+          removeAllEntities(advicesConfig),
+          {
+            bookmarksFilters: { ...DEFAULT_BOOKMARKS_FILTERS },
+          },
+          setIdle(),
+        );
+      },
+      removeFavoriteServerById: rxMethod<string>(
+        pipe(
+          filter((id) => !store.isMutating(mutationKey("favorite-server", id))),
+          map((id) => {
+            const previous = store.serversEntityMap()[id] ?? null;
+            store.startMutation(mutationKey("favorite-server", id));
+            if (previous) {
               patchState(store, removeEntity(id, serversConfig));
             }
-          };
-
-          if (wasFavorite) {
-            return collections.deleteFavoriteServer(vendorId, serverId).pipe(
-              finalize(finish),
-              tapResponse({
-                next: () => undefined,
-                error: (error: unknown) => {
-                  Sentry.captureException(error);
-                  rollback();
-                },
+            return { id, previous };
+          }),
+          mergeMap(({ id, previous }) =>
+            collections.deleteFavoriteServerById(id).pipe(
+              finalize(() => {
+                store.finishMutation(mutationKey("favorite-server", id));
               }),
-            );
-          }
-
-          return collections
-            .addFavoriteServer(vendorId, serverId, {
-              vendor_id: vendorId,
-              server_id: serverId,
-              note,
-              order:
-                store.serversEntityMap()[id]?.order ??
-                store.serversEntities().length,
-              bookmarked_at:
-                store.serversEntityMap()[id]?.bookmarked_at ??
-                nowBookmarkedAt(),
-            })
-            .pipe(
-              finalize(finish),
               tapResponse({
-                next: (saved) => {
-                  patchState(store, upsertEntity(saved, serversConfig));
+                next: () => {
+                  if (previous?.vendor_id && previous?.server_id) {
+                    trackBookmark(
+                      analytics,
+                      "bookmark deleted",
+                      favoriteServerTargetUrl(
+                        previous.vendor_id,
+                        previous.server_id,
+                      ),
+                    );
+                  }
                 },
                 error: (error: unknown) => {
                   Sentry.captureException(error);
-                  rollback();
+                  if (previous) {
+                    patchState(store, addEntity(previous, serversConfig));
+                  }
                 },
               }),
-            );
-        }),
+            ),
+          ),
+        ),
       ),
-    ),
-    toggleFavoriteDatabase: rxMethod<{
-      vendorId: string;
-      databaseId: string;
-      note?: string;
-    }>(
-      pipe(
-        filter(({ vendorId, databaseId }) => {
-          const id = favoriteDatabaseId(vendorId, databaseId);
-          return !store.isMutating(mutationKey("favorite-database", id));
-        }),
-        map(({ vendorId, databaseId, note }) => {
-          const id = favoriteDatabaseId(vendorId, databaseId);
-          const previous = store.databasesEntityMap()[id] ?? null;
-          const wasFavorite = !!previous;
-          store.startMutation(mutationKey("favorite-database", id));
-
-          if (wasFavorite) {
-            patchState(store, removeEntity(id, databasesConfig));
-          } else {
-            const optimistic: FavoriteDatabaseItem = {
-              id,
-              vendor_id: vendorId,
-              database_id: databaseId,
-              order: store.databasesEntities().length,
-              bookmarked_at: nowBookmarkedAt(),
-            };
-            if (note !== undefined) {
-              optimistic.note = note;
+      removeFavoriteDatabaseById: rxMethod<string>(
+        pipe(
+          filter(
+            (id) => !store.isMutating(mutationKey("favorite-database", id)),
+          ),
+          map((id) => {
+            const previous = store.databasesEntityMap()[id] ?? null;
+            store.startMutation(mutationKey("favorite-database", id));
+            if (previous) {
+              patchState(store, removeEntity(id, databasesConfig));
             }
-            patchState(store, addEntity(optimistic, databasesConfig));
-          }
+            return { id, previous };
+          }),
+          mergeMap(({ id, previous }) =>
+            collections.deleteFavoriteDatabaseById(id).pipe(
+              finalize(() => {
+                store.finishMutation(mutationKey("favorite-database", id));
+              }),
+              tapResponse({
+                next: () => {
+                  if (previous?.vendor_id && previous?.database_id) {
+                    trackBookmark(
+                      analytics,
+                      "bookmark deleted",
+                      favoriteDatabaseTargetUrl(
+                        previous.vendor_id,
+                        previous.database_id,
+                      ),
+                    );
+                  }
+                },
+                error: (error: unknown) => {
+                  Sentry.captureException(error);
+                  if (previous) {
+                    patchState(store, addEntity(previous, databasesConfig));
+                  }
+                },
+              }),
+            ),
+          ),
+        ),
+      ),
+      loadAll: rxMethod<void>(
+        pipe(
+          exhaustMap(() => {
+            patchState(store, setLoading());
+            return forkJoin({
+              servers: collections.listFavoriteServers(),
+              databases: collections.listFavoriteDatabases(),
+              searches: collections.listSavedSearches(),
+              comparisons: collections.listSavedComparisons(),
+              advices: collections.listSavedAdvices(),
+            }).pipe(
+              tapResponse({
+                next: ({
+                  servers,
+                  databases,
+                  searches,
+                  comparisons,
+                  advices,
+                }) => {
+                  const normalizedServers = servers
+                    .map((item) => {
+                      return (
+                        resolveFavoriteServer(item) ??
+                        (item.id
+                          ? {
+                              id: item.id,
+                              vendor_id: item.vendor_id || "",
+                              server_id: item.server_id || "",
+                              note: item.note,
+                              order: item.order,
+                            }
+                          : null)
+                      );
+                    })
+                    .filter((item): item is FavoriteServerItem => !!item);
+                  const normalizedDatabases = databases
+                    .map((item) => {
+                      return (
+                        resolveFavoriteDatabase(item) ??
+                        (item.id
+                          ? {
+                              id: item.id,
+                              vendor_id: item.vendor_id || "",
+                              database_id: item.database_id || "",
+                              note: item.note,
+                              order: item.order,
+                            }
+                          : null)
+                      );
+                    })
+                    .filter((item): item is FavoriteDatabaseItem => !!item);
 
-          return { vendorId, databaseId, note, id, previous, wasFavorite };
-        }),
-        mergeMap(
-          ({ vendorId, databaseId, note, id, previous, wasFavorite }) => {
-            const finish = () =>
-              store.finishMutation(mutationKey("favorite-database", id));
-            const rollback = () => {
-              if (wasFavorite && previous) {
-                patchState(store, addEntity(previous, databasesConfig));
-                return;
-              }
-              if (!wasFavorite) {
-                patchState(store, removeEntity(id, databasesConfig));
-              }
-            };
+                  patchState(
+                    store,
+                    setAllEntities(normalizedServers, serversConfig),
+                    setAllEntities(normalizedDatabases, databasesConfig),
+                    setAllEntities(searches, searchesConfig),
+                    setAllEntities(comparisons, comparisonsConfig),
+                    setAllEntities(advices, advicesConfig),
+                    setLoaded(),
+                  );
+                },
+                error: (error: unknown) => {
+                  Sentry.captureException(error);
+                  patchState(
+                    store,
+                    setError(
+                      mutationError(error, "Failed to load collections"),
+                    ),
+                  );
+                },
+              }),
+            );
+          }),
+        ),
+      ),
+      toggleFavoriteServer: rxMethod<{
+        vendorId: string;
+        serverId: string;
+        note?: string;
+      }>(
+        pipe(
+          filter(({ vendorId, serverId }) => {
+            const id = favoriteServerId(vendorId, serverId);
+            return !store.isMutating(mutationKey("favorite-server", id));
+          }),
+          map(({ vendorId, serverId, note }) => {
+            const id = favoriteServerId(vendorId, serverId);
+            const previous = store.serversEntityMap()[id] ?? null;
+            const wasFavorite = !!previous;
+            store.startMutation(mutationKey("favorite-server", id));
 
             if (wasFavorite) {
+              patchState(store, removeEntity(id, serversConfig));
+            } else {
+              const optimistic: FavoriteServerItem = {
+                id,
+                vendor_id: vendorId,
+                server_id: serverId,
+                order: store.serversEntities().length,
+                bookmarked_at: nowBookmarkedAt(),
+              };
+              if (note !== undefined) {
+                optimistic.note = note;
+              }
+              patchState(store, addEntity(optimistic, serversConfig));
+            }
+
+            return { vendorId, serverId, note, id, previous, wasFavorite };
+          }),
+          mergeMap(
+            ({ vendorId, serverId, note, id, previous, wasFavorite }) => {
+              const finish = () =>
+                store.finishMutation(mutationKey("favorite-server", id));
+              const rollback = () => {
+                if (wasFavorite && previous) {
+                  patchState(store, addEntity(previous, serversConfig));
+                  return;
+                }
+                if (!wasFavorite) {
+                  patchState(store, removeEntity(id, serversConfig));
+                }
+              };
+
+              if (wasFavorite) {
+                return collections
+                  .deleteFavoriteServer(vendorId, serverId)
+                  .pipe(
+                    finalize(finish),
+                    tapResponse({
+                      next: () => {
+                        trackBookmark(
+                          analytics,
+                          "bookmark deleted",
+                          favoriteServerTargetUrl(vendorId, serverId),
+                        );
+                      },
+                      error: (error: unknown) => {
+                        Sentry.captureException(error);
+                        rollback();
+                      },
+                    }),
+                  );
+              }
+
               return collections
-                .deleteFavoriteDatabase(vendorId, databaseId)
+                .addFavoriteServer(vendorId, serverId, {
+                  vendor_id: vendorId,
+                  server_id: serverId,
+                  note,
+                  order:
+                    store.serversEntityMap()[id]?.order ??
+                    store.serversEntities().length,
+                  bookmarked_at:
+                    store.serversEntityMap()[id]?.bookmarked_at ??
+                    nowBookmarkedAt(),
+                })
                 .pipe(
                   finalize(finish),
                   tapResponse({
-                    next: () => undefined,
+                    next: (saved) => {
+                      patchState(store, upsertEntity(saved, serversConfig));
+                      trackBookmark(
+                        analytics,
+                        "bookmark saved",
+                        favoriteServerTargetUrl(vendorId, serverId),
+                      );
+                    },
                     error: (error: unknown) => {
                       Sentry.captureException(error);
                       rollback();
                     },
                   }),
                 );
-            }
+            },
+          ),
+        ),
+      ),
+      toggleFavoriteDatabase: rxMethod<{
+        vendorId: string;
+        databaseId: string;
+        note?: string;
+      }>(
+        pipe(
+          filter(({ vendorId, databaseId }) => {
+            const id = favoriteDatabaseId(vendorId, databaseId);
+            return !store.isMutating(mutationKey("favorite-database", id));
+          }),
+          map(({ vendorId, databaseId, note }) => {
+            const id = favoriteDatabaseId(vendorId, databaseId);
+            const previous = store.databasesEntityMap()[id] ?? null;
+            const wasFavorite = !!previous;
+            store.startMutation(mutationKey("favorite-database", id));
 
-            return collections
-              .addFavoriteDatabase(vendorId, databaseId, {
+            if (wasFavorite) {
+              patchState(store, removeEntity(id, databasesConfig));
+            } else {
+              const optimistic: FavoriteDatabaseItem = {
+                id,
                 vendor_id: vendorId,
                 database_id: databaseId,
-                note,
-                order:
-                  store.databasesEntityMap()[id]?.order ??
-                  store.databasesEntities().length,
-                bookmarked_at:
-                  store.databasesEntityMap()[id]?.bookmarked_at ??
-                  nowBookmarkedAt(),
+                order: store.databasesEntities().length,
+                bookmarked_at: nowBookmarkedAt(),
+              };
+              if (note !== undefined) {
+                optimistic.note = note;
+              }
+              patchState(store, addEntity(optimistic, databasesConfig));
+            }
+
+            return { vendorId, databaseId, note, id, previous, wasFavorite };
+          }),
+          mergeMap(
+            ({ vendorId, databaseId, note, id, previous, wasFavorite }) => {
+              const finish = () =>
+                store.finishMutation(mutationKey("favorite-database", id));
+              const rollback = () => {
+                if (wasFavorite && previous) {
+                  patchState(store, addEntity(previous, databasesConfig));
+                  return;
+                }
+                if (!wasFavorite) {
+                  patchState(store, removeEntity(id, databasesConfig));
+                }
+              };
+
+              if (wasFavorite) {
+                return collections
+                  .deleteFavoriteDatabase(vendorId, databaseId)
+                  .pipe(
+                    finalize(finish),
+                    tapResponse({
+                      next: () => {
+                        trackBookmark(
+                          analytics,
+                          "bookmark deleted",
+                          favoriteDatabaseTargetUrl(vendorId, databaseId),
+                        );
+                      },
+                      error: (error: unknown) => {
+                        Sentry.captureException(error);
+                        rollback();
+                      },
+                    }),
+                  );
+              }
+
+              return collections
+                .addFavoriteDatabase(vendorId, databaseId, {
+                  vendor_id: vendorId,
+                  database_id: databaseId,
+                  note,
+                  order:
+                    store.databasesEntityMap()[id]?.order ??
+                    store.databasesEntities().length,
+                  bookmarked_at:
+                    store.databasesEntityMap()[id]?.bookmarked_at ??
+                    nowBookmarkedAt(),
+                })
+                .pipe(
+                  finalize(finish),
+                  tapResponse({
+                    next: (saved) => {
+                      patchState(store, upsertEntity(saved, databasesConfig));
+                      trackBookmark(
+                        analytics,
+                        "bookmark saved",
+                        favoriteDatabaseTargetUrl(vendorId, databaseId),
+                      );
+                    },
+                    error: (error: unknown) => {
+                      Sentry.captureException(error);
+                      rollback();
+                    },
+                  }),
+                );
+            },
+          ),
+        ),
+      ),
+      saveSearch: rxMethod<{
+        page: SavedSearchPage;
+        query: SearchBarQuery;
+        name: string;
+        note?: string;
+      }>(
+        pipe(
+          tap(({ page, query }) => {
+            store.startMutation(
+              mutationKey("save-search", savedSearchIdFromQuery(page, query)),
+            );
+          }),
+          switchMap(({ page, query, name, note }) => {
+            const id = savedSearchIdFromQuery(page, query);
+            const normalizedNote = normalizedCollectionNote(note);
+            return collections
+              .saveSearch(id, {
+                page,
+                query,
+                name: name.trim(),
+                note: normalizedNote,
+                order: store.savedSearches().length,
+                bookmarked_at: nowBookmarkedAt(),
               })
               .pipe(
-                finalize(finish),
                 tapResponse({
                   next: (saved) => {
-                    patchState(store, upsertEntity(saved, databasesConfig));
-                  },
-                  error: (error: unknown) => {
-                    Sentry.captureException(error);
-                    rollback();
-                  },
-                }),
-              );
-          },
-        ),
-      ),
-    ),
-    saveSearch: rxMethod<{
-      page: SavedSearchPage;
-      query: SearchBarQuery;
-      name: string;
-      note?: string;
-    }>(
-      pipe(
-        tap(({ page, query }) => {
-          store.startMutation(
-            mutationKey("save-search", savedSearchIdFromQuery(page, query)),
-          );
-        }),
-        switchMap(({ page, query, name, note }) => {
-          const id = savedSearchIdFromQuery(page, query);
-          const normalizedNote = normalizedCollectionNote(note);
-          return collections
-            .saveSearch(id, {
-              page,
-              query,
-              name: name.trim(),
-              note: normalizedNote,
-              order: store.savedSearches().length,
-              bookmarked_at: nowBookmarkedAt(),
-            })
-            .pipe(
-              tapResponse({
-                next: (saved) => {
-                  patchState(
-                    store,
-                    upsertEntity(
-                      withCollectionNote(saved, normalizedNote),
-                      searchesConfig,
-                    ),
-                  );
-                  store.finishMutation(mutationKey("save-search", id));
-                },
-                error: (error: unknown) => {
-                  Sentry.captureException(error);
-                  store.finishMutation(mutationKey("save-search", id));
-                },
-              }),
-            );
-        }),
-      ),
-    ),
-    updateSearch: rxMethod<{
-      id: string;
-      page: SavedSearchPage;
-      query: SearchBarQuery;
-      name: string;
-      note?: string;
-    }>(
-      pipe(
-        tap(({ id }) => store.startMutation(mutationKey("update-search", id))),
-        switchMap(({ id, page, query, name, note }) => {
-          const normalizedNote = normalizedCollectionNote(note);
-          return collections
-            .saveSearch(id, {
-              page,
-              query,
-              name: name.trim(),
-              note: normalizedNote,
-              order: store.searchesEntityMap()[id]?.order,
-              bookmarked_at: store.searchesEntityMap()[id]?.bookmarked_at,
-            })
-            .pipe(
-              tapResponse({
-                next: (saved) => {
-                  patchState(
-                    store,
-                    updateEntity(
-                      {
-                        id,
-                        changes: withCollectionNote(saved, normalizedNote),
-                      },
-                      searchesConfig,
-                    ),
-                  );
-                  store.finishMutation(mutationKey("update-search", id));
-                },
-                error: (error: unknown) => {
-                  Sentry.captureException(error);
-                  store.finishMutation(mutationKey("update-search", id));
-                },
-              }),
-            );
-        }),
-      ),
-    ),
-    deleteSearch: rxMethod<string>(
-      pipe(
-        tap((id) => store.startMutation(mutationKey("delete-search", id))),
-        switchMap((id) =>
-          collections.deleteSavedSearch(id).pipe(
-            tapResponse({
-              next: () => {
-                patchState(store, removeEntity(id, searchesConfig));
-                store.finishMutation(mutationKey("delete-search", id));
-              },
-              error: (error: unknown) => {
-                Sentry.captureException(error);
-                store.finishMutation(mutationKey("delete-search", id));
-              },
-            }),
-          ),
-        ),
-      ),
-    ),
-    saveComparison: rxMethod<{
-      id: string;
-      compareUrl: string;
-      instances: SavedComparisonInstance[];
-      name: string;
-      note?: string;
-    }>(
-      pipe(
-        tap(({ id }) =>
-          store.startMutation(mutationKey("save-comparison", id)),
-        ),
-        switchMap(({ id, compareUrl, instances, name, note }) => {
-          const normalizedNote = normalizedCollectionNote(note);
-          return collections
-            .saveComparison(id, {
-              compare_url: compareUrl,
-              instances,
-              name: name.trim(),
-              note: normalizedNote,
-              order: store.savedComparisons().length,
-              bookmarked_at: nowBookmarkedAt(),
-            })
-            .pipe(
-              tapResponse({
-                next: (saved) => {
-                  patchState(
-                    store,
-                    upsertEntity(
-                      withCollectionNote(saved, normalizedNote),
-                      comparisonsConfig,
-                    ),
-                  );
-                  store.finishMutation(mutationKey("save-comparison", id));
-                },
-                error: (error: unknown) => {
-                  Sentry.captureException(error);
-                  store.finishMutation(mutationKey("save-comparison", id));
-                },
-              }),
-            );
-        }),
-      ),
-    ),
-    updateComparison: rxMethod<{
-      id: string;
-      compareUrl: string;
-      instances: SavedComparisonInstance[];
-      name: string;
-      note?: string;
-    }>(
-      pipe(
-        tap(({ id }) =>
-          store.startMutation(mutationKey("update-comparison", id)),
-        ),
-        switchMap(({ id, compareUrl, instances, name, note }) => {
-          const normalizedNote = normalizedCollectionNote(note);
-          return collections
-            .saveComparison(id, {
-              compare_url: compareUrl,
-              instances,
-              name: name.trim(),
-              note: normalizedNote,
-              order: store.comparisonsEntityMap()[id]?.order,
-              bookmarked_at: store.comparisonsEntityMap()[id]?.bookmarked_at,
-            })
-            .pipe(
-              tapResponse({
-                next: (saved) => {
-                  patchState(
-                    store,
-                    updateEntity(
-                      {
-                        id,
-                        changes: withCollectionNote(saved, normalizedNote),
-                      },
-                      comparisonsConfig,
-                    ),
-                  );
-                  store.finishMutation(mutationKey("update-comparison", id));
-                },
-                error: (error: unknown) => {
-                  Sentry.captureException(error);
-                  store.finishMutation(mutationKey("update-comparison", id));
-                },
-              }),
-            );
-        }),
-      ),
-    ),
-    deleteComparison: rxMethod<string>(
-      pipe(
-        tap((id) => store.startMutation(mutationKey("delete-comparison", id))),
-        switchMap((id) =>
-          collections.deleteSavedComparison(id).pipe(
-            tapResponse({
-              next: () => {
-                patchState(store, removeEntity(id, comparisonsConfig));
-                store.finishMutation(mutationKey("delete-comparison", id));
-              },
-              error: (error: unknown) => {
-                Sentry.captureException(error);
-                store.finishMutation(mutationKey("delete-comparison", id));
-              },
-            }),
-          ),
-        ),
-      ),
-    ),
-    saveAdvice: rxMethod<{
-      id: string;
-      query: SearchBarQuery;
-      name: string;
-      note?: string;
-    }>(
-      pipe(
-        tap(({ id }) => store.startMutation(mutationKey("save-advice", id))),
-        switchMap(({ id, query, name, note }) => {
-          const normalizedNote = normalizedCollectionNote(note);
-          return collections
-            .saveAdvice(id, {
-              query,
-              name: name.trim(),
-              note: normalizedNote,
-              order: store.savedAdvices().length,
-              bookmarked_at: nowBookmarkedAt(),
-            })
-            .pipe(
-              tapResponse({
-                next: (saved) => {
-                  patchState(
-                    store,
-                    upsertEntity(
-                      withCollectionNote(saved, normalizedNote),
-                      advicesConfig,
-                    ),
-                  );
-                  store.finishMutation(mutationKey("save-advice", id));
-                },
-                error: (error: unknown) => {
-                  Sentry.captureException(error);
-                  store.finishMutation(mutationKey("save-advice", id));
-                },
-              }),
-            );
-        }),
-      ),
-    ),
-    updateAdvice: rxMethod<{
-      id: string;
-      query: SearchBarQuery;
-      name: string;
-      note?: string;
-    }>(
-      pipe(
-        tap(({ id }) => store.startMutation(mutationKey("update-advice", id))),
-        switchMap(({ id, query, name, note }) => {
-          const normalizedNote = normalizedCollectionNote(note);
-          return collections
-            .saveAdvice(id, {
-              query,
-              name: name.trim(),
-              note: normalizedNote,
-              order: store.advicesEntityMap()[id]?.order,
-              bookmarked_at: store.advicesEntityMap()[id]?.bookmarked_at,
-            })
-            .pipe(
-              tapResponse({
-                next: (saved) => {
-                  patchState(
-                    store,
-                    updateEntity(
-                      {
-                        id,
-                        changes: withCollectionNote(saved, normalizedNote),
-                      },
-                      advicesConfig,
-                    ),
-                  );
-                  store.finishMutation(mutationKey("update-advice", id));
-                },
-                error: (error: unknown) => {
-                  Sentry.captureException(error);
-                  store.finishMutation(mutationKey("update-advice", id));
-                },
-              }),
-            );
-        }),
-      ),
-    ),
-    deleteAdvice: rxMethod<string>(
-      pipe(
-        tap((id) => store.startMutation(mutationKey("delete-advice", id))),
-        switchMap((id) =>
-          collections.deleteSavedAdvice(id).pipe(
-            tapResponse({
-              next: () => {
-                patchState(store, removeEntity(id, advicesConfig));
-                store.finishMutation(mutationKey("delete-advice", id));
-              },
-              error: (error: unknown) => {
-                Sentry.captureException(error);
-                store.finishMutation(mutationKey("delete-advice", id));
-              },
-            }),
-          ),
-        ),
-      ),
-    ),
-    reorderBookmarksCards: rxMethod<BookmarksCardViewModel[]>(
-      pipe(
-        map((cards) => {
-          const snapshot = {
-            servers: store.serversEntities().slice(),
-            databases: store.databasesEntities().slice(),
-            searches: store.searchesEntities().slice(),
-            comparisons: store.comparisonsEntities().slice(),
-            advices: store.advicesEntities().slice(),
-          };
-          store.startMutation(mutationKey("reorder-bookmarks"));
-          cards.forEach((card, index) => {
-            const changes = { order: index };
-            switch (card.kind) {
-              case "favoriteServers":
-                patchState(
-                  store,
-                  updateEntity({ id: card.id, changes }, serversConfig),
-                );
-                break;
-              case "favoriteDatabases":
-                patchState(
-                  store,
-                  updateEntity({ id: card.id, changes }, databasesConfig),
-                );
-                break;
-              case "savedSearches":
-                patchState(
-                  store,
-                  updateEntity({ id: card.id, changes }, searchesConfig),
-                );
-                break;
-              case "savedComparisons":
-                patchState(
-                  store,
-                  updateEntity({ id: card.id, changes }, comparisonsConfig),
-                );
-                break;
-              case "savedAdvices":
-                patchState(
-                  store,
-                  updateEntity({ id: card.id, changes }, advicesConfig),
-                );
-                break;
-            }
-          });
-          return { cards, snapshot };
-        }),
-        switchMap(({ cards, snapshot }) => {
-          const updates: Array<{
-            collectionType: (typeof COLLECTION_TYPES)[keyof typeof COLLECTION_TYPES];
-            id: string;
-            body: object;
-          }> = [];
-
-          for (const card of cards) {
-            const collectionType = COLLECTION_TYPES[card.kind];
-            switch (card.kind) {
-              case "favoriteServers": {
-                const item =
-                  store.serversEntityMap()[card.id] ??
-                  store.serversEntities().find((entry) => entry.id === card.id);
-                const resolved = item ? resolveFavoriteServer(item) : null;
-                if (!resolved) {
-                  break;
-                }
-                const { id, ...body } = resolved;
-                updates.push({ collectionType, id, body });
-                break;
-              }
-              case "favoriteDatabases": {
-                const item =
-                  store.databasesEntityMap()[card.id] ??
-                  store
-                    .databasesEntities()
-                    .find((entry) => entry.id === card.id);
-                const resolved = item ? resolveFavoriteDatabase(item) : null;
-                if (!resolved) {
-                  break;
-                }
-                const { id, ...body } = resolved;
-                updates.push({ collectionType, id, body });
-                break;
-              }
-              case "savedSearches": {
-                const item = store.searchesEntityMap()[card.id];
-                if (!item) {
-                  break;
-                }
-                const { id, ...body } = item;
-                updates.push({ collectionType, id, body });
-                break;
-              }
-              case "savedComparisons": {
-                const item = store.comparisonsEntityMap()[card.id];
-                if (!item) {
-                  break;
-                }
-                const { id, ...body } = item;
-                updates.push({ collectionType, id, body });
-                break;
-              }
-              case "savedAdvices": {
-                const item = store.advicesEntityMap()[card.id];
-                if (!item) {
-                  break;
-                }
-                const { id, ...body } = item;
-                updates.push({ collectionType, id, body });
-                break;
-              }
-            }
-          }
-
-          if (!updates.length) {
-            store.finishMutation(mutationKey("reorder-bookmarks"));
-            return of(null);
-          }
-
-          return collections.reorderCollectionItems(updates).pipe(
-            finalize(() => {
-              store.finishMutation(mutationKey("reorder-bookmarks"));
-            }),
-            tapResponse({
-              next: (savedItems) => {
-                for (const item of savedItems) {
-                  if ("server_id" in item) {
                     patchState(
                       store,
-                      updateEntity(
-                        {
-                          id: favoriteServerId(item.vendor_id, item.server_id),
-                          changes: item,
-                        },
-                        serversConfig,
-                      ),
-                    );
-                  } else if ("database_id" in item) {
-                    patchState(
-                      store,
-                      updateEntity(
-                        {
-                          id: favoriteDatabaseId(
-                            item.vendor_id,
-                            item.database_id,
-                          ),
-                          changes: item,
-                        },
-                        databasesConfig,
-                      ),
-                    );
-                  } else if ("page" in item) {
-                    patchState(
-                      store,
-                      updateEntity(
-                        { id: item.id, changes: item },
+                      upsertEntity(
+                        withCollectionNote(saved, normalizedNote),
                         searchesConfig,
                       ),
                     );
-                  } else if ("compare_url" in item) {
+                    store.finishMutation(mutationKey("save-search", id));
+                    trackBookmark(
+                      analytics,
+                      "bookmark saved",
+                      savedSearchTargetUrl(page, query),
+                    );
+                  },
+                  error: (error: unknown) => {
+                    Sentry.captureException(error);
+                    store.finishMutation(mutationKey("save-search", id));
+                  },
+                }),
+              );
+          }),
+        ),
+      ),
+      updateSearch: rxMethod<{
+        id: string;
+        page: SavedSearchPage;
+        query: SearchBarQuery;
+        name: string;
+        note?: string;
+      }>(
+        pipe(
+          tap(({ id }) =>
+            store.startMutation(mutationKey("update-search", id)),
+          ),
+          switchMap(({ id, page, query, name, note }) => {
+            const normalizedNote = normalizedCollectionNote(note);
+            return collections
+              .saveSearch(id, {
+                page,
+                query,
+                name: name.trim(),
+                note: normalizedNote,
+                order: store.searchesEntityMap()[id]?.order,
+                bookmarked_at: store.searchesEntityMap()[id]?.bookmarked_at,
+              })
+              .pipe(
+                tapResponse({
+                  next: (saved) => {
                     patchState(
                       store,
                       updateEntity(
-                        { id: item.id, changes: item },
+                        {
+                          id,
+                          changes: withCollectionNote(saved, normalizedNote),
+                        },
+                        searchesConfig,
+                      ),
+                    );
+                    store.finishMutation(mutationKey("update-search", id));
+                  },
+                  error: (error: unknown) => {
+                    Sentry.captureException(error);
+                    store.finishMutation(mutationKey("update-search", id));
+                  },
+                }),
+              );
+          }),
+        ),
+      ),
+      deleteSearch: rxMethod<string>(
+        pipe(
+          tap((id) => store.startMutation(mutationKey("delete-search", id))),
+          switchMap((id) => {
+            const previous = store.searchesEntityMap()[id] ?? null;
+            return collections.deleteSavedSearch(id).pipe(
+              tapResponse({
+                next: () => {
+                  patchState(store, removeEntity(id, searchesConfig));
+                  store.finishMutation(mutationKey("delete-search", id));
+                  if (previous) {
+                    trackBookmark(
+                      analytics,
+                      "bookmark deleted",
+                      savedSearchTargetUrl(previous.page, previous.query),
+                    );
+                  }
+                },
+                error: (error: unknown) => {
+                  Sentry.captureException(error);
+                  store.finishMutation(mutationKey("delete-search", id));
+                },
+              }),
+            );
+          }),
+        ),
+      ),
+      saveComparison: rxMethod<{
+        id: string;
+        compareUrl: string;
+        instances: SavedComparisonInstance[];
+        name: string;
+        note?: string;
+      }>(
+        pipe(
+          tap(({ id }) =>
+            store.startMutation(mutationKey("save-comparison", id)),
+          ),
+          switchMap(({ id, compareUrl, instances, name, note }) => {
+            const normalizedNote = normalizedCollectionNote(note);
+            return collections
+              .saveComparison(id, {
+                compare_url: compareUrl,
+                instances,
+                name: name.trim(),
+                note: normalizedNote,
+                order: store.savedComparisons().length,
+                bookmarked_at: nowBookmarkedAt(),
+              })
+              .pipe(
+                tapResponse({
+                  next: (saved) => {
+                    patchState(
+                      store,
+                      upsertEntity(
+                        withCollectionNote(saved, normalizedNote),
                         comparisonsConfig,
                       ),
                     );
-                  } else {
+                    store.finishMutation(mutationKey("save-comparison", id));
+                    trackBookmark(analytics, "bookmark saved", compareUrl);
+                  },
+                  error: (error: unknown) => {
+                    Sentry.captureException(error);
+                    store.finishMutation(mutationKey("save-comparison", id));
+                  },
+                }),
+              );
+          }),
+        ),
+      ),
+      updateComparison: rxMethod<{
+        id: string;
+        compareUrl: string;
+        instances: SavedComparisonInstance[];
+        name: string;
+        note?: string;
+      }>(
+        pipe(
+          tap(({ id }) =>
+            store.startMutation(mutationKey("update-comparison", id)),
+          ),
+          switchMap(({ id, compareUrl, instances, name, note }) => {
+            const normalizedNote = normalizedCollectionNote(note);
+            return collections
+              .saveComparison(id, {
+                compare_url: compareUrl,
+                instances,
+                name: name.trim(),
+                note: normalizedNote,
+                order: store.comparisonsEntityMap()[id]?.order,
+                bookmarked_at: store.comparisonsEntityMap()[id]?.bookmarked_at,
+              })
+              .pipe(
+                tapResponse({
+                  next: (saved) => {
                     patchState(
                       store,
                       updateEntity(
-                        { id: item.id, changes: item },
+                        {
+                          id,
+                          changes: withCollectionNote(saved, normalizedNote),
+                        },
+                        comparisonsConfig,
+                      ),
+                    );
+                    store.finishMutation(mutationKey("update-comparison", id));
+                  },
+                  error: (error: unknown) => {
+                    Sentry.captureException(error);
+                    store.finishMutation(mutationKey("update-comparison", id));
+                  },
+                }),
+              );
+          }),
+        ),
+      ),
+      deleteComparison: rxMethod<string>(
+        pipe(
+          tap((id) =>
+            store.startMutation(mutationKey("delete-comparison", id)),
+          ),
+          switchMap((id) => {
+            const previous = store.comparisonsEntityMap()[id] ?? null;
+            return collections.deleteSavedComparison(id).pipe(
+              tapResponse({
+                next: () => {
+                  patchState(store, removeEntity(id, comparisonsConfig));
+                  store.finishMutation(mutationKey("delete-comparison", id));
+                  if (previous?.compare_url) {
+                    trackBookmark(
+                      analytics,
+                      "bookmark deleted",
+                      previous.compare_url,
+                    );
+                  }
+                },
+                error: (error: unknown) => {
+                  Sentry.captureException(error);
+                  store.finishMutation(mutationKey("delete-comparison", id));
+                },
+              }),
+            );
+          }),
+        ),
+      ),
+      saveAdvice: rxMethod<{
+        id: string;
+        query: SearchBarQuery;
+        name: string;
+        note?: string;
+      }>(
+        pipe(
+          tap(({ id }) => store.startMutation(mutationKey("save-advice", id))),
+          switchMap(({ id, query, name, note }) => {
+            const normalizedNote = normalizedCollectionNote(note);
+            return collections
+              .saveAdvice(id, {
+                query,
+                name: name.trim(),
+                note: normalizedNote,
+                order: store.savedAdvices().length,
+                bookmarked_at: nowBookmarkedAt(),
+              })
+              .pipe(
+                tapResponse({
+                  next: (saved) => {
+                    patchState(
+                      store,
+                      upsertEntity(
+                        withCollectionNote(saved, normalizedNote),
                         advicesConfig,
                       ),
                     );
-                  }
-                }
-              },
-              error: (error: unknown) => {
-                Sentry.captureException(error);
-                patchState(
-                  store,
-                  setAllEntities(snapshot.servers, serversConfig),
-                  setAllEntities(snapshot.databases, databasesConfig),
-                  setAllEntities(snapshot.searches, searchesConfig),
-                  setAllEntities(snapshot.comparisons, comparisonsConfig),
-                  setAllEntities(snapshot.advices, advicesConfig),
-                );
-              },
-            }),
-          );
-        }),
+                    store.finishMutation(mutationKey("save-advice", id));
+                    trackBookmark(
+                      analytics,
+                      "bookmark saved",
+                      savedAdviceTargetUrl(query),
+                    );
+                  },
+                  error: (error: unknown) => {
+                    Sentry.captureException(error);
+                    store.finishMutation(mutationKey("save-advice", id));
+                  },
+                }),
+              );
+          }),
+        ),
       ),
-    ),
-  })),
+      updateAdvice: rxMethod<{
+        id: string;
+        query: SearchBarQuery;
+        name: string;
+        note?: string;
+      }>(
+        pipe(
+          tap(({ id }) =>
+            store.startMutation(mutationKey("update-advice", id)),
+          ),
+          switchMap(({ id, query, name, note }) => {
+            const normalizedNote = normalizedCollectionNote(note);
+            return collections
+              .saveAdvice(id, {
+                query,
+                name: name.trim(),
+                note: normalizedNote,
+                order: store.advicesEntityMap()[id]?.order,
+                bookmarked_at: store.advicesEntityMap()[id]?.bookmarked_at,
+              })
+              .pipe(
+                tapResponse({
+                  next: (saved) => {
+                    patchState(
+                      store,
+                      updateEntity(
+                        {
+                          id,
+                          changes: withCollectionNote(saved, normalizedNote),
+                        },
+                        advicesConfig,
+                      ),
+                    );
+                    store.finishMutation(mutationKey("update-advice", id));
+                  },
+                  error: (error: unknown) => {
+                    Sentry.captureException(error);
+                    store.finishMutation(mutationKey("update-advice", id));
+                  },
+                }),
+              );
+          }),
+        ),
+      ),
+      deleteAdvice: rxMethod<string>(
+        pipe(
+          tap((id) => store.startMutation(mutationKey("delete-advice", id))),
+          switchMap((id) => {
+            const previous = store.advicesEntityMap()[id] ?? null;
+            return collections.deleteSavedAdvice(id).pipe(
+              tapResponse({
+                next: () => {
+                  patchState(store, removeEntity(id, advicesConfig));
+                  store.finishMutation(mutationKey("delete-advice", id));
+                  if (previous) {
+                    trackBookmark(
+                      analytics,
+                      "bookmark deleted",
+                      savedAdviceTargetUrl(previous.query),
+                    );
+                  }
+                },
+                error: (error: unknown) => {
+                  Sentry.captureException(error);
+                  store.finishMutation(mutationKey("delete-advice", id));
+                },
+              }),
+            );
+          }),
+        ),
+      ),
+      reorderBookmarksCards: rxMethod<BookmarksCardViewModel[]>(
+        pipe(
+          map((cards) => {
+            const snapshot = {
+              servers: store.serversEntities().slice(),
+              databases: store.databasesEntities().slice(),
+              searches: store.searchesEntities().slice(),
+              comparisons: store.comparisonsEntities().slice(),
+              advices: store.advicesEntities().slice(),
+            };
+            store.startMutation(mutationKey("reorder-bookmarks"));
+            cards.forEach((card, index) => {
+              const changes = { order: index };
+              switch (card.kind) {
+                case "favoriteServers":
+                  patchState(
+                    store,
+                    updateEntity({ id: card.id, changes }, serversConfig),
+                  );
+                  break;
+                case "favoriteDatabases":
+                  patchState(
+                    store,
+                    updateEntity({ id: card.id, changes }, databasesConfig),
+                  );
+                  break;
+                case "savedSearches":
+                  patchState(
+                    store,
+                    updateEntity({ id: card.id, changes }, searchesConfig),
+                  );
+                  break;
+                case "savedComparisons":
+                  patchState(
+                    store,
+                    updateEntity({ id: card.id, changes }, comparisonsConfig),
+                  );
+                  break;
+                case "savedAdvices":
+                  patchState(
+                    store,
+                    updateEntity({ id: card.id, changes }, advicesConfig),
+                  );
+                  break;
+              }
+            });
+            return { cards, snapshot };
+          }),
+          switchMap(({ cards, snapshot }) => {
+            const updates: Array<{
+              collectionType: (typeof COLLECTION_TYPES)[keyof typeof COLLECTION_TYPES];
+              id: string;
+              body: object;
+            }> = [];
+
+            for (const card of cards) {
+              const collectionType = COLLECTION_TYPES[card.kind];
+              switch (card.kind) {
+                case "favoriteServers": {
+                  const item =
+                    store.serversEntityMap()[card.id] ??
+                    store
+                      .serversEntities()
+                      .find((entry) => entry.id === card.id);
+                  const resolved = item ? resolveFavoriteServer(item) : null;
+                  if (!resolved) {
+                    break;
+                  }
+                  const { id, ...body } = resolved;
+                  updates.push({ collectionType, id, body });
+                  break;
+                }
+                case "favoriteDatabases": {
+                  const item =
+                    store.databasesEntityMap()[card.id] ??
+                    store
+                      .databasesEntities()
+                      .find((entry) => entry.id === card.id);
+                  const resolved = item ? resolveFavoriteDatabase(item) : null;
+                  if (!resolved) {
+                    break;
+                  }
+                  const { id, ...body } = resolved;
+                  updates.push({ collectionType, id, body });
+                  break;
+                }
+                case "savedSearches": {
+                  const item = store.searchesEntityMap()[card.id];
+                  if (!item) {
+                    break;
+                  }
+                  const { id, ...body } = item;
+                  updates.push({ collectionType, id, body });
+                  break;
+                }
+                case "savedComparisons": {
+                  const item = store.comparisonsEntityMap()[card.id];
+                  if (!item) {
+                    break;
+                  }
+                  const { id, ...body } = item;
+                  updates.push({ collectionType, id, body });
+                  break;
+                }
+                case "savedAdvices": {
+                  const item = store.advicesEntityMap()[card.id];
+                  if (!item) {
+                    break;
+                  }
+                  const { id, ...body } = item;
+                  updates.push({ collectionType, id, body });
+                  break;
+                }
+              }
+            }
+
+            if (!updates.length) {
+              store.finishMutation(mutationKey("reorder-bookmarks"));
+              return of(null);
+            }
+
+            return collections.reorderCollectionItems(updates).pipe(
+              finalize(() => {
+                store.finishMutation(mutationKey("reorder-bookmarks"));
+              }),
+              tapResponse({
+                next: (savedItems) => {
+                  for (const item of savedItems) {
+                    if ("server_id" in item) {
+                      patchState(
+                        store,
+                        updateEntity(
+                          {
+                            id: favoriteServerId(
+                              item.vendor_id,
+                              item.server_id,
+                            ),
+                            changes: item,
+                          },
+                          serversConfig,
+                        ),
+                      );
+                    } else if ("database_id" in item) {
+                      patchState(
+                        store,
+                        updateEntity(
+                          {
+                            id: favoriteDatabaseId(
+                              item.vendor_id,
+                              item.database_id,
+                            ),
+                            changes: item,
+                          },
+                          databasesConfig,
+                        ),
+                      );
+                    } else if ("page" in item) {
+                      patchState(
+                        store,
+                        updateEntity(
+                          { id: item.id, changes: item },
+                          searchesConfig,
+                        ),
+                      );
+                    } else if ("compare_url" in item) {
+                      patchState(
+                        store,
+                        updateEntity(
+                          { id: item.id, changes: item },
+                          comparisonsConfig,
+                        ),
+                      );
+                    } else {
+                      patchState(
+                        store,
+                        updateEntity(
+                          { id: item.id, changes: item },
+                          advicesConfig,
+                        ),
+                      );
+                    }
+                  }
+                },
+                error: (error: unknown) => {
+                  Sentry.captureException(error);
+                  patchState(
+                    store,
+                    setAllEntities(snapshot.servers, serversConfig),
+                    setAllEntities(snapshot.databases, databasesConfig),
+                    setAllEntities(snapshot.searches, searchesConfig),
+                    setAllEntities(snapshot.comparisons, comparisonsConfig),
+                    setAllEntities(snapshot.advices, advicesConfig),
+                  );
+                },
+              }),
+            );
+          }),
+        ),
+      ),
+    }),
+  ),
   withHooks({
     onInit(store) {
       const platformId = inject(PLATFORM_ID);
