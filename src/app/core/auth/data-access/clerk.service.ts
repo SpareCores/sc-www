@@ -112,19 +112,22 @@ export class ClerkService {
     transferable: boolean;
     origin: string;
   }): Promise<void> {
-    await this.clerk?.handleRedirectCallback({
-      signInUrl: options.origin,
-      signUpUrl: options.origin,
-      continueSignUpUrl: options.origin,
-      firstFactorUrl: options.origin,
-      secondFactorUrl: options.origin,
-      resetPasswordUrl: options.origin,
-      signInProtectCheckUrl: options.origin,
-      signUpProtectCheckUrl: options.origin,
-      signInFallbackRedirectUrl: options.origin,
-      signUpFallbackRedirectUrl: options.origin,
-      transferable: options.transferable,
-    });
+    await this.clerk?.handleRedirectCallback(
+      {
+        signInUrl: options.origin,
+        signUpUrl: options.origin,
+        continueSignUpUrl: options.origin,
+        firstFactorUrl: options.origin,
+        secondFactorUrl: options.origin,
+        resetPasswordUrl: options.origin,
+        signInProtectCheckUrl: options.origin,
+        signUpProtectCheckUrl: options.origin,
+        signInFallbackRedirectUrl: options.origin,
+        signUpFallbackRedirectUrl: options.origin,
+        transferable: options.transferable,
+      },
+      async () => undefined,
+    );
   }
 
   async reloadClient(): Promise<void> {

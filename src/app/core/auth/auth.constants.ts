@@ -9,6 +9,7 @@ export const NEWSLETTER_SUBSCRIBED_KEY = "newsletterSubscribed";
 export const AUTH_PENDING_KEY = "scAuthPending";
 export const AUTH_RETURN_URL_KEY = "scAuthReturnUrl";
 export const GITHUB_SIGNIN_KEY = "scGithubSignIn";
+export const GITHUB_SIGNUP_KEY = "scGithubSignUp";
 export const GITHUB_POPUP_TIMEOUT_MS = 45_000;
 export const AUTH_POPUP_WIDTH = 500;
 export const AUTH_POPUP_HEIGHT = 700;
@@ -45,6 +46,6 @@ export const AUTH_MESSAGES = {
   newsletterError:
     "Couldn't subscribe to the newsletter. Try again later or contact us.",
   githubContinueSignUp:
-    "Finishing your earlier GitHub sign-up. Complete authorization in the popup.",
+    "Finishing your earlier GitHub sign-up. Complete authorization to continue.",
   unableToContinueGithub: "Unable to continue with GitHub.",
 } as const;

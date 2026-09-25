@@ -121,6 +121,13 @@ export class AuthStateService implements GithubAuthHost {
       } else {
         this.clearAuthPending();
       }
+    } else if (
+      !window.location.pathname.startsWith("/auth/callback") &&
+      this.needsGithubConsent() &&
+      this.github.hasSignUpHandoff() &&
+      !!this.clerk.instance?.client?.signUp?.id
+    ) {
+      this.openGithubConsentSignUp();
     }
     if (!this.boundListener) {
       this.clerk.addListener(() => {
@@ -156,7 +163,24 @@ export class AuthStateService implements GithubAuthHost {
       options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
     );
     this.signInModalOpen.set(false);
+
+    if (this.needsGithubConsent() && this.github.hasSignUpHandoff()) {
+      const signUpId = this.clerk.instance?.client?.signUp?.id;
+      if (signUpId) {
+        this.openGithubConsentSignUp();
+        return;
+      }
+    }
+
+    if (
+      this.needsGithubConsent() ||
+      this.githubConsentActive() ||
+      this.github.hasSignUpHandoff()
+    ) {
+      void this.github.abandonIncompleteSignUp();
+    }
     this.resetGithubConsent();
+    this.github.clearSignUpHandoff();
     this.signUpModalOpen.set(true);
   }
 
@@ -166,6 +190,7 @@ export class AuthStateService implements GithubAuthHost {
     this.signUpSubtitle.set(AUTH_MESSAGES.defaultSignUpSubtitle);
     this.github.cancelPendingPopupWait();
     this.github.clearSignInHandoff();
+    this.github.clearSignUpHandoff();
   }
 
   openGithubConsentSignUp(): void {
@@ -173,7 +198,11 @@ export class AuthStateService implements GithubAuthHost {
       this.toastAuthUnavailable();
       return;
     }
-    if (this.clerk.user) {
+    if (
+      this.clerk.user &&
+      !this.github.hasSignUpHandoff() &&
+      !this.needsGithubConsent()
+    ) {
       void this.github.completeSignedInLogin();
       return;
     }
@@ -664,17 +693,7 @@ export class AuthStateService implements GithubAuthHost {
       }
 
       await this.github.signUp(newsletterOptIn, legalAccepted);
-      if (this.isAuthenticated()) {
-        this.closeSignUp();
-        return { status: "complete" };
-      }
-      if (this.githubConsentActive() || this.needsGithubConsent()) {
-        return { status: "complete" };
-      }
-      return {
-        status: "error",
-        message: AUTH_MESSAGES.unableToContinueGithub,
-      };
+      return { status: "complete" };
     } catch (error) {
       return {
         status: "error",
@@ -691,27 +710,27 @@ export class AuthStateService implements GithubAuthHost {
     const params = new URLSearchParams(window.location.search);
     const transferable =
       options?.transferable ?? params.get("intent") !== "signIn";
-    const restoreNavigation = this.github.suppressHostedNavigation();
-    try {
-      await this.clerk.handleRedirectCallback({
-        transferable,
-        origin: urls.origin,
-      });
-      await this.clerk.reloadClient();
-    } finally {
-      restoreNavigation();
-    }
+    await this.clerk.handleRedirectCallback({
+      transferable,
+      origin: urls.origin,
+    });
+    await this.clerk.reloadClient();
     this.syncState();
   }
 
   resolveGithubCallbackOutcome(): GithubCallbackOutcome {
-    if (this.clerk.user) {
-      this.setUser(this.clerk.user);
-      return "authenticated";
-    }
-
     if (this.needsGithubConsent()) {
       return "consent";
+    }
+
+    if (this.github.hasSignUpHandoff()) {
+      return "consent";
+    }
+
+    if (this.clerk.user) {
+      this.setUser(this.clerk.user);
+      this.github.clearSignUpHandoff();
+      return "authenticated";
     }
 
     if (this.isAuthenticated()) {
@@ -817,7 +836,9 @@ export class AuthStateService implements GithubAuthHost {
     if (this.githubConsentActive()) {
       if (user) {
         this.setUser(user);
-        void this.github.completeSignedInLogin();
+        if (!this.github.hasSignUpHandoff() && !this.needsGithubConsent()) {
+          void this.github.completeSignedInLogin();
+        }
       } else {
         this.clearAuthPending();
       }
@@ -842,6 +863,9 @@ export class AuthStateService implements GithubAuthHost {
     }
 
     if (this.signInModalOpen() || this.signUpModalOpen()) {
+      if (this.github.hasSignUpHandoff()) {
+        return;
+      }
       void this.github.completeSignedInLogin();
       return;
     }
@@ -855,7 +879,11 @@ export class AuthStateService implements GithubAuthHost {
       return;
     }
 
-    if (this.needsGithubConsent()) {
+    if (
+      this.needsGithubConsent() &&
+      this.github.hasSignUpHandoff() &&
+      !!this.clerk.instance?.client?.signUp?.id
+    ) {
       this.openGithubConsentSignUp();
       return;
     }
@@ -877,6 +905,7 @@ export class AuthStateService implements GithubAuthHost {
 
     if (
       !this.isAuthenticated() &&
+      this.github.hasSignUpHandoff() &&
       (this.githubConsentActive() || this.needsGithubConsent())
     ) {
       this.openGithubConsentSignUp();
@@ -893,7 +922,7 @@ export class AuthStateService implements GithubAuthHost {
         await this.waitForSignedIn(20000);
       }
       if (!this.isAuthenticated()) {
-        if (this.needsGithubConsent()) {
+        if (this.needsGithubConsent() && this.github.hasSignUpHandoff()) {
           this.openGithubConsentSignUp();
         }
         return;
@@ -916,12 +945,23 @@ export class AuthStateService implements GithubAuthHost {
       this.signUpModalOpen() || this.githubConsentActive()
         ? "auth register"
         : "auth login";
-    this.startAuthPending();
-    this.closeSignIn();
-    this.closeSignUp();
+    const registering = eventName === "auth register";
+    if (registering) {
+      this.resetGithubConsent();
+    } else {
+      this.startAuthPending();
+      this.closeSignIn();
+      this.closeSignUp();
+    }
     await this.clerk.setActive(sessionId);
     this.syncState();
     this.analytics.trackEvent(eventName, {});
+    if (registering) {
+      this.closeSignUp();
+      this.clearAuthPending();
+      this.clearReturnUrl();
+      return;
+    }
     await this.navigateAfterAuth();
   }
 

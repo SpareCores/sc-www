@@ -5,6 +5,7 @@ import {
   AUTH_MESSAGES,
   GITHUB_POPUP_TIMEOUT_MS,
   GITHUB_SIGNIN_KEY,
+  GITHUB_SIGNUP_KEY,
 } from "../auth.constants";
 import type { RegisterResult } from "../auth.types";
 import {
@@ -16,7 +17,6 @@ import {
   needsGithubConsent as needsGithubConsentPure,
   newsletterMetadata,
   openAuthPopup,
-  prefersGithubRedirect,
   resolveHostedNavAction,
   setSessionFlag,
 } from "../auth.utils";
@@ -60,6 +60,30 @@ export class GithubService {
       return;
     }
     setSessionFlag(GITHUB_SIGNIN_KEY, false);
+  }
+
+  clearSignUpHandoff(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    setSessionFlag(GITHUB_SIGNUP_KEY, false);
+  }
+
+  hasSignUpHandoff(): boolean {
+    return getSessionFlag(GITHUB_SIGNUP_KEY);
+  }
+
+  async abandonIncompleteSignUp(): Promise<void> {
+    this.clearSignUpHandoff();
+    try {
+      const signUp = await this.clerk.requireSignUp();
+      if (!signUp) {
+        return;
+      }
+      await signUp.create({});
+    } catch (error) {
+      console.error("Error abandoning incomplete sign up:", error);
+    }
   }
 
   cancelPendingPopupWait(): void {
@@ -142,6 +166,7 @@ export class GithubService {
 
     host.clearAuthPending();
     this.sessionSyncedThisAttempt = false;
+    this.markSignUpHandoff();
 
     const urls = appUrls();
     const oauthParams = {
@@ -153,43 +178,12 @@ export class GithubService {
       unsafeMetadata: newsletterMetadata(newsletterOptIn),
     };
 
-    if (prefersGithubRedirect()) {
-      try {
-        await signUp.authenticateWithRedirect(oauthParams);
-      } catch (error) {
-        host.clearAuthPending();
-        throw error;
-      }
-      return;
-    }
-
-    const restoreNavigation = this.suppressHostedNavigation();
     try {
-      await this.withPopup(
-        "scGithubSignUp",
-        async (popup) => {
-          popup.focus();
-          await signUp.authenticateWithPopup({
-            ...oauthParams,
-            popup,
-          });
-        },
-        {
-          showPendingOnNavigate: true,
-          waitForSignInOutcome: true,
-          requireUser: true,
-        },
-      );
-      if (await this.transferExistingExternalAccount()) {
-        return;
-      }
-      await this.finishSignIn();
+      await signUp.authenticateWithRedirect(oauthParams);
     } catch (error) {
+      this.clearSignUpHandoff();
       host.clearAuthPending();
       throw error;
-    } finally {
-      restoreNavigation();
-      host.syncState(true);
     }
   }
 
@@ -208,8 +202,13 @@ export class GithubService {
     await this.clerk.reloadClient();
     const signIn = await this.clerk.requireSignIn();
     let signUp = await this.clerk.requireSignUp();
-    if (!signUp) {
-      return { status: "error", message: AUTH_MESSAGES.authNotReady };
+    if (!signUp?.id) {
+      await this.abandonIncompleteSignUp();
+      host.resetGithubConsent();
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
+      };
     }
 
     const legalUpdate = {
@@ -237,6 +236,8 @@ export class GithubService {
       } else if (signUp.status === "missing_requirements") {
         signUp = await signUp.update(legalUpdate);
       } else {
+        await this.abandonIncompleteSignUp();
+        host.resetGithubConsent();
         return {
           status: "error",
           message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
@@ -258,16 +259,21 @@ export class GithubService {
       if (signUp.status === "complete" && signUp.createdSessionId) {
         host.resetGithubConsent();
         this.clearSignInHandoff();
+        this.clearSignUpHandoff();
         await host.completeSession(signUp.createdSessionId);
         return { status: "complete" };
       }
 
+      await this.abandonIncompleteSignUp();
+      host.resetGithubConsent();
       return {
         status: "error",
         message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
       };
     } catch (error) {
       host.clearAuthPending();
+      await this.abandonIncompleteSignUp();
+      host.resetGithubConsent();
       return {
         status: "error",
         message: authErrorMessage(
@@ -289,9 +295,11 @@ export class GithubService {
     if (host.isAuthenticated()) {
       host.resetGithubConsent();
       this.clearSignInHandoff();
+      this.clearSignUpHandoff();
       return { status: "complete" };
     }
     if (await this.transferExistingExternalAccount()) {
+      this.clearSignUpHandoff();
       return { status: "complete" };
     }
     return {
@@ -324,6 +332,7 @@ export class GithubService {
     if (transferred.status === "complete" && transferred.createdSessionId) {
       host.resetGithubConsent();
       this.clearSignInHandoff();
+      this.clearSignUpHandoff();
       await host.completeSession(transferred.createdSessionId);
       return { status: "complete" };
     }
@@ -712,6 +721,13 @@ export class GithubService {
       return;
     }
     setSessionFlag(GITHUB_SIGNIN_KEY, true);
+  }
+
+  private markSignUpHandoff(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    setSessionFlag(GITHUB_SIGNUP_KEY, true);
   }
 
   private hasSignInHandoff(): boolean {
