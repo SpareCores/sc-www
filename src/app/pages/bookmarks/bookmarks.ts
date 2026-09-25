@@ -7,6 +7,7 @@ import {
 } from "@angular/cdk/drag-drop";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -38,6 +39,7 @@ import {
   formatBookmarkedAt,
   formatBookmarkedAtExact,
 } from "../../collections/collections.utils";
+import { AuthStateService } from "../../core/auth";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -78,8 +80,8 @@ type BookmarksSortDir = "asc" | "desc";
 
 const SORT_OPTIONS: { value: BookmarksSortBy; label: string }[] = [
   { value: "manual", label: "Manual order" },
-  { value: "name", label: "Name" },
-  { value: "date", label: "Bookmarked at" },
+  { value: "name", label: "Order by name" },
+  { value: "date", label: "Order by time bookmarked" },
 ];
 
 const EDITABLE_KINDS = new Set([
@@ -124,6 +126,7 @@ export class Bookmarks implements OnDestroy {
   private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
   private platformId = inject(PLATFORM_ID);
+  private auth = inject(AuthStateService);
 
   private saveModal = viewChild(CollectionSaveModalComponent);
   private noteModalRef = viewChild<ElementRef<HTMLElement>>("noteModal");
@@ -132,6 +135,8 @@ export class Bookmarks implements OnDestroy {
   private noteFlowbiteModal: Modal | null = null;
   private loadingFavoriteFeatures = new Set<string>();
   private vendorsLoaded = false;
+
+  protected readonly viewReady = signal(false);
 
   protected breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
@@ -254,6 +259,10 @@ export class Bookmarks implements OnDestroy {
   });
 
   constructor() {
+    afterNextRender(() => {
+      void this.revealBookmarks();
+    });
+
     effect(() => {
       const cards = this.cards();
       const favoriteCards = cards.filter((card) =>
@@ -296,6 +305,18 @@ export class Bookmarks implements OnDestroy {
       this.saveModal()?.close();
       this.editingCard.set(null);
     });
+  }
+
+  private async revealBookmarks(): Promise<void> {
+    await this.auth.init();
+    this.auth.syncSession();
+
+    if (!this.auth.isAuthenticated()) {
+      await this.router.navigateByUrl("/");
+      return;
+    }
+
+    this.viewReady.set(true);
   }
 
   ngOnDestroy(): void {
