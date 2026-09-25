@@ -74,7 +74,6 @@ export class RegisterModal {
       if (this.step === "consent" && this.method === "github") {
         this.step = "details";
         this.method = "email";
-        this.errorMessage = "";
         this.infoMessage = "";
       }
     });
@@ -278,7 +277,6 @@ export class RegisterModal {
       if (!this.auth.githubConsentActive()) {
         this.step = "details";
         this.method = "email";
-        this.errorMessage = "";
       }
     }
   }

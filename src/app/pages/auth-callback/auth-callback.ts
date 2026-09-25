@@ -99,6 +99,7 @@ export class AuthCallback implements OnInit {
     }
 
     this.auth.clearAuthPending();
+    this.auth.clearGithubSignUpHandoff();
     await this.auth.leaveAuthCallback();
   }
 }

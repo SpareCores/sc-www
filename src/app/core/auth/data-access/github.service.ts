@@ -73,17 +73,11 @@ export class GithubService {
     return getSessionFlag(GITHUB_SIGNUP_KEY);
   }
 
-  async abandonIncompleteSignUp(): Promise<void> {
+  // Local reset only: signUp.create({}) would run Clerk's CAPTCHA, and the
+  // next real create() replaces the server-side sign-up anyway.
+  abandonIncompleteSignUp(): void {
     this.clearSignUpHandoff();
-    try {
-      const signUp = await this.clerk.requireSignUp();
-      if (!signUp) {
-        return;
-      }
-      await signUp.create({});
-    } catch (error) {
-      console.error("Error abandoning incomplete sign up:", error);
-    }
+    this.clerk.instance?.client?.resetSignUp();
   }
 
   cancelPendingPopupWait(): void {
@@ -166,6 +160,7 @@ export class GithubService {
 
     host.clearAuthPending();
     this.sessionSyncedThisAttempt = false;
+    this.clearSignInHandoff();
     this.markSignUpHandoff();
 
     const urls = appUrls();
@@ -202,8 +197,11 @@ export class GithubService {
     await this.clerk.reloadClient();
     const signIn = await this.clerk.requireSignIn();
     let signUp = await this.clerk.requireSignUp();
-    if (!signUp?.id) {
-      await this.abandonIncompleteSignUp();
+    if (!signUp) {
+      return { status: "error", message: AUTH_MESSAGES.authNotReady };
+    }
+    if (!signUp.id && !isTransferable(signIn)) {
+      this.abandonIncompleteSignUp();
       host.resetGithubConsent();
       return {
         status: "error",
@@ -236,7 +234,7 @@ export class GithubService {
       } else if (signUp.status === "missing_requirements") {
         signUp = await signUp.update(legalUpdate);
       } else {
-        await this.abandonIncompleteSignUp();
+        this.abandonIncompleteSignUp();
         host.resetGithubConsent();
         return {
           status: "error",
@@ -264,7 +262,7 @@ export class GithubService {
         return { status: "complete" };
       }
 
-      await this.abandonIncompleteSignUp();
+      this.abandonIncompleteSignUp();
       host.resetGithubConsent();
       return {
         status: "error",
@@ -272,7 +270,7 @@ export class GithubService {
       };
     } catch (error) {
       host.clearAuthPending();
-      await this.abandonIncompleteSignUp();
+      this.abandonIncompleteSignUp();
       host.resetGithubConsent();
       return {
         status: "error",
@@ -424,7 +422,9 @@ export class GithubService {
     host.clearAuthPending();
     host.setUser(this.clerk.user);
 
-    if (!host.isAuthenticated()) {
+    // A transferable sign-in means there is no account yet, so no session
+    // will arrive; go straight to the consent step.
+    if (!host.isAuthenticated() && !this.needsConsent()) {
       await host.waitForSignedIn(10000);
     }
 
