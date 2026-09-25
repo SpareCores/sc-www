@@ -233,7 +233,7 @@ export class GithubService {
         signUp.verifications?.externalAccount?.status === "unverified";
 
       if (oauthUnverified) {
-        return this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
+        return await this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
       }
 
       if (isTransferable(signUp)) {
@@ -258,7 +258,10 @@ export class GithubService {
 
       if (signUp.status === "missing_requirements") {
         if (signUp.verifications?.externalAccount?.status === "unverified") {
-          return this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
+          return await this.finishUnverifiedOauth(
+            newsletterOptIn,
+            legalAccepted,
+          );
         }
         if (isTransferable(signUp)) {
           return this.completeTransferToSignIn(
@@ -300,24 +303,9 @@ export class GithubService {
     newsletterOptIn: boolean,
     legalAccepted: boolean,
   ): Promise<RegisterResult> {
-    const host = this.requireHost();
-    host.notifyContinueGithubSignUp();
+    this.requireHost().notifyContinueGithubSignUp();
     await this.signUp(newsletterOptIn, legalAccepted);
-    host.syncState();
-    if (host.isAuthenticated()) {
-      host.resetGithubConsent();
-      this.clearSignInHandoff();
-      this.clearSignUpHandoff();
-      return { status: "complete" };
-    }
-    if (await this.transferExistingExternalAccount()) {
-      this.clearSignUpHandoff();
-      return { status: "complete" };
-    }
-    return {
-      status: "error",
-      message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
-    };
+    return { status: "complete" };
   }
 
   private async transferExistingExternalAccount(): Promise<boolean> {
