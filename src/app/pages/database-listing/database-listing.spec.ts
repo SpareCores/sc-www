@@ -1,13 +1,22 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from "@angular/core/testing";
+import { Router } from "@angular/router";
 import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { DatabaseListing } from "./database-listing";
+import { KeeperAPIService } from "../../services/keeper-api.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("DatabaseListing", () => {
   let component: DatabaseListing;
   let fixture: ComponentFixture<DatabaseListing>;
+  let router: Router;
+  let keeperAPI: KeeperAPIService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -17,6 +26,8 @@ describe("DatabaseListing", () => {
 
     fixture = TestBed.createComponent(DatabaseListing);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    keeperAPI = TestBed.inject(KeeperAPIService);
     fixture.detectChanges();
   });
 
@@ -129,4 +140,72 @@ describe("DatabaseListing", () => {
     expect(restored[0]).toBe(0);
     expect(restored.slice(1).every((bit) => bit === 1)).toBeTrue();
   });
+
+  it("keeps filter query params when merging a column update via Router", () => {
+    const navigateSpy = spyOn(router, "navigate").and.resolveTo(true);
+    const pushStateSpy = spyOn(history, "pushState");
+
+    component.searchOptionsChanged({ vcpus_min: 8 });
+
+    expect(navigateSpy).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: jasmine.objectContaining({ vcpus_min: 8 }),
+        replaceUrl: false,
+      }),
+    );
+
+    navigateSpy.calls.reset();
+    component.query = { vcpus_min: 8 };
+    component.refreshColumns(true);
+
+    expect(pushStateSpy).not.toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: jasmine.objectContaining({ columns: jasmine.any(Number) }),
+        queryParamsHandling: "merge",
+        replaceUrl: true,
+      }),
+    );
+  });
+
+  it("ignores stale search responses", fakeAsync(() => {
+    let resolveFirst!: (value: any) => void;
+    let resolveSecond!: (value: any) => void;
+
+    spyOn(keeperAPI, "searchDatabases").and.returnValues(
+      new Promise((resolve) => {
+        resolveFirst = resolve;
+      }),
+      new Promise((resolve) => {
+        resolveSecond = resolve;
+      }),
+    );
+
+    component.query = {};
+    (component as any)._searchDatabases(true);
+    component.query = { vcpus_min: 8 };
+    (component as any)._searchDatabases(true);
+
+    resolveSecond({
+      body: [{ api_reference: "filtered" }],
+      headers: { get: () => "1" },
+    });
+    tick();
+
+    expect(component.databases).toEqual([
+      jasmine.objectContaining({ api_reference: "filtered" }),
+    ]);
+
+    resolveFirst({
+      body: [{ api_reference: "default" }],
+      headers: { get: () => "1" },
+    });
+    tick();
+
+    expect(component.databases).toEqual([
+      jasmine.objectContaining({ api_reference: "filtered" }),
+    ]);
+  }));
 });

@@ -127,4 +127,30 @@ describe("SearchBarParameterField", () => {
     expect(title.querySelector(".tooltip-trigger")).not.toBeNull();
     expect(title.textContent).toContain("Max price");
   });
+
+  it("does not re-emit valueChanged when range model was already synced", () => {
+    const parameter: SearchBarParameter = {
+      name: "vcpus_min",
+      modelValue: 1,
+      schema: {
+        category_id: "processor",
+        title: "Min vCPUs",
+        type: "number",
+        range_min: 1,
+        range_max: 256,
+        null_value: 1,
+      },
+    };
+    fixture.componentRef.setInput("parameter", parameter);
+    fixture.componentRef.setInput("filterCategoryId", "processor");
+    fixture.detectChanges();
+
+    const emitSpy = spyOn(component.valueChanged, "emit");
+    component.onRangeSliderChanged();
+    expect(emitSpy).not.toHaveBeenCalled();
+
+    parameter.modelValue = 57;
+    component.onRangeSliderChanged();
+    expect(emitSpy).toHaveBeenCalledTimes(1);
+  });
 });

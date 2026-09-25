@@ -52,7 +52,11 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
-import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
+import {
+  areSearchParamsEqual,
+  toSearchParams,
+} from "../../tools/listing-search-params";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
@@ -246,6 +250,8 @@ export class DatabaseListing implements OnInit, OnDestroy {
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
 
   private subscription = new Subscription();
+  private searchRequestId = 0;
+  private previousSearchParams: Record<string, unknown> | null = null;
 
   constructor() {
     effect(() => {
@@ -414,7 +420,13 @@ export class DatabaseListing implements OnInit, OnDestroy {
         }
 
         this.refreshColumns(false);
-        this._searchDatabases(true);
+        if (
+          this.previousSearchParams === null ||
+          !areSearchParamsEqual(this.previousSearchParams, query)
+        ) {
+          this.previousSearchParams = toSearchParams(query);
+          this._searchDatabases(true);
+        }
         this.syncSavedSearchChrome();
       }),
     );
@@ -511,13 +523,14 @@ export class DatabaseListing implements OnInit, OnDestroy {
       queryParams.columns = columns;
     }
 
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams,
+    navigateListingQuery(this.router, this.route, queryParams, {
+      params: "replace",
+      history: "push",
     });
   }
 
   private _searchDatabases(updateTotalCount = true) {
+    const requestId = ++this.searchRequestId;
     this.isLoading = true;
 
     const query = structuredClone(
@@ -561,6 +574,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
     this.keeperAPI
       .searchDatabases(query)
       .then((databases) => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
+
         this.databases = (databases?.body || []).map((database) => ({
           ...database,
           selected:
@@ -582,6 +599,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
         this.toastService.removeToast("query-error");
       })
       .catch((err) => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
+
         this.analytics.SentryException(err, {
           tags: {
             location: this.constructor.name,
@@ -597,7 +618,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
         });
       })
       .finally(() => {
-        this.isLoading = false;
+        if (requestId === this.searchRequestId) {
+          this.isLoading = false;
+        }
       });
   }
 
@@ -666,22 +689,25 @@ export class DatabaseListing implements OnInit, OnDestroy {
     return paramObject;
   }
 
-  updateQueryParams(object: DatabaseListingQuery) {
-    const encodedQuery = encodeQueryParams(object);
-    const path = window.location.pathname || "/databases";
-
-    if (encodedQuery?.length) {
-      window.history.pushState({}, "", `${path}?${encodedQuery}`);
-    } else {
-      window.history.pushState({}, "", path);
+  updateQueryParams(object: Params) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
     }
+
+    navigateListingQuery(this.router, this.route, object, {
+      params: "merge",
+      history: "replace",
+    });
   }
 
   refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
     if (isPlatformBrowser(this.platformId) && save) {
       this.hasCustomColumns = true;
-      this.updateQueryParams(this.getQueryObjectBase());
+      const columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+      this.updateQueryParams({ columns });
     }
   }
 

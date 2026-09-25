@@ -82,11 +82,11 @@ import {
   isDatabaseCompareUrlState,
 } from "../../tools/encoded-url-state";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { AdvisorUiService } from "../advisor/advisor-ui.service";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import * as compareTableLayout from "../shared/compare-table/compare-table-layout.utils";
-import { pushBrowserQueryState } from "../server-compare/compare-url-state.utils";
 import {
   DATABASE_COMPARE_FIRST_COL_ID,
   DATABASE_COMPARE_TABLE_HOLDER_ID,
@@ -352,6 +352,9 @@ export class DatabaseCompareComponent
           distinctUntilChanged(),
         )
         .subscribe(() => {
+          if (this.isOwnCompareUrlWrite()) {
+            return;
+          }
           this.setup();
         }),
     );
@@ -847,6 +850,22 @@ export class DatabaseCompareComponent
     ].join("|");
   }
 
+  private isOwnCompareUrlWrite(): boolean {
+    const snapshot = this.route.snapshot;
+    if (!this.compareDataReady || snapshot.paramMap.get("id")) {
+      return false;
+    }
+    const q = snapshot.queryParams;
+    return (
+      encodeQueryParams({
+        instances: q["instances"],
+        baseline_vendor: q["baseline_vendor"],
+        baseline_database: q["baseline_database"],
+        currency: q["currency"],
+      }) === this.lastEncodedCompareQuery
+    );
+  }
+
   private collectionsReadyForChrome(): boolean {
     if (!isPlatformBrowser(this.platformId) || !this.auth.isAuthenticated()) {
       return true;
@@ -947,7 +966,8 @@ export class DatabaseCompareComponent
       return;
     }
 
-    const encodedQuery = encodeQueryParams(this.getCompareUrlQueryParams());
+    const queryParams = this.getCompareUrlQueryParams();
+    const encodedQuery = encodeQueryParams(queryParams);
     const canonicalUrl = encodedQuery
       ? `/databases/compare?${encodedQuery}`
       : "/databases/compare";
@@ -955,6 +975,7 @@ export class DatabaseCompareComponent
     if (this.route.snapshot.paramMap.get("id")) {
       this.lastEncodedCompareQuery = encodedQuery;
       void this.router.navigateByUrl(canonicalUrl, { replaceUrl: true });
+      this.syncSavedComparisonChrome();
       return;
     }
 
@@ -963,7 +984,11 @@ export class DatabaseCompareComponent
     }
 
     this.lastEncodedCompareQuery = encodedQuery;
-    pushBrowserQueryState(encodedQuery);
+    navigateListingQuery(this.router, this.route, queryParams, {
+      params: "replace",
+      history: "push",
+      preserveFragment: true,
+    });
     this.syncSavedComparisonChrome();
   }
 
@@ -979,22 +1004,86 @@ export class DatabaseCompareComponent
       return;
     }
 
+    if (!selection.length) {
+      if (!this.databases.length && !this.instances.length) {
+        return;
+      }
+
+      this.databases = [];
+      this.instances = [];
+      this.instancesRaw = "";
+      this.lineCompareServers = [];
+      this.propertySections = [];
+      this.priceRows = [];
+      this.baselineDatabase = null;
+      this.updateCompareBreadcrumb(0);
+      this.syncSavedComparisonChrome();
+      if (this.route.snapshot.paramMap.get("id")) {
+        this.serverCompare.syncDatabaseCompareRoute();
+      } else {
+        this.syncCompareUrlState();
+      }
+      return;
+    }
+
     if (!this.instances.length) {
       return;
     }
 
-    if (
-      selection.length === this.instances.length &&
-      selection.every(
-        (item, index) =>
-          item.vendor === this.instances[index]?.vendor &&
-          item.database === this.instances[index]?.database,
-      )
-    ) {
+    const nextDatabases: LoadedCompareDatabase[] = [];
+    const indexMap: number[] = [];
+
+    for (const item of selection) {
+      const oldIndex = this.databases.findIndex(
+        (database) =>
+          database.vendor_id === item.vendor &&
+          database.api_reference === item.database,
+      );
+
+      if (oldIndex === -1) {
+        this.serverCompare.syncDatabaseCompareRoute();
+        return;
+      }
+
+      indexMap.push(oldIndex);
+      nextDatabases.push(this.databases[oldIndex]);
+    }
+
+    const orderUnchanged =
+      indexMap.length === this.databases.length &&
+      indexMap.every((oldIndex, index) => oldIndex === index);
+
+    if (orderUnchanged) {
       return;
     }
 
-    this.serverCompare.syncDatabaseCompareRoute();
+    if (this.route.snapshot.paramMap.get("id")) {
+      this.serverCompare.syncDatabaseCompareRoute();
+    }
+
+    this.databases = nextDatabases;
+    this.instances = selection.map((item) => ({
+      display_name: item.display_name,
+      vendor: item.vendor,
+      database: item.database,
+    }));
+    this.instancesRaw = btoa(JSON.stringify(this.instances));
+    this.updateCompareBreadcrumb(this.databases.length);
+
+    if (
+      this.baselineDatabase &&
+      !this.databases.some((database) => this.isBaselineDatabase(database))
+    ) {
+      this.baselineDatabase = null;
+    }
+
+    this.buildPropertySections();
+    this.buildPriceRows();
+    this.refreshLineCompareServers();
+    if (!this.route.snapshot.paramMap.get("id")) {
+      this.syncCompareUrlState();
+    }
+    this.refreshCompareTableLayout();
   }
 
   private applyBaselineFromService(

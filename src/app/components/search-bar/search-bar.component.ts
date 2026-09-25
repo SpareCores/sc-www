@@ -19,6 +19,7 @@ import { LucideChevronDown, LucideDynamicIcon } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { Button } from "../button/button";
 import {
@@ -101,6 +102,7 @@ type ApiResponse<T> = {
 export class SearchBarComponent implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
 
   query = input<SearchBarQuery>({});
@@ -144,8 +146,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   private parameterDraftValues: Record<string, string> = {};
 
-  private readonly valueChangeDebouncer = new Subject<void>();
+  private readonly valueChangeDebouncer = new Subject<number>();
+  private valueChangeGeneration = 0;
   private readonly subscription = new Subscription();
+  private countriesRequest: Promise<CountryMetadata[]> | null = null;
+  private lastSelectedCountryIdsKey: string | null = null;
 
   constructor() {
     effect(() => {
@@ -182,9 +187,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.loadRegions();
 
     this.subscription.add(
-      this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
-        this.filterServers();
-      }),
+      this.valueChangeDebouncer
+        .pipe(debounceTime(500))
+        .subscribe((generation) => {
+          if (generation !== this.valueChangeGeneration) {
+            return;
+          }
+          this.filterServers();
+        }),
     );
 
     if (isPlatformBrowser(this.platformId)) {
@@ -228,6 +238,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     extraParameters: SearchBarQuery,
     filterCategories: SearchBarFilterCategory[],
   ) {
+    this.valueChangeGeneration++;
     searchParameters.forEach((item) => {
       const parameterType = this.getParameterType(item);
 
@@ -634,7 +645,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   valueChanged() {
-    this.valueChangeDebouncer.next();
+    this.valueChangeDebouncer.next(this.valueChangeGeneration);
   }
 
   getParameterDraftValue(
@@ -760,71 +771,102 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   private loadCountries(selectedCountryIds: string[]) {
-    this.keeperAPI
-      .getCountries()
-      .then((response: ApiResponse<CountryMetadata[]>) => {
-        if (!response.body) {
-          return;
-        }
+    const selectedKey = [...selectedCountryIds].sort().join(",");
+    if (
+      this.lastSelectedCountryIdsKey === selectedKey &&
+      this.countryMetadata().length > 0
+    ) {
+      return;
+    }
+    this.lastSelectedCountryIdsKey = selectedKey;
 
-        const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
-          type: "region",
-        });
-        this.countryMetadata.set(
-          response.body
-            .map((item) => {
-              return {
-                ...item,
-                selected: selectedCountryIds.indexOf(item.country_id) !== -1,
-              };
-            })
-            .sort(
-              (a, b) =>
-                regionNamesInEnglish
-                  .of(a.country_id)
-                  ?.localeCompare(
-                    regionNamesInEnglish.of(b.country_id) || "",
-                  ) || 0,
-            ),
-        );
+    const applyCountries = (countries: CountryMetadata[]) => {
+      if (!countries.length) {
+        return;
+      }
 
-        const previousContinents = new Map(
-          this.continentMetadata.map((continent) => [
-            continent.continent,
-            continent,
-          ]),
-        );
-
-        this.continentMetadata = [];
-        this.countryMetadata().forEach((country) => {
-          const continent = this.continentMetadata.find(
-            (item) => item.continent === country.continent,
-          );
-          if (!continent) {
-            const previous = previousContinents.get(country.continent);
-            const hasSelectedCountry = this.countryMetadata().some(
-              (item) => item.continent === country.continent && item.selected,
-            );
-            this.continentMetadata.push({
-              continent: country.continent,
-              selected: false,
-              collapsed: previous ? previous.collapsed : !hasSelectedCountry,
-            });
-          }
-        });
-
-        this.continentMetadata.sort((a, b) =>
-          a.continent.localeCompare(b.continent),
-        );
-
-        this.continentMetadata.forEach((continent) => {
-          continent.selected =
-            this.countryMetadata().find(
-              (country) =>
-                country.continent === continent.continent && !country.selected,
-            ) === undefined;
-        });
+      const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+        type: "region",
       });
+      this.countryMetadata.set(
+        countries
+          .map((item) => {
+            return {
+              ...item,
+              selected: selectedCountryIds.indexOf(item.country_id) !== -1,
+            };
+          })
+          .sort(
+            (a, b) =>
+              regionNamesInEnglish
+                .of(a.country_id)
+                ?.localeCompare(regionNamesInEnglish.of(b.country_id) || "") ||
+              0,
+          ),
+      );
+
+      const previousContinents = new Map(
+        this.continentMetadata.map((continent) => [
+          continent.continent,
+          continent,
+        ]),
+      );
+
+      this.continentMetadata = [];
+      this.countryMetadata().forEach((country) => {
+        const continent = this.continentMetadata.find(
+          (item) => item.continent === country.continent,
+        );
+        if (!continent) {
+          const previous = previousContinents.get(country.continent);
+          const hasSelectedCountry = this.countryMetadata().some(
+            (item) => item.continent === country.continent && item.selected,
+          );
+          this.continentMetadata.push({
+            continent: country.continent,
+            selected: false,
+            collapsed: previous ? previous.collapsed : !hasSelectedCountry,
+          });
+        }
+      });
+
+      this.continentMetadata.sort((a, b) =>
+        a.continent.localeCompare(b.continent),
+      );
+
+      this.continentMetadata.forEach((continent) => {
+        continent.selected =
+          this.countryMetadata().find(
+            (country) =>
+              country.continent === continent.continent && !country.selected,
+          ) === undefined;
+      });
+    };
+
+    if (!this.countriesRequest) {
+      this.countriesRequest = this.keeperAPI
+        .getCountries()
+        .then((response: ApiResponse<CountryMetadata[]>) => {
+          if (!response.body) {
+            this.countriesRequest = null;
+            return [];
+          }
+          return response.body;
+        })
+        .catch((error: unknown) => {
+          this.countriesRequest = null;
+          console.error(error);
+          this.toastService.show({
+            title: "Failed to load countries",
+            body: "Please try again later.",
+            type: "error",
+            id: "search-bar-countries-error",
+          });
+          return [] as CountryMetadata[];
+        });
+    }
+
+    this.countriesRequest.then(applyCountries);
   }
 
   private loadRegions() {

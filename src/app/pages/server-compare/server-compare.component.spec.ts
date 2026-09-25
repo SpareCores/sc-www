@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { ActivatedRoute, convertToParamMap } from "@angular/router";
+import { ActivatedRoute, convertToParamMap, Router } from "@angular/router";
 import { EMPTY, Subject } from "rxjs";
 
 import { ServerCompareComponent } from "./server-compare.component";
@@ -45,6 +45,7 @@ describe("ServerCompareComponent", () => {
 
   let component: ServerCompareComponent;
   let fixture: ComponentFixture<ServerCompareComponent>;
+  let navigate: jasmine.Spy;
 
   beforeEach(async () => {
     routeSnapshot.paramMap = convertToParamMap({});
@@ -144,6 +145,7 @@ describe("ServerCompareComponent", () => {
 
     fixture = TestBed.createComponent(ServerCompareComponent);
     component = fixture.componentInstance;
+    navigate = spyOn(TestBed.inject(Router), "navigate").and.resolveTo(true);
     spyOn(console, "warn");
   });
 
@@ -287,7 +289,6 @@ describe("ServerCompareComponent", () => {
         display_name: "T3 Medium",
       },
     ] as typeof component.servers;
-    const pushState = spyOn(window.history, "pushState");
 
     component.selectBaselineServer(component.servers[0]);
 
@@ -296,10 +297,17 @@ describe("ServerCompareComponent", () => {
       vendor: "aws",
       server: "t3.medium",
     });
-    expect(pushState).toHaveBeenCalledWith(
-      {},
-      "",
-      jasmine.stringMatching(/baseline_vendor=aws&baseline_server=t3\.medium/),
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: {
+          instances: "encoded-instances",
+          baseline_vendor: "aws",
+          baseline_server: "t3.medium",
+        },
+        replaceUrl: false,
+        preserveFragment: true,
+      }),
     );
   });
 
@@ -315,15 +323,18 @@ describe("ServerCompareComponent", () => {
     component.selectedBaselineServer = component.servers[0];
     component["lastEncodedCompareQuery"] =
       "baseline_vendor=aws&baseline_server=t3.medium";
-    const pushState = spyOn(window.history, "pushState");
 
     component.selectBaselineServer(null);
 
     expect(component.selectedBaselineServer).toBeNull();
     expect(setBaselineServer).toHaveBeenCalledWith(null);
-    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
-    expect(pushedUrl).toContain("instances=encoded-instances");
-    expect(pushedUrl).not.toContain("baseline_vendor");
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: { instances: "encoded-instances" },
+        preserveFragment: true,
+      }),
+    );
   });
 
   it("selectBaselineServer preserves URL hash when updating query params", () => {
@@ -335,19 +346,20 @@ describe("ServerCompareComponent", () => {
         display_name: "T3 Medium",
       },
     ] as typeof component.servers;
-    window.history.replaceState(
-      null,
-      "",
-      "/servers/compare?instances=encoded-instances#benchmark_line_cpu",
-    );
     component["lastEncodedCompareQuery"] = "";
-    const pushState = spyOn(window.history, "pushState");
 
     component.selectBaselineServer(component.servers[0]);
 
-    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
-    expect(pushedUrl).toContain("#benchmark_line_cpu");
-    expect(pushedUrl).toContain("baseline_vendor=aws");
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: jasmine.objectContaining({
+          baseline_vendor: "aws",
+          baseline_server: "t3.medium",
+        }),
+        preserveFragment: true,
+      }),
+    );
   });
 
   it("selectBaselineServer URL-encodes Base64 instances query values", () => {
@@ -359,12 +371,17 @@ describe("ServerCompareComponent", () => {
         display_name: "T3 Medium",
       },
     ] as typeof component.servers;
-    const pushState = spyOn(window.history, "pushState");
 
     component.selectBaselineServer(component.servers[0]);
 
-    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
-    expect(pushedUrl).toContain("instances=abc%2Bdef%3Dghi");
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: jasmine.objectContaining({
+          instances: "abc+def=ghi",
+        }),
+      }),
+    );
   });
 
   it("reorders and deletes compare servers without refetching", () => {
@@ -398,7 +415,7 @@ describe("ServerCompareComponent", () => {
         data: component.benchmarkMeta,
       },
     ];
-    const pushState = spyOn(window.history, "pushState");
+    const navigateCallsBefore = navigate.calls.count();
     getServerMeta.calls.reset();
 
     selectionChanged.next([
@@ -423,7 +440,7 @@ describe("ServerCompareComponent", () => {
     expect(component.benchmarkMeta[0].configs[0].values).toEqual([2, 1]);
     expect(getServerMeta).not.toHaveBeenCalled();
     expect(syncCompareRoute).not.toHaveBeenCalled();
-    expect(pushState).toHaveBeenCalled();
+    expect(navigate.calls.count()).toBeGreaterThan(navigateCallsBefore);
   });
 
   it("canonicalizes preset compare routes before applying selection changes", () => {
