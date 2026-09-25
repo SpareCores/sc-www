@@ -73,17 +73,11 @@ export class GithubService {
     return getSessionFlag(GITHUB_SIGNUP_KEY);
   }
 
-  async abandonIncompleteSignUp(): Promise<void> {
+  // Local reset only: signUp.create({}) would run Clerk's CAPTCHA, and the
+  // next real create() replaces the server-side sign-up anyway.
+  abandonIncompleteSignUp(): void {
     this.clearSignUpHandoff();
-    try {
-      const signUp = await this.clerk.requireSignUp();
-      if (!signUp) {
-        return;
-      }
-      await signUp.create({});
-    } catch (error) {
-      console.error("Error abandoning incomplete sign up:", error);
-    }
+    this.clerk.instance?.client?.resetSignUp();
   }
 
   cancelPendingPopupWait(): void {
@@ -95,6 +89,20 @@ export class GithubService {
       this.clerk.instance?.client?.signIn,
       this.clerk.instance?.client?.signUp,
       !!this.clerk.user,
+    );
+  }
+
+  private signInVerificationFailed(): boolean {
+    const verification =
+      this.clerk.instance?.client?.signIn?.firstFactorVerification;
+    if (!verification) {
+      return false;
+    }
+    return (
+      !!verification.error ||
+      verification.status === "unverified" ||
+      verification.status === "failed" ||
+      verification.status === "expired"
     );
   }
 
@@ -166,6 +174,7 @@ export class GithubService {
 
     host.clearAuthPending();
     this.sessionSyncedThisAttempt = false;
+    this.clearSignInHandoff();
     this.markSignUpHandoff();
 
     const urls = appUrls();
@@ -202,8 +211,11 @@ export class GithubService {
     await this.clerk.reloadClient();
     const signIn = await this.clerk.requireSignIn();
     let signUp = await this.clerk.requireSignUp();
-    if (!signUp?.id) {
-      await this.abandonIncompleteSignUp();
+    if (!signUp) {
+      return { status: "error", message: AUTH_MESSAGES.authNotReady };
+    }
+    if (!signUp.id && !isTransferable(signIn)) {
+      this.abandonIncompleteSignUp();
       host.resetGithubConsent();
       return {
         status: "error",
@@ -221,7 +233,7 @@ export class GithubService {
         signUp.verifications?.externalAccount?.status === "unverified";
 
       if (oauthUnverified) {
-        return this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
+        return await this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
       }
 
       if (isTransferable(signUp)) {
@@ -236,7 +248,7 @@ export class GithubService {
       } else if (signUp.status === "missing_requirements") {
         signUp = await signUp.update(legalUpdate);
       } else {
-        await this.abandonIncompleteSignUp();
+        this.abandonIncompleteSignUp();
         host.resetGithubConsent();
         return {
           status: "error",
@@ -246,7 +258,10 @@ export class GithubService {
 
       if (signUp.status === "missing_requirements") {
         if (signUp.verifications?.externalAccount?.status === "unverified") {
-          return this.finishUnverifiedOauth(newsletterOptIn, legalAccepted);
+          return await this.finishUnverifiedOauth(
+            newsletterOptIn,
+            legalAccepted,
+          );
         }
         if (isTransferable(signUp)) {
           return this.completeTransferToSignIn(
@@ -264,7 +279,7 @@ export class GithubService {
         return { status: "complete" };
       }
 
-      await this.abandonIncompleteSignUp();
+      this.abandonIncompleteSignUp();
       host.resetGithubConsent();
       return {
         status: "error",
@@ -272,7 +287,7 @@ export class GithubService {
       };
     } catch (error) {
       host.clearAuthPending();
-      await this.abandonIncompleteSignUp();
+      this.abandonIncompleteSignUp();
       host.resetGithubConsent();
       return {
         status: "error",
@@ -288,24 +303,9 @@ export class GithubService {
     newsletterOptIn: boolean,
     legalAccepted: boolean,
   ): Promise<RegisterResult> {
-    const host = this.requireHost();
-    host.notifyContinueGithubSignUp();
+    this.requireHost().notifyContinueGithubSignUp();
     await this.signUp(newsletterOptIn, legalAccepted);
-    host.syncState();
-    if (host.isAuthenticated()) {
-      host.resetGithubConsent();
-      this.clearSignInHandoff();
-      this.clearSignUpHandoff();
-      return { status: "complete" };
-    }
-    if (await this.transferExistingExternalAccount()) {
-      this.clearSignUpHandoff();
-      return { status: "complete" };
-    }
-    return {
-      status: "error",
-      message: AUTH_MESSAGES.unableToCompleteGithubSignUp,
-    };
+    return { status: "complete" };
   }
 
   private async transferExistingExternalAccount(): Promise<boolean> {
@@ -374,6 +374,11 @@ export class GithubService {
           return;
         }
         if (action === "oauth") {
+          // setActive() navigates before it stores the session, so waiting
+          // here for the session would stall until waitForSignedIn times out.
+          if (clerk.__internal_setActiveInProgress) {
+            return;
+          }
           await this.consumeOAuthCallback(href);
           return;
         }
@@ -424,7 +429,13 @@ export class GithubService {
     host.clearAuthPending();
     host.setUser(this.clerk.user);
 
-    if (!host.isAuthenticated()) {
+    // No session will arrive for a transferable sign-in (no account yet) or a
+    // failed one (e.g. cancelled on GitHub), so only wait otherwise.
+    if (
+      !host.isAuthenticated() &&
+      !this.needsConsent() &&
+      !this.signInVerificationFailed()
+    ) {
       await host.waitForSignedIn(10000);
     }
 
