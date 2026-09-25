@@ -289,10 +289,11 @@ describe("AuthStateService", () => {
     expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
   });
 
-  it("tracks account deletion only after a successful deleteAccount call", async () => {
+  it("tracks account deletion only after a successful Clerk delete", async () => {
     const auth = createAuth();
     const analytics = analyticsService();
     const trackSpy = spyOn(analytics, "trackEvent");
+    const identifySpy = spyOn(analytics, "identify");
     const resetSpy = spyOn(analytics, "reset");
     const deleteSpy = jasmine.createSpy("delete").and.resolveTo(undefined);
     const signedInUser = {
@@ -306,15 +307,16 @@ describe("AuthStateService", () => {
     setClerkInstance({ user: signedInUser });
     setUser(auth, signedInUser);
 
-    await auth.deleteAccount();
+    await signedInUser.delete();
     auth.setUser(null);
 
     expect(deleteSpy).toHaveBeenCalled();
+    expect(identifySpy).toHaveBeenCalledWith("user_1");
     expect(trackSpy).toHaveBeenCalledWith("auth account deleted", {});
     expect(resetSpy).toHaveBeenCalled();
   });
 
-  it("does not track account deletion when deleteAccount fails", async () => {
+  it("does not track account deletion when Clerk delete fails", async () => {
     const auth = createAuth();
     const analytics = analyticsService();
     const trackSpy = spyOn(analytics, "trackEvent");
@@ -332,12 +334,13 @@ describe("AuthStateService", () => {
     setClerkInstance({ user: signedInUser });
     setUser(auth, signedInUser);
 
-    await expectAsync(auth.deleteAccount()).toBeRejectedWithError(
+    await expectAsync(signedInUser.delete()).toBeRejectedWithError(
       "delete failed",
     );
+    auth.setUser(null);
 
     expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
-    expect(auth.isAuthenticated()).toBeTrue();
+    expect(auth.isAuthenticated()).toBeFalse();
   });
 
   it("resets analytics when the user disappears without explicit deletion", () => {

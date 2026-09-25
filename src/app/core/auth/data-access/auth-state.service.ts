@@ -59,6 +59,7 @@ export class AuthStateService implements GithubAuthHost {
   private navigatingAfterAuth = false;
   private boundHost = false;
   private boundListener = false;
+  private accountDeleted = false;
   private signedOutIdentityCleared = false;
 
   private readonly _user = signal<UserResource | null>(null);
@@ -733,22 +734,7 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   openUserProfile(): void {
-    this.clerk.openUserProfile(() => this.deleteAccount());
-  }
-
-  async deleteAccount(): Promise<void> {
-    const user = this.clerk.user;
-    if (!user) {
-      return;
-    }
-
-    await user.delete();
-    try {
-      this.analytics.identify(user.id);
-      this.analytics.trackEvent("auth account deleted", {});
-    } finally {
-      this.analytics.reset();
-    }
+    this.clerk.openUserProfile();
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -760,9 +746,13 @@ export class AuthStateService implements GithubAuthHost {
     this._user.set(user);
 
     if (user) {
+      this.watchAccountDeletion(user);
       this.identifyAnalyticsUser(user);
       return;
     }
+
+    const accountDeleted = this.accountDeleted;
+    this.accountDeleted = false;
 
     if (!previousUser) {
       if (
@@ -775,8 +765,31 @@ export class AuthStateService implements GithubAuthHost {
       return;
     }
 
+    if (accountDeleted) {
+      this.analytics.identify(previousUser.id);
+      this.analytics.trackEvent("auth account deleted", {});
+    }
     this.analytics.reset();
     this.leaveBookmarks();
+  }
+
+  private watchAccountDeletion(user: UserResource): void {
+    const target = user as UserResource & { __scDeleteWrapped?: boolean };
+    if (target.__scDeleteWrapped || typeof user.delete !== "function") {
+      return;
+    }
+
+    const originalDelete = user.delete.bind(user);
+    user.delete = async () => {
+      this.accountDeleted = true;
+      try {
+        await originalDelete();
+      } catch (error) {
+        this.accountDeleted = false;
+        throw error;
+      }
+    };
+    target.__scDeleteWrapped = true;
   }
 
   private leaveBookmarks(): void {
