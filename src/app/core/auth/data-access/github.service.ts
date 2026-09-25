@@ -92,6 +92,20 @@ export class GithubService {
     );
   }
 
+  private signInVerificationFailed(): boolean {
+    const verification =
+      this.clerk.instance?.client?.signIn?.firstFactorVerification;
+    if (!verification) {
+      return false;
+    }
+    return (
+      !!verification.error ||
+      verification.status === "unverified" ||
+      verification.status === "failed" ||
+      verification.status === "expired"
+    );
+  }
+
   async signIn(): Promise<void> {
     const host = this.requireHost();
     if (!isPlatformBrowser(this.platformId)) {
@@ -372,6 +386,11 @@ export class GithubService {
           return;
         }
         if (action === "oauth") {
+          // setActive() navigates before it stores the session, so waiting
+          // here for the session would stall until waitForSignedIn times out.
+          if (clerk.__internal_setActiveInProgress) {
+            return;
+          }
           await this.consumeOAuthCallback(href);
           return;
         }
@@ -422,9 +441,13 @@ export class GithubService {
     host.clearAuthPending();
     host.setUser(this.clerk.user);
 
-    // A transferable sign-in means there is no account yet, so no session
-    // will arrive; go straight to the consent step.
-    if (!host.isAuthenticated() && !this.needsConsent()) {
+    // No session will arrive for a transferable sign-in (no account yet) or a
+    // failed one (e.g. cancelled on GitHub), so only wait otherwise.
+    if (
+      !host.isAuthenticated() &&
+      !this.needsConsent() &&
+      !this.signInVerificationFailed()
+    ) {
       await host.waitForSignedIn(10000);
     }
 
