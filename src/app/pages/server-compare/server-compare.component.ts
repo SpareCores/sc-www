@@ -54,6 +54,7 @@ import {
   decodeBase64JsonUrlState,
   isServerCompareUrlState,
 } from "../../tools/encoded-url-state";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { isCompareBaselineServer } from "../../components/charts/shared/server-compare-table.utils";
 import {
@@ -65,7 +66,6 @@ import {
   SERVER_COMPARE_TABLE_HOLDER_ID,
   SERVER_COMPARE_TABLE_ID,
 } from "./server-compare.constants";
-import { pushBrowserQueryState } from "./compare-url-state.utils";
 import {
   type MemoryBenchmarkConfig,
   type MemoryBenchmarkMeta,
@@ -475,6 +475,9 @@ export class ServerCompareComponent
           distinctUntilChanged(),
         )
         .subscribe(() => {
+          if (this.isOwnCompareUrlWrite()) {
+            return;
+          }
           this.setup();
         }),
     );
@@ -1126,6 +1129,22 @@ export class ServerCompareComponent
     ].join("|");
   }
 
+  private isOwnCompareUrlWrite(): boolean {
+    const snapshot = this.route.snapshot;
+    if (!this.compareDataReady || snapshot.paramMap.get("id")) {
+      return false;
+    }
+    const q = snapshot.queryParams;
+    return (
+      encodeQueryParams({
+        instances: q["instances"],
+        baseline_vendor: q["baseline_vendor"],
+        baseline_server: q["baseline_server"],
+        currency: q["currency"],
+      }) === this.lastEncodedCompareQuery
+    );
+  }
+
   private collectionsReadyForChrome(): boolean {
     if (!isPlatformBrowser(this.platformId) || !this.auth.isAuthenticated()) {
       return true;
@@ -1233,7 +1252,11 @@ export class ServerCompareComponent
       });
       this.selectedBaselineServer = null;
       this.syncSavedComparisonChrome();
-      this.syncCompareUrlState();
+      if (this.route.snapshot.paramMap.get("id")) {
+        this.serverCompare.syncCompareRoute();
+      } else {
+        this.syncCompareUrlState();
+      }
       return;
     }
 
@@ -1289,7 +1312,9 @@ export class ServerCompareComponent
       this.selectedBaselineServer = null;
     }
 
-    this.syncCompareUrlState();
+    if (!this.route.snapshot.paramMap.get("id")) {
+      this.syncCompareUrlState();
+    }
     this.onCompareTableLayoutChange();
   }
 
@@ -1563,7 +1588,8 @@ export class ServerCompareComponent
       return;
     }
 
-    const encodedQuery = encodeQueryParams(this.getCompareUrlQueryParams());
+    const queryParams = this.getCompareUrlQueryParams();
+    const encodedQuery = encodeQueryParams(queryParams);
     const canonicalUrl = encodedQuery
       ? `/servers/compare?${encodedQuery}`
       : "/servers/compare";
@@ -1571,6 +1597,7 @@ export class ServerCompareComponent
     if (this.route.snapshot.paramMap.get("id")) {
       this.lastEncodedCompareQuery = encodedQuery;
       void this.router.navigateByUrl(canonicalUrl, { replaceUrl: true });
+      this.syncSavedComparisonChrome();
       return;
     }
 
@@ -1579,7 +1606,11 @@ export class ServerCompareComponent
     }
 
     this.lastEncodedCompareQuery = encodedQuery;
-    pushBrowserQueryState(encodedQuery);
+    navigateListingQuery(this.router, this.route, queryParams, {
+      params: "replace",
+      history: "push",
+      preserveFragment: true,
+    });
     this.syncSavedComparisonChrome();
   }
 
