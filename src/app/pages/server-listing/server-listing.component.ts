@@ -25,7 +25,11 @@ import {
   decodeBase64JsonUrlState,
   isBenchmarkUrlState,
 } from "../../tools/encoded-url-state";
-import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
+import {
+  areSearchParamsEqual,
+  toSearchParams,
+} from "../../tools/listing-search-params";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -289,6 +293,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private bookmarkSource: SavedSearchItem | null = null;
 
   private subscription = new Subscription();
+  private searchRequestId = 0;
+  private previousSearchParams: Record<string, unknown> | null = null;
 
   constructor() {
     effect(() => {
@@ -471,7 +477,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         // as we need to decode the benchmark URL param first,
         // and will do the search after getBenchmarkConfigs is called
         if (!isInitialLoad) {
-          this._searchServers(true);
+          if (
+            this.previousSearchParams === null ||
+            !areSearchParamsEqual(this.previousSearchParams, query)
+          ) {
+            this.previousSearchParams = toSearchParams(query);
+            this._searchServers(true);
+          }
           this.syncSavedSearchChrome();
           return;
         }
@@ -585,6 +597,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         shouldSearchAfterBenchmarks ||
         this.route.snapshot.queryParams.benchmark
       ) {
+        this.query = {
+          ...this.query,
+          ...this.route.snapshot.queryParams,
+        };
+        this.previousSearchParams = toSearchParams(this.query);
         this._searchServers(true);
       }
 
@@ -771,17 +788,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.searchOptionsChanged(event);
   }
 
-  /**
-   * Updates URL query parameters
-   * @param event Object containing search/filter parameters from the search form
-   * @description
-   * This method:
-   * - Takes parameters to be added to the URL
-   * - Adds non-filter parameters (ordering, pagination, columns)
-   * - Adds benchmark configuration as JSON/base64 encoded string
-   * - Updates the URL with new query parameters
-   * Note that URL params are also updated at updateQueryParams/encodeQueryParams (TODO refactor)
-   */
   searchOptionsChanged(event: any) {
     let queryParams: any = { ...event };
 
@@ -832,13 +838,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       queryParams.benchmark = btoa(JSON.stringify(benchmarkData));
     }
 
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: queryParams,
+    navigateListingQuery(this.router, this.route, queryParams, {
+      params: "replace",
+      history: "push",
     });
   }
 
   private _searchServers(updateTotalCount = true) {
+    const requestId = ++this.searchRequestId;
     this.isLoading = true;
 
     let query = JSON.parse(JSON.stringify(this.query));
@@ -889,6 +896,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.keeperAPI
       .searchServers(query)
       .then((servers) => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
+
         this.servers = servers?.body;
         this.displayedCurrency = this.selectedCurrency;
 
@@ -912,6 +923,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this.toastService.removeToast("query-error");
       })
       .catch((err) => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
+
         this.analytics.SentryException(err, {
           tags: { location: this.constructor.name, function: "_searchServers" },
         });
@@ -924,7 +939,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         });
       })
       .finally(() => {
-        this.isLoading = false;
+        if (requestId === this.searchRequestId) {
+          this.isLoading = false;
+        }
       });
   }
 
@@ -1000,33 +1017,25 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     return paramObject;
   }
 
-  /**
-   * Updates the URL query parameters without triggering a page reload
-   * @param object An object containing the query parameters to be encoded
-   * @description
-   * This method:
-   * - calls encodeQueryParams to standardize the URL params
-   * - Updates the browser URL using History API
-   * Note that URL params are also updated at searchOptionsChanged (TODO refactor)
-   */
-  updateQueryParams(object: any) {
-    const encodedQuery = encodeQueryParams(object);
-    const path = window.location.pathname || "/servers";
-
-    if (encodedQuery?.length) {
-      // update the URL
-      window.history.pushState({}, "", `${path}?${encodedQuery}`);
-    } else {
-      // remove the query params
-      window.history.pushState({}, "", path);
+  updateQueryParams(object: Params) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
     }
+
+    navigateListingQuery(this.router, this.route, object, {
+      params: "merge",
+      history: "replace",
+    });
   }
 
   refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
     if (isPlatformBrowser(this.platformId) && save) {
       this.hasCustomColumns = true;
-      this.updateQueryParams(this.getQueryObjectBase());
+      const columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+      this.updateQueryParams({ columns });
     }
   }
 
@@ -1312,12 +1321,28 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   selectBenchmarkConfig(config: any) {
     this.tempSelectedBenchmarkCategory = null;
+    const benchmarkColumn = this.possibleColumns.find(
+      (column) => column.type === "benchmark",
+    );
+    const enableBenchmarkColumn = !!benchmarkColumn && !benchmarkColumn.show;
     this.selectedBenchmarkConfig = config;
 
     this.modalBenchmarkSelect?.hide();
-    this.updateQueryParams(this.getQueryObjectBase());
     this.modalFilterTerm = null;
-    this._searchServers(true);
+    const query: Params = {
+      benchmark: btoa(
+        JSON.stringify({
+          id: config.benchmark_id,
+          config: config.config,
+        }),
+      ),
+    };
+    if (enableBenchmarkColumn && this.hasCustomColumns) {
+      query.columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+    }
+    this.updateQueryParams(query);
   }
 
   updateFilterTerm() {
@@ -1335,7 +1360,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         (col) => col.type === "benchmark",
       );
       if (benchmarkColumn) benchmarkColumn.show = true;
-      this.refreshColumns(true);
+      this.refreshColumns(false);
 
       // extract unit of selected benchmark config in short form
       const benchmarkTemplate = this._selectedBenchmarkConfig.benchmarkTemplate;

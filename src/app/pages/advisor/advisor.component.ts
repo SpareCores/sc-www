@@ -76,6 +76,7 @@ import type { SavedAdviceItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import type { SearchBarQuery } from "../../components/search-bar/types/search-bar.types";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {
   availableCurrencies as AVAILABLE_CURRENCIES,
@@ -1476,20 +1477,19 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
-      const encodedQuery = encodeQueryParams(this.getUrlStateQueryParams());
+      const queryParams = this.getUrlStateQueryParams();
+      const encodedQuery = encodeQueryParams(queryParams);
 
       if (encodedQuery === this.lastEncodedQuery) {
         return;
       }
 
       this.lastEncodedQuery = encodedQuery;
-      const path = window.location.pathname || "/advisor";
 
-      if (encodedQuery?.length) {
-        window.history.pushState({}, "", `${path}?${encodedQuery}`);
-      } else {
-        window.history.pushState({}, "", path);
-      }
+      navigateListingQuery(this.router, this.route, queryParams as Params, {
+        params: "replace",
+        history: "push",
+      });
     });
 
     effect(() => {
@@ -2681,6 +2681,14 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.compareSubscription.add(
       this.route.queryParams.subscribe((params: Params) => {
         const queryParams = JSON.parse(JSON.stringify(params || {}));
+
+        if (
+          this.hasRestoredRouteState() &&
+          encodeQueryParams(queryParams) === this.lastEncodedQuery
+        ) {
+          return;
+        }
+
         const restoredPage = this.parsePositiveIntParam(queryParams.page, 1);
         const restoredLimit = this.parsePositiveIntParam(
           queryParams.limit,

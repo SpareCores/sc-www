@@ -47,7 +47,11 @@ import {
   ServerCompare,
   ServerCompareService,
 } from "../../services/server-compare.service";
-import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
+import {
+  areSearchParamsEqual,
+  toSearchParams,
+} from "../../tools/listing-search-params";
 import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
@@ -131,6 +135,8 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   private uiTooltip = inject(UiTooltipService);
 
   private subscription = new Subscription();
+  private searchRequestId = 0;
+  private previousSearchParams: Record<string, unknown> | null = null;
 
   isCollapsed = false;
 
@@ -329,7 +335,13 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
         this.refreshColumns(false);
 
-        this._searchServers(true);
+        if (
+          this.previousSearchParams === null ||
+          !areSearchParamsEqual(this.previousSearchParams, query)
+        ) {
+          this.previousSearchParams = toSearchParams(query);
+          this._searchServers(true);
+        }
       }),
     );
   }
@@ -412,13 +424,14 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
       queryParams.columns = columns;
     }
 
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: queryParams,
+    navigateListingQuery(this.router, this.route, queryParams, {
+      params: "replace",
+      history: "push",
     });
   }
 
   private _searchServers(updateTotalCount = true) {
+    const requestId = ++this.searchRequestId;
     this.isLoading = true;
 
     let query = JSON.parse(JSON.stringify(this.query));
@@ -441,6 +454,10 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     this.keeperAPI
       .searchServerPrices(query)
       .then((servers) => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
+
         this.servers = servers?.body.map((item: any) => {
           return {
             ...item,
@@ -471,13 +488,19 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
         }
       })
       .catch((err) => {
+        if (requestId !== this.searchRequestId) {
+          return;
+        }
+
         this.analytics.SentryException(err, {
           tags: { location: this.constructor.name, function: "_searchServers" },
         });
         console.error(err);
       })
       .finally(() => {
-        this.isLoading = false;
+        if (requestId === this.searchRequestId) {
+          this.isLoading = false;
+        }
       });
   }
 
@@ -570,16 +593,15 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     return paramObject;
   }
 
-  updateQueryParams(object: any) {
-    const encodedQuery = encodeQueryParams(object);
-
-    if (encodedQuery?.length) {
-      // update the URL
-      window.history.pushState({}, "", "/server_prices?" + encodedQuery);
-    } else {
-      // remove the query params
-      window.history.pushState({}, "", "/server_prices");
+  updateQueryParams(object: Params) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
     }
+
+    navigateListingQuery(this.router, this.route, object, {
+      params: "merge",
+      history: "replace",
+    });
   }
 
   refreshColumns(save = true) {
@@ -587,7 +609,10 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
     if (isPlatformBrowser(this.platformId) && save) {
       this.hasCustomColumns = true;
-      this.updateQueryParams(this.getQueryObjectBase());
+      const columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+      this.updateQueryParams({ columns });
     }
   }
 
