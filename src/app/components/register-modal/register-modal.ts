@@ -80,7 +80,11 @@ export class RegisterModal {
   }
 
   protected close(): void {
-    if (this.isAuthPending) {
+    if (
+      this.isAuthPending ||
+      this.step === "consent" ||
+      this.step === "verify"
+    ) {
       return;
     }
 
