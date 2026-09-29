@@ -245,7 +245,7 @@ export class CollectionsUiService {
     this.writePendingStorage(action);
   }
 
-  private clearPendingFeatureAction(): void {
+  clearPendingFeatureAction(): void {
     this.pendingConsumed = true;
     this.clearPendingStorage();
   }
