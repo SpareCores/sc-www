@@ -148,7 +148,6 @@ export class AuthStateService implements GithubAuthHost {
 
   closeSignIn(): void {
     this.signInModalOpen.set(false);
-    this.github.cancelPendingPopupWait();
   }
 
   signUp(options?: { subtitle?: string }): void {
@@ -183,7 +182,6 @@ export class AuthStateService implements GithubAuthHost {
     this.signUpModalOpen.set(false);
     this.resetGithubConsent();
     this.signUpSubtitle.set(AUTH_MESSAGES.defaultSignUpSubtitle);
-    this.github.cancelPendingPopupWait();
     this.github.clearSignInHandoff();
     this.github.clearSignUpHandoff();
   }
@@ -218,10 +216,6 @@ export class AuthStateService implements GithubAuthHost {
 
   syncSession(): void {
     this.syncState();
-  }
-
-  isGithubSignInInProgress(): boolean {
-    return this.github.isSignInInProgress();
   }
 
   consumeGithubSignInHandoff(): boolean {
@@ -836,10 +830,6 @@ export class AuthStateService implements GithubAuthHost {
     const previousUser = this._user();
     const user = this.clerk.user;
 
-    if (this.github.isSignInInProgress()) {
-      return;
-    }
-
     if (this.githubConsentActive()) {
       if (user) {
         this.setUser(user);
@@ -897,7 +887,7 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   async navigateAfterAuth(): Promise<void> {
-    if (this.navigatingAfterAuth || this.github.isSignInInProgress()) {
+    if (this.navigatingAfterAuth) {
       return;
     }
 

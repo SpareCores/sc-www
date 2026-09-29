@@ -8,7 +8,6 @@ import type {
 } from "@clerk/shared/types";
 import { ui } from "@clerk/ui/no-rhc";
 import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
-import type { ClerkWithNavigation } from "../auth.types";
 import { appUrls } from "../auth.utils";
 import { CLERK_APPEARANCE, CLERK_TEXTS } from "../clerk-configuration";
 
@@ -28,10 +27,6 @@ export class ClerkService {
 
   get session() {
     return this.clerk?.session ?? null;
-  }
-
-  get navigationInstance(): ClerkWithNavigation | null {
-    return this.clerk as ClerkWithNavigation | null;
   }
 
   isReady(): boolean {

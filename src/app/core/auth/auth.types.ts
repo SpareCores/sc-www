@@ -1,9 +1,3 @@
-import type { Clerk } from "@clerk/clerk-js";
-
-export type ClerkWithNavigation = Clerk & {
-  __internal_windowNavigate: (url: URL | string) => void;
-};
-
 export type RegisterDetailsPayload = {
   firstName: string;
   lastName: string;
@@ -38,5 +32,3 @@ export type PasswordResetResult =
   | { status: "error"; message: string };
 
 export type GithubCallbackOutcome = "authenticated" | "consent" | "error";
-
-export type HostedNavAction = "block" | "oauth" | "forward";

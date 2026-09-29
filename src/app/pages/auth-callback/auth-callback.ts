@@ -36,16 +36,9 @@ export class AuthCallback implements OnInit {
       return;
     }
 
-    const inPopup = !!window.opener && !window.opener.closed;
-    if (inPopup) {
-      window.close();
-      return;
-    }
-
     const params = new URLSearchParams(window.location.search);
     const fromGithubSignIn =
       params.get("intent") === "signIn" ||
-      this.auth.isGithubSignInInProgress() ||
       this.auth.consumeGithubSignInHandoff();
 
     this.auth.clearAuthPending();

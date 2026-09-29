@@ -10,9 +10,6 @@ export const AUTH_PENDING_KEY = "scAuthPending";
 export const AUTH_RETURN_URL_KEY = "scAuthReturnUrl";
 export const GITHUB_SIGNIN_KEY = "scGithubSignIn";
 export const GITHUB_SIGNUP_KEY = "scGithubSignUp";
-export const GITHUB_POPUP_TIMEOUT_MS = 45_000;
-export const AUTH_POPUP_WIDTH = 500;
-export const AUTH_POPUP_HEIGHT = 700;
 export const AUTH_OVERLAY_CLASS = "sc-auth-pending";
 export const AUTH_OVERLAY_ID = "sc-auth-pending-overlay";
 
@@ -39,9 +36,6 @@ export const AUTH_MESSAGES = {
   unableToResendVerification: "Unable to resend the verification code.",
   verificationCodeSent: "Code sent, check your emails!",
   unableToCompleteGithubSignUp: "Unable to complete your GitHub sign-up.",
-  githubPopupTimeout: "GitHub sign-in timed out. Try again or use email.",
-  githubPopupCancelled: "GitHub sign-in was cancelled.",
-  githubPopupBlocked: "Enable popups to continue with GitHub.",
   newsletterSuccess: "Yay, you've just subscribed to our newsletter!",
   newsletterError:
     "Couldn't subscribe to the newsletter. Try again later or contact us.",

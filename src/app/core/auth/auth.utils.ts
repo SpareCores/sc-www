@@ -1,11 +1,5 @@
 import type { SignInResource, SignUpResource } from "@clerk/shared/types";
-import {
-  AUTH_MESSAGES,
-  AUTH_POPUP_HEIGHT,
-  AUTH_POPUP_WIDTH,
-  NEWSLETTER_OPT_IN_KEY,
-} from "./auth.constants";
-import type { HostedNavAction } from "./auth.types";
+import { NEWSLETTER_OPT_IN_KEY } from "./auth.constants";
 
 export type ClerkAuthError = {
   message: string;
@@ -85,49 +79,6 @@ export function appUrls(): { origin: string; authCallback: string } {
     origin,
     authCallback: `${origin}/auth/callback`,
   };
-}
-
-export function isClerkAccountPortalUrl(url: string): boolean {
-  return /accounts\.dev|accountsstage\.dev|#\/continue|protect-check/i.test(
-    url,
-  );
-}
-
-export function isAppOAuthCallbackUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url, window.location.origin);
-    return (
-      parsed.origin === window.location.origin &&
-      parsed.pathname.startsWith("/auth/callback")
-    );
-  } catch {
-    return url.includes("/auth/callback");
-  }
-}
-
-export function isSameOriginAppUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url, window.location.origin);
-    return parsed.origin === window.location.origin;
-  } catch {
-    return url.startsWith("/") && !url.startsWith("//");
-  }
-}
-
-export function resolveHostedNavAction(
-  href: string,
-  options: { blockSameOrigin: boolean },
-): HostedNavAction {
-  if (isClerkAccountPortalUrl(href)) {
-    return "block";
-  }
-  if (isAppOAuthCallbackUrl(href)) {
-    return "oauth";
-  }
-  if (options.blockSameOrigin && isSameOriginAppUrl(href)) {
-    return "block";
-  }
-  return "forward";
 }
 
 const SECOND_FACTOR_STATUSES = new Set([
@@ -274,29 +225,4 @@ export function newsletterMetadata(
   return {
     [NEWSLETTER_OPT_IN_KEY]: true,
   };
-}
-
-export function openAuthPopup(name: string): Window {
-  const width = AUTH_POPUP_WIDTH;
-  const height = AUTH_POPUP_HEIGHT;
-  const left = Math.max(
-    0,
-    Math.round(window.screenX + (window.outerWidth - width) / 2),
-  );
-  const top = Math.max(
-    0,
-    Math.round(window.screenY + (window.outerHeight - height) / 2),
-  );
-  const popup = window.open(
-    "about:blank",
-    name,
-    `popup=yes,width=${width},height=${height},left=${left},top=${top},noopener=no`,
-  );
-
-  if (!popup) {
-    throw new Error(AUTH_MESSAGES.githubPopupBlocked);
-  }
-
-  popup.focus();
-  return popup;
 }
