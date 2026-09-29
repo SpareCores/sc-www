@@ -31,4 +31,12 @@ export type PasswordResetResult =
   | { status: "complete" }
   | { status: "error"; message: string };
 
-export type GithubCallbackOutcome = "authenticated" | "consent" | "error";
+export type AuthKind = "login" | "registration";
+
+export type GitHubIntent = "signIn" | "signUp";
+
+export type GitHubCallbackResult =
+  | { status: "authenticated" }
+  | { status: "needs_consent" }
+  | { status: "cancelled" }
+  | { status: "error"; message: string };

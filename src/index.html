@@ -149,13 +149,14 @@
     </div>
     <script>
       try {
-        if (sessionStorage.getItem("scAuthPending") === "1") {
+        const flow = JSON.parse(sessionStorage.getItem("scAuthFlow") ?? "null");
+        if (flow?.pending === true) {
           document.documentElement.classList.add("sc-auth-pending");
           document
             .getElementById("sc-auth-pending-overlay")
             ?.setAttribute("aria-hidden", "false");
         }
-      } catch (e) {}
+      } catch {}
     </script>
     <sc-root></sc-root>
   </body>

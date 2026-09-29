@@ -217,7 +217,7 @@ export class LoginModal {
     }
   }
 
-  protected async continueWithGithub(): Promise<void> {
+  protected async continueWithGitHub(): Promise<void> {
     if (this.busy) {
       return;
     }
@@ -227,12 +227,12 @@ export class LoginModal {
     this.busy = "github";
 
     try {
-      await this.auth.signInWithGithub();
+      await this.auth.signInWithGitHub();
     } catch (error) {
       this.errorMessage =
         error instanceof Error
           ? error.message
-          : AUTH_MESSAGES.unableToContinueGithub;
+          : AUTH_MESSAGES.unableToContinueGitHub;
     } finally {
       this.busy = null;
     }

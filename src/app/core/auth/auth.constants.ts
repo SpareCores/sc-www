@@ -6,10 +6,6 @@ export const WWW_API_BASE_URI =
 
 export const NEWSLETTER_OPT_IN_KEY = "newsletterOptIn";
 export const NEWSLETTER_SUBSCRIBED_KEY = "newsletterSubscribed";
-export const AUTH_PENDING_KEY = "scAuthPending";
-export const AUTH_RETURN_URL_KEY = "scAuthReturnUrl";
-export const GITHUB_SIGNIN_KEY = "scGithubSignIn";
-export const GITHUB_SIGNUP_KEY = "scGithubSignUp";
 export const AUTH_OVERLAY_CLASS = "sc-auth-pending";
 export const AUTH_OVERLAY_ID = "sc-auth-pending-overlay";
 
@@ -35,11 +31,11 @@ export const AUTH_MESSAGES = {
   unableToVerifyEmail: "Unable to verify your email address.",
   unableToResendVerification: "Unable to resend the verification code.",
   verificationCodeSent: "Code sent, check your emails!",
-  unableToCompleteGithubSignUp: "Unable to complete your GitHub sign-up.",
+  unableToCompleteGitHubSignUp: "Unable to complete your GitHub sign-up.",
   newsletterSuccess: "Yay, you've just subscribed to our newsletter!",
   newsletterError:
     "Couldn't subscribe to the newsletter. Try again later or contact us.",
-  githubContinueSignUp:
-    "Finishing your earlier GitHub sign-up. Complete authorization to continue.",
-  unableToContinueGithub: "Unable to continue with GitHub.",
+  unableToContinueGitHub: "Unable to continue with GitHub.",
+  githubAuthorizationDenied:
+    "Unable to continue with GitHub. Authorize Spare Cores to access your GitHub account to sign up or sign in.",
 } as const;

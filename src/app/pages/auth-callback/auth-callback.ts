@@ -1,24 +1,10 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { Component, OnInit, PLATFORM_ID, inject, signal } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
+import { Component, OnInit, PLATFORM_ID, inject } from "@angular/core";
 import { AuthStateService } from "../../core/auth";
 
 @Component({
   selector: "sc-auth-callback",
-  imports: [CommonModule],
-  template: `
-    <div id="clerk-captcha"></div>
-    @if (errorMessage()) {
-      <div class="sc-auth-pending-overlay" role="alert">
-        <div class="sc-auth-pending-overlay__content">
-          <p
-            class="sc-auth-pending-overlay__text sc-auth-pending-overlay__text--error"
-          >
-            {{ errorMessage() }}
-          </p>
-        </div>
-      </div>
-    }
-  `,
+  template: `<div id="clerk-captcha"></div>`,
   styles: `
     :host {
       display: block;
@@ -29,70 +15,11 @@ export class AuthCallback implements OnInit {
   private readonly auth = inject(AuthStateService);
   private readonly platformId = inject(PLATFORM_ID);
 
-  protected errorMessage = signal<string | null>(null);
-
   async ngOnInit(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    const params = new URLSearchParams(window.location.search);
-    const fromGithubSignIn =
-      params.get("intent") === "signIn" ||
-      this.auth.consumeGithubSignInHandoff();
-
-    this.auth.clearAuthPending();
-
-    if (params.get("error")) {
-      await this.finish("error");
-      return;
-    }
-
-    try {
-      await this.auth.handleRedirectCallback({
-        transferable: !fromGithubSignIn,
-      });
-      const outcome = this.auth.resolveGithubCallbackOutcome();
-      if (outcome === "consent") {
-        await this.finish("consent");
-        return;
-      }
-      if (this.auth.isAuthenticated() || outcome === "authenticated") {
-        await this.finish("authenticated");
-        return;
-      }
-      await this.finish(outcome);
-    } catch {
-      const outcome = this.auth.resolveGithubCallbackOutcome();
-      if (this.auth.needsGithubConsent() || outcome === "consent") {
-        await this.finish("consent");
-        return;
-      }
-      if (this.auth.isAuthenticated() || outcome === "authenticated") {
-        await this.finish("authenticated");
-        return;
-      }
-      this.errorMessage.set("Unable to complete sign-in.");
-      await this.finish("error");
-    }
-  }
-
-  private async finish(
-    outcome: "authenticated" | "consent" | "error",
-  ): Promise<void> {
-    if (outcome === "authenticated") {
-      await this.auth.finishAuthRedirect();
-      return;
-    }
-
-    if (outcome === "consent") {
-      await this.auth.leaveAuthCallback();
-      this.auth.openGithubConsentSignUp();
-      return;
-    }
-
-    this.auth.clearAuthPending();
-    this.auth.clearGithubSignUpHandoff();
-    await this.auth.leaveAuthCallback();
+    await this.auth.handleGitHubCallback();
   }
 }

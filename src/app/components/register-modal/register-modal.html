@@ -170,7 +170,7 @@
             buttonClass="w-full !justify-center"
             [loading]="busy === 'github'"
             [disabled]="!!busy"
-            (buttonClick)="continueWithGithub()"
+            (buttonClick)="continueWithGitHub()"
           ></sc-button>
 
           <div class="auth-modal__footer">
@@ -227,6 +227,7 @@
             type="checkbox"
             name="legalAccepted"
             [(ngModel)]="legalAccepted"
+            [disabled]="!!busy"
           />
           <span>
             I agree to the
@@ -245,6 +246,7 @@
             type="checkbox"
             name="newsletterOptIn"
             [(ngModel)]="newsletterOptIn"
+            [disabled]="!!busy"
           />
           <span>Subscribe me to the Spare Cores newsletter</span>
         </label>

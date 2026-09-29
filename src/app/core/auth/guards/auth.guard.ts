@@ -13,16 +13,8 @@ export const authGuard: CanActivateFn = async () => {
   }
 
   await auth.init();
-  auth.syncSession();
 
   if (auth.isAuthenticated()) {
-    return true;
-  }
-
-  if (
-    (auth.isAuthPending() || auth.authInProgress()) &&
-    (await auth.waitForSignedIn(20000))
-  ) {
     return true;
   }
 
@@ -41,7 +33,7 @@ export const blockLandingDuringAuthGuard: CanActivateFn = () => {
     return true;
   }
 
-  if (!auth.isAuthPending() && !auth.authInProgress()) {
+  if (!auth.authInProgress()) {
     return true;
   }
 

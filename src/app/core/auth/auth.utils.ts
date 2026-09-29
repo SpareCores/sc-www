@@ -47,32 +47,6 @@ export function authErrorMessage(error: unknown, fallback: string): string {
   return clerkAuthError(error, fallback).message;
 }
 
-export function getSessionFlag(key: string): boolean {
-  if (typeof sessionStorage === "undefined") {
-    return false;
-  }
-  try {
-    return sessionStorage.getItem(key) === "1";
-  } catch {
-    return false;
-  }
-}
-
-export function setSessionFlag(key: string, enabled: boolean): void {
-  if (typeof sessionStorage === "undefined") {
-    return;
-  }
-  try {
-    if (enabled) {
-      sessionStorage.setItem(key, "1");
-    } else {
-      sessionStorage.removeItem(key);
-    }
-  } catch {
-    return;
-  }
-}
-
 export function appUrls(): { origin: string; authCallback: string } {
   const origin = window.location.origin;
   return {
@@ -177,7 +151,7 @@ export function canResumeEmailVerification(
   return !!pendingEmail && pendingEmail.toLowerCase() === email.toLowerCase();
 }
 
-export function isPendingGithubExternalComplete(
+export function isPendingGitHubExternalComplete(
   signUp: SignUpResource | null | undefined,
 ): boolean {
   return signUp?.verifications?.externalAccount?.status === "verified";
@@ -189,7 +163,7 @@ export function needsLegalAcceptance(
   return !!signUp && !signUp.legalAcceptedAt;
 }
 
-export function needsGithubConsent(
+export function needsGitHubConsent(
   signIn: SignInResource | null | undefined,
   signUp: SignUpResource | null | undefined,
   hasUser: boolean,
@@ -211,7 +185,7 @@ export function needsGithubConsent(
   }
 
   return (
-    isPendingGithubExternalComplete(signUp) && needsLegalAcceptance(signUp)
+    isPendingGitHubExternalComplete(signUp) && needsLegalAcceptance(signUp)
   );
 }
 

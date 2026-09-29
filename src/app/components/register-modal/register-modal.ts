@@ -104,14 +104,14 @@ export class RegisterModal {
     return !!this.verificationCode.trim();
   }
 
-  protected continueWithGithub(): void {
+  protected continueWithGitHub(): void {
     if (this.busy) {
       return;
     }
 
     this.errorMessage = "";
     this.method = "github";
-    void this.submitGithub();
+    void this.submitGitHub();
   }
 
   protected backToDetails(): void {
@@ -136,7 +136,7 @@ export class RegisterModal {
     this.errorMessage = "";
 
     if (this.method === "github") {
-      await this.submitGithub();
+      await this.submitGitHub();
       return;
     }
 
@@ -257,10 +257,10 @@ export class RegisterModal {
     }
   }
 
-  private async submitGithub(): Promise<void> {
+  private async submitGitHub(): Promise<void> {
     this.busy = "github";
 
-    const result = await this.auth.submitGithubConsent(
+    const result = await this.auth.submitGitHubConsent(
       this.newsletterOptIn,
       this.auth.githubConsentActive() ? this.legalAccepted : false,
     );
