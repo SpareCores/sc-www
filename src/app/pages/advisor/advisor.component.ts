@@ -69,10 +69,10 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { AuthStateService } from "../../core/auth";
-import { AdviceCollectionsService } from "../../collections/advice-collections.service";
+import { AssessmentCollectionsService } from "../../collections/assessment-collections.service";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
-import type { SavedAdviceItem } from "../../collections/collections.types";
+import type { SavedAssessmentItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import type { SearchBarQuery } from "../../components/search-bar/types/search-bar.types";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
@@ -410,12 +410,12 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
   private auth = inject(AuthStateService);
-  private adviceCollections = inject(AdviceCollectionsService);
+  private assessmentCollections = inject(AssessmentCollectionsService);
   private collectionsUi = inject(CollectionsUiService);
   private neetoCalService = inject(NeetoCalService);
   private uiTooltip = inject(UiTooltipService);
   readonly advisorUi = inject(AdvisorUiService);
-  saveAdviceModal = viewChild(CollectionSaveModalComponent);
+  saveAssessmentModal = viewChild(CollectionSaveModalComponent);
   readonly currencyDropdown =
     viewChild<FlowbiteDropdownDirective>("currencyDropdown");
   readonly pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
@@ -442,9 +442,9 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private customControlFocusFrame: number | null = null;
   private customControlFocusAttemptCount = 0;
   private lastPendingCustomControlFocus: string | null = null;
-  private readonly pendingSaveAdviceClose = signal(false);
-  private readonly editingAdviceId = signal<string | null>(null);
-  private readonly bookmarkSource = signal<SavedAdviceItem | null>(null);
+  private readonly pendingSaveAssessmentClose = signal(false);
+  private readonly editingAssessmentId = signal<string | null>(null);
+  private readonly bookmarkSource = signal<SavedAssessmentItem | null>(null);
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
@@ -807,10 +807,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.matchedBaselineBenchmarkScore() !== null,
   );
   readonly displayTitle = computed(() => {
-    return this.exactSavedAdvice()?.name ?? ADVISOR_PAGE_TITLE;
+    return this.exactSavedAssessment()?.name ?? ADVISOR_PAGE_TITLE;
   });
   readonly displayDescription = computed(() => {
-    const exact = this.exactSavedAdvice();
+    const exact = this.exactSavedAssessment();
     if (exact?.note?.trim()) {
       return exact.note.trim();
     }
@@ -820,15 +820,17 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     return ADVISOR_PAGE_DESCRIPTION;
   });
   readonly displayBreadcrumbs = computed((): BreadcrumbSegment[] => {
-    const exact = this.exactSavedAdvice();
+    const exact = this.exactSavedAssessment();
     if (!exact) {
       return ADVISOR_BREADCRUMBS;
     }
     return [...ADVISOR_BREADCRUMBS, { name: exact.name, url: "/advisor" }];
   });
-  readonly exactSavedAdvice = computed(() => {
-    this.adviceCollections.store.savedAdvices();
-    return this.adviceCollections.activeSavedAdvice(this.getAdviceQuery());
+  readonly exactSavedAssessment = computed(() => {
+    this.assessmentCollections.store.savedAssessments();
+    return this.assessmentCollections.activeSavedAssessment(
+      this.getAssessmentQuery(),
+    );
   });
   readonly recommendationSummary = computed(() =>
     this.advisorUi.buildRecommendationSummary(this.totalRecommendationCount()),
@@ -1176,29 +1178,30 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     effect(() => {
-      if (!this.pendingSaveAdviceClose()) {
+      if (!this.pendingSaveAssessmentClose()) {
         return;
       }
 
-      this.adviceCollections.store.savedAdvices();
-      const editingId = this.editingAdviceId();
-      const query = this.getAdviceQuery();
-      const saved = this.exactSavedAdvice();
-      const id = editingId ?? this.adviceCollections.buildAdviceId(query);
-      const saving = this.adviceCollections.isSavingAdvice(id);
+      this.assessmentCollections.store.savedAssessments();
+      const editingId = this.editingAssessmentId();
+      const query = this.getAssessmentQuery();
+      const saved = this.exactSavedAssessment();
+      const id =
+        editingId ?? this.assessmentCollections.buildAssessmentId(query);
+      const saving = this.assessmentCollections.isSavingAssessment(id);
       const updating = editingId
-        ? this.adviceCollections.isUpdatingAdvice(editingId)
+        ? this.assessmentCollections.isUpdatingAssessment(editingId)
         : saved
-          ? this.adviceCollections.isUpdatingAdvice(saved.id)
+          ? this.assessmentCollections.isUpdatingAssessment(saved.id)
           : false;
 
       if (saving || updating) {
         return;
       }
 
-      this.pendingSaveAdviceClose.set(false);
+      this.pendingSaveAssessmentClose.set(false);
       if (editingId || saved) {
-        this.saveAdviceModal()?.close();
+        this.saveAssessmentModal()?.close();
       }
     });
 
@@ -1206,18 +1209,18 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!this.isAuthenticated()) {
         return;
       }
-      const modal = this.saveAdviceModal();
+      const modal = this.saveAssessmentModal();
       if (!modal) {
         return;
       }
-      if (!this.collectionsUi.takePendingOpenSave("advice")) {
+      if (!this.collectionsUi.takePendingOpenSave("assessment")) {
         return;
       }
-      untracked(() => this.openSaveAdviceModal());
+      untracked(() => this.openSaveAssessmentModal());
     });
 
     effect(() => {
-      const exact = this.exactSavedAdvice();
+      const exact = this.exactSavedAssessment();
       if (exact) {
         this.bookmarkSource.set(exact);
       }
@@ -1940,56 +1943,58 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.auth.isAuthenticated();
   }
 
-  activeSavedAdvice() {
-    return this.exactSavedAdvice();
+  activeSavedAssessment() {
+    return this.exactSavedAssessment();
   }
 
-  canSaveAdvice(): boolean {
+  canSaveAssessment(): boolean {
     return this.isAuthenticated() && this.canRequestRecommendations();
   }
 
-  openSaveAdviceModal(): void {
+  openSaveAssessmentModal(): void {
     if (!this.isAuthenticated()) {
       this.collectionsUi.promptRegisterForFeature({
         type: "open-save",
-        target: "advice",
+        target: "assessment",
       });
       return;
     }
 
-    const exact = this.exactSavedAdvice();
+    const exact = this.exactSavedAssessment();
     const draft = exact ?? this.bookmarkSource();
-    this.editingAdviceId.set(exact?.id ?? null);
-    this.saveAdviceModal()?.open(draft?.name ?? "", draft?.note ?? "");
+    this.editingAssessmentId.set(exact?.id ?? null);
+    this.saveAssessmentModal()?.open(draft?.name ?? "", draft?.note ?? "");
   }
 
-  isSaveAdvicePending(): boolean {
-    const editingId = this.editingAdviceId();
+  isSaveAssessmentPending(): boolean {
+    const editingId = this.editingAssessmentId();
     if (editingId) {
-      return this.adviceCollections.isUpdatingAdvice(editingId);
+      return this.assessmentCollections.isUpdatingAssessment(editingId);
     }
 
-    const saved = this.exactSavedAdvice();
+    const saved = this.exactSavedAssessment();
     if (saved) {
-      return this.adviceCollections.isUpdatingAdvice(saved.id);
+      return this.assessmentCollections.isUpdatingAssessment(saved.id);
     }
 
-    return this.adviceCollections.isSavingAdvice(
-      this.adviceCollections.buildAdviceId(this.getAdviceQuery()),
+    return this.assessmentCollections.isSavingAssessment(
+      this.assessmentCollections.buildAssessmentId(this.getAssessmentQuery()),
     );
   }
 
-  confirmSaveAdvice(payload: { name: string; note?: string }): void {
-    const query = this.getAdviceQuery();
-    const editingId = this.editingAdviceId();
-    const saved = this.exactSavedAdvice();
+  confirmSaveAssessment(payload: { name: string; note?: string }): void {
+    const query = this.getAssessmentQuery();
+    const editingId = this.editingAssessmentId();
+    const saved = this.exactSavedAssessment();
     const id =
-      editingId ?? saved?.id ?? this.adviceCollections.buildAdviceId(query);
+      editingId ??
+      saved?.id ??
+      this.assessmentCollections.buildAssessmentId(query);
 
-    this.pendingSaveAdviceClose.set(true);
+    this.pendingSaveAssessmentClose.set(true);
 
     if (editingId || saved) {
-      this.adviceCollections.updateAdvice(
+      this.assessmentCollections.updateAssessment(
         id,
         query,
         payload.name,
@@ -1998,32 +2003,37 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.adviceCollections.saveAdvice(id, query, payload.name, payload.note);
+    this.assessmentCollections.saveAssessment(
+      id,
+      query,
+      payload.name,
+      payload.note,
+    );
   }
 
-  deleteSavedAdvice(): void {
-    const saved = this.exactSavedAdvice();
+  deleteSavedAssessment(): void {
+    const saved = this.exactSavedAssessment();
     if (saved) {
-      this.adviceCollections.deleteAdvice(saved.id);
+      this.assessmentCollections.deleteAssessment(saved.id);
       this.bookmarkSource.set(null);
     }
   }
 
-  toggleSavedAdvice(): void {
-    if (this.exactSavedAdvice()) {
-      this.deleteSavedAdvice();
+  toggleSavedAssessment(): void {
+    if (this.exactSavedAssessment()) {
+      this.deleteSavedAssessment();
       return;
     }
 
-    this.openSaveAdviceModal();
+    this.openSaveAssessmentModal();
   }
 
-  isDeleteAdvicePending(): boolean {
-    const saved = this.exactSavedAdvice();
-    return !!saved && this.adviceCollections.isDeletingAdvice(saved.id);
+  isDeleteAssessmentPending(): boolean {
+    const saved = this.exactSavedAssessment();
+    return !!saved && this.assessmentCollections.isDeletingAssessment(saved.id);
   }
 
-  private getAdviceQuery(): SearchBarQuery {
+  private getAssessmentQuery(): SearchBarQuery {
     return this.getUrlStateQueryParams() as SearchBarQuery;
   }
 

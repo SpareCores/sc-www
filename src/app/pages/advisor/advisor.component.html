@@ -13,17 +13,17 @@
         [title]="displayTitle()"
         [showBookmark]="true"
         [bookmarkGuestLocked]="!isAuthenticated()"
-        [bookmarkActive]="!!exactSavedAdvice()"
-        [bookmarkDisabled]="!exactSavedAdvice() && !canSaveAdvice()"
-        [bookmarkLoading]="isDeleteAdvicePending()"
-        [showEdit]="!!exactSavedAdvice()"
+        [bookmarkActive]="!!exactSavedAssessment()"
+        [bookmarkDisabled]="!exactSavedAssessment() && !canSaveAssessment()"
+        [bookmarkLoading]="isDeleteAssessmentPending()"
+        [showEdit]="!!exactSavedAssessment()"
         editAriaLabel="Edit assessment"
         [showShare]="true"
         [shareIcon]="clipboardIcon()"
         shareButtonId="advisor_share_button"
         (shareClick)="clipboardURL()"
-        (bookmarkClick)="toggleSavedAdvice()"
-        (editClick)="openSaveAdviceModal()"
+        (bookmarkClick)="toggleSavedAssessment()"
+        (editClick)="openSaveAssessmentModal()"
       >
         <sc-button
           id="advisor_example_button"
@@ -52,8 +52,8 @@
       modalId="advisor-save-modal"
       title="Bookmark this assessment"
       confirmLabel="Confirm"
-      [saving]="isSaveAdvicePending()"
-      (confirmed)="confirmSaveAdvice($event)"
+      [saving]="isSaveAssessmentPending()"
+      (confirmed)="confirmSaveAssessment($event)"
     ></sc-collection-save-modal>
 
     <div

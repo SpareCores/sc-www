@@ -13,7 +13,7 @@ describe("CollectionsStore", () => {
   let listFavoriteDatabases: jasmine.Spy;
   let listSavedSearches: jasmine.Spy;
   let listSavedComparisons: jasmine.Spy;
-  let listSavedAdvices: jasmine.Spy;
+  let listSavedAssessments: jasmine.Spy;
 
   beforeEach(() => {
     isAuthenticated = signal(false);
@@ -38,8 +38,8 @@ describe("CollectionsStore", () => {
     listSavedComparisons = jasmine
       .createSpy("listSavedComparisons")
       .and.returnValue(of([]));
-    listSavedAdvices = jasmine
-      .createSpy("listSavedAdvices")
+    listSavedAssessments = jasmine
+      .createSpy("listSavedAssessments")
       .and.returnValue(of([]));
 
     TestBed.configureTestingModule({
@@ -60,7 +60,7 @@ describe("CollectionsStore", () => {
             listFavoriteDatabases,
             listSavedSearches,
             listSavedComparisons,
-            listSavedAdvices,
+            listSavedAssessments,
           },
         },
       ],
@@ -97,7 +97,7 @@ describe("CollectionsStore", () => {
     expect(listFavoriteDatabases).toHaveBeenCalled();
     expect(listSavedSearches).toHaveBeenCalled();
     expect(listSavedComparisons).toHaveBeenCalled();
-    expect(listSavedAdvices).toHaveBeenCalled();
+    expect(listSavedAssessments).toHaveBeenCalled();
     expect(store.favoriteServers()).toEqual([
       {
         id: favoriteServerId("aws", "t3.nano"),

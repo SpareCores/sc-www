@@ -344,12 +344,12 @@ export function isDefaultListingQuery(query: SearchBarQuery): boolean {
   return Object.keys(listingSearchQuery(query)).length === 0;
 }
 
-const ADVICE_BOOKMARKS_HIDDEN_KEYS = new Set([
+const ASSESSMENT_BOOKMARKS_HIDDEN_KEYS = new Set([
   "page",
   "add_total_count_header",
 ]);
 
-const ADVICE_NUMERIC_KEYS = new Set([
+const ASSESSMENT_NUMERIC_KEYS = new Set([
   "avg_cpu_utilization",
   "minimum_memory",
   "peak_gpu_memory",
@@ -611,10 +611,10 @@ export function savedSearchDetailEntries(
   return formatQueryDetailEntries(listingSearchQuery(query));
 }
 
-export function savedAdviceDetailEntries(
+export function savedAssessmentDetailEntries(
   query: SearchBarQuery,
 ): { field: string; value: string }[] {
-  return formatQueryDetailEntries(adviceComparableQuery(query));
+  return formatQueryDetailEntries(assessmentComparableQuery(query));
 }
 
 export function savedComparisonDetailEntries(
@@ -717,12 +717,12 @@ export function collectionItemHref(
   return encoded ? `${path}?${encoded}` : path;
 }
 
-function coerceAdviceQueryValue(key: string, value: unknown): unknown {
+function coerceAssessmentQueryValue(key: string, value: unknown): unknown {
   if (Array.isArray(value)) {
-    return value.map((entry) => coerceAdviceQueryValue(key, entry));
+    return value.map((entry) => coerceAssessmentQueryValue(key, entry));
   }
 
-  if (typeof value === "string" && ADVICE_NUMERIC_KEYS.has(key)) {
+  if (typeof value === "string" && ASSESSMENT_NUMERIC_KEYS.has(key)) {
     const parsed = Number(value);
     if (!Number.isNaN(parsed)) {
       return parsed;
@@ -753,28 +753,28 @@ function coerceAdviceQueryValue(key: string, value: unknown): unknown {
   return value;
 }
 
-export function adviceComparableQuery(
+export function assessmentComparableQuery(
   query: SearchBarQuery,
 ): Record<string, unknown> {
   const normalized = normalizeSearchQuery(query);
   const comparable: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(normalized)) {
-    if (ADVICE_BOOKMARKS_HIDDEN_KEYS.has(key)) {
+    if (ASSESSMENT_BOOKMARKS_HIDDEN_KEYS.has(key)) {
       continue;
     }
-    comparable[key] = coerceAdviceQueryValue(key, value);
+    comparable[key] = coerceAssessmentQueryValue(key, value);
   }
 
   return normalizeQueryObject(comparable);
 }
 
-export function adviceQueriesEqual(
+export function assessmentQueriesEqual(
   left: SearchBarQuery,
   right: SearchBarQuery,
 ): boolean {
   return (
-    JSON.stringify(adviceComparableQuery(left)) ===
-    JSON.stringify(adviceComparableQuery(right))
+    JSON.stringify(assessmentComparableQuery(left)) ===
+    JSON.stringify(assessmentComparableQuery(right))
   );
 }
