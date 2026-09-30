@@ -32,7 +32,9 @@ describe("AuthFlowStore", () => {
       returnUrl: "/servers?tab=1#list",
       githubIntent: "signIn",
     });
+    expect(store.peekReturnUrl()).toBe("/servers?tab=1#list");
     expect(store.consumeReturnUrl()).toBe("/servers?tab=1#list");
+    expect(store.peekReturnUrl()).toBeNull();
     expect(store.pending()).toBeTrue();
     expect(store.githubIntent()).toBe("signIn");
   });
@@ -48,6 +50,7 @@ describe("AuthFlowStore", () => {
     store.rememberReturnUrl("//evil.example");
     store.rememberReturnUrl("https://evil.example");
 
+    expect(store.peekReturnUrl()).toBeNull();
     expect(store.consumeReturnUrl()).toBe("/");
   });
 
@@ -65,6 +68,7 @@ describe("AuthFlowStore", () => {
 
     expect(store.pending()).toBeTrue();
     expect(store.githubIntent()).toBeNull();
+    expect(store.peekReturnUrl()).toBeNull();
     expect(store.consumeReturnUrl()).toBe("/");
   });
 

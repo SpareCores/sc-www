@@ -46,8 +46,12 @@ export class AuthFlowStore {
     this.write({ ...this.record(), githubIntent });
   }
 
+  peekReturnUrl(): string | null {
+    return this.safeReturnUrl(this.record().returnUrl);
+  }
+
   consumeReturnUrl(): string {
-    const returnUrl = this.safeReturnUrl(this.record().returnUrl) ?? "/";
+    const returnUrl = this.peekReturnUrl() ?? "/";
     this.clearReturnUrl();
     return returnUrl;
   }
