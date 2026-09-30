@@ -2,10 +2,10 @@ import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
-import { AUTH_MESSAGES, AuthStateService } from "./index";
 import { AuthFlowStore } from "./data-access/auth-flow-store.service";
 import { ClerkService } from "./data-access/clerk.service";
 import { GitHubService } from "./data-access/github.service";
+import { AUTH_MESSAGES, AuthStateService } from "./index";
 
 describe("AuthStateService", () => {
   let originalUrl = "/";
@@ -173,7 +173,7 @@ describe("AuthStateService", () => {
     };
     setClerkInstance(clerk);
     setUser(auth, clerk.user);
-    flowStore().rememberReturnUrl("/servers");
+    flowStore().setReturnUrl("/servers");
     flowStore().setGitHubIntent("signUp");
     flowStore().setPending(true);
 
@@ -327,11 +327,13 @@ describe("AuthStateService", () => {
       status: "complete",
       createdSessionId: "sess_1",
     });
-    spyOn(clerkService(), "requireSignIn").and.resolveTo({ create } as never);
+    spyOn(clerkService(), "getSignInResource").and.resolveTo({
+      create,
+    } as never);
     spyOn(clerkService(), "setActive").and.callFake(async () => {
       clerk.user = signedInUser;
     });
-    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
     const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
     go("/servers?tab=1#list");
 
@@ -358,7 +360,7 @@ describe("AuthStateService", () => {
       session: null,
       addListener: jasmine.createSpy("addListener"),
     });
-    spyOn(clerkService(), "requireSignIn").and.resolveTo({
+    spyOn(clerkService(), "getSignInResource").and.resolveTo({
       create: jasmine.createSpy().and.rejectWith(new Error("nope")),
     } as never);
     auth.startAuthPending();
@@ -408,9 +410,9 @@ describe("AuthStateService", () => {
       clerkService(),
       "handleRedirectCallback",
     ).and.resolveTo();
-    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
     const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
-    flowStore().rememberReturnUrl("/servers?tab=1#list");
+    flowStore().setReturnUrl("/servers?tab=1#list");
     go("/auth/callback?intent=signIn");
 
     await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
@@ -442,9 +444,9 @@ describe("AuthStateService", () => {
       clerkService(),
       "handleRedirectCallback",
     ).and.resolveTo();
-    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
     const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
-    flowStore().rememberReturnUrl("/servers");
+    flowStore().setReturnUrl("/servers");
     go("/auth/callback?intent=signUp");
 
     await auth.handleGitHubCallback();
@@ -466,11 +468,11 @@ describe("AuthStateService", () => {
       addListener: jasmine.createSpy("addListener"),
     });
     spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
-    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
     spyOn(githubService(), "needsConsent").and.returnValue(true);
-    const complete = spyOn(githubService(), "completeGitHubSignUp");
+    const complete = spyOn(githubService(), "submitConsentAndComplete");
     const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
-    flowStore().rememberReturnUrl("/servers?tab=1#list");
+    flowStore().setReturnUrl("/servers?tab=1#list");
     go("/auth/callback?intent=signUp");
 
     await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
@@ -497,7 +499,7 @@ describe("AuthStateService", () => {
       clerkService(),
       "handleRedirectCallback",
     ).and.resolveTo();
-    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
     spyOn(router(), "navigateByUrl").and.resolveTo(true);
     go("/auth/callback?intent=signIn");
 
@@ -531,7 +533,7 @@ describe("AuthStateService", () => {
       clerkService(),
       "handleRedirectCallback",
     ).and.resolveTo();
-    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
     spyOn(router(), "navigateByUrl").and.resolveTo(true);
     go("/auth/callback?intent=signIn");
 
@@ -612,10 +614,10 @@ describe("AuthStateService", () => {
       "handleRedirectCallback",
     ).and.resolveTo();
     spyOn(githubService(), "needsConsent").and.returnValue(true);
-    const complete = spyOn(githubService(), "completeGitHubSignUp");
-    const abandon = spyOn(githubService(), "abandonIncompleteSignUp");
+    const complete = spyOn(githubService(), "submitConsentAndComplete");
+    const abandon = spyOn(githubService(), "resetSignUpState");
     const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
-    flowStore().rememberReturnUrl("/servers?tab=1#list");
+    flowStore().setReturnUrl("/servers?tab=1#list");
     flowStore().setGitHubIntent("signUp");
     flowStore().setPending(true);
     go("/auth/callback?error=access_denied");
@@ -656,10 +658,10 @@ describe("AuthStateService", () => {
       addListener: jasmine.createSpy("addListener"),
     });
     spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
-    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
     spyOn(githubService(), "needsConsent").and.returnValue(false);
     spyOn(router(), "navigateByUrl").and.resolveTo(true);
-    flowStore().rememberReturnUrl("/servers");
+    flowStore().setReturnUrl("/servers");
     go("/auth/callback?intent=signUp");
 
     await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
@@ -690,7 +692,7 @@ describe("AuthStateService", () => {
       addListener: jasmine.createSpy("addListener"),
     });
     const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
-    flowStore().rememberReturnUrl("/servers");
+    flowStore().setReturnUrl("/servers");
     go(
       "/auth/callback?error=server_error&error_description=GitHub%20is%20down",
     );
@@ -725,7 +727,7 @@ describe("AuthStateService", () => {
       addListener: jasmine.createSpy("addListener"),
     });
     spyOn(router(), "navigateByUrl").and.resolveTo(true);
-    flowStore().rememberReturnUrl("/servers");
+    flowStore().setReturnUrl("/servers");
     go("/auth/callback?error=server_error");
 
     await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
@@ -748,7 +750,7 @@ describe("AuthStateService", () => {
     });
     const redirect = spyOn(clerkService(), "handleRedirectCallback");
     const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
-    flowStore().rememberReturnUrl("/servers");
+    flowStore().setReturnUrl("/servers");
     go("/auth/callback");
 
     await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
@@ -772,14 +774,14 @@ describe("AuthStateService", () => {
       clerkService(),
       "handleRedirectCallback",
     ).and.resolveTo();
-    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
     let releaseNavigation: (value: boolean) => void = () => undefined;
     const navigate = spyOn(router(), "navigateByUrl").and.returnValue(
       new Promise<boolean>((resolve) => {
         releaseNavigation = resolve;
       }),
     );
-    flowStore().rememberReturnUrl("/servers");
+    flowStore().setReturnUrl("/servers");
     go("/auth/callback?intent=signIn");
 
     const first = auth.handleGitHubCallback();
@@ -804,7 +806,7 @@ describe("AuthStateService", () => {
       session: {},
       addListener: jasmine.createSpy("addListener"),
     });
-    flowStore().rememberReturnUrl("/servers");
+    flowStore().setReturnUrl("/servers");
     flowStore().setGitHubIntent("signIn");
     flowStore().setPending(true);
     go("/servers");

@@ -8,14 +8,14 @@ import {
 } from "@angular/core";
 import type { GitHubIntent } from "../auth.types";
 
-type AuthFlowRecord = {
+type AuthFlowState = {
   pending: boolean;
   returnUrl: string | null;
   githubIntent: GitHubIntent | null;
 };
 
 const AUTH_FLOW_KEY = "scAuthFlow";
-const EMPTY_FLOW: AuthFlowRecord = {
+const EMPTY_FLOW: AuthFlowState = {
   pending: false,
   returnUrl: null,
   githubIntent: null,
@@ -24,30 +24,30 @@ const EMPTY_FLOW: AuthFlowRecord = {
 @Injectable({ providedIn: "root" })
 export class AuthFlowStore {
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly record = signal<AuthFlowRecord>(this.read());
-  readonly pending = computed(() => this.record().pending);
-  readonly githubIntent = computed(() => this.record().githubIntent);
+  private readonly state = signal<AuthFlowState>(this.loadFromStorage());
+  readonly pending = computed(() => this.state().pending);
+  readonly githubIntent = computed(() => this.state().githubIntent);
 
-  rememberReturnUrl(currentUrl: string): void {
-    if (currentUrl.startsWith("/auth/callback")) {
+  setReturnUrl(returnUrl: string): void {
+    if (returnUrl.startsWith("/auth/callback")) {
       return;
     }
-    this.write({
-      ...this.record(),
-      returnUrl: this.safeReturnUrl(currentUrl),
+    this.saveToStorage({
+      ...this.state(),
+      returnUrl: this.safeReturnUrl(returnUrl),
     });
   }
 
   setPending(pending: boolean): void {
-    this.write({ ...this.record(), pending });
+    this.saveToStorage({ ...this.state(), pending });
   }
 
   setGitHubIntent(githubIntent: GitHubIntent | null): void {
-    this.write({ ...this.record(), githubIntent });
+    this.saveToStorage({ ...this.state(), githubIntent });
   }
 
   peekReturnUrl(): string | null {
-    return this.safeReturnUrl(this.record().returnUrl);
+    return this.safeReturnUrl(this.state().returnUrl);
   }
 
   consumeReturnUrl(): string {
@@ -57,14 +57,14 @@ export class AuthFlowStore {
   }
 
   clearReturnUrl(): void {
-    this.write({ ...this.record(), returnUrl: null });
+    this.saveToStorage({ ...this.state(), returnUrl: null });
   }
 
   clear(): void {
-    this.write(EMPTY_FLOW);
+    this.saveToStorage(EMPTY_FLOW);
   }
 
-  private read(): AuthFlowRecord {
+  private loadFromStorage(): AuthFlowState {
     if (!this.canUseStorage()) {
       return EMPTY_FLOW;
     }
@@ -73,7 +73,7 @@ export class AuthFlowStore {
       if (!raw) {
         return EMPTY_FLOW;
       }
-      const parsed = JSON.parse(raw) as Partial<AuthFlowRecord>;
+      const parsed = JSON.parse(raw) as Partial<AuthFlowState>;
       const githubIntent =
         parsed.githubIntent === "signIn" || parsed.githubIntent === "signUp"
           ? parsed.githubIntent
@@ -90,16 +90,16 @@ export class AuthFlowStore {
     }
   }
 
-  private write(record: AuthFlowRecord): void {
-    this.record.set(record);
+  private saveToStorage(state: AuthFlowState): void {
+    this.state.set(state);
     if (!this.canUseStorage()) {
       return;
     }
     try {
-      if (!record.pending && !record.returnUrl && !record.githubIntent) {
+      if (!state.pending && !state.returnUrl && !state.githubIntent) {
         sessionStorage.removeItem(AUTH_FLOW_KEY);
       } else {
-        sessionStorage.setItem(AUTH_FLOW_KEY, JSON.stringify(record));
+        sessionStorage.setItem(AUTH_FLOW_KEY, JSON.stringify(state));
       }
     } catch {
       return;

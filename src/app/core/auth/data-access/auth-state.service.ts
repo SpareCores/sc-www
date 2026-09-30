@@ -28,14 +28,14 @@ import type {
   RegisterResult,
 } from "../auth.types";
 import {
-  appUrls,
   authErrorMessage,
+  authUrls,
   canResumeEmailVerification,
   clerkAuthError,
+  getPendingEmailVerification,
   isSecondFactorStatus,
   needsLegalAcceptance,
   newsletterMetadata,
-  pendingEmailVerification,
   signUpMissingPassword,
 } from "../auth.utils";
 import { AuthFlowStore } from "./auth-flow-store.service";
@@ -93,7 +93,7 @@ export class AuthStateService {
     this.syncUserFromClerk();
     this.bindClerkListener();
     this.setAuthOverlayVisible(this.authInProgress());
-    if (this.finalizePromise || this.onAuthCallback()) {
+    if (this.finalizePromise || this.isAuthCallbackRoute()) {
       return;
     }
     if (this.shouldResumeGitHubConsent()) {
@@ -107,11 +107,11 @@ export class AuthStateService {
   }
 
   signIn(): void {
-    if (!this.clerk.isReady()) {
+    if (!this.clerk.isLoaded()) {
       this.toastAuthUnavailable();
       return;
     }
-    this.rememberCurrentReturnUrl();
+    this.setCurrentReturnUrl();
     this.githubConsent.set(false);
     this.signUpModalOpen.set(false);
     this.signInModalOpen.set(true);
@@ -123,11 +123,11 @@ export class AuthStateService {
   }
 
   signUp(options?: { subtitle?: string }): void {
-    if (!this.clerk.isReady()) {
+    if (!this.clerk.isLoaded()) {
       this.toastAuthUnavailable();
       return;
     }
-    this.rememberCurrentReturnUrl();
+    this.setCurrentReturnUrl();
     this.signUpSubtitle.set(
       options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
     );
@@ -139,7 +139,7 @@ export class AuthStateService {
     }
 
     if (this.github.needsConsent() || this.flow.githubIntent() === "signUp") {
-      this.github.abandonIncompleteSignUp();
+      this.github.resetSignUpState();
     }
     this.githubConsent.set(false);
     this.flow.setGitHubIntent(null);
@@ -155,7 +155,7 @@ export class AuthStateService {
   }
 
   cancelSignUp(): void {
-    this.github.abandonIncompleteSignUp();
+    this.github.resetSignUpState();
     this.closeSignUp();
   }
 
@@ -213,40 +213,40 @@ export class AuthStateService {
     if (oauthError) {
       if (oauthError.toLowerCase().includes("access_denied")) {
         const message = AUTH_MESSAGES.githubAuthorizationDenied;
-        await this.finishGitHubCallbackFailure(message);
+        await this.failGitHubCallback(message);
         return { status: "cancelled" };
       }
       const message =
         params.get("error_description")?.trim() ||
         AUTH_MESSAGES.unableToContinueGitHub;
-      await this.finishGitHubCallbackFailure(message);
+      await this.failGitHubCallback(message);
       return { status: "error", message };
     }
 
-    const intent = this.callbackIntent();
+    const intent = this.resolveGitHubIntent();
     if (!intent) {
       const message = AUTH_MESSAGES.unableToContinueGitHub;
-      await this.finishGitHubCallbackFailure(message);
+      await this.failGitHubCallback(message);
       return { status: "error", message };
     }
 
     const returnUrl = this.flow.peekReturnUrl();
     const afterAuthUrl = returnUrl
-      ? new URL(returnUrl, appUrls().origin).href
+      ? new URL(returnUrl, authUrls().origin).href
       : undefined;
 
     let callbackError: unknown;
     try {
       await this.clerk.handleRedirectCallback({
         transferable: intent !== "signIn",
-        origin: appUrls().origin,
+        origin: authUrls().origin,
         afterAuthUrl,
       });
     } catch (error) {
       callbackError = error;
     }
 
-    await this.clerk.reloadClient();
+    await this.clerk.syncClerkState();
     this.syncUserFromClerk();
 
     if (this.isAuthenticated()) {
@@ -257,13 +257,13 @@ export class AuthStateService {
     }
 
     if (this.github.needsConsent()) {
-      await this.finishGitHubConsent();
+      await this.completeGitHubConsent();
       return { status: "needs_consent" };
     }
 
     if (!callbackError) {
       const message = AUTH_MESSAGES.githubAuthorizationDenied;
-      await this.finishGitHubCallbackFailure(message);
+      await this.failGitHubCallback(message);
       return { status: "cancelled" };
     }
 
@@ -271,7 +271,7 @@ export class AuthStateService {
       callbackError,
       AUTH_MESSAGES.unableToContinueGitHub,
     );
-    await this.finishGitHubCallbackFailure(message);
+    await this.failGitHubCallback(message);
     return {
       status: "error",
       message,
@@ -286,7 +286,7 @@ export class AuthStateService {
       };
     }
 
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -325,7 +325,7 @@ export class AuthStateService {
   }
 
   async completeLoginSecondFactor(code: string): Promise<LoginResult> {
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -357,7 +357,7 @@ export class AuthStateService {
   }
 
   async resendLoginSecondFactor(): Promise<LoginResult> {
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -366,7 +366,7 @@ export class AuthStateService {
   }
 
   async abandonLoginAttempt(): Promise<void> {
-    await this.clerk.abandonSignIn();
+    await this.clerk.resetSignInState();
   }
 
   async startPasswordReset(emailAddress: string): Promise<PasswordResetResult> {
@@ -377,7 +377,7 @@ export class AuthStateService {
       };
     }
 
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -400,7 +400,7 @@ export class AuthStateService {
     code: string;
     password: string;
   }): Promise<PasswordResetResult> {
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -430,7 +430,7 @@ export class AuthStateService {
   }
 
   async resendPasswordResetCode(): Promise<PasswordResetResult> {
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -464,7 +464,7 @@ export class AuthStateService {
       return;
     }
 
-    this.rememberCurrentReturnUrl();
+    this.setCurrentReturnUrl();
     this.githubConsent.set(false);
     this.flow.setGitHubIntent("signIn");
     this.startAuthPending();
@@ -486,7 +486,7 @@ export class AuthStateService {
       };
     }
 
-    const signUp = await this.clerk.requireSignUp();
+    const signUp = await this.clerk.getSignUpResource();
     if (!signUp) {
       return this.authNotReady();
     }
@@ -523,7 +523,7 @@ export class AuthStateService {
   async completeRegister(
     payload: RegisterConsentPayload,
   ): Promise<RegisterResult> {
-    const signUp = await this.clerk.requireSignUp();
+    const signUp = await this.clerk.getSignUpResource();
     if (!signUp) {
       return this.authNotReady();
     }
@@ -544,7 +544,7 @@ export class AuthStateService {
   }
 
   async verifyRegister(code: string): Promise<RegisterResult> {
-    const signUp = await this.clerk.requireSignUp();
+    const signUp = await this.clerk.getSignUpResource();
     if (!signUp) {
       return this.authNotReady();
     }
@@ -577,7 +577,7 @@ export class AuthStateService {
   }
 
   async resendRegisterCode(): Promise<RegisterResult> {
-    const signUp = await this.clerk.requireSignUp();
+    const signUp = await this.clerk.getSignUpResource();
     if (!signUp) {
       return this.authNotReady();
     }
@@ -606,11 +606,14 @@ export class AuthStateService {
     newsletterOptIn: boolean,
     legalAccepted: boolean,
   ): Promise<RegisterResult> {
-    this.rememberCurrentReturnUrl();
+    this.setCurrentReturnUrl();
     this.flow.setGitHubIntent("signUp");
     this.startAuthPending();
     const result = this.githubConsent()
-      ? await this.github.completeGitHubSignUp(newsletterOptIn, legalAccepted)
+      ? await this.github.submitConsentAndComplete(
+          newsletterOptIn,
+          legalAccepted,
+        )
       : await this.github.continueSignUp(newsletterOptIn, legalAccepted);
     return this.applyGitHubOutcome(result);
   }
@@ -631,7 +634,7 @@ export class AuthStateService {
   }
 
   openUserProfile(): void {
-    this.clerk.openUserProfile();
+    this.clerk.openUserProfileModal();
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -667,7 +670,7 @@ export class AuthStateService {
       this.analytics.trackEvent("auth account deleted", {});
     }
     this.analytics.reset();
-    this.leaveBookmarks();
+    this.redirectFromBookmarks();
   }
 
   private async applyGitHubOutcome(
@@ -705,7 +708,7 @@ export class AuthStateService {
         this.githubConsent.set(false);
       }
       await this.clerk.setActive(sessionId);
-      await this.clerk.reloadClient();
+      await this.clerk.syncClerkState();
       this.syncUserFromClerk();
       await this.finalizeAuthFlow(kind);
     } catch (error) {
@@ -735,7 +738,7 @@ export class AuthStateService {
       kind === "registration" ? "auth register" : "auth login",
       {},
     );
-    const returnUrl = this.onAuthCallback()
+    const returnUrl = this.isAuthCallbackRoute()
       ? this.flow.consumeReturnUrl()
       : null;
     this.closeSignIn();
@@ -748,7 +751,7 @@ export class AuthStateService {
     this.flow.clearReturnUrl();
   }
 
-  private async finishGitHubConsent(): Promise<void> {
+  private async completeGitHubConsent(): Promise<void> {
     const returnUrl = this.flow.consumeReturnUrl();
     this.flow.setGitHubIntent("signUp");
     this.clearAuthPending();
@@ -756,8 +759,8 @@ export class AuthStateService {
     this.openGitHubConsent();
   }
 
-  private async finishGitHubCallbackFailure(message?: string): Promise<void> {
-    this.github.abandonIncompleteSignUp();
+  private async failGitHubCallback(message?: string): Promise<void> {
+    this.github.resetSignUpState();
     const returnUrl = this.flow.consumeReturnUrl();
     this.closeSignIn();
     this.closeSignUp();
@@ -773,7 +776,7 @@ export class AuthStateService {
   }
 
   private openGitHubConsent(): void {
-    if (!this.clerk.isReady()) {
+    if (!this.clerk.isLoaded()) {
       this.toastAuthUnavailable();
       return;
     }
@@ -792,7 +795,7 @@ export class AuthStateService {
     );
   }
 
-  private callbackIntent(): GitHubIntent | null {
+  private resolveGitHubIntent(): GitHubIntent | null {
     const intent = new URLSearchParams(window.location.search).get("intent");
     if (intent === "signIn" || intent === "signUp") {
       return intent;
@@ -800,18 +803,18 @@ export class AuthStateService {
     return this.flow.githubIntent();
   }
 
-  private onAuthCallback(): boolean {
+  private isAuthCallbackRoute(): boolean {
     return (
       isPlatformBrowser(this.platformId) &&
       window.location.pathname.startsWith("/auth/callback")
     );
   }
 
-  private rememberCurrentReturnUrl(): void {
+  private setCurrentReturnUrl(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    this.flow.rememberReturnUrl(
+    this.flow.setReturnUrl(
       `${window.location.pathname}${window.location.search}${window.location.hash}`,
     );
   }
@@ -827,7 +830,7 @@ export class AuthStateService {
   }
 
   private async prepareEmailSecondFactor(
-    signIn: NonNullable<Awaited<ReturnType<ClerkService["requireSignIn"]>>>,
+    signIn: NonNullable<Awaited<ReturnType<ClerkService["getSignInResource"]>>>,
   ): Promise<LoginResult> {
     const emailCodeFactor = signIn.supportedSecondFactors?.find(
       (factor) => factor.strategy === "email_code",
@@ -879,7 +882,7 @@ export class AuthStateService {
     target.__scDeleteWrapped = true;
   }
 
-  private leaveBookmarks(): void {
+  private redirectFromBookmarks(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -913,7 +916,7 @@ export class AuthStateService {
       return { status: "consent" };
     }
 
-    if (pendingEmailVerification(result)) {
+    if (getPendingEmailVerification(result)) {
       await result.prepareEmailAddressVerification({
         strategy: "email_code",
       });

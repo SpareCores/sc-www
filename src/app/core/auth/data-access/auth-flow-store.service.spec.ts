@@ -21,7 +21,7 @@ describe("AuthFlowStore", () => {
   it("keeps pending state, GitHub intent, and a safe return URL in one record", () => {
     const store = createStore();
 
-    store.rememberReturnUrl("/servers?tab=1#list");
+    store.setReturnUrl("/servers?tab=1#list");
     store.setGitHubIntent("signIn");
     store.setPending(true);
 
@@ -42,13 +42,13 @@ describe("AuthFlowStore", () => {
   it("does not replace the original URL from the callback page and rejects unsafe URLs", () => {
     const store = createStore();
 
-    store.rememberReturnUrl("/servers?tab=1#list");
-    store.rememberReturnUrl("/auth/callback?intent=signIn");
+    store.setReturnUrl("/servers?tab=1#list");
+    store.setReturnUrl("/auth/callback?intent=signIn");
 
     expect(store.consumeReturnUrl()).toBe("/servers?tab=1#list");
 
-    store.rememberReturnUrl("//evil.example");
-    store.rememberReturnUrl("https://evil.example");
+    store.setReturnUrl("//evil.example");
+    store.setReturnUrl("https://evil.example");
 
     expect(store.peekReturnUrl()).toBeNull();
     expect(store.consumeReturnUrl()).toBe("/");
@@ -74,7 +74,7 @@ describe("AuthFlowStore", () => {
 
   it("clears the flow record from one cleanup path", () => {
     const store = createStore();
-    store.rememberReturnUrl("/servers");
+    store.setReturnUrl("/servers");
     store.setPending(true);
     store.setGitHubIntent("signUp");
 
