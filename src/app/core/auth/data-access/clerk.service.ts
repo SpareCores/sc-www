@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { Router } from "@angular/router";
 import { Clerk } from "@clerk/clerk-js";
 import type {
   SignInResource,
@@ -14,6 +15,7 @@ import { CLERK_APPEARANCE, CLERK_TEXTS } from "../clerk-configuration";
 @Injectable({ providedIn: "root" })
 export class ClerkService {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly router = inject(Router);
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
 
@@ -156,6 +158,25 @@ export class ClerkService {
     return this.clerk?.addListener(listener) as (() => void) | undefined;
   }
 
+  private navigateWithinApp(url: string, replace = false): Promise<boolean> {
+    return this.router.navigateByUrl(
+      this.toAppUrl(url),
+      replace ? { replaceUrl: true } : undefined,
+    );
+  }
+
+  private toAppUrl(url: string): string {
+    try {
+      const target = new URL(url, window.location.origin);
+      if (target.origin === window.location.origin) {
+        return `${target.pathname}${target.search}${target.hash}`;
+      }
+    } catch {
+      return url;
+    }
+    return url;
+  }
+
   private async loadClerk(): Promise<void> {
     if (!CLERK_PUBLISHABLE_KEY) {
       console.error("NG_APP_CLERK_PUBLISHABLE_KEY is not set");
@@ -170,6 +191,8 @@ export class ClerkService {
       localization: CLERK_TEXTS,
       signInUrl: urls.origin,
       signUpUrl: urls.origin,
+      routerPush: (url: string) => this.navigateWithinApp(url),
+      routerReplace: (url: string) => this.navigateWithinApp(url, true),
       telemetry: false,
     });
   }

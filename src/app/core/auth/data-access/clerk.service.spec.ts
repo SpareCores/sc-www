@@ -1,11 +1,20 @@
 import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
+import { Router } from "@angular/router";
 import { ClerkService } from "./clerk.service";
 
 describe("ClerkService", () => {
+  let router: { navigateByUrl: jasmine.Spy };
+
   function createService(): ClerkService {
+    router = {
+      navigateByUrl: jasmine.createSpy().and.resolveTo(true),
+    };
     TestBed.configureTestingModule({
-      providers: [{ provide: PLATFORM_ID, useValue: "browser" }],
+      providers: [
+        { provide: PLATFORM_ID, useValue: "browser" },
+        { provide: Router, useValue: router },
+      ],
     });
     return TestBed.inject(ClerkService);
   }
@@ -61,5 +70,31 @@ describe("ClerkService", () => {
     expect(options["signInFallbackRedirectUrl"]).toBeUndefined();
     expect(options["signUpFallbackRedirectUrl"]).toBeUndefined();
     expect(options["transferable"]).toBeTrue();
+  });
+
+  it("routes same-origin redirects through Angular Router", async () => {
+    const service = createService();
+    const absoluteSameOrigin = `${window.location.origin}/servers?tab=1#list`;
+
+    await (
+      service as unknown as {
+        navigateWithinApp(url: string, replace?: boolean): Promise<boolean>;
+      }
+    ).navigateWithinApp(absoluteSameOrigin);
+
+    expect(router.navigateByUrl).toHaveBeenCalledOnceWith(
+      "/servers?tab=1#list",
+      undefined,
+    );
+
+    await (
+      service as unknown as {
+        navigateWithinApp(url: string, replace?: boolean): Promise<boolean>;
+      }
+    ).navigateWithinApp("/servers?tab=2", true);
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith("/servers?tab=2", {
+      replaceUrl: true,
+    });
   });
 });
