@@ -262,15 +262,27 @@
           data-cl-size="flexible"
         ></div>
 
-        <sc-button
-          type="submit"
-          label="Continue"
-          icon="chevron-right"
-          size="small"
-          buttonClass="w-full !justify-center"
-          [loading]="busy === 'submit' || busy === 'github'"
-          [disabled]="!canSubmitConsent() || !!busy"
-        ></sc-button>
+        <div class="auth-modal__consent-actions">
+          <sc-button
+            type="button"
+            label="Cancel"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [disabled]="!!busy"
+            (buttonClick)="cancelConsent()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            label="Continue"
+            icon="chevron-right"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [loading]="busy === 'submit' || busy === 'github'"
+            [disabled]="!canSubmitConsent() || !!busy"
+          ></sc-button>
+        </div>
       </form>
     </div>
     } @else {
@@ -297,10 +309,13 @@
 
         @if (errorMessage) {
         <p class="auth-modal__error">{{ errorMessage }}</p>
+        } @if (infoMessage) {
+        <p class="auth-modal__info">{{ infoMessage }}</p>
         }
 
-        <div class="auth-modal__verify-actions">
+        <div class="auth-modal__actions">
           <sc-button
+            type="button"
             label="Resend code"
             variant="outline"
             color="brand"
@@ -310,9 +325,6 @@
             [disabled]="!!busy"
             (buttonClick)="resendCode()"
           ></sc-button>
-          @if (infoMessage) {
-          <p class="auth-modal__info">{{ infoMessage }}</p>
-          }
           <sc-button
             type="submit"
             label="Verify email"

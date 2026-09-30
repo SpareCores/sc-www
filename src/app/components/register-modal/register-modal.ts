@@ -92,6 +92,15 @@ export class RegisterModal {
     this.auth.closeSignUp();
   }
 
+  protected cancelConsent(): void {
+    if (this.busy) {
+      return;
+    }
+
+    this.busy = null;
+    this.auth.cancelSignUp();
+  }
+
   protected canSubmitDetails(form: NgForm): boolean {
     return !!form.valid && !!this.firstName.trim() && !!this.lastName.trim();
   }

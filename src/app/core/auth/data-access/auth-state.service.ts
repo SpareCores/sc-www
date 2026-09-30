@@ -154,6 +154,11 @@ export class AuthStateService {
     this.flow.clearReturnUrl();
   }
 
+  cancelSignUp(): void {
+    this.github.abandonIncompleteSignUp();
+    this.closeSignUp();
+  }
+
   private syncUserFromClerk(): void {
     const previousUser = this._user();
     const user = this.clerk.user;
