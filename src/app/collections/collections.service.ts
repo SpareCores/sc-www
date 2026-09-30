@@ -11,7 +11,7 @@ import {
   type CollectionType,
   type FavoriteDatabaseItem,
   type FavoriteServerItem,
-  type SavedAdviceItem,
+  type SavedAssessmentItem,
   type SavedComparisonItem,
   type SavedSearchItem,
 } from "./collections.types";
@@ -27,7 +27,7 @@ export type {
   BookmarksFilters,
   FavoriteDatabaseItem,
   FavoriteServerItem,
-  SavedAdviceItem,
+  SavedAssessmentItem,
   SavedComparisonItem,
   SavedNamedItem,
   SavedSearchItem,
@@ -163,23 +163,23 @@ export class CollectionsService {
     return this.delete(COLLECTION_TYPES.savedComparisons, id);
   }
 
-  listSavedAdvices(): Observable<SavedAdviceItem[]> {
-    return this.list(COLLECTION_TYPES.savedAdvices);
+  listSavedAssessments(): Observable<SavedAssessmentItem[]> {
+    return this.list(COLLECTION_TYPES.savedAssessments);
   }
 
-  getSavedAdvice(id: string): Observable<SavedAdviceItem> {
-    return this.get(COLLECTION_TYPES.savedAdvices, id);
+  getSavedAssessment(id: string): Observable<SavedAssessmentItem> {
+    return this.get(COLLECTION_TYPES.savedAssessments, id);
   }
 
-  saveAdvice(
+  saveAssessment(
     id: string,
-    body: CollectionItemPayload<typeof COLLECTION_TYPES.savedAdvices>,
-  ): Observable<SavedAdviceItem> {
-    return this.put(COLLECTION_TYPES.savedAdvices, id, body);
+    body: CollectionItemPayload<typeof COLLECTION_TYPES.savedAssessments>,
+  ): Observable<SavedAssessmentItem> {
+    return this.put(COLLECTION_TYPES.savedAssessments, id, body);
   }
 
-  deleteSavedAdvice(id: string): Observable<void> {
-    return this.delete(COLLECTION_TYPES.savedAdvices, id);
+  deleteSavedAssessment(id: string): Observable<void> {
+    return this.delete(COLLECTION_TYPES.savedAssessments, id);
   }
 
   reorderCollectionItems(

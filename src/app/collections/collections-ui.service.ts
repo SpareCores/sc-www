@@ -30,7 +30,7 @@ export type PendingOpenSaveTarget =
   | "search-databases"
   | "compare-servers"
   | "compare-databases"
-  | "advice";
+  | "assessment";
 
 export type PendingFeatureAction =
   | {
@@ -245,7 +245,7 @@ export class CollectionsUiService {
     this.writePendingStorage(action);
   }
 
-  private clearPendingFeatureAction(): void {
+  clearPendingFeatureAction(): void {
     this.pendingConsumed = true;
     this.clearPendingStorage();
   }
@@ -322,7 +322,7 @@ export class CollectionsUiService {
         target === "search-databases" ||
         target === "compare-servers" ||
         target === "compare-databases" ||
-        target === "advice"
+        target === "assessment"
       ) {
         return { type: "open-save", target };
       }

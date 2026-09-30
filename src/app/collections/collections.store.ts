@@ -58,17 +58,17 @@ import {
   type BookmarksFilters,
   type FavoriteDatabaseItem,
   type FavoriteServerItem,
-  type SavedAdviceItem,
+  type SavedAssessmentItem,
   type SavedComparisonItem,
   type SavedComparisonInstance,
   type SavedSearchItem,
   type SavedSearchPage,
 } from "./collections.types";
 import {
-  adviceQueriesEqual,
+  assessmentQueriesEqual,
   collectionItemHref,
   nowBookmarkedAt,
-  savedAdviceDetailEntries,
+  savedAssessmentDetailEntries,
   savedComparisonDetailEntries,
   savedSearchDetailEntries,
   savedSearchIdFromQuery,
@@ -111,9 +111,9 @@ const comparisonsConfig = entityConfig({
   selectId: (entity) => entity.id,
 });
 
-const advicesConfig = entityConfig({
-  entity: type<SavedAdviceItem>(),
-  collection: "advices",
+const assessmentsConfig = entityConfig({
+  entity: type<SavedAssessmentItem>(),
+  collection: "assessments",
   selectId: (entity) => entity.id,
 });
 
@@ -160,13 +160,13 @@ export const CollectionsStore = signalStore(
   withEntities(databasesConfig),
   withEntities(searchesConfig),
   withEntities(comparisonsConfig),
-  withEntities(advicesConfig),
+  withEntities(assessmentsConfig),
   withComputed((store) => ({
     favoriteServers: computed(() => sortByOrder(store.serversEntities())),
     favoriteDatabases: computed(() => sortByOrder(store.databasesEntities())),
     savedSearches: computed(() => sortByOrder(store.searchesEntities())),
     savedComparisons: computed(() => sortByOrder(store.comparisonsEntities())),
-    savedAdvices: computed(() => sortByOrder(store.advicesEntities())),
+    savedAssessments: computed(() => sortByOrder(store.assessmentsEntities())),
     favoriteServerIds: computed(() => new Set(store.serversIds())),
     favoriteDatabaseIds: computed(() => new Set(store.databasesIds())),
     bookmarksStats: computed(() => ({
@@ -174,7 +174,7 @@ export const CollectionsStore = signalStore(
       favoriteDatabases: store.databasesEntities().length,
       savedSearches: store.searchesEntities().length,
       savedComparisons: store.comparisonsEntities().length,
-      savedAdvices: store.advicesEntities().length,
+      savedAssessments: store.assessmentsEntities().length,
     })),
     bookmarksCards: computed((): BookmarksCardViewModel[] => {
       const filters = store.bookmarksFilters();
@@ -262,10 +262,10 @@ export const CollectionsStore = signalStore(
         }
       }
 
-      if (filters.savedAdvices) {
-        for (const item of sortByOrder(store.advicesEntities())) {
+      if (filters.savedAssessments) {
+        for (const item of sortByOrder(store.assessmentsEntities())) {
           cards.push({
-            kind: "savedAdvices",
+            kind: "savedAssessments",
             id: item.id,
             title: item.name,
             note: item.note,
@@ -273,7 +273,7 @@ export const CollectionsStore = signalStore(
             bookmarkedAt: item.bookmarked_at,
             href: collectionItemHref("/advisor", item.query),
             icon: "bot",
-            details: savedAdviceDetailEntries(item.query),
+            details: savedAssessmentDetailEntries(item.query),
           });
         }
       }
@@ -311,15 +311,15 @@ export const CollectionsStore = signalStore(
     savedComparisonById(id: string): SavedComparisonItem | null {
       return store.comparisonsEntityMap()[id] ?? null;
     },
-    savedAdviceByQuery(query: SearchBarQuery): SavedAdviceItem | null {
+    savedAssessmentByQuery(query: SearchBarQuery): SavedAssessmentItem | null {
       return (
         store
-          .advicesEntities()
-          .find((item) => adviceQueriesEqual(item.query, query)) ?? null
+          .assessmentsEntities()
+          .find((item) => assessmentQueriesEqual(item.query, query)) ?? null
       );
     },
-    savedAdviceById(id: string): SavedAdviceItem | null {
-      return store.advicesEntityMap()[id] ?? null;
+    savedAssessmentById(id: string): SavedAssessmentItem | null {
+      return store.assessmentsEntityMap()[id] ?? null;
     },
     setBookmarksFilter(key: keyof BookmarksFilters, enabled: boolean): void {
       patchState(store, {
@@ -336,7 +336,7 @@ export const CollectionsStore = signalStore(
         removeAllEntities(databasesConfig),
         removeAllEntities(searchesConfig),
         removeAllEntities(comparisonsConfig),
-        removeAllEntities(advicesConfig),
+        removeAllEntities(assessmentsConfig),
         {
           bookmarksFilters: { ...DEFAULT_BOOKMARKS_FILTERS },
         },
@@ -410,7 +410,7 @@ export const CollectionsStore = signalStore(
             databases: collections.listFavoriteDatabases(),
             searches: collections.listSavedSearches(),
             comparisons: collections.listSavedComparisons(),
-            advices: collections.listSavedAdvices(),
+            assessments: collections.listSavedAssessments(),
           }).pipe(
             tapResponse({
               next: ({
@@ -418,7 +418,7 @@ export const CollectionsStore = signalStore(
                 databases,
                 searches,
                 comparisons,
-                advices,
+                assessments,
               }) => {
                 const normalizedServers = servers
                   .map((item) => {
@@ -459,7 +459,7 @@ export const CollectionsStore = signalStore(
                   setAllEntities(normalizedDatabases, databasesConfig),
                   setAllEntities(searches, searchesConfig),
                   setAllEntities(comparisons, comparisonsConfig),
-                  setAllEntities(advices, advicesConfig),
+                  setAllEntities(assessments, assessmentsConfig),
                   setLoaded(),
                 );
               },
@@ -869,22 +869,24 @@ export const CollectionsStore = signalStore(
         ),
       ),
     ),
-    saveAdvice: rxMethod<{
+    saveAssessment: rxMethod<{
       id: string;
       query: SearchBarQuery;
       name: string;
       note?: string;
     }>(
       pipe(
-        tap(({ id }) => store.startMutation(mutationKey("save-advice", id))),
+        tap(({ id }) =>
+          store.startMutation(mutationKey("save-assessment", id)),
+        ),
         switchMap(({ id, query, name, note }) => {
           const normalizedNote = normalizedCollectionNote(note);
           return collections
-            .saveAdvice(id, {
+            .saveAssessment(id, {
               query,
               name: name.trim(),
               note: normalizedNote,
-              order: store.savedAdvices().length,
+              order: store.savedAssessments().length,
               bookmarked_at: nowBookmarkedAt(),
             })
             .pipe(
@@ -894,37 +896,39 @@ export const CollectionsStore = signalStore(
                     store,
                     upsertEntity(
                       withCollectionNote(saved, normalizedNote),
-                      advicesConfig,
+                      assessmentsConfig,
                     ),
                   );
-                  store.finishMutation(mutationKey("save-advice", id));
+                  store.finishMutation(mutationKey("save-assessment", id));
                 },
                 error: (error: unknown) => {
                   Sentry.captureException(error);
-                  store.finishMutation(mutationKey("save-advice", id));
+                  store.finishMutation(mutationKey("save-assessment", id));
                 },
               }),
             );
         }),
       ),
     ),
-    updateAdvice: rxMethod<{
+    updateAssessment: rxMethod<{
       id: string;
       query: SearchBarQuery;
       name: string;
       note?: string;
     }>(
       pipe(
-        tap(({ id }) => store.startMutation(mutationKey("update-advice", id))),
+        tap(({ id }) =>
+          store.startMutation(mutationKey("update-assessment", id)),
+        ),
         switchMap(({ id, query, name, note }) => {
           const normalizedNote = normalizedCollectionNote(note);
           return collections
-            .saveAdvice(id, {
+            .saveAssessment(id, {
               query,
               name: name.trim(),
               note: normalizedNote,
-              order: store.advicesEntityMap()[id]?.order,
-              bookmarked_at: store.advicesEntityMap()[id]?.bookmarked_at,
+              order: store.assessmentsEntityMap()[id]?.order,
+              bookmarked_at: store.assessmentsEntityMap()[id]?.bookmarked_at,
             })
             .pipe(
               tapResponse({
@@ -936,33 +940,33 @@ export const CollectionsStore = signalStore(
                         id,
                         changes: withCollectionNote(saved, normalizedNote),
                       },
-                      advicesConfig,
+                      assessmentsConfig,
                     ),
                   );
-                  store.finishMutation(mutationKey("update-advice", id));
+                  store.finishMutation(mutationKey("update-assessment", id));
                 },
                 error: (error: unknown) => {
                   Sentry.captureException(error);
-                  store.finishMutation(mutationKey("update-advice", id));
+                  store.finishMutation(mutationKey("update-assessment", id));
                 },
               }),
             );
         }),
       ),
     ),
-    deleteAdvice: rxMethod<string>(
+    deleteAssessment: rxMethod<string>(
       pipe(
-        tap((id) => store.startMutation(mutationKey("delete-advice", id))),
+        tap((id) => store.startMutation(mutationKey("delete-assessment", id))),
         switchMap((id) =>
-          collections.deleteSavedAdvice(id).pipe(
+          collections.deleteSavedAssessment(id).pipe(
             tapResponse({
               next: () => {
-                patchState(store, removeEntity(id, advicesConfig));
-                store.finishMutation(mutationKey("delete-advice", id));
+                patchState(store, removeEntity(id, assessmentsConfig));
+                store.finishMutation(mutationKey("delete-assessment", id));
               },
               error: (error: unknown) => {
                 Sentry.captureException(error);
-                store.finishMutation(mutationKey("delete-advice", id));
+                store.finishMutation(mutationKey("delete-assessment", id));
               },
             }),
           ),
@@ -977,7 +981,7 @@ export const CollectionsStore = signalStore(
             databases: store.databasesEntities().slice(),
             searches: store.searchesEntities().slice(),
             comparisons: store.comparisonsEntities().slice(),
-            advices: store.advicesEntities().slice(),
+            assessments: store.assessmentsEntities().slice(),
           };
           store.startMutation(mutationKey("reorder-bookmarks"));
           cards.forEach((card, index) => {
@@ -1007,10 +1011,10 @@ export const CollectionsStore = signalStore(
                   updateEntity({ id: card.id, changes }, comparisonsConfig),
                 );
                 break;
-              case "savedAdvices":
+              case "savedAssessments":
                 patchState(
                   store,
-                  updateEntity({ id: card.id, changes }, advicesConfig),
+                  updateEntity({ id: card.id, changes }, assessmentsConfig),
                 );
                 break;
             }
@@ -1071,8 +1075,8 @@ export const CollectionsStore = signalStore(
                 updates.push({ collectionType, id, body });
                 break;
               }
-              case "savedAdvices": {
-                const item = store.advicesEntityMap()[card.id];
+              case "savedAssessments": {
+                const item = store.assessmentsEntityMap()[card.id];
                 if (!item) {
                   break;
                 }
@@ -1141,7 +1145,7 @@ export const CollectionsStore = signalStore(
                       store,
                       updateEntity(
                         { id: item.id, changes: item },
-                        advicesConfig,
+                        assessmentsConfig,
                       ),
                     );
                   }
@@ -1155,7 +1159,7 @@ export const CollectionsStore = signalStore(
                   setAllEntities(snapshot.databases, databasesConfig),
                   setAllEntities(snapshot.searches, searchesConfig),
                   setAllEntities(snapshot.comparisons, comparisonsConfig),
-                  setAllEntities(snapshot.advices, advicesConfig),
+                  setAllEntities(snapshot.assessments, assessmentsConfig),
                 );
               },
             }),

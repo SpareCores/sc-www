@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { Router } from "@angular/router";
 import { Clerk } from "@clerk/clerk-js";
 import type {
   SignInResource,
@@ -8,13 +9,13 @@ import type {
 } from "@clerk/shared/types";
 import { ui } from "@clerk/ui/no-rhc";
 import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
-import type { ClerkWithNavigation } from "../auth.types";
-import { appUrls } from "../auth.utils";
+import { authUrls } from "../auth.utils";
 import { CLERK_APPEARANCE, CLERK_TEXTS } from "../clerk-configuration";
 
 @Injectable({ providedIn: "root" })
 export class ClerkService {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly router = inject(Router);
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
 
@@ -30,11 +31,7 @@ export class ClerkService {
     return this.clerk?.session ?? null;
   }
 
-  get navigationInstance(): ClerkWithNavigation | null {
-    return this.clerk as ClerkWithNavigation | null;
-  }
-
-  isReady(): boolean {
+  isLoaded(): boolean {
     return this.clerk !== null;
   }
 
@@ -51,12 +48,12 @@ export class ClerkService {
     return this.initPromise;
   }
 
-  async requireSignIn(): Promise<SignInResource | null> {
+  async getSignInResource(): Promise<SignInResource | null> {
     await this.init();
     return this.clerk?.client?.signIn ?? null;
   }
 
-  async requireSignUp(): Promise<SignUpResource | null> {
+  async getSignUpResource(): Promise<SignUpResource | null> {
     await this.init();
     return this.clerk?.client?.signUp ?? null;
   }
@@ -69,88 +66,22 @@ export class ClerkService {
     await this.clerk?.signOut(() => undefined);
   }
 
-  openUserProfile(onDeleteAccount?: () => Promise<void>): void {
+  openUserProfileModal(): void {
     const user = this.clerk?.user;
     const hidePasswordSection =
       !!user &&
       !user.passwordEnabled &&
       !!user.externalAccounts?.some((account) => account.provider === "github");
 
-    const elements: Record<string, { display: string }> = {
-      profileSection__danger: { display: "none" },
-    };
+    const elements: Record<string, { display: string }> = {};
     if (hidePasswordSection) {
       elements["profileSection__password"] = { display: "none" };
     }
 
     this.clerk?.openUserProfile({
       apiKeysProps: { hide: true },
-      appearance: { elements },
-      customPages: onDeleteAccount
-        ? [this.createDeleteAccountPage(onDeleteAccount)]
-        : undefined,
+      appearance: Object.keys(elements).length ? { elements } : undefined,
     });
-  }
-
-  private createDeleteAccountPage(onDeleteAccount: () => Promise<void>) {
-    return {
-      label: "Delete account",
-      url: "delete-account",
-      mount: (el: HTMLDivElement) => {
-        el.replaceChildren();
-
-        const title = document.createElement("h1");
-        title.textContent = "Delete account";
-        title.style.cssText =
-          "margin:0 0 0.5rem;font-size:1.125rem;font-weight:600;color:#fff";
-
-        const description = document.createElement("p");
-        description.textContent =
-          "Permanently delete your account and all associated data. This cannot be undone.";
-        description.style.cssText =
-          "margin:0 0 1rem;font-size:0.875rem;color:#9ca3af;line-height:1.4";
-
-        const error = document.createElement("p");
-        error.style.cssText =
-          "display:none;margin:0 0 0.75rem;font-size:0.875rem;color:#EF4444";
-
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = "Delete account";
-        button.style.cssText =
-          "appearance:none;border:0;border-radius:0.5rem;padding:0.5rem 1rem;background:#EF4444;color:#fff;font-size:0.875rem;font-weight:500;cursor:pointer";
-
-        button.addEventListener("click", () => {
-          if (
-            !window.confirm(
-              "Delete your account permanently? This cannot be undone.",
-            )
-          ) {
-            return;
-          }
-
-          error.style.display = "none";
-          error.textContent = "";
-          button.disabled = true;
-          button.textContent = "Deleting…";
-
-          void onDeleteAccount().catch((err: unknown) => {
-            error.textContent =
-              err instanceof Error
-                ? err.message
-                : "Unable to delete account. Please try again.";
-            error.style.display = "block";
-            button.disabled = false;
-            button.textContent = "Delete account";
-          });
-        });
-
-        el.append(title, description, error, button);
-      },
-      unmount: (el?: HTMLDivElement) => {
-        el?.replaceChildren();
-      },
-    };
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -177,31 +108,39 @@ export class ClerkService {
   async handleRedirectCallback(options: {
     transferable: boolean;
     origin: string;
+    afterAuthUrl?: string;
   }): Promise<void> {
-    await this.clerk?.handleRedirectCallback({
-      signInUrl: options.origin,
-      signUpUrl: options.origin,
-      continueSignUpUrl: options.origin,
-      firstFactorUrl: options.origin,
-      secondFactorUrl: options.origin,
-      resetPasswordUrl: options.origin,
-      signInProtectCheckUrl: options.origin,
-      signUpProtectCheckUrl: options.origin,
-      signInFallbackRedirectUrl: options.origin,
-      signUpFallbackRedirectUrl: options.origin,
-      transferable: options.transferable,
-    });
+    await this.clerk?.handleRedirectCallback(
+      {
+        signInUrl: options.origin,
+        signUpUrl: options.origin,
+        continueSignUpUrl: options.origin,
+        firstFactorUrl: options.origin,
+        secondFactorUrl: options.origin,
+        resetPasswordUrl: options.origin,
+        signInProtectCheckUrl: options.origin,
+        signUpProtectCheckUrl: options.origin,
+        transferable: options.transferable,
+        ...(options.afterAuthUrl
+          ? {
+              signInForceRedirectUrl: options.afterAuthUrl,
+              signUpForceRedirectUrl: options.afterAuthUrl,
+            }
+          : {}),
+      },
+      async () => undefined,
+    );
   }
 
-  async reloadClient(): Promise<void> {
+  async syncClerkState(): Promise<void> {
     try {
       await this.clerk?.client?.reload();
     } catch (error) {
-      console.error("Error reloading Clerk client:", error);
+      console.error("Failed to synchronize Clerk client state:", error);
     }
   }
 
-  async abandonSignIn(): Promise<void> {
+  async resetSignInState(): Promise<void> {
     const signIn = this.clerk?.client?.signIn;
     if (!signIn) {
       return;
@@ -211,12 +150,31 @@ export class ClerkService {
     try {
       await signIn.create(identifier ? { identifier } : {});
     } catch {
-      await this.reloadClient();
+      await this.syncClerkState();
     }
   }
 
   addListener(listener: () => void): (() => void) | undefined {
     return this.clerk?.addListener(listener) as (() => void) | undefined;
+  }
+
+  private navigateRouter(url: string, replace = false): Promise<boolean> {
+    return this.router.navigateByUrl(
+      this.toRelativePath(url),
+      replace ? { replaceUrl: true } : undefined,
+    );
+  }
+
+  private toRelativePath(url: string): string {
+    try {
+      const target = new URL(url, window.location.origin);
+      if (target.origin === window.location.origin) {
+        return `${target.pathname}${target.search}${target.hash}`;
+      }
+    } catch {
+      return url;
+    }
+    return url;
   }
 
   private async loadClerk(): Promise<void> {
@@ -226,13 +184,15 @@ export class ClerkService {
     }
 
     this.clerk = new Clerk(CLERK_PUBLISHABLE_KEY);
-    const urls = appUrls();
+    const urls = authUrls();
     await this.clerk.load({
       ui,
       appearance: CLERK_APPEARANCE,
       localization: CLERK_TEXTS,
       signInUrl: urls.origin,
       signUpUrl: urls.origin,
+      routerPush: (url: string) => this.navigateRouter(url),
+      routerReplace: (url: string) => this.navigateRouter(url, true),
       telemetry: false,
     });
   }

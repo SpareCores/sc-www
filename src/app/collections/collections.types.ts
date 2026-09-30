@@ -11,7 +11,7 @@ export const COLLECTION_TYPES = {
   favoriteDatabases: "favorite_databases",
   savedSearches: "saved_searches",
   savedComparisons: "saved_comparisons",
-  savedAdvices: "saved_advices",
+  savedAssessments: "saved_assessments",
 } as const;
 
 export type CollectionType =
@@ -50,7 +50,7 @@ export type SavedComparisonItem = SavedNamedItem & {
   instances: SavedComparisonInstance[];
 };
 
-export type SavedAdviceItem = SavedNamedItem & {
+export type SavedAssessmentItem = SavedNamedItem & {
   query: SearchBarQuery;
 };
 
@@ -59,7 +59,7 @@ export type CollectionItemMap = {
   [COLLECTION_TYPES.favoriteDatabases]: FavoriteDatabaseItem;
   [COLLECTION_TYPES.savedSearches]: SavedSearchItem;
   [COLLECTION_TYPES.savedComparisons]: SavedComparisonItem;
-  [COLLECTION_TYPES.savedAdvices]: SavedAdviceItem;
+  [COLLECTION_TYPES.savedAssessments]: SavedAssessmentItem;
 };
 
 export type CollectionItemPayload<T extends CollectionType> = Omit<
@@ -72,7 +72,7 @@ export type BookmarksFilterKey =
   | "favoriteDatabases"
   | "savedSearches"
   | "savedComparisons"
-  | "savedAdvices";
+  | "savedAssessments";
 
 export type BookmarksFilters = Record<BookmarksFilterKey, boolean>;
 
@@ -81,7 +81,7 @@ export const DEFAULT_BOOKMARKS_FILTERS: BookmarksFilters = {
   favoriteDatabases: true,
   savedSearches: true,
   savedComparisons: true,
-  savedAdvices: true,
+  savedAssessments: true,
 };
 
 export type BookmarksCardKind = BookmarksFilterKey;

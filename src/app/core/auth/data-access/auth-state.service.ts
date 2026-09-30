@@ -15,11 +15,11 @@ import {
   AUTH_MESSAGES,
   AUTH_OVERLAY_CLASS,
   AUTH_OVERLAY_ID,
-  AUTH_PENDING_KEY,
-  AUTH_RETURN_URL_KEY,
 } from "../auth.constants";
 import type {
-  GithubCallbackOutcome,
+  AuthKind,
+  GitHubCallbackResult,
+  GitHubIntent,
   LoginPayload,
   LoginResult,
   PasswordResetResult,
@@ -28,26 +28,22 @@ import type {
   RegisterResult,
 } from "../auth.types";
 import {
-  appUrls,
   authErrorMessage,
+  authUrls,
   canResumeEmailVerification,
   clerkAuthError,
-  getSessionFlag,
-  isPendingGithubExternalComplete,
+  getPendingEmailVerification,
   isSecondFactorStatus,
-  isTransferable,
   needsLegalAcceptance,
   newsletterMetadata,
-  pendingEmailVerification,
-  setSessionFlag,
   signUpMissingPassword,
 } from "../auth.utils";
+import { AuthFlowStore } from "./auth-flow-store.service";
 import { ClerkService } from "./clerk.service";
-import type { GithubAuthHost } from "./github-auth-host";
-import { GithubService } from "./github.service";
+import { GitHubService, type GitHubSignUpOutcome } from "./github.service";
 
 @Injectable({ providedIn: "root" })
-export class AuthStateService implements GithubAuthHost {
+export class AuthStateService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly document = inject(DOCUMENT);
   private readonly ngZone = inject(NgZone);
@@ -55,10 +51,13 @@ export class AuthStateService implements GithubAuthHost {
   private readonly toastService = inject(ToastService);
   private readonly analytics = inject(AnalyticsService);
   private readonly clerk = inject(ClerkService);
-  private readonly github = inject(GithubService);
-  private navigatingAfterAuth = false;
-  private boundHost = false;
+  private readonly github = inject(GitHubService);
+  private readonly flow = inject(AuthFlowStore);
+  private activating = false;
+  private finalizePromise: Promise<void> | null = null;
+  private gitHubCallbackPromise: Promise<GitHubCallbackResult> | null = null;
   private boundListener = false;
+  private accountDeleted = false;
   private signedOutIdentityCleared = false;
 
   private readonly _user = signal<UserResource | null>(null);
@@ -69,7 +68,7 @@ export class AuthStateService implements GithubAuthHost {
   readonly signUpSubtitle = signal<string>(AUTH_MESSAGES.defaultSignUpSubtitle);
   private readonly githubConsent = signal(false);
   readonly githubConsentActive = computed(() => this.githubConsent());
-  readonly authInProgress = signal(this.isAuthPending());
+  readonly authInProgress = this.flow.pending;
   readonly isAuthenticated = computed(() => this._user() !== null);
   readonly userId = computed(() => this._user()?.id ?? null);
 
@@ -85,193 +84,198 @@ export class AuthStateService implements GithubAuthHost {
 
   readonly userImageUrl = computed(() => this._user()?.imageUrl ?? "");
 
-  constructor() {
-    this.ensureHostBound();
-  }
-
-  private ensureHostBound(): void {
-    if (this.boundHost) {
-      return;
-    }
-    this.github.bindHost(this);
-    this.boundHost = true;
-  }
-
   async init(): Promise<void> {
-    this.ensureHostBound();
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
     await this.clerk.init();
-    this.syncState();
-    if (this.isAuthPending()) {
-      const onAuthCallback =
-        window.location.pathname.startsWith("/auth/callback");
-      if (onAuthCallback) {
-        if (this.isAuthenticated() && !this.needsGithubConsent()) {
-          this.startAuthPending();
-        } else {
-          this.clearAuthPending();
-        }
-      } else if (this.isAuthenticated()) {
-        this.startAuthPending();
-        void this.navigateAfterAuth();
-      } else {
-        this.clearAuthPending();
-      }
+    this.syncUserFromClerk();
+    this.bindClerkListener();
+    this.setAuthOverlayVisible(this.authInProgress());
+    if (this.finalizePromise || this.isAuthCallbackRoute()) {
+      return;
     }
-    if (!this.boundListener) {
-      this.clerk.addListener(() => {
-        this.ngZone.run(() => this.syncState(true));
-      });
-      this.boundListener = true;
+    if (this.shouldResumeGitHubConsent()) {
+      this.clearAuthPending();
+      return;
+    }
+    if (this.authInProgress()) {
+      this.flow.clear();
+      this.setAuthOverlayVisible(false);
     }
   }
 
   signIn(): void {
-    if (!this.clerk.isReady()) {
+    if (!this.clerk.isLoaded()) {
       this.toastAuthUnavailable();
       return;
     }
-    this.rememberReturnUrl();
-    this.resetGithubConsent();
+    this.setCurrentReturnUrl();
+    this.githubConsent.set(false);
     this.signUpModalOpen.set(false);
     this.signInModalOpen.set(true);
   }
 
   closeSignIn(): void {
     this.signInModalOpen.set(false);
-    this.github.cancelPendingPopupWait();
+    this.flow.clearReturnUrl();
   }
 
   signUp(options?: { subtitle?: string }): void {
-    if (!this.clerk.isReady()) {
+    if (!this.clerk.isLoaded()) {
       this.toastAuthUnavailable();
       return;
     }
-    this.rememberReturnUrl();
+    this.setCurrentReturnUrl();
     this.signUpSubtitle.set(
       options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
     );
     this.signInModalOpen.set(false);
-    this.resetGithubConsent();
+
+    if (this.shouldResumeGitHubConsent()) {
+      this.openGitHubConsent();
+      return;
+    }
+
+    if (this.github.needsConsent() || this.flow.githubIntent() === "signUp") {
+      this.github.resetSignUpState();
+    }
+    this.githubConsent.set(false);
+    this.flow.setGitHubIntent(null);
     this.signUpModalOpen.set(true);
   }
 
   closeSignUp(): void {
     this.signUpModalOpen.set(false);
-    this.resetGithubConsent();
+    this.githubConsent.set(false);
     this.signUpSubtitle.set(AUTH_MESSAGES.defaultSignUpSubtitle);
-    this.github.cancelPendingPopupWait();
-    this.github.clearSignInHandoff();
+    this.flow.setGitHubIntent(null);
+    this.flow.clearReturnUrl();
   }
 
-  openGithubConsentSignUp(): void {
-    if (!this.clerk.isReady()) {
-      this.toastAuthUnavailable();
+  cancelSignUp(): void {
+    this.github.resetSignUpState();
+    this.closeSignUp();
+  }
+
+  private syncUserFromClerk(): void {
+    const previousUser = this._user();
+    const user = this.clerk.user;
+
+    if (
+      !user &&
+      previousUser &&
+      (this.clerk.session ||
+        this.authInProgress() ||
+        this.activating ||
+        !!this.finalizePromise)
+    ) {
       return;
     }
-    if (this.clerk.user) {
-      void this.github.completeSignedInLogin();
-      return;
-    }
-    this.githubConsent.set(true);
-    this.clearAuthPending();
-    this.navigatingAfterAuth = false;
-    this.signInModalOpen.set(false);
-    this.signUpModalOpen.set(true);
-  }
 
-  isGithubConsentActive(): boolean {
-    return this.githubConsent();
-  }
-
-  notifyContinueGithubSignUp(): void {
-    this.toastService.show({
-      title: AUTH_MESSAGES.githubContinueSignUp,
-      type: "info",
-      duration: 5000,
-    });
-  }
-
-  syncSession(): void {
-    this.syncState();
-  }
-
-  isGithubSignInInProgress(): boolean {
-    return this.github.isSignInInProgress();
-  }
-
-  consumeGithubSignInHandoff(): boolean {
-    return this.github.consumeSignInHandoff();
+    this.setUser(user);
   }
 
   startAuthPending(): void {
-    if (this.githubConsentActive()) {
+    if (this.githubConsent()) {
       return;
     }
-    this.authInProgress.set(true);
-    if (isPlatformBrowser(this.platformId)) {
-      setSessionFlag(AUTH_PENDING_KEY, true);
-    }
+    this.flow.setPending(true);
     this.setAuthOverlayVisible(true);
   }
 
-  clearAuthPending(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      setSessionFlag(AUTH_PENDING_KEY, false);
-    }
-    this.authInProgress.set(false);
+  private clearAuthPending(): void {
+    this.flow.setPending(false);
     this.setAuthOverlayVisible(false);
   }
 
-  isAuthPending(): boolean {
-    return getSessionFlag(AUTH_PENDING_KEY);
-  }
-
-  async finishAuthRedirect(): Promise<void> {
-    this.startAuthPending();
-    await this.navigateAfterAuth();
-  }
-
-  async leaveAuthCallback(): Promise<void> {
+  async handleGitHubCallback(): Promise<GitHubCallbackResult> {
     if (!isPlatformBrowser(this.platformId)) {
-      return;
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.signInBrowserOnly,
+      };
     }
-    if (!window.location.pathname.startsWith("/auth/callback")) {
-      return;
+
+    if (!this.gitHubCallbackPromise) {
+      this.gitHubCallbackPromise = this.processGitHubCallback().finally(() => {
+        this.gitHubCallbackPromise = null;
+      });
     }
-    await this.router.navigateByUrl(this.consumeReturnUrl(), {
-      replaceUrl: true,
-    });
+    return this.gitHubCallbackPromise;
   }
 
-  waitForSignedIn(timeoutMs: number): Promise<boolean> {
+  private async processGitHubCallback(): Promise<GitHubCallbackResult> {
+    await this.init();
+    const params = new URLSearchParams(window.location.search);
+    const oauthError = params.get("error");
+    if (oauthError) {
+      if (oauthError.toLowerCase().includes("access_denied")) {
+        const message = AUTH_MESSAGES.githubAuthorizationDenied;
+        await this.failGitHubCallback(message);
+        return { status: "cancelled" };
+      }
+      const message =
+        params.get("error_description")?.trim() ||
+        AUTH_MESSAGES.unableToContinueGitHub;
+      await this.failGitHubCallback(message);
+      return { status: "error", message };
+    }
+
+    const intent = this.resolveGitHubIntent();
+    if (!intent) {
+      const message = AUTH_MESSAGES.unableToContinueGitHub;
+      await this.failGitHubCallback(message);
+      return { status: "error", message };
+    }
+
+    const returnUrl = this.flow.peekReturnUrl();
+    const afterAuthUrl = returnUrl
+      ? new URL(returnUrl, authUrls().origin).href
+      : undefined;
+
+    let callbackError: unknown;
+    try {
+      await this.clerk.handleRedirectCallback({
+        transferable: intent !== "signIn",
+        origin: authUrls().origin,
+        afterAuthUrl,
+      });
+    } catch (error) {
+      callbackError = error;
+    }
+
+    await this.clerk.syncClerkState();
+    this.syncUserFromClerk();
+
     if (this.isAuthenticated()) {
-      return Promise.resolve(true);
+      await this.finalizeAuthFlow(
+        intent === "signUp" ? "registration" : "login",
+      );
+      return { status: "authenticated" };
     }
 
-    return new Promise((resolve) => {
-      const started = Date.now();
-      const timer = window.setInterval(() => {
-        const user = this.clerk.user;
-        if (user) {
-          this.setUser(user);
-          window.clearInterval(timer);
-          resolve(true);
-          return;
-        }
-        if (Date.now() - started >= timeoutMs) {
-          window.clearInterval(timer);
-          resolve(false);
-        }
-      }, 150);
-    });
-  }
+    if (this.github.needsConsent()) {
+      await this.completeGitHubConsent();
+      return { status: "needs_consent" };
+    }
 
-  needsGithubConsent(): boolean {
-    return this.github.needsConsent();
+    if (!callbackError) {
+      const message = AUTH_MESSAGES.githubAuthorizationDenied;
+      await this.failGitHubCallback(message);
+      return { status: "cancelled" };
+    }
+
+    const message = authErrorMessage(
+      callbackError,
+      AUTH_MESSAGES.unableToContinueGitHub,
+    );
+    await this.failGitHubCallback(message);
+    return {
+      status: "error",
+      message,
+    };
   }
 
   async submitLogin(payload: LoginPayload): Promise<LoginResult> {
@@ -282,7 +286,7 @@ export class AuthStateService implements GithubAuthHost {
       };
     }
 
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -294,7 +298,7 @@ export class AuthStateService implements GithubAuthHost {
       });
 
       if (result.status === "complete" && result.createdSessionId) {
-        await this.completeSession(result.createdSessionId);
+        await this.activateSession(result.createdSessionId, "login");
         return { status: "complete" };
       }
 
@@ -321,7 +325,7 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   async completeLoginSecondFactor(code: string): Promise<LoginResult> {
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -333,7 +337,7 @@ export class AuthStateService implements GithubAuthHost {
       });
 
       if (result.status === "complete" && result.createdSessionId) {
-        await this.completeSession(result.createdSessionId);
+        await this.activateSession(result.createdSessionId, "login");
         return { status: "complete" };
       }
 
@@ -353,7 +357,7 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   async resendLoginSecondFactor(): Promise<LoginResult> {
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return this.authNotReady();
     }
@@ -362,11 +366,471 @@ export class AuthStateService implements GithubAuthHost {
   }
 
   async abandonLoginAttempt(): Promise<void> {
-    await this.clerk.abandonSignIn();
+    await this.clerk.resetSignInState();
+  }
+
+  async startPasswordReset(emailAddress: string): Promise<PasswordResetResult> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.passwordResetBrowserOnly,
+      };
+    }
+
+    const signIn = await this.clerk.getSignInResource();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    try {
+      await signIn.create({
+        strategy: "reset_password_email_code",
+        identifier: emailAddress.trim(),
+      });
+      return { status: "code_sent" };
+    } catch (error) {
+      return {
+        status: "error",
+        message: authErrorMessage(error, AUTH_MESSAGES.unableToSendResetCode),
+      };
+    }
+  }
+
+  async completePasswordReset(payload: {
+    code: string;
+    password: string;
+  }): Promise<PasswordResetResult> {
+    const signIn = await this.clerk.getSignInResource();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    try {
+      const result = await signIn.attemptFirstFactor({
+        strategy: "reset_password_email_code",
+        code: payload.code.trim(),
+        password: payload.password,
+      });
+
+      if (result.status === "complete" && result.createdSessionId) {
+        await this.activateSession(result.createdSessionId, "login");
+        return { status: "complete" };
+      }
+
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.unableToResetPassword,
+      };
+    } catch (error) {
+      return {
+        status: "error",
+        message: authErrorMessage(error, AUTH_MESSAGES.unableToResetPassword),
+      };
+    }
+  }
+
+  async resendPasswordResetCode(): Promise<PasswordResetResult> {
+    const signIn = await this.clerk.getSignInResource();
+    if (!signIn) {
+      return this.authNotReady();
+    }
+
+    try {
+      const emailFactor = signIn.supportedFirstFactors?.find(
+        (factor) => factor.strategy === "reset_password_email_code",
+      );
+      if (!emailFactor || !("emailAddressId" in emailFactor)) {
+        return {
+          status: "error",
+          message: AUTH_MESSAGES.unableToResendResetCode,
+        };
+      }
+
+      await signIn.prepareFirstFactor({
+        strategy: "reset_password_email_code",
+        emailAddressId: emailFactor.emailAddressId,
+      });
+      return { status: "code_sent" };
+    } catch (error) {
+      return {
+        status: "error",
+        message: authErrorMessage(error, AUTH_MESSAGES.unableToResendResetCode),
+      };
+    }
+  }
+
+  async signInWithGitHub(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.setCurrentReturnUrl();
+    this.githubConsent.set(false);
+    this.flow.setGitHubIntent("signIn");
+    this.startAuthPending();
+    const result = await this.github.startSignIn();
+    if (result.status === "error") {
+      this.flow.setGitHubIntent(null);
+      this.clearAuthPending();
+      throw new Error(result.message);
+    }
+  }
+
+  async startRegister(
+    payload: RegisterDetailsPayload,
+  ): Promise<RegisterResult> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.registrationBrowserOnly,
+      };
+    }
+
+    const signUp = await this.clerk.getSignUpResource();
+    if (!signUp) {
+      return this.authNotReady();
+    }
+
+    const email = payload.emailAddress.trim();
+    if (canResumeEmailVerification(signUp, email)) {
+      return { status: "verify" };
+    }
+
+    const details = {
+      firstName: payload.firstName.trim(),
+      lastName: payload.lastName.trim(),
+      emailAddress: email,
+      password: payload.password,
+    };
+
+    const resumable =
+      !!signUp.id && !signUp.verifications?.externalAccount?.status;
+
+    try {
+      const result = resumable
+        ? await signUp.update(details)
+        : await signUp.create(details);
+
+      return this.resolveRegisterProgress(result, false);
+    } catch (error) {
+      return this.registerClerkError(
+        error,
+        AUTH_MESSAGES.unableToCreateAccount,
+      );
+    }
+  }
+
+  async completeRegister(
+    payload: RegisterConsentPayload,
+  ): Promise<RegisterResult> {
+    const signUp = await this.clerk.getSignUpResource();
+    if (!signUp) {
+      return this.authNotReady();
+    }
+
+    try {
+      const result = await signUp.update({
+        legalAccepted: payload.legalAccepted,
+        unsafeMetadata: newsletterMetadata(payload.newsletterOptIn),
+      });
+
+      return this.resolveRegisterProgress(result, true);
+    } catch (error) {
+      return this.registerClerkError(
+        error,
+        AUTH_MESSAGES.unableToCreateAccount,
+      );
+    }
+  }
+
+  async verifyRegister(code: string): Promise<RegisterResult> {
+    const signUp = await this.clerk.getSignUpResource();
+    if (!signUp) {
+      return this.authNotReady();
+    }
+
+    if (signUpMissingPassword(signUp)) {
+      return this.missingPasswordError();
+    }
+
+    try {
+      const result = await signUp.attemptEmailAddressVerification({
+        code: code.trim(),
+      });
+
+      if (result.status === "complete" && result.createdSessionId) {
+        await this.activateSession(result.createdSessionId, "registration");
+        return { status: "complete" };
+      }
+
+      if (signUpMissingPassword(result)) {
+        return this.missingPasswordError();
+      }
+
+      return {
+        status: "error",
+        message: AUTH_MESSAGES.unableToVerifyEmail,
+      };
+    } catch (error) {
+      return this.registerClerkError(error, AUTH_MESSAGES.unableToVerifyEmail);
+    }
+  }
+
+  async resendRegisterCode(): Promise<RegisterResult> {
+    const signUp = await this.clerk.getSignUpResource();
+    if (!signUp) {
+      return this.authNotReady();
+    }
+
+    if (signUpMissingPassword(signUp)) {
+      return this.missingPasswordError();
+    }
+
+    try {
+      await signUp.prepareEmailAddressVerification({
+        strategy: "email_code",
+      });
+      return { status: "verify" };
+    } catch (error) {
+      return {
+        status: "error",
+        message: authErrorMessage(
+          error,
+          AUTH_MESSAGES.unableToResendVerification,
+        ),
+      };
+    }
+  }
+
+  async submitGitHubConsent(
+    newsletterOptIn: boolean,
+    legalAccepted: boolean,
+  ): Promise<RegisterResult> {
+    this.setCurrentReturnUrl();
+    this.flow.setGitHubIntent("signUp");
+    this.startAuthPending();
+    const result = this.githubConsent()
+      ? await this.github.submitConsentAndComplete(
+          newsletterOptIn,
+          legalAccepted,
+        )
+      : await this.github.continueSignUp(newsletterOptIn, legalAccepted);
+    return this.applyGitHubOutcome(result);
+  }
+
+  async signOut(): Promise<void> {
+    this.closeSignIn();
+    this.closeSignUp();
+    try {
+      await this.clerk.signOut();
+    } finally {
+      this.flow.clear();
+      this.setAuthOverlayVisible(false);
+      this.activating = false;
+      this.finalizePromise = null;
+      this.gitHubCallbackPromise = null;
+      this.setUser(null);
+    }
+  }
+
+  openUserProfile(): void {
+    this.clerk.openUserProfileModal();
+  }
+
+  async getToken(template?: string): Promise<string | null> {
+    return this.clerk.getToken(template);
+  }
+
+  private setUser(user: UserResource | null): void {
+    const previousUser = this._user();
+    this._user.set(user);
+
+    if (user) {
+      this.watchAccountDeletion(user);
+      this.identifyAnalyticsUser(user);
+      return;
+    }
+
+    const accountDeleted = this.accountDeleted;
+    this.accountDeleted = false;
+
+    if (!previousUser) {
+      if (
+        isPlatformBrowser(this.platformId) &&
+        !this.signedOutIdentityCleared
+      ) {
+        this.signedOutIdentityCleared = true;
+        this.analytics.reset();
+      }
+      return;
+    }
+
+    if (accountDeleted) {
+      this.analytics.identify(previousUser.id);
+      this.analytics.trackEvent("auth account deleted", {});
+    }
+    this.analytics.reset();
+    this.redirectFromBookmarks();
+  }
+
+  private async applyGitHubOutcome(
+    result: GitHubSignUpOutcome,
+  ): Promise<RegisterResult> {
+    if (result.status === "error") {
+      this.flow.setGitHubIntent(null);
+      this.githubConsent.set(false);
+      this.clearAuthPending();
+      return result;
+    }
+
+    if (result.status === "needs_consent") {
+      this.openGitHubConsent();
+      return { status: "consent" };
+    }
+
+    if (result.status === "redirecting") {
+      return { status: "complete" };
+    }
+
+    await this.activateSession(result.sessionId, result.kind);
+    return { status: "complete" };
+  }
+
+  private async activateSession(
+    sessionId: string,
+    kind: AuthKind,
+  ): Promise<void> {
+    this.activating = true;
+    try {
+      if (kind === "login") {
+        this.startAuthPending();
+      } else {
+        this.githubConsent.set(false);
+      }
+      await this.clerk.setActive(sessionId);
+      await this.clerk.syncClerkState();
+      this.syncUserFromClerk();
+      await this.finalizeAuthFlow(kind);
+    } catch (error) {
+      this.clearAuthPending();
+      throw error;
+    } finally {
+      this.activating = false;
+    }
+  }
+
+  private finalizeAuthFlow(kind: AuthKind): Promise<void> {
+    if (!this.finalizePromise) {
+      this.finalizePromise = this.runFinalize(kind).finally(() => {
+        this.finalizePromise = null;
+      });
+    }
+    return this.finalizePromise;
+  }
+
+  private async runFinalize(kind: AuthKind): Promise<void> {
+    if (!this.isAuthenticated()) {
+      this.clearAuthPending();
+      return;
+    }
+
+    this.analytics.trackEvent(
+      kind === "registration" ? "auth register" : "auth login",
+      {},
+    );
+    const returnUrl = this.isAuthCallbackRoute()
+      ? this.flow.consumeReturnUrl()
+      : null;
+    this.closeSignIn();
+    this.closeSignUp();
+    this.clearAuthPending();
+    if (returnUrl) {
+      await this.router.navigateByUrl(returnUrl, { replaceUrl: true });
+      return;
+    }
+    this.flow.clearReturnUrl();
+  }
+
+  private async completeGitHubConsent(): Promise<void> {
+    const returnUrl = this.flow.consumeReturnUrl();
+    this.flow.setGitHubIntent("signUp");
+    this.clearAuthPending();
+    await this.router.navigateByUrl(returnUrl, { replaceUrl: true });
+    this.openGitHubConsent();
+  }
+
+  private async failGitHubCallback(message?: string): Promise<void> {
+    this.github.resetSignUpState();
+    const returnUrl = this.flow.consumeReturnUrl();
+    this.closeSignIn();
+    this.closeSignUp();
+    this.flow.clear();
+    this.setAuthOverlayVisible(false);
+    await this.router.navigateByUrl(returnUrl, { replaceUrl: true });
+    if (message) {
+      this.toastService.show({
+        title: message,
+        type: "error",
+      });
+    }
+  }
+
+  private openGitHubConsent(): void {
+    if (!this.clerk.isLoaded()) {
+      this.toastAuthUnavailable();
+      return;
+    }
+    this.flow.setGitHubIntent("signUp");
+    this.githubConsent.set(true);
+    this.clearAuthPending();
+    this.signInModalOpen.set(false);
+    this.signUpModalOpen.set(true);
+  }
+
+  private shouldResumeGitHubConsent(): boolean {
+    return (
+      !this.clerk.user &&
+      this.flow.githubIntent() === "signUp" &&
+      this.github.needsConsent()
+    );
+  }
+
+  private resolveGitHubIntent(): GitHubIntent | null {
+    const intent = new URLSearchParams(window.location.search).get("intent");
+    if (intent === "signIn" || intent === "signUp") {
+      return intent;
+    }
+    return this.flow.githubIntent();
+  }
+
+  private isAuthCallbackRoute(): boolean {
+    return (
+      isPlatformBrowser(this.platformId) &&
+      window.location.pathname.startsWith("/auth/callback")
+    );
+  }
+
+  private setCurrentReturnUrl(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.flow.setReturnUrl(
+      `${window.location.pathname}${window.location.search}${window.location.hash}`,
+    );
+  }
+
+  private bindClerkListener(): void {
+    if (this.boundListener) {
+      return;
+    }
+    this.clerk.addListener(() => {
+      this.ngZone.run(() => this.syncUserFromClerk());
+    });
+    this.boundListener = true;
   }
 
   private async prepareEmailSecondFactor(
-    signIn: NonNullable<Awaited<ReturnType<ClerkService["requireSignIn"]>>>,
+    signIn: NonNullable<Awaited<ReturnType<ClerkService["getSignInResource"]>>>,
   ): Promise<LoginResult> {
     const emailCodeFactor = signIn.supportedSecondFactors?.find(
       (factor) => factor.strategy === "email_code",
@@ -399,387 +863,26 @@ export class AuthStateService implements GithubAuthHost {
     }
   }
 
-  async startPasswordReset(emailAddress: string): Promise<PasswordResetResult> {
-    if (!isPlatformBrowser(this.platformId)) {
-      return {
-        status: "error",
-        message: AUTH_MESSAGES.passwordResetBrowserOnly,
-      };
+  private watchAccountDeletion(user: UserResource): void {
+    const target = user as UserResource & { __scDeleteWrapped?: boolean };
+    if (target.__scDeleteWrapped || typeof user.delete !== "function") {
+      return;
     }
 
-    const signIn = await this.clerk.requireSignIn();
-    if (!signIn) {
-      return this.authNotReady();
-    }
-
-    try {
-      await signIn.create({
-        strategy: "reset_password_email_code",
-        identifier: emailAddress.trim(),
-      });
-      return { status: "code_sent" };
-    } catch (error) {
-      return {
-        status: "error",
-        message: authErrorMessage(error, AUTH_MESSAGES.unableToSendResetCode),
-      };
-    }
-  }
-
-  async completePasswordReset(payload: {
-    code: string;
-    password: string;
-  }): Promise<PasswordResetResult> {
-    const signIn = await this.clerk.requireSignIn();
-    if (!signIn) {
-      return this.authNotReady();
-    }
-
-    try {
-      const result = await signIn.attemptFirstFactor({
-        strategy: "reset_password_email_code",
-        code: payload.code.trim(),
-        password: payload.password,
-      });
-
-      if (result.status === "complete" && result.createdSessionId) {
-        await this.completeSession(result.createdSessionId);
-        return { status: "complete" };
+    const originalDelete = user.delete.bind(user);
+    user.delete = async () => {
+      this.accountDeleted = true;
+      try {
+        await originalDelete();
+      } catch (error) {
+        this.accountDeleted = false;
+        throw error;
       }
-
-      return {
-        status: "error",
-        message: AUTH_MESSAGES.unableToResetPassword,
-      };
-    } catch (error) {
-      return {
-        status: "error",
-        message: authErrorMessage(error, AUTH_MESSAGES.unableToResetPassword),
-      };
-    }
-  }
-
-  async resendPasswordResetCode(): Promise<PasswordResetResult> {
-    const signIn = await this.clerk.requireSignIn();
-    if (!signIn) {
-      return this.authNotReady();
-    }
-
-    try {
-      const emailFactor = signIn.supportedFirstFactors?.find(
-        (factor) => factor.strategy === "reset_password_email_code",
-      );
-      if (!emailFactor || !("emailAddressId" in emailFactor)) {
-        return {
-          status: "error",
-          message: AUTH_MESSAGES.unableToResendResetCode,
-        };
-      }
-
-      await signIn.prepareFirstFactor({
-        strategy: "reset_password_email_code",
-        emailAddressId: emailFactor.emailAddressId,
-      });
-      return { status: "code_sent" };
-    } catch (error) {
-      return {
-        status: "error",
-        message: authErrorMessage(error, AUTH_MESSAGES.unableToResendResetCode),
-      };
-    }
-  }
-
-  async signInWithGithub(): Promise<void> {
-    await this.github.signIn();
-  }
-
-  async startRegister(
-    payload: RegisterDetailsPayload,
-  ): Promise<RegisterResult> {
-    if (!isPlatformBrowser(this.platformId)) {
-      return {
-        status: "error",
-        message: AUTH_MESSAGES.registrationBrowserOnly,
-      };
-    }
-
-    const signUp = await this.clerk.requireSignUp();
-    if (!signUp) {
-      return this.authNotReady();
-    }
-
-    const email = payload.emailAddress.trim();
-    if (canResumeEmailVerification(signUp, email)) {
-      return { status: "verify" };
-    }
-
-    const details = {
-      firstName: payload.firstName.trim(),
-      lastName: payload.lastName.trim(),
-      emailAddress: email,
-      password: payload.password,
     };
-
-    try {
-      const result = signUp.id
-        ? await signUp.update(details)
-        : await signUp.create(details);
-
-      return this.resolveRegisterProgress(result, false);
-    } catch (error) {
-      return this.registerClerkError(
-        error,
-        AUTH_MESSAGES.unableToCreateAccount,
-      );
-    }
+    target.__scDeleteWrapped = true;
   }
 
-  async completeRegister(
-    payload: RegisterConsentPayload,
-  ): Promise<RegisterResult> {
-    const signUp = await this.clerk.requireSignUp();
-    if (!signUp) {
-      return this.authNotReady();
-    }
-
-    try {
-      const result = await signUp.update({
-        legalAccepted: payload.legalAccepted,
-        unsafeMetadata: newsletterMetadata(payload.newsletterOptIn),
-      });
-
-      return this.resolveRegisterProgress(result, true);
-    } catch (error) {
-      return this.registerClerkError(
-        error,
-        AUTH_MESSAGES.unableToCreateAccount,
-      );
-    }
-  }
-
-  async verifyRegister(code: string): Promise<RegisterResult> {
-    const signUp = await this.clerk.requireSignUp();
-    if (!signUp) {
-      return this.authNotReady();
-    }
-
-    if (signUpMissingPassword(signUp)) {
-      return this.missingPasswordError();
-    }
-
-    try {
-      const result = await signUp.attemptEmailAddressVerification({
-        code: code.trim(),
-      });
-
-      if (result.status === "complete" && result.createdSessionId) {
-        await this.completeSession(result.createdSessionId);
-        return { status: "complete" };
-      }
-
-      if (signUpMissingPassword(result)) {
-        return this.missingPasswordError();
-      }
-
-      return {
-        status: "error",
-        message: AUTH_MESSAGES.unableToVerifyEmail,
-      };
-    } catch (error) {
-      return this.registerClerkError(error, AUTH_MESSAGES.unableToVerifyEmail);
-    }
-  }
-
-  async resendRegisterCode(): Promise<RegisterResult> {
-    const signUp = await this.clerk.requireSignUp();
-    if (!signUp) {
-      return this.authNotReady();
-    }
-
-    if (signUpMissingPassword(signUp)) {
-      return this.missingPasswordError();
-    }
-
-    try {
-      await signUp.prepareEmailAddressVerification({
-        strategy: "email_code",
-      });
-      return { status: "verify" };
-    } catch (error) {
-      return {
-        status: "error",
-        message: authErrorMessage(
-          error,
-          AUTH_MESSAGES.unableToResendVerification,
-        ),
-      };
-    }
-  }
-
-  async submitGithubConsent(
-    newsletterOptIn: boolean,
-    legalAccepted: boolean,
-  ): Promise<RegisterResult> {
-    if (this.githubConsentActive()) {
-      const result = await this.github.completePendingSignUp(
-        newsletterOptIn,
-        legalAccepted,
-      );
-      if (result.status !== "error") {
-        this.closeSignUp();
-      }
-      return result;
-    }
-
-    try {
-      await this.clerk.reloadClient();
-      const signUp = await this.clerk.requireSignUp();
-      const signIn = await this.clerk.requireSignIn();
-
-      if (isTransferable(signUp) || isTransferable(signIn)) {
-        const result = await this.github.completePendingSignUp(
-          newsletterOptIn,
-          true,
-        );
-        if (result.status !== "error") {
-          this.closeSignUp();
-        }
-        return result;
-      }
-
-      if (isPendingGithubExternalComplete(signUp)) {
-        if (needsLegalAcceptance(signUp)) {
-          this.openGithubConsentSignUp();
-          return { status: "complete" };
-        }
-        const result = await this.github.completePendingSignUp(
-          newsletterOptIn,
-          true,
-        );
-        if (result.status !== "error") {
-          this.closeSignUp();
-        }
-        return result;
-      }
-
-      await this.github.signUp(newsletterOptIn, legalAccepted);
-      if (this.isAuthenticated()) {
-        this.closeSignUp();
-        return { status: "complete" };
-      }
-      if (this.githubConsentActive() || this.needsGithubConsent()) {
-        return { status: "complete" };
-      }
-      return {
-        status: "error",
-        message: AUTH_MESSAGES.unableToContinueGithub,
-      };
-    } catch (error) {
-      return {
-        status: "error",
-        message: authErrorMessage(error, AUTH_MESSAGES.unableToContinueGithub),
-      };
-    }
-  }
-
-  async handleRedirectCallback(options?: {
-    transferable?: boolean;
-  }): Promise<void> {
-    await this.init();
-    const urls = appUrls();
-    const params = new URLSearchParams(window.location.search);
-    const transferable =
-      options?.transferable ?? params.get("intent") !== "signIn";
-    const restoreNavigation = this.github.suppressHostedNavigation();
-    try {
-      await this.clerk.handleRedirectCallback({
-        transferable,
-        origin: urls.origin,
-      });
-      await this.clerk.reloadClient();
-    } finally {
-      restoreNavigation();
-    }
-    this.syncState();
-  }
-
-  resolveGithubCallbackOutcome(): GithubCallbackOutcome {
-    if (this.clerk.user) {
-      this.setUser(this.clerk.user);
-      return "authenticated";
-    }
-
-    if (this.needsGithubConsent()) {
-      return "consent";
-    }
-
-    if (this.isAuthenticated()) {
-      return "authenticated";
-    }
-
-    return "error";
-  }
-
-  async signOut(): Promise<void> {
-    this.closeSignIn();
-    this.closeSignUp();
-    try {
-      await this.clerk.signOut();
-    } finally {
-      this.clearAuthPending();
-      this.navigatingAfterAuth = false;
-      this.setUser(null);
-    }
-  }
-
-  openUserProfile(): void {
-    this.clerk.openUserProfile(() => this.deleteAccount());
-  }
-
-  async deleteAccount(): Promise<void> {
-    const user = this.clerk.user;
-    if (!user) {
-      return;
-    }
-
-    await user.delete();
-    try {
-      this.analytics.identify(user.id);
-      this.analytics.trackEvent("auth account deleted", {});
-    } finally {
-      this.analytics.reset();
-    }
-  }
-
-  async getToken(template?: string): Promise<string | null> {
-    return this.clerk.getToken(template);
-  }
-
-  setUser(user: UserResource | null): void {
-    const previousUser = this._user();
-    this._user.set(user);
-
-    if (user) {
-      this.identifyAnalyticsUser(user);
-      return;
-    }
-
-    if (!previousUser) {
-      if (
-        isPlatformBrowser(this.platformId) &&
-        !this.signedOutIdentityCleared
-      ) {
-        this.signedOutIdentityCleared = true;
-        this.analytics.reset();
-      }
-      return;
-    }
-
-    this.analytics.reset();
-    this.leaveBookmarks();
-  }
-
-  private leaveBookmarks(): void {
+  private redirectFromBookmarks(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -789,129 +892,6 @@ export class AuthStateService implements GithubAuthHost {
     void this.router.navigateByUrl("/");
   }
 
-  resetGithubConsent(): void {
-    this.githubConsent.set(false);
-  }
-
-  syncState(fromListener = false): void {
-    const previousUser = this._user();
-    const user = this.clerk.user;
-
-    if (this.github.isSignInInProgress()) {
-      return;
-    }
-
-    if (this.githubConsentActive()) {
-      if (user) {
-        this.setUser(user);
-        void this.github.completeSignedInLogin();
-      } else {
-        this.clearAuthPending();
-      }
-      return;
-    }
-
-    if (
-      !user &&
-      previousUser &&
-      (this.clerk.session ||
-        this.authInProgress() ||
-        this.isAuthPending() ||
-        this.navigatingAfterAuth)
-    ) {
-      return;
-    }
-
-    this.setUser(user);
-
-    if (!isPlatformBrowser(this.platformId) || !user) {
-      return;
-    }
-
-    if (this.signInModalOpen() || this.signUpModalOpen()) {
-      void this.github.completeSignedInLogin();
-      return;
-    }
-
-    const path = window.location.pathname;
-    if (path.startsWith("/auth/callback")) {
-      return;
-    }
-
-    if (this.navigatingAfterAuth) {
-      return;
-    }
-
-    if (this.needsGithubConsent()) {
-      this.openGithubConsentSignUp();
-      return;
-    }
-
-    if (this.isAuthPending() || this.authInProgress()) {
-      void this.navigateAfterAuth();
-      return;
-    }
-
-    if (fromListener && !previousUser) {
-      void this.navigateAfterAuth();
-    }
-  }
-
-  async navigateAfterAuth(): Promise<void> {
-    if (this.navigatingAfterAuth || this.github.isSignInInProgress()) {
-      return;
-    }
-
-    if (
-      !this.isAuthenticated() &&
-      (this.githubConsentActive() || this.needsGithubConsent())
-    ) {
-      this.openGithubConsentSignUp();
-      return;
-    }
-
-    this.navigatingAfterAuth = true;
-    this.startAuthPending();
-    this.closeSignIn();
-    this.closeSignUp();
-
-    try {
-      if (!this.isAuthenticated()) {
-        await this.waitForSignedIn(20000);
-      }
-      if (!this.isAuthenticated()) {
-        if (this.needsGithubConsent()) {
-          this.openGithubConsentSignUp();
-        }
-        return;
-      }
-      if (window.location.pathname.startsWith("/auth/callback")) {
-        await this.router.navigateByUrl(this.consumeReturnUrl(), {
-          replaceUrl: true,
-        });
-      } else {
-        this.clearReturnUrl();
-      }
-      this.clearAuthPending();
-    } finally {
-      this.navigatingAfterAuth = false;
-    }
-  }
-
-  async completeSession(sessionId: string): Promise<void> {
-    const eventName =
-      this.signUpModalOpen() || this.githubConsentActive()
-        ? "auth register"
-        : "auth login";
-    this.startAuthPending();
-    this.closeSignIn();
-    this.closeSignUp();
-    await this.clerk.setActive(sessionId);
-    this.syncState();
-    this.analytics.trackEvent(eventName, {});
-    await this.navigateAfterAuth();
-  }
-
   private setAuthOverlayVisible(enabled: boolean): void {
     this.document.documentElement.classList.toggle(AUTH_OVERLAY_CLASS, enabled);
     this.document
@@ -919,54 +899,12 @@ export class AuthStateService implements GithubAuthHost {
       ?.setAttribute("aria-hidden", enabled ? "false" : "true");
   }
 
-  private rememberReturnUrl(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-    const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-    if (path.startsWith("/auth/callback")) {
-      return;
-    }
-    try {
-      sessionStorage.setItem(AUTH_RETURN_URL_KEY, path);
-    } catch {
-      return;
-    }
-  }
-
-  private clearReturnUrl(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-    try {
-      sessionStorage.removeItem(AUTH_RETURN_URL_KEY);
-    } catch {
-      return;
-    }
-  }
-
-  private consumeReturnUrl(): string {
-    if (!isPlatformBrowser(this.platformId)) {
-      return "/";
-    }
-    try {
-      const value = sessionStorage.getItem(AUTH_RETURN_URL_KEY);
-      sessionStorage.removeItem(AUTH_RETURN_URL_KEY);
-      if (value?.startsWith("/") && !value.startsWith("//")) {
-        return value;
-      }
-    } catch {
-      return "/";
-    }
-    return "/";
-  }
-
   private async resolveRegisterProgress(
     result: SignUpResource,
     prepareEmail: boolean,
   ): Promise<RegisterResult> {
     if (result.status === "complete" && result.createdSessionId) {
-      await this.completeSession(result.createdSessionId);
+      await this.activateSession(result.createdSessionId, "registration");
       return { status: "complete" };
     }
 
@@ -978,7 +916,7 @@ export class AuthStateService implements GithubAuthHost {
       return { status: "consent" };
     }
 
-    if (pendingEmailVerification(result)) {
+    if (getPendingEmailVerification(result)) {
       await result.prepareEmailAddressVerification({
         strategy: "email_code",
       });

@@ -68,17 +68,37 @@ export class RegisterModal {
         this.step = "consent";
         this.errorMessage = "";
         this.infoMessage = "";
+        return;
+      }
+
+      if (this.step === "consent" && this.method === "github") {
+        this.step = "details";
+        this.method = "email";
+        this.infoMessage = "";
       }
     });
   }
 
   protected close(): void {
-    if (this.isAuthPending) {
+    if (
+      this.isAuthPending ||
+      this.step === "consent" ||
+      this.step === "verify"
+    ) {
       return;
     }
 
     this.busy = null;
     this.auth.closeSignUp();
+  }
+
+  protected cancelConsent(): void {
+    if (this.busy) {
+      return;
+    }
+
+    this.busy = null;
+    this.auth.cancelSignUp();
   }
 
   protected canSubmitDetails(form: NgForm): boolean {
@@ -93,14 +113,14 @@ export class RegisterModal {
     return !!this.verificationCode.trim();
   }
 
-  protected continueWithGithub(): void {
+  protected continueWithGitHub(): void {
     if (this.busy) {
       return;
     }
 
     this.errorMessage = "";
     this.method = "github";
-    void this.submitGithub();
+    void this.submitGitHub();
   }
 
   protected backToDetails(): void {
@@ -125,7 +145,7 @@ export class RegisterModal {
     this.errorMessage = "";
 
     if (this.method === "github") {
-      await this.submitGithub();
+      await this.submitGitHub();
       return;
     }
 
@@ -246,18 +266,31 @@ export class RegisterModal {
     }
   }
 
-  private async submitGithub(): Promise<void> {
+  private async submitGitHub(): Promise<void> {
     this.busy = "github";
 
-    const result = await this.auth.submitGithubConsent(
+    const result = await this.auth.submitGitHubConsent(
       this.newsletterOptIn,
       this.auth.githubConsentActive() ? this.legalAccepted : false,
     );
+
+    if (
+      result.status === "complete" &&
+      this.method === "github" &&
+      !this.auth.githubConsentActive() &&
+      !this.auth.isAuthenticated()
+    ) {
+      return;
+    }
 
     this.busy = null;
 
     if (result.status === "error") {
       this.errorMessage = result.message;
+      if (!this.auth.githubConsentActive()) {
+        this.step = "details";
+        this.method = "email";
+      }
     }
   }
 

@@ -1,11 +1,5 @@
 import type { SignInResource, SignUpResource } from "@clerk/shared/types";
-import {
-  AUTH_MESSAGES,
-  AUTH_POPUP_HEIGHT,
-  AUTH_POPUP_WIDTH,
-  NEWSLETTER_OPT_IN_KEY,
-} from "./auth.constants";
-import type { HostedNavAction } from "./auth.types";
+import { NEWSLETTER_OPT_IN_KEY } from "./auth.constants";
 
 export type ClerkAuthError = {
   message: string;
@@ -53,81 +47,12 @@ export function authErrorMessage(error: unknown, fallback: string): string {
   return clerkAuthError(error, fallback).message;
 }
 
-export function getSessionFlag(key: string): boolean {
-  if (typeof sessionStorage === "undefined") {
-    return false;
-  }
-  try {
-    return sessionStorage.getItem(key) === "1";
-  } catch {
-    return false;
-  }
-}
-
-export function setSessionFlag(key: string, enabled: boolean): void {
-  if (typeof sessionStorage === "undefined") {
-    return;
-  }
-  try {
-    if (enabled) {
-      sessionStorage.setItem(key, "1");
-    } else {
-      sessionStorage.removeItem(key);
-    }
-  } catch {
-    return;
-  }
-}
-
-export function appUrls(): { origin: string; authCallback: string } {
+export function authUrls(): { origin: string; authCallback: string } {
   const origin = window.location.origin;
   return {
     origin,
     authCallback: `${origin}/auth/callback`,
   };
-}
-
-export function isClerkAccountPortalUrl(url: string): boolean {
-  return /accounts\.dev|accountsstage\.dev|#\/continue|protect-check/i.test(
-    url,
-  );
-}
-
-export function isAppOAuthCallbackUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url, window.location.origin);
-    return (
-      parsed.origin === window.location.origin &&
-      parsed.pathname.startsWith("/auth/callback")
-    );
-  } catch {
-    return url.includes("/auth/callback");
-  }
-}
-
-export function isSameOriginAppUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url, window.location.origin);
-    return parsed.origin === window.location.origin;
-  } catch {
-    return url.startsWith("/") && !url.startsWith("//");
-  }
-}
-
-export function resolveHostedNavAction(
-  href: string,
-  options: { blockSameOrigin: boolean },
-): HostedNavAction {
-  if (isClerkAccountPortalUrl(href)) {
-    return "block";
-  }
-  if (isAppOAuthCallbackUrl(href)) {
-    return "oauth";
-  }
-  if (options.blockSameOrigin && isSameOriginAppUrl(href)) {
-    return "block";
-  }
-  return "forward";
 }
 
 const SECOND_FACTOR_STATUSES = new Set([
@@ -191,7 +116,7 @@ export function signUpMissingPassword(
   return missing.includes("password");
 }
 
-export function pendingEmailVerification(
+export function getPendingEmailVerification(
   signUp: SignUpResource | null | undefined,
 ): string | null {
   if (!signUp?.emailAddress) {
@@ -222,11 +147,11 @@ export function canResumeEmailVerification(
     return false;
   }
 
-  const pendingEmail = pendingEmailVerification(signUp);
+  const pendingEmail = getPendingEmailVerification(signUp);
   return !!pendingEmail && pendingEmail.toLowerCase() === email.toLowerCase();
 }
 
-export function isPendingGithubExternalComplete(
+export function hasVerifiedGitHubExternal(
   signUp: SignUpResource | null | undefined,
 ): boolean {
   return signUp?.verifications?.externalAccount?.status === "verified";
@@ -238,7 +163,7 @@ export function needsLegalAcceptance(
   return !!signUp && !signUp.legalAcceptedAt;
 }
 
-export function needsGithubConsent(
+export function needsGitHubConsent(
   signIn: SignInResource | null | undefined,
   signUp: SignUpResource | null | undefined,
   hasUser: boolean,
@@ -255,13 +180,11 @@ export function needsGithubConsent(
     return true;
   }
 
-  if (pendingEmailVerification(signUp)) {
+  if (getPendingEmailVerification(signUp)) {
     return false;
   }
 
-  return (
-    isPendingGithubExternalComplete(signUp) && needsLegalAcceptance(signUp)
-  );
+  return hasVerifiedGitHubExternal(signUp) && needsLegalAcceptance(signUp);
 }
 
 export function newsletterMetadata(
@@ -274,36 +197,4 @@ export function newsletterMetadata(
   return {
     [NEWSLETTER_OPT_IN_KEY]: true,
   };
-}
-
-export function prefersGithubRedirect(): boolean {
-  return (
-    window.matchMedia("(max-width: 768px)").matches ||
-    window.matchMedia("(pointer: coarse)").matches
-  );
-}
-
-export function openAuthPopup(name: string): Window {
-  const width = AUTH_POPUP_WIDTH;
-  const height = AUTH_POPUP_HEIGHT;
-  const left = Math.max(
-    0,
-    Math.round(window.screenX + (window.outerWidth - width) / 2),
-  );
-  const top = Math.max(
-    0,
-    Math.round(window.screenY + (window.outerHeight - height) / 2),
-  );
-  const popup = window.open(
-    "about:blank",
-    name,
-    `popup=yes,width=${width},height=${height},left=${left},top=${top},noopener=no`,
-  );
-
-  if (!popup) {
-    throw new Error(AUTH_MESSAGES.githubPopupBlocked);
-  }
-
-  popup.focus();
-  return popup;
 }

@@ -62,7 +62,7 @@ const FILTER_LABELS: Record<BookmarksFilterKey, string> = {
   favoriteDatabases: "Databases",
   savedSearches: "Searches",
   savedComparisons: "Comparisons",
-  savedAdvices: "Assessments",
+  savedAssessments: "Assessments",
 };
 
 const STAT_ICONS: Record<BookmarksFilterKey, string> = {
@@ -70,7 +70,7 @@ const STAT_ICONS: Record<BookmarksFilterKey, string> = {
   favoriteDatabases: "database",
   savedSearches: "search",
   savedComparisons: "scale",
-  savedAdvices: "bot",
+  savedAssessments: "bot",
 };
 
 const INSTANCE_PREVIEW_COUNT = 6;
@@ -87,7 +87,7 @@ const SORT_OPTIONS: { value: BookmarksSortBy; label: string }[] = [
 const EDITABLE_KINDS = new Set([
   "savedSearches",
   "savedComparisons",
-  "savedAdvices",
+  "savedAssessments",
 ]);
 
 const noteModalOptions: ModalOptions = {
@@ -229,7 +229,7 @@ export class Bookmarks implements OnDestroy {
         return "Edit search";
       case "savedComparisons":
         return "Edit comparison";
-      case "savedAdvices":
+      case "savedAssessments":
         return "Edit assessment";
       default:
         return "Edit";
@@ -291,7 +291,7 @@ export class Bookmarks implements OnDestroy {
 
       this.collectionsStore.savedSearches();
       this.collectionsStore.savedComparisons();
-      this.collectionsStore.savedAdvices();
+      this.collectionsStore.savedAssessments();
 
       if (
         this.collectionsStore.isMutating(
@@ -309,7 +309,6 @@ export class Bookmarks implements OnDestroy {
 
   private async revealBookmarks(): Promise<void> {
     await this.auth.init();
-    this.auth.syncSession();
 
     if (!this.auth.isAuthenticated()) {
       await this.router.navigateByUrl("/");
@@ -495,8 +494,8 @@ export class Bookmarks implements OnDestroy {
       case "savedComparisons":
         this.collectionsStore.deleteComparison(card.id);
         break;
-      case "savedAdvices":
-        this.collectionsStore.deleteAdvice(card.id);
+      case "savedAssessments":
+        this.collectionsStore.deleteAssessment(card.id);
         break;
     }
   }
@@ -549,13 +548,13 @@ export class Bookmarks implements OnDestroy {
         });
         break;
       }
-      case "savedAdvices": {
-        const item = this.collectionsStore.advicesEntityMap()[card.id];
+      case "savedAssessments": {
+        const item = this.collectionsStore.assessmentsEntityMap()[card.id];
         if (!item) {
           return;
         }
         this.pendingEditClose.set(true);
-        this.collectionsStore.updateAdvice({
+        this.collectionsStore.updateAssessment({
           id: card.id,
           query: item.query,
           name: payload.name,
@@ -652,8 +651,8 @@ export class Bookmarks implements OnDestroy {
         return "update-search";
       case "savedComparisons":
         return "update-comparison";
-      case "savedAdvices":
-        return "update-advice";
+      case "savedAssessments":
+        return "update-assessment";
       default:
         return "update";
     }
@@ -669,8 +668,8 @@ export class Bookmarks implements OnDestroy {
         return "delete-search";
       case "savedComparisons":
         return "delete-comparison";
-      case "savedAdvices":
-        return "delete-advice";
+      case "savedAssessments":
+        return "delete-assessment";
       default:
         return "delete";
     }

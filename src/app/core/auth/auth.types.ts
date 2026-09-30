@@ -1,9 +1,3 @@
-import type { Clerk } from "@clerk/clerk-js";
-
-export type ClerkWithNavigation = Clerk & {
-  __internal_windowNavigate: (url: URL | string) => void;
-};
-
 export type RegisterDetailsPayload = {
   firstName: string;
   lastName: string;
@@ -37,6 +31,12 @@ export type PasswordResetResult =
   | { status: "complete" }
   | { status: "error"; message: string };
 
-export type GithubCallbackOutcome = "authenticated" | "consent" | "error";
+export type AuthKind = "login" | "registration";
 
-export type HostedNavAction = "block" | "oauth" | "forward";
+export type GitHubIntent = "signIn" | "signUp";
+
+export type GitHubCallbackResult =
+  | { status: "authenticated" }
+  | { status: "needs_consent" }
+  | { status: "cancelled" }
+  | { status: "error"; message: string };

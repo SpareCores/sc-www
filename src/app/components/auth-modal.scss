@@ -122,13 +122,6 @@
   width: min(100%, 18.75rem);
 }
 
-.auth-modal__challenge--pending:has(.auth-modal__captcha:not(:empty))
-  .auth-modal__pending-text--wait,
-.auth-modal__challenge--pending:not(:has(.auth-modal__captcha:not(:empty)))
-  .auth-modal__pending-text--verify {
-  display: none;
-}
-
 .auth-modal__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
