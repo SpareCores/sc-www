@@ -47,7 +47,7 @@ export function authErrorMessage(error: unknown, fallback: string): string {
   return clerkAuthError(error, fallback).message;
 }
 
-export function appUrls(): { origin: string; authCallback: string } {
+export function authUrls(): { origin: string; authCallback: string } {
   const origin = window.location.origin;
   return {
     origin,
@@ -116,7 +116,7 @@ export function signUpMissingPassword(
   return missing.includes("password");
 }
 
-export function pendingEmailVerification(
+export function getPendingEmailVerification(
   signUp: SignUpResource | null | undefined,
 ): string | null {
   if (!signUp?.emailAddress) {
@@ -147,11 +147,11 @@ export function canResumeEmailVerification(
     return false;
   }
 
-  const pendingEmail = pendingEmailVerification(signUp);
+  const pendingEmail = getPendingEmailVerification(signUp);
   return !!pendingEmail && pendingEmail.toLowerCase() === email.toLowerCase();
 }
 
-export function isPendingGitHubExternalComplete(
+export function hasVerifiedGitHubExternal(
   signUp: SignUpResource | null | undefined,
 ): boolean {
   return signUp?.verifications?.externalAccount?.status === "verified";
@@ -180,13 +180,11 @@ export function needsGitHubConsent(
     return true;
   }
 
-  if (pendingEmailVerification(signUp)) {
+  if (getPendingEmailVerification(signUp)) {
     return false;
   }
 
-  return (
-    isPendingGitHubExternalComplete(signUp) && needsLegalAcceptance(signUp)
-  );
+  return hasVerifiedGitHubExternal(signUp) && needsLegalAcceptance(signUp);
 }
 
 export function newsletterMetadata(

@@ -78,9 +78,9 @@ describe("ClerkService", () => {
 
     await (
       service as unknown as {
-        navigateWithinApp(url: string, replace?: boolean): Promise<boolean>;
+        navigateRouter(url: string, replace?: boolean): Promise<boolean>;
       }
-    ).navigateWithinApp(absoluteSameOrigin);
+    ).navigateRouter(absoluteSameOrigin);
 
     expect(router.navigateByUrl).toHaveBeenCalledOnceWith(
       "/servers?tab=1#list",
@@ -89,9 +89,9 @@ describe("ClerkService", () => {
 
     await (
       service as unknown as {
-        navigateWithinApp(url: string, replace?: boolean): Promise<boolean>;
+        navigateRouter(url: string, replace?: boolean): Promise<boolean>;
       }
-    ).navigateWithinApp("/servers?tab=2", true);
+    ).navigateRouter("/servers?tab=2", true);
 
     expect(router.navigateByUrl).toHaveBeenCalledWith("/servers?tab=2", {
       replaceUrl: true,

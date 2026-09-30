@@ -1,13 +1,13 @@
 import {
   canResumeEmailVerification,
   clerkAuthError,
-  isPendingGitHubExternalComplete,
+  getPendingEmailVerification,
+  hasVerifiedGitHubExternal,
   isSecondFactorStatus,
   isTransferable,
   needsGitHubConsent,
   needsLegalAcceptance,
   newsletterMetadata,
-  pendingEmailVerification,
 } from "./auth.utils";
 
 describe("auth utils", () => {
@@ -38,14 +38,14 @@ describe("auth utils", () => {
   });
 
   it("detects a verified GitHub account that still needs legal acceptance", () => {
-    expect(isPendingGitHubExternalComplete(null)).toBeFalse();
+    expect(hasVerifiedGitHubExternal(null)).toBeFalse();
     expect(
-      isPendingGitHubExternalComplete({
+      hasVerifiedGitHubExternal({
         verifications: { externalAccount: { status: "verified" } },
       } as never),
     ).toBeTrue();
     expect(
-      isPendingGitHubExternalComplete({
+      hasVerifiedGitHubExternal({
         verifications: { externalAccount: { status: "unverified" } },
       } as never),
     ).toBeFalse();
@@ -109,7 +109,9 @@ describe("auth utils", () => {
       missingFields: [],
     };
 
-    expect(pendingEmailVerification(signUp as never)).toBe("Ada@Example.com");
+    expect(getPendingEmailVerification(signUp as never)).toBe(
+      "Ada@Example.com",
+    );
     expect(
       canResumeEmailVerification(signUp as never, "ada@example.com"),
     ).toBeTrue();

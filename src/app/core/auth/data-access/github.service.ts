@@ -2,11 +2,11 @@ import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import type { SignInResource, SignUpResource } from "@clerk/shared/types";
 import { AUTH_MESSAGES } from "../auth.constants";
-import type { AuthKind } from "../auth.types";
+import type { AuthKind, GitHubIntent } from "../auth.types";
 import {
-  appUrls,
   authErrorMessage,
-  isPendingGitHubExternalComplete,
+  authUrls,
+  hasVerifiedGitHubExternal,
   isSecondFactorStatus,
   isTransferable,
   needsGitHubConsent,
@@ -38,7 +38,7 @@ export class GitHubService {
     );
   }
 
-  abandonIncompleteSignUp(): void {
+  resetSignUpState(): void {
     this.clerk.instance?.client?.resetSignUp();
   }
 
@@ -47,12 +47,12 @@ export class GitHubService {
       return { status: "error", message: AUTH_MESSAGES.signInBrowserOnly };
     }
 
-    const signIn = await this.clerk.requireSignIn();
+    const signIn = await this.clerk.getSignInResource();
     if (!signIn) {
       return { status: "error", message: AUTH_MESSAGES.authNotReady };
     }
 
-    const redirectUrl = this.callbackUrl("signIn");
+    const redirectUrl = this.buildRedirectUrl("signIn");
     try {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_github",
@@ -79,12 +79,12 @@ export class GitHubService {
       };
     }
 
-    const signUp = await this.clerk.requireSignUp();
+    const signUp = await this.clerk.getSignUpResource();
     if (!signUp) {
       return { status: "error", message: AUTH_MESSAGES.authNotReady };
     }
 
-    const redirectUrl = this.callbackUrl("signUp");
+    const redirectUrl = this.buildRedirectUrl("signUp");
     try {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_github",
@@ -117,24 +117,24 @@ export class GitHubService {
     const { signIn, signUp } = await this.loadResources();
 
     if (isTransferable(signUp)) {
-      return this.completeLoadedSignUp(signIn, signUp, newsletterOptIn, false);
+      return this.finalizeSignUpFlow(signIn, signUp, newsletterOptIn, false);
     }
 
     if (isTransferable(signIn)) {
       return { status: "needs_consent" };
     }
 
-    if (isPendingGitHubExternalComplete(signUp)) {
+    if (hasVerifiedGitHubExternal(signUp)) {
       if (needsLegalAcceptance(signUp)) {
         return { status: "needs_consent" };
       }
-      return this.completeLoadedSignUp(signIn, signUp, newsletterOptIn, true);
+      return this.finalizeSignUpFlow(signIn, signUp, newsletterOptIn, true);
     }
 
     return this.startSignUp(newsletterOptIn, legalAccepted);
   }
 
-  async completeGitHubSignUp(
+  async submitConsentAndComplete(
     newsletterOptIn: boolean,
     legalAccepted: boolean,
   ): Promise<GitHubSignUpOutcome> {
@@ -146,7 +146,7 @@ export class GitHubService {
     }
 
     const { signIn, signUp } = await this.loadResources();
-    return this.completeLoadedSignUp(
+    return this.finalizeSignUpFlow(
       signIn,
       signUp,
       newsletterOptIn,
@@ -154,7 +154,7 @@ export class GitHubService {
     );
   }
 
-  private async completeLoadedSignUp(
+  private async finalizeSignUpFlow(
     signIn: SignInResource | null,
     currentSignUp: SignUpResource | null,
     newsletterOptIn: boolean,
@@ -165,7 +165,7 @@ export class GitHubService {
       return { status: "error", message: AUTH_MESSAGES.authNotReady };
     }
     if (!signUp.id && !isTransferable(signIn)) {
-      this.abandonIncompleteSignUp();
+      this.resetSignUpState();
       return {
         status: "error",
         message: AUTH_MESSAGES.unableToCompleteGitHubSignUp,
@@ -194,7 +194,7 @@ export class GitHubService {
       } else if (signUp.status === "missing_requirements") {
         signUp = await signUp.update(legalUpdate);
       } else {
-        this.abandonIncompleteSignUp();
+        this.resetSignUpState();
         return {
           status: "error",
           message: AUTH_MESSAGES.unableToCompleteGitHubSignUp,
@@ -207,7 +207,7 @@ export class GitHubService {
         }
         if (isTransferable(signUp)) {
           return this.completeTransferToSignIn(
-            await this.clerk.requireSignIn(),
+            await this.clerk.getSignInResource(),
           );
         }
         signUp = await signUp.update(legalUpdate);
@@ -221,13 +221,13 @@ export class GitHubService {
         };
       }
 
-      this.abandonIncompleteSignUp();
+      this.resetSignUpState();
       return {
         status: "error",
         message: AUTH_MESSAGES.unableToCompleteGitHubSignUp,
       };
     } catch (error) {
-      this.abandonIncompleteSignUp();
+      this.resetSignUpState();
       return {
         status: "error",
         message: authErrorMessage(
@@ -271,15 +271,15 @@ export class GitHubService {
     signIn: SignInResource | null;
     signUp: SignUpResource | null;
   }> {
-    await this.clerk.reloadClient();
+    await this.clerk.syncClerkState();
     const [signIn, signUp] = await Promise.all([
-      this.clerk.requireSignIn(),
-      this.clerk.requireSignUp(),
+      this.clerk.getSignInResource(),
+      this.clerk.getSignUpResource(),
     ]);
     return { signIn, signUp };
   }
 
-  private callbackUrl(intent: "signIn" | "signUp"): string {
-    return `${appUrls().authCallback}?intent=${intent}`;
+  private buildRedirectUrl(intent: GitHubIntent): string {
+    return `${authUrls().authCallback}?intent=${intent}`;
   }
 }

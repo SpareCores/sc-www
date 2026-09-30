@@ -9,7 +9,7 @@ import type {
 } from "@clerk/shared/types";
 import { ui } from "@clerk/ui/no-rhc";
 import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
-import { appUrls } from "../auth.utils";
+import { authUrls } from "../auth.utils";
 import { CLERK_APPEARANCE, CLERK_TEXTS } from "../clerk-configuration";
 
 @Injectable({ providedIn: "root" })
@@ -31,7 +31,7 @@ export class ClerkService {
     return this.clerk?.session ?? null;
   }
 
-  isReady(): boolean {
+  isLoaded(): boolean {
     return this.clerk !== null;
   }
 
@@ -48,12 +48,12 @@ export class ClerkService {
     return this.initPromise;
   }
 
-  async requireSignIn(): Promise<SignInResource | null> {
+  async getSignInResource(): Promise<SignInResource | null> {
     await this.init();
     return this.clerk?.client?.signIn ?? null;
   }
 
-  async requireSignUp(): Promise<SignUpResource | null> {
+  async getSignUpResource(): Promise<SignUpResource | null> {
     await this.init();
     return this.clerk?.client?.signUp ?? null;
   }
@@ -66,7 +66,7 @@ export class ClerkService {
     await this.clerk?.signOut(() => undefined);
   }
 
-  openUserProfile(): void {
+  openUserProfileModal(): void {
     const user = this.clerk?.user;
     const hidePasswordSection =
       !!user &&
@@ -132,15 +132,15 @@ export class ClerkService {
     );
   }
 
-  async reloadClient(): Promise<void> {
+  async syncClerkState(): Promise<void> {
     try {
       await this.clerk?.client?.reload();
     } catch (error) {
-      console.error("Error reloading Clerk client:", error);
+      console.error("Failed to synchronize Clerk client state:", error);
     }
   }
 
-  async abandonSignIn(): Promise<void> {
+  async resetSignInState(): Promise<void> {
     const signIn = this.clerk?.client?.signIn;
     if (!signIn) {
       return;
@@ -150,7 +150,7 @@ export class ClerkService {
     try {
       await signIn.create(identifier ? { identifier } : {});
     } catch {
-      await this.reloadClient();
+      await this.syncClerkState();
     }
   }
 
@@ -184,7 +184,7 @@ export class ClerkService {
     }
 
     this.clerk = new Clerk(CLERK_PUBLISHABLE_KEY);
-    const urls = appUrls();
+    const urls = authUrls();
     await this.clerk.load({
       ui,
       appearance: CLERK_APPEARANCE,

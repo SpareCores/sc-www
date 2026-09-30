@@ -30,7 +30,7 @@ describe("GitHubService", () => {
       .createSpy()
       .and.resolveTo(undefined);
     const github = createService({
-      requireSignIn: jasmine.createSpy().and.resolveTo({
+      getSignInResource: jasmine.createSpy().and.resolveTo({
         authenticateWithRedirect,
       }),
     });
@@ -51,7 +51,7 @@ describe("GitHubService", () => {
 
   it("returns a redirect error without throwing", async () => {
     const github = createService({
-      requireSignIn: jasmine.createSpy().and.resolveTo({
+      getSignInResource: jasmine.createSpy().and.resolveTo({
         authenticateWithRedirect: jasmine
           .createSpy()
           .and.rejectWith({ errors: [{ message: "Denied" }] }),
@@ -73,9 +73,9 @@ describe("GitHubService", () => {
       authenticateWithRedirect,
     };
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({}),
-      requireSignUp: jasmine.createSpy().and.resolveTo(signUp),
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({}),
+      getSignUpResource: jasmine.createSpy().and.resolveTo(signUp),
     });
 
     await expectAsync(github.continueSignUp(true, true)).toBeResolvedTo({
@@ -93,11 +93,11 @@ describe("GitHubService", () => {
 
   it("returns consent when a transferable sign-in needs registration terms", async () => {
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({
         firstFactorVerification: { status: "transferable" },
       }),
-      requireSignUp: jasmine.createSpy().and.resolveTo({ id: "su_1" }),
+      getSignUpResource: jasmine.createSpy().and.resolveTo({ id: "su_1" }),
     });
 
     await expectAsync(github.continueSignUp(false, false)).toBeResolvedTo({
@@ -107,9 +107,9 @@ describe("GitHubService", () => {
 
   it("returns consent when verified GitHub OAuth still needs terms", async () => {
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({}),
-      requireSignUp: jasmine.createSpy().and.resolveTo({
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({}),
+      getSignUpResource: jasmine.createSpy().and.resolveTo({
         id: "su_1",
         legalAcceptedAt: null,
         verifications: { externalAccount: { status: "verified" } },
@@ -127,15 +127,17 @@ describe("GitHubService", () => {
       createdSessionId: "sess_1",
     });
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({ create }),
-      requireSignUp: jasmine.createSpy().and.resolveTo({
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({ create }),
+      getSignUpResource: jasmine.createSpy().and.resolveTo({
         id: "su_1",
         verifications: { externalAccount: { status: "transferable" } },
       }),
     });
 
-    await expectAsync(github.completeGitHubSignUp(false, true)).toBeResolvedTo({
+    await expectAsync(
+      github.submitConsentAndComplete(false, true),
+    ).toBeResolvedTo({
       status: "complete",
       sessionId: "sess_1",
       kind: "login",
@@ -145,19 +147,21 @@ describe("GitHubService", () => {
 
   it("reports additional verification when a transferred sign-in needs it", async () => {
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({
         create: jasmine.createSpy().and.resolveTo({
           status: "needs_second_factor",
         }),
       }),
-      requireSignUp: jasmine.createSpy().and.resolveTo({
+      getSignUpResource: jasmine.createSpy().and.resolveTo({
         id: "su_1",
         verifications: { externalAccount: { status: "transferable" } },
       }),
     });
 
-    await expectAsync(github.completeGitHubSignUp(false, true)).toBeResolvedTo({
+    await expectAsync(
+      github.submitConsentAndComplete(false, true),
+    ).toBeResolvedTo({
       status: "error",
       message: AUTH_MESSAGES.additionalVerification,
     });
@@ -166,13 +170,15 @@ describe("GitHubService", () => {
   it("abandons a GitHub sign-up that can no longer be completed", async () => {
     const resetSignUp = jasmine.createSpy("resetSignUp");
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({}),
-      requireSignUp: jasmine.createSpy().and.resolveTo({ id: null }),
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({}),
+      getSignUpResource: jasmine.createSpy().and.resolveTo({ id: null }),
       instance: { client: { resetSignUp } },
     });
 
-    await expectAsync(github.completeGitHubSignUp(false, true)).toBeResolvedTo({
+    await expectAsync(
+      github.submitConsentAndComplete(false, true),
+    ).toBeResolvedTo({
       status: "error",
       message: AUTH_MESSAGES.unableToCompleteGitHubSignUp,
     });
@@ -189,12 +195,14 @@ describe("GitHubService", () => {
       authenticateWithRedirect,
     };
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({}),
-      requireSignUp: jasmine.createSpy().and.resolveTo(signUp),
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({}),
+      getSignUpResource: jasmine.createSpy().and.resolveTo(signUp),
     });
 
-    await expectAsync(github.completeGitHubSignUp(false, true)).toBeResolvedTo({
+    await expectAsync(
+      github.submitConsentAndComplete(false, true),
+    ).toBeResolvedTo({
       status: "redirecting",
     });
     expect(authenticateWithRedirect).toHaveBeenCalledWith(
@@ -207,9 +215,9 @@ describe("GitHubService", () => {
 
   it("returns a registration session after legal acceptance", async () => {
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({}),
-      requireSignUp: jasmine.createSpy().and.resolveTo({
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({}),
+      getSignUpResource: jasmine.createSpy().and.resolveTo({
         id: "su_1",
         status: "missing_requirements",
         verifications: { externalAccount: { status: "verified" } },
@@ -220,7 +228,9 @@ describe("GitHubService", () => {
       }),
     });
 
-    await expectAsync(github.completeGitHubSignUp(false, true)).toBeResolvedTo({
+    await expectAsync(
+      github.submitConsentAndComplete(false, true),
+    ).toBeResolvedTo({
       status: "complete",
       sessionId: "sess_reg",
       kind: "registration",
@@ -230,9 +240,9 @@ describe("GitHubService", () => {
   it("abandons the sign-up when Clerk rejects completion", async () => {
     const resetSignUp = jasmine.createSpy("resetSignUp");
     const github = createService({
-      reloadClient: jasmine.createSpy().and.resolveTo(undefined),
-      requireSignIn: jasmine.createSpy().and.resolveTo({}),
-      requireSignUp: jasmine.createSpy().and.resolveTo({
+      syncClerkState: jasmine.createSpy().and.resolveTo(undefined),
+      getSignInResource: jasmine.createSpy().and.resolveTo({}),
+      getSignUpResource: jasmine.createSpy().and.resolveTo({
         id: "su_1",
         status: "missing_requirements",
         verifications: { externalAccount: { status: "verified" } },
@@ -241,7 +251,9 @@ describe("GitHubService", () => {
       instance: { client: { resetSignUp } },
     });
 
-    await expectAsync(github.completeGitHubSignUp(true, true)).toBeResolvedTo({
+    await expectAsync(
+      github.submitConsentAndComplete(true, true),
+    ).toBeResolvedTo({
       status: "error",
       message: "boom",
     });
