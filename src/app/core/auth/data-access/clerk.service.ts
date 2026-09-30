@@ -106,6 +106,7 @@ export class ClerkService {
   async handleRedirectCallback(options: {
     transferable: boolean;
     origin: string;
+    afterAuthUrl?: string;
   }): Promise<void> {
     await this.clerk?.handleRedirectCallback(
       {
@@ -117,9 +118,13 @@ export class ClerkService {
         resetPasswordUrl: options.origin,
         signInProtectCheckUrl: options.origin,
         signUpProtectCheckUrl: options.origin,
-        signInFallbackRedirectUrl: options.origin,
-        signUpFallbackRedirectUrl: options.origin,
         transferable: options.transferable,
+        ...(options.afterAuthUrl
+          ? {
+              signInForceRedirectUrl: options.afterAuthUrl,
+              signUpForceRedirectUrl: options.afterAuthUrl,
+            }
+          : {}),
       },
       async () => undefined,
     );
