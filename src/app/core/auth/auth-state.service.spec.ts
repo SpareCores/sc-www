@@ -417,9 +417,11 @@ describe("AuthStateService", () => {
       status: "authenticated",
     });
 
-    expect(redirect).toHaveBeenCalledWith(
-      jasmine.objectContaining({ transferable: false }),
-    );
+    expect(redirect).toHaveBeenCalledWith({
+      transferable: false,
+      origin: window.location.origin,
+      afterAuthUrl: `${window.location.origin}/servers?tab=1#list`,
+    });
     expect(navigate).toHaveBeenCalledOnceWith("/servers?tab=1#list", {
       replaceUrl: true,
     });
@@ -436,14 +438,23 @@ describe("AuthStateService", () => {
       session: {},
       addListener: jasmine.createSpy("addListener"),
     });
-    spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
+    const redirect = spyOn(
+      clerkService(),
+      "handleRedirectCallback",
+    ).and.resolveTo();
     spyOn(clerkService(), "reloadClient").and.resolveTo();
-    spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
     flowStore().rememberReturnUrl("/servers");
     go("/auth/callback?intent=signUp");
 
     await auth.handleGitHubCallback();
 
+    expect(redirect).toHaveBeenCalledWith({
+      transferable: true,
+      origin: window.location.origin,
+      afterAuthUrl: `${window.location.origin}/servers`,
+    });
+    expect(navigate).toHaveBeenCalledOnceWith("/servers", { replaceUrl: true });
     expect(track).toHaveBeenCalledOnceWith("auth register", {});
   });
 
@@ -473,6 +484,66 @@ describe("AuthStateService", () => {
       replaceUrl: true,
     });
     expect(flowStore().githubIntent()).toBe("signUp");
+  });
+
+  it("does not force a Clerk redirect when no return URL is stored", async () => {
+    const auth = createAuth();
+    setClerkInstance({
+      user: { id: "user_1" },
+      session: {},
+      addListener: jasmine.createSpy("addListener"),
+    });
+    const redirect = spyOn(
+      clerkService(),
+      "handleRedirectCallback",
+    ).and.resolveTo();
+    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    go("/auth/callback?intent=signIn");
+
+    await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
+      status: "authenticated",
+    });
+
+    expect(redirect).toHaveBeenCalledWith({
+      transferable: false,
+      origin: window.location.origin,
+      afterAuthUrl: undefined,
+    });
+  });
+
+  it("does not force a Clerk redirect for an unsafe stored return URL", async () => {
+    sessionStorage.setItem(
+      "scAuthFlow",
+      JSON.stringify({
+        pending: true,
+        returnUrl: "https://evil.example",
+        githubIntent: "signIn",
+      }),
+    );
+    const auth = createAuth();
+    setClerkInstance({
+      user: { id: "user_1" },
+      session: {},
+      addListener: jasmine.createSpy("addListener"),
+    });
+    const redirect = spyOn(
+      clerkService(),
+      "handleRedirectCallback",
+    ).and.resolveTo();
+    spyOn(clerkService(), "reloadClient").and.resolveTo();
+    spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    go("/auth/callback?intent=signIn");
+
+    await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
+      status: "authenticated",
+    });
+
+    expect(redirect).toHaveBeenCalledWith({
+      transferable: false,
+      origin: window.location.origin,
+      afterAuthUrl: undefined,
+    });
   });
 
   it("persists GitHub consent opened from the registration flow", async () => {

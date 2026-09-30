@@ -225,11 +225,17 @@ export class AuthStateService {
       return { status: "error", message };
     }
 
+    const returnUrl = this.flow.peekReturnUrl();
+    const afterAuthUrl = returnUrl
+      ? new URL(returnUrl, appUrls().origin).href
+      : undefined;
+
     let callbackError: unknown;
     try {
       await this.clerk.handleRedirectCallback({
         transferable: intent !== "signIn",
         origin: appUrls().origin,
+        afterAuthUrl,
       });
     } catch (error) {
       callbackError = error;
