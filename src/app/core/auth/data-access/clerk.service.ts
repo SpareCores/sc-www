@@ -158,14 +158,14 @@ export class ClerkService {
     return this.clerk?.addListener(listener) as (() => void) | undefined;
   }
 
-  private navigateWithinApp(url: string, replace = false): Promise<boolean> {
+  private navigateRouter(url: string, replace = false): Promise<boolean> {
     return this.router.navigateByUrl(
-      this.toAppUrl(url),
+      this.toRelativePath(url),
       replace ? { replaceUrl: true } : undefined,
     );
   }
 
-  private toAppUrl(url: string): string {
+  private toRelativePath(url: string): string {
     try {
       const target = new URL(url, window.location.origin);
       if (target.origin === window.location.origin) {
@@ -191,8 +191,8 @@ export class ClerkService {
       localization: CLERK_TEXTS,
       signInUrl: urls.origin,
       signUpUrl: urls.origin,
-      routerPush: (url: string) => this.navigateWithinApp(url),
-      routerReplace: (url: string) => this.navigateWithinApp(url, true),
+      routerPush: (url: string) => this.navigateRouter(url),
+      routerReplace: (url: string) => this.navigateRouter(url, true),
       telemetry: false,
     });
   }
