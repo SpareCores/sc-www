@@ -1154,6 +1154,54 @@ describe("AuthStateService", () => {
     expect(auth.isAuthenticated()).toBeTrue();
   }));
 
+  it("discards in-flight revalidation when an auth operation starts", fakeAsync(() => {
+    const auth = createAuth();
+    const clerk = {
+      addListener: jasmine.createSpy("addListener"),
+      user: null,
+      session: null,
+      client: {
+        lastActiveSessionId: "sess_1",
+        sessions: [{ id: "sess_1" }],
+      },
+    };
+    setClerkInstance(clerk);
+    let resolveReload!: (value: boolean) => void;
+    let syncCalls = 0;
+    spyOn(clerkService(), "syncClerkState").and.callFake(
+      () =>
+        new Promise<boolean>((resolve) => {
+          syncCalls += 1;
+          if (syncCalls === 1) {
+            resolveReload = resolve;
+            return;
+          }
+          resolve(true);
+        }),
+    );
+    const setActiveSpy = spyOn(clerkService(), "setActive");
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    auth.startAuthPending();
+    resolveReload(true);
+    flushMicrotasks();
+
+    expect(setActiveSpy).not.toHaveBeenCalled();
+
+    (auth as unknown as { clearAuthPending: () => void }).clearAuthPending();
+    flushMicrotasks();
+    tick(AUTH_REVALIDATION_COALESCE_MS);
+    flushMicrotasks();
+
+    expect(setActiveSpy).toHaveBeenCalledOnceWith("sess_1");
+  }));
+
   it("preserves auth state when reload fails", fakeAsync(() => {
     const auth = createAuth();
     const signedInUser = {

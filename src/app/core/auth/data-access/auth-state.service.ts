@@ -61,6 +61,7 @@ export class AuthStateService {
   private gitHubCallbackPromise: Promise<GitHubCallbackResult> | null = null;
   private boundListener = false;
   private boundAuthRevalidation = false;
+  private authOperationGeneration = 0;
   private revalidationInFlight = false;
   private revalidationQueued = false;
   private revalidationPending = false;
@@ -194,6 +195,7 @@ export class AuthStateService {
     if (this.githubConsent()) {
       return;
     }
+    this.authOperationGeneration++;
     this.flow.setPending(true);
     if (this.signUpModalOpen() || this.signInModalOpen()) {
       this.setAuthOverlayVisible(false);
@@ -638,6 +640,7 @@ export class AuthStateService {
   }
 
   async signOut(): Promise<void> {
+    this.authOperationGeneration++;
     this.closeSignIn();
     this.closeSignUp();
     try {
@@ -720,6 +723,7 @@ export class AuthStateService {
     sessionId: string,
     kind: AuthKind,
   ): Promise<void> {
+    this.authOperationGeneration++;
     this.activating = true;
     try {
       if (kind === "login") {
@@ -964,6 +968,13 @@ export class AuthStateService {
     this.requestAuthRevalidation();
   }
 
+  private isStaleAuthRevalidation(generation: number): boolean {
+    return (
+      generation !== this.authOperationGeneration ||
+      this.isAuthTransitionActive()
+    );
+  }
+
   private async runAuthRevalidation(): Promise<void> {
     if (this.revalidationInFlight) {
       this.revalidationQueued = true;
@@ -975,13 +986,21 @@ export class AuthStateService {
     }
 
     this.revalidationInFlight = true;
+    const generation = this.authOperationGeneration;
     try {
       const synced = await this.clerk.syncClerkState();
       if (!synced) {
         return;
       }
+      if (this.isStaleAuthRevalidation(generation)) {
+        this.revalidationPending = true;
+        return;
+      }
       this.ngZone.run(() => this.syncUserFromClerk());
-      await this.maybeRecoverActiveSession();
+      await this.maybeRecoverActiveSession(generation);
+      if (this.isStaleAuthRevalidation(generation)) {
+        this.revalidationPending = true;
+      }
     } finally {
       this.revalidationInFlight = false;
       if (this.revalidationQueued) {
@@ -992,7 +1011,7 @@ export class AuthStateService {
     }
   }
 
-  private async maybeRecoverActiveSession(): Promise<void> {
+  private async maybeRecoverActiveSession(generation: number): Promise<void> {
     if (this.recoveringSession || this.clerk.session || this.clerk.user) {
       return;
     }
@@ -1003,6 +1022,11 @@ export class AuthStateService {
       !sessionId ||
       !client.sessions?.some((session) => session.id === sessionId)
     ) {
+      return;
+    }
+
+    if (this.isStaleAuthRevalidation(generation)) {
+      this.revalidationPending = true;
       return;
     }
 
