@@ -53,6 +53,7 @@ export namespace Servers {
         | "Alibaba"
         | "Ampere"
         | "Apple"
+        | "Hygon"
         | "Intel"
         | "Microsoft";
       /** Processor family */
@@ -179,7 +180,7 @@ export namespace Servers {
       hw_virt?: boolean | null;
       /**
        * Hyperthreading
-       * Whether CPU hyperthreading is enabled or not. Calculated based on the "ht" CPU flag, with a fallback to comparing the number of vCPUs with physical CPU cores.
+       * Whether CPU hyperthreading is enabled or not. Determined by comparing the number of vCPUs with physical CPU cores.
        */
       cpu_hyperthreading?: boolean | null;
       /**
@@ -1150,15 +1151,20 @@ export namespace Servers {
         | "US"
         | "ZA";
       /**
-       * Required local storage size
+       * Required bundled storage size
        * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_size?: number | null;
       /**
-       * Local storage type
+       * Bundled storage type
        * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
       storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      /**
+       * Required bundled storage count
+       * Required number of bundled storage devices.
+       */
+      storage_count_min?: number | null;
       /**
        * Required baseline network storage speed
        * Required baseline network storage speed in Gbps.
@@ -1266,6 +1272,7 @@ export namespace Servers {
         | "A40"
         | "B200"
         | "B300"
+        | "G59"
         | "GB200"
         | "GB300"
         | "H100"
