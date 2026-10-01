@@ -701,23 +701,23 @@ export class ServerCompareComponent
                 : server.score || 0;
 
             this.servers.push(server);
-            if (selectedZones.length) {
-              selectedZones.forEach((zone: any) => {
-                this.serverCompare.toggleCompare(true, {
-                  server: server.api_reference,
-                  vendor: server.vendor_id,
-                  display_name: server.display_name,
-                  zoneRegion: zone,
-                });
-              });
-            } else {
-              this.serverCompare.toggleCompare(true, {
-                server: server.api_reference,
-                vendor: server.vendor_id,
-                display_name: server.display_name,
-              });
-            }
           }
+
+          this.serverCompare.replaceServerCompareSelection(
+            this.servers.map((server) => {
+              const instance = loadInstances.find(
+                (item) =>
+                  item.vendor === server.vendor_id &&
+                  item.server === server.api_reference,
+              );
+              return {
+                display_name: server.display_name,
+                vendor: server.vendor_id,
+                server: server.api_reference,
+                zonesRegions: instance?.zonesRegions ?? [],
+              };
+            }),
+          );
 
           this.instanceProperties.forEach((p: any) => {
             const group = this.instancePropertyCategories.find(
