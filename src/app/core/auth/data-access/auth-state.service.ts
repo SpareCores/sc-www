@@ -182,6 +182,10 @@ export class AuthStateService {
       return;
     }
     this.flow.setPending(true);
+    if (this.signUpModalOpen() || this.signInModalOpen()) {
+      this.setAuthOverlayVisible(false);
+      return;
+    }
     this.setAuthOverlayVisible(true);
   }
 

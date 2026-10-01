@@ -229,12 +229,11 @@ export class LoginModal {
     try {
       await this.auth.signInWithGitHub();
     } catch (error) {
+      this.busy = null;
       this.errorMessage =
         error instanceof Error
           ? error.message
           : AUTH_MESSAGES.unableToContinueGitHub;
-    } finally {
-      this.busy = null;
     }
   }
 
