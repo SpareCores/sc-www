@@ -56,6 +56,7 @@ export namespace ServerPrices {
         | "Alibaba"
         | "Ampere"
         | "Apple"
+        | "Hygon"
         | "Intel"
         | "Microsoft";
       /** Processor family */
@@ -654,12 +655,12 @@ export namespace ServerPrices {
        */
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
-       * Required local storage size
+       * Required bundled storage size
        * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_size?: number | null;
       /**
-       * Local storage type
+       * Bundled storage type
        * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
       storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
@@ -745,6 +746,7 @@ export namespace ServerPrices {
         | "A40"
         | "B200"
         | "B300"
+        | "G59"
         | "GB200"
         | "GB300"
         | "H100"
