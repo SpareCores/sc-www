@@ -432,6 +432,65 @@ describe("AuthStateService", () => {
     expect(auth.signUpModalOpen()).toBeFalse();
   });
 
+  it("removes compare-limit toasts after a successful GitHub login", async () => {
+    const auth = createAuth();
+    const removeToast = spyOn(
+      (
+        auth as unknown as {
+          toastService: { removeToast: (id: string) => void };
+        }
+      ).toastService,
+      "removeToast",
+    );
+    setClerkInstance({
+      user: { id: "user_1" },
+      session: {},
+      addListener: jasmine.createSpy("addListener"),
+    });
+    spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
+    const navigate = spyOn(router(), "navigateByUrl").and.callFake(async () => {
+      expect(removeToast).toHaveBeenCalledWith("guest-server-compare-limit");
+      expect(removeToast).toHaveBeenCalledWith("guest-database-compare-limit");
+      return true;
+    });
+    flowStore().setReturnUrl("/servers");
+    go("/auth/callback?intent=signIn");
+
+    await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
+      status: "authenticated",
+    });
+
+    expect(navigate).toHaveBeenCalledOnceWith("/servers", { replaceUrl: true });
+  });
+
+  it("removes compare-limit toasts after a successful GitHub registration", async () => {
+    const auth = createAuth();
+    const removeToast = spyOn(
+      (
+        auth as unknown as {
+          toastService: { removeToast: (id: string) => void };
+        }
+      ).toastService,
+      "removeToast",
+    );
+    setClerkInstance({
+      user: { id: "user_2" },
+      session: {},
+      addListener: jasmine.createSpy("addListener"),
+    });
+    spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
+    spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    flowStore().setReturnUrl("/servers");
+    go("/auth/callback?intent=signUp");
+
+    await auth.handleGitHubCallback();
+
+    expect(removeToast).toHaveBeenCalledWith("guest-server-compare-limit");
+    expect(removeToast).toHaveBeenCalledWith("guest-database-compare-limit");
+  });
+
   it("tracks GitHub registration separately from login", async () => {
     const auth = createAuth();
     const track = spyOn(analyticsService(), "trackEvent");
