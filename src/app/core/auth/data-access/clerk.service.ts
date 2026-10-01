@@ -132,11 +132,13 @@ export class ClerkService {
     );
   }
 
-  async syncClerkState(): Promise<void> {
+  async syncClerkState(): Promise<boolean> {
     try {
       await this.clerk?.client?.reload();
+      return true;
     } catch (error) {
       console.error("Failed to synchronize Clerk client state:", error);
+      return false;
     }
   }
 
