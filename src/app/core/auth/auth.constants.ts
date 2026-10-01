@@ -8,6 +8,7 @@ export const NEWSLETTER_OPT_IN_KEY = "newsletterOptIn";
 export const NEWSLETTER_SUBSCRIBED_KEY = "newsletterSubscribed";
 export const AUTH_OVERLAY_CLASS = "sc-auth-pending";
 export const AUTH_OVERLAY_ID = "sc-auth-pending-overlay";
+export const AUTH_REVALIDATION_COALESCE_MS = 400;
 
 export const AUTH_MESSAGES = {
   defaultSignUpSubtitle: "Welcome! Please fill in the details to get started.",

@@ -1,5 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
+  DestroyRef,
   Injectable,
   NgZone,
   PLATFORM_ID,
@@ -15,6 +16,7 @@ import {
   AUTH_MESSAGES,
   AUTH_OVERLAY_CLASS,
   AUTH_OVERLAY_ID,
+  AUTH_REVALIDATION_COALESCE_MS,
 } from "../auth.constants";
 import type {
   AuthKind,
@@ -46,6 +48,7 @@ import { GitHubService, type GitHubSignUpOutcome } from "./github.service";
 export class AuthStateService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly ngZone = inject(NgZone);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
@@ -57,6 +60,16 @@ export class AuthStateService {
   private finalizePromise: Promise<void> | null = null;
   private gitHubCallbackPromise: Promise<GitHubCallbackResult> | null = null;
   private boundListener = false;
+  private boundAuthRevalidation = false;
+  private authOperationGeneration = 0;
+  private revalidationInFlight = false;
+  private revalidationQueued = false;
+  private revalidationPending = false;
+  private recoveringSession = false;
+  private coalesceUntil = 0;
+  private revalidationTimer: ReturnType<typeof setTimeout> | null = null;
+  private onVisibilityChange: (() => void) | null = null;
+  private onWindowFocus: (() => void) | null = null;
   private accountDeleted = false;
   private signedOutIdentityCleared = false;
 
@@ -92,6 +105,7 @@ export class AuthStateService {
     await this.clerk.init();
     this.syncUserFromClerk();
     this.bindClerkListener();
+    this.bindAuthRevalidation();
     this.setAuthOverlayVisible(this.authInProgress());
     if (this.finalizePromise || this.isAuthCallbackRoute()) {
       return;
@@ -181,6 +195,7 @@ export class AuthStateService {
     if (this.githubConsent()) {
       return;
     }
+    this.authOperationGeneration++;
     this.flow.setPending(true);
     if (this.signUpModalOpen() || this.signInModalOpen()) {
       this.setAuthOverlayVisible(false);
@@ -192,6 +207,7 @@ export class AuthStateService {
   private clearAuthPending(): void {
     this.flow.setPending(false);
     this.setAuthOverlayVisible(false);
+    this.flushPendingAuthRevalidation();
   }
 
   async handleGitHubCallback(): Promise<GitHubCallbackResult> {
@@ -205,6 +221,7 @@ export class AuthStateService {
     if (!this.gitHubCallbackPromise) {
       this.gitHubCallbackPromise = this.processGitHubCallback().finally(() => {
         this.gitHubCallbackPromise = null;
+        this.flushPendingAuthRevalidation();
       });
     }
     return this.gitHubCallbackPromise;
@@ -623,6 +640,7 @@ export class AuthStateService {
   }
 
   async signOut(): Promise<void> {
+    this.authOperationGeneration++;
     this.closeSignIn();
     this.closeSignUp();
     try {
@@ -634,6 +652,7 @@ export class AuthStateService {
       this.finalizePromise = null;
       this.gitHubCallbackPromise = null;
       this.setUser(null);
+      this.flushPendingAuthRevalidation();
     }
   }
 
@@ -704,6 +723,7 @@ export class AuthStateService {
     sessionId: string,
     kind: AuthKind,
   ): Promise<void> {
+    this.authOperationGeneration++;
     this.activating = true;
     try {
       if (kind === "login") {
@@ -720,6 +740,7 @@ export class AuthStateService {
       throw error;
     } finally {
       this.activating = false;
+      this.flushPendingAuthRevalidation();
     }
   }
 
@@ -727,6 +748,7 @@ export class AuthStateService {
     if (!this.finalizePromise) {
       this.finalizePromise = this.runFinalize(kind).finally(() => {
         this.finalizePromise = null;
+        this.flushPendingAuthRevalidation();
       });
     }
     return this.finalizePromise;
@@ -831,6 +853,192 @@ export class AuthStateService {
       this.ngZone.run(() => this.syncUserFromClerk());
     });
     this.boundListener = true;
+  }
+
+  private bindAuthRevalidation(): void {
+    if (!isPlatformBrowser(this.platformId) || this.boundAuthRevalidation) {
+      return;
+    }
+
+    const win = this.document.defaultView;
+    if (!win) {
+      return;
+    }
+
+    this.boundAuthRevalidation = true;
+    this.onVisibilityChange = () => {
+      if (this.document.visibilityState === "visible") {
+        this.requestAuthRevalidation();
+      }
+    };
+    this.onWindowFocus = () => {
+      this.requestAuthRevalidation();
+    };
+
+    this.ngZone.runOutsideAngular(() => {
+      this.document.addEventListener(
+        "visibilitychange",
+        this.onVisibilityChange!,
+      );
+      win.addEventListener("focus", this.onWindowFocus!);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      if (this.revalidationTimer != null) {
+        clearTimeout(this.revalidationTimer);
+        this.revalidationTimer = null;
+      }
+      if (this.onVisibilityChange) {
+        this.document.removeEventListener(
+          "visibilitychange",
+          this.onVisibilityChange,
+        );
+      }
+      if (this.onWindowFocus) {
+        win.removeEventListener("focus", this.onWindowFocus);
+      }
+      this.boundAuthRevalidation = false;
+    });
+  }
+
+  private isAuthTransitionActive(): boolean {
+    return (
+      this.activating ||
+      this.authInProgress() ||
+      !!this.finalizePromise ||
+      !!this.gitHubCallbackPromise
+    );
+  }
+
+  private requestAuthRevalidation(): void {
+    if (this.isAuthTransitionActive()) {
+      this.revalidationPending = true;
+      return;
+    }
+
+    if (this.revalidationInFlight) {
+      this.revalidationQueued = true;
+      return;
+    }
+
+    const now = Date.now();
+    if (now < this.coalesceUntil) {
+      this.revalidationQueued = true;
+      this.scheduleQueuedRevalidation();
+      return;
+    }
+
+    this.coalesceUntil = now + AUTH_REVALIDATION_COALESCE_MS;
+    void this.runAuthRevalidation();
+  }
+
+  private scheduleQueuedRevalidation(): void {
+    if (this.revalidationTimer != null) {
+      return;
+    }
+
+    const delay = Math.max(0, this.coalesceUntil - Date.now());
+    this.revalidationTimer = setTimeout(() => {
+      this.revalidationTimer = null;
+      if (!this.revalidationQueued) {
+        return;
+      }
+      this.revalidationQueued = false;
+      if (this.isAuthTransitionActive()) {
+        this.revalidationPending = true;
+        return;
+      }
+      if (this.revalidationInFlight) {
+        this.revalidationQueued = true;
+        return;
+      }
+      this.coalesceUntil = Date.now() + AUTH_REVALIDATION_COALESCE_MS;
+      void this.runAuthRevalidation();
+    }, delay);
+  }
+
+  private flushPendingAuthRevalidation(): void {
+    if (!this.revalidationPending) {
+      return;
+    }
+    if (this.isAuthTransitionActive()) {
+      return;
+    }
+    this.revalidationPending = false;
+    this.requestAuthRevalidation();
+  }
+
+  private isStaleAuthRevalidation(generation: number): boolean {
+    return (
+      generation !== this.authOperationGeneration ||
+      this.isAuthTransitionActive()
+    );
+  }
+
+  private async runAuthRevalidation(): Promise<void> {
+    if (this.revalidationInFlight) {
+      this.revalidationQueued = true;
+      return;
+    }
+    if (this.isAuthTransitionActive()) {
+      this.revalidationPending = true;
+      return;
+    }
+
+    this.revalidationInFlight = true;
+    const generation = this.authOperationGeneration;
+    try {
+      const synced = await this.clerk.syncClerkState();
+      if (!synced) {
+        return;
+      }
+      if (this.isStaleAuthRevalidation(generation)) {
+        this.revalidationPending = true;
+        return;
+      }
+      this.ngZone.run(() => this.syncUserFromClerk());
+      await this.maybeRecoverActiveSession(generation);
+      if (this.isStaleAuthRevalidation(generation)) {
+        this.revalidationPending = true;
+      }
+    } finally {
+      this.revalidationInFlight = false;
+      if (this.revalidationQueued) {
+        this.scheduleQueuedRevalidation();
+      } else {
+        this.flushPendingAuthRevalidation();
+      }
+    }
+  }
+
+  private async maybeRecoverActiveSession(generation: number): Promise<void> {
+    if (this.recoveringSession || this.clerk.session || this.clerk.user) {
+      return;
+    }
+
+    const client = this.clerk.instance?.client;
+    const sessionId = client?.lastActiveSessionId;
+    if (
+      !sessionId ||
+      !client.sessions?.some((session) => session.id === sessionId)
+    ) {
+      return;
+    }
+
+    if (this.isStaleAuthRevalidation(generation)) {
+      this.revalidationPending = true;
+      return;
+    }
+
+    this.recoveringSession = true;
+    try {
+      await this.clerk.setActive(sessionId);
+      this.ngZone.run(() => this.syncUserFromClerk());
+    } catch {
+      return;
+    } finally {
+      this.recoveringSession = false;
+    }
   }
 
   private async prepareEmailSecondFactor(
