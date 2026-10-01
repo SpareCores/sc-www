@@ -704,19 +704,10 @@ export class ServerCompareComponent
           }
 
           this.serverCompare.replaceServerCompareSelection(
-            this.servers.map((server) => {
-              const instance = loadInstances.find(
-                (item) =>
-                  item.vendor === server.vendor_id &&
-                  item.server === server.api_reference,
-              );
-              return {
-                display_name: server.display_name,
-                vendor: server.vendor_id,
-                server: server.api_reference,
-                zonesRegions: instance?.zonesRegions ?? [],
-              };
-            }),
+            this.buildServerCompareSelectionFromLoaded(
+              this.servers,
+              loadInstances,
+            ),
           );
 
           this.instanceProperties.forEach((p: any) => {
@@ -1574,6 +1565,51 @@ export class ServerCompareComponent
       server: instance.server,
       zonesRegions: instance.zonesRegions ?? [],
     }));
+  }
+
+  private buildServerCompareSelectionFromLoaded(
+    servers: ExtendedServerDetails[],
+    loadInstances: Array<{
+      vendor?: string;
+      server?: string;
+      zonesRegions?: ZoneAndRegion[];
+    }>,
+  ): ServerCompare[] {
+    const selection: ServerCompare[] = [];
+
+    for (let i = 0; i < servers.length; i++) {
+      const server = servers[i];
+      const zones = (loadInstances[i]?.zonesRegions ?? []).map((zone) => ({
+        ...zone,
+      }));
+      const existing = selection.find(
+        (item) =>
+          item.vendor === server.vendor_id &&
+          item.server === server.api_reference,
+      );
+
+      if (!existing) {
+        selection.push({
+          display_name: server.display_name,
+          vendor: server.vendor_id,
+          server: server.api_reference,
+          zonesRegions: zones,
+        });
+        continue;
+      }
+
+      for (const zone of zones) {
+        if (
+          !existing.zonesRegions.some(
+            (entry) => entry.region === zone.region && entry.zone === zone.zone,
+          )
+        ) {
+          existing.zonesRegions.push(zone);
+        }
+      }
+    }
+
+    return selection;
   }
 
   private buildCanonicalCompareUrl(): string {
