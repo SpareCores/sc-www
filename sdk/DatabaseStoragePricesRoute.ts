@@ -45,7 +45,7 @@ export namespace DatabaseStoragePrices {
        */
       green_energy?: boolean | null;
       /**
-       * Required local storage size
+       * Required bundled storage size
        * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_min?: number | null;
