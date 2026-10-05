@@ -14,7 +14,6 @@ import {
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
-import { getTransientHttpToast } from "../../services/http-error-toast";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("ServerCompareComponent", () => {
@@ -23,6 +22,7 @@ describe("ServerCompareComponent", () => {
     queryParams: {} as Record<string, string>,
   };
   const showToast = jasmine.createSpy("show");
+  const showTransientHttpError = jasmine.createSpy("showTransientHttpError");
   const removeToast = jasmine.createSpy("removeToast");
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
   const highlightAll = jasmine.createSpy("highlightAll");
@@ -52,6 +52,7 @@ describe("ServerCompareComponent", () => {
     routeSnapshot.paramMap = convertToParamMap({});
     routeSnapshot.queryParams = {};
     showToast.calls.reset();
+    showTransientHttpError.calls.reset();
     removeToast.calls.reset();
     updateTitleAndMetaTags.calls.reset();
     highlightAll.calls.reset();
@@ -120,14 +121,7 @@ describe("ServerCompareComponent", () => {
           useValue: {
             show: showToast,
             removeToast,
-            showTransientHttpError: (error: unknown) => {
-              const toast = getTransientHttpToast(error);
-              if (!toast) {
-                return false;
-              }
-              showToast(toast);
-              return true;
-            },
+            showTransientHttpError,
           },
         },
         {

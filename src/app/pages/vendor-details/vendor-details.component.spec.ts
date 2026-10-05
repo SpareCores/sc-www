@@ -118,7 +118,7 @@ describe("VendorDetailsComponent", () => {
 
   it("shows transient toast when vendor load fails with 500", async () => {
     const toastService = TestBed.inject(ToastService);
-    const show = spyOn(toastService, "show");
+    const showTransient = spyOn(toastService, "showTransientHttpError");
     getVendors.and.rejectWith({ status: 500 });
 
     fixture = TestBed.createComponent(VendorDetailsComponent);
@@ -126,10 +126,6 @@ describe("VendorDetailsComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(show).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        title: "Service temporarily unavailable",
-      }),
-    );
+    expect(showTransient).toHaveBeenCalledWith({ status: 500 });
   });
 });

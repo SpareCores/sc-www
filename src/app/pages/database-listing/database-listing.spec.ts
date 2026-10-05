@@ -212,16 +212,12 @@ describe("DatabaseListing", () => {
 
   it("shows transient toast when search fails with 500", fakeAsync(() => {
     const toastService = TestBed.inject(ToastService);
-    const show = spyOn(toastService, "show");
+    const showTransient = spyOn(toastService, "showTransientHttpError");
     spyOn(keeperAPI, "searchDatabases").and.rejectWith({ status: 500 });
 
     (component as any)._searchDatabases(true);
     tick();
 
-    expect(show).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        title: "Service temporarily unavailable",
-      }),
-    );
+    expect(showTransient).toHaveBeenCalledWith({ status: 500 });
   }));
 });

@@ -295,7 +295,7 @@ describe("DatabaseDetails", () => {
 
   it("shows transient toast when database load fails with 500", async () => {
     const toastService = TestBed.inject(ToastService);
-    const show = spyOn(toastService, "show");
+    const showTransient = spyOn(toastService, "showTransientHttpError");
     keeperAPI.getDatabase.and.rejectWith({ status: 500 });
 
     fixture = TestBed.createComponent(DatabaseDetails);
@@ -303,10 +303,6 @@ describe("DatabaseDetails", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(show).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        title: "Service temporarily unavailable",
-      }),
-    );
+    expect(showTransient).toHaveBeenCalledWith({ status: 500 });
   });
 });

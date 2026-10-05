@@ -208,7 +208,7 @@ describe("DatabaseCompareComponent", () => {
       ]),
     );
     getDatabase.and.rejectWith({ status: 500 });
-    const show = spyOn(toastService, "show");
+    const showTransient = spyOn(toastService, "showTransientHttpError");
 
     const route = TestBed.inject(ActivatedRoute) as any;
     route.snapshot.queryParams = { instances };
@@ -222,10 +222,6 @@ describe("DatabaseCompareComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(show).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        title: "Service temporarily unavailable",
-      }),
-    );
+    expect(showTransient).toHaveBeenCalledWith({ status: 500 });
   });
 });

@@ -39,7 +39,6 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
-import { getTransientHttpToast } from "../../services/http-error-toast";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import {
@@ -65,6 +64,7 @@ describe("AdvisorComponent", () => {
   const getRegions = jasmine.createSpy("getRegions");
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
   const showToast = jasmine.createSpy("show");
+  const showTransientHttpError = jasmine.createSpy("showTransientHttpError");
   const initDropdown = jasmine.createSpy("initDropdown");
   const initializeNeetoCal = jasmine.createSpy("initialize");
   const selectionChanged = new Subject();
@@ -104,6 +104,7 @@ describe("AdvisorComponent", () => {
     getRegions.calls.reset();
     updateTitleAndMetaTags.calls.reset();
     showToast.calls.reset();
+    showTransientHttpError.calls.reset();
     initDropdown.calls.reset();
     initializeNeetoCal.calls.reset();
     compareService.selectedForCompare = [];
@@ -346,14 +347,7 @@ describe("AdvisorComponent", () => {
           provide: ToastService,
           useValue: {
             show: showToast,
-            showTransientHttpError: (error: unknown) => {
-              const toast = getTransientHttpToast(error);
-              if (!toast) {
-                return false;
-              }
-              showToast(toast);
-              return true;
-            },
+            showTransientHttpError,
           },
         },
         {
@@ -1031,6 +1025,7 @@ describe("AdvisorComponent", () => {
     expect(emptyStateCell?.classList).toContain("advisor-empty-state-cell");
     expect(emptyStateRow?.classList).toContain("advisor-empty-state-row");
     expect(showToast).not.toHaveBeenCalled();
+    expect(showTransientHttpError).not.toHaveBeenCalled();
   }));
 
   it("restores advisor state from the route query params", async () => {
@@ -2443,10 +2438,6 @@ describe("AdvisorComponent", () => {
     flushMicrotasks();
     fixture.detectChanges();
 
-    expect(showToast).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        title: "Service temporarily unavailable",
-      }),
-    );
+    expect(showTransientHttpError).toHaveBeenCalledWith({ status: 500 });
   }));
 });

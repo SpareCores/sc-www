@@ -27,16 +27,12 @@ describe("BenchmarkCoverageComponent", () => {
   it("shows transient toast when debug load fails with 500", async () => {
     const toastService = TestBed.inject(ToastService);
     const keeperAPI = TestBed.inject(KeeperAPIService);
-    const show = spyOn(toastService, "show");
+    const showTransient = spyOn(toastService, "showTransientHttpError");
     spyOn(keeperAPI, "getDebugInfo").and.rejectWith({ status: 500 });
     spyOn(keeperAPI, "getVendors").and.resolveTo({ body: [] });
 
     await (component as any).loadDebugData();
 
-    expect(show).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        title: "Service temporarily unavailable",
-      }),
-    );
+    expect(showTransient).toHaveBeenCalledWith({ status: 500 });
   });
 });
