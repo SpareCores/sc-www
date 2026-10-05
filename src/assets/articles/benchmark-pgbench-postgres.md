@@ -11,86 +11,79 @@ author: Adam Toth
 tags: [benchmark, performance, scalability, score]
 ---
 
-Many cloud benchmarking projects start with the easy parts: CPU, memory, web
-serving, or static file serving. A database benchmark is harder to get right.
-PostgreSQL performance depends on more than server speed: it is shaped by
-concurrency, transaction mix, query planning, memory layout, and the environment
-around the database.
+Many cloud benchmarking projects start with the easy parts: CPU, memory, or
+static web serving. Databases are harder. PostgreSQL throughput depends on
+concurrency, transaction mix, query planning, and memory layout, not just raw
+server speed. And in our
+[static web server benchmarks](/article/benchmark-static-webserver) post, we
+promised to follow up on the Redis use case that came up on Twitter/X. It
+turned out we needed something closer to a real database.
 
-That gap was one of the reasons we built this PostgreSQL benchmark. We wanted a
-workload that could be used across thousands of cloud server types while staying
-relevant to real database performance. The result is a `pgbench`-driven
-benchmark that measures PostgreSQL server behavior on both local and remote
-deployments.
+So we built a `pgbench`-based benchmark that runs on both self-hosted and
+managed PostgreSQL. Some highlights:
 
-## Why we needed a PostgreSQL benchmark
+- **CPU and memory, not disk**: the \~300 MiB dataset fits in
+  `shared_buffers`, so storage does not show up in the score.
+- **One node is enough on IaaS**: the client used under 1% CPU and \~10 MB of
+  memory on an 8-vCPU run, so it shares the server with the database.
+- **Concurrency curve, not just a peak**: each run measures up to four client
+  counts, with p50, p95, and p99 latency for each.
 
-Our [Navigator](https://sparecores.com/servers) project publishes performance
-measurements for more than 5,000 cloud server types. Before this benchmark, we
-had useful proxies for database performance, but none that scaled well to modern
-cloud instances.
+If you're not interested in the design choices, feel free to skip ahead to
+[Running the Benchmark](/article/benchmark-pgbench-postgres#running-the-benchmark).
+
+## Why We Needed a PostgreSQL Benchmark
+
+Our [Navigator](/servers) project publishes performance measurements for
+5000+ cloud server types. Before this benchmark, we already had
+[50+ benchmark scores](/article/cloud-compute-performance-benchmarks) that
+served as proxies for database performance, but none of them scaled well to
+modern cloud instances.
 
 PassMark database operations do not scale to larger machines, Redis is not a
 relational database, and raw CPU or memory metrics are not the same thing as
 database throughput. We needed a benchmark that measures the server's actual
 PostgreSQL behavior rather than a partially related proxy.
 
-We built this benchmark to compare PostgreSQL performance across cloud servers
-without mixing in workload dimensions that would make the results harder to
-interpret.
+## Methodology
 
-Some highlights:
+`pgbench` is PostgreSQL's standard benchmarking tool. It lets us keep the
+benchmark focused on server behavior rather than on a specific application.
+The headline score is TPM (transactions per minute): the highest throughput
+the server reached across the measured client counts.
 
-- **Comparable measurements**: focus on PostgreSQL CPU and memory behavior
-  across self-managed and managed deployments.
-- **Two workloads**: a custom CPU-heavy read-only workload and a built-in
-  TPC-B-like reference workload.
-- **Concurrency profile**: TPM results include measurements at multiple client
-  counts, with latency samples.
+### IaaS and DBaaS
 
-## What the Benchmark Measures
+The same image runs against two kinds of deployments:
 
-The image runs `pgbench` against PostgreSQL and reports throughput and
-concurrency behavior across multiple client counts. The main score is TPM
-(transactions per minute), and this benchmark shows how throughput changes as
-concurrency rises and where the server stops scaling cleanly.
+- **IaaS** (Infrastructure as a Service): self-hosted PostgreSQL, with the
+  client and database on the same node.
+- **DBaaS** (Database as a Service): provider-managed PostgreSQL, with the
+  client on a separate VM connected over a private VPC network.
 
-The benchmark is designed to be deployment-agnostic. It supports both:
+But why not run the client on a separate machine for IaaS too, like most
+published database benchmarks do?
 
-- **IaaS (Infrastructure as a Service):** self-hosted PostgreSQL, with the
-  client and database on the same node
-- **DBaaS (Database as a Service):** provider-managed PostgreSQL, with the
-  client running separately while the database engine is managed by the provider
+Because we measured it: on an 8-vCPU run, the `pgbench` client used under 1%
+CPU and \~10 MB of memory. Paying for a second VM per benchmark run, across
+thousands of server types, would have been wasteful for such a small effect.
+For DBaaS there is no choice: the provider runs the database, so the client
+needs its own VM.
 
-This makes the benchmark useful for comparing self-managed and managed
-PostgreSQL on comparable hardware while keeping the methodology consistent.
+### Workloads
 
-## Why `pgbench` Is a Good Fit
+The benchmark ships two workloads:
 
-`pgbench` is a standard PostgreSQL benchmarking tool, and it is a good fit for
-our purpose because it lets us keep the benchmark focused on server behavior
-rather than on a specific application workload.
+- `pgbench_ro` (default): a custom read-only workload that keeps the server
+  busy with CPU-heavy PostgreSQL work instead of waiting on storage.
+- `pgbench_tpcb`: the built-in TPC-B-like workload (a simplified
+  bank-transaction benchmark), useful as a conventional OLTP (Online
+  Transaction Processing) comparison point.
 
-It can be used with two workloads:
-
-- `pgbench_ro` is the default workload for this benchmark. It is a custom
-  read-only workload designed to make the server spend meaningful time in
-  CPU-heavy PostgreSQL work rather than waiting on storage.
-- `pgbench_tpcb` is the built-in TPC-B-like reference workload, useful as a
-  conventional OLTP-style comparison point.
-
-The default workload is intentionally tuned to reduce the effect of network
-latency and storage performance. The goal is to measure PostgreSQL CPU and
-memory behavior, not block storage or network throughput.
-
-## The Default Workload: CPU-Heavy and Cache-Friendly
-
-The default `pgbench_ro` workload is not meant to model a real application
-exactly. Instead, it is built to be stable, comparable, and sensitive to server
-CPU and memory performance.
-
-It creates a fixed schema and runs a single SQL transaction with several blocks
-that exercise different PostgreSQL subsystems:
+The default `pgbench_ro` workload is not meant to model a real application.
+It creates a fixed schema of \~303 MiB, small enough to fit in
+`shared_buffers`, and runs a single SQL transaction with several blocks that
+exercise different PostgreSQL subsystems:
 
 - index scans and joins
 - aggregation and hashing
@@ -98,95 +91,111 @@ that exercise different PostgreSQL subsystems:
 - full-text search
 - arrays and GIN (Generalized Inverted Index) indexes
 - ordered-set aggregates
-- TOAST (The Oversized-Attribute Storage Technique) fetch/decompression
+- TOAST (The Oversized-Attribute Storage Technique) fetch and decompression
 - sequential scan work
 
-The transaction is intentionally synthetic and CPU-heavy. It spreads work across
-multiple PostgreSQL components so that no single path dominates the result. That
-makes it more useful for comparing different server types than a trivial one-row
-`SELECT` benchmark, which can be distorted by network latency or very small
-transactional costs.
+Spreading the work across these components means no single code path
+dominates the result. A trivial one-row `SELECT` benchmark, by contrast, is
+easily distorted by network latency and per-transaction overhead.
 
-The benchmark also varies the concurrency profile across a small number of
-client counts; the score is based on the highest TPM result in the measured
-profile. That gives us a simple headline number while still preserving the
-concurrency curve that matters for real server comparisons.
+### Concurrency Profile
+
+By default, `pgbench_ro` measures throughput at 1, V/2, V, and 2V clients,
+where V is the database server's vCPU count. The score is the highest TPM
+among these points, and the full curve is kept in the output, so you can see
+where a server stops scaling cleanly. If you're curious why that point varies
+so much between servers, our
+[multi-core scalability](/article/multi-core-scalability) article covers the
+usual suspects.
+
+Note that this is not a quick test: with warmups, a default run takes \~25
+minutes per server with 4 or more vCPUs, excluding data preparation. Across
+thousands of server types, that adds up.
 
 ## Running the Benchmark
 
-The image is published as:
+Pull the image:
 
-```bash
-ghcr.io/sparecores/benchmark-pgbench-postgres:main
-```
+<pre class="command-line" data-prompt="$"><code class="language-sh">
+docker pull ghcr.io/sparecores/benchmark-pgbench-postgres:main
+</code></pre>
 
-Run the image via Docker. In remote mode, set `SC_DB_HOST` and provide
-credentials. In standalone mode, the container starts a local PostgreSQL 18
-server.
-
-### Remote Mode
-
-```sh
-docker run --rm \
-  -e SC_DB_HOST=<postgres-host> \
-  -e SC_DB_PASSWORD=<password> \
-  -e SC_WORKLOAD=pgbench_ro \
-  ghcr.io/sparecores/benchmark-pgbench-postgres:main
-```
+The image runs in one of two modes, depending on whether `SC_DB_HOST` is set.
 
 ### Standalone Mode
 
-```sh
+With no `SC_DB_HOST`, the container starts its own PostgreSQL 18 server and
+benchmarks it:
+
+<pre class="command-line" data-prompt="$"><code class="language-sh">
 docker run --rm ghcr.io/sparecores/benchmark-pgbench-postgres:main
-```
+</code></pre>
 
-In standalone mode, the image starts PostgreSQL locally, applies local tuning,
-and runs the benchmark against that instance. In remote mode, the target
-database is left as-is; the image does not enforce or check the remote server
-version.
+The local server is tuned with a port of
+<a href="https://pgtune.leopard.in.ua/" target="_blank" rel="noopener">pgtune</a>
+based on the detected vCPU count and memory. The image also raises
+PostgreSQL's priority with `nice -n -20`, which only takes effect in a
+container allowed to change priorities (for example, a privileged one).
 
-## What the Results Look Like
+### Remote Mode
 
-The benchmark emits one JSON object to stdout. The most important fields are:
+Set `SC_DB_HOST` to benchmark an existing server, such as a DBaaS instance:
 
-- `score`: the headline result in TPM
-- `score_unit`: `tpm`
-- `peak_concurrency`: the client count at the peak result
-- `sizes[]`: per-workload-size measurements and their profiles
-- `profile[]`: one concurrency measurement at a time, including latency samples
-- `latency_ms`: sampled p50, p95, and p99 values in milliseconds
+<pre class="command-line" data-prompt="$" data-continuation-str="\"><code class="language-sh">
+docker run --rm \
+  -e SC_DB_HOST=&lt;postgres-host&gt; \
+  -e SC_DB_PASSWORD=&lt;password&gt; \
+  -e SC_DB_VCPUS=&lt;db-vcpus&gt; \
+  ghcr.io/sparecores/benchmark-pgbench-postgres:main
+</code></pre>
 
-This makes it easy to compare server types not only by headline throughput, but
-by how they handle increasing concurrency and whether throughput degrades in a
-meaningful way as load rises.
+Set `SC_DB_VCPUS` to the database server's vCPU count. It defaults to the
+CPU count of the machine running the container, so on a separate client VM
+the concurrency points would be sized for the wrong machine. The remote
+server is benchmarked as-is: the image does not retune it.
 
-## What This Benchmark Deliberately Excludes
+## Reading the Output
 
-This benchmark is designed to compare server CPU and memory performance, not
-every possible database dimension. We deliberately avoid some areas that would
-otherwise distract from the core comparison.
+The benchmark prints one JSON object to stdout:
 
-The main exclusions are:
+- At the top level, `score`, `score_unit` (`tpm`), and `peak_concurrency`
+  come from the best-performing workload size.
+- `sizes[]` holds one entry per workload size: the `cpu_scale` work multiplier
+  for `pgbench_ro`, or the scale factor for `pgbench_tpcb`.
+- Each size has a `profile[]` with one point per client count, including
+  `concurrency`, `tpm`, and `latency_ms` with p50, p95, and p99 values.
 
-- **Disk performance**: storage is separate from the server type in most clouds
-- **Network throughput and latency**: the benchmark is designed to be resilient
-  to RTT effects
-- **Application-specific workloads**: the benchmark is synthetic and not meant
-  to predict a specific production workload
-- **Engine tuning in DBaaS**: provider-managed services are part of the
-  benchmark environment, not something the harness attempts to control
+Comparing the `profile[]` curves tells you more than the headline score: two
+servers with the same peak can behave very differently once load goes past
+their vCPU count.
 
-This keeps the results comparable across a wide range of machines and server
-classes.
+## Caveats
+
+This benchmark compares server CPU and memory performance, not every possible
+database dimension. Note the following:
+
+- **Disk performance**: not measured, as storage is sold separately from the
+  server type in most clouds.
+- **Network throughput and latency**: not measured. The default workload is
+  heavy enough per transaction that RTT (round-trip time) has little effect.
+- **DBaaS engine tuning**: provider-managed settings are part of what is
+  measured, not something the benchmark controls.
+- **Remote server version**: not checked or recorded in remote mode.
+- **Application-specific workloads**: the workloads are synthetic, so results
+  help with server selection but do not replace testing your own application.
 
 ## Summary
 
-This benchmark provides a consistent way to compare PostgreSQL CPU and memory
-performance across cloud servers. Its synthetic workloads and controlled setup
-make the results useful for server selection, but they do not replace
-application-level testing.
+We now have a PostgreSQL benchmark that runs the same way on self-hosted and
+managed databases, and focuses on the CPU and memory work that differs most
+between server types. The concurrency profile shows not just how fast a
+server is, but how far it scales. And since [Navigator](/servers) also tracks
+server prices, you can weigh TPM against cost when picking a server.
 
 ## Further Reading
+
+To save you time, we've provided links to the relevant parts of the
+documentation:
 
 - <a
   href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/README.md"
@@ -203,5 +212,8 @@ application-level testing.
 
 ## Feedback
 
-If you have any questions or suggestions, please leave a message in the comment
-section below.
+If you have any questions, concerns, or suggestions, please leave a message in
+the comment section below, open a ticket in our
+<a href="https://github.com/SpareCores/sc-images" target="_blank" rel="noopener">GitHub repository</a>,
+or <a href="https://meet.sparecores.com/intro" target="_blank" rel="noopener">schedule a call with us</a>
+to discuss your needs.
