@@ -1,5 +1,6 @@
 import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
+import { TRANSIENT_HTTP_TOAST_ID } from "./http-error-toast";
 import { ToastService } from "./toast.service";
 
 describe("ToastService", () => {
@@ -88,15 +89,10 @@ describe("ToastService", () => {
     expect(document.querySelectorAll('[data-cy="toast"]').length).toBe(0);
   });
 
-  it("clearTransientHttpError dismisses the tracked transient toast", () => {
-    const remove = spyOn(service, "removeToast").and.callThrough();
-    expect(service.showTransientHttpError({ status: 500 })).toBe(true);
+  it("clearTransientHttpError dismisses the stable transient toast id", () => {
+    const remove = spyOn(service, "removeToast");
     service.clearTransientHttpError();
-    expect(remove).toHaveBeenCalledTimes(1);
-
-    remove.calls.reset();
-    service.clearTransientHttpError();
-    expect(remove).not.toHaveBeenCalled();
+    expect(remove).toHaveBeenCalledWith(TRANSIENT_HTTP_TOAST_ID);
   });
 
   it("showTransientHttpError replaces a previous transient toast", () => {

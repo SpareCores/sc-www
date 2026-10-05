@@ -1,5 +1,8 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { getTransientHttpToast } from "./http-error-toast";
+import {
+  getTransientHttpToast,
+  TRANSIENT_HTTP_TOAST_ID,
+} from "./http-error-toast";
 
 describe("getTransientHttpToast", () => {
   function error(status: number): HttpErrorResponse {
@@ -11,6 +14,7 @@ describe("getTransientHttpToast", () => {
       title: "Request timed out",
       body: "The service took too long to respond. Please try again.",
       type: "error",
+      id: TRANSIENT_HTTP_TOAST_ID,
     });
   });
 
@@ -19,6 +23,7 @@ describe("getTransientHttpToast", () => {
       title: "Too many requests",
       body: "Please wait a moment and try again.",
       type: "error",
+      id: TRANSIENT_HTTP_TOAST_ID,
     });
   });
 
@@ -27,6 +32,7 @@ describe("getTransientHttpToast", () => {
       title: "Service temporarily unavailable",
       body: "We couldn't load the latest data. Please try again later.",
       type: "error",
+      id: TRANSIENT_HTTP_TOAST_ID,
     });
   });
 
@@ -35,6 +41,7 @@ describe("getTransientHttpToast", () => {
       title: "Service temporarily unavailable",
       body: "We couldn't load the latest data. Please try again later.",
       type: "error",
+      id: TRANSIENT_HTTP_TOAST_ID,
     });
   });
 

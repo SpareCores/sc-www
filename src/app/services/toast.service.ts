@@ -1,7 +1,7 @@
 import { Injectable, inject, PLATFORM_ID } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { OnDestroy } from "@angular/core";
-import { getTransientHttpToast } from "./http-error-toast";
+import { getTransientHttpToast, TRANSIENT_HTTP_TOAST_ID } from "./http-error-toast";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
@@ -30,7 +30,6 @@ export class ToastService implements OnDestroy {
   private toasts = new Map<string, { element: HTMLElement; timeoutId?: any }>();
   private platformId = inject(PLATFORM_ID);
   private toastTimers: { [id: string]: any } = {};
-  private activeTransientToastId: string | null = null;
 
   constructor() {
     this.setupContainer();
@@ -50,21 +49,12 @@ export class ToastService implements OnDestroy {
     if (!toast) {
       return false;
     }
-
-    this.activeTransientToastId =
-      this.show({
-        ...toast,
-        id: this.activeTransientToastId ?? undefined,
-      }) ?? null;
+    this.show(toast);
     return true;
   }
 
   clearTransientHttpError(): void {
-    if (!this.activeTransientToastId) {
-      return;
-    }
-    this.removeToast(this.activeTransientToastId);
-    this.activeTransientToastId = null;
+    this.removeToast(TRANSIENT_HTTP_TOAST_ID);
   }
 
   show(options: ToastOptions) {

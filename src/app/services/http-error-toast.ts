@@ -1,5 +1,7 @@
 import { ToastOptions } from "./toast.service";
 
+export const TRANSIENT_HTTP_TOAST_ID = "keeper-api-transient-error";
+
 function getErrorStatus(error: unknown): number | undefined {
   if (
     error !== null &&
@@ -12,9 +14,7 @@ function getErrorStatus(error: unknown): number | undefined {
   return undefined;
 }
 
-export function getTransientHttpToast(
-  error: unknown,
-): Omit<ToastOptions, "id"> | null {
+export function getTransientHttpToast(error: unknown): ToastOptions | null {
   const status = getErrorStatus(error);
 
   if (status === 408) {
@@ -22,6 +22,7 @@ export function getTransientHttpToast(
       title: "Request timed out",
       body: "The service took too long to respond. Please try again.",
       type: "error",
+      id: TRANSIENT_HTTP_TOAST_ID,
     };
   }
 
@@ -30,6 +31,7 @@ export function getTransientHttpToast(
       title: "Too many requests",
       body: "Please wait a moment and try again.",
       type: "error",
+      id: TRANSIENT_HTTP_TOAST_ID,
     };
   }
 
@@ -38,6 +40,7 @@ export function getTransientHttpToast(
       title: "Service temporarily unavailable",
       body: "We couldn't load the latest data. Please try again later.",
       type: "error",
+      id: TRANSIENT_HTTP_TOAST_ID,
     };
   }
 
