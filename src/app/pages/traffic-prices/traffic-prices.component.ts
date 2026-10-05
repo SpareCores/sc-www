@@ -28,6 +28,7 @@ import { PaginationComponent } from "../../components/pagination/pagination.comp
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { availableCurrencies, CurrencyOption } from "../../tools/shared_data";
 import {
@@ -58,6 +59,7 @@ import {
 export class TrafficPricesComponent implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
@@ -239,13 +241,21 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   private _searchTrafficPrices() {
     this.isLoading = true;
 
-    this.keeperAPI.getTrafficPrices(this.query).then((results: any) => {
-      this.traffic_prices = results.body;
-      this.isLoading = false;
-      this.totalPages = Math.ceil(
-        parseInt(results?.headers?.get("x-total-count") || "0") / this.limit,
-      );
-    });
+    this.keeperAPI
+      .getTrafficPrices(this.query)
+      .then((results: any) => {
+        this.traffic_prices = results.body;
+        this.totalPages = Math.ceil(
+          parseInt(results?.headers?.get("x-total-count") || "0") / this.limit,
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        this.toastService.showTransientHttpError(err);
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
   }
 
   toggleOrdering(column: TableColumn) {

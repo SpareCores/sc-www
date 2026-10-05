@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { TrafficPricesComponent } from "./traffic-prices.component";
+import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("TrafficPricesComponent", () => {
@@ -43,5 +45,21 @@ describe("TrafficPricesComponent", () => {
     expect(component.orderBy).toBe(orderByBefore);
     expect(component.orderDir).toBe(orderDirBefore);
     expect(searchOptionsChangedSpy).not.toHaveBeenCalled();
+  });
+
+  it("shows transient toast when traffic prices search fails with 500", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const show = spyOn(toastService, "show");
+    spyOn(keeperAPI, "getTrafficPrices").and.rejectWith({ status: 500 });
+
+    (component as any)._searchTrafficPrices();
+    await fixture.whenStable();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Service temporarily unavailable",
+      }),
+    );
   });
 });

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { VendorsComponent } from "./vendors.component";
+import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("VendorsComponent", () => {
@@ -20,5 +22,23 @@ describe("VendorsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("shows transient toast when vendors load fails with 500", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const show = spyOn(toastService, "show");
+    spyOn(keeperAPI, "getVendors").and.rejectWith({ status: 500 });
+
+    fixture = TestBed.createComponent(VendorsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Service temporarily unavailable",
+      }),
+    );
   });
 });

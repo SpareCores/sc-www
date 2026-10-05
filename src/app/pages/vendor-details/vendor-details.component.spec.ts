@@ -4,12 +4,29 @@ import { of } from "rxjs";
 import { VendorDetailsComponent } from "./vendor-details.component";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 
 describe("VendorDetailsComponent", () => {
   let component: VendorDetailsComponent;
   let fixture: ComponentFixture<VendorDetailsComponent>;
+  const getVendors = jasmine.createSpy("getVendors");
 
   beforeEach(async () => {
+    getVendors.calls.reset();
+    getVendors.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          name: "Amazon Web Services",
+          logo: "/assets/images/vendors/aws.svg",
+          homepage: "https://aws.amazon.com/",
+          country_id: "US",
+          founding_year: 2006,
+          status: "active",
+        },
+      ],
+    });
+
     await TestBed.configureTestingModule({
       imports: [VendorDetailsComponent],
       providers: [
@@ -24,20 +41,7 @@ describe("VendorDetailsComponent", () => {
         {
           provide: KeeperAPIService,
           useValue: {
-            getVendors: () =>
-              Promise.resolve({
-                body: [
-                  {
-                    vendor_id: "aws",
-                    name: "Amazon Web Services",
-                    logo: "/assets/images/vendors/aws.svg",
-                    homepage: "https://aws.amazon.com/",
-                    country_id: "US",
-                    founding_year: 2006,
-                    status: "active",
-                  },
-                ],
-              }),
+            getVendors,
             getRegions: () =>
               Promise.resolve({
                 body: [
@@ -110,5 +114,22 @@ describe("VendorDetailsComponent", () => {
     expect(component.zoneCount).toBe(1);
     expect(component.serverCount).toBe(10);
     expect(component.databaseCount).toBe(4);
+  });
+
+  it("shows transient toast when vendor load fails with 500", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const show = spyOn(toastService, "show");
+    getVendors.and.rejectWith({ status: 500 });
+
+    fixture = TestBed.createComponent(VendorDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Service temporarily unavailable",
+      }),
+    );
   });
 });

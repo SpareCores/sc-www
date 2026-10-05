@@ -9,6 +9,7 @@ import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { DatabaseListing } from "./database-listing";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -207,5 +208,20 @@ describe("DatabaseListing", () => {
     expect(component.databases).toEqual([
       jasmine.objectContaining({ api_reference: "filtered" }),
     ]);
+  }));
+
+  it("shows transient toast when search fails with 500", fakeAsync(() => {
+    const toastService = TestBed.inject(ToastService);
+    const show = spyOn(toastService, "show");
+    spyOn(keeperAPI, "searchDatabases").and.rejectWith({ status: 500 });
+
+    (component as any)._searchDatabases(true);
+    tick();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Service temporarily unavailable",
+      }),
+    );
   }));
 });

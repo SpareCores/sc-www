@@ -39,6 +39,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { getTransientHttpToast } from "../../services/http-error-toast";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import {
@@ -345,6 +346,14 @@ describe("AdvisorComponent", () => {
           provide: ToastService,
           useValue: {
             show: showToast,
+            showTransientHttpError: (error: unknown) => {
+              const toast = getTransientHttpToast(error);
+              if (!toast) {
+                return false;
+              }
+              showToast(toast);
+              return true;
+            },
           },
         },
         {
@@ -2421,4 +2430,23 @@ describe("AdvisorComponent", () => {
     expect(component.manualOrderBy()).toBeUndefined();
     expect(component.manualOrderDir()).toBeUndefined();
   });
+
+  it("shows transient toast when recommendation search fails with 500", fakeAsync(() => {
+    searchServers.and.rejectWith({ status: 500 });
+
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+    component.averageCpuUtilization.set(50);
+
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(showToast).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Service temporarily unavailable",
+      }),
+    );
+  }));
 });

@@ -5,6 +5,7 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import {
   OrderDir,
   TableRegionTableRegionGetData,
@@ -28,6 +29,7 @@ export class VendorsComponent implements OnInit {
   private SEOHandler = inject(SeoHandlerService);
   private API = inject(KeeperAPIService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   breadcrumbs: BreadcrumbSegment[] = [
     {
@@ -53,22 +55,31 @@ export class VendorsComponent implements OnInit {
       "AWS, Google Cloud, Hetzner",
     );
 
-    this.API.getVendors().then((vendors) => {
-      this.vendors = vendors.body;
-      for (let i = 0; i < this.vendors.length; i++) {
-        this.vendors[i].regions = 0;
-      }
-      this.API.getRegions().then((regions) => {
+    this.API.getVendors()
+      .then((vendors) => {
+        this.vendors = vendors.body;
+        for (let i = 0; i < this.vendors.length; i++) {
+          this.vendors[i].regions = 0;
+        }
+        return this.API.getRegions();
+      })
+      .then((regions) => {
+        if (!regions) {
+          return;
+        }
+
         this.regions = regions.body;
-        // count regions per vendor
         for (let i = 0; i < this.regions.length; i++) {
           const vendor = this.vendors.find(
             (v: any) => v.vendor_id === this.regions[i].vendor_id,
           );
           vendor.regions++;
         }
+      })
+      .catch((err) => {
+        console.error(err);
+        this.toastService.showTransientHttpError(err);
       });
-    });
   }
 
   getVendorName(vendorId: string): string {

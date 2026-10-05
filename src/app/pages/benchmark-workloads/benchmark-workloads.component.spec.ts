@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkWorkloadsComponent } from "./benchmark-workloads.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import { Status } from "../../../../sdk/data-contracts";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -115,5 +116,21 @@ describe("BenchmarkWorkloadsComponent", () => {
 
     expect(mobileComponent.isMobileViewport()).toBeTrue();
     expect(mobileComponent.isCollapsed()).toBeTrue();
+  });
+
+  it("shows transient toast when workloads load fails with 500", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const show = spyOn(toastService, "show");
+    keeperApiService.getBenchmarkWorkloads.and.rejectWith({ status: 500 });
+
+    const failFixture = TestBed.createComponent(BenchmarkWorkloadsComponent);
+    failFixture.detectChanges();
+    await failFixture.whenStable();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Service temporarily unavailable",
+      }),
+    );
   });
 });

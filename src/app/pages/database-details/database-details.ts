@@ -387,12 +387,14 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         console.error(err);
         this.keeperResponseErrorMsg =
           err.error?.detail || "Failed to load database details.";
-        this.toastService.show({
-          title: "Failed to load database",
-          body: this.keeperResponseErrorMsg,
-          type: "error",
-          id: "database-details-error",
-        });
+        if (!this.toastService.showTransientHttpError(err)) {
+          this.toastService.show({
+            title: "Failed to load database",
+            body: this.keeperResponseErrorMsg,
+            type: "error",
+            id: "database-details-error",
+          });
+        }
       })
       .finally(() => {
         this.isLoading = false;

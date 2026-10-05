@@ -26,6 +26,7 @@ import { PageHeader } from "../../components/page-header/page-header";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ToastService } from "../../services/toast.service";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import {
   ServerDebugInfo,
@@ -97,6 +98,7 @@ export class BenchmarkCoverageComponent implements OnInit {
     "The table below provides detailed status and benchmark coverage for all discovered cloud servers, including pricing availability, hardware inspection results, and high-level benchmark workload status. You can filter the dataset by vendor, status, and specific benchmark families, along with free-text search. By default, the table is filtered for active instances with pricing information. When a specific benchmark is missing, you can click on the x icon to view the raw logs and metadata collected while we tried to run the benchmark. Note that the target page might return a 404 error if we were unable to start the server at all.";
 
   private keeperApi = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
   private seoHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
 
@@ -498,8 +500,9 @@ export class BenchmarkCoverageComponent implements OnInit {
       );
       this.vendors.set(vendorsResponse.body as Vendor[]);
       this.initializeSearchBar();
-    } catch {
+    } catch (err) {
       this.errorMessage.set("Failed to load benchmark data. Please try again.");
+      this.toastService.showTransientHttpError(err);
     } finally {
       this.isLoading.set(false);
     }

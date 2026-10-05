@@ -200,4 +200,32 @@ describe("DatabaseCompareComponent", () => {
       ),
     ).toBeTrue();
   });
+
+  it("shows transient toast when compare load fails with 500", async () => {
+    const instances = btoa(
+      JSON.stringify([
+        { display_name: "db-a", vendor: "aws", database: "db-a" },
+      ]),
+    );
+    getDatabase.and.rejectWith({ status: 500 });
+    const show = spyOn(toastService, "show");
+
+    const route = TestBed.inject(ActivatedRoute) as any;
+    route.snapshot.queryParams = { instances };
+    route.snapshot.paramMap = convertToParamMap({});
+    route.queryParams = of({ instances });
+    route.queryParamMap = of(convertToParamMap({ instances }));
+    route.paramMap = of(convertToParamMap({}));
+
+    fixture = TestBed.createComponent(DatabaseCompareComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Service temporarily unavailable",
+      }),
+    );
+  });
 });

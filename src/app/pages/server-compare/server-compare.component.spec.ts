@@ -14,6 +14,7 @@ import {
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { getTransientHttpToast } from "../../services/http-error-toast";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("ServerCompareComponent", () => {
@@ -119,6 +120,14 @@ describe("ServerCompareComponent", () => {
           useValue: {
             show: showToast,
             removeToast,
+            showTransientHttpError: (error: unknown) => {
+              const toast = getTransientHttpToast(error);
+              if (!toast) {
+                return false;
+              }
+              showToast(toast);
+              return true;
+            },
           },
         },
         {

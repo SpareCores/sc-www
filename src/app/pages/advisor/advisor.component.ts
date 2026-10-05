@@ -2233,6 +2233,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       .catch((error) => {
         console.error("Failed to preload advisor baseline servers", error);
         this.serverTableRows.set([]);
+        this.toastService.showTransientHttpError(error);
       })
       .finally(() => {
         this.isLoadingBaselineServers.set(false);
@@ -2310,6 +2311,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       .catch((error) => {
         console.error("Failed to preload advisor benchmark configs", error);
         this.benchmarkConfigOptions.set([]);
+        this.toastService.showTransientHttpError(error);
       })
       .finally(() => {
         this.isLoadingBenchmarkConfigs.set(false);
@@ -2349,6 +2351,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       console.error("Failed to load advisor baseline benchmark scores", error);
       this.baselineBenchmarkScores.set([]);
+      this.toastService.showTransientHttpError(error);
     } finally {
       if (requestVersion === this.baselineBenchmarkRequestVersion) {
         this.isLoadingBaselineBenchmarkScores.set(false);
@@ -2365,6 +2368,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       .catch((error) => {
         console.error("Failed to preload advisor region metadata", error);
         this.regionMetadata.set([]);
+        this.toastService.showTransientHttpError(error);
       });
   }
 
@@ -2669,6 +2673,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       console.error("Failed to load advisor recommendations", error);
       this.resetRecommendationState();
+      this.toastService.showTransientHttpError(error);
     } finally {
       if (
         requestVersion === this.recommendationRequestVersion &&

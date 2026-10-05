@@ -532,6 +532,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private _searchDatabases(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
+    this.toastService.clearTransientHttpError();
 
     const query = structuredClone(
       this.query,
@@ -595,8 +596,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
               this.limit,
           );
         }
-
-        this.toastService.removeToast("query-error");
       })
       .catch((err) => {
         if (requestId !== this.searchRequestId) {
@@ -610,12 +609,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
           },
         });
         console.error(err);
-        this.toastService.show({
-          title: "Query error!",
-          body: err.error?.detail || "Please try again later.",
-          type: "error",
-          id: "query-error",
-        });
+        this.toastService.showTransientHttpError(err);
       })
       .finally(() => {
         if (requestId === this.searchRequestId) {

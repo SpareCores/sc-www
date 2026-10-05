@@ -29,6 +29,7 @@ import {
 } from "@lucide/angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import {
   Benchmark,
   BenchmarkScoreStatsItem,
@@ -85,6 +86,7 @@ export class BenchmarkWorkloadsComponent implements OnInit {
 
   private document = inject(DOCUMENT);
   private keeperAPI = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
   private seoHandler = inject(SeoHandlerService);
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
@@ -114,24 +116,29 @@ export class BenchmarkWorkloadsComponent implements OnInit {
 
   readonly benchmarksResource = resource({
     loader: async () => {
-      const workloadsResponse = await this.keeperAPI.getBenchmarkWorkloads();
-      const benchmarkMetaResponse = await this.keeperAPI
-        .getServerBenchmarkMeta()
-        .catch(() => null);
-      const rawData: BenchmarkScoreStatsItem[] = workloadsResponse.body ?? [];
-      const noteByBenchmarkId = this.buildBenchmarkNoteMap(
-        benchmarkMetaResponse?.body ?? [],
-      );
-      const data = rawData.map((workload) =>
-        this.normalizeWorkload(workload, noteByBenchmarkId),
-      );
-      const grouped = this.groupByFramework(data);
+      try {
+        const workloadsResponse = await this.keeperAPI.getBenchmarkWorkloads();
+        const benchmarkMetaResponse = await this.keeperAPI
+          .getServerBenchmarkMeta()
+          .catch(() => null);
+        const rawData: BenchmarkScoreStatsItem[] = workloadsResponse.body ?? [];
+        const noteByBenchmarkId = this.buildBenchmarkNoteMap(
+          benchmarkMetaResponse?.body ?? [],
+        );
+        const data = rawData.map((workload) =>
+          this.normalizeWorkload(workload, noteByBenchmarkId),
+        );
+        const grouped = this.groupByFramework(data);
 
-      if (data.length > 0 && !this.activeBenchmarkId()) {
-        this.activeBenchmarkId.set(data[0].benchmark_id);
+        if (data.length > 0 && !this.activeBenchmarkId()) {
+          this.activeBenchmarkId.set(data[0].benchmark_id);
+        }
+
+        return grouped;
+      } catch (err) {
+        this.toastService.showTransientHttpError(err);
+        throw err;
       }
-
-      return grouped;
     },
   });
 

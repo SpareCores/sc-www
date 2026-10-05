@@ -33,6 +33,7 @@ import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ToastService } from "../../services/toast.service";
 
 declare let Datamap: any;
 
@@ -83,6 +84,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   private keeperAPI = inject(KeeperAPIService);
   private SEOHandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
+  private toastService = inject(ToastService);
   private renderer = inject(Renderer2);
   private countryNamePipe = new CountryIdtoNamePipe();
 
@@ -229,6 +231,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
           this.keeperResponseErrorMsg =
             "Failed to load vendor data. Please try again later.";
         }
+        this.toastService.showTransientHttpError(error);
       })
       .finally(() => {
         this.isLoading = false;

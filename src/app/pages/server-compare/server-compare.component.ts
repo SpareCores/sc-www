@@ -824,6 +824,7 @@ export class ServerCompareComponent
             tags: { location: this.constructor.name, function: "compareInit" },
           });
           console.error(err);
+          this.toastService.showTransientHttpError(err);
         })
         .finally(() => {
           if (loadId !== this.compareLoadId) {

@@ -847,6 +847,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private _searchServers(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
+    this.toastService.clearTransientHttpError();
 
     let query = JSON.parse(JSON.stringify(this.query));
 
@@ -919,8 +920,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               this.limit,
           );
         }
-
-        this.toastService.removeToast("query-error");
       })
       .catch((err) => {
         if (requestId !== this.searchRequestId) {
@@ -931,12 +930,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           tags: { location: this.constructor.name, function: "_searchServers" },
         });
         console.error(err);
-        this.toastService.show({
-          title: "Query error!",
-          body: err.error?.detail || "Please try again later.",
-          type: "error",
-          id: "query-error",
-        });
+        this.toastService.showTransientHttpError(err);
       })
       .finally(() => {
         if (requestId === this.searchRequestId) {

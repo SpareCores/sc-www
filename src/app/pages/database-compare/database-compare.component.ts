@@ -798,6 +798,10 @@ export class DatabaseCompareComponent
         this.refreshLineCompareServers();
       })
       .catch((err) => {
+        if (loadId !== this.compareLoadId) {
+          return;
+        }
+
         this.analytics.SentryException(err, {
           tags: {
             location: this.constructor.name,
@@ -805,12 +809,14 @@ export class DatabaseCompareComponent
           },
         });
         console.error(err);
-        this.toastService.show({
-          title: "Failed to load database compare",
-          body: err.error?.detail || "Please try again later.",
-          type: "error",
-          id: "database-compare-error",
-        });
+        if (!this.toastService.showTransientHttpError(err)) {
+          this.toastService.show({
+            title: "Failed to load database compare",
+            body: err.error?.detail || "Please try again later.",
+            type: "error",
+            id: "database-compare-error",
+          });
+        }
       })
       .finally(() => {
         if (loadId !== this.compareLoadId) {

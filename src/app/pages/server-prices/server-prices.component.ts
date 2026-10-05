@@ -496,6 +496,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
           tags: { location: this.constructor.name, function: "_searchServers" },
         });
         console.error(err);
+        this.toastService.showTransientHttpError(err);
       })
       .finally(() => {
         if (requestId === this.searchRequestId) {
