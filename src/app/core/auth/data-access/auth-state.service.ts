@@ -987,7 +987,9 @@ export class AuthStateService {
     const sessionId = client?.lastActiveSessionId;
     if (
       !sessionId ||
-      !client.sessions?.some((session) => session.id === sessionId)
+      !client.sessions?.some(
+        (session) => session.id === sessionId && session.status === "active",
+      )
     ) {
       return;
     }
