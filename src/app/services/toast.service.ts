@@ -1,7 +1,10 @@
 import { Injectable, inject, PLATFORM_ID } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { OnDestroy } from "@angular/core";
-import { getTransientHttpToast, TRANSIENT_HTTP_TOAST_ID } from "./http-error-toast";
+import {
+  getTransientHttpToast,
+  TRANSIENT_HTTP_TOAST_ID,
+} from "./http-error-toast";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
