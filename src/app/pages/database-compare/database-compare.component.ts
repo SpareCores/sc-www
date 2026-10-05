@@ -759,12 +759,15 @@ export class DatabaseCompareComponent
           loaded.bestMonthPrice = monthPrices[0];
 
           this.databases.push(loaded);
-          this.serverCompare.toggleDatabaseCompare(true, {
+        }
+
+        this.serverCompare.replaceDatabaseCompareSelection(
+          this.databases.map((database) => ({
             vendor: database.vendor_id,
             database: database.api_reference,
             display_name: database.display_name,
-          });
-        }
+          })),
+        );
 
         await Promise.all(
           this.databases.map(async (database) => {
