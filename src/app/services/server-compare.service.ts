@@ -362,6 +362,25 @@ export class ServerCompareService implements OnDestroy {
     this.databaseSelectionChanged.next(this.selectedDatabases);
   }
 
+  replaceServerCompareSelection(items: ServerCompare[]): void {
+    this.selectedForCompare = items.map((item) => ({
+      display_name: item.display_name,
+      vendor: item.vendor,
+      server: item.server,
+      zonesRegions: item.zonesRegions.map((zone) => ({ ...zone })),
+    }));
+    this.selectionChanged.next(this.selectedForCompare);
+  }
+
+  replaceDatabaseCompareSelection(items: DatabaseCompare[]): void {
+    this.selectedDatabases = items.map((item) => ({
+      display_name: item.display_name,
+      vendor: item.vendor,
+      database: item.database,
+    }));
+    this.databaseSelectionChanged.next(this.selectedDatabases);
+  }
+
   reorderSelectedForCompare(previousIndex: number, currentIndex: number) {
     this.reorderSelection(
       this.selectedForCompare,

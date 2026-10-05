@@ -764,6 +764,8 @@ export class AuthStateService {
       kind === "registration" ? "auth register" : "auth login",
       {},
     );
+    this.toastService.removeToast("guest-server-compare-limit");
+    this.toastService.removeToast("guest-database-compare-limit");
     const returnUrl = this.isAuthCallbackRoute()
       ? this.flow.consumeReturnUrl()
       : null;
