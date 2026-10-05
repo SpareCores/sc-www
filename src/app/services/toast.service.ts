@@ -1,6 +1,7 @@
 import { Injectable, inject, PLATFORM_ID } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { OnDestroy } from "@angular/core";
+import { getTransientHttpToast } from "./http-error-toast";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
@@ -29,6 +30,7 @@ export class ToastService implements OnDestroy {
   private toasts = new Map<string, { element: HTMLElement; timeoutId?: any }>();
   private platformId = inject(PLATFORM_ID);
   private toastTimers: { [id: string]: any } = {};
+  private activeTransientToastId: string | null = null;
 
   constructor() {
     this.setupContainer();
@@ -43,6 +45,28 @@ export class ToastService implements OnDestroy {
     }
   }
 
+  showTransientHttpError(error: unknown): boolean {
+    const toast = getTransientHttpToast(error);
+    if (!toast) {
+      return false;
+    }
+
+    this.activeTransientToastId =
+      this.show({
+        ...toast,
+        id: this.activeTransientToastId ?? undefined,
+      }) ?? null;
+    return true;
+  }
+
+  clearTransientHttpError(): void {
+    if (!this.activeTransientToastId) {
+      return;
+    }
+    this.removeToast(this.activeTransientToastId);
+    this.activeTransientToastId = null;
+  }
+
   show(options: ToastOptions) {
     if (!isPlatformBrowser(this.platformId) || !this.toastContainer) return;
 
@@ -55,10 +79,13 @@ export class ToastService implements OnDestroy {
     toast.className =
       "rounded-lg p-2 transform transition-all duration-300 ease-in-out translate-x-0";
 
+    toast.setAttribute("data-cy", "toast");
+    toast.setAttribute("data-toast-type", type);
+
     toast.innerHTML = `
       <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${this.getColorClasses(type).background} ${this.getColorClasses(type).text}" role="alert">
         <div class="flex items-center w-full">
-          <div class="ml-3 text-sm font-semibold">${title}</div>
+          <div class="ml-3 text-sm font-semibold" data-cy="toast-title">${title}</div>
           ${
             !duration
               ? `
@@ -70,7 +97,7 @@ export class ToastService implements OnDestroy {
               : ""
           }
         </div>
-        ${body ? `<div class="ml-3 text-sm font-normal mt-1">${body}</div>` : ""}
+        ${body ? `<div class="ml-3 text-sm font-normal mt-1" data-cy="toast-body">${body}</div>` : ""}
         ${
           action
             ? `<button type="button" data-toast-action class="ml-3 mt-1 text-sm font-semibold underline underline-offset-2 cursor-pointer text-left">${action.label}</button>`
