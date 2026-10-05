@@ -45,12 +45,12 @@ export namespace StoragePrices {
        */
       green_energy?: boolean | null;
       /**
-       * Required local storage size
+       * Required bundled storage size
        * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_min?: number | null;
       /**
-       * Local storage type
+       * Bundled storage type
        * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
       storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";

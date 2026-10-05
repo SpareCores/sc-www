@@ -668,6 +668,7 @@ export enum GpuModels {
   A40 = "A40",
   B200 = "B200",
   B300 = "B300",
+  G59 = "G59",
   GB200 = "GB200",
   GB300 = "GB300",
   H100 = "H100",
@@ -797,6 +798,7 @@ export enum CpuManufacturers {
   Alibaba = "Alibaba",
   Ampere = "Ampere",
   Apple = "Apple",
+  Hygon = "Hygon",
   Intel = "Intel",
   Microsoft = "Microsoft",
 }
@@ -7994,6 +7996,7 @@ export interface SearchServersServersGetParams {
     | "Alibaba"
     | "Ampere"
     | "Apple"
+    | "Hygon"
     | "Intel"
     | "Microsoft";
   /** Processor family */
@@ -8120,7 +8123,7 @@ export interface SearchServersServersGetParams {
   hw_virt?: boolean | null;
   /**
    * Hyperthreading
-   * Whether CPU hyperthreading is enabled or not. Calculated based on the "ht" CPU flag, with a fallback to comparing the number of vCPUs with physical CPU cores.
+   * Whether CPU hyperthreading is enabled or not. Determined by comparing the number of vCPUs with physical CPU cores.
    */
   cpu_hyperthreading?: boolean | null;
   /**
@@ -9091,15 +9094,20 @@ export interface SearchServersServersGetParams {
     | "US"
     | "ZA";
   /**
-   * Required local storage size
+   * Required bundled storage size
    * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
    */
   storage_size?: number | null;
   /**
-   * Local storage type
+   * Bundled storage type
    * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
    */
   storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  /**
+   * Required bundled storage count
+   * Required number of bundled storage devices.
+   */
+  storage_count_min?: number | null;
   /**
    * Required baseline network storage speed
    * Required baseline network storage speed in Gbps.
@@ -9207,6 +9215,7 @@ export interface SearchServersServersGetParams {
     | "A40"
     | "B200"
     | "B300"
+    | "G59"
     | "GB200"
     | "GB300"
     | "H100"
@@ -10195,6 +10204,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Alibaba"
     | "Ampere"
     | "Apple"
+    | "Hygon"
     | "Intel"
     | "Microsoft";
   /** Processor family */
@@ -10793,12 +10803,12 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
-   * Required local storage size
+   * Required bundled storage size
    * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
    */
   storage_size?: number | null;
   /**
-   * Local storage type
+   * Bundled storage type
    * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
    */
   storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
@@ -10884,6 +10894,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A40"
     | "B200"
     | "B300"
+    | "G59"
     | "GB200"
     | "GB300"
     | "H100"
@@ -10970,12 +10981,12 @@ export interface SearchStoragePricesStoragePricesGetParams {
    */
   green_energy?: boolean | null;
   /**
-   * Required local storage size
+   * Required bundled storage size
    * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
    */
   storage_min?: number | null;
   /**
-   * Local storage type
+   * Bundled storage type
    * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
    */
   storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
@@ -11609,7 +11620,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
    */
   green_energy?: boolean | null;
   /**
-   * Required local storage size
+   * Required bundled storage size
    * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
    */
   storage_min?: number | null;
