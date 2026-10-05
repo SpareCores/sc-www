@@ -12,7 +12,6 @@ export const PROFILE_RETURN_PARAM = "profile";
 export const PROFILE_RETURN_VALUE = "connected";
 export const PROFILE_AVATAR_MAX_BYTES = 10 * 1024 * 1024;
 export const PROFILE_DELETE_CONFIRMATION = "Delete account";
-export const AUTH_REVALIDATION_COALESCE_MS = 400;
 
 export const AUTH_MESSAGES = {
   defaultSignUpSubtitle: "Welcome! Please fill in the details to get started.",
