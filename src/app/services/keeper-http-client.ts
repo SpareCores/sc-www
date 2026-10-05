@@ -184,6 +184,13 @@ export class KeeperHttpClient extends HttpClientSDK {
       }
 
       const remainingBudgetMs = maxWaitMs - accumulatedWaitMs;
+      if (remainingBudgetMs <= 0) {
+        console.log("API exception");
+        console.log(err.message);
+        console.log(err.status);
+        throw err;
+      }
+
       const delay = getRetryDelay({
         status,
         retryAfterHeader: err?.headers?.get?.("Retry-After"),
