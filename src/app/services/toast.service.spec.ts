@@ -19,10 +19,7 @@ describe("ToastService", () => {
   beforeEach(() => {
     clearToasts();
     TestBed.configureTestingModule({
-      providers: [
-        ToastService,
-        { provide: PLATFORM_ID, useValue: "browser" },
-      ],
+      providers: [ToastService, { provide: PLATFORM_ID, useValue: "browser" }],
     });
     service = TestBed.inject(ToastService);
   });

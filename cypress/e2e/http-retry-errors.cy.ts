@@ -103,9 +103,7 @@ describe("HTTP retry errors", () => {
 
     cy.wait("@serversSearch429", { timeout: API_WAIT_MS });
     cy.wait("@serversSearch429", { timeout: API_WAIT_MS });
-    cy.get("@serversSearch429.1")
-      .its("response.statusCode")
-      .should("eq", 429);
+    cy.get("@serversSearch429.1").its("response.statusCode").should("eq", 429);
     cy.get("@serversSearch429.all").should("have.length.at.least", 2);
     cy.get("#servers_table").should("exist");
   });

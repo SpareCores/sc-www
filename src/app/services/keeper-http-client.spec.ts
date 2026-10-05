@@ -1,8 +1,4 @@
-import {
-  HttpClient,
-  provideHttpClient,
-  withFetch,
-} from "@angular/common/http";
+import { HttpClient, provideHttpClient, withFetch } from "@angular/common/http";
 import {
   HttpTestingController,
   provideHttpClientTesting,
@@ -64,9 +60,7 @@ describe("KeeperHttpClient", () => {
 
     it("parses HTTP-date relative to now", () => {
       const now = Date.parse("Wed, 21 Oct 2026 07:28:00 GMT");
-      expect(
-        parseRetryAfter("Wed, 21 Oct 2026 07:28:05 GMT", now),
-      ).toBe(5000);
+      expect(parseRetryAfter("Wed, 21 Oct 2026 07:28:05 GMT", now)).toBe(5000);
     });
 
     it("returns null for invalid values", () => {
@@ -76,9 +70,7 @@ describe("KeeperHttpClient", () => {
 
     it("clamps negative delta to 0", () => {
       const now = Date.parse("Wed, 21 Oct 2026 07:28:05 GMT");
-      expect(
-        parseRetryAfter("Wed, 21 Oct 2026 07:28:00 GMT", now),
-      ).toBe(0);
+      expect(parseRetryAfter("Wed, 21 Oct 2026 07:28:00 GMT", now)).toBe(0);
     });
   });
 
@@ -116,9 +108,7 @@ describe("KeeperHttpClient", () => {
     it("retries status 0 using the normal first interval", fakeAsync(() => {
       let resolved: unknown;
 
-      client
-        .request({ method: "GET", path })
-        .then((res) => (resolved = res));
+      client.request({ method: "GET", path }).then((res) => (resolved = res));
 
       flushMicrotasks();
       httpMock.expectOne(requestUrl()).error(new ProgressEvent("error"));
@@ -137,9 +127,7 @@ describe("KeeperHttpClient", () => {
     it("retries 429 without Retry-After using the first interval", fakeAsync(() => {
       let resolved: unknown;
 
-      client
-        .request({ method: "GET", path })
-        .then((res) => (resolved = res));
+      client.request({ method: "GET", path }).then((res) => (resolved = res));
 
       flushMicrotasks();
       httpMock.expectOne(requestUrl()).flush(null, {
@@ -161,9 +149,7 @@ describe("KeeperHttpClient", () => {
     it("honors Retry-After: 1 at the 999/1000ms boundary", fakeAsync(() => {
       let resolved: unknown;
 
-      client
-        .request({ method: "GET", path })
-        .then((res) => (resolved = res));
+      client.request({ method: "GET", path }).then((res) => (resolved = res));
 
       flushMicrotasks();
       httpMock.expectOne(requestUrl()).flush(null, {
@@ -186,9 +172,7 @@ describe("KeeperHttpClient", () => {
     it("falls back to the interval for invalid Retry-After", fakeAsync(() => {
       let resolved: unknown;
 
-      client
-        .request({ method: "GET", path })
-        .then((res) => (resolved = res));
+      client.request({ method: "GET", path }).then((res) => (resolved = res));
 
       flushMicrotasks();
       httpMock.expectOne(requestUrl()).flush(null, {
@@ -313,7 +297,11 @@ describe("KeeperHttpClient", () => {
       client.request({ method: "GET", path }).catch((err) => (rejected = err));
 
       flushMicrotasks();
-      for (let attempt = 0; attempt < RETRY_INTERVALS_SSR.length + 1; attempt++) {
+      for (
+        let attempt = 0;
+        attempt < RETRY_INTERVALS_SSR.length + 1;
+        attempt++
+      ) {
         httpMock.expectOne(requestUrl()).flush(null, {
           status: 500,
           statusText: "Error",
