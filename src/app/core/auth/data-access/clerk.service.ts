@@ -7,6 +7,7 @@ import type {
   SignUpResource,
   UserResource,
 } from "@clerk/shared/types";
+import { AnalyticsService } from "../../../services/analytics.service";
 import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
 import { authUrls } from "../auth.utils";
 
@@ -14,6 +15,7 @@ import { authUrls } from "../auth.utils";
 export class ClerkService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
+  private readonly analytics = inject(AnalyticsService);
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
 
@@ -122,6 +124,9 @@ export class ClerkService {
       return true;
     } catch (error) {
       console.error("Failed to synchronize Clerk client state:", error);
+      this.analytics.SentryException(error, {
+        tags: { feature: "clerk-sync" },
+      });
       return false;
     }
   }
