@@ -52,10 +52,20 @@ a:hover {
   }
 }
 
-.items_table tbody tr:nth-child(odd) .speaker-avatars .speaker-avatar + .speaker-avatar {
+.items_table
+  tbody
+  tr:nth-child(odd)
+  .speaker-avatars
+  .speaker-avatar
+  + .speaker-avatar {
   box-shadow: 0 0 0 2px #082f49;
 }
 
-.items_table tbody tr:nth-child(even) .speaker-avatars .speaker-avatar + .speaker-avatar {
+.items_table
+  tbody
+  tr:nth-child(even)
+  .speaker-avatars
+  .speaker-avatar
+  + .speaker-avatar {
   box-shadow: 0 0 0 2px #06263a;
 }
