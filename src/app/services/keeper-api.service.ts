@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { AuthStateService } from "../core/auth";
-import { MYHTTPClient } from "./my_http/my-http";
+import { KeeperHttpClient } from "./keeper-http-client";
 import { Server } from "../../../sdk/Server";
 import { Servers } from "../../../sdk/Servers";
 import {
@@ -50,27 +50,33 @@ type ServerSelectColumns = ServerSelectColumn[];
 })
 export class KeeperAPIService {
   private platformId = inject(PLATFORM_ID);
-  private httpClient = inject(HttpClient);
+  private angularHttp = inject(HttpClient);
   private auth = inject(AuthStateService);
 
-  public myHttp = new MYHTTPClient(this.httpClient, this.platformId, this.auth);
+  public httpClient = new KeeperHttpClient(
+    this.angularHttp,
+    this.platformId,
+    this.auth,
+  );
 
-  public SearchController: Servers = new Servers(this.myHttp);
-  public ServerController: Server = new Server(this.myHttp);
-  public ServerPricesController: ServerPrices = new ServerPrices(this.myHttp);
-  public DatabasesController: Databases = new Databases(this.myHttp);
-  public DatabaseController: Database = new Database(this.myHttp);
-  public TableController: Table = new Table(this.myHttp);
-  public AIController: Ai = new Ai(this.myHttp);
-  public StorageController: StoragePrices = new StoragePrices(this.myHttp);
-  public TrafficController: TrafficPrices = new TrafficPrices(this.myHttp);
+  public SearchController: Servers = new Servers(this.httpClient);
+  public ServerController: Server = new Server(this.httpClient);
+  public ServerPricesController: ServerPrices = new ServerPrices(
+    this.httpClient,
+  );
+  public DatabasesController: Databases = new Databases(this.httpClient);
+  public DatabaseController: Database = new Database(this.httpClient);
+  public TableController: Table = new Table(this.httpClient);
+  public AIController: Ai = new Ai(this.httpClient);
+  public StorageController: StoragePrices = new StoragePrices(this.httpClient);
+  public TrafficController: TrafficPrices = new TrafficPrices(this.httpClient);
   public BenchmarksController: BenchmarkConfigs = new BenchmarkConfigs(
-    this.myHttp,
+    this.httpClient,
   );
   public BenchmarkScoreStatsController: BenchmarkScoreStats =
-    new BenchmarkScoreStats(this.myHttp);
-  public V2Controller: V2 = new V2(this.myHttp);
-  public debugController: Debug = new Debug(this.myHttp);
+    new BenchmarkScoreStats(this.httpClient);
+  public V2Controller: V2 = new V2(this.httpClient);
+  public debugController: Debug = new Debug(this.httpClient);
 
   public getServerV2(vendor: string, id: string): Promise<any> {
     return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet({
