@@ -1,6 +1,8 @@
 import {
   Component,
+  DestroyRef,
   OnInit,
+  PLATFORM_ID,
   computed,
   inject,
   signal,
@@ -27,13 +29,14 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
+import { BENCHMARK_COVERAGE_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import {
   ServerDebugInfo,
   Vendor,
   VendorDebugInfo,
 } from "../../../../sdk/data-contracts";
-import { PercentPipe } from "@angular/common";
+import { PercentPipe, isPlatformBrowser } from "@angular/common";
 import { PageLimitPipe } from "../../pipes/page-limit.pipe";
 import {
   BenchmarkFamilyFilterValue,
@@ -77,6 +80,10 @@ import {
 })
 export class BenchmarkCoverageComponent implements OnInit {
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
+    });
+
     effect(() => {
       const params = this.filterParams();
       const currentParams = this.route.snapshot.queryParams;
@@ -101,6 +108,9 @@ export class BenchmarkCoverageComponent implements OnInit {
   private toastService = inject(ToastService);
   private seoHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+  private platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   isCollapsed = false;
 
@@ -360,7 +370,9 @@ export class BenchmarkCoverageComponent implements OnInit {
       "https://sparecores.com/assets/images/og/debug.png",
     );
 
-    void this.loadDebugData();
+    if (this.isBrowser) {
+      void this.loadDebugData();
+    }
 
     this.initializeFiltersFromUrl();
   }
@@ -486,6 +498,8 @@ export class BenchmarkCoverageComponent implements OnInit {
   private async loadDebugData() {
     this.isLoading.set(true);
     this.errorMessage.set(null);
+    this.toastService.clearTransientHttpError();
+    this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
 
     try {
       const [debugResponse, vendorsResponse] = await Promise.all([
@@ -500,9 +514,16 @@ export class BenchmarkCoverageComponent implements OnInit {
       );
       this.vendors.set(vendorsResponse.body as Vendor[]);
       this.initializeSearchBar();
+      this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
     } catch (err) {
-      this.errorMessage.set("Failed to load benchmark data. Please try again.");
-      this.toastService.showTransientHttpError(err);
+      this.errorMessage.set(
+        "Failed to load benchmark data. Please try again later.",
+      );
+      this.toastService.showHttpError(err, {
+        id: BENCHMARK_COVERAGE_ERROR_TOAST_ID,
+        title: "Failed to load benchmark data.",
+        body: "Please try again later.",
+      });
     } finally {
       this.isLoading.set(false);
     }

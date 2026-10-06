@@ -7,6 +7,8 @@ import {
 
 import { LandingpageComponent } from "./landingpage.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
+import { QUERY_ERROR_LANDING_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("LandingpageComponent", () => {
@@ -172,6 +174,31 @@ describe("LandingpageComponent", () => {
     expect(getRegionsSpy).toHaveBeenCalledTimes(2);
     expect(lookup.get("aws~us-east-1")?.display_name).toBe(
       "US East (N. Virginia)",
+    );
+  });
+
+  it("shows query-error toast when welcome search fails with 422", async () => {
+    const toastService = fixture.debugElement.injector.get(ToastService);
+    const keeperAPI = fixture.debugElement.injector.get(KeeperAPIService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+    spyOn(toastService, "removeToast");
+    spyOn(keeperAPI, "searchServers").and.returnValue(
+      Promise.reject({
+        status: 422,
+        error: { detail: "Invalid filter" },
+      }),
+    );
+
+    component.welcomeAnim(0);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(showHttpError).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 422 }),
+      jasmine.objectContaining({
+        title: "Servers query error!",
+        id: QUERY_ERROR_LANDING_TOAST_ID,
+      }),
     );
   });
 });

@@ -59,6 +59,8 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
+import { ToastService } from "../../services/toast.service";
+import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { initGiscus } from "../../tools/initGiscus";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
@@ -129,6 +131,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private keeperAPI = inject(KeeperAPIService);
   private SEOHandler = inject(SeoHandlerService);
+  private toastService = inject(ToastService);
   private serverCompare = inject(ServerCompareService);
   private renderer = inject(Renderer2);
   private location = inject(Location);
@@ -221,7 +224,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   geekScoreMulti: string = "0";
 
   keeperResponseErrorMsg: string =
-    "Failed to load server data. Please try again later.";
+    "Failed to load server details. Please try again later.";
 
   activeFAQ: number = -1;
 
@@ -663,8 +666,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 },
               });
               this.keeperResponseErrorMsg =
-                "Failed to load server data. Please try again later.";
+                "Failed to load server details. Please try again later.";
             }
+            this.toastService.showHttpError(error, {
+              id: SERVER_DETAILS_ERROR_TOAST_ID,
+              title: "Failed to load server details.",
+            });
           })
           .finally(() => {
             this.isLoading = false;
@@ -690,6 +697,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.summarizeModal?.hide();
     this.summarizeModal = null;
 
+    this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
     this.SEOHandler.cleanupStructuredData(this.document);
     this.subscription.unsubscribe();
   }

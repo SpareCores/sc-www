@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { BenchmarkCoverageComponent } from "./benchmark-coverage.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { BENCHMARK_COVERAGE_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("BenchmarkCoverageComponent", () => {
@@ -27,12 +28,15 @@ describe("BenchmarkCoverageComponent", () => {
   it("shows transient toast when debug load fails with 500", async () => {
     const toastService = TestBed.inject(ToastService);
     const keeperAPI = TestBed.inject(KeeperAPIService);
-    const showTransient = spyOn(toastService, "showTransientHttpError");
+    const showHttpError = spyOn(toastService, "showHttpError");
     spyOn(keeperAPI, "getDebugInfo").and.rejectWith({ status: 500 });
     spyOn(keeperAPI, "getVendors").and.resolveTo({ body: [] });
 
     await (component as any).loadDebugData();
 
-    expect(showTransient).toHaveBeenCalledWith({ status: 500 });
+    expect(showHttpError).toHaveBeenCalledWith(
+      { status: 500 },
+      jasmine.objectContaining({ id: BENCHMARK_COVERAGE_ERROR_TOAST_ID }),
+    );
   });
 });

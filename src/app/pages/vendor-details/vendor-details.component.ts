@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   DOCUMENT,
   OnDestroy,
   OnInit,
@@ -34,6 +35,7 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
+import { VENDOR_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 
 declare let Datamap: any;
 
@@ -85,8 +87,10 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private renderer = inject(Renderer2);
   private countryNamePipe = new CountryIdtoNamePipe();
+  private vendorLoadId = 0;
 
   isLoading = true;
   vendor: Vendor | null = null;
@@ -129,6 +133,7 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.SEOHandler.cleanupStructuredData(this.document);
+    this.toastService.removeToast(VENDOR_DETAILS_ERROR_TOAST_ID);
   }
 
   toggleCard(cardId: string) {
@@ -146,9 +151,12 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
   }
 
   private loadVendor(vendorId: string) {
+    const loadId = ++this.vendorLoadId;
     this.isLoading = true;
     this.vendor = null;
     this.bubbleMap = null;
+    this.toastService.clearTransientHttpError();
+    this.toastService.removeToast(VENDOR_DETAILS_ERROR_TOAST_ID);
 
     Promise.all([
       this.keeperAPI.getVendors(),
@@ -171,6 +179,10 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
           debugResponse,
           databasesResponse,
         ]) => {
+          if (this.destroyRef.destroyed || loadId !== this.vendorLoadId) {
+            return;
+          }
+
           const vendors = (vendorsResponse?.body || []) as Vendor[];
           const regions = (regionsResponse?.body || []) as Region[];
           const zones = (zonesResponse?.body || []) as Zone[];
@@ -215,9 +227,14 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
           this.features = this.buildFeatures();
           this.buildPropertySections(vendor);
           this.updateSeo(vendor);
+          this.toastService.removeToast(VENDOR_DETAILS_ERROR_TOAST_ID);
         },
       )
       .catch((error) => {
+        if (this.destroyRef.destroyed || loadId !== this.vendorLoadId) {
+          return;
+        }
+
         console.error(error);
         this.analytics.SentryException(error, {
           tags: {
@@ -231,9 +248,17 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
           this.keeperResponseErrorMsg =
             "Failed to load vendor data. Please try again later.";
         }
-        this.toastService.showTransientHttpError(error);
+        this.toastService.showHttpError(error, {
+          id: VENDOR_DETAILS_ERROR_TOAST_ID,
+          title: "Failed to load vendor",
+          body: this.keeperResponseErrorMsg,
+        });
       })
       .finally(() => {
+        if (this.destroyRef.destroyed || loadId !== this.vendorLoadId) {
+          return;
+        }
+
         this.isLoading = false;
         if (isPlatformBrowser(this.platformId) && this.vendor) {
           setTimeout(() => this.initMap());

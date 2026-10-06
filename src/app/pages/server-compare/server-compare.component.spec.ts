@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from "@angular/core/testing";
 import { ActivatedRoute, convertToParamMap, Router } from "@angular/router";
 import { EMPTY, Subject } from "rxjs";
 
@@ -14,6 +19,7 @@ import {
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { SERVER_COMPARE_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("ServerCompareComponent", () => {
@@ -22,7 +28,8 @@ describe("ServerCompareComponent", () => {
     queryParams: {} as Record<string, string>,
   };
   const showToast = jasmine.createSpy("show");
-  const showTransientHttpError = jasmine.createSpy("showTransientHttpError");
+  const clearTransientHttpError = jasmine.createSpy("clearTransientHttpError");
+  const showHttpError = jasmine.createSpy("showHttpError");
   const removeToast = jasmine.createSpy("removeToast");
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
   const highlightAll = jasmine.createSpy("highlightAll");
@@ -52,7 +59,8 @@ describe("ServerCompareComponent", () => {
     routeSnapshot.paramMap = convertToParamMap({});
     routeSnapshot.queryParams = {};
     showToast.calls.reset();
-    showTransientHttpError.calls.reset();
+    clearTransientHttpError.calls.reset();
+    showHttpError.calls.reset();
     removeToast.calls.reset();
     updateTitleAndMetaTags.calls.reset();
     highlightAll.calls.reset();
@@ -121,7 +129,8 @@ describe("ServerCompareComponent", () => {
           useValue: {
             show: showToast,
             removeToast,
-            showTransientHttpError,
+            clearTransientHttpError,
+            showHttpError,
           },
         },
         {
@@ -498,4 +507,43 @@ describe("ServerCompareComponent", () => {
     expect(component.benchmarkMeta[0].configs[0].values).toEqual([2, 1]);
     expect(getServerMeta).not.toHaveBeenCalled();
   });
+
+  it("shows fallback toast when compare load fails with 422", fakeAsync(() => {
+    const instances = btoa(
+      JSON.stringify([
+        {
+          display_name: "c7g.medium",
+          vendor: "aws",
+          server: "c7g.medium",
+          zonesRegions: [{ region: "us-east-1", zone: "us-east-1a" }],
+        },
+      ]),
+    );
+    routeSnapshot.queryParams = { instances };
+    getServerMeta.and.rejectWith({
+      status: 422,
+      error: { detail: "Invalid compare request" },
+    });
+    getServerBenchmarkMeta.and.resolveTo({ body: [] });
+    getVendors.and.resolveTo({ body: [] });
+    getRegions.and.resolveTo({ body: [] });
+    getZones.and.resolveTo({ body: [] });
+    getServerV2.and.resolveTo({ body: {} });
+    getServerPrices.and.resolveTo({ body: [] });
+    getServerBenchmark.and.resolveTo({ body: [] });
+
+    showHttpError.calls.reset();
+
+    component.setup();
+    tick();
+
+    expect(getServerMeta).toHaveBeenCalled();
+    expect(showHttpError).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 422 }),
+      {
+        id: SERVER_COMPARE_ERROR_TOAST_ID,
+        title: "Failed to load server comparison",
+      },
+    );
+  }));
 });

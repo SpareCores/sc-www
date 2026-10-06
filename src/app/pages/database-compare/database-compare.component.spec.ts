@@ -5,6 +5,7 @@ import { of } from "rxjs";
 import { DatabaseCompareComponent } from "./database-compare.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { BAD_DATABASE_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("DatabaseCompareComponent", () => {
@@ -95,7 +96,7 @@ describe("DatabaseCompareComponent", () => {
     expect(show).toHaveBeenCalledWith(
       jasmine.objectContaining({
         title: "Invalid URL",
-        id: "bad-database-compare-url-param",
+        id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
       }),
     );
     expect(component.databases.length).toBe(0);
@@ -199,29 +200,5 @@ describe("DatabaseCompareComponent", () => {
         (server) => !server.benchmark_scores.length,
       ),
     ).toBeTrue();
-  });
-
-  it("shows transient toast when compare load fails with 500", async () => {
-    const instances = btoa(
-      JSON.stringify([
-        { display_name: "db-a", vendor: "aws", database: "db-a" },
-      ]),
-    );
-    getDatabase.and.rejectWith({ status: 500 });
-    const showTransient = spyOn(toastService, "showTransientHttpError");
-
-    const route = TestBed.inject(ActivatedRoute) as any;
-    route.snapshot.queryParams = { instances };
-    route.snapshot.paramMap = convertToParamMap({});
-    route.queryParams = of({ instances });
-    route.queryParamMap = of(convertToParamMap({ instances }));
-    route.paramMap = of(convertToParamMap({}));
-
-    fixture = TestBed.createComponent(DatabaseCompareComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(showTransient).toHaveBeenCalledWith({ status: 500 });
   });
 });

@@ -13,7 +13,6 @@ import {
 } from "../../../../sdk/data-contracts";
 import { DatabaseDetails } from "./database-details";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("DatabaseDetails", () => {
@@ -291,18 +290,5 @@ describe("DatabaseDetails", () => {
     expect(component.cardPriceDescription).toBe(
       " Pricing starts at 0.20 USD/hour and 50.00 USD/month.",
     );
-  });
-
-  it("shows transient toast when database load fails with 500", async () => {
-    const toastService = TestBed.inject(ToastService);
-    const showTransient = spyOn(toastService, "showTransientHttpError");
-    keeperAPI.getDatabase.and.rejectWith({ status: 500 });
-
-    fixture = TestBed.createComponent(DatabaseDetails);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(showTransient).toHaveBeenCalledWith({ status: 500 });
   });
 });

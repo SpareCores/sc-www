@@ -71,6 +71,10 @@ import {
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import {
+  BAD_DATABASE_COMPARE_URL_TOAST_ID,
+  DATABASE_COMPARE_ERROR_TOAST_ID,
+} from "../../services/toast-ids";
 import { CompareCollectionsService } from "../../collections/compare-collections.service";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
@@ -143,7 +147,6 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     }
   ).components?.schemas?.Database?.properties ?? {};
 
-const INVALID_COMPARE_URL_TOAST_ID = "bad-database-compare-url-param";
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_COMPARE_URL_TOAST_BODY =
   'Visit the <a href="/databases" class="underline font-semibold">Database Navigator page</a> to select databases to compare.';
@@ -375,6 +378,7 @@ export class DatabaseCompareComponent
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.stickyLayout.destroy();
+    this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
   }
 
   ngAfterViewInit() {
@@ -608,6 +612,8 @@ export class DatabaseCompareComponent
     const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
+    this.toastService.clearTransientHttpError();
+    this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
 
     this.instances = [];
     this.instancesRaw = "";
@@ -633,9 +639,9 @@ export class DatabaseCompareComponent
       if (specialCompare) {
         this.instances = specialCompare.instances || [];
         this.instancesRaw = btoa(JSON.stringify(this.instances));
-        this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+        this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
       } else {
-        this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+        this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
         this.isLoading = false;
       }
@@ -653,7 +659,7 @@ export class DatabaseCompareComponent
             title: INVALID_URL_TOAST_TITLE,
             body: INVALID_COMPARE_URL_TOAST_BODY,
             type: "error",
-            id: INVALID_COMPARE_URL_TOAST_ID,
+            id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
           });
         }
         this.isLoading = false;
@@ -662,13 +668,13 @@ export class DatabaseCompareComponent
 
       this.instances = decodedInstances.value;
       this.instancesRaw = this.instances.length > 0 ? param : "";
-      this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+      this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
       if (!this.instances.length) {
         this.applyGuideChrome();
         this.isLoading = false;
       }
     } else {
-      this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+      this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
       this.applyGuideChrome();
       this.isLoading = false;
       return;
@@ -799,6 +805,7 @@ export class DatabaseCompareComponent
         this.buildPropertySections();
         this.buildPriceRows();
         this.refreshLineCompareServers();
+        this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
       })
       .catch((err) => {
         if (loadId !== this.compareLoadId) {
@@ -812,14 +819,10 @@ export class DatabaseCompareComponent
           },
         });
         console.error(err);
-        if (!this.toastService.showTransientHttpError(err)) {
-          this.toastService.show({
-            title: "Failed to load database compare",
-            body: err.error?.detail || "Please try again later.",
-            type: "error",
-            id: "database-compare-error",
-          });
-        }
+        this.toastService.showHttpError(err, {
+          id: DATABASE_COMPARE_ERROR_TOAST_ID,
+          title: "Failed to load database comparison",
+        });
       })
       .finally(() => {
         if (loadId !== this.compareLoadId) {

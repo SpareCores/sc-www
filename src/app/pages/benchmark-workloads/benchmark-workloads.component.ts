@@ -30,6 +30,7 @@ import {
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { BENCHMARK_WORKLOADS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import {
   Benchmark,
   BenchmarkScoreStatsItem,
@@ -106,16 +107,23 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   private pendingScrollTimeout: ReturnType<typeof setTimeout> | null = null;
   private hasInitializedViewportState = false;
   private desktopCollapsedState = false;
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.clearPendingScrollTarget();
       this.clearDeferredScroll();
+      this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
     });
   }
 
   readonly benchmarksResource = resource({
+    params: () => (this.isBrowser ? true : undefined),
+    defaultValue: [] as BenchmarkFamily[],
     loader: async () => {
+      this.toastService.clearTransientHttpError();
+      this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
+
       try {
         const workloadsResponse = await this.keeperAPI.getBenchmarkWorkloads();
         const benchmarkMetaResponse = await this.keeperAPI
@@ -134,15 +142,22 @@ export class BenchmarkWorkloadsComponent implements OnInit {
           this.activeBenchmarkId.set(data[0].benchmark_id);
         }
 
+        this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
         return grouped;
       } catch (err) {
-        this.toastService.showTransientHttpError(err);
+        this.toastService.showHttpError(err, {
+          id: BENCHMARK_WORKLOADS_ERROR_TOAST_ID,
+          title: "Failed to load benchmark data.",
+          body: "Please try again later.",
+        });
         throw err;
       }
     },
   });
 
-  readonly isLoading = computed(() => this.benchmarksResource.isLoading());
+  readonly isLoading = computed(
+    () => !this.isBrowser || this.benchmarksResource.isLoading(),
+  );
   readonly errorMessage = computed(() =>
     this.benchmarksResource.error()
       ? "Failed to load benchmark data. Please try again later."

@@ -50,6 +50,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { DATABASE_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
 
@@ -192,6 +193,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.toastService.removeToast(DATABASE_DETAILS_ERROR_TOAST_ID);
   }
 
   @HostListener("window:resize")
@@ -202,6 +204,8 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private loadDatabase(vendor: string, id: string) {
     this.isLoading = true;
     this.databaseDetails = null;
+    this.toastService.clearTransientHttpError();
+    this.toastService.removeToast(DATABASE_DETAILS_ERROR_TOAST_ID);
 
     Promise.all([
       this.keeperAPI.getDatabase(vendor, id),
@@ -375,6 +379,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             this.description + this.cardPriceDescription,
             "cloud, database, dbaas, price, comparison, sparecores",
           );
+          this.toastService.removeToast(DATABASE_DETAILS_ERROR_TOAST_ID);
         },
       )
       .catch((err) => {
@@ -387,14 +392,10 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         console.error(err);
         this.keeperResponseErrorMsg =
           err.error?.detail || "Failed to load database details.";
-        if (!this.toastService.showTransientHttpError(err)) {
-          this.toastService.show({
-            title: "Failed to load database",
-            body: this.keeperResponseErrorMsg,
-            type: "error",
-            id: "database-details-error",
-          });
-        }
+        this.toastService.showHttpError(err, {
+          id: DATABASE_DETAILS_ERROR_TOAST_ID,
+          title: "Failed to load database details.",
+        });
       })
       .finally(() => {
         this.isLoading = false;

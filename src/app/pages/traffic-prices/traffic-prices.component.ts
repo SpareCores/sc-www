@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
+  DestroyRef,
   inject,
   OnDestroy,
   OnInit,
@@ -29,6 +30,7 @@ import { SearchBarComponent } from "../../components/search-bar/search-bar.compo
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { availableCurrencies, CurrencyOption } from "../../tools/shared_data";
 import {
@@ -60,6 +62,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
@@ -67,6 +70,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
 
   private subscription = new Subscription();
+  private searchRequestId = 0;
 
   limit = 10;
   page = 1;
@@ -177,6 +181,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.toastService.removeToast(QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID);
   }
 
   toggleCollapse() {
@@ -239,22 +244,39 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   }
 
   private _searchTrafficPrices() {
+    const requestId = ++this.searchRequestId;
     this.isLoading = true;
+    this.toastService.clearTransientHttpError();
+    this.toastService.removeToast(QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID);
 
     this.keeperAPI
       .getTrafficPrices(this.query)
       .then((results: any) => {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+          return;
+        }
+
         this.traffic_prices = results.body;
         this.totalPages = Math.ceil(
           parseInt(results?.headers?.get("x-total-count") || "0") / this.limit,
         );
+        this.toastService.removeToast(QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID);
       })
       .catch((err) => {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+          return;
+        }
+
         console.error(err);
-        this.toastService.showTransientHttpError(err);
+        this.toastService.showHttpError(err, {
+          id: QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID,
+          title: "Traffic prices query error!",
+        });
       })
       .finally(() => {
-        this.isLoading = false;
+        if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
+          this.isLoading = false;
+        }
       });
   }
 

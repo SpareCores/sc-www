@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   PLATFORM_ID,
   OnInit,
   ViewChild,
@@ -58,6 +59,10 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
 import { AnalyticsService } from "../../services/analytics.service";
 import { Modal, ModalOptions } from "flowbite";
 import { ToastService } from "../../services/toast.service";
+import {
+  BAD_BENCHMARK_URL_TOAST_ID,
+  QUERY_ERROR_SERVERS_TOAST_ID,
+} from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
@@ -154,6 +159,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private uiTooltip = inject(UiTooltipService);
   private collectionsUi = inject(CollectionsUiService);
   private auth = inject(AuthStateService);
@@ -559,7 +565,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               title: INVALID_URL_TOAST_TITLE,
               body: INVALID_BENCHMARK_URL_TOAST_BODY,
               type: "error",
-              id: "bad-benchmark-url-param",
+              id: BAD_BENCHMARK_URL_TOAST_ID,
             });
           }
         } else {
@@ -569,7 +575,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               title: INVALID_URL_TOAST_TITLE,
               body: INVALID_BENCHMARK_URL_TOAST_BODY,
               type: "error",
-              id: "bad-benchmark-url-param",
+              id: BAD_BENCHMARK_URL_TOAST_ID,
             });
           }
         }
@@ -679,6 +685,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
     this.introductionModal?.hide();
     this.introductionModal = null;
+    this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
   }
 
   setSpecialList() {
@@ -848,6 +855,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
     this.toastService.clearTransientHttpError();
+    this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
 
     let query = JSON.parse(JSON.stringify(this.query));
 
@@ -897,7 +905,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.keeperAPI
       .searchServers(query)
       .then((servers) => {
-        if (requestId !== this.searchRequestId) {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
         }
 
@@ -920,9 +928,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               this.limit,
           );
         }
+        this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
       })
       .catch((err) => {
-        if (requestId !== this.searchRequestId) {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
         }
 
@@ -930,10 +939,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           tags: { location: this.constructor.name, function: "_searchServers" },
         });
         console.error(err);
-        this.toastService.showTransientHttpError(err);
+        this.toastService.showHttpError(err, {
+          id: QUERY_ERROR_SERVERS_TOAST_ID,
+          title: "Servers query error!",
+        });
       })
       .finally(() => {
-        if (requestId === this.searchRequestId) {
+        if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
           this.isLoading = false;
         }
       });
@@ -1382,7 +1394,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       }
 
       // remove error toast if it exists
-      this.toastService.removeToast("bad-benchmark-url-param");
+      this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
     }
   }
 }

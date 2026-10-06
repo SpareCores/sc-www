@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, DestroyRef, OnInit, inject } from "@angular/core";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
   BreadcrumbSegment,
@@ -6,6 +6,7 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { VENDORS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import {
   OrderDir,
   TableRegionTableRegionGetData,
@@ -30,6 +31,14 @@ export class VendorsComponent implements OnInit {
   private API = inject(KeeperAPIService);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
+  private vendorsLoadId = 0;
+
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.toastService.removeToast(VENDORS_ERROR_TOAST_ID);
+    });
+  }
 
   breadcrumbs: BreadcrumbSegment[] = [
     {
@@ -55,8 +64,16 @@ export class VendorsComponent implements OnInit {
       "AWS, Google Cloud, Hetzner",
     );
 
+    const loadId = ++this.vendorsLoadId;
+    this.toastService.clearTransientHttpError();
+    this.toastService.removeToast(VENDORS_ERROR_TOAST_ID);
+
     this.API.getVendors()
       .then((vendors) => {
+        if (this.destroyRef.destroyed || loadId !== this.vendorsLoadId) {
+          return;
+        }
+
         this.vendors = vendors.body;
         for (let i = 0; i < this.vendors.length; i++) {
           this.vendors[i].regions = 0;
@@ -64,7 +81,11 @@ export class VendorsComponent implements OnInit {
         return this.API.getRegions();
       })
       .then((regions) => {
-        if (!regions) {
+        if (
+          this.destroyRef.destroyed ||
+          loadId !== this.vendorsLoadId ||
+          !regions
+        ) {
           return;
         }
 
@@ -75,10 +96,18 @@ export class VendorsComponent implements OnInit {
           );
           vendor.regions++;
         }
+        this.toastService.removeToast(VENDORS_ERROR_TOAST_ID);
       })
       .catch((err) => {
+        if (this.destroyRef.destroyed || loadId !== this.vendorsLoadId) {
+          return;
+        }
+
         console.error(err);
-        this.toastService.showTransientHttpError(err);
+        this.toastService.showHttpError(err, {
+          id: VENDORS_ERROR_TOAST_ID,
+          title: "Failed to load vendors",
+        });
       });
   }
 
