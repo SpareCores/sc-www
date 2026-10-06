@@ -27,6 +27,12 @@ export function isRetryableStatus(status: number): boolean {
   return RETRYABLE_STATUS_CODES.has(status);
 }
 
+export function isAutomaticallyRetryableMethod(
+  method: string | undefined,
+): boolean {
+  return method === "GET";
+}
+
 export function parseRetryAfter(
   header: string | null | undefined,
   nowMs: number = Date.now(),
@@ -70,7 +76,7 @@ export function getRetryDelay(options: {
 
   let delay = intervals[attempt] ?? intervals[intervals.length - 1] ?? 0;
 
-  if (status === 429) {
+  if (status === 429 || status === 503) {
     const parsed = parseRetryAfter(retryAfterHeader, nowMs);
     if (parsed != null) {
       delay = parsed;
@@ -176,7 +182,11 @@ export class KeeperHttpClient extends HttpClientSDK {
     } catch (err: any) {
       const status = err?.status ?? 0;
 
-      if (!isRetryableStatus(status) || retry >= intervals.length) {
+      if (
+        !isAutomaticallyRetryableMethod(method) ||
+        !isRetryableStatus(status) ||
+        retry >= intervals.length
+      ) {
         throw err;
       }
 

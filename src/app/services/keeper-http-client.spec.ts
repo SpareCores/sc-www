@@ -16,6 +16,7 @@ import {
   RETRY_INTERVALS,
   RETRY_INTERVALS_SSR,
   getRetryDelay,
+  isAutomaticallyRetryableMethod,
   maxTotalRetryWaitMs,
   parseRetryAfter,
 } from "./keeper-http-client";
@@ -168,6 +169,50 @@ describe("KeeperHttpClient", () => {
 
       expect(resolved).toBeTruthy();
     }));
+
+    it("honors Retry-After on 503", fakeAsync(() => {
+      let resolved: unknown;
+
+      client.request({ method: "GET", path }).then((res) => (resolved = res));
+
+      flushMicrotasks();
+      httpMock.expectOne(requestUrl()).flush(null, {
+        status: 503,
+        statusText: "Service Unavailable",
+        headers: { "Retry-After": "1" },
+      });
+
+      tick(999);
+      expect(httpMock.match(requestUrl()).length).toBe(0);
+
+      tick(1);
+      flushMicrotasks();
+      httpMock.expectOne(requestUrl()).flush([{ ok: true }]);
+      flushMicrotasks();
+
+      expect(resolved).toBeTruthy();
+    }));
+
+    (["POST", "PATCH", "DELETE"] as const).forEach((method) => {
+      it(`does not retry ${method} on 408`, fakeAsync(() => {
+        let rejected: unknown;
+
+        client
+          .request({ method, path, body: {} })
+          .catch((err) => (rejected = err));
+
+        flushMicrotasks();
+        httpMock.expectOne(requestUrl()).flush(null, {
+          status: 408,
+          statusText: "Request Timeout",
+        });
+        flushMicrotasks();
+
+        expect((rejected as { status: number }).status).toBe(408);
+        tick(RETRY_INTERVALS[0]);
+        expect(httpMock.match(requestUrl()).length).toBe(0);
+      }));
+    });
 
     it("falls back to the interval for invalid Retry-After", fakeAsync(() => {
       let resolved: unknown;
@@ -332,6 +377,27 @@ describe("KeeperHttpClient", () => {
           remainingBudgetMs: 100,
         }),
       ).toBe(100);
+    });
+
+    it("honors Retry-After on 503 within the remaining budget", () => {
+      expect(
+        getRetryDelay({
+          status: 503,
+          retryAfterHeader: "2",
+          attempt: 0,
+          intervals: RETRY_INTERVALS,
+          remainingBudgetMs: 18700,
+        }),
+      ).toBe(2000);
+    });
+  });
+
+  describe("isAutomaticallyRetryableMethod", () => {
+    it("allows only GET", () => {
+      expect(isAutomaticallyRetryableMethod("GET")).toBeTrue();
+      expect(isAutomaticallyRetryableMethod("POST")).toBeFalse();
+      expect(isAutomaticallyRetryableMethod("PATCH")).toBeFalse();
+      expect(isAutomaticallyRetryableMethod("DELETE")).toBeFalse();
     });
   });
 });
