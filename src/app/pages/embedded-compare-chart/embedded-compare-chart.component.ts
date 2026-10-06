@@ -7,6 +7,7 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
+import { BAD_SERVER_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
 import {
@@ -14,7 +15,6 @@ import {
   isServerCompareUrlState,
 } from "../../tools/encoded-url-state";
 
-const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_COMPARE_URL_TOAST_BODY =
   'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
@@ -204,7 +204,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
     this.instancesRaw = "";
 
     if (!encodedInstances) {
-      this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+      this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
       return;
     }
 
@@ -226,7 +226,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
           title: INVALID_URL_TOAST_TITLE,
           body: INVALID_COMPARE_URL_TOAST_BODY,
           type: "error",
-          id: INVALID_COMPARE_URL_TOAST_ID,
+          id: BAD_SERVER_COMPARE_URL_TOAST_ID,
         });
       }
       return;
@@ -234,7 +234,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
 
     this.instances = decodedInstances.value;
     this.instancesRaw = this.instances.length > 0 ? encodedInstances : "";
-    this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+    this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
 
     if (this.instances?.length > 0) {
       let serverCount = this.instances?.length || 0;

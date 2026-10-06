@@ -20,6 +20,7 @@ import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { Button } from "../button/button";
 import {
@@ -860,7 +861,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             title: "Failed to load countries",
             body: "Please try again later.",
             type: "error",
-            id: "search-bar-countries-error",
+            id: SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID,
           });
           return [] as CountryMetadata[];
         });

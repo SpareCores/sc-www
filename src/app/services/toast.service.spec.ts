@@ -1,6 +1,11 @@
 import { PLATFORM_ID } from "@angular/core";
-import { TestBed } from "@angular/core/testing";
-import { TRANSIENT_HTTP_TOAST_ID } from "./http-error-toast";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import {
+  QUERY_ERROR_SERVERS_TOAST_ID,
+  SERVER_COMPARE_ERROR_TOAST_ID,
+  TRANSIENT_HTTP_TOAST_ID,
+  VENDORS_ERROR_TOAST_ID,
+} from "./toast-ids";
 import { ToastService } from "./toast.service";
 
 describe("ToastService", () => {
@@ -79,26 +84,114 @@ describe("ToastService", () => {
     );
   });
 
-  it("showTransientHttpError shows mapped toast and returns true", () => {
-    expect(service.showTransientHttpError({ status: 500 })).toBe(true);
-    expect(toastByTitle("Service temporarily unavailable")).toBeTruthy();
-  });
-
-  it("showTransientHttpError returns false for non-transient errors", () => {
-    expect(service.showTransientHttpError({ status: 404 })).toBe(false);
-    expect(document.querySelectorAll('[data-cy="toast"]').length).toBe(0);
-  });
-
   it("clearTransientHttpError dismisses the stable transient toast id", () => {
     const remove = spyOn(service, "removeToast");
     service.clearTransientHttpError();
     expect(remove).toHaveBeenCalledWith(TRANSIENT_HTTP_TOAST_ID);
   });
 
-  it("showTransientHttpError replaces a previous transient toast", () => {
-    service.showTransientHttpError({ status: 500 });
-    service.showTransientHttpError({ status: 408 });
-    expect(toastByTitle("Service temporarily unavailable")).toBeUndefined();
-    expect(toastByTitle("Request timed out")).toBeTruthy();
+  it("showHttpError shows transient toast when status is retryable", () => {
+    service.showHttpError(
+      { status: 500 },
+      { id: QUERY_ERROR_SERVERS_TOAST_ID },
+    );
+
+    expect(toastByTitle("Service temporarily unavailable")).toBeTruthy();
+    expect(toastByTitle("Query error!")).toBeUndefined();
   });
+
+  it("showHttpError falls back to Query error! with detail for non-transient errors", () => {
+    service.showHttpError(
+      { status: 422, error: { detail: "Invalid filter" } },
+      { id: QUERY_ERROR_SERVERS_TOAST_ID },
+    );
+
+    const toast = toastByTitle("Query error!");
+    expect(toast).toBeTruthy();
+    expect(toast?.querySelector('[data-cy="toast-body"]')?.textContent).toBe(
+      "Invalid filter",
+    );
+  });
+
+  it("showHttpError uses custom title and body when provided", () => {
+    service.showHttpError(
+      { status: 422 },
+      {
+        id: VENDORS_ERROR_TOAST_ID,
+        title: "Failed to load vendors",
+        body: "Custom body",
+      },
+    );
+
+    const toast = toastByTitle("Failed to load vendors");
+    expect(toast).toBeTruthy();
+    expect(toast?.querySelector('[data-cy="toast-body"]')?.textContent).toBe(
+      "Custom body",
+    );
+  });
+
+  it("removeToast dismisses a toast after the exit animation", fakeAsync(() => {
+    service.show({
+      title: "Servers query error!",
+      type: "error",
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
+    });
+
+    service.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+    tick(0);
+    expect(toastByTitle("Servers query error!")).toBeTruthy();
+
+    tick(300);
+    expect(toastByTitle("Servers query error!")).toBeUndefined();
+  }));
+
+  it("removeToast during exit does not orphan a replacement toast", fakeAsync(() => {
+    service.show({
+      title: "First",
+      type: "error",
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
+    });
+
+    service.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+    tick(0);
+
+    service.show({
+      title: "Second",
+      type: "error",
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
+    });
+
+    tick(300);
+
+    expect(toastByTitle("First")).toBeUndefined();
+    expect(toastByTitle("Second")).toBeTruthy();
+
+    service.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+    tick(0);
+    tick(300);
+
+    expect(toastByTitle("Second")).toBeUndefined();
+  }));
+
+  it("close dismisses an orphaned toast element not tracked by id", fakeAsync(() => {
+    service.show({
+      title: "Failed to load server comparison",
+      type: "error",
+      id: SERVER_COMPARE_ERROR_TOAST_ID,
+    });
+
+    const toast = toastByTitle(
+      "Failed to load server comparison",
+    ) as HTMLElement;
+    expect(toast).toBeTruthy();
+
+    (service as any).toasts.delete(SERVER_COMPARE_ERROR_TOAST_ID);
+
+    toast
+      .querySelector("[data-toast-close]")
+      ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    tick(300);
+
+    expect(toastByTitle("Failed to load server comparison")).toBeUndefined();
+  }));
 });

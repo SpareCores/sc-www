@@ -2,6 +2,10 @@ import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
+import {
+  GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+  GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+} from "../../services/toast-ids";
 import { AuthFlowStore } from "./data-access/auth-flow-store.service";
 import { ClerkService } from "./data-access/clerk.service";
 import { GitHubService } from "./data-access/github.service";
@@ -450,8 +454,12 @@ describe("AuthStateService", () => {
     spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
     spyOn(clerkService(), "syncClerkState").and.resolveTo();
     const navigate = spyOn(router(), "navigateByUrl").and.callFake(async () => {
-      expect(removeToast).toHaveBeenCalledWith("guest-server-compare-limit");
-      expect(removeToast).toHaveBeenCalledWith("guest-database-compare-limit");
+      expect(removeToast).toHaveBeenCalledWith(
+        GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+      );
+      expect(removeToast).toHaveBeenCalledWith(
+        GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+      );
       return true;
     });
     flowStore().setReturnUrl("/servers");
@@ -487,8 +495,12 @@ describe("AuthStateService", () => {
 
     await auth.handleGitHubCallback();
 
-    expect(removeToast).toHaveBeenCalledWith("guest-server-compare-limit");
-    expect(removeToast).toHaveBeenCalledWith("guest-database-compare-limit");
+    expect(removeToast).toHaveBeenCalledWith(
+      GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+    );
+    expect(removeToast).toHaveBeenCalledWith(
+      GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+    );
   });
 
   it("tracks GitHub registration separately from login", async () => {

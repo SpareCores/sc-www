@@ -7,6 +7,7 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
+import { BAD_SERVER_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("EmbeddedCompareChartComponent", () => {
@@ -120,7 +121,7 @@ describe("EmbeddedCompareChartComponent", () => {
         title: "Invalid URL",
         body: 'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.',
         type: "error",
-        id: "bad-compare-url-param",
+        id: BAD_SERVER_COMPARE_URL_TOAST_ID,
       }),
     );
     expect(getServerMeta).not.toHaveBeenCalled();
@@ -140,7 +141,7 @@ describe("EmbeddedCompareChartComponent", () => {
         title: "Invalid URL",
         body: 'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.',
         type: "error",
-        id: "bad-compare-url-param",
+        id: BAD_SERVER_COMPARE_URL_TOAST_ID,
       }),
     );
     expect(getServerMeta).not.toHaveBeenCalled();

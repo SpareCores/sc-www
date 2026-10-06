@@ -12,6 +12,7 @@ import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
 import { NumbersOnlyDirective } from "../../../../directives/numbers-only.directive";
 import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
 import { ToastService } from "../../../../services/toast.service";
+import { CPU_CACHE_INPUT_ERROR_TOAST_ID } from "../../../../services/toast-ids";
 import type {
   BenchmarkFilterOption,
   ComplianceFrameworkMetadata,
@@ -65,7 +66,6 @@ type CpuCacheRangeFocusLossSkip = {
 })
 export class SearchBarParameterField implements DoCheck, OnDestroy {
   private toastService = inject(ToastService);
-  private readonly cpuCacheRangeErrorToastId = "cpu-cache-input-error";
   private parameterDraftValue: string | undefined;
   private cpuCacheRangeDraftValue: string | undefined;
   private lastModelValue: unknown = Symbol("initial-model-value");
@@ -522,7 +522,7 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
     parameter.modelValue = values[boundedIndex];
     this.lastModelValue = parameter.modelValue;
     this.syncCpuCacheRangeDraftValue(parameter);
-    this.toastService.removeToast(this.cpuCacheRangeErrorToastId);
+    this.toastService.removeToast(CPU_CACHE_INPUT_ERROR_TOAST_ID);
     this.valueChanged.emit();
   }
 
@@ -552,7 +552,7 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
     parameter.modelValue = normalizedValue;
     this.lastModelValue = parameter.modelValue;
     this.syncCpuCacheRangeDraftValue(parameter);
-    this.toastService.removeToast(this.cpuCacheRangeErrorToastId);
+    this.toastService.removeToast(CPU_CACHE_INPUT_ERROR_TOAST_ID);
 
     if (previousValue !== parameter.modelValue) {
       this.filterServers.emit();
@@ -591,7 +591,7 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
       title,
       body,
       type: "error",
-      id: this.cpuCacheRangeErrorToastId,
+      id: CPU_CACHE_INPUT_ERROR_TOAST_ID,
       duration: 4000,
     });
   }
