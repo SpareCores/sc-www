@@ -1,6 +1,7 @@
 import { Location, isPlatformBrowser } from "@angular/common";
 import {
   Component,
+  DestroyRef,
   DOCUMENT,
   ElementRef,
   HostListener,
@@ -135,6 +136,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private serverCompare = inject(ServerCompareService);
   private renderer = inject(Renderer2);
   private location = inject(Location);
+  private destroyRef = inject(DestroyRef);
+  private serverLoadId = 0;
   similarDropdown = viewChild<FlowbiteDropdownDirective>("similarDropdown");
 
   readonly burstableInstanceWarningTitle = BURSTABLE_INSTANCE_WARNING_TITLE;
@@ -267,6 +270,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.route.params.subscribe((params) => {
         const vendor = params["vendor"];
         const id = params["id"];
+        const loadId = ++this.serverLoadId;
+        this.isLoading = true;
+        this.toastService.clearTransientHttpError();
+        this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
 
         Promise.all([
           this.keeperAPI.getServerMeta(),
@@ -281,6 +288,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.keeperAPI.getZones(),
         ])
           .then((dataAll) => {
+            if (this.destroyRef.destroyed || loadId !== this.serverLoadId) {
+              return;
+            }
+
+            this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
+
             const promisAllResponses = dataAll.map((d) => d.body);
             const [
               serverMeta,
@@ -641,10 +654,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 );
               }
 
-              this.loadServerDescriptions(vendor, id);
+              this.loadServerDescriptions(
+                vendor,
+                id,
+                () =>
+                  !this.destroyRef.destroyed && loadId === this.serverLoadId,
+              );
             }
           })
           .catch((error) => {
+            if (this.destroyRef.destroyed || loadId !== this.serverLoadId) {
+              return;
+            }
+
             console.error(error);
             if (error?.status === 404) {
               this.keeperResponseErrorMsg =
@@ -674,7 +696,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             });
           })
           .finally(() => {
-            this.isLoading = false;
+            if (!this.destroyRef.destroyed && loadId === this.serverLoadId) {
+              this.isLoading = false;
+            }
           });
       }),
     );
@@ -1446,10 +1470,17 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }, 300);
   }
 
-  loadServerDescriptions(vendor: string, id: string) {
+  loadServerDescriptions(
+    vendor: string,
+    id: string,
+    isCurrent: () => boolean = () => true,
+  ) {
     this.keeperAPI
       .getServerDescriptions(vendor, id)
       .then((response) => {
+        if (!isCurrent()) {
+          return;
+        }
         if (response?.body) {
           this.serverDescription = response.body as ServerDescription;
           this.descriptionsAvailable = true;
@@ -1460,6 +1491,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         }
       })
       .catch(() => {
+        if (!isCurrent()) {
+          return;
+        }
         this.descriptionsAvailable = false;
       });
   }

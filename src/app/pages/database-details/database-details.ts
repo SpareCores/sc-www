@@ -168,6 +168,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private availabilityOverflowCheckTimeout?: ReturnType<typeof setTimeout>;
   private subscription = new Subscription();
   private destroyRef = inject(DestroyRef);
+  private loadRequestId = 0;
 
   constructor() {
     afterNextRender(() => {
@@ -202,6 +203,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   }
 
   private loadDatabase(vendor: string, id: string) {
+    const requestId = ++this.loadRequestId;
     this.isLoading = true;
     this.databaseDetails = null;
     this.toastService.clearTransientHttpError();
@@ -228,6 +230,10 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           benchmarksResponse,
           benchmarkMetaResponse,
         ]) => {
+          if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
+            return;
+          }
+
           const database = databaseResponse.body;
           if (!database) {
             this.keeperResponseErrorMsg = "Database not found.";
@@ -251,6 +257,12 @@ export class DatabaseDetails implements OnInit, OnDestroy {
                     .getServerBenchmark(database.vendor_id, database.server_id)
                     .catch(() => ({ body: [] })),
                 ]);
+              if (
+                this.destroyRef.destroyed ||
+                requestId !== this.loadRequestId
+              ) {
+                return;
+              }
               const server = serverResponse?.body;
               if (server?.display_name && server?.api_reference) {
                 underlyingServer = {
@@ -263,9 +275,19 @@ export class DatabaseDetails implements OnInit, OnDestroy {
               underlyingServerScores = (serverBenchmarksResponse?.body ||
                 []) as PgbenchScore[];
             } catch {
+              if (
+                this.destroyRef.destroyed ||
+                requestId !== this.loadRequestId
+              ) {
+                return;
+              }
               underlyingServer = undefined;
               underlyingServerScores = [];
             }
+          }
+
+          if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
+            return;
           }
 
           this.databaseDetails = {
@@ -383,6 +405,10 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         },
       )
       .catch((err) => {
+        if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
+          return;
+        }
+
         this.analytics.SentryException(err, {
           tags: {
             location: this.constructor.name,
@@ -398,6 +424,10 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         });
       })
       .finally(() => {
+        if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
+          return;
+        }
+
         this.isLoading = false;
         this.scheduleAvailabilityOverflowCheck();
       });

@@ -2,6 +2,7 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   DOCUMENT,
   ElementRef,
   OnDestroy,
@@ -197,6 +198,7 @@ export class DatabaseCompareComponent
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private advisorUi = inject(AdvisorUiService);
   private chartTooltip = inject(ChartTooltipService);
   private legendVisibility = inject(CompareChartLegendVisibilityService);
@@ -711,7 +713,7 @@ export class DatabaseCompareComponent
 
     Promise.all(promises)
       .then(async (data) => {
-        if (loadId !== this.compareLoadId) {
+        if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
           return;
         }
 
@@ -798,7 +800,7 @@ export class DatabaseCompareComponent
           }),
         );
 
-        if (loadId !== this.compareLoadId) {
+        if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
           return;
         }
 
@@ -808,7 +810,7 @@ export class DatabaseCompareComponent
         this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
       })
       .catch((err) => {
-        if (loadId !== this.compareLoadId) {
+        if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
           return;
         }
 
@@ -825,7 +827,7 @@ export class DatabaseCompareComponent
         });
       })
       .finally(() => {
-        if (loadId !== this.compareLoadId) {
+        if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
           return;
         }
 
