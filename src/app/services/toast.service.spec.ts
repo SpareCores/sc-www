@@ -102,7 +102,7 @@ describe("ToastService", () => {
 
   it("showHttpError falls back to Query error! with detail for non-transient errors", () => {
     service.showHttpError(
-      { status: 422, error: { detail: "Invalid filter" } },
+      { status: 404, error: { detail: "Invalid filter" } },
       { id: QUERY_ERROR_SERVERS_TOAST_ID },
     );
 
@@ -110,6 +110,30 @@ describe("ToastService", () => {
     expect(toast).toBeTruthy();
     expect(toast?.querySelector('[data-cy="toast-body"]')?.textContent).toBe(
       "Invalid filter",
+    );
+  });
+
+  it("showHttpError shows full JSON body for 422 validation responses", () => {
+    const payload = {
+      detail: [
+        {
+          type: "less_than_equal",
+          loc: ["query", "vcpus_max"],
+          msg: "Input should be less than or equal to 256",
+          input: "500",
+          ctx: { le: 256 },
+        },
+      ],
+    };
+
+    service.showHttpError(
+      { status: 422, error: payload },
+      { id: QUERY_ERROR_SERVERS_TOAST_ID, title: "Servers query error!" },
+    );
+
+    const toast = toastByTitle("Servers query error!");
+    expect(toast?.querySelector('[data-cy="toast-body"]')?.textContent).toBe(
+      JSON.stringify(payload, null, 2),
     );
   });
 

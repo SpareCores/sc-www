@@ -7,7 +7,38 @@ import {
 } from "./http-error-toast";
 
 describe("getHttpErrorDetailMessage", () => {
-  it("returns backend detail for HttpErrorResponse", () => {
+  const validationPayload = {
+    detail: [
+      {
+        type: "less_than_equal",
+        loc: ["query", "vcpus_max"],
+        msg: "Input should be less than or equal to 256",
+        input: "500",
+        ctx: { le: 256 },
+      },
+    ],
+  };
+
+  it("returns pretty-printed full JSON body for 422 validation errors", () => {
+    expect(
+      getHttpErrorDetailMessage(
+        new HttpErrorResponse({
+          status: 422,
+          error: validationPayload,
+        }),
+      ),
+    ).toBe(JSON.stringify(validationPayload, null, 2));
+  });
+
+  it("returns pretty-printed full JSON body for 400 responses", () => {
+    expect(
+      getHttpErrorDetailMessage(
+        new HttpErrorResponse({ status: 400, error: validationPayload }),
+      ),
+    ).toBe(JSON.stringify(validationPayload, null, 2));
+  });
+
+  it("returns string detail JSON for 422 when detail is a string", () => {
     expect(
       getHttpErrorDetailMessage(
         new HttpErrorResponse({
@@ -15,13 +46,13 @@ describe("getHttpErrorDetailMessage", () => {
           error: { detail: "Invalid filter" },
         }),
       ),
-    ).toBe("Invalid filter");
+    ).toBe(JSON.stringify({ detail: "Invalid filter" }, null, 2));
   });
 
-  it("returns detail from duck-typed HTTP errors", () => {
+  it("returns detail from duck-typed non-validation HTTP errors", () => {
     expect(
       getHttpErrorDetailMessage({
-        status: 422,
+        status: 404,
         error: { detail: "Duck typed" },
       }),
     ).toBe("Duck typed");
@@ -33,7 +64,7 @@ describe("getHttpErrorDetailMessage", () => {
     );
     expect(
       getHttpErrorDetailMessage(
-        new HttpErrorResponse({ status: 422, error: { detail: "" } }),
+        new HttpErrorResponse({ status: 404, error: { detail: "" } }),
       ),
     ).toBe(DEFAULT_HTTP_ERROR_DETAIL);
   });

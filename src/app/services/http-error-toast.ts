@@ -17,23 +17,34 @@ function getErrorStatus(error: unknown): number | undefined {
   return undefined;
 }
 
+function getErrorBody(error: unknown): unknown {
+  if (error instanceof HttpErrorResponse) {
+    return error.error;
+  }
+  if (error !== null && typeof error === "object" && "error" in error) {
+    return (error as { error: unknown }).error;
+  }
+  return undefined;
+}
+
 export function getHttpErrorDetailMessage(
   error: unknown,
   fallback: string = DEFAULT_HTTP_ERROR_DETAIL,
 ): string {
-  let detail: unknown;
+  const body = getErrorBody(error);
+  const status = getErrorStatus(error);
 
-  if (error instanceof HttpErrorResponse) {
-    detail = error.error?.detail;
-  } else if (
-    error !== null &&
-    typeof error === "object" &&
-    "error" in error &&
-    (error as { error: unknown }).error !== null &&
-    typeof (error as { error: unknown }).error === "object" &&
-    "detail" in ((error as { error: object }).error as object)
+  if ((status === 400 || status === 422) && body != null && body !== "") {
+    return typeof body === "string" ? body : JSON.stringify(body, null, 2);
+  }
+
+  let detail: unknown;
+  if (
+    body !== null &&
+    typeof body === "object" &&
+    "detail" in (body as object)
   ) {
-    detail = (error as { error: { detail: unknown } }).error.detail;
+    detail = (body as { detail: unknown }).detail;
   }
 
   return typeof detail === "string" && detail ? detail : fallback;

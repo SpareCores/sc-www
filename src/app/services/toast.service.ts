@@ -106,7 +106,7 @@ export class ToastService implements OnDestroy {
               : ""
           }
         </div>
-        ${body ? `<div class="ml-3 text-sm font-normal mt-1" data-cy="toast-body">${body}</div>` : ""}
+        ${body ? `<div class="ml-3 text-sm font-normal mt-1 whitespace-pre-wrap break-words" data-cy="toast-body">${body}</div>` : ""}
         ${
           action
             ? `<button type="button" data-toast-action class="ml-3 mt-1 text-sm font-semibold underline underline-offset-2 cursor-pointer text-left">${action.label}</button>`
