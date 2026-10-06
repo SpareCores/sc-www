@@ -9,6 +9,25 @@ import {
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => {
+    switch (char) {
+      case "&":
+        return "&amp;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case '"':
+        return "&quot;";
+      case "'":
+        return "&#39;";
+      default:
+        return char;
+    }
+  });
+}
+
 export interface ToastOptions {
   /** The title text to display on the first line of the toast notification */
   title: string;
@@ -91,10 +110,14 @@ export class ToastService implements OnDestroy {
     toast.setAttribute("data-cy", "toast");
     toast.setAttribute("data-toast-type", type);
 
+    const safeTitle = escapeHtml(title);
+    const safeBody = body ? escapeHtml(body) : "";
+    const safeActionLabel = action ? escapeHtml(action.label) : "";
+
     toast.innerHTML = `
       <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${this.getColorClasses(type).background} ${this.getColorClasses(type).text}" role="alert">
         <div class="flex items-center w-full">
-          <div class="ml-3 text-sm font-semibold" data-cy="toast-title">${title}</div>
+          <div class="ml-3 text-sm font-semibold" data-cy="toast-title">${safeTitle}</div>
           ${
             !duration
               ? `
@@ -106,10 +129,10 @@ export class ToastService implements OnDestroy {
               : ""
           }
         </div>
-        ${body ? `<div class="ml-3 text-sm font-normal mt-1 whitespace-pre-wrap break-words" data-cy="toast-body">${body}</div>` : ""}
+        ${safeBody ? `<div class="ml-3 text-sm font-normal mt-1 whitespace-pre-wrap break-words" data-cy="toast-body">${safeBody}</div>` : ""}
         ${
           action
-            ? `<button type="button" data-toast-action class="ml-3 mt-1 text-sm font-semibold underline underline-offset-2 cursor-pointer text-left">${action.label}</button>`
+            ? `<button type="button" data-toast-action class="ml-3 mt-1 text-sm font-semibold underline underline-offset-2 cursor-pointer text-left">${safeActionLabel}</button>`
             : ""
         }
       </div>

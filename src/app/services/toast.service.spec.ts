@@ -137,6 +137,23 @@ describe("ToastService", () => {
     );
   });
 
+  it("escapes HTML in toast title and body", () => {
+    service.show({
+      title: `<img src=x onerror=alert(1)>`,
+      body: `<script>alert("x")</script>`,
+      type: "error",
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
+    });
+
+    const toast = toastByTitle(`<img src=x onerror=alert(1)>`);
+    expect(toast).toBeTruthy();
+    expect(toast?.innerHTML).not.toContain("<script>");
+    expect(toast?.innerHTML).not.toContain("<img src=x");
+    expect(toast?.querySelector('[data-cy="toast-body"]')?.textContent).toBe(
+      `<script>alert("x")</script>`,
+    );
+  });
+
   it("showHttpError uses custom title and body when provided", () => {
     service.showHttpError(
       { status: 422 },
