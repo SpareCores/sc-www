@@ -5,7 +5,7 @@ date: 2026-10-02
 # ~100 character
 teaser: Compare PostgreSQL CPU and memory performance across self-managed and managed cloud databases.
 # 320x220
-image: /assets/images/blog/thumbnails/benchmark-pgbench-postgres.webp
+image: /assets/images/blog/thumbnails/postgresql-contour.webp
 image_alt: Stylized PostgreSQL and cloud-server illustration representing database benchmark performance.
 author: Adam Toth
 tags: [benchmark, performance, scalability, score]
