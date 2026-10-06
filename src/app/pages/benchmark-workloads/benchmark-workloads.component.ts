@@ -107,8 +107,6 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   private pendingScrollTimeout: ReturnType<typeof setTimeout> | null = null;
   private hasInitializedViewportState = false;
   private desktopCollapsedState = false;
-  private readonly isBrowser = isPlatformBrowser(this.platformId);
-
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.clearPendingScrollTarget();
@@ -118,7 +116,7 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   }
 
   readonly benchmarksResource = resource({
-    params: () => (this.isBrowser ? true : undefined),
+    params: () => true,
     defaultValue: [] as BenchmarkFamily[],
     loader: async () => {
       this.toastService.clearTransientHttpError();
@@ -155,9 +153,7 @@ export class BenchmarkWorkloadsComponent implements OnInit {
     },
   });
 
-  readonly isLoading = computed(
-    () => !this.isBrowser || this.benchmarksResource.isLoading(),
-  );
+  readonly isLoading = computed(() => this.benchmarksResource.isLoading());
   readonly errorMessage = computed(() =>
     this.benchmarksResource.error()
       ? "Failed to load benchmark data. Please try again later."

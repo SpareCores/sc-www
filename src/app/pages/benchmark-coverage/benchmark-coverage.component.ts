@@ -2,7 +2,6 @@ import {
   Component,
   DestroyRef,
   OnInit,
-  PLATFORM_ID,
   computed,
   inject,
   signal,
@@ -36,7 +35,7 @@ import {
   Vendor,
   VendorDebugInfo,
 } from "../../../../sdk/data-contracts";
-import { PercentPipe, isPlatformBrowser } from "@angular/common";
+import { PercentPipe } from "@angular/common";
 import { PageLimitPipe } from "../../pipes/page-limit.pipe";
 import {
   BenchmarkFamilyFilterValue,
@@ -109,8 +108,6 @@ export class BenchmarkCoverageComponent implements OnInit {
   private seoHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
-  private platformId = inject(PLATFORM_ID);
-  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   isCollapsed = false;
 
@@ -370,9 +367,7 @@ export class BenchmarkCoverageComponent implements OnInit {
       "https://sparecores.com/assets/images/og/debug.png",
     );
 
-    if (this.isBrowser) {
-      void this.loadDebugData();
-    }
+    void this.loadDebugData();
 
     this.initializeFiltersFromUrl();
   }
