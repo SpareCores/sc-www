@@ -177,17 +177,11 @@ export class KeeperHttpClient extends HttpClientSDK {
       const status = err?.status ?? 0;
 
       if (!isRetryableStatus(status) || retry >= intervals.length) {
-        console.log("API exception");
-        console.log(err.message);
-        console.log(err.status);
         throw err;
       }
 
       const remainingBudgetMs = maxWaitMs - accumulatedWaitMs;
       if (remainingBudgetMs <= 0) {
-        console.log("API exception");
-        console.log(err.message);
-        console.log(err.status);
         throw err;
       }
 
@@ -199,7 +193,6 @@ export class KeeperHttpClient extends HttpClientSDK {
         remainingBudgetMs,
       });
 
-      console.log("Retrying request...");
       await new Promise((resolve) => setTimeout(resolve, delay));
       return this._requestWithRetries(
         method,
