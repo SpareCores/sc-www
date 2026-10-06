@@ -1,6 +1,6 @@
 ---
 # ~50 chars
-title: Measuring PostgreSQL Performance on Cloud Servers
+title: Measuring PostgreSQL Performance on Cloud
 date: 2026-10-02
 # ~100 character
 teaser: Compare PostgreSQL CPU and memory performance across self-managed and managed cloud databases.
@@ -11,34 +11,38 @@ author: Adam Toth
 tags: [benchmark, performance, scalability, score]
 ---
 
-Many cloud benchmarking projects start with the easy parts: CPU, memory, or
-static web serving. Databases are harder. PostgreSQL throughput depends on
-concurrency, transaction mix, query planning, and memory layout, not just raw
-server speed. And in our
-[static web server benchmarks](/article/benchmark-static-webserver) post, we
-promised to follow up on the Redis use case that came up on Twitter/X. It
-turned out we needed something closer to a real database.
+Many cloud benchmarking projects start with the more straightforward parts: CPU,
+memory, or static web serving. Databases are harder. PostgreSQL throughput
+depends on concurrency, transaction mix, query planning, and memory layout, not
+just raw server speed. And in our [static web server
+benchmarks](/article/benchmark-static-webserver) post, we promised to follow up
+on the Redis use case that came up on Twitter/X. It turned out we needed
+something closer to a real database.
 
 So we built a `pgbench`-based benchmark that runs on both self-hosted and
 managed PostgreSQL. Some highlights:
 
-- **CPU and memory, not disk**: the \~300 MiB dataset fits in
-  `shared_buffers`, so storage does not show up in the score.
-- **One node is enough on IaaS**: the client used under 1% CPU and \~10 MB of
-  memory on an 8-vCPU run, so it shares the server with the database.
-- **Concurrency curve, not just a peak**: each run measures up to four client
-  counts, with p50, p95, and p99 latency for each.
+- **CPU and memory, not disk or network**: the \~300 MiB dataset stays in
+  memory, and the score is not designed to measure storage or network
+  performance.
+- **From tiny to large servers**: runs on anything from 2 GiB of RAM up to
+  servers with hundreds of vCPUs.
+- **ARM and x86**: the images are published for both `arm64` and `amd64`.
+- **One comparable number**: each run records a concurrency curve with p50, p95,
+  and p99 latency at up to four client counts, then reduces it to a single score
+  in transactions per minute (TPM) that compares the CPU and memory performance
+  of any PostgreSQL server.
 
 If you're not interested in the design choices, feel free to skip ahead to
 [Running the Benchmark](/article/benchmark-pgbench-postgres#running-the-benchmark).
 
 ## Why We Needed a PostgreSQL Benchmark
 
-Our [Navigator](/servers) project publishes performance measurements for
-5000+ cloud server types. Before this benchmark, we already had
-[50+ benchmark scores](/article/cloud-compute-performance-benchmarks) that
-served as proxies for database performance, but none of them scaled well to
-modern cloud instances.
+Our [Navigator](/servers) project publishes performance measurements for 5000+
+cloud server types. Before this benchmark, we already had [50+ benchmark
+scores](/article/cloud-compute-performance-benchmarks) that served as proxies
+for database performance, but none of them scaled well to modern cloud
+instances.
 
 PassMark database operations do not scale to larger machines, Redis is not a
 relational database, and raw CPU or memory metrics are not the same thing as
@@ -48,9 +52,9 @@ PostgreSQL behavior rather than a partially related proxy.
 ## Methodology
 
 `pgbench` is PostgreSQL's standard benchmarking tool. It lets us keep the
-benchmark focused on server behavior rather than on a specific application.
-The headline score is TPM (transactions per minute): the highest throughput
-the server reached across the measured client counts.
+benchmark focused on server behavior rather than on a specific application. The
+headline score is TPM (transactions per minute): the highest throughput the
+server reached across the measured client counts.
 
 ### IaaS and DBaaS
 
@@ -64,26 +68,27 @@ The same image runs against two kinds of deployments:
 But why not run the client on a separate machine for IaaS too, like most
 published database benchmarks do?
 
-Because we measured it: on an 8-vCPU run, the `pgbench` client used under 1%
-CPU and \~10 MB of memory. Paying for a second VM per benchmark run, across
-thousands of server types, would have been wasteful for such a small effect.
-For DBaaS there is no choice: the provider runs the database, so the client
-needs its own VM.
+Because we measured it: on an 8-vCPU run, the `pgbench` client used under 1% CPU
+and \~10 MB of memory. Paying for a second VM per benchmark run, across
+thousands of server types, would have been wasteful for such a small effect. For
+DBaaS there is no choice: the provider runs the database, so the client needs
+its own VM.
 
-### Workloads
+The extra network hop does not skew the comparison between the two. The
+read-only workload runs heavy queries that take \~100 ms per transaction, so the
+round-trip time (RTT) between client and server is a rounding error in the
+score.
 
-The benchmark ships two workloads:
+### Workload
 
-- `pgbench_ro` (default): a custom read-only workload that keeps the server
-  busy with CPU-heavy PostgreSQL work instead of waiting on storage.
-- `pgbench_tpcb`: the built-in TPC-B-like workload (a simplified
-  bank-transaction benchmark), useful as a conventional OLTP (Online
-  Transaction Processing) comparison point.
+The benchmark ships the `pgbench_ro` workload: a custom read-only workload that
+keeps the server busy with CPU-heavy PostgreSQL work instead of waiting on
+storage.
 
-The default `pgbench_ro` workload is not meant to model a real application.
-It creates a fixed schema of \~303 MiB, small enough to fit in
-`shared_buffers`, and runs a single SQL transaction with several blocks that
-exercise different PostgreSQL subsystems:
+The default `pgbench_ro` workload is not meant to model a real application. It
+creates a fixed schema of \~303 MiB, small enough to fit in `shared_buffers`,
+and runs a single SQL transaction with several blocks that exercise different
+PostgreSQL subsystems:
 
 - index scans and joins
 - aggregation and hashing
@@ -94,19 +99,21 @@ exercise different PostgreSQL subsystems:
 - TOAST (The Oversized-Attribute Storage Technique) fetch and decompression
 - sequential scan work
 
-Spreading the work across these components means no single code path
-dominates the result. A trivial one-row `SELECT` benchmark, by contrast, is
-easily distorted by network latency and per-transaction overhead.
+Spreading the work across these components means no single code path dominates
+the result. A trivial one-row `SELECT` benchmark, by contrast, is easily
+distorted by network latency and per-transaction overhead. See our
+<a href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/README.md#workloads"
+target="_blank" rel="noopener">documentation</a>
+for details.
 
 ### Concurrency Profile
 
-By default, `pgbench_ro` measures throughput at 1, V/2, V, and 2V clients,
-where V is the database server's vCPU count. The score is the highest TPM
-among these points, and the full curve is kept in the output, so you can see
-where a server stops scaling cleanly. If you're curious why that point varies
-so much between servers, our
-[multi-core scalability](/article/multi-core-scalability) article covers the
-usual suspects.
+By default, `pgbench_ro` measures throughput at 1, V/2, V, and 2V clients, where
+V is the database server's vCPU count. The score is the highest TPM among these
+points, and the full curve is kept in the output, so you can see where a server
+stops scaling cleanly. If you're curious why that point varies so much between
+servers, our [multi-core scalability](/article/multi-core-scalability) article
+covers the usual suspects.
 
 Note that this is not a quick test: with warmups, a default run takes \~25
 minutes per server with 4 or more vCPUs, excluding data preparation. Across
@@ -131,11 +138,11 @@ benchmarks it:
 docker run --rm ghcr.io/sparecores/benchmark-pgbench-postgres:main
 </code></pre>
 
-The local server is tuned with a port of
-<a href="https://pgtune.leopard.in.ua/" target="_blank" rel="noopener">pgtune</a>
-based on the detected vCPU count and memory. The image also raises
-PostgreSQL's priority with `nice -n -20`, which only takes effect in a
-container allowed to change priorities (for example, a privileged one).
+The local server is tuned with a port of <a href="https://pgtune.leopard.in.ua/"
+target="_blank" rel="noopener">pgtune</a> based on the detected vCPU count and
+memory. The image also raises PostgreSQL's priority with `nice -n -20`, which
+only takes effect in a container allowed to change priorities (for example, a
+privileged one).
 
 ### Remote Mode
 
@@ -149,25 +156,25 @@ docker run --rm \
   ghcr.io/sparecores/benchmark-pgbench-postgres:main
 </code></pre>
 
-Set `SC_DB_VCPUS` to the database server's vCPU count. It defaults to the
-CPU count of the machine running the container, so on a separate client VM
-the concurrency points would be sized for the wrong machine. The remote
-server is benchmarked as-is: the image does not retune it.
+Set `SC_DB_VCPUS` to the database server's vCPU count. It defaults to the CPU
+count of the machine running the container, so on a separate client VM the
+concurrency points would be sized for the wrong machine. The remote server is
+benchmarked as-is: the image does not retune it.
 
 ## Reading the Output
 
 The benchmark prints one JSON object to stdout:
 
-- At the top level, `score`, `score_unit` (`tpm`), and `peak_concurrency`
-  come from the best-performing workload size.
+- At the top level, `score`, `score_unit` (`tpm`), and `peak_concurrency` come
+  from the best-performing workload size.
 - `sizes[]` holds one entry per workload size: the `cpu_scale` work multiplier
   for `pgbench_ro`, or the scale factor for `pgbench_tpcb`.
 - Each size has a `profile[]` with one point per client count, including
   `concurrency`, `tpm`, and `latency_ms` with p50, p95, and p99 values.
 
 Comparing the `profile[]` curves tells you more than the headline score: two
-servers with the same peak can behave very differently once load goes past
-their vCPU count.
+servers with the same peak can behave very differently once load goes past their
+vCPU count.
 
 ## Caveats
 
@@ -186,11 +193,11 @@ database dimension. Note the following:
 
 ## Summary
 
-We now have a PostgreSQL benchmark that runs the same way on self-hosted and
+We now proudly publish a PostgreSQL benchmark that runs the same way on self-hosted and
 managed databases, and focuses on the CPU and memory work that differs most
-between server types. The concurrency profile shows not just how fast a
-server is, but how far it scales. And since [Navigator](/servers) also tracks
-server prices, you can weigh TPM against cost when picking a server.
+between server types. It also supports a variety of server architecture types. The concurrency profile shows not just how fast a server
+is, but how well it scales. Since [Navigator](/servers) also tracks server
+prices, you can weigh TPM against cost when picking a server.
 
 ## Further Reading
 
@@ -206,14 +213,12 @@ documentation:
 - <a
   href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/limitations.md"
   target="_blank" rel="noopener">Limitations and exclusions</a>
-- <a
-  href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/references.md"
-  target="_blank" rel="noopener">Reference glossary</a>
 
 ## Feedback
 
 If you have any questions, concerns, or suggestions, please leave a message in
-the comment section below, open a ticket in our
-<a href="https://github.com/SpareCores/sc-images" target="_blank" rel="noopener">GitHub repository</a>,
-or <a href="https://meet.sparecores.com/intro" target="_blank" rel="noopener">schedule a call with us</a>
-to discuss your needs.
+the comment section below, open a ticket in our <a
+href="https://github.com/SpareCores/sc-images" target="_blank"
+rel="noopener">GitHub repository</a>, or <a
+href="https://meet.sparecores.com/intro" target="_blank" rel="noopener">schedule
+a call with us</a> to discuss your needs.
