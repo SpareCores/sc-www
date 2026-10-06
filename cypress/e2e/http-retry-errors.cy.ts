@@ -44,6 +44,25 @@ function clientNavigate(path: string) {
   });
 }
 
+function waitForMatchingStatus(
+  alias: string,
+  getUrl: () => string | undefined,
+  statusCheck: (statusCode: number) => boolean,
+) {
+  cy.wait(alias, { timeout: API_WAIT_MS }).then((interception) => {
+    const statusCode = interception.response?.statusCode;
+    const matchesUrl = interception.request.url === getUrl();
+    if (
+      matchesUrl &&
+      typeof statusCode === "number" &&
+      statusCheck(statusCode)
+    ) {
+      return;
+    }
+    waitForMatchingStatus(alias, getUrl, statusCheck);
+  });
+}
+
 describe("HTTP retry errors", () => {
   // Full SSR visits hydrate from HttpTransferCache, so Cypress never sees
   // those GETs. Bootstrap on `/`, then SPA-navigate so requests hit the wire.
@@ -73,14 +92,16 @@ describe("HTTP retry errors", () => {
 
     clientNavigate("/servers");
 
-    cy.wait("@serversSearch", { timeout: API_WAIT_MS })
-      .its("response.statusCode")
-      .should("eq", 408);
-    cy.wait("@serversSearch", { timeout: API_WAIT_MS })
-      .its("response.statusCode")
-      .should("be.within", 200, 299);
-    // First /servers URL must be retried (408 → another attempt). Listing URL
-    // sync may issue extra searches, so total intercepts can exceed 2.
+    waitForMatchingStatus(
+      "@serversSearch",
+      () => anchorUrl,
+      (status) => status === 408,
+    );
+    waitForMatchingStatus(
+      "@serversSearch",
+      () => anchorUrl,
+      (status) => status >= 200 && status < 300,
+    );
     cy.wrap(null).should(() => {
       expect(anchorAttempts).to.be.at.least(2);
     });
@@ -113,12 +134,16 @@ describe("HTTP retry errors", () => {
 
     clientNavigate("/servers");
 
-    cy.wait("@serversSearch429", { timeout: API_WAIT_MS })
-      .its("response.statusCode")
-      .should("eq", 429);
-    cy.wait("@serversSearch429", { timeout: API_WAIT_MS })
-      .its("response.statusCode")
-      .should("be.within", 200, 299);
+    waitForMatchingStatus(
+      "@serversSearch429",
+      () => anchorUrl,
+      (status) => status === 429,
+    );
+    waitForMatchingStatus(
+      "@serversSearch429",
+      () => anchorUrl,
+      (status) => status >= 200 && status < 300,
+    );
     cy.wrap(null).should(() => {
       expect(anchorAttempts).to.be.at.least(2);
     });
