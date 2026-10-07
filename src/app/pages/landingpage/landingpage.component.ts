@@ -167,7 +167,6 @@ export class LandingpageComponent implements OnInit {
 
   welcomeAnim(startingDelay: number = 1000) {
     const requestId = ++this.searchRequestId;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
 
     // get the cheapest machine
@@ -528,7 +527,6 @@ export class LandingpageComponent implements OnInit {
     this.spinStart = Date.now();
 
     const requestId = ++this.searchRequestId;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
 
     this.keeperAPI

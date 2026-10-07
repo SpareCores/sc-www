@@ -155,7 +155,6 @@ export class VendorDetailsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.vendor = null;
     this.bubbleMap = null;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(VENDOR_DETAILS_ERROR_TOAST_ID);
 
     Promise.all([

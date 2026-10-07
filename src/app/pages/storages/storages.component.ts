@@ -246,7 +246,6 @@ export class StoragesComponent implements OnInit, OnDestroy {
   private _searchStorages() {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_STORAGE_PRICES_TOAST_ID);
 
     this.keeperAPI

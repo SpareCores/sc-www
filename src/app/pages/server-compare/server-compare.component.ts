@@ -516,7 +516,6 @@ export class ServerCompareComponent
     const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
 
     this.instances = [];

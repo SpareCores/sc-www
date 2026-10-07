@@ -119,7 +119,6 @@ export class BenchmarkWorkloadsComponent implements OnInit {
     params: () => true,
     defaultValue: [] as BenchmarkFamily[],
     loader: async () => {
-      this.toastService.clearTransientHttpError();
       this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
 
       try {

@@ -536,7 +536,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private _searchDatabases(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_DATABASES_TOAST_ID);
 
     const query = structuredClone(

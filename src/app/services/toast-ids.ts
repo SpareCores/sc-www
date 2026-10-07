@@ -1,5 +1,3 @@
-export const TRANSIENT_HTTP_TOAST_ID = "keeper-api-transient-error";
-
 export const QUERY_ERROR_SERVERS_TOAST_ID = "query-error-servers";
 export const QUERY_ERROR_DATABASES_TOAST_ID = "query-error-databases";
 export const QUERY_ERROR_SERVER_PRICES_TOAST_ID = "query-error-server-prices";

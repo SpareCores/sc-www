@@ -493,7 +493,6 @@ export class BenchmarkCoverageComponent implements OnInit {
   private async loadDebugData() {
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
 
     try {

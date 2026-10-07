@@ -854,7 +854,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private _searchServers(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
 
     let query = JSON.parse(JSON.stringify(this.query));
