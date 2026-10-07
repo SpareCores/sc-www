@@ -149,8 +149,8 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
   ).components?.schemas?.Database?.properties ?? {};
 
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
-const INVALID_COMPARE_URL_TOAST_BODY =
-  'Visit the <a href="/databases" class="underline font-semibold">Database Navigator page</a> to select databases to compare.';
+const INVALID_COMPARE_URL_TOAST_BODY = "Select databases to compare.";
+const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Database Navigator page";
 const DATABASE_COMPARE_GUIDE_TITLE = "Cloud Database Compare Guide";
 const DATABASE_COMPARISON_TITLE = "Cloud Database Comparison";
 const DATABASE_COMPARE_BREADCRUMB = "Compare";
@@ -662,6 +662,10 @@ export class DatabaseCompareComponent
             body: INVALID_COMPARE_URL_TOAST_BODY,
             type: "error",
             id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
+            action: {
+              label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+              onClick: () => this.router.navigate(["/databases"]),
+            },
           });
         }
         this.isLoading = false;

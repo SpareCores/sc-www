@@ -119,9 +119,12 @@ describe("EmbeddedCompareChartComponent", () => {
     expect(showToast).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({
         title: "Invalid URL",
-        body: 'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.',
+        body: "Select servers to compare.",
         type: "error",
         id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Server Navigator page",
+        }),
       }),
     );
     expect(getServerMeta).not.toHaveBeenCalled();
@@ -139,9 +142,12 @@ describe("EmbeddedCompareChartComponent", () => {
     expect(showToast).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({
         title: "Invalid URL",
-        body: 'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.',
+        body: "Select servers to compare.",
         type: "error",
         id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Server Navigator page",
+        }),
       }),
     );
     expect(getServerMeta).not.toHaveBeenCalled();

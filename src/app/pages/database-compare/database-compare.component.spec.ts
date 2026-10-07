@@ -96,7 +96,11 @@ describe("DatabaseCompareComponent", () => {
     expect(show).toHaveBeenCalledWith(
       jasmine.objectContaining({
         title: "Invalid URL",
+        body: "Select databases to compare.",
         id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Database Navigator page",
+        }),
       }),
     );
     expect(component.databases.length).toBe(0);

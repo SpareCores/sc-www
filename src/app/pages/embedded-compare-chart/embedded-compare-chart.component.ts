@@ -2,7 +2,7 @@ import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { LucideExternalLink } from "@lucide/angular";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -16,8 +16,8 @@ import {
 } from "../../tools/encoded-url-state";
 
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
-const INVALID_COMPARE_URL_TOAST_BODY =
-  'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
+const INVALID_COMPARE_URL_TOAST_BODY = "Select servers to compare.";
+const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Server Navigator page";
 
 @Component({
   selector: "sc-embedded-compare-chart",
@@ -28,6 +28,7 @@ const INVALID_COMPARE_URL_TOAST_BODY =
 export class EmbeddedCompareChartComponent implements OnInit {
   private SEOHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private analytics = inject(AnalyticsService);
   private keeperAPI = inject(KeeperAPIService);
   private platformId = inject(PLATFORM_ID);
@@ -227,6 +228,10 @@ export class EmbeddedCompareChartComponent implements OnInit {
           body: INVALID_COMPARE_URL_TOAST_BODY,
           type: "error",
           id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/servers"]),
+          },
         });
       }
       return;
