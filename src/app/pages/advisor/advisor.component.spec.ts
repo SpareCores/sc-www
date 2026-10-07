@@ -1103,7 +1103,7 @@ describe("AdvisorComponent", () => {
     expect(showToast).toHaveBeenCalledWith(
       jasmine.objectContaining({
         title: "Invalid URL",
-        body: "Select a baseline server.",
+        body: "Select an existing baseline server.",
         type: "error",
         id: BAD_ADVISOR_BASELINE_URL_TOAST_ID,
       }),
