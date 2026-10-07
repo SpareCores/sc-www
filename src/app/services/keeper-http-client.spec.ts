@@ -16,6 +16,7 @@ import {
   RETRY_INTERVALS,
   RETRY_INTERVALS_SSR,
   getRetryDelay,
+  isAbortError,
   isAutomaticallyRetryableMethod,
   maxTotalRetryWaitMs,
   parseRetryAfter,
@@ -255,6 +256,44 @@ describe("KeeperHttpClient", () => {
       expect(httpMock.match(requestUrl()).length).toBe(0);
 
       tick(maxTotalRetryWaitMs(RETRY_INTERVALS));
+      expect(httpMock.match(requestUrl()).length).toBe(0);
+    }));
+
+    it("stops retrying when the abort signal fires during delay", fakeAsync(() => {
+      let rejected: unknown;
+      const abortController = new AbortController();
+
+      client
+        .request({ method: "GET", path, signal: abortController.signal })
+        .catch((err) => (rejected = err));
+
+      flushMicrotasks();
+      httpMock.expectOne(requestUrl()).flush(null, {
+        status: 503,
+        statusText: "Service Unavailable",
+      });
+
+      tick(RETRY_INTERVALS[0] / 2);
+      abortController.abort();
+      flushMicrotasks();
+
+      expect(isAbortError(rejected)).toBeTrue();
+      tick(RETRY_INTERVALS[0]);
+      expect(httpMock.match(requestUrl()).length).toBe(0);
+    }));
+
+    it("rejects immediately when the abort signal is already aborted", fakeAsync(() => {
+      let rejected: unknown;
+      const abortController = new AbortController();
+      abortController.abort();
+
+      client
+        .request({ method: "GET", path, signal: abortController.signal })
+        .catch((err) => (rejected = err));
+
+      flushMicrotasks();
+
+      expect(isAbortError(rejected)).toBeTrue();
       expect(httpMock.match(requestUrl()).length).toBe(0);
     }));
 
