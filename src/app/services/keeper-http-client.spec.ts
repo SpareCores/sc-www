@@ -237,8 +237,7 @@ describe("KeeperHttpClient", () => {
       expect(resolved).toBeTruthy();
     }));
 
-    it("caps huge Retry-After to the remaining total wait budget then stops", fakeAsync(() => {
-      const maxWait = maxTotalRetryWaitMs(RETRY_INTERVALS);
+    it("fails fast when Retry-After exceeds the remaining wait budget", fakeAsync(() => {
       let rejected: unknown;
 
       client.request({ method: "GET", path }).catch((err) => (rejected = err));
@@ -247,24 +246,15 @@ describe("KeeperHttpClient", () => {
       httpMock.expectOne(requestUrl()).flush(null, {
         status: 429,
         statusText: "Too Many Requests",
-        headers: { "Retry-After": "3600" },
-      });
-
-      tick(maxWait - 1);
-      expect(httpMock.match(requestUrl()).length).toBe(0);
-
-      tick(1);
-      flushMicrotasks();
-
-      httpMock.expectOne(requestUrl()).flush(null, {
-        status: 429,
-        statusText: "Too Many Requests",
-        headers: { "Retry-After": "3600" },
+        headers: { "Retry-After": "47" },
       });
       flushMicrotasks();
 
       expect(rejected).toBeTruthy();
       expect((rejected as { status: number }).status).toBe(429);
+      expect(httpMock.match(requestUrl()).length).toBe(0);
+
+      tick(maxTotalRetryWaitMs(RETRY_INTERVALS));
       expect(httpMock.match(requestUrl()).length).toBe(0);
     }));
 

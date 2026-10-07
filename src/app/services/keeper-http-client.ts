@@ -195,9 +195,17 @@ export class KeeperHttpClient extends HttpClientSDK {
         throw err;
       }
 
+      const retryAfterHeader = err?.headers?.get?.("Retry-After");
+      if (status === 429 || status === 503) {
+        const parsed = parseRetryAfter(retryAfterHeader);
+        if (parsed != null && parsed > remainingBudgetMs) {
+          throw err;
+        }
+      }
+
       const delay = getRetryDelay({
         status,
-        retryAfterHeader: err?.headers?.get?.("Retry-After"),
+        retryAfterHeader,
         attempt: retry,
         intervals,
         remainingBudgetMs,
