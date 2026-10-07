@@ -74,6 +74,7 @@ import {
   ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID,
   ADVISOR_BENCHMARK_CONFIGS_ERROR_TOAST_ID,
   ADVISOR_REGIONS_ERROR_TOAST_ID,
+  BAD_ADVISOR_BASELINE_URL_TOAST_ID,
   QUERY_ERROR_ADVISOR_TOAST_ID,
 } from "../../services/toast-ids";
 import { AuthStateService } from "../../core/auth";
@@ -191,6 +192,8 @@ const ADVISOR_BASELINE_SERVER_CONTROL_NAME = "baseline_server";
 const ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME = "server_workload";
 const ADVISOR_CUSTOM_CONTROL_FOCUS_ATTEMPT_LIMIT = 20;
 const ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX = "Workload profile";
+const INVALID_URL_TOAST_TITLE = "Invalid URL";
+const INVALID_BASELINE_URL_TOAST_BODY = "Select an existing baseline server.";
 
 function toAdvisorTitleCase(value: string): string {
   return value
@@ -475,6 +478,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly baselineServerInput = signal("");
   readonly selectedBaselineServer = signal<AdvisorBaselineServer | null>(null);
   readonly isLoadingBaselineServers = signal(false);
+  readonly hasLoadedBaselineServers = signal(false);
   readonly benchmarkConfigInput = signal("");
   readonly selectedBenchmarkConfig =
     signal<SearchBarBenchmarkConfigOption | null>(null);
@@ -1247,6 +1251,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
+      if (this.isLoadingBaselineServers() || !this.hasLoadedBaselineServers()) {
+        return;
+      }
+
       const matchedServer = this.serverTableRows().find((server) => {
         return (
           server.vendor_id === pendingBaselineVendorId &&
@@ -1254,16 +1262,35 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         );
       });
 
-      if (!matchedServer) {
+      if (matchedServer) {
+        this.selectedBaselineServer.set(matchedServer);
+        this.baselineServerInput.set(
+          `${matchedServer.vendor_id} ${matchedServer.api_reference}`,
+        );
+        this.pendingBaselineVendorId.set(null);
+        this.pendingBaselineApiReference.set(null);
+        this.toastService.removeToast(BAD_ADVISOR_BASELINE_URL_TOAST_ID);
         return;
       }
 
-      this.selectedBaselineServer.set(matchedServer);
-      this.baselineServerInput.set(
-        `${matchedServer.vendor_id} ${matchedServer.api_reference}`,
-      );
       this.pendingBaselineVendorId.set(null);
       this.pendingBaselineApiReference.set(null);
+      this.pendingWorkloadId.set(null);
+      this.pendingWorkloadConfig.set(null);
+      this.selectedBaselineServer.set(null);
+      this.baselineServerInput.set("");
+      this.limitToSameArchitecture.set(false);
+      this.limitToSameCpuAllocation.set(false);
+      this.pendingCustomControlFocus.set(ADVISOR_BASELINE_SERVER_CONTROL_NAME);
+
+      if (isPlatformBrowser(this.platformId)) {
+        this.toastService.show({
+          title: INVALID_URL_TOAST_TITLE,
+          body: INVALID_BASELINE_URL_TOAST_BODY,
+          type: "error",
+          id: BAD_ADVISOR_BASELINE_URL_TOAST_ID,
+        });
+      }
     });
 
     effect(() => {
@@ -1594,6 +1621,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.toastService.removeToast(ADVISOR_BENCHMARK_CONFIGS_ERROR_TOAST_ID);
     this.toastService.removeToast(ADVISOR_BASELINE_BENCHMARK_ERROR_TOAST_ID);
     this.toastService.removeToast(ADVISOR_REGIONS_ERROR_TOAST_ID);
+    this.toastService.removeToast(BAD_ADVISOR_BASELINE_URL_TOAST_ID);
   }
 
   toggleOrdering(column: TableColumn): void {
@@ -2219,6 +2247,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.benchmarkConfigInput.set("");
     this.pendingWorkloadId.set(null);
     this.pendingWorkloadConfig.set(null);
+    this.toastService.removeToast(BAD_ADVISOR_BASELINE_URL_TOAST_ID);
     this.optimizationGoal.set(ADVISOR_DEFAULT_OPTIMIZATION_GOAL);
     this.averageCpuUtilization.set(null);
     this.minimumMemoryGiB.set(ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB);
@@ -2254,6 +2283,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadBaselineServerRows(): void {
     const loadId = ++this.baselineServersLoadId;
     this.isLoadingBaselineServers.set(true);
+    this.hasLoadedBaselineServers.set(false);
     this.toastService.removeToast(ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID);
 
     this.keeperApi
@@ -2267,6 +2297,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         this.serverTableRows.set(response?.body || []);
+        this.hasLoadedBaselineServers.set(true);
         this.toastService.removeToast(ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID);
       })
       .catch((error) => {
@@ -2279,6 +2310,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
         console.error("Failed to preload advisor baseline servers", error);
         this.serverTableRows.set([]);
+        this.hasLoadedBaselineServers.set(false);
         this.showOwnedHttpErrorToast(
           error,
           "Failed to load servers",
@@ -2930,6 +2962,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
           this.baselineServerInput.set("");
           this.limitToSameArchitecture.set(false);
           this.limitToSameCpuAllocation.set(false);
+          this.toastService.removeToast(BAD_ADVISOR_BASELINE_URL_TOAST_ID);
           this.pendingCustomControlFocus.set(
             ADVISOR_BASELINE_SERVER_CONTROL_NAME,
           );

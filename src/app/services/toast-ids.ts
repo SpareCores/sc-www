@@ -29,6 +29,8 @@ export const BAD_SERVER_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
 export const BAD_DATABASE_COMPARE_URL_TOAST_ID =
   "bad-database-compare-url-param";
 export const BAD_BENCHMARK_URL_TOAST_ID = "bad-benchmark-url-param";
+export const BAD_ADVISOR_BASELINE_URL_TOAST_ID =
+  "bad-advisor-baseline-url-param";
 
 export const GUEST_SERVER_COMPARE_LIMIT_TOAST_ID = "guest-server-compare-limit";
 export const GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID =

@@ -41,6 +41,7 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import {
   ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID,
+  BAD_ADVISOR_BASELINE_URL_TOAST_ID,
   QUERY_ERROR_ADVISOR_TOAST_ID,
 } from "../../services/toast-ids";
 import { NeetoCalService } from "../../services/neeto-cal.service";
@@ -1081,6 +1082,32 @@ describe("AdvisorComponent", () => {
     expect(component.averageCpuUtilization()).toBe(60);
     expect(component.minimumMemoryGiB()).toBe(1);
     expect(component.peakGpuMemoryGiB()).toBe(2);
+  });
+
+  it("shows an invalid URL toast when baseline server is missing from preload", async () => {
+    queryParams$.next({
+      baseline_vendor: "vendy",
+      baseline_server: "missing.server",
+      workload_id: "stress_ng:bestn",
+      workload_config: "{}",
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.selectedBaselineServer()).toBeNull();
+    expect(component.pendingBaselineVendorId()).toBeNull();
+    expect(component.pendingBaselineApiReference()).toBeNull();
+    expect(component.pendingWorkloadId()).toBeNull();
+    expect(showToast).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Invalid URL",
+        body: "Select a baseline server.",
+        type: "error",
+        id: BAD_ADVISOR_BASELINE_URL_TOAST_ID,
+      }),
+    );
   });
 
   it("sanitizes invalid numeric advisor query params from the route", async () => {
