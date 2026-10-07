@@ -26,6 +26,7 @@ import {
 import { PageHeader } from "../../components/page-header/page-header";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { isAbortError } from "../../services/keeper-http-client";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
 import { BENCHMARK_COVERAGE_ERROR_TOAST_ID } from "../../services/toast-ids";
@@ -78,8 +79,12 @@ import {
   styleUrls: ["./benchmark-coverage.component.scss"],
 })
 export class BenchmarkCoverageComponent implements OnInit {
+  private loadAbortController: AbortController | null = null;
+
   constructor() {
     this.destroyRef.onDestroy(() => {
+      this.loadAbortController?.abort();
+      this.loadAbortController = null;
       this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
     });
 
@@ -491,15 +496,24 @@ export class BenchmarkCoverageComponent implements OnInit {
   }
 
   private async loadDebugData() {
+    this.loadAbortController?.abort();
+    const abortController = new AbortController();
+    this.loadAbortController = abortController;
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
     this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
 
     try {
+      const requestParams = { signal: abortController.signal };
       const [debugResponse, vendorsResponse] = await Promise.all([
-        this.keeperApi.getDebugInfo(),
-        this.keeperApi.getVendors(),
+        this.keeperApi.getDebugInfo(requestParams),
+        this.keeperApi.getVendors(requestParams),
       ]);
+
+      if (this.destroyRef.destroyed || abortController.signal.aborted) {
+        return;
+      }
 
       this.vendorDebugData.set(debugResponse.body.vendors ?? []);
       this.serverDebugData.set(debugResponse.body.servers ?? []);
@@ -510,6 +524,14 @@ export class BenchmarkCoverageComponent implements OnInit {
       this.initializeSearchBar();
       this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
     } catch (err) {
+      if (
+        isAbortError(err) ||
+        this.destroyRef.destroyed ||
+        abortController.signal.aborted
+      ) {
+        return;
+      }
+
       this.errorMessage.set(
         "Failed to load benchmark data. Please try again later.",
       );
@@ -519,7 +541,12 @@ export class BenchmarkCoverageComponent implements OnInit {
         body: "Please try again later.",
       });
     } finally {
-      this.isLoading.set(false);
+      if (this.loadAbortController === abortController) {
+        this.loadAbortController = null;
+      }
+      if (!this.destroyRef.destroyed && !abortController.signal.aborted) {
+        this.isLoading.set(false);
+      }
     }
   }
 

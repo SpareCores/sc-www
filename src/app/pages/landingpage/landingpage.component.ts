@@ -13,6 +13,7 @@ import {
 import { ArticleMeta, ArticlesService } from "../../services/articles.service";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { isAbortError } from "../../services/keeper-http-client";
 import { ToastService } from "../../services/toast.service";
 import { QUERY_ERROR_LANDING_TOAST_ID } from "../../services/toast-ids";
 import { spinner_initial_data } from "../../tools/spinner_initial_data";
@@ -79,11 +80,14 @@ export class LandingpageComponent implements OnInit {
   private prismService = inject(PrismService);
   private cdr = inject(ChangeDetectorRef);
   private searchRequestId = 0;
+  private searchAbortController: AbortController | null = null;
 
   showResourceTrackerCode = false;
 
   constructor() {
     this.destroyRef.onDestroy(() => {
+      this.searchAbortController?.abort();
+      this.searchAbortController = null;
       this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
     });
 
@@ -167,17 +171,27 @@ export class LandingpageComponent implements OnInit {
 
   welcomeAnim(startingDelay: number = 1000) {
     const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const abortController = new AbortController();
+    this.searchAbortController = abortController;
     this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
 
     // get the cheapest machine
     this.keeperAPI
-      .searchServers({
-        vcpus_min: this.cpuCount,
-        memory_min: this.ramCount,
-        limit: 25,
-      })
+      .searchServers(
+        {
+          vcpus_min: this.cpuCount,
+          memory_min: this.ramCount,
+          limit: 25,
+        },
+        { signal: abortController.signal },
+      )
       .then((servers) => {
-        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+        if (
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
           return;
         }
 
@@ -215,7 +229,12 @@ export class LandingpageComponent implements OnInit {
         }
       })
       .catch((err) => {
-        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+        if (
+          isAbortError(err) ||
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
           return;
         }
 
@@ -224,6 +243,11 @@ export class LandingpageComponent implements OnInit {
         });
         console.error(err);
         this.showSearchErrorToast(err);
+      })
+      .finally(() => {
+        if (this.searchAbortController === abortController) {
+          this.searchAbortController = null;
+        }
       });
   }
 
@@ -527,16 +551,26 @@ export class LandingpageComponent implements OnInit {
     this.spinStart = Date.now();
 
     const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const abortController = new AbortController();
+    this.searchAbortController = abortController;
     this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
 
     this.keeperAPI
-      .searchServers({
-        vcpus_min: this.cpuCount,
-        memory_min: this.ramCount,
-        limit: 25,
-      })
+      .searchServers(
+        {
+          vcpus_min: this.cpuCount,
+          memory_min: this.ramCount,
+          limit: 25,
+        },
+        { signal: abortController.signal },
+      )
       .then((servers) => {
-        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+        if (
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
           return;
         }
 
@@ -544,7 +578,12 @@ export class LandingpageComponent implements OnInit {
         this.spinAnim(servers.body);
       })
       .catch((err) => {
-        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+        if (
+          isAbortError(err) ||
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
           return;
         }
 
@@ -553,6 +592,11 @@ export class LandingpageComponent implements OnInit {
         });
         console.error(err);
         this.showSearchErrorToast(err);
+      })
+      .finally(() => {
+        if (this.searchAbortController === abortController) {
+          this.searchAbortController = null;
+        }
       });
   }
 
