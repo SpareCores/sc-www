@@ -13,12 +13,13 @@ To compile the project, you need to set up the below environment variables at bu
   endpoint to be used on the server-side
 - NG_APP_CLERK_PUBLISHABLE_KEY: [Clerk](https://clerk.com/) publishable key for authentication
 
-For Cypress authentication helpers (`@clerk/testing`), also set these test-runner
-variables (separate from the Angular app key; never expose the secret to the
-browser):
+For Cypress (`@clerk/testing`), also set:
 
-- CLERK_PUBLISHABLE_KEY: Clerk publishable key for Cypress `clerkSetup()`
-- CLERK_SECRET_KEY: Clerk secret key for Cypress `clerkSetup()` (CI secret only)
+- CLERK_SECRET_KEY: Clerk secret key for `clerkSetup()` and test-user cleanup
+  (CI/Node only; never expose to the browser)
+
+`cypress.config.ts` bridges `NG_APP_CLERK_PUBLISHABLE_KEY` into
+`CLERK_PUBLISHABLE_KEY` for `@clerk/testing`
 
 Optional Cypress auth/visual account credentials:
 
@@ -112,9 +113,9 @@ The explicit Karma setup for browsers, reporters, and coverage output lives in `
 End-to-end tests are implemented using Cypress.
 
 Auth-related Cypress specs use `@clerk/testing`. Provide
-`CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, and
-`NG_APP_CLERK_PUBLISHABLE_KEY` when running those specs. Guest-limit specs do
-not sign in, but the Cypress runner still initializes Clerk via `clerkSetup()`.
+`NG_APP_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` when running those specs.
+Guest-limit specs do not sign in, but the Cypress runner still initializes
+Clerk via `clerkSetup()`.
 
 Deterministic registration uses Clerk `+clerk_test` emails and verification
 code `424242` (no real verification email is sent). Do not use real Clerk
