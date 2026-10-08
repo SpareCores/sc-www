@@ -2,6 +2,10 @@ import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
+import {
+  GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+  GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+} from "../../services/toast-ids";
 import { AuthFlowStore } from "./data-access/auth-flow-store.service";
 import { ClerkService } from "./data-access/clerk.service";
 import { GitHubService } from "./data-access/github.service";
@@ -430,6 +434,73 @@ describe("AuthStateService", () => {
     expect(track).toHaveBeenCalledOnceWith("auth login", {});
     expect(auth.authInProgress()).toBeFalse();
     expect(auth.signUpModalOpen()).toBeFalse();
+  });
+
+  it("removes compare-limit toasts after a successful GitHub login", async () => {
+    const auth = createAuth();
+    const removeToast = spyOn(
+      (
+        auth as unknown as {
+          toastService: { removeToast: (id: string) => void };
+        }
+      ).toastService,
+      "removeToast",
+    );
+    setClerkInstance({
+      user: { id: "user_1" },
+      session: {},
+      addListener: jasmine.createSpy("addListener"),
+    });
+    spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
+    const navigate = spyOn(router(), "navigateByUrl").and.callFake(async () => {
+      expect(removeToast).toHaveBeenCalledWith(
+        GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+      );
+      expect(removeToast).toHaveBeenCalledWith(
+        GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+      );
+      return true;
+    });
+    flowStore().setReturnUrl("/servers");
+    go("/auth/callback?intent=signIn");
+
+    await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
+      status: "authenticated",
+    });
+
+    expect(navigate).toHaveBeenCalledOnceWith("/servers", { replaceUrl: true });
+  });
+
+  it("removes compare-limit toasts after a successful GitHub registration", async () => {
+    const auth = createAuth();
+    const removeToast = spyOn(
+      (
+        auth as unknown as {
+          toastService: { removeToast: (id: string) => void };
+        }
+      ).toastService,
+      "removeToast",
+    );
+    setClerkInstance({
+      user: { id: "user_2" },
+      session: {},
+      addListener: jasmine.createSpy("addListener"),
+    });
+    spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
+    spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    flowStore().setReturnUrl("/servers");
+    go("/auth/callback?intent=signUp");
+
+    await auth.handleGitHubCallback();
+
+    expect(removeToast).toHaveBeenCalledWith(
+      GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+    );
+    expect(removeToast).toHaveBeenCalledWith(
+      GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+    );
   });
 
   it("tracks GitHub registration separately from login", async () => {

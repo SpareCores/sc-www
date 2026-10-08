@@ -1,7 +1,15 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from "@angular/core/testing";
 import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { ServerPricesComponent } from "./server-prices.component";
+import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
+import { QUERY_ERROR_SERVER_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -95,4 +103,64 @@ describe("ServerPricesComponent", () => {
     ).toBe(0);
     expect(component.getScore(0)).toBe("0");
   });
+
+  it("shows query-error toast when search fails with 422 and clears it on retry success", fakeAsync(() => {
+    const toastService = TestBed.inject(ToastService);
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+    const removeToast = spyOn(toastService, "removeToast");
+    let resolveSecond!: (value: any) => void;
+
+    spyOn(keeperAPI, "searchServerPrices").and.returnValues(
+      Promise.reject({
+        status: 422,
+        error: { detail: "Invalid filter" },
+      }),
+      new Promise((resolve) => {
+        resolveSecond = resolve;
+      }),
+    );
+
+    showHttpError.calls.reset();
+    removeToast.calls.reset();
+
+    (component as any)._searchServers(true);
+    tick();
+
+    expect(showHttpError).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 422 }),
+      jasmine.objectContaining({
+        title: "Server prices query error!",
+        id: QUERY_ERROR_SERVER_PRICES_TOAST_ID,
+      }),
+    );
+
+    showHttpError.calls.reset();
+    removeToast.calls.reset();
+
+    (component as any)._searchServers(true);
+    expect(removeToast).toHaveBeenCalledWith(
+      QUERY_ERROR_SERVER_PRICES_TOAST_ID,
+    );
+    expect(
+      removeToast.calls
+        .allArgs()
+        .filter((args) => args[0] === QUERY_ERROR_SERVER_PRICES_TOAST_ID)
+        .length,
+    ).toBe(1);
+
+    resolveSecond({
+      body: [],
+      headers: { get: () => "0" },
+    });
+    tick();
+
+    expect(
+      removeToast.calls
+        .allArgs()
+        .filter((args) => args[0] === QUERY_ERROR_SERVER_PRICES_TOAST_ID)
+        .length,
+    ).toBe(2);
+    expect(showHttpError).not.toHaveBeenCalled();
+  }));
 });

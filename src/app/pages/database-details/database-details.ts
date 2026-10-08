@@ -50,6 +50,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { DATABASE_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
 
@@ -167,6 +168,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private availabilityOverflowCheckTimeout?: ReturnType<typeof setTimeout>;
   private subscription = new Subscription();
   private destroyRef = inject(DestroyRef);
+  private loadRequestId = 0;
 
   constructor() {
     afterNextRender(() => {
@@ -192,6 +194,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.toastService.removeToast(DATABASE_DETAILS_ERROR_TOAST_ID);
   }
 
   @HostListener("window:resize")
@@ -200,8 +203,10 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   }
 
   private loadDatabase(vendor: string, id: string) {
+    const requestId = ++this.loadRequestId;
     this.isLoading = true;
     this.databaseDetails = null;
+    this.toastService.removeToast(DATABASE_DETAILS_ERROR_TOAST_ID);
 
     Promise.all([
       this.keeperAPI.getDatabase(vendor, id),
@@ -224,6 +229,10 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           benchmarksResponse,
           benchmarkMetaResponse,
         ]) => {
+          if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
+            return;
+          }
+
           const database = databaseResponse.body;
           if (!database) {
             this.keeperResponseErrorMsg = "Database not found.";
@@ -247,6 +256,12 @@ export class DatabaseDetails implements OnInit, OnDestroy {
                     .getServerBenchmark(database.vendor_id, database.server_id)
                     .catch(() => ({ body: [] })),
                 ]);
+              if (
+                this.destroyRef.destroyed ||
+                requestId !== this.loadRequestId
+              ) {
+                return;
+              }
               const server = serverResponse?.body;
               if (server?.display_name && server?.api_reference) {
                 underlyingServer = {
@@ -259,9 +274,19 @@ export class DatabaseDetails implements OnInit, OnDestroy {
               underlyingServerScores = (serverBenchmarksResponse?.body ||
                 []) as PgbenchScore[];
             } catch {
+              if (
+                this.destroyRef.destroyed ||
+                requestId !== this.loadRequestId
+              ) {
+                return;
+              }
               underlyingServer = undefined;
               underlyingServerScores = [];
             }
+          }
+
+          if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
+            return;
           }
 
           this.databaseDetails = {
@@ -375,9 +400,14 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             this.description + this.cardPriceDescription,
             "cloud, database, dbaas, price, comparison, sparecores",
           );
+          this.toastService.removeToast(DATABASE_DETAILS_ERROR_TOAST_ID);
         },
       )
       .catch((err) => {
+        if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
+          return;
+        }
+
         this.analytics.SentryException(err, {
           tags: {
             location: this.constructor.name,
@@ -387,14 +417,16 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         console.error(err);
         this.keeperResponseErrorMsg =
           err.error?.detail || "Failed to load database details.";
-        this.toastService.show({
-          title: "Failed to load database",
-          body: this.keeperResponseErrorMsg,
-          type: "error",
-          id: "database-details-error",
+        this.toastService.showHttpError(err, {
+          id: DATABASE_DETAILS_ERROR_TOAST_ID,
+          title: "Failed to load database details.",
         });
       })
       .finally(() => {
+        if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
+          return;
+        }
+
         this.isLoading = false;
         this.scheduleAvailabilityOverflowCheck();
       });

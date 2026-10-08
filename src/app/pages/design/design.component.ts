@@ -7,6 +7,7 @@ import { ThemeTextComponent } from "../../components/theme-text/theme-text.compo
 import { DesignPageCardComponent } from "../../components/design-page-card/design-page-card.component";
 import { DownloadableLogoCollectionComponent } from "../../components/downloadable-logo-collection/downloadable-logo-collection.component";
 import { ToastService } from "../../services/toast.service";
+import { DESIGN_COLOR_COPY_TOAST_ID } from "../../services/toast-ids";
 
 type LogoDownloadItems = {
   folderName: string;
@@ -76,7 +77,7 @@ export class DesignComponent implements OnInit {
             body: `${color} copied to clipboard.`,
             type: "success",
             duration: 2000,
-            id: "design-color-copy",
+            id: DESIGN_COLOR_COPY_TOAST_ID,
           });
         })
         .catch(() => {
@@ -85,7 +86,7 @@ export class DesignComponent implements OnInit {
             body: "Unable to copy the color code.",
             type: "error",
             duration: 2500,
-            id: "design-color-copy",
+            id: DESIGN_COLOR_COPY_TOAST_ID,
           });
         });
     } else {
@@ -94,7 +95,7 @@ export class DesignComponent implements OnInit {
         body: "Clipboard access is not available in this browser.",
         type: "error",
         duration: 2500,
-        id: "design-color-copy",
+        id: DESIGN_COLOR_COPY_TOAST_ID,
       });
     }
   }

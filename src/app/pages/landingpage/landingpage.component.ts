@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  DestroyRef,
   PLATFORM_ID,
   OnInit,
   ViewChild,
@@ -12,6 +13,9 @@ import {
 import { ArticleMeta, ArticlesService } from "../../services/articles.service";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { isAbortError } from "../../services/keeper-http-client";
+import { ToastService } from "../../services/toast.service";
+import { QUERY_ERROR_LANDING_TOAST_ID } from "../../services/toast-ids";
 import { spinner_initial_data } from "../../tools/spinner_initial_data";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
@@ -67,16 +71,26 @@ import {
 export class LandingpageComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private SEOHandler = inject(SeoHandlerService);
   private articles = inject(ArticlesService);
   private analyticsService = inject(AnalyticsService);
   private neetoCalService = inject(NeetoCalService);
   private prismService = inject(PrismService);
   private cdr = inject(ChangeDetectorRef);
+  private searchRequestId = 0;
+  private searchAbortController: AbortController | null = null;
 
   showResourceTrackerCode = false;
 
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.searchAbortController?.abort();
+      this.searchAbortController = null;
+      this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
+    });
+
     afterNextRender(() => {
       if (!isPlatformBrowser(this.platformId)) {
         return;
@@ -156,14 +170,33 @@ export class LandingpageComponent implements OnInit {
   }
 
   welcomeAnim(startingDelay: number = 1000) {
+    const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const abortController = new AbortController();
+    this.searchAbortController = abortController;
+    this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
+
     // get the cheapest machine
     this.keeperAPI
-      .searchServers({
-        vcpus_min: this.cpuCount,
-        memory_min: this.ramCount,
-        limit: 25,
-      })
+      .searchServers(
+        {
+          vcpus_min: this.cpuCount,
+          memory_min: this.ramCount,
+          limit: 25,
+        },
+        { signal: abortController.signal },
+      )
       .then((servers) => {
+        if (
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
+          return;
+        }
+
+        this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
+
         if (!this.spinnerClicked) {
           setTimeout(() => {
             if (!this.spinnerClicked) {
@@ -196,10 +229,25 @@ export class LandingpageComponent implements OnInit {
         }
       })
       .catch((err) => {
+        if (
+          isAbortError(err) ||
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
+          return;
+        }
+
         this.analyticsService.SentryException(err, {
           tags: { location: this.constructor.name, function: "welcomeAnim" },
         });
         console.error(err);
+        this.showSearchErrorToast(err);
+      })
+      .finally(() => {
+        if (this.searchAbortController === abortController) {
+          this.searchAbortController = null;
+        }
       });
   }
 
@@ -502,21 +550,61 @@ export class LandingpageComponent implements OnInit {
 
     this.spinStart = Date.now();
 
+    const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const abortController = new AbortController();
+    this.searchAbortController = abortController;
+    this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
+
     this.keeperAPI
-      .searchServers({
-        vcpus_min: this.cpuCount,
-        memory_min: this.ramCount,
-        limit: 25,
-      })
+      .searchServers(
+        {
+          vcpus_min: this.cpuCount,
+          memory_min: this.ramCount,
+          limit: 25,
+        },
+        { signal: abortController.signal },
+      )
       .then((servers) => {
+        if (
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
+          return;
+        }
+
+        this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
         this.spinAnim(servers.body);
       })
       .catch((err) => {
+        if (
+          isAbortError(err) ||
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
+          return;
+        }
+
         this.analyticsService.SentryException(err, {
           tags: { location: this.constructor.name, function: "spinClicked" },
         });
         console.error(err);
+        this.showSearchErrorToast(err);
+      })
+      .finally(() => {
+        if (this.searchAbortController === abortController) {
+          this.searchAbortController = null;
+        }
       });
+  }
+
+  private showSearchErrorToast(err: unknown): void {
+    this.toastService.showHttpError(err, {
+      id: QUERY_ERROR_LANDING_TOAST_ID,
+      title: "Servers query error!",
+    });
   }
 
   spinAnim(servers: SearchServersServersGetData, isFake = false) {

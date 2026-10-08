@@ -9,6 +9,8 @@ import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { DatabaseListing } from "./database-listing";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
+import { QUERY_ERROR_DATABASES_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -207,5 +209,60 @@ describe("DatabaseListing", () => {
     expect(component.databases).toEqual([
       jasmine.objectContaining({ api_reference: "filtered" }),
     ]);
+  }));
+
+  it("shows query-error toast when search fails with 422 and clears it on retry success", fakeAsync(() => {
+    const toastService = TestBed.inject(ToastService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+    const removeToast = spyOn(toastService, "removeToast");
+    let resolveSecond!: (value: any) => void;
+
+    spyOn(keeperAPI, "searchDatabases").and.returnValues(
+      Promise.reject({
+        status: 422,
+        error: { detail: "Invalid filter" },
+      }),
+      new Promise((resolve) => {
+        resolveSecond = resolve;
+      }),
+    );
+
+    showHttpError.calls.reset();
+    removeToast.calls.reset();
+
+    (component as any)._searchDatabases(true);
+    tick();
+
+    expect(showHttpError).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 422 }),
+      jasmine.objectContaining({
+        title: "Databases query error!",
+        id: QUERY_ERROR_DATABASES_TOAST_ID,
+      }),
+    );
+
+    showHttpError.calls.reset();
+    removeToast.calls.reset();
+
+    (component as any)._searchDatabases(true);
+    expect(removeToast).toHaveBeenCalledWith(QUERY_ERROR_DATABASES_TOAST_ID);
+    expect(
+      removeToast.calls
+        .allArgs()
+        .filter((args) => args[0] === QUERY_ERROR_DATABASES_TOAST_ID).length,
+    ).toBe(1);
+
+    resolveSecond({
+      body: [{ api_reference: "ok" }],
+      headers: { get: () => "1" },
+    });
+    tick();
+
+    expect(
+      removeToast.calls
+        .allArgs()
+        .filter((args) => args[0] === QUERY_ERROR_DATABASES_TOAST_ID).length,
+    ).toBe(2);
+    expect(showHttpError).not.toHaveBeenCalled();
   }));
 });

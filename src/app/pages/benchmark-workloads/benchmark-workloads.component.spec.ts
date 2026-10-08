@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkWorkloadsComponent } from "./benchmark-workloads.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
+import { BENCHMARK_WORKLOADS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { Status } from "../../../../sdk/data-contracts";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -115,5 +117,56 @@ describe("BenchmarkWorkloadsComponent", () => {
 
     expect(mobileComponent.isMobileViewport()).toBeTrue();
     expect(mobileComponent.isCollapsed()).toBeTrue();
+  });
+
+  it("shows http error toast when workloads load fails with 500", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+    keeperApiService.getBenchmarkWorkloads.and.rejectWith({ status: 500 });
+
+    const failFixture = TestBed.createComponent(BenchmarkWorkloadsComponent);
+    failFixture.detectChanges();
+    await failFixture.whenStable();
+
+    expect(showHttpError).toHaveBeenCalledWith(
+      { status: 500 },
+      jasmine.objectContaining({ id: BENCHMARK_WORKLOADS_ERROR_TOAST_ID }),
+    );
+  });
+
+  it("shows http error toast when workloads load fails with 404", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+    keeperApiService.getBenchmarkWorkloads.and.rejectWith({
+      status: 404,
+      error: { detail: "Not found" },
+    });
+
+    const failFixture = TestBed.createComponent(BenchmarkWorkloadsComponent);
+    failFixture.detectChanges();
+    await failFixture.whenStable();
+
+    expect(showHttpError).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 404 }),
+      jasmine.objectContaining({
+        id: BENCHMARK_WORKLOADS_ERROR_TOAST_ID,
+        title: "Failed to load benchmark data.",
+        body: "Please try again later.",
+      }),
+    );
+  });
+
+  it("does not show toast when workloads load is aborted", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+    keeperApiService.getBenchmarkWorkloads.and.rejectWith(
+      new DOMException("The operation was aborted.", "AbortError"),
+    );
+
+    const failFixture = TestBed.createComponent(BenchmarkWorkloadsComponent);
+    failFixture.detectChanges();
+    await failFixture.whenStable();
+
+    expect(showHttpError).not.toHaveBeenCalled();
   });
 });
