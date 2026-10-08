@@ -12,27 +12,34 @@ const SERVERS_FILTERED = "/servers?vendor=hcloud&gpu_min=1&gpu_memory_min=1";
 const SERVER_DETAILS = "/server/gcp/t2d-standard-1";
 const DATABASE_DETAILS = "/database/gcp/db-c4a-highmem-48";
 
-function visualUserCredentials(): { email: string; password: string } {
-  const email = Cypress.env("E2E_CLERK_USER_EMAIL") as string | undefined;
-  const password = Cypress.env("E2E_CLERK_USER_PASSWORD") as string | undefined;
-  expect(email, "E2E_CLERK_USER_EMAIL").to.be.a("string").and.not.be.empty;
-  expect(password, "E2E_CLERK_USER_PASSWORD").to.be.a("string").and.not.be
-    .empty;
-  return { email: email!, password: password! };
+function registerClerkTestUser(email: string, password: string): void {
+  setupClerkTestingToken();
+  E2EEvent.visitURL("/", 2000);
+  openGuestAuthButton("Register");
+  cy.get('input[name="firstName"]').clear().type("Ada");
+  cy.get('input[name="lastName"]').clear().type("Lovelace");
+  cy.get('input[name="emailAddress"]').clear().type(email);
+  cy.get('input[name="password"]').clear().type(password);
+  cy.get('.auth-modal__form button[type="submit"]').first().click();
+  cy.get(".auth-modal__title", { timeout: 20000 }).should(
+    "contain.text",
+    "One last step",
+  );
+  cy.get('input[name="legalAccepted"]').check({ force: true });
+  cy.contains("button", "Continue").click();
+  cy.get(".auth-modal__title", { timeout: 20000 }).should(
+    "contain.text",
+    "Verify your email",
+  );
+  cy.get('input[name="verificationCode"]').clear().type("424242");
+  cy.contains("button", "Verify email").click();
+  cy.get(".auth-modal", { timeout: 20000 }).should("not.exist");
+  cy.get("#auth_button", { timeout: 20000 }).should("be.visible");
 }
 
-function signInVisualUser(): void {
-  const { email, password } = visualUserCredentials();
-
-  cy.session(["auth-visual", email], () => {
-    setupClerkTestingToken();
-    E2EEvent.visitURL("/", 2000);
-    cy.clerkSignIn({
-      strategy: "password",
-      identifier: email,
-      password,
-    });
-    cy.get("#auth_button", { timeout: 20000 }).should("be.visible");
+function ensureVisualUserSession(email: string, password: string): void {
+  cy.session(["auth-visual-clerk-test", email], () => {
+    registerClerkTestUser(email, password);
   });
 }
 
@@ -233,8 +240,31 @@ export function registerAuthVisualSuites(suffix: string): void {
   });
 
   describe("Auth visual — authenticated", () => {
+    let visualEmail: string | undefined;
+    let visualPassword: string | undefined;
+
+    before(() => {
+      const runId = Date.now();
+      visualEmail = `sc-www+clerk_test+visual${suffix || ""}+${runId}@example.com`;
+      visualPassword = `TestPass!${runId}`;
+      ensureVisualUserSession(visualEmail, visualPassword);
+    });
+
     beforeEach(() => {
-      signInVisualUser();
+      expect(visualEmail, "visualEmail").to.be.a("string").and.not.be.empty;
+      expect(visualPassword, "visualPassword").to.be.a("string").and.not.be
+        .empty;
+      ensureVisualUserSession(visualEmail!, visualPassword!);
+    });
+
+    after(() => {
+      if (!visualEmail) {
+        return;
+      }
+      const email = visualEmail;
+      visualEmail = undefined;
+      visualPassword = undefined;
+      cy.task("deleteClerkUserByEmail", email, { timeout: 20000 });
     });
 
     it("compares signed-in header", () => {
