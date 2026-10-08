@@ -1,4 +1,4 @@
-import { setupClerkTestingToken } from "@clerk/testing/cypress";
+import { bypassClerkBotProtection } from "./clerk-testing";
 import { E2EEvent } from "./generics";
 
 export const SERVER_COMPARE_URL =
@@ -22,8 +22,8 @@ function waitForClerk(): void {
 }
 
 function fillRegisterDetails(email: string, password: string): void {
-  cy.get('input[name="firstName"]').clear().type("Ada");
-  cy.get('input[name="lastName"]').clear().type("Lovelace");
+  cy.get('input[name="firstName"]').clear().type("Test");
+  cy.get('input[name="lastName"]').clear().type("User");
   cy.get('input[name="emailAddress"]').clear().type(email);
   cy.get('input[name="password"]').clear().type(password);
   cy.get('.auth-modal__form button[type="submit"]')
@@ -41,7 +41,7 @@ function expectRegisterStep(title: string): void {
 }
 
 function registerClerkTestUser(email: string, password: string): void {
-  setupClerkTestingToken();
+  bypassClerkBotProtection();
   E2EEvent.visitURL("/", 2000);
   waitForClerk();
   openGuestAuthButton("Register");
@@ -210,7 +210,7 @@ export function registerAuthVisualSuites(suffix: string): void {
     });
 
     it("compares registration consent step", () => {
-      setupClerkTestingToken();
+      bypassClerkBotProtection();
       const runId = Date.now();
       const email = `sc-www+clerk_test+consent+${runId}@example.com`;
       const password = `ScWwwE2e!${runId}`;
@@ -226,7 +226,7 @@ export function registerAuthVisualSuites(suffix: string): void {
     });
 
     it("compares registration verify step", () => {
-      setupClerkTestingToken();
+      bypassClerkBotProtection();
       const runId = Date.now();
       const email = `sc-www+clerk_test+verify+${runId}@example.com`;
       const password = `ScWwwE2e!${runId}`;

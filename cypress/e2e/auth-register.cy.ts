@@ -1,4 +1,4 @@
-import { setupClerkTestingToken } from "@clerk/testing/cypress";
+import { bypassClerkBotProtection } from "../support/clerk-testing";
 import { E2EEvent } from "../support/generics";
 
 describe("Clerk +clerk_test registration", () => {
@@ -15,7 +15,7 @@ describe("Clerk +clerk_test registration", () => {
   });
 
   it("registers through details, consent, and email verification", () => {
-    setupClerkTestingToken();
+    bypassClerkBotProtection();
 
     const runId = Date.now();
     createdEmail = `sc-www+clerk_test+${runId}@example.com`;
@@ -31,8 +31,8 @@ describe("Clerk +clerk_test registration", () => {
     cy.contains("button", "Register").filter(":visible").first().click();
 
     cy.get(".auth-modal__title").should("contain.text", "Create your account");
-    cy.get('input[name="firstName"]').clear().type("Ada");
-    cy.get('input[name="lastName"]').clear().type("Lovelace");
+    cy.get('input[name="firstName"]').clear().type("Test");
+    cy.get('input[name="lastName"]').clear().type("User");
     cy.get('input[name="emailAddress"]').clear().type(createdEmail);
     cy.get('input[name="password"]').clear().type(password);
     cy.get('.auth-modal__form button[type="submit"]')

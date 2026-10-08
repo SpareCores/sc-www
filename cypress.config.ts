@@ -38,16 +38,14 @@ export default defineConfig({
       on("before:browser:launch", customizeChromeHeadless);
 
       getCompareSnapshotPlugin(on, config);
-      const publishableKey = process.env["NG_APP_CLERK_PUBLISHABLE_KEY"];
-      if (publishableKey && !process.env["CLERK_PUBLISHABLE_KEY"]) {
-        process.env["CLERK_PUBLISHABLE_KEY"] = publishableKey;
-        config.env = {
-          ...config.env,
-          CLERK_PUBLISHABLE_KEY: publishableKey,
-        };
-      }
 
-      return clerkSetup({ config });
+      return clerkSetup({
+        config,
+        options: {
+          publishableKey: process.env["NG_APP_CLERK_PUBLISHABLE_KEY"],
+          secretKey: process.env["CLERK_SECRET_KEY"],
+        },
+      });
     },
   },
   numTestsKeptInMemory: 1,

@@ -18,9 +18,6 @@ For Cypress (`@clerk/testing`), also set:
 - CLERK_SECRET_KEY: Clerk secret key for `clerkSetup()` and test-user cleanup
   (CI/Node only; never expose to the browser)
 
-`cypress.config.ts` bridges `NG_APP_CLERK_PUBLISHABLE_KEY` into
-`CLERK_PUBLISHABLE_KEY` for `@clerk/testing`
-
 This can also be done via defining an `.env` file based on the provided `.env.example` template file.
 
 You also need to provide your own Terms of Service and Privacy Policy
