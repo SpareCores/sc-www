@@ -12,6 +12,15 @@ const SERVERS_FILTERED = "/servers?vendor=hcloud&gpu_min=1&gpu_memory_min=1";
 const SERVER_DETAILS = "/server/gcp/t2d-standard-1";
 const DATABASE_DETAILS = "/database/gcp/db-c4a-highmem-48";
 
+function waitForClerk(): void {
+  cy.window({ timeout: 30000 }).should((win) => {
+    expect(win).to.have.property("Clerk");
+    expect((win as Window & { Clerk: { loaded: boolean } }).Clerk.loaded).to.eq(
+      true,
+    );
+  });
+}
+
 function fillRegisterDetails(email: string, password: string): void {
   cy.get('input[name="firstName"]').clear().type("Ada");
   cy.get('input[name="lastName"]').clear().type("Lovelace");
@@ -34,7 +43,7 @@ function expectRegisterStep(title: string): void {
 function registerClerkTestUser(email: string, password: string): void {
   setupClerkTestingToken();
   E2EEvent.visitURL("/", 2000);
-  cy.clerkLoaded();
+  waitForClerk();
   openGuestAuthButton("Register");
   cy.get(".auth-modal__title").should("contain.text", "Create your account");
   fillRegisterDetails(email, password);
@@ -207,7 +216,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       const password = `ScWwwE2e!${runId}`;
 
       E2EEvent.visitURL("/", 2000);
-      cy.clerkLoaded();
+      waitForClerk();
       openGuestAuthButton("Register");
       fillRegisterDetails(email, password);
       expectRegisterStep("One last step");
@@ -223,7 +232,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       const password = `ScWwwE2e!${runId}`;
 
       E2EEvent.visitURL("/", 2000);
-      cy.clerkLoaded();
+      waitForClerk();
       openGuestAuthButton("Register");
       fillRegisterDetails(email, password);
       expectRegisterStep("One last step");

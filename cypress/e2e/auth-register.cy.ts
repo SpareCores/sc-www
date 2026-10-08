@@ -22,7 +22,12 @@ describe("Clerk +clerk_test registration", () => {
     const password = `ScWwwE2e!${runId}`;
 
     E2EEvent.visitURL("/", 2000);
-    cy.clerkLoaded();
+    cy.window({ timeout: 30000 }).should((win) => {
+      expect(win).to.have.property("Clerk");
+      expect(
+        (win as Window & { Clerk: { loaded: boolean } }).Clerk.loaded,
+      ).to.eq(true);
+    });
     cy.contains("button", "Register").filter(":visible").first().click();
 
     cy.get(".auth-modal__title").should("contain.text", "Create your account");

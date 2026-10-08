@@ -195,5 +195,6 @@ export class ClerkService {
       routerReplace: (url: string) => this.navigateRouter(url, true),
       telemetry: false,
     });
+    (window as Window & { Clerk: Clerk }).Clerk = this.clerk;
   }
 }
