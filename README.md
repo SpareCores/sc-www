@@ -25,11 +25,6 @@ Optional Cypress auth/visual account credentials:
 - E2E_CLERK_USER_EMAIL / E2E_CLERK_USER_PASSWORD: dedicated Clerk test user for
   authenticated visual regression (not a personal account)
 
-Optional Mailinator private-domain E2E (real email delivery path):
-
-- MAILINATOR_API_TOKEN / MAILINATOR_DOMAIN: Node-side only; used by the gated
-  Mailinator registration spec
-
 This can also be done via defining an `.env` file based on the provided `.env.example` template file.
 
 You also need to provide your own Terms of Service and Privacy Policy
@@ -122,8 +117,8 @@ Auth-related Cypress specs use `@clerk/testing`. Provide
 not sign in, but the Cypress runner still initializes Clerk via `clerkSetup()`.
 
 Deterministic registration uses Clerk `+clerk_test` emails and verification
-code `424242`. Real email delivery is covered by a separate, env-gated
-Mailinator spec.
+code `424242` (no real verification email is sent). Do not use real Clerk
+verification emails in E2E — the instance quota is reserved for real users.
 
 ## License
 
