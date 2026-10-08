@@ -47,17 +47,7 @@ export default defineConfig({
         };
       }
 
-      return clerkSetup({ config }).then((cfg) => {
-        const email = process.env["E2E_CLERK_USER_EMAIL"];
-        const password = process.env["E2E_CLERK_USER_PASSWORD"];
-        if (email) {
-          cfg.env = { ...cfg.env, E2E_CLERK_USER_EMAIL: email };
-        }
-        if (password) {
-          cfg.env = { ...cfg.env, E2E_CLERK_USER_PASSWORD: password };
-        }
-        return cfg;
-      });
+      return clerkSetup({ config });
     },
   },
   numTestsKeptInMemory: 1,

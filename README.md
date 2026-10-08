@@ -21,11 +21,6 @@ For Cypress (`@clerk/testing`), also set:
 `cypress.config.ts` bridges `NG_APP_CLERK_PUBLISHABLE_KEY` into
 `CLERK_PUBLISHABLE_KEY` for `@clerk/testing`
 
-Optional Cypress auth/visual account credentials:
-
-- E2E_CLERK_USER_EMAIL / E2E_CLERK_USER_PASSWORD: dedicated Clerk test user for
-  authenticated visual regression (not a personal account)
-
 This can also be done via defining an `.env` file based on the provided `.env.example` template file.
 
 You also need to provide your own Terms of Service and Privacy Policy
@@ -116,11 +111,6 @@ Auth-related Cypress specs use `@clerk/testing`. Provide
 `NG_APP_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` when running those specs.
 Guest-limit specs do not sign in, but the Cypress runner still initializes
 Clerk via `clerkSetup()`.
-
-Authenticated visual specs (`cypress/e2e/auth-visual*.cy.ts`) also need
-`E2E_CLERK_USER_EMAIL` and `E2E_CLERK_USER_PASSWORD` for a dedicated Clerk
-test account (never a personal account). Guest modal / consent / verify shots
-can run without that account.
 
 Deterministic registration uses Clerk `+clerk_test` emails and verification
 code `424242` (no real verification email is sent). Do not use real Clerk
