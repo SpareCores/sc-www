@@ -222,6 +222,14 @@ running. Depending on our budget at the different cloud vendors, we hope to wrap
 up a much wider coverage in the next few weeks. We will then write up our
 findings in a more detailed blog post, so stay tuned!
 
+## Acknowledgments
+
+We'd like to thank <a href="https://benchant.com" target="_blank"
+rel="noopener">benchANT</a> for their help in shaping and validating our
+methodology. Their expertise in database performance testing and measurement was
+invaluable throughout this project, and we highly recommend consulting them for
+any custom database benchmarking needs.
+
 ## Feedback
 
 If you have any questions, concerns, or suggestions, please leave a message in
