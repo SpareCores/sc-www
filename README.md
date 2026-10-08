@@ -117,6 +117,10 @@ Auth-related Cypress specs use `@clerk/testing`. Provide
 Guest-limit specs do not sign in, but the Cypress runner still initializes
 Clerk via `clerkSetup()`.
 
+Authenticated visual specs (`cypress/e2e/auth-visual.cy.ts`) also need
+`E2E_CLERK_USER_EMAIL` and `E2E_CLERK_USER_PASSWORD` for a dedicated Clerk
+test account (never a personal account).
+
 Deterministic registration uses Clerk `+clerk_test` emails and verification
 code `424242` (no real verification email is sent). Do not use real Clerk
 verification emails in E2E — the instance quota is reserved for real users.
