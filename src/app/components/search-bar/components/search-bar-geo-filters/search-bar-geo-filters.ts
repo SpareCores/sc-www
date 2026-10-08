@@ -10,6 +10,10 @@ import {
 import { CountryIdtoNamePipe } from "../../../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
 import { ToastService } from "../../../../services/toast.service";
+import {
+  GUEST_COUNTRY_LIMIT_TOAST_ID,
+  GUEST_REGION_LIMIT_TOAST_ID,
+} from "../../../../services/toast-ids";
 import { CollectionsUiService } from "../../../../collections/collections-ui.service";
 import type {
   ContinentMetadata,
@@ -389,7 +393,7 @@ export class SearchBarGeoFilters {
 
   private showCountryLimitToast(): void {
     this.toastService.show({
-      id: "guest-country-limit",
+      id: GUEST_COUNTRY_LIMIT_TOAST_ID,
       title: "Country limit reached.",
       body: "Guests can only filter by one country at a time.",
       type: "warning",
@@ -402,7 +406,7 @@ export class SearchBarGeoFilters {
 
   private showRegionLimitToast(): void {
     this.toastService.show({
-      id: "guest-region-limit",
+      id: GUEST_REGION_LIMIT_TOAST_ID,
       title: "Region limit reached.",
       body: "Guests can only filter by three regions at a time.",
       type: "warning",

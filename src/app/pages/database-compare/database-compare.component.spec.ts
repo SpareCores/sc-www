@@ -5,6 +5,7 @@ import { of } from "rxjs";
 import { DatabaseCompareComponent } from "./database-compare.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { BAD_DATABASE_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("DatabaseCompareComponent", () => {
@@ -95,7 +96,11 @@ describe("DatabaseCompareComponent", () => {
     expect(show).toHaveBeenCalledWith(
       jasmine.objectContaining({
         title: "Invalid URL",
-        id: "bad-database-compare-url-param",
+        body: "Select databases to compare.",
+        id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Database Navigator page",
+        }),
       }),
     );
     expect(component.databases.length).toBe(0);

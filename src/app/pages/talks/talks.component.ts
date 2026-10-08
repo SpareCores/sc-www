@@ -38,6 +38,14 @@ export class TalksComponent implements OnInit {
 
   talks: SlidesMeta[] = [];
 
+  authorsOf(talk: SlidesMeta): string[] {
+    const author = talk.author;
+    if (Array.isArray(author)) {
+      return author.filter((name) => !!name);
+    }
+    return author ? [author] : [];
+  }
+
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       const category = params["tag"];

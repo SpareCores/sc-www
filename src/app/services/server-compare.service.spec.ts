@@ -1,7 +1,10 @@
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 
+import { AuthStateService } from "../core/auth";
 import { CollectionsUiService } from "../collections/collections-ui.service";
+import { GUEST_SERVER_COMPARE_LIMIT_TOAST_ID } from "./toast-ids";
+import { ToastService } from "./toast.service";
 import { ServerCompare, ServerCompareService } from "./server-compare.service";
 
 describe("ServerCompareService", () => {
@@ -218,5 +221,133 @@ describe("ServerCompareService", () => {
         "/databases/compare?",
       ),
     ).toBeTrue();
+  });
+
+  it("replaces server compare selection above guest limit without toasts", () => {
+    const toastService = TestBed.inject(ToastService);
+    const show = spyOn(toastService, "show");
+    const selectionChanged = jasmine.createSpy("selectionChanged");
+    service.selectionChanged.subscribe(selectionChanged);
+    service.setBaselineServer({ vendor: "aws", server: "a1" });
+    const hydrated: ServerCompare[] = [
+      {
+        display_name: "S1",
+        vendor: "aws",
+        server: "s1",
+        zonesRegions: [],
+      },
+      {
+        display_name: "S2",
+        vendor: "gcp",
+        server: "s2",
+        zonesRegions: [
+          { zone: "a", region: "us-east-1" },
+          { zone: "b", region: "us-west-2" },
+        ],
+      },
+      {
+        display_name: "S3",
+        vendor: "azure",
+        server: "s3",
+        zonesRegions: [],
+      },
+      {
+        display_name: "S4",
+        vendor: "aws",
+        server: "s4",
+        zonesRegions: [],
+      },
+      {
+        display_name: "S5",
+        vendor: "gcp",
+        server: "s5",
+        zonesRegions: [],
+      },
+    ];
+
+    service.replaceServerCompareSelection(hydrated);
+
+    expect(service.selectedForCompare).toEqual(hydrated);
+    expect(service.selectedForCompare[1].zonesRegions).toEqual([
+      { zone: "a", region: "us-east-1" },
+      { zone: "b", region: "us-west-2" },
+    ]);
+    expect(selectionChanged).toHaveBeenCalledOnceWith(
+      service.selectedForCompare,
+    );
+    expect(show).not.toHaveBeenCalled();
+    expect(service.baselineServer).toEqual({ vendor: "aws", server: "a1" });
+  });
+
+  it("still enforces guest server compare limit on toggle", () => {
+    const toastService = TestBed.inject(ToastService);
+    const show = spyOn(toastService, "show");
+    const auth = TestBed.inject(AuthStateService);
+    spyOn(auth, "isAuthenticated").and.returnValue(false);
+    service.selectedForCompare = [
+      {
+        display_name: "S1",
+        vendor: "aws",
+        server: "s1",
+        zonesRegions: [],
+      },
+      {
+        display_name: "S2",
+        vendor: "gcp",
+        server: "s2",
+        zonesRegions: [],
+      },
+      {
+        display_name: "S3",
+        vendor: "azure",
+        server: "s3",
+        zonesRegions: [],
+      },
+      {
+        display_name: "S4",
+        vendor: "aws",
+        server: "s4",
+        zonesRegions: [],
+      },
+    ];
+
+    const added = service.toggleCompare(true, {
+      display_name: "S5",
+      vendor: "gcp",
+      server: "s5",
+    });
+
+    expect(added).toBeFalse();
+    expect(service.selectedForCompare.length).toBe(4);
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({ id: GUEST_SERVER_COMPARE_LIMIT_TOAST_ID }),
+    );
+  });
+
+  it("replaces database compare selection above guest limit without toasts", () => {
+    const toastService = TestBed.inject(ToastService);
+    const show = spyOn(toastService, "show");
+    const selectionChanged = jasmine.createSpy("databaseSelectionChanged");
+    service.databaseSelectionChanged.subscribe(selectionChanged);
+    service.setBaselineDatabase({ vendor: "aws", database: "db-a" });
+    const hydrated = [
+      { display_name: "db-a", vendor: "aws", database: "db-a" },
+      { display_name: "db-b", vendor: "gcp", database: "db-b" },
+      { display_name: "db-c", vendor: "azure", database: "db-c" },
+      { display_name: "db-d", vendor: "aws", database: "db-d" },
+      { display_name: "db-e", vendor: "gcp", database: "db-e" },
+    ];
+
+    service.replaceDatabaseCompareSelection(hydrated);
+
+    expect(service.selectedDatabases).toEqual(hydrated);
+    expect(selectionChanged).toHaveBeenCalledOnceWith(
+      service.selectedDatabases,
+    );
+    expect(show).not.toHaveBeenCalled();
+    expect(service.baselineDatabase).toEqual({
+      vendor: "aws",
+      database: "db-a",
+    });
   });
 });

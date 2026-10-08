@@ -15,7 +15,7 @@ export type ArticleMeta = {
 
 export type SlidesMeta = {
   title: string;
-  author: string;
+  author: string | string[];
   date: Date;
   conference: string;
   conference_url: string;

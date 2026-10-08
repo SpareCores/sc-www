@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   PLATFORM_ID,
   OnInit,
   ViewChild,
@@ -53,6 +54,7 @@ import {
   toSearchParams,
 } from "../../tools/listing-search-params";
 import { ToastService } from "../../services/toast.service";
+import { QUERY_ERROR_SERVER_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
@@ -132,6 +134,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private uiTooltip = inject(UiTooltipService);
 
   private subscription = new Subscription();
@@ -348,6 +351,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
   }
 
   toggleCollapse() {
@@ -433,6 +437,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   private _searchServers(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
+    this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
 
     let query = JSON.parse(JSON.stringify(this.query));
 
@@ -454,7 +459,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     this.keeperAPI
       .searchServerPrices(query)
       .then((servers) => {
-        if (requestId !== this.searchRequestId) {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
         }
 
@@ -486,9 +491,10 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
               this.limit,
           );
         }
+        this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
       })
       .catch((err) => {
-        if (requestId !== this.searchRequestId) {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
         }
 
@@ -496,9 +502,13 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
           tags: { location: this.constructor.name, function: "_searchServers" },
         });
         console.error(err);
+        this.toastService.showHttpError(err, {
+          id: QUERY_ERROR_SERVER_PRICES_TOAST_ID,
+          title: "Server prices query error!",
+        });
       })
       .finally(() => {
-        if (requestId === this.searchRequestId) {
+        if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
           this.isLoading = false;
         }
       });

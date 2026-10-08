@@ -39,6 +39,11 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import {
+  ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID,
+  BAD_ADVISOR_BASELINE_URL_TOAST_ID,
+  QUERY_ERROR_ADVISOR_TOAST_ID,
+} from "../../services/toast-ids";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import {
@@ -64,6 +69,8 @@ describe("AdvisorComponent", () => {
   const getRegions = jasmine.createSpy("getRegions");
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
   const showToast = jasmine.createSpy("show");
+  const showHttpError = jasmine.createSpy("showHttpError");
+  const removeToast = jasmine.createSpy("removeToast");
   const initDropdown = jasmine.createSpy("initDropdown");
   const initializeNeetoCal = jasmine.createSpy("initialize");
   const selectionChanged = new Subject();
@@ -103,6 +110,8 @@ describe("AdvisorComponent", () => {
     getRegions.calls.reset();
     updateTitleAndMetaTags.calls.reset();
     showToast.calls.reset();
+    showHttpError.calls.reset();
+    removeToast.calls.reset();
     initDropdown.calls.reset();
     initializeNeetoCal.calls.reset();
     compareService.selectedForCompare = [];
@@ -345,6 +354,8 @@ describe("AdvisorComponent", () => {
           provide: ToastService,
           useValue: {
             show: showToast,
+            showHttpError,
+            removeToast,
           },
         },
         {
@@ -1022,6 +1033,7 @@ describe("AdvisorComponent", () => {
     expect(emptyStateCell?.classList).toContain("advisor-empty-state-cell");
     expect(emptyStateRow?.classList).toContain("advisor-empty-state-row");
     expect(showToast).not.toHaveBeenCalled();
+    expect(showHttpError).not.toHaveBeenCalled();
   }));
 
   it("restores advisor state from the route query params", async () => {
@@ -1067,6 +1079,32 @@ describe("AdvisorComponent", () => {
     expect(component.averageCpuUtilization()).toBe(60);
     expect(component.minimumMemoryGiB()).toBe(1);
     expect(component.peakGpuMemoryGiB()).toBe(2);
+  });
+
+  it("shows an invalid URL toast when baseline server is missing from preload", async () => {
+    queryParams$.next({
+      baseline_vendor: "vendy",
+      baseline_server: "missing.server",
+      workload_id: "stress_ng:bestn",
+      workload_config: "{}",
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.selectedBaselineServer()).toBeNull();
+    expect(component.pendingBaselineVendorId()).toBeNull();
+    expect(component.pendingBaselineApiReference()).toBeNull();
+    expect(component.pendingWorkloadId()).toBeNull();
+    expect(showToast).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Invalid URL",
+        body: "Select an existing baseline server.",
+        type: "error",
+        id: BAD_ADVISOR_BASELINE_URL_TOAST_ID,
+      }),
+    );
   });
 
   it("sanitizes invalid numeric advisor query params from the route", async () => {
@@ -2421,4 +2459,52 @@ describe("AdvisorComponent", () => {
     expect(component.manualOrderBy()).toBeUndefined();
     expect(component.manualOrderDir()).toBeUndefined();
   });
+
+  it("shows query-error toast when recommendation search fails with 422", fakeAsync(() => {
+    searchServers.and.rejectWith({
+      status: 422,
+      error: { detail: "Invalid advisor filter" },
+    });
+
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+    component.averageCpuUtilization.set(50);
+
+    showHttpError.calls.reset();
+
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(showHttpError).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 422 }),
+      {
+        id: QUERY_ERROR_ADVISOR_TOAST_ID,
+        title: "Advisor query error!",
+      },
+    );
+  }));
+
+  it("shows fallback toast when baseline servers preload fails with 422", fakeAsync(() => {
+    getServersSelect.and.rejectWith({
+      status: 422,
+      error: { detail: "Bad server select" },
+    });
+
+    fixture = TestBed.createComponent(AdvisorComponent);
+    component = fixture.componentInstance;
+    showHttpError.calls.reset();
+    fixture.detectChanges();
+    tick();
+    flushMicrotasks();
+
+    expect(showHttpError).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 422 }),
+      {
+        title: "Failed to load servers",
+        id: ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID,
+      },
+    );
+  }));
 });

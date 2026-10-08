@@ -29,6 +29,9 @@ import {
 } from "@lucide/angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { isAbortError } from "../../services/keeper-http-client";
+import { ToastService } from "../../services/toast.service";
+import { BENCHMARK_WORKLOADS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import {
   Benchmark,
   BenchmarkScoreStatsItem,
@@ -85,6 +88,7 @@ export class BenchmarkWorkloadsComponent implements OnInit {
 
   private document = inject(DOCUMENT);
   private keeperAPI = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
   private seoHandler = inject(SeoHandlerService);
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
@@ -104,34 +108,62 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   private pendingScrollTimeout: ReturnType<typeof setTimeout> | null = null;
   private hasInitializedViewportState = false;
   private desktopCollapsedState = false;
-
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.clearPendingScrollTarget();
       this.clearDeferredScroll();
+      this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
     });
   }
 
   readonly benchmarksResource = resource({
-    loader: async () => {
-      const workloadsResponse = await this.keeperAPI.getBenchmarkWorkloads();
-      const benchmarkMetaResponse = await this.keeperAPI
-        .getServerBenchmarkMeta()
-        .catch(() => null);
-      const rawData: BenchmarkScoreStatsItem[] = workloadsResponse.body ?? [];
-      const noteByBenchmarkId = this.buildBenchmarkNoteMap(
-        benchmarkMetaResponse?.body ?? [],
-      );
-      const data = rawData.map((workload) =>
-        this.normalizeWorkload(workload, noteByBenchmarkId),
-      );
-      const grouped = this.groupByFramework(data);
+    params: () => true,
+    defaultValue: [] as BenchmarkFamily[],
+    loader: async ({ abortSignal }) => {
+      this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
 
-      if (data.length > 0 && !this.activeBenchmarkId()) {
-        this.activeBenchmarkId.set(data[0].benchmark_id);
+      try {
+        const requestParams = { signal: abortSignal };
+        const workloadsResponse =
+          await this.keeperAPI.getBenchmarkWorkloads(requestParams);
+        const benchmarkMetaResponse = await this.keeperAPI
+          .getServerBenchmarkMeta(requestParams)
+          .catch((err) => {
+            if (isAbortError(err) || abortSignal.aborted) {
+              throw err;
+            }
+            return null;
+          });
+        const rawData: BenchmarkScoreStatsItem[] = workloadsResponse.body ?? [];
+        const noteByBenchmarkId = this.buildBenchmarkNoteMap(
+          benchmarkMetaResponse?.body ?? [],
+        );
+        const data = rawData.map((workload) =>
+          this.normalizeWorkload(workload, noteByBenchmarkId),
+        );
+        const grouped = this.groupByFramework(data);
+
+        if (data.length > 0 && !this.activeBenchmarkId()) {
+          this.activeBenchmarkId.set(data[0].benchmark_id);
+        }
+
+        this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
+        return grouped;
+      } catch (err) {
+        if (
+          isAbortError(err) ||
+          abortSignal.aborted ||
+          this.destroyRef.destroyed
+        ) {
+          throw err;
+        }
+        this.toastService.showHttpError(err, {
+          id: BENCHMARK_WORKLOADS_ERROR_TOAST_ID,
+          title: "Failed to load benchmark data.",
+          body: "Please try again later.",
+        });
+        throw err;
       }
-
-      return grouped;
     },
   });
 
