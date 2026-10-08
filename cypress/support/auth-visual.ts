@@ -12,29 +12,40 @@ const SERVERS_FILTERED = "/servers?vendor=hcloud&gpu_min=1&gpu_memory_min=1";
 const SERVER_DETAILS = "/server/gcp/t2d-standard-1";
 const DATABASE_DETAILS = "/database/gcp/db-c4a-highmem-48";
 
-function registerClerkTestUser(email: string, password: string): void {
-  setupClerkTestingToken();
-  E2EEvent.visitURL("/", 2000);
-  openGuestAuthButton("Register");
+function fillRegisterDetails(email: string, password: string): void {
   cy.get('input[name="firstName"]').clear().type("Ada");
   cy.get('input[name="lastName"]').clear().type("Lovelace");
   cy.get('input[name="emailAddress"]').clear().type(email);
   cy.get('input[name="password"]').clear().type(password);
-  cy.get('.auth-modal__form button[type="submit"]').first().click();
-  cy.get(".auth-modal__title", { timeout: 20000 }).should(
-    "contain.text",
-    "One last step",
-  );
+  cy.get('.auth-modal__form button[type="submit"]')
+    .first()
+    .should("not.be.disabled")
+    .click();
+}
+
+function expectRegisterStep(title: string): void {
+  cy.get(".auth-modal__title", { timeout: 30000 }).should(($title) => {
+    const text = $title.text().replace(/\s+/g, " ").trim();
+    const error = Cypress.$(".auth-modal__error").text().trim();
+    expect(text, error || "register step").to.eq(title);
+  });
+}
+
+function registerClerkTestUser(email: string, password: string): void {
+  setupClerkTestingToken();
+  E2EEvent.visitURL("/", 2000);
+  cy.clerkLoaded();
+  openGuestAuthButton("Register");
+  cy.get(".auth-modal__title").should("contain.text", "Create your account");
+  fillRegisterDetails(email, password);
+  expectRegisterStep("One last step");
   cy.get('input[name="legalAccepted"]').check({ force: true });
-  cy.contains("button", "Continue").click();
-  cy.get(".auth-modal__title", { timeout: 20000 }).should(
-    "contain.text",
-    "Verify your email",
-  );
+  cy.contains("button", "Continue").should("not.be.disabled").click();
+  expectRegisterStep("Verify your email");
   cy.get('input[name="verificationCode"]').clear().type("424242");
-  cy.contains("button", "Verify email").click();
-  cy.get(".auth-modal", { timeout: 20000 }).should("not.exist");
-  cy.get("#auth_button", { timeout: 20000 }).should("be.visible");
+  cy.contains("button", "Verify email").should("not.be.disabled").click();
+  cy.get(".auth-modal", { timeout: 30000 }).should("not.exist");
+  cy.get("#auth_button", { timeout: 30000 }).should("be.visible");
 }
 
 function ensureVisualUserSession(email: string, password: string): void {
@@ -132,7 +143,8 @@ function openGuestAuthButton(label: "Register" | "Log in"): void {
       return;
     }
 
-    E2EEvent.openMobileMenuForScreenshot();
+    cy.get("#menu_button").should("be.visible").click();
+    cy.get("#menu_options").should("be.visible");
     cy.contains("#menu_options button", label).should("be.visible").click();
   });
 }
@@ -192,19 +204,13 @@ export function registerAuthVisualSuites(suffix: string): void {
       setupClerkTestingToken();
       const runId = Date.now();
       const email = `sc-www+clerk_test+consent+${runId}@example.com`;
-      const password = `TestPass!${runId}`;
+      const password = `ScWwwE2e!${runId}`;
 
       E2EEvent.visitURL("/", 2000);
+      cy.clerkLoaded();
       openGuestAuthButton("Register");
-      cy.get('input[name="firstName"]').clear().type("Ada");
-      cy.get('input[name="lastName"]').clear().type("Lovelace");
-      cy.get('input[name="emailAddress"]').clear().type(email);
-      cy.get('input[name="password"]').clear().type(password);
-      cy.get('.auth-modal__form button[type="submit"]').first().click();
-      cy.get(".auth-modal__title", { timeout: 20000 }).should(
-        "contain.text",
-        "One last step",
-      );
+      fillRegisterDetails(email, password);
+      expectRegisterStep("One last step");
       prepareLandingChrome();
       snap("auth-register-consent", suffix);
       cy.task("deleteClerkUserByEmail", email, { timeout: 20000 });
@@ -214,25 +220,16 @@ export function registerAuthVisualSuites(suffix: string): void {
       setupClerkTestingToken();
       const runId = Date.now();
       const email = `sc-www+clerk_test+verify+${runId}@example.com`;
-      const password = `TestPass!${runId}`;
+      const password = `ScWwwE2e!${runId}`;
 
       E2EEvent.visitURL("/", 2000);
+      cy.clerkLoaded();
       openGuestAuthButton("Register");
-      cy.get('input[name="firstName"]').clear().type("Ada");
-      cy.get('input[name="lastName"]').clear().type("Lovelace");
-      cy.get('input[name="emailAddress"]').clear().type(email);
-      cy.get('input[name="password"]').clear().type(password);
-      cy.get('.auth-modal__form button[type="submit"]').first().click();
-      cy.get(".auth-modal__title", { timeout: 20000 }).should(
-        "contain.text",
-        "One last step",
-      );
+      fillRegisterDetails(email, password);
+      expectRegisterStep("One last step");
       cy.get('input[name="legalAccepted"]').check({ force: true });
-      cy.contains("button", "Continue").click();
-      cy.get(".auth-modal__title", { timeout: 20000 }).should(
-        "contain.text",
-        "Verify your email",
-      );
+      cy.contains("button", "Continue").should("not.be.disabled").click();
+      expectRegisterStep("Verify your email");
       prepareLandingChrome();
       snap("auth-register-verify", suffix);
       cy.task("deleteClerkUserByEmail", email, { timeout: 20000 });
@@ -246,7 +243,7 @@ export function registerAuthVisualSuites(suffix: string): void {
     before(() => {
       const runId = Date.now();
       visualEmail = `sc-www+clerk_test+visual${suffix || ""}+${runId}@example.com`;
-      visualPassword = `TestPass!${runId}`;
+      visualPassword = `ScWwwE2e!${runId}`;
       ensureVisualUserSession(visualEmail, visualPassword);
     });
 
