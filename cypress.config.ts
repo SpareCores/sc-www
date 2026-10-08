@@ -1,5 +1,7 @@
+import { clerkSetup } from "@clerk/testing/cypress";
 import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
+import { deleteClerkUserByEmail } from "./cypress/support/clerk-users";
 
 const customizeChromeHeadless = (
   browser: Cypress.Browser,
@@ -29,10 +31,14 @@ export default defineConfig({
           console.log(message);
           return null;
         },
+        deleteClerkUserByEmail(email: string) {
+          return deleteClerkUserByEmail(email);
+        },
       });
       on("before:browser:launch", customizeChromeHeadless);
 
-      return getCompareSnapshotPlugin(on, config);
+      const imageDiffConfig = getCompareSnapshotPlugin(on, config);
+      return clerkSetup({ config: imageDiffConfig });
     },
   },
   numTestsKeptInMemory: 1,

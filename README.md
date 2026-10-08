@@ -13,6 +13,23 @@ To compile the project, you need to set up the below environment variables at bu
   endpoint to be used on the server-side
 - NG_APP_CLERK_PUBLISHABLE_KEY: [Clerk](https://clerk.com/) publishable key for authentication
 
+For Cypress authentication helpers (`@clerk/testing`), also set these test-runner
+variables (separate from the Angular app key; never expose the secret to the
+browser):
+
+- CLERK_PUBLISHABLE_KEY: Clerk publishable key for Cypress `clerkSetup()`
+- CLERK_SECRET_KEY: Clerk secret key for Cypress `clerkSetup()` (CI secret only)
+
+Optional Cypress auth/visual account credentials:
+
+- E2E_CLERK_USER_EMAIL / E2E_CLERK_USER_PASSWORD: dedicated Clerk test user for
+  authenticated visual regression (not a personal account)
+
+Optional Mailinator private-domain E2E (real email delivery path):
+
+- MAILINATOR_API_TOKEN / MAILINATOR_DOMAIN: Node-side only; used by the gated
+  Mailinator registration spec
+
 This can also be done via defining an `.env` file based on the provided `.env.example` template file.
 
 You also need to provide your own Terms of Service and Privacy Policy
@@ -98,6 +115,15 @@ The explicit Karma setup for browsers, reporters, and coverage output lives in `
 ## Running end-to-end tests
 
 End-to-end tests are implemented using Cypress.
+
+Auth-related Cypress specs use `@clerk/testing`. Provide
+`CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, and
+`NG_APP_CLERK_PUBLISHABLE_KEY` when running those specs. Guest-limit specs do
+not sign in, but the Cypress runner still initializes Clerk via `clerkSetup()`.
+
+Deterministic registration uses Clerk `+clerk_test` emails and verification
+code `424242`. Real email delivery is covered by a separate, env-gated
+Mailinator spec.
 
 ## License
 
