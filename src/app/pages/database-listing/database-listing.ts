@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
   OnDestroy,
   OnInit,
@@ -51,6 +52,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { QUERY_ERROR_DATABASES_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import {
@@ -143,6 +145,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
   private analytics = inject(AnalyticsService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private uiTooltip = inject(UiTooltipService);
   private collectionsUi = inject(CollectionsUiService);
   private auth = inject(AuthStateService);
@@ -447,6 +450,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.toastService.removeToast(QUERY_ERROR_DATABASES_TOAST_ID);
   }
 
   toggleCollapse() {
@@ -532,6 +536,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private _searchDatabases(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
+    this.toastService.removeToast(QUERY_ERROR_DATABASES_TOAST_ID);
 
     const query = structuredClone(
       this.query,
@@ -574,7 +579,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
     this.keeperAPI
       .searchDatabases(query)
       .then((databases) => {
-        if (requestId !== this.searchRequestId) {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
         }
 
@@ -595,11 +600,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
               this.limit,
           );
         }
-
-        this.toastService.removeToast("query-error");
+        this.toastService.removeToast(QUERY_ERROR_DATABASES_TOAST_ID);
       })
       .catch((err) => {
-        if (requestId !== this.searchRequestId) {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
         }
 
@@ -610,15 +614,13 @@ export class DatabaseListing implements OnInit, OnDestroy {
           },
         });
         console.error(err);
-        this.toastService.show({
-          title: "Query error!",
-          body: err.error?.detail || "Please try again later.",
-          type: "error",
-          id: "query-error",
+        this.toastService.showHttpError(err, {
+          id: QUERY_ERROR_DATABASES_TOAST_ID,
+          title: "Databases query error!",
         });
       })
       .finally(() => {
-        if (requestId === this.searchRequestId) {
+        if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
           this.isLoading = false;
         }
       });

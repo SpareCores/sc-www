@@ -12,6 +12,10 @@ import type { SignUpResource, UserResource } from "@clerk/shared/types";
 import { AnalyticsService } from "../../../services/analytics.service";
 import { ToastService } from "../../../services/toast.service";
 import {
+  GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+  GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+} from "../../../services/toast-ids";
+import {
   AUTH_MESSAGES,
   AUTH_OVERLAY_CLASS,
   AUTH_OVERLAY_ID,
@@ -742,8 +746,8 @@ export class AuthStateService {
       kind === "registration" ? "auth register" : "auth login",
       {},
     );
-    this.toastService.removeToast("guest-server-compare-limit");
-    this.toastService.removeToast("guest-database-compare-limit");
+    this.toastService.removeToast(GUEST_SERVER_COMPARE_LIMIT_TOAST_ID);
+    this.toastService.removeToast(GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID);
     const returnUrl = this.isAuthCallbackRoute()
       ? this.flow.consumeReturnUrl()
       : null;

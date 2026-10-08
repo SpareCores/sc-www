@@ -4,6 +4,10 @@ import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { AuthStateService } from "../core/auth";
 import { ToastService } from "./toast.service";
+import {
+  GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+  GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+} from "./toast-ids";
 import { GUEST_COMPARE_LIMIT } from "../collections/collections.utils";
 import { CollectionsUiService } from "../collections/collections-ui.service";
 
@@ -240,7 +244,7 @@ export class ServerCompareService implements OnDestroy {
 
   private showGuestServerCompareLimitToast(): void {
     this.toastService.show({
-      id: "guest-server-compare-limit",
+      id: GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
       title: "Server limit reached.",
       body: `Guests can only compare up to ${GUEST_COMPARE_LIMIT} servers at a time.`,
       type: "warning",
@@ -253,7 +257,7 @@ export class ServerCompareService implements OnDestroy {
 
   private showGuestDatabaseCompareLimitToast(): void {
     this.toastService.show({
-      id: "guest-database-compare-limit",
+      id: GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
       title: "Database limit reached.",
       body: `Guests can only compare up to ${GUEST_COMPARE_LIMIT} databases at a time.`,
       type: "warning",

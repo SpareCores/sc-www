@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
+  DestroyRef,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
@@ -30,6 +31,8 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
 import { StoragePipe } from "../../pipes/storage.pipe";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ToastService } from "../../services/toast.service";
+import { QUERY_ERROR_STORAGE_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import {
   TableColumn,
@@ -60,6 +63,8 @@ import {
 export class StoragesComponent implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
@@ -67,6 +72,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
   pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
 
   private subscription = new Subscription();
+  private searchRequestId = 0;
 
   limit = 10;
   page = 1;
@@ -175,6 +181,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.toastService.removeToast(QUERY_ERROR_STORAGE_PRICES_TOAST_ID);
   }
 
   toggleCollapse() {
@@ -237,15 +244,39 @@ export class StoragesComponent implements OnInit, OnDestroy {
   }
 
   private _searchStorages() {
+    const requestId = ++this.searchRequestId;
     this.isLoading = true;
+    this.toastService.removeToast(QUERY_ERROR_STORAGE_PRICES_TOAST_ID);
 
-    this.keeperAPI.getStoragePrices(this.query).then((results: any) => {
-      this.storages = results.body;
-      this.isLoading = false;
-      this.totalPages = Math.ceil(
-        parseInt(results?.headers?.get("x-total-count") || "0") / this.limit,
-      );
-    });
+    this.keeperAPI
+      .getStoragePrices(this.query)
+      .then((results: any) => {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+          return;
+        }
+
+        this.storages = results.body;
+        this.totalPages = Math.ceil(
+          parseInt(results?.headers?.get("x-total-count") || "0") / this.limit,
+        );
+        this.toastService.removeToast(QUERY_ERROR_STORAGE_PRICES_TOAST_ID);
+      })
+      .catch((err) => {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+          return;
+        }
+
+        console.error(err);
+        this.toastService.showHttpError(err, {
+          id: QUERY_ERROR_STORAGE_PRICES_TOAST_ID,
+          title: "Storage prices query error!",
+        });
+      })
+      .finally(() => {
+        if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
+          this.isLoading = false;
+        }
+      });
   }
 
   toggleOrdering(column: TableColumn) {

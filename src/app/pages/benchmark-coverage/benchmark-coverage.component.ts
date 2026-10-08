@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
@@ -25,7 +26,10 @@ import {
 import { PageHeader } from "../../components/page-header/page-header";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { isAbortError } from "../../services/keeper-http-client";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ToastService } from "../../services/toast.service";
+import { BENCHMARK_COVERAGE_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import {
   ServerDebugInfo,
@@ -75,7 +79,15 @@ import {
   styleUrls: ["./benchmark-coverage.component.scss"],
 })
 export class BenchmarkCoverageComponent implements OnInit {
+  private loadAbortController: AbortController | null = null;
+
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.loadAbortController?.abort();
+      this.loadAbortController = null;
+      this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
+    });
+
     effect(() => {
       const params = this.filterParams();
       const currentParams = this.route.snapshot.queryParams;
@@ -97,8 +109,10 @@ export class BenchmarkCoverageComponent implements OnInit {
     "The table below provides detailed status and benchmark coverage for all discovered cloud servers, including pricing availability, hardware inspection results, and high-level benchmark workload status. You can filter the dataset by vendor, status, and specific benchmark families, along with free-text search. By default, the table is filtered for active instances with pricing information. When a specific benchmark is missing, you can click on the x icon to view the raw logs and metadata collected while we tried to run the benchmark. Note that the target page might return a 404 error if we were unable to start the server at all.";
 
   private keeperApi = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
   private seoHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   isCollapsed = false;
 
@@ -482,14 +496,24 @@ export class BenchmarkCoverageComponent implements OnInit {
   }
 
   private async loadDebugData() {
+    this.loadAbortController?.abort();
+    const abortController = new AbortController();
+    this.loadAbortController = abortController;
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
+    this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
 
     try {
+      const requestParams = { signal: abortController.signal };
       const [debugResponse, vendorsResponse] = await Promise.all([
-        this.keeperApi.getDebugInfo(),
-        this.keeperApi.getVendors(),
+        this.keeperApi.getDebugInfo(requestParams),
+        this.keeperApi.getVendors(requestParams),
       ]);
+
+      if (this.destroyRef.destroyed || abortController.signal.aborted) {
+        return;
+      }
 
       this.vendorDebugData.set(debugResponse.body.vendors ?? []);
       this.serverDebugData.set(debugResponse.body.servers ?? []);
@@ -498,10 +522,31 @@ export class BenchmarkCoverageComponent implements OnInit {
       );
       this.vendors.set(vendorsResponse.body as Vendor[]);
       this.initializeSearchBar();
-    } catch {
-      this.errorMessage.set("Failed to load benchmark data. Please try again.");
+      this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
+    } catch (err) {
+      if (
+        isAbortError(err) ||
+        this.destroyRef.destroyed ||
+        abortController.signal.aborted
+      ) {
+        return;
+      }
+
+      this.errorMessage.set(
+        "Failed to load benchmark data. Please try again later.",
+      );
+      this.toastService.showHttpError(err, {
+        id: BENCHMARK_COVERAGE_ERROR_TOAST_ID,
+        title: "Failed to load benchmark data.",
+        body: "Please try again later.",
+      });
     } finally {
-      this.isLoading.set(false);
+      if (this.loadAbortController === abortController) {
+        this.loadAbortController = null;
+      }
+      if (!this.destroyRef.destroyed && !abortController.signal.aborted) {
+        this.isLoading.set(false);
+      }
     }
   }
 

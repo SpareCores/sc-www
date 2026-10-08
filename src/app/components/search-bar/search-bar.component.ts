@@ -19,7 +19,9 @@ import { LucideChevronDown, LucideDynamicIcon } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { isAbortError } from "../../services/keeper-http-client";
 import { ToastService } from "../../services/toast.service";
+import { SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { Button } from "../button/button";
 import {
@@ -151,6 +153,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private readonly subscription = new Subscription();
   private countriesRequest: Promise<CountryMetadata[]> | null = null;
   private lastSelectedCountryIdsKey: string | null = null;
+  private loadAbortController = new AbortController();
 
   constructor() {
     effect(() => {
@@ -172,16 +175,36 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const requestParams = { signal: this.loadAbortController.signal };
+
     this.keeperAPI
-      .getComplianceFrameworks()
+      .getComplianceFrameworks(requestParams)
       .then((response: ApiResponse<ComplianceFrameworkMetadata[]>) => {
+        if (this.loadAbortController.signal.aborted) {
+          return;
+        }
         this.complianceFrameworks = response.body ?? [];
+      })
+      .catch((error: unknown) => {
+        if (isAbortError(error) || this.loadAbortController.signal.aborted) {
+          return;
+        }
+        console.error(error);
       });
 
     this.keeperAPI
-      .getStorages()
+      .getStorages(requestParams)
       .then((response: ApiResponse<StorageMetadata[]>) => {
+        if (this.loadAbortController.signal.aborted) {
+          return;
+        }
         this.storageIds = response.body ?? [];
+      })
+      .catch((error: unknown) => {
+        if (isAbortError(error) || this.loadAbortController.signal.aborted) {
+          return;
+        }
+        console.error(error);
       });
 
     this.loadRegions();
@@ -845,8 +868,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     if (!this.countriesRequest) {
       this.countriesRequest = this.keeperAPI
-        .getCountries()
+        .getCountries({ signal: this.loadAbortController.signal })
         .then((response: ApiResponse<CountryMetadata[]>) => {
+          if (this.loadAbortController.signal.aborted) {
+            return [] as CountryMetadata[];
+          }
           if (!response.body) {
             this.countriesRequest = null;
             return [];
@@ -854,13 +880,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           return response.body;
         })
         .catch((error: unknown) => {
+          if (isAbortError(error) || this.loadAbortController.signal.aborted) {
+            return [] as CountryMetadata[];
+          }
           this.countriesRequest = null;
           console.error(error);
           this.toastService.show({
             title: "Failed to load countries",
             body: "Please try again later.",
             type: "error",
-            id: "search-bar-countries-error",
+            id: SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID,
           });
           return [] as CountryMetadata[];
         });
@@ -870,13 +899,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   private loadRegions() {
+    const requestParams = { signal: this.loadAbortController.signal };
     const vendorsRequest: Promise<ApiResponse<VendorMetadata[]>> =
-      this.keeperAPI.getVendors();
+      this.keeperAPI.getVendors(requestParams);
     const regionsRequest: Promise<ApiResponse<RegionMetadata[]>> =
-      this.keeperAPI.getRegions();
+      this.keeperAPI.getRegions(requestParams);
 
-    Promise.all([vendorsRequest, regionsRequest]).then(
-      ([vendorResponse, regionResponse]) => {
+    Promise.all([vendorsRequest, regionsRequest])
+      .then(([vendorResponse, regionResponse]) => {
+        if (this.loadAbortController.signal.aborted) {
+          return;
+        }
         if (vendorResponse.body) {
           this.vendors = vendorResponse.body;
         }
@@ -885,8 +918,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             regionResponse.body.sort((a, b) => a.name.localeCompare(b.name)),
           );
         }
-      },
-    );
+      })
+      .catch((error: unknown) => {
+        if (isAbortError(error) || this.loadAbortController.signal.aborted) {
+          return;
+        }
+        console.error(error);
+      });
   }
 
   openSearchPrompt() {
@@ -967,6 +1005,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.loadAbortController.abort();
     this.subscription.unsubscribe();
     this.valueChangeDebouncer.complete();
   }

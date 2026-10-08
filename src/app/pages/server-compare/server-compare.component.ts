@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   ElementRef,
   HostBinding,
   OnInit,
@@ -45,6 +46,10 @@ import { EmbedComparePreviewComponent } from "../embed-compare-preview/embed-com
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { ToastService } from "../../services/toast.service";
+import {
+  BAD_SERVER_COMPARE_URL_TOAST_ID,
+  SERVER_COMPARE_ERROR_TOAST_ID,
+} from "../../services/toast-ids";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PrismService } from "../../services/prism.service";
 import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
@@ -82,10 +87,9 @@ const optionsModal: ModalOptions = {
   closable: true,
 };
 
-const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
-const INVALID_COMPARE_URL_TOAST_BODY =
-  'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
+const INVALID_COMPARE_URL_TOAST_BODY = "Select servers to compare.";
+const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Server Navigator page";
 const SERVER_COMPARE_GUIDE_TITLE = "Server Compare Guide";
 const SERVER_COMPARISON_TITLE = "Server Comparison";
 const SERVER_COMPARE_BREADCRUMB = "Compare";
@@ -152,6 +156,7 @@ export class ServerCompareComponent
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
   private tooltipService = inject(ChartTooltipService);
   private compareCollections = inject(CompareCollectionsService);
   private auth = inject(AuthStateService);
@@ -504,12 +509,14 @@ export class ServerCompareComponent
     }
 
     this.stickyLayout.destroy();
+    this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
   }
 
   setup() {
     const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
+    this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
 
     this.instances = [];
     this.instancesRaw = "";
@@ -533,9 +540,9 @@ export class ServerCompareComponent
       if (serverCompare) {
         this.instances = serverCompare.instances;
         this.instancesRaw = btoa(JSON.stringify(this.instances));
-        this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+        this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
       } else {
-        this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+        this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
         this.isLoading = false;
       }
@@ -553,7 +560,11 @@ export class ServerCompareComponent
             title: INVALID_URL_TOAST_TITLE,
             body: INVALID_COMPARE_URL_TOAST_BODY,
             type: "error",
-            id: INVALID_COMPARE_URL_TOAST_ID,
+            id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+            action: {
+              label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+              onClick: () => this.router.navigate(["/servers"]),
+            },
           });
         }
         this.isLoading = false;
@@ -562,14 +573,14 @@ export class ServerCompareComponent
 
       this.instances = decodedInstances.value;
       this.instancesRaw = this.instances.length > 0 ? param : "";
-      this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+      this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
 
       if (!this.instances?.length) {
         this.applyGuideChrome();
         this.isLoading = false;
       }
     } else {
-      this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
+      this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
       this.applyGuideChrome();
       this.isLoading = false;
     }
@@ -604,7 +615,7 @@ export class ServerCompareComponent
       });
       Promise.all(promises)
         .then((data) => {
-          if (loadId !== this.compareLoadId) {
+          if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
             return;
           }
 
@@ -805,9 +816,10 @@ export class ServerCompareComponent
               override: true,
             });
           }
+          this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
         })
         .catch((err) => {
-          if (loadId !== this.compareLoadId) {
+          if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
             return;
           }
 
@@ -815,9 +827,13 @@ export class ServerCompareComponent
             tags: { location: this.constructor.name, function: "compareInit" },
           });
           console.error(err);
+          this.toastService.showHttpError(err, {
+            id: SERVER_COMPARE_ERROR_TOAST_ID,
+            title: "Failed to load server comparison",
+          });
         })
         .finally(() => {
-          if (loadId !== this.compareLoadId) {
+          if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
             return;
           }
 

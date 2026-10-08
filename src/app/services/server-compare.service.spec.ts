@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 
 import { AuthStateService } from "../core/auth";
 import { CollectionsUiService } from "../collections/collections-ui.service";
+import { GUEST_SERVER_COMPARE_LIMIT_TOAST_ID } from "./toast-ids";
 import { ToastService } from "./toast.service";
 import { ServerCompare, ServerCompareService } from "./server-compare.service";
 
@@ -319,7 +320,7 @@ describe("ServerCompareService", () => {
     expect(added).toBeFalse();
     expect(service.selectedForCompare.length).toBe(4);
     expect(show).toHaveBeenCalledWith(
-      jasmine.objectContaining({ id: "guest-server-compare-limit" }),
+      jasmine.objectContaining({ id: GUEST_SERVER_COMPARE_LIMIT_TOAST_ID }),
     );
   });
 
