@@ -669,6 +669,8 @@ export enum GpuModels {
   A10G = "A10G",
   B200 = "B200",
   B300 = "B300",
+  GB200 = "GB200",
+  GB300 = "GB300",
   H100 = "H100",
   H200 = "H200",
   L20 = "L20",
@@ -676,11 +678,14 @@ export enum GpuModels {
   L40S = "L40S",
   P100 = "P100",
   P4 = "P4",
+  RTX5000 = "RTX 5000",
   RTXPRO4500 = "RTX PRO 4500",
+  RTXPRO6000BlackwellServerEdition = "RTX PRO 6000 Blackwell Server Edition",
   RTXPro6000 = "RTX Pro 6000",
   T4 = "T4",
   T4G = "T4G",
   V100 = "V100",
+  V100S = "V100S",
   V620 = "V620",
   V710 = "V710",
 }
@@ -9404,6 +9409,8 @@ export interface SearchServersServersGetParams {
     | "A10G"
     | "B200"
     | "B300"
+    | "GB200"
+    | "GB300"
     | "H100"
     | "H200"
     | "L20"
@@ -9411,11 +9418,14 @@ export interface SearchServersServersGetParams {
     | "L40S"
     | "P100"
     | "P4"
+    | "RTX 5000"
     | "RTX PRO 4500"
+    | "RTX PRO 6000 Blackwell Server Edition"
     | "RTX Pro 6000"
     | "T4"
     | "T4G"
     | "V100"
+    | "V100S"
     | "V620"
     | "V710";
   /**
@@ -11073,6 +11083,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A10G"
     | "B200"
     | "B300"
+    | "GB200"
+    | "GB300"
     | "H100"
     | "H200"
     | "L20"
@@ -11080,11 +11092,14 @@ export interface SearchServerPricesServerPricesGetParams {
     | "L40S"
     | "P100"
     | "P4"
+    | "RTX 5000"
     | "RTX PRO 4500"
+    | "RTX PRO 6000 Blackwell Server Edition"
     | "RTX Pro 6000"
     | "T4"
     | "T4G"
     | "V100"
+    | "V100S"
     | "V620"
     | "V710";
   /**

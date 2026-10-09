@@ -1300,6 +1300,8 @@ export namespace Servers {
         | "A10G"
         | "B200"
         | "B300"
+        | "GB200"
+        | "GB300"
         | "H100"
         | "H200"
         | "L20"
@@ -1307,11 +1309,14 @@ export namespace Servers {
         | "L40S"
         | "P100"
         | "P4"
+        | "RTX 5000"
         | "RTX PRO 4500"
+        | "RTX PRO 6000 Blackwell Server Edition"
         | "RTX Pro 6000"
         | "T4"
         | "T4G"
         | "V100"
+        | "V100S"
         | "V620"
         | "V710";
       /**
