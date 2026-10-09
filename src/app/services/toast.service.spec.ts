@@ -100,6 +100,18 @@ describe("ToastService", () => {
     expect(toastByTitle("Query error!")).toBeUndefined();
   });
 
+  it("showHttpError reuses one shared transient toast across repeated retryable failures", () => {
+    service.showHttpError(
+      { status: 500 },
+      { id: QUERY_ERROR_SERVERS_TOAST_ID },
+    );
+    service.showHttpError({ status: 429 }, { id: VENDORS_ERROR_TOAST_ID });
+
+    expect(document.querySelectorAll('[data-cy="toast"]').length).toBe(1);
+    expect(toastByTitle("Service temporarily unavailable")).toBeUndefined();
+    expect(toastByTitle("Too many requests")).toBeTruthy();
+  });
+
   it("showHttpError falls back to Query error! with detail for non-transient errors", () => {
     service.showHttpError(
       { status: 404, error: { detail: "Invalid filter" } },
