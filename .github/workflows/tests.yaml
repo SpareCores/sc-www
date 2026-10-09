@@ -68,8 +68,8 @@ jobs:
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
           NG_APP_WWW_API_BASE_URI: https://www-api-staging.sparecores.net
-          NG_APP_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          NG_APP_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY_TESTING }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY_TESTING }}
           NG_APP_POSTHOG_KEY: ""
           NG_APP_POSTHOG_HOST: ""
           NG_APP_SENTRY_DSN: ""
