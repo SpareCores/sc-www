@@ -19,7 +19,7 @@ export function dismissPageHttpToasts(
 
 export function showInvalidUrlParamToast(
   toastService: Pick<ToastService, "show">,
-  platformId: Object,
+  platformId: object,
   options: {
     id: string;
     body: string;
