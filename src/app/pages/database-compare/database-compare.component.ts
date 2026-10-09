@@ -76,6 +76,11 @@ import {
   BAD_DATABASE_COMPARE_URL_TOAST_ID,
   DATABASE_COMPARE_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
+import {
+  INVALID_DATABASE_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+  INVALID_DATABASE_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
+  INVALID_URL_TOAST_TITLE,
+} from "../../services/url-toast-content";
 import { CompareCollectionsService } from "../../collections/compare-collections.service";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
@@ -148,9 +153,6 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     }
   ).components?.schemas?.Database?.properties ?? {};
 
-const INVALID_URL_TOAST_TITLE = "Invalid URL";
-const INVALID_COMPARE_URL_TOAST_BODY = "Select databases to compare.";
-const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Database Navigator page";
 const DATABASE_COMPARE_GUIDE_TITLE = "Cloud Database Compare Guide";
 const DATABASE_COMPARISON_TITLE = "Cloud Database Comparison";
 const DATABASE_COMPARE_BREADCRUMB = "Compare";

@@ -85,6 +85,10 @@ import type { SavedAssessmentItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import type { SearchBarQuery } from "../../components/search-bar/types/search-bar.types";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
+import {
+  INVALID_BASELINE_URL_TOAST_BODY,
+  INVALID_URL_TOAST_TITLE,
+} from "../../services/url-toast-content";
 import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {
@@ -192,8 +196,6 @@ const ADVISOR_BASELINE_SERVER_CONTROL_NAME = "baseline_server";
 const ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME = "server_workload";
 const ADVISOR_CUSTOM_CONTROL_FOCUS_ATTEMPT_LIMIT = 20;
 const ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX = "Workload profile";
-const INVALID_URL_TOAST_TITLE = "Invalid URL";
-const INVALID_BASELINE_URL_TOAST_BODY = "Select an existing baseline server.";
 
 function toAdvisorTitleCase(value: string): string {
   return value

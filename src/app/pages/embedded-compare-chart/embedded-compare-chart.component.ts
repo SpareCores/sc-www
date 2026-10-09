@@ -8,16 +8,17 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
 import { BAD_SERVER_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
+import {
+  INVALID_SERVER_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+  INVALID_SERVER_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
+  INVALID_URL_TOAST_TITLE,
+} from "../../services/url-toast-content";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
 import {
   decodeBase64JsonUrlState,
   isServerCompareUrlState,
 } from "../../tools/encoded-url-state";
-
-const INVALID_URL_TOAST_TITLE = "Invalid URL";
-const INVALID_COMPARE_URL_TOAST_BODY = "Select servers to compare.";
-const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Server Navigator page";
 
 @Component({
   selector: "sc-embedded-compare-chart",
