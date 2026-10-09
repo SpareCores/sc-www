@@ -65,6 +65,10 @@ import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import {
+  dismissPageHttpToasts,
+  showInvalidUrlParamToast,
+} from "../../services/page-toast.helpers";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
   DatabaseCompare,
@@ -79,7 +83,6 @@ import {
 import {
   INVALID_DATABASE_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
   INVALID_DATABASE_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
-  INVALID_URL_TOAST_TITLE,
 } from "../../services/url-toast-content";
 import { CompareCollectionsService } from "../../collections/compare-collections.service";
 import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
@@ -382,7 +385,8 @@ export class DatabaseCompareComponent
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.stickyLayout.destroy();
-    this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
+    dismissPageHttpToasts(this.toastService, DATABASE_COMPARE_ERROR_TOAST_ID);
+    this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
   }
 
   ngAfterViewInit() {
@@ -616,8 +620,7 @@ export class DatabaseCompareComponent
     const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
-    this.toastService.clearTransientHttpError();
-    this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
+    dismissPageHttpToasts(this.toastService, DATABASE_COMPARE_ERROR_TOAST_ID);
 
     this.instances = [];
     this.instancesRaw = "";
@@ -645,9 +648,17 @@ export class DatabaseCompareComponent
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
       } else {
-        this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/databases"]),
+          },
+        });
         this.isLoading = false;
+        return;
       }
     } else if (param) {
       const decodedInstances = decodeBase64JsonUrlState(
@@ -658,18 +669,14 @@ export class DatabaseCompareComponent
       if (!decodedInstances.value) {
         console.warn("Invalid instances data in URL:", decodedInstances.error);
         this.applyGuideChrome();
-        if (isPlatformBrowser(this.platformId)) {
-          this.toastService.show({
-            title: INVALID_URL_TOAST_TITLE,
-            body: INVALID_COMPARE_URL_TOAST_BODY,
-            type: "error",
-            id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
-            action: {
-              label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
-              onClick: () => this.router.navigate(["/databases"]),
-            },
-          });
-        }
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/databases"]),
+          },
+        });
         this.isLoading = false;
         return;
       }

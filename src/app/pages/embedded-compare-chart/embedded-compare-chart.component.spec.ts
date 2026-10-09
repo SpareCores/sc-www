@@ -152,4 +152,10 @@ describe("EmbeddedCompareChartComponent", () => {
     );
     expect(getServerMeta).not.toHaveBeenCalled();
   });
+
+  it("removes the invalid URL toast on destroy", () => {
+    component.ngOnDestroy();
+
+    expect(removeToast).toHaveBeenCalledWith(BAD_SERVER_COMPARE_URL_TOAST_ID);
+  });
 });

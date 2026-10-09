@@ -45,6 +45,10 @@ import { ServerCompareChartsComponent } from "../../components/server-compare-ch
 import { EmbedComparePreviewComponent } from "../embed-compare-preview/embed-compare-preview.component";
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
+import {
+  dismissPageHttpToasts,
+  showInvalidUrlParamToast,
+} from "../../services/page-toast.helpers";
 import { ToastService } from "../../services/toast.service";
 import {
   BAD_SERVER_COMPARE_URL_TOAST_ID,
@@ -53,7 +57,6 @@ import {
 import {
   INVALID_SERVER_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
   INVALID_SERVER_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
-  INVALID_URL_TOAST_TITLE,
 } from "../../services/url-toast-content";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PrismService } from "../../services/prism.service";
@@ -511,15 +514,15 @@ export class ServerCompareComponent
     }
 
     this.stickyLayout.destroy();
-    this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
+    dismissPageHttpToasts(this.toastService, SERVER_COMPARE_ERROR_TOAST_ID);
+    this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
   }
 
   setup() {
     const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
-    this.toastService.clearTransientHttpError();
-    this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
+    dismissPageHttpToasts(this.toastService, SERVER_COMPARE_ERROR_TOAST_ID);
 
     this.instances = [];
     this.instancesRaw = "";
@@ -545,9 +548,17 @@ export class ServerCompareComponent
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
       } else {
-        this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/servers"]),
+          },
+        });
         this.isLoading = false;
+        return;
       }
     } else if (param) {
       const decodedInstances = decodeBase64JsonUrlState(
@@ -558,18 +569,14 @@ export class ServerCompareComponent
       if (!decodedInstances.value) {
         console.warn("Invalid instances data in URL:", decodedInstances.error);
         this.applyGuideChrome();
-        if (isPlatformBrowser(this.platformId)) {
-          this.toastService.show({
-            title: INVALID_URL_TOAST_TITLE,
-            body: INVALID_COMPARE_URL_TOAST_BODY,
-            type: "error",
-            id: BAD_SERVER_COMPARE_URL_TOAST_ID,
-            action: {
-              label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
-              onClick: () => this.router.navigate(["/servers"]),
-            },
-          });
-        }
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/servers"]),
+          },
+        });
         this.isLoading = false;
         return;
       }

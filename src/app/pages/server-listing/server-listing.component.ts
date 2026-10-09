@@ -58,16 +58,17 @@ import {
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { AnalyticsService } from "../../services/analytics.service";
 import { Modal, ModalOptions } from "flowbite";
+import {
+  dismissPageHttpToasts,
+  showInvalidUrlParamToast,
+} from "../../services/page-toast.helpers";
 import { ToastService } from "../../services/toast.service";
 import {
   BAD_BENCHMARK_URL_TOAST_ID,
   QUERY_ERROR_SERVERS_TOAST_ID,
   SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
-import {
-  INVALID_BENCHMARK_URL_TOAST_BODY,
-  INVALID_URL_TOAST_TITLE,
-} from "../../services/url-toast-content";
+import { INVALID_BENCHMARK_URL_TOAST_BODY } from "../../services/url-toast-content";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
@@ -487,6 +488,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         // as we need to decode the benchmark URL param first,
         // and will do the search after getBenchmarkConfigs is called
         if (!isInitialLoad) {
+          if (this.benchmarksLoaded) {
+            this.syncSelectedBenchmarkConfig(benchmarkDataEncoded);
+          }
           if (
             this.benchmarksLoaded &&
             (this.previousSearchParams === null ||
@@ -558,63 +562,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           }
         });
 
-        if (
-          this.specialList?.benchmark_id &&
-          this.specialList?.benchmark_config
-        ) {
-          this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
-            (config: any) =>
-              config.benchmark_id === this.specialList.benchmark_id &&
-              config.config === this.specialList.benchmark_config,
-          );
-        }
-        if (benchmarkDataEncoded) {
-          const benchmarkData = decodeBase64JsonUrlState(
-            benchmarkDataEncoded,
-            isBenchmarkUrlState,
-          );
-
-          if (benchmarkData.value) {
-            this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
-              (config: any) =>
-                config.benchmark_id === benchmarkData.value?.id &&
-                config.config === benchmarkData.value?.config,
-            );
-            if (
-              !this.selectedBenchmarkConfig &&
-              isPlatformBrowser(this.platformId)
-            ) {
-              this.toastService.show({
-                title: INVALID_URL_TOAST_TITLE,
-                body: INVALID_BENCHMARK_URL_TOAST_BODY,
-                type: "error",
-                id: BAD_BENCHMARK_URL_TOAST_ID,
-              });
-            }
-          } else {
-            console.warn("Invalid benchmark data in URL:", benchmarkData.error);
-            if (isPlatformBrowser(this.platformId)) {
-              this.toastService.show({
-                title: INVALID_URL_TOAST_TITLE,
-                body: INVALID_BENCHMARK_URL_TOAST_BODY,
-                type: "error",
-                id: BAD_BENCHMARK_URL_TOAST_ID,
-              });
-            }
-          }
-        } else if (
-          !this.selectedBenchmarkConfig &&
-          this.benchmarksConfigs.length > 0 &&
-          !benchmarkDataEncoded
-        ) {
-          const defaultBenchmarkId = "stress_ng:bestn";
-          const defaultBenchmarkConfig = "{}";
-          this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
-            (config: any) =>
-              config.benchmark_id === defaultBenchmarkId &&
-              config.config === defaultBenchmarkConfig,
-          );
-        }
+        this.syncSelectedBenchmarkConfig(benchmarkDataEncoded);
 
         if (
           shouldSearchAfterBenchmarks ||
@@ -735,9 +683,73 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
     this.introductionModal?.hide();
     this.introductionModal = null;
-    this.toastService.clearTransientHttpError();
-    this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
-    this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
+    dismissPageHttpToasts(this.toastService, [
+      QUERY_ERROR_SERVERS_TOAST_ID,
+      SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
+    ]);
+    this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
+  }
+
+  private findBenchmarkConfig(
+    benchmarkId: string,
+    configValue: string,
+  ): any | null {
+    return (
+      this.benchmarksConfigs.find(
+        (config: any) =>
+          config.benchmark_id === benchmarkId && config.config === configValue,
+      ) || null
+    );
+  }
+
+  private syncSelectedBenchmarkConfig(
+    benchmarkDataEncoded?: string | null,
+  ): void {
+    let nextBenchmarkConfig =
+      this.specialList?.benchmark_id && this.specialList?.benchmark_config
+        ? this.findBenchmarkConfig(
+            this.specialList.benchmark_id,
+            this.specialList.benchmark_config,
+          )
+        : null;
+
+    if (benchmarkDataEncoded) {
+      const benchmarkData = decodeBase64JsonUrlState(
+        benchmarkDataEncoded,
+        isBenchmarkUrlState,
+      );
+
+      if (benchmarkData.value) {
+        const benchmarkConfig = this.findBenchmarkConfig(
+          benchmarkData.value.id,
+          benchmarkData.value.config,
+        );
+
+        if (benchmarkConfig) {
+          nextBenchmarkConfig = benchmarkConfig;
+          this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
+        } else {
+          showInvalidUrlParamToast(this.toastService, this.platformId, {
+            id: BAD_BENCHMARK_URL_TOAST_ID,
+            body: INVALID_BENCHMARK_URL_TOAST_BODY,
+          });
+        }
+      } else {
+        console.warn("Invalid benchmark data in URL:", benchmarkData.error);
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_BENCHMARK_URL_TOAST_ID,
+          body: INVALID_BENCHMARK_URL_TOAST_BODY,
+        });
+      }
+    } else {
+      this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
+
+      if (!nextBenchmarkConfig && this.benchmarksConfigs.length > 0) {
+        nextBenchmarkConfig = this.findBenchmarkConfig("stress_ng:bestn", "{}");
+      }
+    }
+
+    this.selectedBenchmarkConfig = nextBenchmarkConfig;
   }
 
   setSpecialList() {
@@ -909,8 +921,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     const searchAbortController = new AbortController();
     this.searchAbortController = searchAbortController;
     this.isLoading = true;
-    this.toastService.clearTransientHttpError();
-    this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+    dismissPageHttpToasts(this.toastService, QUERY_ERROR_SERVERS_TOAST_ID);
 
     let query = JSON.parse(JSON.stringify(this.query));
 

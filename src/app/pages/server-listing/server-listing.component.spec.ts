@@ -11,6 +11,7 @@ import { ServerListingComponent } from "./server-listing.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
 import {
+  BAD_BENCHMARK_URL_TOAST_ID,
   QUERY_ERROR_SERVERS_TOAST_ID,
   SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
@@ -212,6 +213,46 @@ describe("ServerListingComponent", () => {
     expect(navigateSpy).not.toHaveBeenCalled();
   });
 
+  it("clears the bad benchmark toast when the benchmark query becomes valid or disappears", () => {
+    const toastService = TestBed.inject(ToastService);
+    const showToast = spyOn(toastService, "show");
+    const removeToast = spyOn(toastService, "removeToast");
+    const matchingConfig = {
+      benchmark_id: "stress_ng:bestn",
+      config: "{}",
+      benchmarkTemplate: { unit: "score" },
+    };
+    component.benchmarksConfigs = [matchingConfig];
+
+    (component as any).syncSelectedBenchmarkConfig("not-valid-base64");
+
+    expect(showToast).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Invalid URL",
+        body: "Visit the Server Navigator page to select a benchmark.",
+        id: BAD_BENCHMARK_URL_TOAST_ID,
+      }),
+    );
+
+    const encodedBenchmark = btoa(
+      JSON.stringify({
+        id: matchingConfig.benchmark_id,
+        config: matchingConfig.config,
+      }),
+    );
+    removeToast.calls.reset();
+
+    (component as any).syncSelectedBenchmarkConfig(encodedBenchmark);
+
+    expect(component.selectedBenchmarkConfig).toEqual(matchingConfig);
+    expect(removeToast).toHaveBeenCalledWith(BAD_BENCHMARK_URL_TOAST_ID);
+
+    removeToast.calls.reset();
+    (component as any).syncSelectedBenchmarkConfig(undefined);
+
+    expect(removeToast).toHaveBeenCalledWith(BAD_BENCHMARK_URL_TOAST_ID);
+  });
+
   it("shows query-error toast when search fails with 422 and clears it on retry success", fakeAsync(() => {
     const toastService = TestBed.inject(ToastService);
     const showHttpError = spyOn(toastService, "showHttpError");
@@ -266,6 +307,15 @@ describe("ServerListingComponent", () => {
     ).toBe(2);
     expect(showHttpError).not.toHaveBeenCalled();
   }));
+
+  it("removes the bad benchmark toast on destroy", () => {
+    const toastService = TestBed.inject(ToastService);
+    const removeToast = spyOn(toastService, "removeToast");
+
+    component.ngOnDestroy();
+
+    expect(removeToast).toHaveBeenCalledWith(BAD_BENCHMARK_URL_TOAST_ID);
+  });
 });
 
 describe("ServerListingComponent benchmark bootstrap", () => {

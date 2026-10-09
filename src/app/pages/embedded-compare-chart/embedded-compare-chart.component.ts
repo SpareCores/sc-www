@@ -1,17 +1,22 @@
-import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
-import { isPlatformBrowser } from "@angular/common";
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+} from "@angular/core";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { LucideExternalLink } from "@lucide/angular";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
 import { BAD_SERVER_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import {
   INVALID_SERVER_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
   INVALID_SERVER_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
-  INVALID_URL_TOAST_TITLE,
 } from "../../services/url-toast-content";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
@@ -26,7 +31,7 @@ import {
   templateUrl: "./embedded-compare-chart.component.html",
   styleUrl: "./embedded-compare-chart.component.scss",
 })
-export class EmbeddedCompareChartComponent implements OnInit {
+export class EmbeddedCompareChartComponent implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -197,6 +202,10 @@ export class EmbeddedCompareChartComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
+  }
+
   setup() {
     const chartname = this.route.snapshot.params["chartname"];
     const encodedInstances = this.route.snapshot.queryParams["instances"];
@@ -223,18 +232,14 @@ export class EmbeddedCompareChartComponent implements OnInit {
 
     if (!decodedInstances.value) {
       console.warn("Invalid instances data in URL:", decodedInstances.error);
-      if (isPlatformBrowser(this.platformId)) {
-        this.toastService.show({
-          title: INVALID_URL_TOAST_TITLE,
-          body: INVALID_COMPARE_URL_TOAST_BODY,
-          type: "error",
-          id: BAD_SERVER_COMPARE_URL_TOAST_ID,
-          action: {
-            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
-            onClick: () => this.router.navigate(["/servers"]),
-          },
-        });
-      }
+      showInvalidUrlParamToast(this.toastService, this.platformId, {
+        id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+        body: INVALID_COMPARE_URL_TOAST_BODY,
+        action: {
+          label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+          onClick: () => this.router.navigate(["/servers"]),
+        },
+      });
       return;
     }
 
