@@ -9,6 +9,8 @@ import { favoriteServerId } from "./collections.types";
 describe("CollectionsStore", () => {
   let store: InstanceType<typeof CollectionsStore>;
   let isAuthenticated: ReturnType<typeof signal<boolean>>;
+  let authInProgress: ReturnType<typeof signal<boolean>>;
+  let userId: ReturnType<typeof signal<string | null>>;
   let listFavoriteServers: jasmine.Spy;
   let listFavoriteDatabases: jasmine.Spy;
   let listSavedSearches: jasmine.Spy;
@@ -17,6 +19,8 @@ describe("CollectionsStore", () => {
 
   beforeEach(() => {
     isAuthenticated = signal(false);
+    authInProgress = signal(false);
+    userId = signal<string | null>(null);
     const favoriteId = favoriteServerId("aws", "t3.nano");
     listFavoriteServers = jasmine
       .createSpy("listFavoriteServers")
@@ -49,8 +53,8 @@ describe("CollectionsStore", () => {
           provide: AuthStateService,
           useValue: {
             isAuthenticated: () => isAuthenticated(),
-            authInProgress: () => false,
-            userId: () => (isAuthenticated() ? "user_test" : null),
+            authInProgress: () => authInProgress(),
+            userId: () => userId(),
           },
         },
         {
@@ -69,6 +73,12 @@ describe("CollectionsStore", () => {
     store = TestBed.inject(CollectionsStore);
   });
 
+  async function flushAuthEffects(): Promise<void> {
+    TestBed.flushEffects();
+    await Promise.resolve();
+    await Promise.resolve();
+  }
+
   it("should be created", () => {
     expect(store).toBeTruthy();
   });
@@ -79,11 +89,67 @@ describe("CollectionsStore", () => {
     expect(listFavoriteServers).not.toHaveBeenCalled();
   });
 
+  it("does not load while auth is in progress", async () => {
+    authInProgress.set(true);
+    isAuthenticated.set(true);
+    userId.set("user_test");
+    await flushAuthEffects();
+
+    expect(listFavoriteServers).not.toHaveBeenCalled();
+    expect(store.isLoaded()).toBeFalse();
+  });
+
   it("loads collections when authenticated with a user id", async () => {
     isAuthenticated.set(true);
-    TestBed.flushEffects();
-    await Promise.resolve();
-    await Promise.resolve();
+    userId.set("user_test");
+    await flushAuthEffects();
+
+    expect(listFavoriteServers).toHaveBeenCalled();
+    expect(store.isLoaded()).toBeTrue();
+  });
+
+  it("loads collections only once for the same user id", async () => {
+    isAuthenticated.set(true);
+    userId.set("user_test");
+    await flushAuthEffects();
+    listFavoriteServers.calls.reset();
+
+    userId.set("user_test");
+    isAuthenticated.set(true);
+    await flushAuthEffects();
+
+    expect(listFavoriteServers).not.toHaveBeenCalled();
+  });
+
+  it("loads collections again when the user id changes", async () => {
+    isAuthenticated.set(true);
+    userId.set("user_a");
+    await flushAuthEffects();
+    listFavoriteServers.calls.reset();
+
+    userId.set("user_b");
+    await flushAuthEffects();
+
+    expect(listFavoriteServers).toHaveBeenCalled();
+  });
+
+  it("clears collections on sign-out and loads for a later user", async () => {
+    isAuthenticated.set(true);
+    userId.set("user_a");
+    await flushAuthEffects();
+    expect(store.isLoaded()).toBeTrue();
+
+    isAuthenticated.set(false);
+    userId.set(null);
+    await flushAuthEffects();
+
+    expect(store.favoriteServers()).toEqual([]);
+    expect(store.isLoaded()).toBeFalse();
+
+    listFavoriteServers.calls.reset();
+    isAuthenticated.set(true);
+    userId.set("user_b");
+    await flushAuthEffects();
 
     expect(listFavoriteServers).toHaveBeenCalled();
     expect(store.isLoaded()).toBeTrue();

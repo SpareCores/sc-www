@@ -19,7 +19,10 @@ import {
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
-import { SERVER_COMPARE_ERROR_TOAST_ID } from "../../services/toast-ids";
+import {
+  BAD_SERVER_COMPARE_URL_TOAST_ID,
+  SERVER_COMPARE_ERROR_TOAST_ID,
+} from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("ServerCompareComponent", () => {
@@ -160,6 +163,45 @@ describe("ServerCompareComponent", () => {
 
   afterEach(() => {
     component.ngOnDestroy();
+  });
+
+  it("shows an invalid URL toast for malformed instances and clears it on destroy", () => {
+    routeSnapshot.queryParams = { instances: "not-valid-base64" };
+
+    component.setup();
+
+    expect(showToast).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Invalid URL",
+        body: "Select servers to compare.",
+        id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Server Navigator page",
+        }),
+      }),
+    );
+
+    removeToast.calls.reset();
+    component.ngOnDestroy();
+
+    expect(removeToast).toHaveBeenCalledWith(BAD_SERVER_COMPARE_URL_TOAST_ID);
+  });
+
+  it("shows an invalid URL toast for an unknown special compare id", () => {
+    routeSnapshot.paramMap = convertToParamMap({ id: "losindflsdnflsdknf" });
+
+    component.setup();
+
+    expect(showToast).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Invalid URL",
+        body: "Select servers to compare.",
+        id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Server Navigator page",
+        }),
+      }),
+    );
   });
 
   it("coalesces mirror layout updates into one animation frame and removes those listeners on destroy", () => {

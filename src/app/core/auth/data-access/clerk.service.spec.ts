@@ -19,9 +19,74 @@ describe("ClerkService", () => {
     return TestBed.inject(ClerkService);
   }
 
-  function setClerk(service: ClerkService, clerk: unknown): void {
-    (service as unknown as { clerk: unknown }).clerk = clerk;
+  function setClerk(
+    service: ClerkService,
+    clerk: unknown,
+    initResolved = true,
+  ): void {
+    const target = service as unknown as {
+      clerk: unknown;
+      initPromise: Promise<void> | null;
+    };
+    target.clerk = clerk;
+    target.initPromise = initResolved ? Promise.resolve() : null;
   }
+
+  function createServerService(): ClerkService {
+    router = {
+      navigateByUrl: jasmine.createSpy().and.resolveTo(true),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PLATFORM_ID, useValue: "server" },
+        { provide: Router, useValue: router },
+      ],
+    });
+    return TestBed.inject(ClerkService);
+  }
+
+  it("does not initialize Clerk outside the browser", async () => {
+    const service = createServerService();
+
+    await service.init();
+
+    expect(service.isLoaded()).toBeFalse();
+    expect(service.instance).toBeNull();
+  });
+
+  it("returns null token outside the browser", async () => {
+    const service = createServerService();
+
+    await expectAsync(service.getToken()).toBeResolvedTo(null);
+  });
+
+  it("returns the active session token in the browser", async () => {
+    const service = createService();
+    const getToken = jasmine
+      .createSpy("getToken")
+      .and.resolveTo("session-token");
+    setClerk(service, { session: { getToken } });
+
+    await expectAsync(service.getToken()).toBeResolvedTo("session-token");
+    expect(getToken).toHaveBeenCalledWith(undefined);
+  });
+
+  it("returns null token when there is no active session", async () => {
+    const service = createService();
+    setClerk(service, { session: null });
+
+    await expectAsync(service.getToken()).toBeResolvedTo(null);
+  });
+
+  it("returns null token when session token retrieval fails", async () => {
+    const service = createService();
+    const getToken = jasmine
+      .createSpy("getToken")
+      .and.rejectWith(new Error("token failed"));
+    setClerk(service, { session: { getToken } });
+
+    await expectAsync(service.getToken()).toBeResolvedTo(null);
+  });
 
   it("passes Force redirect URLs when afterAuthUrl is set", async () => {
     const service = createService();

@@ -79,6 +79,7 @@ describe("DatabaseCompareComponent", () => {
 
   it("shows an invalid URL toast for bad instances", async () => {
     const show = spyOn(toastService, "show");
+    const removeToast = spyOn(toastService, "removeToast").and.callThrough();
     const route = TestBed.inject(ActivatedRoute) as any;
     route.snapshot.queryParams = { instances: "not-valid-base64" };
     route.snapshot.paramMap = convertToParamMap({});
@@ -87,6 +88,38 @@ describe("DatabaseCompareComponent", () => {
       convertToParamMap({ instances: "not-valid-base64" }),
     );
     route.paramMap = of(convertToParamMap({}));
+
+    fixture = TestBed.createComponent(DatabaseCompareComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Invalid URL",
+        body: "Select databases to compare.",
+        id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Database Navigator page",
+        }),
+      }),
+    );
+    expect(component.databases.length).toBe(0);
+
+    removeToast.calls.reset();
+    component.ngOnDestroy();
+
+    expect(removeToast).toHaveBeenCalledWith(BAD_DATABASE_COMPARE_URL_TOAST_ID);
+  });
+
+  it("shows an invalid URL toast for an unknown special compare id", async () => {
+    const show = spyOn(toastService, "show");
+    const route = TestBed.inject(ActivatedRoute) as any;
+    route.snapshot.queryParams = {};
+    route.snapshot.paramMap = convertToParamMap({ id: "aws-16vcpu-dsfsdfsd" });
+    route.queryParams = of({});
+    route.queryParamMap = of(convertToParamMap({}));
+    route.paramMap = of(convertToParamMap({ id: "aws-16vcpu-dsfsdfsd" }));
 
     fixture = TestBed.createComponent(DatabaseCompareComponent);
     component = fixture.componentInstance;

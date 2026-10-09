@@ -230,6 +230,47 @@ export abstract class E2EEvent {
     });
   }
 
+  public static hideScrollbarsForScreenshot(options?: {
+    lockOverflow?: boolean;
+  }) {
+    cy.wrap(
+      Cypress.automation("remote:debugger:protocol", {
+        command: "Emulation.setScrollbarsHidden",
+        params: { hidden: true },
+      }),
+      { log: false },
+    );
+
+    cy.document().then((doc) => {
+      doc.getElementById("e2e-hide-scrollbars")?.remove();
+
+      const style = doc.createElement("style");
+      style.id = "e2e-hide-scrollbars";
+      style.textContent = `
+        ${
+          options?.lockOverflow
+            ? `html, body { overflow: hidden !important; }`
+            : ""
+        }
+
+        html, body, * {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        *::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+      `;
+
+      doc.head.appendChild(style);
+    });
+  }
+
   // Hide compare-page scrollbars and mirror bars for screenshot consistency
   public static hideCompareScrollbarsForScreenshot() {
     cy.document().then((doc) => {

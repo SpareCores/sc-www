@@ -379,6 +379,233 @@ describe("AuthStateService", () => {
     expect(auth.authInProgress()).toBeFalse();
   });
 
+  it("moves registration from details to consent", async () => {
+    const auth = createAuth();
+    setClerkInstance({
+      user: null,
+      session: null,
+      addListener: jasmine.createSpy("addListener"),
+    });
+    const create = jasmine.createSpy("create").and.resolveTo({
+      status: "missing_requirements",
+      legalAcceptedAt: null,
+      emailAddress: "ada@example.com",
+      missingFields: [],
+      unverifiedFields: ["email_address"],
+    });
+    spyOn(clerkService(), "getSignUpResource").and.resolveTo({
+      id: null,
+      create,
+      verifications: {},
+    } as never);
+
+    await expectAsync(
+      auth.startRegister({
+        firstName: "Ada",
+        lastName: "Lovelace",
+        emailAddress: " ada@example.com ",
+        password: "secret",
+      }),
+    ).toBeResolvedTo({ status: "consent" });
+
+    expect(create).toHaveBeenCalledWith({
+      firstName: "Ada",
+      lastName: "Lovelace",
+      emailAddress: "ada@example.com",
+      password: "secret",
+    });
+  });
+
+  it("moves registration from consent to email verification", async () => {
+    const auth = createAuth();
+    setClerkInstance({
+      user: null,
+      session: null,
+      addListener: jasmine.createSpy("addListener"),
+    });
+    const prepareEmailAddressVerification = jasmine
+      .createSpy("prepareEmailAddressVerification")
+      .and.resolveTo({});
+    const update = jasmine.createSpy("update").and.resolveTo({
+      status: "missing_requirements",
+      legalAcceptedAt: 1,
+      emailAddress: "ada@example.com",
+      missingFields: [],
+      unverifiedFields: ["email_address"],
+      prepareEmailAddressVerification,
+    });
+    spyOn(clerkService(), "getSignUpResource").and.resolveTo({
+      update,
+    } as never);
+
+    await expectAsync(
+      auth.completeRegister({
+        legalAccepted: true,
+        newsletterOptIn: false,
+      }),
+    ).toBeResolvedTo({ status: "verify" });
+
+    expect(update).toHaveBeenCalledWith({
+      legalAccepted: true,
+      unsafeMetadata: undefined,
+    });
+    expect(prepareEmailAddressVerification).toHaveBeenCalledWith({
+      strategy: "email_code",
+    });
+  });
+
+  it("activates a session after successful email verification", async () => {
+    const auth = createAuth();
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Ada",
+      lastName: "Lovelace",
+      username: "ada",
+      imageUrl: "",
+    };
+    const clerk = {
+      user: null as typeof signedInUser | null,
+      session: null,
+      addListener: jasmine.createSpy("addListener"),
+    };
+    setClerkInstance(clerk);
+    spyOn(clerkService(), "getSignUpResource").and.resolveTo({
+      missingFields: [],
+      attemptEmailAddressVerification: jasmine.createSpy().and.resolveTo({
+        status: "complete",
+        createdSessionId: "sess_reg",
+        missingFields: [],
+      }),
+    } as never);
+    spyOn(clerkService(), "setActive").and.callFake(async () => {
+      clerk.user = signedInUser;
+    });
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
+    const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    const track = spyOn(analyticsService(), "trackEvent");
+    go("/servers");
+
+    await expectAsync(auth.verifyRegister("424242")).toBeResolvedTo({
+      status: "complete",
+    });
+
+    expect(auth.isAuthenticated()).toBeTrue();
+    expect(auth.authInProgress()).toBeFalse();
+    expect(track).toHaveBeenCalledOnceWith("auth register", {});
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("resends the registration verification code", async () => {
+    const auth = createAuth();
+    setClerkInstance({
+      user: null,
+      session: null,
+      addListener: jasmine.createSpy("addListener"),
+    });
+    const prepareEmailAddressVerification = jasmine
+      .createSpy("prepareEmailAddressVerification")
+      .and.resolveTo({});
+    spyOn(clerkService(), "getSignUpResource").and.resolveTo({
+      missingFields: [],
+      prepareEmailAddressVerification,
+    } as never);
+
+    await expectAsync(auth.resendRegisterCode()).toBeResolvedTo({
+      status: "verify",
+    });
+    expect(prepareEmailAddressVerification).toHaveBeenCalledWith({
+      strategy: "email_code",
+    });
+  });
+
+  it("returns a registration error message without toasting", async () => {
+    const auth = createAuth();
+    const toast = spyOn(
+      (
+        auth as unknown as {
+          toastService: { show: (options: unknown) => void };
+        }
+      ).toastService,
+      "show",
+    );
+    setClerkInstance({
+      user: null,
+      session: null,
+      addListener: jasmine.createSpy("addListener"),
+    });
+    spyOn(clerkService(), "getSignUpResource").and.resolveTo({
+      id: null,
+      create: jasmine.createSpy("create").and.rejectWith({
+        errors: [
+          {
+            longMessage: "Email is taken",
+            meta: { paramName: "emailAddress" },
+          },
+        ],
+      }),
+      verifications: {},
+    } as never);
+
+    await expectAsync(
+      auth.startRegister({
+        firstName: "Ada",
+        lastName: "Lovelace",
+        emailAddress: "ada@example.com",
+        password: "secret",
+      }),
+    ).toBeResolvedTo({
+      status: "error",
+      message: "Email is taken",
+      param: "emailAddress",
+    });
+    expect(toast).not.toHaveBeenCalled();
+  });
+
+  it("returns to bookmarks after GitHub auth when that return URL is stored", async () => {
+    const auth = createAuth();
+    setClerkInstance({
+      user: { id: "user_1" },
+      session: {},
+      addListener: jasmine.createSpy("addListener"),
+    });
+    spyOn(clerkService(), "handleRedirectCallback").and.resolveTo();
+    spyOn(clerkService(), "syncClerkState").and.resolveTo();
+    const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    flowStore().setReturnUrl("/bookmarks");
+    go("/auth/callback?intent=signIn");
+
+    await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
+      status: "authenticated",
+    });
+
+    expect(navigate).toHaveBeenCalledOnceWith("/bookmarks", {
+      replaceUrl: true,
+    });
+    expect(auth.authInProgress()).toBeFalse();
+  });
+
+  it("redirects away from bookmarks after sign-out", async () => {
+    const auth = createAuth();
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    setClerkInstance({
+      signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
+      user: signedInUser,
+    });
+    setUser(auth, signedInUser);
+    const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    go("/bookmarks");
+
+    await auth.signOut();
+
+    expect(navigate).toHaveBeenCalledOnceWith("/");
+  });
+
   it("clears a failed GitHub sign-in redirect", async () => {
     const auth = createAuth();
     setClerkInstance({ user: null, addListener: jasmine.createSpy() });
