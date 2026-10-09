@@ -162,7 +162,17 @@ function openGuestAuthButton(label: "Register" | "Log in"): void {
 }
 
 function snap(name: string, suffix: string): void {
+  E2EEvent.hideScrollbarsForScreenshot();
   cy.compareSnapshot(`${name}${suffix}`);
+}
+
+function snapViewport(name: string, suffix: string): void {
+  cy.scrollTo(0, 0);
+  E2EEvent.hideScrollbarsForScreenshot({ lockOverflow: true });
+  cy.compareSnapshot({
+    name: `${name}${suffix}`,
+    cypressScreenshotOptions: { capture: "viewport" },
+  });
 }
 
 export function registerAuthVisualSuites(suffix: string): void {
@@ -175,7 +185,7 @@ export function registerAuthVisualSuites(suffix: string): void {
         "Sign in to Spare Cores",
       );
       prepareLandingChrome();
-      snap("auth-sign-in-modal", suffix);
+      snapViewport("auth-sign-in-modal", suffix);
     });
 
     it("compares default registration subtitle", () => {
@@ -190,7 +200,7 @@ export function registerAuthVisualSuites(suffix: string): void {
         "Welcome! Please fill in the details to get started.",
       );
       prepareLandingChrome();
-      snap("auth-register-default-subtitle", suffix);
+      snapViewport("auth-register-default-subtitle", suffix);
     });
 
     it("compares feature registration subtitle", () => {
@@ -209,7 +219,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       );
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("servers_table");
-      snap("auth-register-feature-subtitle", suffix);
+      snapViewport("auth-register-feature-subtitle", suffix);
     });
 
     it("compares registration consent step", () => {
@@ -224,7 +234,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       fillRegisterDetails(email, password);
       expectRegisterStep("One last step");
       prepareLandingChrome();
-      snap("auth-register-consent", suffix);
+      snapViewport("auth-register-consent", suffix);
       cy.task("deleteClerkUserByEmail", email, { timeout: 20000 });
     });
 
@@ -243,7 +253,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       cy.contains("button", "Continue").should("not.be.disabled").click();
       expectRegisterStep("Verify your email");
       prepareLandingChrome();
-      snap("auth-register-verify", suffix);
+      snapViewport("auth-register-verify", suffix);
       cy.task("deleteClerkUserByEmail", email, { timeout: 20000 });
     });
   });
