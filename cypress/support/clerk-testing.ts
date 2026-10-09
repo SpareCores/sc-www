@@ -1,4 +1,4 @@
-const TESTING_TOKEN_PARAM = "__clerk_testing_token";
+import { setupClerkTestingToken } from "@clerk/testing/cypress";
 
 export function randomClerkTestPassword(): string {
   const bytes = new Uint8Array(24);
@@ -19,27 +19,5 @@ export function bypassClerkBotProtection(): void {
     );
   }
 
-  cy.intercept(`https://${fapi}/v1/**`, (req) => {
-    const url = new URL(req.url);
-    url.searchParams.set(TESTING_TOKEN_PARAM, token);
-    req.url = url.toString();
-
-    req.continue((res) => {
-      if (!res.body || typeof res.body !== "object") {
-        return;
-      }
-
-      const body = res.body as {
-        response?: { captcha_bypass?: boolean };
-        client?: { captcha_bypass?: boolean };
-      };
-
-      if (body.response && typeof body.response === "object") {
-        body.response.captcha_bypass = true;
-      }
-      if (body.client && typeof body.client === "object") {
-        body.client.captcha_bypass = true;
-      }
-    });
-  });
+  setupClerkTestingToken();
 }
