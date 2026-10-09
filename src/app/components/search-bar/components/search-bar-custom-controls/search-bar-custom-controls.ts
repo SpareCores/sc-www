@@ -556,9 +556,9 @@ export class SearchBarCustomControls {
       secondaryParts.push(`${server.storage_size} GB storage`);
     }
 
-    if (server.gpu_memory_total) {
+    if (server.accelerator_memory_total) {
       secondaryParts.push(
-        `${(server.gpu_memory_total / 1024).toFixed(1)} GiB GPU`,
+        `${(server.accelerator_memory_total / 1024).toFixed(1)} GiB GPU`,
       );
     }
 

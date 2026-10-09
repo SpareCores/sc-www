@@ -306,7 +306,6 @@ export enum StorageType {
   Hdd = "hdd",
   Ssd = "ssd",
   NvmeSsd = "nvme ssd",
-  Network = "network",
 }
 
 /**
@@ -326,9 +325,11 @@ export enum ServerColumns {
   ServerId = "server_id",
   Name = "name",
   ApiReference = "api_reference",
+  ApiReferenceObject = "api_reference_object",
   DisplayName = "display_name",
   Description = "description",
   Family = "family",
+  Series = "series",
   Vcpus = "vcpus",
   Hypervisor = "hypervisor",
   CpuAllocation = "cpu_allocation",
@@ -356,16 +357,18 @@ export enum ServerColumns {
   MemoryGeneration = "memory_generation",
   MemorySpeed = "memory_speed",
   MemoryEcc = "memory_ecc",
-  GpuCount = "gpu_count",
-  GpuMemoryMin = "gpu_memory_min",
-  GpuMemoryTotal = "gpu_memory_total",
-  GpuManufacturer = "gpu_manufacturer",
-  GpuFamily = "gpu_family",
-  GpuModel = "gpu_model",
-  Gpus = "gpus",
+  AcceleratorCount = "accelerator_count",
+  AcceleratorMemoryMin = "accelerator_memory_min",
+  AcceleratorMemoryTotal = "accelerator_memory_total",
+  AcceleratorType = "accelerator_type",
+  AcceleratorManufacturer = "accelerator_manufacturer",
+  AcceleratorFamily = "accelerator_family",
+  AcceleratorModel = "accelerator_model",
+  Accelerators = "accelerators",
   StorageSize = "storage_size",
   StorageType = "storage_type",
   Storages = "storages",
+  CompatibleStorageIds = "compatible_storage_ids",
   NetworkSpeedBaseline = "network_speed_baseline",
   NetworkSpeedMax = "network_speed_max",
   NetworkStorageSpeedBaseline = "network_storage_speed_baseline",
@@ -664,16 +667,12 @@ export enum GpuModels {
   A10 = "A10",
   A100 = "A100",
   A10G = "A10G",
-  A16 = "A16",
-  A40 = "A40",
   B200 = "B200",
   B300 = "B300",
-  G59 = "G59",
   GB200 = "GB200",
   GB300 = "GB300",
   H100 = "H100",
   H200 = "H200",
-  HL205 = "HL-205",
   L20 = "L20",
   L4 = "L4",
   L40S = "L40S",
@@ -687,14 +686,8 @@ export enum GpuModels {
   T4G = "T4G",
   V100 = "V100",
   V100S = "V100S",
-  V520 = "V520",
   V620 = "V620",
   V710 = "V710",
-  V3 = "v3",
-  V5E = "v5e",
-  V5P = "v5p",
-  V6E = "v6e",
-  V7X = "v7x",
 }
 
 /** GpuManufacturers */
@@ -1255,18 +1248,56 @@ export enum Allocation {
 }
 
 /**
+ * AcceleratorType
+ * Type of a hardware accelerator, e.g. GPU or TPU.
+ */
+export enum AcceleratorType {
+  GPU = "GPU",
+  TPU = "TPU",
+}
+
+/**
+ * Accelerator
+ * Hardware accelerator (e.g. GPU or TPU) details.
+ */
+export interface Accelerator {
+  /** Manufacturer */
+  manufacturer: string;
+  /** Family */
+  family?: string | null;
+  /** Model */
+  model?: string | null;
+  /** Memory */
+  memory: number;
+  /** Firmware Version */
+  firmware_version?: string | null;
+  /** Bios Version */
+  bios_version?: string | null;
+  /** Graphics Clock */
+  graphics_clock?: number | null;
+  /** Sm Clock */
+  sm_clock?: number | null;
+  /** Mem Clock */
+  mem_clock?: number | null;
+  /** Video Clock */
+  video_clock?: number | null;
+}
+
+/**
  * Benchmark
  * Benchmark scenario definitions.
  *
  * Attributes:
  *     benchmark_id (str): Unique identifier of a specific Benchmark.
  *     category (typing.Optional[str]): Category of the resource.
+ *     subcategory (typing.Optional[str]): Subcategory of the benchmark within its category, e.g. the scope of an nvbandwidth test.
  *     source (typing.Union[sc_crawler.workload_profiles.MeasuredSource, sc_crawler.workload_profiles.ExtrapolatedSource, sc_crawler.workload_profiles.CompoundSource]): How the benchmark score is produced. A discriminated object keyed by 'kind': 'measured' (directly observed), 'extrapolated' (derived from this server's own measurements; carries 'derived_from' + 'note'), or 'compound' (aggregated across component benchmarks; carries 'aggregation', 'normalization', and the 'components' recipe).
  *     name (str): Human-friendly name.
  *     description (typing.Optional[str]): Short description.
  *     note (typing.Optional[str]): Optional caveat/comment on how to interpret the metric, surfaced as a warning/info badge (e.g. limited scaling on high vCPU counts, or independence from vCPU count). Null when there is nothing to flag.
  *     framework (str): The name of the benchmark framework/software/tool used.
  *     config_fields (dict): A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
+ *     environment_fields (dict): A dictionary of descriptions on the environment details recorded with the benchmark scores, e.g. {"kernel_version": "Linux kernel version of the server."}.
  *     measurement (typing.Optional[str]): The name of measurement recorded in the benchmark.
  *     unit (typing.Optional[str]): Optional unit of measurement for the benchmark score.
  *     higher_is_better (bool): If higher benchmark score means better performance, or vica versa.
@@ -1284,6 +1315,11 @@ export interface Benchmark {
    * Category of the resource.
    */
   category: string | null;
+  /**
+   * Subcategory
+   * Subcategory of the benchmark within its category, e.g. the scope of an nvbandwidth test.
+   */
+  subcategory?: string | null;
   /**
    * Source
    * How the benchmark score is produced. A discriminated object keyed by 'kind': 'measured' (directly observed), 'extrapolated' (derived from this server's own measurements; carries 'derived_from' + 'note'), or 'compound' (aggregated across component benchmarks; carries 'aggregation', 'normalization', and the 'components' recipe).
@@ -1315,6 +1351,12 @@ export interface Benchmark {
    * @default {}
    */
   config_fields?: Record<string, any>;
+  /**
+   * Environment Fields
+   * A dictionary of descriptions on the environment details recorded with the benchmark scores, e.g. {"kernel_version": "Linux kernel version of the server."}.
+   * @default {}
+   */
+  environment_fields?: Record<string, any>;
   /**
    * Measurement
    * The name of measurement recorded in the benchmark.
@@ -1352,6 +1394,8 @@ export interface BenchmarkConfig {
   config: string;
   /** Category */
   category?: string | null;
+  /** Subcategory */
+  subcategory?: string | null;
 }
 
 /**
@@ -1718,6 +1762,7 @@ export interface Cpu {
  *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
  *     description (typing.Optional[str]): Short description.
  *     family (typing.Optional[str]): Hardware family or class classification.
+ *     series (typing.Optional[str]): Hardware series within the family.
  *     server_id (typing.Optional[str]): Reference to the underlying cloud server's identifier.
  *     vcpus (typing.Optional[int]): Number of virtual CPU cores allocated to the database server instance.
  *     memory_amount (typing.Optional[int]): Amount of RAM (MiB) provisioned for the instance.
@@ -1734,6 +1779,7 @@ export interface Cpu {
  *     storage_extra_min (typing.Optional[int]): Minimum custom storage size (in GB) that can be attached to the instance.
  *     storage_extra_max (typing.Optional[int]): Maximum storage limit (in GB) supported by the instance or storage tier.
  *     storage_extra_autosize (typing.Optional[bool]): Whether storage capacity can automatically expand as disk usage grows.
+ *     compatible_storage_ids (typing.Optional[typing.List[str]]): List of database_storage_ids that can be attached to the database as extra storage.
  *     disk_encryption (typing.Optional[bool]): Indicates whether underlying storage drives are encrypted at rest.
  *     scheduled_backups (typing.Optional[bool]): Support for automated snapshot schedules and backup retention management.
  *     continuous_backups (typing.Optional[int]): Maximum point-in-time recovery (PITR) log retention window expressed in days (0 if unsupported).
@@ -1788,6 +1834,11 @@ export interface Database {
    * Hardware family or class classification.
    */
   family?: string | null;
+  /**
+   * Series
+   * Hardware series within the family.
+   */
+  series?: string | null;
   /**
    * Server Id
    * Reference to the underlying cloud server's identifier.
@@ -1865,6 +1916,11 @@ export interface Database {
    * Whether storage capacity can automatically expand as disk usage grows.
    */
   storage_extra_autosize?: boolean | null;
+  /**
+   * Compatible Storage Ids
+   * List of database_storage_ids that can be attached to the database as extra storage.
+   */
+  compatible_storage_ids?: string[] | null;
   /**
    * Disk Encryption
    * Indicates whether underlying storage drives are encrypted at rest.
@@ -1972,6 +2028,11 @@ export interface DatabaseBase {
    */
   family?: string | null;
   /**
+   * Series
+   * Hardware series within the family.
+   */
+  series?: string | null;
+  /**
    * Server Id
    * Reference to the underlying cloud server's identifier.
    */
@@ -2048,6 +2109,11 @@ export interface DatabaseBase {
    * Whether storage capacity can automatically expand as disk usage grows.
    */
   storage_extra_autosize?: boolean | null;
+  /**
+   * Compatible Storage Ids
+   * List of database_storage_ids that can be attached to the database as extra storage.
+   */
+  compatible_storage_ids?: string[] | null;
   /**
    * Disk Encryption
    * Indicates whether underlying storage drives are encrypted at rest.
@@ -2155,6 +2221,11 @@ export interface DatabasePKs {
    */
   family?: string | null;
   /**
+   * Series
+   * Hardware series within the family.
+   */
+  series?: string | null;
+  /**
    * Server Id
    * Reference to the underlying cloud server's identifier.
    */
@@ -2231,6 +2302,11 @@ export interface DatabasePKs {
    * Whether storage capacity can automatically expand as disk usage grows.
    */
   storage_extra_autosize?: boolean | null;
+  /**
+   * Compatible Storage Ids
+   * List of database_storage_ids that can be attached to the database as extra storage.
+   */
+  compatible_storage_ids?: string[] | null;
   /**
    * Disk Encryption
    * Indicates whether underlying storage drives are encrypted at rest.
@@ -2662,33 +2738,6 @@ export interface ExtrapolatedSource {
   note?: string | null;
 }
 
-/**
- * Gpu
- * GPU accelerator details.
- */
-export interface Gpu {
-  /** Manufacturer */
-  manufacturer: string;
-  /** Family */
-  family?: string | null;
-  /** Model */
-  model?: string | null;
-  /** Memory */
-  memory: number;
-  /** Firmware Version */
-  firmware_version?: string | null;
-  /** Bios Version */
-  bios_version?: string | null;
-  /** Graphics Clock */
-  graphics_clock?: number | null;
-  /** Sm Clock */
-  sm_clock?: number | null;
-  /** Mem Clock */
-  mem_clock?: number | null;
-  /** Video Clock */
-  video_clock?: number | null;
-}
-
 /** HTTPValidationError */
 export interface HTTPValidationError {
   /** Detail */
@@ -2702,7 +2751,7 @@ export interface HealthcheckResponse {
   /** Database Last Updated */
   database_last_updated: number;
   /** Database Hash */
-  database_hash: string;
+  database_hash: string | null;
   /** Database Alembic Version */
   database_alembic_version: string;
 }
@@ -2720,6 +2769,12 @@ export interface IdNameAndDescriptionAndCategory {
   /** Unit */
   unit: string | null;
 }
+
+/**
+ * InspectorTaskBlockReasonCodesResponse
+ * Inspector task name mapped to its block reason codes.
+ */
+export type InspectorTaskBlockReasonCodesResponse = Record<string, string[]>;
 
 /** MeasuredSource */
 export interface MeasuredSource {
@@ -3119,9 +3174,11 @@ export interface ScoreComponent {
  *     server_id (str): Unique identifier, as called at the Vendor.
  *     name (str): Human-friendly name.
  *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
+ *     api_reference_object (typing.Optional[dict]): How this resource is referenced in the vendor API calls, including the parameter name(s).
  *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
  *     description (str): Short description.
  *     family (typing.Optional[str]): Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+ *     series (typing.Optional[str]): Server series within the family, e.g. b3 (OVH General Purpose).
  *     vcpus (int): Default number of virtual CPUs (vCPU) of the server.
  *     hypervisor (typing.Optional[str]): Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
  *     cpu_allocation (CpuAllocation): Allocation of CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -3149,16 +3206,18 @@ export interface ScoreComponent {
  *     memory_generation (typing.Optional[sc_crawler.table_fields.DdrGeneration]): Generation of the DDR SDRAM, e.g. DDR4 or DDR5.
  *     memory_speed (typing.Optional[int]): DDR SDRAM clock rate (Mhz).
  *     memory_ecc (typing.Optional[bool]): If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
- *     gpu_count (float): Number of GPU accelerator(s).
- *     gpu_memory_min (typing.Optional[int]): Memory (MiB) allocated to the lowest-end GPU accelerator.
- *     gpu_memory_total (typing.Optional[int]): Overall memory (MiB) allocated to all the GPU accelerator(s).
- *     gpu_manufacturer (typing.Optional[str]): The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
- *     gpu_family (typing.Optional[str]): The product family of the primary GPU accelerator, e.g. Turing.
- *     gpu_model (typing.Optional[str]): The model number of the primary GPU accelerator, e.g. Tesla T4.
- *     gpus (typing.List[sc_crawler.table_fields.Gpu]): JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
+ *     accelerator_count (float): Number of accelerator(s), e.g. GPUs or TPUs.
+ *     accelerator_memory_min (typing.Optional[int]): Memory (MiB) allocated to the lowest-end accelerator.
+ *     accelerator_memory_total (typing.Optional[int]): Overall memory (MiB) allocated to all the accelerator(s).
+ *     accelerator_type (typing.Optional[sc_crawler.table_fields.AcceleratorType]): The type of the primary accelerator, e.g. GPU or TPU.
+ *     accelerator_manufacturer (typing.Optional[str]): The manufacturer of the primary accelerator, e.g. Nvidia or AMD.
+ *     accelerator_family (typing.Optional[str]): The product family of the primary accelerator, e.g. Turing.
+ *     accelerator_model (typing.Optional[str]): The model number of the primary accelerator, e.g. Tesla T4.
+ *     accelerators (typing.List[sc_crawler.table_fields.Accelerator]): JSON array of accelerator details, including the manufacturer, name, and memory (MiB) of each accelerator.
  *     storage_size (int): Overall size (GB) of the disk(s).
- *     storage_type (typing.Optional[sc_crawler.table_fields.StorageType]): Primary disk type, e.g. HDD, SSD, NVMe SSD, or network).
+ *     storage_type (typing.Optional[sc_crawler.table_fields.StorageType]): Primary disk type, e.g. HDD, SSD, or NVMe SSD.
  *     storages (typing.List[sc_crawler.table_fields.Disk]): JSON array of disks attached to the server, including the size (GB) and type of each disk.
+ *     compatible_storage_ids (typing.Optional[typing.List[str]]): List of storage_ids that can be attached to the server as extra storage.
  *     network_speed_baseline (typing.Optional[float]): The baseline network performance (Gbps) of the network card.
  *     network_speed_max (typing.Optional[float]): The maximum network performance (Gbps) of the network card.
  *     network_storage_speed_baseline (typing.Optional[float]): The baseline bandwidth performance of network-attached storage (Gbps).
@@ -3192,6 +3251,11 @@ export interface Server {
    */
   api_reference: string;
   /**
+   * Api Reference Object
+   * How this resource is referenced in the vendor API calls, including the parameter name(s).
+   */
+  api_reference_object?: Record<string, any> | null;
+  /**
    * Display Name
    * Human-friendly reference (usually the id or name) of the resource.
    */
@@ -3206,6 +3270,11 @@ export interface Server {
    * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
    */
   family?: string | null;
+  /**
+   * Series
+   * Server series within the family, e.g. b3 (OVH General Purpose).
+   */
+  series?: string | null;
   /**
    * Vcpus
    * Default number of virtual CPUs (vCPU) of the server.
@@ -3335,49 +3404,51 @@ export interface Server {
    */
   memory_ecc?: boolean | null;
   /**
-   * Gpu Count
-   * Number of GPU accelerator(s).
+   * Accelerator Count
+   * Number of accelerator(s), e.g. GPUs or TPUs.
    * @default 0
    */
-  gpu_count?: number;
+  accelerator_count?: number;
   /**
-   * Gpu Memory Min
-   * Memory (MiB) allocated to the lowest-end GPU accelerator.
+   * Accelerator Memory Min
+   * Memory (MiB) allocated to the lowest-end accelerator.
    */
-  gpu_memory_min?: number | null;
+  accelerator_memory_min?: number | null;
   /**
-   * Gpu Memory Total
-   * Overall memory (MiB) allocated to all the GPU accelerator(s).
+   * Accelerator Memory Total
+   * Overall memory (MiB) allocated to all the accelerator(s).
    */
-  gpu_memory_total?: number | null;
+  accelerator_memory_total?: number | null;
+  /** The type of the primary accelerator, e.g. GPU or TPU. */
+  accelerator_type?: AcceleratorType | null;
   /**
-   * Gpu Manufacturer
-   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
+   * Accelerator Manufacturer
+   * The manufacturer of the primary accelerator, e.g. Nvidia or AMD.
    */
-  gpu_manufacturer?: string | null;
+  accelerator_manufacturer?: string | null;
   /**
-   * Gpu Family
-   * The product family of the primary GPU accelerator, e.g. Turing.
+   * Accelerator Family
+   * The product family of the primary accelerator, e.g. Turing.
    */
-  gpu_family?: string | null;
+  accelerator_family?: string | null;
   /**
-   * Gpu Model
-   * The model number of the primary GPU accelerator, e.g. Tesla T4.
+   * Accelerator Model
+   * The model number of the primary accelerator, e.g. Tesla T4.
    */
-  gpu_model?: string | null;
+  accelerator_model?: string | null;
   /**
-   * Gpus
-   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
+   * Accelerators
+   * JSON array of accelerator details, including the manufacturer, name, and memory (MiB) of each accelerator.
    * @default []
    */
-  gpus?: Gpu[];
+  accelerators?: Accelerator[];
   /**
    * Storage Size
    * Overall size (GB) of the disk(s).
    * @default 0
    */
   storage_size?: number;
-  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
+  /** Primary disk type, e.g. HDD, SSD, or NVMe SSD. */
   storage_type?: StorageType | null;
   /**
    * Storages
@@ -3385,6 +3456,11 @@ export interface Server {
    * @default []
    */
   storages?: Disk[];
+  /**
+   * Compatible Storage Ids
+   * List of storage_ids that can be attached to the server as extra storage.
+   */
+  compatible_storage_ids?: string[] | null;
   /**
    * Network Speed Baseline
    * The baseline network performance (Gbps) of the network card.
@@ -3464,6 +3540,11 @@ export interface ServerBase {
    */
   api_reference: string;
   /**
+   * Api Reference Object
+   * How this resource is referenced in the vendor API calls, including the parameter name(s).
+   */
+  api_reference_object?: Record<string, any> | null;
+  /**
    * Display Name
    * Human-friendly reference (usually the id or name) of the resource.
    */
@@ -3478,6 +3559,11 @@ export interface ServerBase {
    * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
    */
   family?: string | null;
+  /**
+   * Series
+   * Server series within the family, e.g. b3 (OVH General Purpose).
+   */
+  series?: string | null;
   /**
    * Vcpus
    * Default number of virtual CPUs (vCPU) of the server.
@@ -3607,49 +3693,51 @@ export interface ServerBase {
    */
   memory_ecc?: boolean | null;
   /**
-   * Gpu Count
-   * Number of GPU accelerator(s).
+   * Accelerator Count
+   * Number of accelerator(s), e.g. GPUs or TPUs.
    * @default 0
    */
-  gpu_count?: number;
+  accelerator_count?: number;
   /**
-   * Gpu Memory Min
-   * Memory (MiB) allocated to the lowest-end GPU accelerator.
+   * Accelerator Memory Min
+   * Memory (MiB) allocated to the lowest-end accelerator.
    */
-  gpu_memory_min?: number | null;
+  accelerator_memory_min?: number | null;
   /**
-   * Gpu Memory Total
-   * Overall memory (MiB) allocated to all the GPU accelerator(s).
+   * Accelerator Memory Total
+   * Overall memory (MiB) allocated to all the accelerator(s).
    */
-  gpu_memory_total?: number | null;
+  accelerator_memory_total?: number | null;
+  /** The type of the primary accelerator, e.g. GPU or TPU. */
+  accelerator_type?: AcceleratorType | null;
   /**
-   * Gpu Manufacturer
-   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
+   * Accelerator Manufacturer
+   * The manufacturer of the primary accelerator, e.g. Nvidia or AMD.
    */
-  gpu_manufacturer?: string | null;
+  accelerator_manufacturer?: string | null;
   /**
-   * Gpu Family
-   * The product family of the primary GPU accelerator, e.g. Turing.
+   * Accelerator Family
+   * The product family of the primary accelerator, e.g. Turing.
    */
-  gpu_family?: string | null;
+  accelerator_family?: string | null;
   /**
-   * Gpu Model
-   * The model number of the primary GPU accelerator, e.g. Tesla T4.
+   * Accelerator Model
+   * The model number of the primary accelerator, e.g. Tesla T4.
    */
-  gpu_model?: string | null;
+  accelerator_model?: string | null;
   /**
-   * Gpus
-   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
+   * Accelerators
+   * JSON array of accelerator details, including the manufacturer, name, and memory (MiB) of each accelerator.
    * @default []
    */
-  gpus?: Gpu[];
+  accelerators?: Accelerator[];
   /**
    * Storage Size
    * Overall size (GB) of the disk(s).
    * @default 0
    */
   storage_size?: number;
-  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
+  /** Primary disk type, e.g. HDD, SSD, or NVMe SSD. */
   storage_type?: StorageType | null;
   /**
    * Storages
@@ -3657,6 +3745,11 @@ export interface ServerBase {
    * @default []
    */
   storages?: Disk[];
+  /**
+   * Compatible Storage Ids
+   * List of storage_ids that can be attached to the server as extra storage.
+   */
+  compatible_storage_ids?: string[] | null;
   /**
    * Network Speed Baseline
    * The baseline network performance (Gbps) of the network card.
@@ -3859,6 +3952,11 @@ export interface ServerPKs {
    */
   api_reference: string;
   /**
+   * Api Reference Object
+   * How this resource is referenced in the vendor API calls, including the parameter name(s).
+   */
+  api_reference_object?: Record<string, any> | null;
+  /**
    * Display Name
    * Human-friendly reference (usually the id or name) of the resource.
    */
@@ -3873,6 +3971,11 @@ export interface ServerPKs {
    * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
    */
   family?: string | null;
+  /**
+   * Series
+   * Server series within the family, e.g. b3 (OVH General Purpose).
+   */
+  series?: string | null;
   /**
    * Vcpus
    * Default number of virtual CPUs (vCPU) of the server.
@@ -4002,49 +4105,51 @@ export interface ServerPKs {
    */
   memory_ecc?: boolean | null;
   /**
-   * Gpu Count
-   * Number of GPU accelerator(s).
+   * Accelerator Count
+   * Number of accelerator(s), e.g. GPUs or TPUs.
    * @default 0
    */
-  gpu_count?: number;
+  accelerator_count?: number;
   /**
-   * Gpu Memory Min
-   * Memory (MiB) allocated to the lowest-end GPU accelerator.
+   * Accelerator Memory Min
+   * Memory (MiB) allocated to the lowest-end accelerator.
    */
-  gpu_memory_min?: number | null;
+  accelerator_memory_min?: number | null;
   /**
-   * Gpu Memory Total
-   * Overall memory (MiB) allocated to all the GPU accelerator(s).
+   * Accelerator Memory Total
+   * Overall memory (MiB) allocated to all the accelerator(s).
    */
-  gpu_memory_total?: number | null;
+  accelerator_memory_total?: number | null;
+  /** The type of the primary accelerator, e.g. GPU or TPU. */
+  accelerator_type?: AcceleratorType | null;
   /**
-   * Gpu Manufacturer
-   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
+   * Accelerator Manufacturer
+   * The manufacturer of the primary accelerator, e.g. Nvidia or AMD.
    */
-  gpu_manufacturer?: string | null;
+  accelerator_manufacturer?: string | null;
   /**
-   * Gpu Family
-   * The product family of the primary GPU accelerator, e.g. Turing.
+   * Accelerator Family
+   * The product family of the primary accelerator, e.g. Turing.
    */
-  gpu_family?: string | null;
+  accelerator_family?: string | null;
   /**
-   * Gpu Model
-   * The model number of the primary GPU accelerator, e.g. Tesla T4.
+   * Accelerator Model
+   * The model number of the primary accelerator, e.g. Tesla T4.
    */
-  gpu_model?: string | null;
+  accelerator_model?: string | null;
   /**
-   * Gpus
-   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
+   * Accelerators
+   * JSON array of accelerator details, including the manufacturer, name, and memory (MiB) of each accelerator.
    * @default []
    */
-  gpus?: Gpu[];
+  accelerators?: Accelerator[];
   /**
    * Storage Size
    * Overall size (GB) of the disk(s).
    * @default 0
    */
   storage_size?: number;
-  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
+  /** Primary disk type, e.g. HDD, SSD, or NVMe SSD. */
   storage_type?: StorageType | null;
   /**
    * Storages
@@ -4052,6 +4157,11 @@ export interface ServerPKs {
    * @default []
    */
   storages?: Disk[];
+  /**
+   * Compatible Storage Ids
+   * List of storage_ids that can be attached to the server as extra storage.
+   */
+  compatible_storage_ids?: string[] | null;
   /**
    * Network Speed Baseline
    * The baseline network performance (Gbps) of the network card.
@@ -4323,6 +4433,11 @@ export interface ServerWithScore {
    */
   api_reference: string;
   /**
+   * Api Reference Object
+   * How this resource is referenced in the vendor API calls, including the parameter name(s).
+   */
+  api_reference_object?: Record<string, any> | null;
+  /**
    * Display Name
    * Human-friendly reference (usually the id or name) of the resource.
    */
@@ -4337,6 +4452,11 @@ export interface ServerWithScore {
    * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
    */
   family?: string | null;
+  /**
+   * Series
+   * Server series within the family, e.g. b3 (OVH General Purpose).
+   */
+  series?: string | null;
   /**
    * Vcpus
    * Default number of virtual CPUs (vCPU) of the server.
@@ -4466,49 +4586,51 @@ export interface ServerWithScore {
    */
   memory_ecc?: boolean | null;
   /**
-   * Gpu Count
-   * Number of GPU accelerator(s).
+   * Accelerator Count
+   * Number of accelerator(s), e.g. GPUs or TPUs.
    * @default 0
    */
-  gpu_count?: number;
+  accelerator_count?: number;
   /**
-   * Gpu Memory Min
-   * Memory (MiB) allocated to the lowest-end GPU accelerator.
+   * Accelerator Memory Min
+   * Memory (MiB) allocated to the lowest-end accelerator.
    */
-  gpu_memory_min?: number | null;
+  accelerator_memory_min?: number | null;
   /**
-   * Gpu Memory Total
-   * Overall memory (MiB) allocated to all the GPU accelerator(s).
+   * Accelerator Memory Total
+   * Overall memory (MiB) allocated to all the accelerator(s).
    */
-  gpu_memory_total?: number | null;
+  accelerator_memory_total?: number | null;
+  /** The type of the primary accelerator, e.g. GPU or TPU. */
+  accelerator_type?: AcceleratorType | null;
   /**
-   * Gpu Manufacturer
-   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
+   * Accelerator Manufacturer
+   * The manufacturer of the primary accelerator, e.g. Nvidia or AMD.
    */
-  gpu_manufacturer?: string | null;
+  accelerator_manufacturer?: string | null;
   /**
-   * Gpu Family
-   * The product family of the primary GPU accelerator, e.g. Turing.
+   * Accelerator Family
+   * The product family of the primary accelerator, e.g. Turing.
    */
-  gpu_family?: string | null;
+  accelerator_family?: string | null;
   /**
-   * Gpu Model
-   * The model number of the primary GPU accelerator, e.g. Tesla T4.
+   * Accelerator Model
+   * The model number of the primary accelerator, e.g. Tesla T4.
    */
-  gpu_model?: string | null;
+  accelerator_model?: string | null;
   /**
-   * Gpus
-   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
+   * Accelerators
+   * JSON array of accelerator details, including the manufacturer, name, and memory (MiB) of each accelerator.
    * @default []
    */
-  gpus?: Gpu[];
+  accelerators?: Accelerator[];
   /**
    * Storage Size
    * Overall size (GB) of the disk(s).
    * @default 0
    */
   storage_size?: number;
-  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
+  /** Primary disk type, e.g. HDD, SSD, or NVMe SSD. */
   storage_type?: StorageType | null;
   /**
    * Storages
@@ -4516,6 +4638,11 @@ export interface ServerWithScore {
    * @default []
    */
   storages?: Disk[];
+  /**
+   * Compatible Storage Ids
+   * List of storage_ids that can be attached to the server as extra storage.
+   */
+  compatible_storage_ids?: string[] | null;
   /**
    * Network Speed Baseline
    * The baseline network performance (Gbps) of the network card.
@@ -5343,9 +5470,11 @@ export interface TableServerSelectTableServerSelectGetParams {
     | "server_id"
     | "name"
     | "api_reference"
+    | "api_reference_object"
     | "display_name"
     | "description"
     | "family"
+    | "series"
     | "vcpus"
     | "hypervisor"
     | "cpu_allocation"
@@ -5373,16 +5502,18 @@ export interface TableServerSelectTableServerSelectGetParams {
     | "memory_generation"
     | "memory_speed"
     | "memory_ecc"
-    | "gpu_count"
-    | "gpu_memory_min"
-    | "gpu_memory_total"
-    | "gpu_manufacturer"
-    | "gpu_family"
-    | "gpu_model"
-    | "gpus"
+    | "accelerator_count"
+    | "accelerator_memory_min"
+    | "accelerator_memory_total"
+    | "accelerator_type"
+    | "accelerator_manufacturer"
+    | "accelerator_family"
+    | "accelerator_model"
+    | "accelerators"
     | "storage_size"
     | "storage_type"
     | "storages"
+    | "compatible_storage_ids"
     | "network_speed_baseline"
     | "network_speed_max"
     | "network_storage_speed_baseline"
@@ -7946,6 +8077,41 @@ export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
 export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData =
   Record<string, any>;
 
+export interface ServerTaskBlockReasonCodesInspectorServerVendorServerTaskBlockReasonCodesGetParams {
+  /**
+   * Tasks
+   * Inspector task names to evaluate.
+   */
+  tasks: string[];
+  /**
+   * Vendor
+   * A Vendor's ID.
+   */
+  vendor: string;
+  /**
+   * Server
+   * A Server's ID or API reference.
+   */
+  server: string;
+}
+
+export type ServerTaskBlockReasonCodesInspectorServerVendorServerTaskBlockReasonCodesGetData =
+  InspectorTaskBlockReasonCodesResponse;
+
+export interface TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetParams {
+  /**
+   * Tasks
+   * Inspector task names to evaluate.
+   */
+  tasks: string[];
+}
+
+/** Response Task Block Reason Codes Inspector Task Block Reason Codes Get */
+export type TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetData = Record<
+  string,
+  Record<string, InspectorTaskBlockReasonCodesResponse>
+>;
+
 export interface SearchRegionsRegionsGetParams {
   /**
    * Vendor
@@ -8451,15 +8617,40 @@ export interface SearchServersServersGetParams {
    */
   benchmark_score_min?: number | null;
   /**
+   * Maximum benchmark score
+   * Maximum value of the selected benchmark score, e.g. for benchmarks where lower is better.
+   */
+  benchmark_score_max?: number | null;
+  /**
    * Required benchmark score/price
    * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
    */
   benchmark_score_per_price_min?: number | null;
   /**
+   * Required benchmark score/vCPU
+   * Required value of the selected benchmark score divided by the number of virtual CPUs.
+   */
+  benchmark_score_per_vcpu_min?: number | null;
+  /**
    * Required memory
    * Required amount of memory in GBs.
    */
   memory_min?: number | null;
+  /**
+   * Maximum memory
+   * Maximum amount of memory in GBs.
+   */
+  memory_max?: number | null;
+  /**
+   * Minimum memory per vCPU
+   * Minimum amount of memory (GBs) per virtual CPU.
+   */
+  memory_per_vcpu_min?: number | null;
+  /**
+   * Maximum memory per vCPU
+   * Maximum amount of memory (GBs) per virtual CPU.
+   */
+  memory_per_vcpu_max?: number | null;
   /**
    * Required baseline network speed
    * Required baseline network speed in Gbps.
@@ -9102,7 +9293,7 @@ export interface SearchServersServersGetParams {
    * Bundled storage type
    * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
    */
-  storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  storage_type?: "hdd" | "ssd" | "nvme ssd";
   /**
    * Required bundled storage count
    * Required number of bundled storage devices.
@@ -9176,12 +9367,17 @@ export interface SearchServersServersGetParams {
    * Required storage type
    * Storage product type (e.g. HDD, SSD, NVMe) for the required storage price lookup. When omitted, the cheapest available type (usually HDD over network) is used.
    */
-  extra_storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  extra_storage_type?: "hdd" | "ssd" | "nvme ssd";
   /**
    * GPU count
    * Required number of GPUs.
    */
   gpu_min?: number | null;
+  /**
+   * Maximum GPU count
+   * Maximum number of GPUs. Set to 0 to search for servers without GPUs.
+   */
+  gpu_max?: number | null;
   /**
    * Required GPU memory
    * Required amount of GPU memory (GB) in each GPU.
@@ -9211,16 +9407,12 @@ export interface SearchServersServersGetParams {
     | "A10"
     | "A100"
     | "A10G"
-    | "A16"
-    | "A40"
     | "B200"
     | "B300"
-    | "G59"
     | "GB200"
     | "GB300"
     | "H100"
     | "H200"
-    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
@@ -9234,14 +9426,13 @@ export interface SearchServersServersGetParams {
     | "T4G"
     | "V100"
     | "V100S"
-    | "V520"
     | "V620"
-    | "V710"
-    | "v3"
-    | "v5e"
-    | "v5p"
-    | "v6e"
-    | "v7x";
+    | "V710";
+  /**
+   * Maximum price
+   * Maximum best price of the server in the requested currency, using the price allocation selected via best_price_allocation (hourly price, or monthly price when MONTHLY is selected), including the optional extra traffic and storage costs.
+   */
+  price_max?: number | null;
   /**
    * Currency
    * Currency used for prices.
@@ -10811,7 +11002,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Bundled storage type
    * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
    */
-  storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  storage_type?: "hdd" | "ssd" | "nvme ssd";
   /**
    * Countries
    * Filter for regions in the provided list of countries.
@@ -10890,16 +11081,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A10"
     | "A100"
     | "A10G"
-    | "A16"
-    | "A40"
     | "B200"
     | "B300"
-    | "G59"
     | "GB200"
     | "GB300"
     | "H100"
     | "H200"
-    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
@@ -10913,14 +11100,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "T4G"
     | "V100"
     | "V100S"
-    | "V520"
     | "V620"
-    | "V710"
-    | "v3"
-    | "v5e"
-    | "v5p"
-    | "v6e"
-    | "v7x";
+    | "V710";
   /**
    * Limit
    * Maximum number of results.
@@ -10989,7 +11170,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
    * Bundled storage type
    * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
    */
-  storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  storage_type?: "hdd" | "ssd" | "nvme ssd";
   /**
    * Compliance framework
    * Compliance framework implemented at the vendor.

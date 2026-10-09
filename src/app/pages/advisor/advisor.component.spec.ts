@@ -162,7 +162,7 @@ describe("AdvisorComponent", () => {
           status: "active",
           vcpus: 4,
           memory_amount: 4096,
-          gpu_count: 1,
+          accelerator_count: 1,
           gpu_memory_min: 8,
           gpu_memory_total: 0,
           storage_size: 80,
@@ -1788,7 +1788,7 @@ describe("AdvisorComponent", () => {
         memory_amount: 8192,
         memory_speed: 4800,
         memory_generation: "DDR5",
-        gpu_count: 2,
+        accelerator_count: 2,
         storage_size: 160,
         cpu_l1d_cache: 128,
         cpu_l2_cache: 2048,
@@ -1854,23 +1854,26 @@ describe("AdvisorComponent", () => {
     component.selectedBaselineServer.set({
       vendor_id: "aws",
       api_reference: "large",
-      gpu_count: 1,
+      accelerator_count: 1,
     });
     component.recommendations.set([
       {
         vendor_id: "aws",
         api_reference: "large",
-        gpu_count: null,
+        accelerator_count: null,
       },
       {
         vendor_id: "aws",
         api_reference: "c7a.large",
-        gpu_count: 2,
+        accelerator_count: 2,
       },
     ] as never[]);
 
     const candidate = component.recommendations()[1];
-    const delta = component.getComparableResourceDelta(candidate, "gpu_count");
+    const delta = component.getComparableResourceDelta(
+      candidate,
+      "accelerator_count",
+    );
 
     expect(delta?.baselineValue).toBe(1);
     expect(delta?.percentageDelta).toBe(100);
@@ -1889,7 +1892,7 @@ describe("AdvisorComponent", () => {
         server_id: "srv-1",
         memory_amount: 4096,
         memory_speed: 4800,
-        gpu_count: 1,
+        accelerator_count: 1,
         storage_size: 80,
         cpu_l1d_cache: 64,
         cpu_l2_cache: 1024,
