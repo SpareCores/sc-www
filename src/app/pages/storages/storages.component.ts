@@ -30,6 +30,7 @@ import { SearchBarComponent } from "../../components/search-bar/search-bar.compo
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { StoragePipe } from "../../pipes/storage.pipe";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { dismissPageHttpToasts } from "../../services/page-toast.helpers";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
 import { QUERY_ERROR_STORAGE_PRICES_TOAST_ID } from "../../services/toast-ids";
@@ -73,6 +74,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
   private searchRequestId = 0;
+  private searchAbortController: AbortController | null = null;
 
   limit = 10;
   page = 1;
@@ -180,8 +182,12 @@ export class StoragesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.searchAbortController?.abort();
     this.subscription.unsubscribe();
-    this.toastService.removeToast(QUERY_ERROR_STORAGE_PRICES_TOAST_ID);
+    dismissPageHttpToasts(
+      this.toastService,
+      QUERY_ERROR_STORAGE_PRICES_TOAST_ID,
+    );
   }
 
   toggleCollapse() {
@@ -245,12 +251,19 @@ export class StoragesComponent implements OnInit, OnDestroy {
 
   private _searchStorages() {
     const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const searchAbortController = new AbortController();
+    this.searchAbortController = searchAbortController;
     this.isLoading = true;
-    this.toastService.clearTransientHttpError();
-    this.toastService.removeToast(QUERY_ERROR_STORAGE_PRICES_TOAST_ID);
+    dismissPageHttpToasts(
+      this.toastService,
+      QUERY_ERROR_STORAGE_PRICES_TOAST_ID,
+    );
 
     this.keeperAPI
-      .getStoragePrices(this.query)
+      .getStoragePrices(this.query, {
+        signal: searchAbortController.signal,
+      })
       .then((results: any) => {
         if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
@@ -275,6 +288,9 @@ export class StoragesComponent implements OnInit, OnDestroy {
       })
       .finally(() => {
         if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
+          if (this.searchAbortController === searchAbortController) {
+            this.searchAbortController = null;
+          }
           this.isLoading = false;
         }
       });

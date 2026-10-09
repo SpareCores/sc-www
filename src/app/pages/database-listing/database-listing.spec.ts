@@ -265,4 +265,38 @@ describe("DatabaseListing", () => {
     ).toBe(2);
     expect(showHttpError).not.toHaveBeenCalled();
   }));
+
+  it("aborts the previous search when a newer one starts", () => {
+    const signals: AbortSignal[] = [];
+
+    spyOn(keeperAPI, "searchDatabases").and.callFake(
+      (_query: any, params: any = {}) => {
+        signals.push(params.signal);
+        return new Promise(() => {});
+      },
+    );
+
+    (component as any)._searchDatabases(true);
+    (component as any)._searchDatabases(true);
+
+    expect(signals.length).toBe(2);
+    expect(signals[0].aborted).toBeTrue();
+    expect(signals[1].aborted).toBeFalse();
+  });
+
+  it("aborts the active search on destroy", () => {
+    let activeSignal: AbortSignal | undefined;
+
+    spyOn(keeperAPI, "searchDatabases").and.callFake(
+      (_query: any, params: any = {}) => {
+        activeSignal = params.signal;
+        return new Promise(() => {});
+      },
+    );
+
+    (component as any)._searchDatabases(true);
+    component.ngOnDestroy();
+
+    expect(activeSignal?.aborted).toBeTrue();
+  });
 });

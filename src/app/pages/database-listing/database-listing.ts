@@ -49,6 +49,7 @@ import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { dismissPageHttpToasts } from "../../services/page-toast.helpers";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
@@ -254,6 +255,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
   private searchRequestId = 0;
+  private searchAbortController: AbortController | null = null;
   private previousSearchParams: Record<string, unknown> | null = null;
 
   constructor() {
@@ -449,8 +451,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.searchAbortController?.abort();
     this.subscription.unsubscribe();
-    this.toastService.removeToast(QUERY_ERROR_DATABASES_TOAST_ID);
+    dismissPageHttpToasts(this.toastService, QUERY_ERROR_DATABASES_TOAST_ID);
   }
 
   toggleCollapse() {
@@ -535,9 +538,11 @@ export class DatabaseListing implements OnInit, OnDestroy {
 
   private _searchDatabases(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const searchAbortController = new AbortController();
+    this.searchAbortController = searchAbortController;
     this.isLoading = true;
-    this.toastService.clearTransientHttpError();
-    this.toastService.removeToast(QUERY_ERROR_DATABASES_TOAST_ID);
+    dismissPageHttpToasts(this.toastService, QUERY_ERROR_DATABASES_TOAST_ID);
 
     const query = structuredClone(
       this.query,
@@ -578,7 +583,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
     query.benchmark_config = this.selectedBenchmarkConfig;
 
     this.keeperAPI
-      .searchDatabases(query)
+      .searchDatabases(query, {
+        signal: searchAbortController.signal,
+      })
       .then((databases) => {
         if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
@@ -622,6 +629,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
       })
       .finally(() => {
         if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
+          if (this.searchAbortController === searchAbortController) {
+            this.searchAbortController = null;
+          }
           this.isLoading = false;
         }
       });
