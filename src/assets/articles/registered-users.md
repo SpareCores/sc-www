@@ -8,12 +8,12 @@ teaser: Register for free to save searches, comparisons, and assessments, and to
 image: /assets/images/blog/thumbnails/registered-users.webp
 image_alt: Screenshot of the Bookmarks page on the Spare Cores website listing saved searches, comparisons, assessments, and favorite servers.
 author: Adam Toth
-tags: [data]
+tags: [user-accounts, user-experience, web-application]
 ---
 
 Until now, everything you did on Spare Cores lived in the URL: a carefully
 tuned server search, a comparison of a dozen instances, or an Advisor
-assessment for your workload. If you wanted to get back to it next week, you
+assessment for your workload. If you wanted to get back to it the following week, you
 had to bookmark the link in your browser, or dig it out of a Slack thread you
 shared with your team.
 
@@ -42,10 +42,11 @@ a verification code in their inbox. Subscribing to our newsletter is optional,
 and you can leave it unchecked.
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="zoomin mx-auto"
+    style="max-width: 400px; width: 100%;"
     title="Register window"
     alt="Screenshot of the registration window on the Spare Cores website with the email form and the Continue with GitHub button."
-    src="/assets/images/blog/registered-users-register.webp"/>
+    src="/assets/images/blog/registered-users-register.png"/>
   <p>Register with your email address or GitHub account</p>
 </div>
 
@@ -54,10 +55,11 @@ a menu with links to your Bookmarks, your profile (where you can also delete
 your account), and signing out.
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="zoomin mx-auto"
+    style="max-width: 250px; width: 100%;"
     title="Account menu"
     alt="Screenshot of the account menu in the Spare Cores header with the Bookmarks, Edit Profile, and Sign Out items."
-    src="/assets/images/blog/registered-users-avatar-button.webp"/>
+    src="/assets/images/blog/registered-users-avatar-button.png"/>
   <p>The account menu in the header</p>
 </div>
 
@@ -69,40 +71,44 @@ completed, so the server ends up in your bookmarks without a second click.
 ## Compare and Filter Without Limits
 
 Guests can now add up to four servers or databases to a comparison, filter by
-one country, and select up to three regions at a time. Going over any of these
-limits shows a short notice with a link to the registration window:
+one country, and select up to three regions at a time. We added these limits
+because bots, search engines, and LLM tools kept loading our servers with
+unrealistic combinations of random regions. Going over any of these limits now
+shows a short notice with a link to the registration window:
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="zoomin mx-auto"
+    style="max-width: 500px; width: 100%;"
     title="Comparison limit for guests"
     alt="Screenshot of the Spare Cores server listing with four servers selected for comparison and the checkbox of a fifth server disabled."
-    src="/assets/images/blog/registered-users-guest-server-limit.webp"/>
+    src="/assets/images/blog/registered-users-guest-server-limit.png"/>
   <p>Guests can compare up to four servers or databases</p>
 </div>
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="mx-auto"
-    style="max-width: 400px; width: 100%;"
+  <img class="zoomin mx-auto"
+    style="max-width: 300px; width: 100%;"
     title="Server limit notice"
     alt="Screenshot of the Server limit reached notice saying that guests can only compare up to four servers at a time, with a link to register for free."
-    src="/assets/images/blog/registered-users-guest-toast-server-limit.webp"/>
+    src="/assets/images/blog/registered-users-guest-toast-server-limit.png"/>
   <p>The notice shown when a guest tries to add a fifth server</p>
 </div>
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="zoomin mx-auto"
+    style="max-width: 400px; width: 100%;"
     title="Region filter limit for guests"
     alt="Screenshot of the region filter on the Spare Cores server listing with three Alibaba Cloud regions selected."
-    src="/assets/images/blog/registered-users-guest-region-limit.webp"/>
+    src="/assets/images/blog/registered-users-guest-region-limit.png"/>
   <p>Guests can filter by one country and up to three regions at a time</p>
 </div>
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="mx-auto"
-    style="max-width: 400px; width: 100%;"
+  <img class="zoomin mx-auto"
+    style="max-width: 300px; width: 100%;"
     title="Region limit notice"
     alt="Screenshot of the Region limit reached notice saying that guests can only filter by three regions at a time, with a link to register for free."
-    src="/assets/images/blog/registered-users-guest-toast-region-limit.webp"/>
+    src="/assets/images/blog/registered-users-guest-toast-region-limit.png"/>
   <p>The notice shown when a guest selects the third region</p>
 </div>
 
@@ -133,10 +139,11 @@ you can record why you shortlisted a server or what a comparison was meant to
 show.
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="zoomin mx-auto"
+    style="max-width: 500px; width: 100%;"
     title="Saving a search"
     alt="Screenshot of the Bookmark this search dialog on the Spare Cores website with a name and a note filled in."
-    src="/assets/images/blog/registered-users-bookmark-save.webp"/>
+    src="/assets/images/blog/registered-users-bookmark-save.png"/>
   <p>Add a name and an optional note when saving</p>
 </div>
 
@@ -150,7 +157,7 @@ items, edit their notes, or delete them from here.
   <img class="zoomin w-full"
     title="Bookmarks page"
     alt="Screenshot of the Bookmarks page on the Spare Cores website with saved searches, comparisons, assessments, and servers."
-    src="/assets/images/blog/registered-users-saved-searches.webp"/>
+    src="/assets/images/blog/registered-users-saved-searches.png"/>
   <p>All your saved items on the Bookmarks page</p>
 </div>
 
