@@ -15,13 +15,12 @@ describe("VendorsComponent", () => {
       imports: [VendorsComponent],
       providers: [...sharedTestingProviders],
     }).compileComponents();
-
-    fixture = TestBed.createComponent(VendorsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it("should create", () => {
+    fixture = TestBed.createComponent(VendorsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
