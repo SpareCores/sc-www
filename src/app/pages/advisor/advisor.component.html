@@ -818,7 +818,9 @@
                           </div>
                           @if (recommendation.accelerator_model) {
                             <div class="text-xs text-white flex gap-1">
-                              <span>{{ recommendation.accelerator_model }}</span>
+                              <span>{{
+                                recommendation.accelerator_model
+                              }}</span>
                             </div>
                           }
                         </td>
@@ -826,7 +828,9 @@
                       @if (column.type === "gpu_memory_min") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ recommendation.accelerator_memory_min | gpuMemory }}
+                            {{
+                              recommendation.accelerator_memory_min | gpuMemory
+                            }}
                           </div>
                           @if (
                             getComparableResourceDelta(
@@ -862,7 +866,10 @@
                       @if (column.type === "gpu_memory_total") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ recommendation.accelerator_memory_total | gpuMemory }}
+                            {{
+                              recommendation.accelerator_memory_total
+                                | gpuMemory
+                            }}
                           </div>
                           @if (
                             getComparableResourceDelta(
@@ -912,7 +919,9 @@
                               </span>
                             }
                             @if (recommendation.accelerator_family) {
-                              <span>{{ recommendation.accelerator_family }} </span>
+                              <span
+                                >{{ recommendation.accelerator_family }}
+                              </span>
                             }
                           </div>
                         </td>

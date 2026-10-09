@@ -240,7 +240,12 @@ const EXPECTED_SERVER_PRICES_COLUMNS: TableColumn[] = [
     type: "text",
     key: "server.storage_type",
   },
-  { name: "GPUs", show: true, type: "gpu", orderField: "server.accelerator_count" },
+  {
+    name: "GPUs",
+    show: true,
+    type: "gpu",
+    orderField: "server.accelerator_count",
+  },
   {
     name: "GPU MIN MEMORY",
     show: false,

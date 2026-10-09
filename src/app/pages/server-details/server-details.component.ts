@@ -1376,7 +1376,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   diffSpec(s: ServerPKs) {
     return (
-      Math.abs(Number(this.serverDetails.accelerator_count) - Number(s.accelerator_count)) *
+      Math.abs(
+        Number(this.serverDetails.accelerator_count) -
+          Number(s.accelerator_count),
+      ) *
         10e6 +
       Math.abs(Number(this.serverDetails.vcpus) - Number(s.vcpus)) * 10e3 +
       Math.abs(

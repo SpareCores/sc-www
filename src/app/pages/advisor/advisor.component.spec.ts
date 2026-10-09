@@ -1870,7 +1870,10 @@ describe("AdvisorComponent", () => {
     ] as never[]);
 
     const candidate = component.recommendations()[1];
-    const delta = component.getComparableResourceDelta(candidate, "accelerator_count");
+    const delta = component.getComparableResourceDelta(
+      candidate,
+      "accelerator_count",
+    );
 
     expect(delta?.baselineValue).toBe(1);
     expect(delta?.percentageDelta).toBe(100);
