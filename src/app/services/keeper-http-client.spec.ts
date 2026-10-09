@@ -16,6 +16,7 @@ import {
   RETRY_INTERVALS,
   RETRY_INTERVALS_SSR,
   getRetryDelay,
+  isAbortError,
   isAutomaticallyRetryableMethod,
   maxTotalRetryWaitMs,
   parseRetryAfter,
@@ -24,6 +25,7 @@ import {
 describe("KeeperHttpClient", () => {
   let client: KeeperHttpClient;
   let httpMock: HttpTestingController;
+  let auth: jasmine.SpyObj<Pick<AuthStateService, "getToken">>;
   const path = "/servers";
   const baseUri = import.meta.env.NG_APP_BACKEND_BASE_URI || "";
 
@@ -32,6 +34,12 @@ describe("KeeperHttpClient", () => {
   }
 
   function setup(platformId: object = "browser" as unknown as object) {
+    auth = jasmine.createSpyObj<Pick<AuthStateService, "getToken">>(
+      "AuthStateService",
+      ["getToken"],
+    );
+    auth.getToken.and.resolveTo(null);
+
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withFetch()),
@@ -39,14 +47,17 @@ describe("KeeperHttpClient", () => {
         { provide: PLATFORM_ID, useValue: platformId },
         {
           provide: AuthStateService,
-          useValue: { getToken: () => Promise.resolve(null) },
+          useValue: auth,
         },
       ],
     });
 
     const angularHttp = TestBed.inject(HttpClient);
-    const auth = TestBed.inject(AuthStateService);
-    client = new KeeperHttpClient(angularHttp, platformId, auth);
+    client = new KeeperHttpClient(
+      angularHttp,
+      platformId,
+      auth as unknown as AuthStateService,
+    );
     httpMock = TestBed.inject(HttpTestingController);
   }
 
@@ -191,6 +202,64 @@ describe("KeeperHttpClient", () => {
       flushMicrotasks();
 
       expect(resolved).toBeTruthy();
+    }));
+
+    it("fetches a fresh auth token for each retry attempt", fakeAsync(() => {
+      let resolved: unknown;
+
+      auth.getToken.and.returnValues(
+        Promise.resolve("first-token"),
+        Promise.resolve("second-token"),
+      );
+
+      client.request({ method: "GET", path }).then((res) => (resolved = res));
+
+      flushMicrotasks();
+      const firstAttempt = httpMock.expectOne(requestUrl());
+      expect(firstAttempt.request.headers.get("Authorization")).toBe(
+        "Bearer first-token",
+      );
+      firstAttempt.flush(null, {
+        status: 503,
+        statusText: "Service Unavailable",
+      });
+
+      tick(RETRY_INTERVALS[0]);
+      flushMicrotasks();
+
+      const secondAttempt = httpMock.expectOne(requestUrl());
+      expect(secondAttempt.request.headers.get("Authorization")).toBe(
+        "Bearer second-token",
+      );
+      secondAttempt.flush([{ ok: true }]);
+      flushMicrotasks();
+
+      expect(auth.getToken).toHaveBeenCalledTimes(2);
+      expect(resolved).toBeTruthy();
+    }));
+
+    it("aborts during retry delay without issuing another request", fakeAsync(() => {
+      const controller = new AbortController();
+      let rejected: unknown;
+
+      client
+        .request({ method: "GET", path, signal: controller.signal })
+        .catch((err) => (rejected = err));
+
+      flushMicrotasks();
+      httpMock.expectOne(requestUrl()).flush(null, {
+        status: 429,
+        statusText: "Too Many Requests",
+      });
+
+      controller.abort();
+      flushMicrotasks();
+
+      expect(isAbortError(rejected)).toBeTrue();
+      expect(httpMock.match(requestUrl()).length).toBe(0);
+
+      tick(RETRY_INTERVALS[0]);
+      expect(httpMock.match(requestUrl()).length).toBe(0);
     }));
 
     (["POST", "PATCH", "DELETE"] as const).forEach((method) => {
