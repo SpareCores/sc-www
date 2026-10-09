@@ -415,10 +415,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   ),
                 });
               }
-              if (this.serverDetails.gpu_count) {
+              if (this.serverDetails.accelerator_count) {
                 this.features.push({
                   name: "GPU",
-                  value: this.serverDetails.gpu_count,
+                  value: this.serverDetails.accelerator_count,
                 });
               }
 
@@ -1055,7 +1055,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       return html;
     }
 
-    if (name === "gpus") {
+    if (name === "accelerators") {
       let html = "<ul>";
       (prop as any[]).forEach((s: any) => {
         html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
@@ -1352,7 +1352,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           "@type": "QuantitativeValue",
           name: "Graphics processing units",
           unitText: "GPU(s)",
-          value: this.serverDetails.gpu_count,
+          value: this.serverDetails.accelerator_count,
         },
       ],
     };
@@ -1376,7 +1376,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   diffSpec(s: ServerPKs) {
     return (
-      Math.abs(Number(this.serverDetails.gpu_count) - Number(s.gpu_count)) *
+      Math.abs(Number(this.serverDetails.accelerator_count) - Number(s.accelerator_count)) *
         10e6 +
       Math.abs(Number(this.serverDetails.vcpus) - Number(s.vcpus)) * 10e3 +
       Math.abs(

@@ -139,7 +139,7 @@ describe("server compare table utils", () => {
       0,
     );
     expect(
-      getServerPropertyValue({ id: "gpu_count" }, { gpu_count: 0 } as never),
+      getServerPropertyValue({ id: "accelerator_count" }, { accelerator_count: 0 } as never),
     ).toBe(0);
     expect(
       getServerPropertyValue({ id: "vcpu_count", unit: "vCPU" }, {
@@ -191,7 +191,7 @@ describe("server compare table utils", () => {
       } as never),
     ).toBe("2 TiB/mo");
     expect(
-      getServerPropertyValue({ id: "gpu_count" }, { gpu_count: 0.5 } as never),
+      getServerPropertyValue({ id: "accelerator_count" }, { accelerator_count: 0.5 } as never),
     ).toBe("½");
   });
 

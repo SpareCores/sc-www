@@ -787,11 +787,11 @@
                       @if (column.type === "gpu") {
                         <td>
                           <div class="text-sm text-white whitespace-nowrap">
-                            {{ recommendation.gpu_count | gpuCount }}
+                            {{ recommendation.accelerator_count | gpuCount }}
                             @if (
                               getComparableResourceDelta(
                                 recommendation,
-                                "gpu_count"
+                                "accelerator_count"
                               );
                               as gpuDelta
                             ) {
@@ -816,9 +816,9 @@
                               }
                             }
                           </div>
-                          @if (recommendation.gpu_model) {
+                          @if (recommendation.accelerator_model) {
                             <div class="text-xs text-white flex gap-1">
-                              <span>{{ recommendation.gpu_model }}</span>
+                              <span>{{ recommendation.accelerator_model }}</span>
                             </div>
                           }
                         </td>
@@ -826,12 +826,12 @@
                       @if (column.type === "gpu_memory_min") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ recommendation.gpu_memory_min | gpuMemory }}
+                            {{ recommendation.accelerator_memory_min | gpuMemory }}
                           </div>
                           @if (
                             getComparableResourceDelta(
                               recommendation,
-                              "gpu_memory_min"
+                              "accelerator_memory_min"
                             );
                             as gpuMemoryMinDelta
                           ) {
@@ -862,12 +862,12 @@
                       @if (column.type === "gpu_memory_total") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ recommendation.gpu_memory_total | gpuMemory }}
+                            {{ recommendation.accelerator_memory_total | gpuMemory }}
                           </div>
                           @if (
                             getComparableResourceDelta(
                               recommendation,
-                              "gpu_memory_total"
+                              "accelerator_memory_total"
                             );
                             as gpuMemoryTotalDelta
                           ) {
@@ -901,18 +901,18 @@
                             <span>{{
                               advisorUi.getModelDetail(
                                 recommendation,
-                                "gpu_model"
+                                "accelerator_model"
                               )
                             }}</span>
                           </div>
                           <div class="text-xs text-white">
-                            @if (recommendation.gpu_manufacturer) {
+                            @if (recommendation.accelerator_manufacturer) {
                               <span
-                                >{{ recommendation.gpu_manufacturer }}
+                                >{{ recommendation.accelerator_manufacturer }}
                               </span>
                             }
-                            @if (recommendation.gpu_family) {
-                              <span>{{ recommendation.gpu_family }} </span>
+                            @if (recommendation.accelerator_family) {
+                              <span>{{ recommendation.accelerator_family }} </span>
                             }
                           </div>
                         </td>

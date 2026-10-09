@@ -53,7 +53,7 @@ export namespace StoragePrices {
        * Bundled storage type
        * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
-      storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      storage_type?: "hdd" | "ssd" | "nvme ssd";
       /**
        * Compliance framework
        * Compliance framework implemented at the vendor.

@@ -508,15 +508,40 @@ export namespace Servers {
        */
       benchmark_score_min?: number | null;
       /**
+       * Maximum benchmark score
+       * Maximum value of the selected benchmark score, e.g. for benchmarks where lower is better.
+       */
+      benchmark_score_max?: number | null;
+      /**
        * Required benchmark score/price
        * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
        */
       benchmark_score_per_price_min?: number | null;
       /**
+       * Required benchmark score/vCPU
+       * Required value of the selected benchmark score divided by the number of virtual CPUs.
+       */
+      benchmark_score_per_vcpu_min?: number | null;
+      /**
        * Required memory
        * Required amount of memory in GBs.
        */
       memory_min?: number | null;
+      /**
+       * Maximum memory
+       * Maximum amount of memory in GBs.
+       */
+      memory_max?: number | null;
+      /**
+       * Minimum memory per vCPU
+       * Minimum amount of memory (GBs) per virtual CPU.
+       */
+      memory_per_vcpu_min?: number | null;
+      /**
+       * Maximum memory per vCPU
+       * Maximum amount of memory (GBs) per virtual CPU.
+       */
+      memory_per_vcpu_max?: number | null;
       /**
        * Required baseline network speed
        * Required baseline network speed in Gbps.
@@ -1159,7 +1184,7 @@ export namespace Servers {
        * Bundled storage type
        * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
-      storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      storage_type?: "hdd" | "ssd" | "nvme ssd";
       /**
        * Required bundled storage count
        * Required number of bundled storage devices.
@@ -1233,12 +1258,17 @@ export namespace Servers {
        * Required storage type
        * Storage product type (e.g. HDD, SSD, NVMe) for the required storage price lookup. When omitted, the cheapest available type (usually HDD over network) is used.
        */
-      extra_storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      extra_storage_type?: "hdd" | "ssd" | "nvme ssd";
       /**
        * GPU count
        * Required number of GPUs.
        */
       gpu_min?: number | null;
+      /**
+       * Maximum GPU count
+       * Maximum number of GPUs. Set to 0 to search for servers without GPUs.
+       */
+      gpu_max?: number | null;
       /**
        * Required GPU memory
        * Required amount of GPU memory (GB) in each GPU.
@@ -1268,37 +1298,27 @@ export namespace Servers {
         | "A10"
         | "A100"
         | "A10G"
-        | "A16"
-        | "A40"
         | "B200"
         | "B300"
-        | "G59"
-        | "GB200"
-        | "GB300"
         | "H100"
         | "H200"
-        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
         | "P100"
         | "P4"
-        | "RTX 5000"
         | "RTX PRO 4500"
-        | "RTX PRO 6000 Blackwell Server Edition"
         | "RTX Pro 6000"
         | "T4"
         | "T4G"
         | "V100"
-        | "V100S"
-        | "V520"
         | "V620"
-        | "V710"
-        | "v3"
-        | "v5e"
-        | "v5p"
-        | "v6e"
-        | "v7x";
+        | "V710";
+      /**
+       * Maximum price
+       * Maximum best price of the server in the requested currency, using the price allocation selected via best_price_allocation (hourly price, or monthly price when MONTHLY is selected), including the optional extra traffic and storage costs.
+       */
+      price_max?: number | null;
       /**
        * Currency
        * Currency used for prices.

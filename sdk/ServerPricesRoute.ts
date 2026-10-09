@@ -663,7 +663,7 @@ export namespace ServerPrices {
        * Bundled storage type
        * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
-      storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      storage_type?: "hdd" | "ssd" | "nvme ssd";
       /**
        * Countries
        * Filter for regions in the provided list of countries.
@@ -742,37 +742,22 @@ export namespace ServerPrices {
         | "A10"
         | "A100"
         | "A10G"
-        | "A16"
-        | "A40"
         | "B200"
         | "B300"
-        | "G59"
-        | "GB200"
-        | "GB300"
         | "H100"
         | "H200"
-        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
         | "P100"
         | "P4"
-        | "RTX 5000"
         | "RTX PRO 4500"
-        | "RTX PRO 6000 Blackwell Server Edition"
         | "RTX Pro 6000"
         | "T4"
         | "T4G"
         | "V100"
-        | "V100S"
-        | "V520"
         | "V620"
-        | "V710"
-        | "v3"
-        | "v5e"
-        | "v5p"
-        | "v6e"
-        | "v7x";
+        | "V710";
       /**
        * Limit
        * Maximum number of results.
