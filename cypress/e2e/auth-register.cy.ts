@@ -1,4 +1,7 @@
-import { bypassClerkBotProtection } from "../support/clerk-testing";
+import {
+  bypassClerkBotProtection,
+  randomClerkTestPassword,
+} from "../support/clerk-testing";
 import { E2EEvent } from "../support/generics";
 
 describe("Clerk +clerk_test registration", () => {
@@ -19,7 +22,7 @@ describe("Clerk +clerk_test registration", () => {
 
     const runId = Date.now();
     createdEmail = `sc-www+clerk_test+${runId}@example.com`;
-    const password = `ScWwwE2e!${runId}`;
+    const password = randomClerkTestPassword();
 
     E2EEvent.visitURL("/", 2000);
     cy.window({ timeout: 30000 }).should((win) => {
@@ -34,7 +37,7 @@ describe("Clerk +clerk_test registration", () => {
     cy.get('input[name="firstName"]').clear().type("Test");
     cy.get('input[name="lastName"]').clear().type("User");
     cy.get('input[name="emailAddress"]').clear().type(createdEmail);
-    cy.get('input[name="password"]').clear().type(password);
+    cy.get('input[name="password"]').clear().type(password, { log: false });
     cy.get('.auth-modal__form button[type="submit"]')
       .first()
       .should("not.be.disabled")

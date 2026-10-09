@@ -1,4 +1,7 @@
-import { bypassClerkBotProtection } from "./clerk-testing";
+import {
+  bypassClerkBotProtection,
+  randomClerkTestPassword,
+} from "./clerk-testing";
 import { E2EEvent } from "./generics";
 
 export const SERVER_COMPARE_URL =
@@ -25,7 +28,7 @@ function fillRegisterDetails(email: string, password: string): void {
   cy.get('input[name="firstName"]').clear().type("Test");
   cy.get('input[name="lastName"]').clear().type("User");
   cy.get('input[name="emailAddress"]').clear().type(email);
-  cy.get('input[name="password"]').clear().type(password);
+  cy.get('input[name="password"]').clear().type(password, { log: false });
   cy.get('.auth-modal__form button[type="submit"]')
     .first()
     .should("not.be.disabled")
@@ -213,7 +216,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       bypassClerkBotProtection();
       const runId = Date.now();
       const email = `sc-www+clerk_test+consent+${runId}@example.com`;
-      const password = `ScWwwE2e!${runId}`;
+      const password = randomClerkTestPassword();
 
       E2EEvent.visitURL("/", 2000);
       waitForClerk();
@@ -229,7 +232,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       bypassClerkBotProtection();
       const runId = Date.now();
       const email = `sc-www+clerk_test+verify+${runId}@example.com`;
-      const password = `ScWwwE2e!${runId}`;
+      const password = randomClerkTestPassword();
 
       E2EEvent.visitURL("/", 2000);
       waitForClerk();
@@ -252,7 +255,7 @@ export function registerAuthVisualSuites(suffix: string): void {
     before(() => {
       const runId = Date.now();
       visualEmail = `sc-www+clerk_test+visual${suffix || ""}+${runId}@example.com`;
-      visualPassword = `ScWwwE2e!${runId}`;
+      visualPassword = randomClerkTestPassword();
       ensureVisualUserSession(visualEmail, visualPassword);
     });
 
