@@ -153,9 +153,11 @@ export class KeeperAPIService {
 
   public searchDatabases(
     query: SearchDatabasesDatabasesGetParams,
+    params: RequestParams = {},
   ): Promise<KeeperApiResponse<SearchDatabasesDatabasesGetData>> {
     return this.DatabasesController.searchDatabasesDatabasesGet(
       query,
+      params,
     ) as unknown as Promise<KeeperApiResponse<SearchDatabasesDatabasesGetData>>;
   }
 
@@ -204,8 +206,12 @@ export class KeeperAPIService {
 
   public searchServerPrices(
     query: SearchServerPricesServerPricesGetParams,
+    params: RequestParams = {},
   ): Promise<any> {
-    return this.ServerPricesController.searchServerPricesServerPricesGet(query);
+    return this.ServerPricesController.searchServerPricesServerPricesGet(
+      query,
+      params,
+    );
   }
 
   public parsePromptFor(
@@ -291,14 +297,22 @@ export class KeeperAPIService {
 
   public getStoragePrices(
     query: SearchStoragePricesStoragePricesGetParams,
+    params: RequestParams = {},
   ): Promise<any> {
-    return this.StorageController.searchStoragePricesStoragePricesGet(query);
+    return this.StorageController.searchStoragePricesStoragePricesGet(
+      query,
+      params,
+    );
   }
 
   public getTrafficPrices(
     query: SearchTrafficPricesTrafficPricesGetParams,
+    params: RequestParams = {},
   ): Promise<any> {
-    return this.TrafficController.searchTrafficPricesTrafficPricesGet(query);
+    return this.TrafficController.searchTrafficPricesTrafficPricesGet(
+      query,
+      params,
+    );
   }
 
   public getBenchmarkConfigs(params: RequestParams = {}): Promise<any> {
