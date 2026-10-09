@@ -2777,7 +2777,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     const requestVersion = ++this.recommendationRequestVersion;
     this.activeRecommendationRequestKey = requestKey;
     this.isLoadingRecommendations.set(true);
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_ADVISOR_TOAST_ID);
 
     try {

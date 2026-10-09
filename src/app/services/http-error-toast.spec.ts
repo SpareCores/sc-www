@@ -3,8 +3,8 @@ import {
   DEFAULT_HTTP_ERROR_DETAIL,
   getHttpErrorDetailMessage,
   getTransientHttpToast,
-  TRANSIENT_HTTP_TOAST_ID,
 } from "./http-error-toast";
+import { QUERY_ERROR_SERVERS_TOAST_ID } from "./toast-ids";
 
 describe("getHttpErrorDetailMessage", () => {
   const validationPayload = {
@@ -75,63 +75,85 @@ describe("getTransientHttpToast", () => {
     return new HttpErrorResponse({ status, statusText: "Error" });
   }
 
-  it("maps status 0 network failures", () => {
-    expect(getTransientHttpToast(error(0))).toEqual({
+  it("maps status 0 network failures to the caller id", () => {
+    expect(
+      getTransientHttpToast(error(0), QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toEqual({
       title: "Connection problem",
       body: "We couldn't reach the service. Please try again.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
     });
   });
 
-  it("maps 408", () => {
-    expect(getTransientHttpToast(error(408))).toEqual({
+  it("maps 408 to the caller id", () => {
+    expect(
+      getTransientHttpToast(error(408), QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toEqual({
       title: "Request timed out",
       body: "The service took too long to respond. Please try again.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
     });
   });
 
-  it("maps 429", () => {
-    expect(getTransientHttpToast(error(429))).toEqual({
+  it("maps 429 to the caller id", () => {
+    expect(
+      getTransientHttpToast(error(429), QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toEqual({
       title: "Too many requests",
       body: "Please wait a moment and try again.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
     });
   });
 
-  it("maps 500", () => {
-    expect(getTransientHttpToast(error(500))).toEqual({
+  it("maps 500 to the caller id", () => {
+    expect(
+      getTransientHttpToast(error(500), QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toEqual({
       title: "Service temporarily unavailable",
       body: "We couldn't load the latest data. Please try again later.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
     });
   });
 
-  it("maps 504", () => {
-    expect(getTransientHttpToast(error(504))).toEqual({
+  it("maps 504 to the caller id", () => {
+    expect(
+      getTransientHttpToast(error(504), QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toEqual({
       title: "Service temporarily unavailable",
       body: "We couldn't load the latest data. Please try again later.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id: QUERY_ERROR_SERVERS_TOAST_ID,
     });
   });
 
   it("returns null for 400", () => {
-    expect(getTransientHttpToast(error(400))).toBeNull();
+    expect(
+      getTransientHttpToast(error(400), QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toBeNull();
   });
 
   it("returns null for 404", () => {
-    expect(getTransientHttpToast(error(404))).toBeNull();
+    expect(
+      getTransientHttpToast(error(404), QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toBeNull();
   });
 
   it("returns null for non-status values", () => {
-    expect(getTransientHttpToast(null)).toBeNull();
-    expect(getTransientHttpToast(undefined)).toBeNull();
-    expect(getTransientHttpToast("boom")).toBeNull();
-    expect(getTransientHttpToast({ detail: "x" })).toBeNull();
+    expect(
+      getTransientHttpToast(null, QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toBeNull();
+    expect(
+      getTransientHttpToast(undefined, QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toBeNull();
+    expect(
+      getTransientHttpToast("boom", QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toBeNull();
+    expect(
+      getTransientHttpToast({ detail: "x" }, QUERY_ERROR_SERVERS_TOAST_ID),
+    ).toBeNull();
   });
 });

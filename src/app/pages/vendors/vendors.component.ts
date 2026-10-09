@@ -65,7 +65,6 @@ export class VendorsComponent implements OnInit {
     );
 
     const loadId = ++this.vendorsLoadId;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(VENDORS_ERROR_TOAST_ID);
 
     this.API.getVendors()

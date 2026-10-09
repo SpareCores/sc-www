@@ -280,7 +280,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         const loadId = ++this.serverLoadId;
         this.resetServerState();
         this.isLoading = true;
-        this.toastService.clearTransientHttpError();
         this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
 
         Promise.all([

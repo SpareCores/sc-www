@@ -69,7 +69,6 @@ describe("AdvisorComponent", () => {
   const getRegions = jasmine.createSpy("getRegions");
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
   const showToast = jasmine.createSpy("show");
-  const clearTransientHttpError = jasmine.createSpy("clearTransientHttpError");
   const showHttpError = jasmine.createSpy("showHttpError");
   const removeToast = jasmine.createSpy("removeToast");
   const initDropdown = jasmine.createSpy("initDropdown");
@@ -111,7 +110,6 @@ describe("AdvisorComponent", () => {
     getRegions.calls.reset();
     updateTitleAndMetaTags.calls.reset();
     showToast.calls.reset();
-    clearTransientHttpError.calls.reset();
     showHttpError.calls.reset();
     removeToast.calls.reset();
     initDropdown.calls.reset();
@@ -356,7 +354,6 @@ describe("AdvisorComponent", () => {
           provide: ToastService,
           useValue: {
             show: showToast,
-            clearTransientHttpError,
             showHttpError,
             removeToast,
           },

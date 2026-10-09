@@ -155,4 +155,18 @@ describe("BenchmarkWorkloadsComponent", () => {
       }),
     );
   });
+
+  it("does not show toast when workloads load is aborted", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+    keeperApiService.getBenchmarkWorkloads.and.rejectWith(
+      new DOMException("The operation was aborted.", "AbortError"),
+    );
+
+    const failFixture = TestBed.createComponent(BenchmarkWorkloadsComponent);
+    failFixture.detectChanges();
+    await failFixture.whenStable();
+
+    expect(showHttpError).not.toHaveBeenCalled();
+  });
 });

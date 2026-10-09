@@ -206,7 +206,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     const requestId = ++this.loadRequestId;
     this.isLoading = true;
     this.databaseDetails = null;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(DATABASE_DETAILS_ERROR_TOAST_ID);
 
     Promise.all([

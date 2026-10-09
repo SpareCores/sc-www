@@ -1,8 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { ToastOptions } from "./toast.service";
-import { TRANSIENT_HTTP_TOAST_ID } from "./toast-ids";
 
-export { TRANSIENT_HTTP_TOAST_ID };
 export const DEFAULT_HTTP_ERROR_DETAIL = "Please try again later.";
 
 function getErrorStatus(error: unknown): number | undefined {
@@ -50,7 +48,10 @@ export function getHttpErrorDetailMessage(
   return typeof detail === "string" && detail ? detail : fallback;
 }
 
-export function getTransientHttpToast(error: unknown): ToastOptions | null {
+export function getTransientHttpToast(
+  error: unknown,
+  id: string,
+): ToastOptions | null {
   const status = getErrorStatus(error);
 
   if (status === 0) {
@@ -58,7 +59,7 @@ export function getTransientHttpToast(error: unknown): ToastOptions | null {
       title: "Connection problem",
       body: "We couldn't reach the service. Please try again.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id,
     };
   }
 
@@ -67,7 +68,7 @@ export function getTransientHttpToast(error: unknown): ToastOptions | null {
       title: "Request timed out",
       body: "The service took too long to respond. Please try again.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id,
     };
   }
 
@@ -76,7 +77,7 @@ export function getTransientHttpToast(error: unknown): ToastOptions | null {
       title: "Too many requests",
       body: "Please wait a moment and try again.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id,
     };
   }
 
@@ -85,7 +86,7 @@ export function getTransientHttpToast(error: unknown): ToastOptions | null {
       title: "Service temporarily unavailable",
       body: "We couldn't load the latest data. Please try again later.",
       type: "error",
-      id: TRANSIENT_HTTP_TOAST_ID,
+      id,
     };
   }
 

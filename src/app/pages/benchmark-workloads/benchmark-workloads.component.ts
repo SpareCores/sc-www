@@ -29,6 +29,7 @@ import {
 } from "@lucide/angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { isAbortError } from "../../services/keeper-http-client";
 import { ToastService } from "../../services/toast.service";
 import { BENCHMARK_WORKLOADS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import {
@@ -118,15 +119,21 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   readonly benchmarksResource = resource({
     params: () => true,
     defaultValue: [] as BenchmarkFamily[],
-    loader: async () => {
-      this.toastService.clearTransientHttpError();
+    loader: async ({ abortSignal }) => {
       this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
 
       try {
-        const workloadsResponse = await this.keeperAPI.getBenchmarkWorkloads();
+        const requestParams = { signal: abortSignal };
+        const workloadsResponse =
+          await this.keeperAPI.getBenchmarkWorkloads(requestParams);
         const benchmarkMetaResponse = await this.keeperAPI
-          .getServerBenchmarkMeta()
-          .catch(() => null);
+          .getServerBenchmarkMeta(requestParams)
+          .catch((err) => {
+            if (isAbortError(err) || abortSignal.aborted) {
+              throw err;
+            }
+            return null;
+          });
         const rawData: BenchmarkScoreStatsItem[] = workloadsResponse.body ?? [];
         const noteByBenchmarkId = this.buildBenchmarkNoteMap(
           benchmarkMetaResponse?.body ?? [],
@@ -143,6 +150,13 @@ export class BenchmarkWorkloadsComponent implements OnInit {
         this.toastService.removeToast(BENCHMARK_WORKLOADS_ERROR_TOAST_ID);
         return grouped;
       } catch (err) {
+        if (
+          isAbortError(err) ||
+          abortSignal.aborted ||
+          this.destroyRef.destroyed
+        ) {
+          throw err;
+        }
         this.toastService.showHttpError(err, {
           id: BENCHMARK_WORKLOADS_ERROR_TOAST_ID,
           title: "Failed to load benchmark data.",

@@ -243,8 +243,8 @@ export class KeeperAPIService {
     }
   }
 
-  public getCountries(): Promise<any> {
-    return this.TableController.tableCountryTableCountryGet();
+  public getCountries(params: RequestParams = {}): Promise<any> {
+    return this.TableController.tableCountryTableCountryGet(params);
   }
 
   public getVendors(params: RequestParams = {}): Promise<any> {
@@ -279,20 +279,24 @@ export class KeeperAPIService {
     return this.TableController.tableMetadataServerTableServerMetaGet(params);
   }
 
-  public getComplianceFrameworks(): Promise<any> {
-    return this.TableController.tableComplianceFrameworksTableComplianceFrameworkGet();
+  public getComplianceFrameworks(params: RequestParams = {}): Promise<any> {
+    return this.TableController.tableComplianceFrameworksTableComplianceFrameworkGet(
+      params,
+    );
   }
 
   public getServerBenchmarkMeta(params: RequestParams = {}): Promise<any> {
     return this.TableController.tableBenchmarkTableBenchmarkGet(params);
   }
 
-  public getBenchmarkWorkloads(): Promise<any> {
-    return this.BenchmarkScoreStatsController.getBenchmarkScoreStatsBenchmarkScoreStatsGet();
+  public getBenchmarkWorkloads(params: RequestParams = {}): Promise<any> {
+    return this.BenchmarkScoreStatsController.getBenchmarkScoreStatsBenchmarkScoreStatsGet(
+      params,
+    );
   }
 
-  public getStorages(): Promise<any> {
-    return this.TableController.tableStorageTableStorageGet();
+  public getStorages(params: RequestParams = {}): Promise<any> {
+    return this.TableController.tableStorageTableStorageGet(params);
   }
 
   public getStoragePrices(
@@ -321,7 +325,7 @@ export class KeeperAPIService {
     );
   }
 
-  public getDebugInfo(): Promise<any> {
-    return this.debugController.getDebugInfoDebugGet();
+  public getDebugInfo(params: RequestParams = {}): Promise<any> {
+    return this.debugController.getDebugInfoDebugGet(params);
   }
 }
