@@ -39,4 +39,18 @@ describe("BenchmarkCoverageComponent", () => {
       jasmine.objectContaining({ id: BENCHMARK_COVERAGE_ERROR_TOAST_ID }),
     );
   });
+
+  it("does not show toast when debug load is aborted", async () => {
+    const toastService = TestBed.inject(ToastService);
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+    spyOn(keeperAPI, "getDebugInfo").and.rejectWith(
+      new DOMException("The operation was aborted.", "AbortError"),
+    );
+    spyOn(keeperAPI, "getVendors").and.resolveTo({ body: [] });
+
+    await (component as any).loadDebugData();
+
+    expect(showHttpError).not.toHaveBeenCalled();
+  });
 });

@@ -4,7 +4,6 @@ import { OnDestroy } from "@angular/core";
 import {
   getHttpErrorDetailMessage,
   getTransientHttpToast,
-  TRANSIENT_HTTP_TOAST_ID,
 } from "./http-error-toast";
 
 export type ToastType = "success" | "error" | "warning" | "info";
@@ -67,24 +66,13 @@ export class ToastService implements OnDestroy {
     }
   }
 
-  showTransientHttpError(error: unknown): boolean {
-    const toast = getTransientHttpToast(error);
-    if (!toast) {
-      return false;
-    }
-    this.show(toast);
-    return true;
-  }
-
-  clearTransientHttpError(): void {
-    this.removeToast(TRANSIENT_HTTP_TOAST_ID);
-  }
-
   showHttpError(
     error: unknown,
     options: { id: string; title?: string; body?: string },
   ): void {
-    if (this.showTransientHttpError(error)) {
+    const transient = getTransientHttpToast(error, options.id);
+    if (transient) {
+      this.show(transient);
       return;
     }
     this.show({

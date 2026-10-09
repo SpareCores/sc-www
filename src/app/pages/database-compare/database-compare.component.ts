@@ -614,7 +614,6 @@ export class DatabaseCompareComponent
     const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
 
     this.instances = [];

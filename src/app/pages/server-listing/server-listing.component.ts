@@ -17,6 +17,7 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { isAbortError } from "../../services/keeper-http-client";
 import {
   OrderDir,
   ServerPKs,
@@ -300,6 +301,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
   private searchRequestId = 0;
+  private searchAbortController: AbortController | null = null;
   private previousSearchParams: Record<string, unknown> | null = null;
 
   constructor() {
@@ -681,6 +683,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.searchAbortController?.abort();
+    this.searchAbortController = null;
     this.sub?.unsubscribe();
     this.subscription.unsubscribe();
     this.introductionModal?.hide();
@@ -853,8 +857,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   private _searchServers(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const abortController = new AbortController();
+    this.searchAbortController = abortController;
+
     this.isLoading = true;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
 
     let query = JSON.parse(JSON.stringify(this.query));
@@ -903,9 +910,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
 
     this.keeperAPI
-      .searchServers(query)
+      .searchServers(query, { signal: abortController.signal })
       .then((servers) => {
-        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+        if (
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
           return;
         }
 
@@ -931,7 +942,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
       })
       .catch((err) => {
-        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+        if (
+          isAbortError(err) ||
+          this.destroyRef.destroyed ||
+          requestId !== this.searchRequestId ||
+          abortController.signal.aborted
+        ) {
           return;
         }
 
@@ -945,6 +961,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         });
       })
       .finally(() => {
+        if (this.searchAbortController === abortController) {
+          this.searchAbortController = null;
+        }
         if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
           this.isLoading = false;
         }

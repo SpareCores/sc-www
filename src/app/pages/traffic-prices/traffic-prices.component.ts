@@ -246,7 +246,6 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   private _searchTrafficPrices() {
     const requestId = ++this.searchRequestId;
     this.isLoading = true;
-    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID);
 
     this.keeperAPI

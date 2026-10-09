@@ -3,7 +3,6 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import {
   QUERY_ERROR_SERVERS_TOAST_ID,
   SERVER_COMPARE_ERROR_TOAST_ID,
-  TRANSIENT_HTTP_TOAST_ID,
   VENDORS_ERROR_TOAST_ID,
 } from "./toast-ids";
 import { ToastService } from "./toast.service";
@@ -84,13 +83,7 @@ describe("ToastService", () => {
     );
   });
 
-  it("clearTransientHttpError dismisses the stable transient toast id", () => {
-    const remove = spyOn(service, "removeToast");
-    service.clearTransientHttpError();
-    expect(remove).toHaveBeenCalledWith(TRANSIENT_HTTP_TOAST_ID);
-  });
-
-  it("showHttpError shows transient toast when status is retryable", () => {
+  it("showHttpError shows transient toast under the caller id when status is retryable", fakeAsync(() => {
     service.showHttpError(
       { status: 500 },
       { id: QUERY_ERROR_SERVERS_TOAST_ID },
@@ -98,7 +91,12 @@ describe("ToastService", () => {
 
     expect(toastByTitle("Service temporarily unavailable")).toBeTruthy();
     expect(toastByTitle("Query error!")).toBeUndefined();
-  });
+
+    service.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+    tick(0);
+    tick(300);
+    expect(toastByTitle("Service temporarily unavailable")).toBeUndefined();
+  }));
 
   it("showHttpError falls back to Query error! with detail for non-transient errors", () => {
     service.showHttpError(

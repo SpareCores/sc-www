@@ -28,7 +28,6 @@ describe("ServerCompareComponent", () => {
     queryParams: {} as Record<string, string>,
   };
   const showToast = jasmine.createSpy("show");
-  const clearTransientHttpError = jasmine.createSpy("clearTransientHttpError");
   const showHttpError = jasmine.createSpy("showHttpError");
   const removeToast = jasmine.createSpy("removeToast");
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
@@ -59,7 +58,6 @@ describe("ServerCompareComponent", () => {
     routeSnapshot.paramMap = convertToParamMap({});
     routeSnapshot.queryParams = {};
     showToast.calls.reset();
-    clearTransientHttpError.calls.reset();
     showHttpError.calls.reset();
     removeToast.calls.reset();
     updateTitleAndMetaTags.calls.reset();
@@ -129,7 +127,6 @@ describe("ServerCompareComponent", () => {
           useValue: {
             show: showToast,
             removeToast,
-            clearTransientHttpError,
             showHttpError,
           },
         },
