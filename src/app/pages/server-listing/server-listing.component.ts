@@ -62,7 +62,12 @@ import { ToastService } from "../../services/toast.service";
 import {
   BAD_BENCHMARK_URL_TOAST_ID,
   QUERY_ERROR_SERVERS_TOAST_ID,
+  SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
+import {
+  INVALID_BENCHMARK_URL_TOAST_BODY,
+  INVALID_URL_TOAST_TITLE,
+} from "../../services/url-toast-content";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
@@ -106,10 +111,6 @@ const serverListingIntroductionModalOptions: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
 };
-
-const INVALID_URL_TOAST_TITLE = "Invalid URL";
-const INVALID_BENCHMARK_URL_TOAST_BODY =
-  "Visit the Server Navigator page to select a benchmark.";
 
 @Component({
   selector: "sc-server-listing",
@@ -300,6 +301,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
   private searchRequestId = 0;
+  private benchmarksLoaded = false;
+  private benchmarkLoadAbortController: AbortController | null = null;
+  private searchAbortController: AbortController | null = null;
   private previousSearchParams: Record<string, unknown> | null = null;
 
   constructor() {
@@ -484,8 +488,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         // and will do the search after getBenchmarkConfigs is called
         if (!isInitialLoad) {
           if (
-            this.previousSearchParams === null ||
-            !areSearchParamsEqual(this.previousSearchParams, query)
+            this.benchmarksLoaded &&
+            (this.previousSearchParams === null ||
+              !areSearchParamsEqual(this.previousSearchParams, query))
           ) {
             this.previousSearchParams = toSearchParams(query);
             this._searchServers(true);
@@ -502,92 +507,106 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       }),
     );
 
+    this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
+    this.benchmarkLoadAbortController?.abort();
+    this.benchmarksLoaded = false;
+    const benchmarkLoadAbortController = new AbortController();
+    this.benchmarkLoadAbortController = benchmarkLoadAbortController;
+
     Promise.all([
-      this.keeperAPI.getServerBenchmarkMeta(),
-      this.keeperAPI.getBenchmarkConfigs(),
-    ]).then((data) => {
-      this.benchmarkMetadata = data[0]?.body;
-
-      this.benchmarksConfigs = data[1]?.body.map((config: any) => {
-        let template = this.benchmarkMetadata.find(
-          (benchmark: any) => benchmark.benchmark_id === config.benchmark_id,
-        );
-        return {
-          ...config,
-          config_title: config.config.replaceAll(/[{}"]/g, ""),
-          benchmarkTemplate: template,
-          group: JSON.stringify({
-            group: { title: config.category, name: config.category },
-          }),
-        };
-      });
-
-      this.benchmarkCategories = [];
-      this.benchmarksConfigs.forEach((config: any) => {
+      this.keeperAPI.getServerBenchmarkMeta({
+        signal: benchmarkLoadAbortController.signal,
+      }),
+      this.keeperAPI.getBenchmarkConfigs({
+        signal: benchmarkLoadAbortController.signal,
+      }),
+    ])
+      .then((data) => {
         if (
-          !this.benchmarkCategories.find(
-            (category: any) => category === config.category,
-          )
+          this.destroyRef.destroyed ||
+          this.benchmarkLoadAbortController !== benchmarkLoadAbortController
         ) {
-          this.benchmarkCategories.push(config.category);
+          return;
         }
-      });
 
-      // load benchmark id and configuration
-      if (
-        this.specialList?.benchmark_id &&
-        this.specialList?.benchmark_config
-      ) {
-        this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
-          (config: any) =>
-            config.benchmark_id === this.specialList.benchmark_id &&
-            config.config === this.specialList.benchmark_config,
-        );
-      }
-      // allow overriding preselected benchmark via URL parameters
-      if (benchmarkDataEncoded) {
-        const benchmarkData = decodeBase64JsonUrlState(
-          benchmarkDataEncoded,
-          isBenchmarkUrlState,
-        );
+        this.benchmarksLoaded = true;
+        this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
+        this.benchmarkMetadata = data[0]?.body;
 
-        if (benchmarkData.value) {
+        this.benchmarksConfigs = data[1]?.body.map((config: any) => {
+          let template = this.benchmarkMetadata.find(
+            (benchmark: any) => benchmark.benchmark_id === config.benchmark_id,
+          );
+          return {
+            ...config,
+            config_title: config.config.replaceAll(/[{}"]/g, ""),
+            benchmarkTemplate: template,
+            group: JSON.stringify({
+              group: { title: config.category, name: config.category },
+            }),
+          };
+        });
+
+        this.benchmarkCategories = [];
+        this.benchmarksConfigs.forEach((config: any) => {
+          if (
+            !this.benchmarkCategories.find(
+              (category: any) => category === config.category,
+            )
+          ) {
+            this.benchmarkCategories.push(config.category);
+          }
+        });
+
+        if (
+          this.specialList?.benchmark_id &&
+          this.specialList?.benchmark_config
+        ) {
           this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
             (config: any) =>
-              config.benchmark_id === benchmarkData.value?.id &&
-              config.config === benchmarkData.value?.config,
+              config.benchmark_id === this.specialList.benchmark_id &&
+              config.config === this.specialList.benchmark_config,
           );
-          if (
-            !this.selectedBenchmarkConfig &&
-            isPlatformBrowser(this.platformId)
-          ) {
-            this.toastService.show({
-              title: INVALID_URL_TOAST_TITLE,
-              body: INVALID_BENCHMARK_URL_TOAST_BODY,
-              type: "error",
-              id: BAD_BENCHMARK_URL_TOAST_ID,
-            });
-          }
-        } else {
-          console.warn("Invalid benchmark data in URL:", benchmarkData.error);
-          if (isPlatformBrowser(this.platformId)) {
-            this.toastService.show({
-              title: INVALID_URL_TOAST_TITLE,
-              body: INVALID_BENCHMARK_URL_TOAST_BODY,
-              type: "error",
-              id: BAD_BENCHMARK_URL_TOAST_ID,
-            });
-          }
         }
-      }
+        if (benchmarkDataEncoded) {
+          const benchmarkData = decodeBase64JsonUrlState(
+            benchmarkDataEncoded,
+            isBenchmarkUrlState,
+          );
 
-      // set default benchmark to stress-ng multi-code SCore
-      else if (
-        !this.selectedBenchmarkConfig &&
-        this.benchmarksConfigs.length > 0
-      ) {
-        // let the user decide if something was wrong in the URL
-        if (!benchmarkDataEncoded) {
+          if (benchmarkData.value) {
+            this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
+              (config: any) =>
+                config.benchmark_id === benchmarkData.value?.id &&
+                config.config === benchmarkData.value?.config,
+            );
+            if (
+              !this.selectedBenchmarkConfig &&
+              isPlatformBrowser(this.platformId)
+            ) {
+              this.toastService.show({
+                title: INVALID_URL_TOAST_TITLE,
+                body: INVALID_BENCHMARK_URL_TOAST_BODY,
+                type: "error",
+                id: BAD_BENCHMARK_URL_TOAST_ID,
+              });
+            }
+          } else {
+            console.warn("Invalid benchmark data in URL:", benchmarkData.error);
+            if (isPlatformBrowser(this.platformId)) {
+              this.toastService.show({
+                title: INVALID_URL_TOAST_TITLE,
+                body: INVALID_BENCHMARK_URL_TOAST_BODY,
+                type: "error",
+                id: BAD_BENCHMARK_URL_TOAST_ID,
+              });
+            }
+          }
+        } else if (
+          !this.selectedBenchmarkConfig &&
+          this.benchmarksConfigs.length > 0 &&
+          !benchmarkDataEncoded
+        ) {
           const defaultBenchmarkId = "stress_ng:bestn";
           const defaultBenchmarkConfig = "{}";
           this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
@@ -596,27 +615,56 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               config.config === defaultBenchmarkConfig,
           );
         }
-      }
 
-      // only search once after benchmarks are loaded on initial load
-      if (
-        shouldSearchAfterBenchmarks ||
-        this.route.snapshot.queryParams.benchmark
-      ) {
-        this.query = {
-          ...this.query,
-          ...this.route.snapshot.queryParams,
-        };
-        this.previousSearchParams = toSearchParams(this.query);
-        this._searchServers(true);
-      }
+        if (
+          shouldSearchAfterBenchmarks ||
+          this.route.snapshot.queryParams.benchmark
+        ) {
+          this.query = {
+            ...this.query,
+            ...this.route.snapshot.queryParams,
+          };
+          this.previousSearchParams = toSearchParams(this.query);
+          this._searchServers(true);
+        }
 
-      if (isPlatformBrowser(this.platformId)) {
-        this.initDropdown();
-      }
+        if (isPlatformBrowser(this.platformId)) {
+          this.initDropdown();
+        }
+      })
+      .catch((err) => {
+        if (
+          this.destroyRef.destroyed ||
+          benchmarkLoadAbortController.signal.aborted ||
+          this.benchmarkLoadAbortController !== benchmarkLoadAbortController
+        ) {
+          return;
+        }
 
-      isInitialLoad = false;
-    });
+        this.analytics.SentryException(err, {
+          tags: {
+            location: this.constructor.name,
+            function: "loadBenchmarks",
+          },
+        });
+        console.error(err);
+        this.toastService.showHttpError(err, {
+          id: SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
+          title: "Failed to load server filters.",
+        });
+      })
+      .finally(() => {
+        if (
+          !this.destroyRef.destroyed &&
+          this.benchmarkLoadAbortController === benchmarkLoadAbortController
+        ) {
+          this.benchmarkLoadAbortController = null;
+          isInitialLoad = false;
+          if (!this.benchmarksLoaded) {
+            this.isLoading = false;
+          }
+        }
+      });
 
     if (isPlatformBrowser(this.platformId)) {
       this.subscription.add(
@@ -681,11 +729,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.benchmarkLoadAbortController?.abort();
+    this.searchAbortController?.abort();
     this.sub?.unsubscribe();
     this.subscription.unsubscribe();
     this.introductionModal?.hide();
     this.introductionModal = null;
+    this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+    this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
   }
 
   setSpecialList() {
@@ -853,6 +905,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   private _searchServers(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const searchAbortController = new AbortController();
+    this.searchAbortController = searchAbortController;
     this.isLoading = true;
     this.toastService.clearTransientHttpError();
     this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
@@ -903,7 +958,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
 
     this.keeperAPI
-      .searchServers(query)
+      .searchServers(query, {
+        signal: searchAbortController.signal,
+      })
       .then((servers) => {
         if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
@@ -946,6 +1003,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       })
       .finally(() => {
         if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
+          if (this.searchAbortController === searchAbortController) {
+            this.searchAbortController = null;
+          }
           this.isLoading = false;
         }
       });

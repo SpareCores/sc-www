@@ -10,7 +10,10 @@ import { OrderDir } from "../../../../sdk/data-contracts";
 import { ServerListingComponent } from "./server-listing.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
-import { QUERY_ERROR_SERVERS_TOAST_ID } from "../../services/toast-ids";
+import {
+  QUERY_ERROR_SERVERS_TOAST_ID,
+  SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
+} from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { areSearchParamsEqual } from "../../tools/listing-search-params";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
@@ -262,5 +265,48 @@ describe("ServerListingComponent", () => {
         .filter((args) => args[0] === QUERY_ERROR_SERVERS_TOAST_ID).length,
     ).toBe(2);
     expect(showHttpError).not.toHaveBeenCalled();
+  }));
+});
+
+describe("ServerListingComponent benchmark bootstrap", () => {
+  let fixture: ComponentFixture<ServerListingComponent>;
+  let component: ServerListingComponent;
+  let keeperAPI: KeeperAPIService;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ServerListingComponent],
+      providers: [...sharedTestingProviders],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ServerListingComponent);
+    component = fixture.componentInstance;
+    keeperAPI = TestBed.inject(KeeperAPIService);
+
+    spyOn(keeperAPI, "getServerBenchmarkMeta").and.callFake(() =>
+      Promise.reject({ status: 500 }),
+    );
+    spyOn(keeperAPI, "getBenchmarkConfigs").and.returnValue(
+      new Promise(() => {}),
+    );
+    spyOn(keeperAPI, "searchServers");
+  });
+
+  it("stops loading and shows an error toast when benchmark bootstrap fails", fakeAsync(() => {
+    const toastService = TestBed.inject(ToastService);
+    const showHttpError = spyOn(toastService, "showHttpError");
+
+    fixture.detectChanges();
+    tick();
+
+    expect(component.isLoading).toBeFalse();
+    expect(showHttpError).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 500 }),
+      jasmine.objectContaining({
+        id: SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
+        title: "Failed to load server filters.",
+      }),
+    );
+    expect(keeperAPI.searchServers).not.toHaveBeenCalled();
   }));
 });

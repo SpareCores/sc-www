@@ -7,6 +7,8 @@ export const QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID = "query-error-traffic-prices";
 export const QUERY_ERROR_STORAGE_PRICES_TOAST_ID = "query-error-storage-prices";
 export const QUERY_ERROR_LANDING_TOAST_ID = "query-error-landing";
 export const QUERY_ERROR_ADVISOR_TOAST_ID = "query-error-advisor";
+export const SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID =
+  "server-listing-benchmark-error";
 
 export const SERVER_COMPARE_ERROR_TOAST_ID = "server-compare-error";
 export const DATABASE_COMPARE_ERROR_TOAST_ID = "database-compare-error";
