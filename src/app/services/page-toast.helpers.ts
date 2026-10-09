@@ -8,10 +8,9 @@ type InvalidUrlToastAction = {
 };
 
 export function dismissPageHttpToasts(
-  toastService: Pick<ToastService, "clearTransientHttpError" | "removeToast">,
+  toastService: Pick<ToastService, "removeToast">,
   ownedToastIds: string | string[],
 ): void {
-  toastService.clearTransientHttpError();
   const toastIds = Array.isArray(ownedToastIds)
     ? ownedToastIds
     : [ownedToastIds];

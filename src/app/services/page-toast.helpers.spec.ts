@@ -4,21 +4,16 @@ import {
 } from "./page-toast.helpers";
 
 describe("page toast helpers", () => {
-  it("dismissPageHttpToasts clears the transient toast and owned ids", () => {
-    const clearTransientHttpError = jasmine.createSpy(
-      "clearTransientHttpError",
-    );
+  it("dismissPageHttpToasts clears owned ids", () => {
     const removeToast = jasmine.createSpy("removeToast");
 
     dismissPageHttpToasts(
       {
-        clearTransientHttpError,
         removeToast,
       } as any,
       ["query-error", "bad-url"],
     );
 
-    expect(clearTransientHttpError).toHaveBeenCalled();
     expect(removeToast).toHaveBeenCalledWith("query-error");
     expect(removeToast).toHaveBeenCalledWith("bad-url");
   });
