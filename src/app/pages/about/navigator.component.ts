@@ -208,7 +208,7 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
     {
       component: "Database",
       status: "Stable",
-      data: "https://cdn.sparecores.net/sc-data/sc-data-all.sql.xz",
+      data: "https://cdn.sparecores.net/sc-data/latest/sc-data-all.sql.xz",
       license: "BSL 1.1",
       description:
         "SQLite database dump of current cloud resource information.",
