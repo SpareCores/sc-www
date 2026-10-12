@@ -669,8 +669,7 @@ export enum GpuModels {
   A10G = "A10G",
   B200 = "B200",
   B300 = "B300",
-  GB200 = "GB200",
-  GB300 = "GB300",
+  GH200 = "GH200",
   H100 = "H100",
   H200 = "H200",
   L20 = "L20",
@@ -794,6 +793,7 @@ export enum CpuManufacturers {
   Hygon = "Hygon",
   Intel = "Intel",
   Microsoft = "Microsoft",
+  NVIDIA = "NVIDIA",
 }
 
 /** CpuFlags */
@@ -1101,6 +1101,7 @@ export enum CpuFamilies {
   ARMv9 = "ARMv9",
   AmpereAltra = "Ampere Altra",
   EPYC = "EPYC",
+  Grace = "Grace",
   Xeon = "Xeon",
   Yitian = "Yitian",
 }
@@ -2751,7 +2752,7 @@ export interface HealthcheckResponse {
   /** Database Last Updated */
   database_last_updated: number;
   /** Database Hash */
-  database_hash: string | null;
+  database_hash: string;
   /** Database Alembic Version */
   database_alembic_version: string;
 }
@@ -8164,7 +8165,8 @@ export interface SearchServersServersGetParams {
     | "Apple"
     | "Hygon"
     | "Intel"
-    | "Microsoft";
+    | "Microsoft"
+    | "NVIDIA";
   /** Processor family */
   cpu_family?:
     | "ARM"
@@ -8172,6 +8174,7 @@ export interface SearchServersServersGetParams {
     | "ARMv9"
     | "Ampere Altra"
     | "EPYC"
+    | "Grace"
     | "Xeon"
     | "Yitian";
   /**
@@ -9409,8 +9412,7 @@ export interface SearchServersServersGetParams {
     | "A10G"
     | "B200"
     | "B300"
-    | "GB200"
-    | "GB300"
+    | "GH200"
     | "H100"
     | "H200"
     | "L20"
@@ -10397,7 +10399,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Apple"
     | "Hygon"
     | "Intel"
-    | "Microsoft";
+    | "Microsoft"
+    | "NVIDIA";
   /** Processor family */
   cpu_family?:
     | "ARM"
@@ -10405,6 +10408,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ARMv9"
     | "Ampere Altra"
     | "EPYC"
+    | "Grace"
     | "Xeon"
     | "Yitian";
   /**
@@ -11083,8 +11087,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A10G"
     | "B200"
     | "B300"
-    | "GB200"
-    | "GB300"
+    | "GH200"
     | "H100"
     | "H200"
     | "L20"

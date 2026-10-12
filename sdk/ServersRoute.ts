@@ -55,7 +55,8 @@ export namespace Servers {
         | "Apple"
         | "Hygon"
         | "Intel"
-        | "Microsoft";
+        | "Microsoft"
+        | "NVIDIA";
       /** Processor family */
       cpu_family?:
         | "ARM"
@@ -63,6 +64,7 @@ export namespace Servers {
         | "ARMv9"
         | "Ampere Altra"
         | "EPYC"
+        | "Grace"
         | "Xeon"
         | "Yitian";
       /**
@@ -1300,8 +1302,7 @@ export namespace Servers {
         | "A10G"
         | "B200"
         | "B300"
-        | "GB200"
-        | "GB300"
+        | "GH200"
         | "H100"
         | "H200"
         | "L20"
