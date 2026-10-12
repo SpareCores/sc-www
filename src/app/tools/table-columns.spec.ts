@@ -422,7 +422,7 @@ const EXPECTED_ADVISOR_COLUMNS: TableColumn[] = [
     info: COLUMN_XPU_TOOLTIP,
     show: false,
     type: "gpu_model",
-    key: "gpu_model",
+    key: "accelerator_model",
   },
   {
     name: "STORAGE",
