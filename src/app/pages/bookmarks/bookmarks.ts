@@ -768,10 +768,10 @@ export class Bookmarks implements OnDestroy {
         value: formatStorageSize(server.storage_size),
       });
     }
-    if (server?.gpu_count) {
+    if (server?.accelerator_count) {
       features.push({
         name: "GPU",
-        value: String(server.gpu_count),
+        value: String(server.accelerator_count),
       });
     }
 

@@ -461,12 +461,12 @@
                       }
                       @if (column.type === "gpu_memory_min") {
                         <td>
-                          {{ item.gpu_memory_min | gpuMemory }}
+                          {{ item.accelerator_memory_min | gpuMemory }}
                         </td>
                       }
                       @if (column.type === "gpu_memory_total") {
                         <td>
-                          {{ item.gpu_memory_total | gpuMemory }}
+                          {{ item.accelerator_memory_total | gpuMemory }}
                         </td>
                       }
                       @if (column.type === "storage") {
@@ -484,11 +484,11 @@
                       @if (column.type === "gpu") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ item.gpu_count | gpuCount }}
+                            {{ item.accelerator_count | gpuCount }}
                           </div>
-                          @if (item.gpu_model) {
+                          @if (item.accelerator_model) {
                             <div class="text-xs text-white flex gap-1">
-                              <span>{{ item.gpu_model }}</span>
+                              <span>{{ item.accelerator_model }}</span>
                             </div>
                           }
                         </td>
@@ -533,17 +533,17 @@
                       }
                       @if (column.type === "gpu_model") {
                         <td>
-                          @if (item.gpu_model) {
+                          @if (item.accelerator_model) {
                             <div class="text-sm text-white flex gap-1">
-                              <span>{{ item.gpu_model }}</span>
+                              <span>{{ item.accelerator_model }}</span>
                             </div>
                           }
                           <div class="text-xs text-white">
-                            @if (item.gpu_manufacturer) {
-                              <span>{{ item.gpu_manufacturer }} </span>
+                            @if (item.accelerator_manufacturer) {
+                              <span>{{ item.accelerator_manufacturer }} </span>
                             }
-                            @if (item.gpu_family) {
-                              <span>{{ item.gpu_family }} </span>
+                            @if (item.accelerator_family) {
+                              <span>{{ item.accelerator_family }} </span>
                             }
                           </div>
                         </td>

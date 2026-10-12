@@ -480,7 +480,7 @@
                   </td>
                   <td>{{ server.vcpus }}</td>
                   <td>{{ getMemory(server.memory_amount) }}</td>
-                  <td>{{ server.gpu_count | gpuCount }}</td>
+                  <td>{{ server.accelerator_count | gpuCount }}</td>
                 </tr>
               }
             </tbody>
@@ -544,7 +544,7 @@
                   <td>{{ getMemory(server.memory_amount) }}</td>
                   @if (selectedSimilarOption.key === "bySpecs") {
                     <td>
-                      {{ server.gpu_count | gpuCount }}
+                      {{ server.accelerator_count | gpuCount }}
                     </td>
                   }
                   @if (selectedSimilarOption.key === "byScore") {

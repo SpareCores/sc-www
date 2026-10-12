@@ -299,7 +299,10 @@ export class AdvisorUiService {
     return `${value} ${currencySlug}`;
   }
 
-  getModelDetail(item: ServerPKs, modelKey: "cpu_model" | "gpu_model"): string {
+  getModelDetail(
+    item: ServerPKs,
+    modelKey: "cpu_model" | "accelerator_model",
+  ): string {
     return this.formatPresentValue(this.getRecordValue(item, modelKey));
   }
 

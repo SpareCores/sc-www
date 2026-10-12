@@ -18,10 +18,10 @@ export type ServerDetailsForFaqs = {
   memory_generation?: string | null;
   storage_size?: number | null;
   storage_type?: string | null;
-  gpu_count?: number | null;
-  gpu_manufacturer?: string | null;
-  gpu_family?: string | null;
-  gpu_model?: string | null;
+  accelerator_count?: number | null;
+  accelerator_manufacturer?: string | null;
+  accelerator_family?: string | null;
+  accelerator_model?: string | null;
   benchmark_scores: BenchmarkScore[];
   prices: Pick<ServerPrice, "price" | "currency">[];
   family?: string | null;
@@ -78,7 +78,7 @@ function buildSpecsAnswer(
   serverDetails: ServerDetailsForFaqs,
   formattedMemory: string,
 ): string {
-  return `The ${serverDetails.display_name} server is equipped with ${serverDetails.vcpus} logical CPU core${serverDetails.vcpus! > 1 ? "s" : ""} on ${serverDetails.cpu_cores || "unknown number of"} ${serverDetails.cpu_manufacturer || ""} ${serverDetails.cpu_family || ""} ${serverDetails.cpu_model || ""} physical CPU core${serverDetails.cpu_cores ? (serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${serverDetails.cpu_speed ? " running at max. " + serverDetails.cpu_speed + " Ghz" : ""}, ${formattedMemory} of ${serverDetails.memory_generation || ""} memory${serverDetails.memory_speed ? " with " + serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(serverDetails.storage_size)} of ${serverDetails.storage_type || ""} storage, and ${serverDetails.gpu_count! > 0 ? serverDetails.gpu_count : "no"} ${serverDetails.gpu_manufacturer || ""} ${serverDetails.gpu_family || ""} ${serverDetails.gpu_model || ""} GPU${serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`;
+  return `The ${serverDetails.display_name} server is equipped with ${serverDetails.vcpus} logical CPU core${serverDetails.vcpus! > 1 ? "s" : ""} on ${serverDetails.cpu_cores || "unknown number of"} ${serverDetails.cpu_manufacturer || ""} ${serverDetails.cpu_family || ""} ${serverDetails.cpu_model || ""} physical CPU core${serverDetails.cpu_cores ? (serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${serverDetails.cpu_speed ? " running at max. " + serverDetails.cpu_speed + " Ghz" : ""}, ${formattedMemory} of ${serverDetails.memory_generation || ""} memory${serverDetails.memory_speed ? " with " + serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(serverDetails.storage_size)} of ${serverDetails.storage_type || ""} storage, and ${serverDetails.accelerator_count! > 0 ? serverDetails.accelerator_count : "no"} ${serverDetails.accelerator_manufacturer || ""} ${serverDetails.accelerator_family || ""} ${serverDetails.accelerator_model || ""} GPU${serverDetails.accelerator_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`;
 }
 
 export function buildServerFaqs(input: BuildServerFaqsInput): AccordionItem[] {

@@ -86,14 +86,14 @@ export class ServerOGComponent implements OnInit, OnDestroy {
                   ),
                 });
               }
-              if (this.serverDetails.gpu_count) {
+              if (this.serverDetails.accelerator_count) {
                 this.features.push({
                   name: "GPU",
-                  value: this.serverDetails.gpu_count,
+                  value: this.serverDetails.accelerator_count,
                 });
               }
 
-              this.description = `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}.`;
+              this.description = `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.accelerator_count! > 0 ? this.serverDetails.accelerator_count : "no"} ${this.serverDetails.accelerator_manufacturer || ""} ${this.serverDetails.accelerator_family || ""} ${this.serverDetails.accelerator_model || ""} GPU${this.serverDetails.accelerator_count! > 1 ? "s" : ""}.`;
               if (this.serverDetails.prices[0]) {
                 this.description += ` The pricing starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour.`;
               }

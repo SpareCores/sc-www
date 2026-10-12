@@ -369,9 +369,9 @@ function invertAdvisorDeltaTone(
 
 type AdvisorComparableResourceKey =
   | "memory_amount"
-  | "gpu_count"
-  | "gpu_memory_min"
-  | "gpu_memory_total"
+  | "accelerator_count"
+  | "accelerator_memory_min"
+  | "accelerator_memory_total"
   | "storage_size"
   | "cpu_l1d_cache"
   | "cpu_l2_cache"

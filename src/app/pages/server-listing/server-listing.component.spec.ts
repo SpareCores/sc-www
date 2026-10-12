@@ -103,8 +103,8 @@ describe("ServerListingComponent", () => {
     ).toBeFalse();
     expect(
       component.getField(
-        { server: { gpu_count: 0 } } as never,
-        "server.gpu_count",
+        { server: { accelerator_count: 0 } } as never,
+        "server.accelerator_count",
       ),
     ).toBe(0);
     expect(component.formatGbps(0)).toBe("0 Gbps");
