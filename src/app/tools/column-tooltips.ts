@@ -18,3 +18,6 @@ export const COLUMN_HA_STRATEGY_TOOLTIP =
 
 export const COLUMN_SLA_TOOLTIP =
   "Maximum level of Service Level Agreement as a percentage.";
+
+export const COLUMN_XPU_TOOLTIP =
+  "XPU refers to any hardware accelerator attached to the server, such as GPUs, TPUs, or other AI/ML inference and training chips.";

@@ -770,7 +770,7 @@ export class Bookmarks implements OnDestroy {
     }
     if (server?.accelerator_count) {
       features.push({
-        name: "GPU",
+        name: "Accelerator",
         value: String(server.accelerator_count),
       });
     }
