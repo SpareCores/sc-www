@@ -69,11 +69,11 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
 import specialServerListsData from "./special-lists.js";
-import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
-import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
+import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 import { formatNumberInputValue } from "../../pipes/pipe-utils";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
@@ -133,11 +133,11 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,
-    GpuCountPipe,
+    AcceleratorCountPipe,
     CpuCacheSizePipe,
     MonthlyTrafficPipe,
     StoragePipe,
-    GpuMemoryPipe,
+    AcceleratorMemoryPipe,
     Ipv4CountPipe,
     FlowbiteDropdownDirective,
     BookmarkButton,

@@ -53,7 +53,7 @@ import {
 } from "../../components/server-property-card/server-property-card.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
-import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
 import { formatStorageSize } from "../../pipes/pipe-utils";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { AnalyticsService } from "../../services/analytics.service";
@@ -113,7 +113,7 @@ interface PropertyCategoryDefinition {
     RouterModule,
     BaseChartDirective,
     ReduceUnitNamePipe,
-    GpuCountPipe,
+    AcceleratorCountPipe,
     ServerChartsComponent,
     ServerLstopoComponent,
     ServerPropertyCardComponent,
