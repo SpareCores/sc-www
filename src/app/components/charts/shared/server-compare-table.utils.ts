@@ -212,11 +212,11 @@ export function getServerPropertyValue(
     return formatStorageSize(server.storage_size);
   }
 
-  if (name === "gpu_memory_min") {
+  if (name === "accelerator_memory_min") {
     return formatGpuMemory(server.accelerator_memory_min);
   }
 
-  if (name === "gpu_memory_total") {
+  if (name === "accelerator_memory_total") {
     return formatGpuMemory(server.accelerator_memory_total);
   }
 

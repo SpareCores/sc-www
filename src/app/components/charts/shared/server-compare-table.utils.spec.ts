@@ -55,11 +55,13 @@ describe("server compare table utils", () => {
   });
 
   it("returns a dash for array properties containing nested objects", () => {
-    const server: PropertyValueServer & { gpus: Array<{ name: string }> } = {
-      gpus: [{ name: "A100" }],
+    const server: PropertyValueServer & {
+      accelerators: Array<{ name: string }>;
+    } = {
+      accelerators: [{ name: "A100" }],
     };
 
-    expect(getServerPropertyValue({ id: "gpus" }, server)).toBe("-");
+    expect(getServerPropertyValue({ id: "accelerators" }, server)).toBe("-");
   });
 
   it("renders boolean values with inline lucide svg markup", () => {
@@ -118,7 +120,10 @@ describe("server compare table utils", () => {
       getServerPropertyValue({ id: "storage_size" }, { storage_size: 0 }),
     ).toBe("0 GB");
     expect(
-      getServerPropertyValue({ id: "gpu_memory_min" }, { gpu_memory_min: 0 }),
+      getServerPropertyValue(
+        { id: "accelerator_memory_min" },
+        { accelerator_memory_min: 0 },
+      ),
     ).toBe("0 GiB");
     expect(
       getServerPropertyValue({ id: "network_speed_max" }, {
@@ -161,9 +166,9 @@ describe("server compare table utils", () => {
     ).toBe("500 GB");
     expect(
       getServerPropertyValue(
-        { id: "gpu_memory_total" },
+        { id: "accelerator_memory_total" },
         {
-          gpu_memory_total: 16384,
+          accelerator_memory_total: 16384,
         },
       ),
     ).toBe("16 GiB");

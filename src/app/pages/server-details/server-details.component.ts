@@ -181,7 +181,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     [];
 
   similarOptions: any[] = [
-    { name: "By GPU, CPU and memory specs", key: "bySpecs" },
+    { name: "By accelerator, CPU and memory specs", key: "bySpecs" },
     { name: "By CPU performance", key: "byScore" },
     { name: "By CPU performance per price", key: "byPerformancePerPrice" },
   ];
@@ -191,7 +191,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     { name: "General", category: "meta" },
     { name: "CPU", category: "cpu" },
     { name: "Memory", category: "memory" },
-    { name: "GPU", category: "gpu" },
+    { name: "Accelerators", category: "gpu" },
     { name: "Storage", category: "storage" },
     { name: "Network", category: "network" },
   ];
@@ -417,7 +417,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               }
               if (this.serverDetails.accelerator_count) {
                 this.features.push({
-                  name: "GPU",
+                  name: "Accelerator",
                   value: this.serverDetails.accelerator_count,
                 });
               }
@@ -1350,8 +1350,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         },
         {
           "@type": "QuantitativeValue",
-          name: "Graphics processing units",
-          unitText: "GPU(s)",
+          name: "Accelerators",
+          unitText: "accelerator(s)",
           value: this.serverDetails.accelerator_count,
         },
       ],

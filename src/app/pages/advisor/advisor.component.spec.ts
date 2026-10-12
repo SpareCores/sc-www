@@ -583,7 +583,7 @@ describe("AdvisorComponent", () => {
       "WORKLOAD",
       "$ EFFICIENCY",
       "MEMORY",
-      "GPUs",
+      "XPU",
       "STORAGE",
       "BEST PRICE",
     ]);
@@ -1822,7 +1822,7 @@ describe("AdvisorComponent", () => {
     const memoryDelta = memoryPrimaryLine.querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
-    const gpuDelta = cells[visibleColumnIndex("GPUs")].querySelector(
+    const gpuDelta = cells[visibleColumnIndex("XPU")].querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
     const storageDelta = cells[visibleColumnIndex("STORAGE")].querySelector(
@@ -1918,7 +1918,7 @@ describe("AdvisorComponent", () => {
     const memoryCell = cells[
       visibleColumnIndex("MEMORY")
     ] as HTMLTableCellElement;
-    const gpuCell = cells[visibleColumnIndex("GPUs")] as HTMLTableCellElement;
+    const gpuCell = cells[visibleColumnIndex("XPU")] as HTMLTableCellElement;
     const memoryPrimaryLine = memoryCell.querySelector(
       "div.text-sm",
     ) as HTMLElement;
@@ -2453,7 +2453,7 @@ describe("AdvisorComponent", () => {
       "WORKLOAD",
       "$ EFFICIENCY",
       "MEMORY",
-      "GPUs",
+      "XPU",
       "STORAGE",
       "BEST PRICE",
     ]);

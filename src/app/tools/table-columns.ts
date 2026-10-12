@@ -6,6 +6,7 @@ import {
   COLUMN_SCORE_PER_PRICE_TOOLTIP,
   COLUMN_SCORE_TOOLTIP,
   COLUMN_SLA_TOOLTIP,
+  COLUMN_XPU_TOOLTIP,
 } from "./column-tooltips";
 
 export type TableColumnType =
@@ -105,18 +106,29 @@ const COLUMNS = {
   cpuCache: { name: "CPU CACHE", type: "cpu_cache" },
   cpuModel: { name: "CPU MODEL", type: "cpu_model" },
   direction: { name: "DIRECTION", type: "text", key: "direction" },
-  gpu: { name: "GPUs", type: "gpu", orderField: "accelerator_count" },
+  gpu: {
+    name: "XPU",
+    type: "gpu",
+    orderField: "accelerator_count",
+    info: COLUMN_XPU_TOOLTIP,
+  },
   gpuMemoryMin: {
-    name: "GPU MIN MEMORY",
+    name: "XPU MIN MEMORY",
+    info: COLUMN_XPU_TOOLTIP,
     type: "gpu_memory_min",
     orderField: "accelerator_memory_min",
   },
   gpuMemoryTotal: {
-    name: "GPU TOTAL MEMORY",
+    name: "XPU TOTAL MEMORY",
+    info: COLUMN_XPU_TOOLTIP,
     type: "gpu_memory_total",
     orderField: "accelerator_memory_total",
   },
-  gpuModel: { name: "GPU MODEL", type: "gpu_model" },
+  gpuModel: {
+    name: "XPU MODEL",
+    type: "gpu_model",
+    info: COLUMN_XPU_TOOLTIP,
+  },
   hwVirt: {
     name: "HW VIRT",
     type: "text",
@@ -178,12 +190,14 @@ const COLUMNS = {
     info: COLUMN_SCORE_PER_PRICE_TOOLTIP,
   },
   serverGpuMemoryMin: {
-    name: "GPU MIN MEMORY",
+    name: "XPU MIN MEMORY",
+    info: COLUMN_XPU_TOOLTIP,
     type: "gpu_memory_min",
     key: "server.accelerator_memory_min",
   },
   serverGpuMemoryTotal: {
-    name: "GPU TOTAL MEMORY",
+    name: "XPU TOTAL MEMORY",
+    info: COLUMN_XPU_TOOLTIP,
     type: "gpu_memory_total",
     key: "server.accelerator_memory_total",
   },
