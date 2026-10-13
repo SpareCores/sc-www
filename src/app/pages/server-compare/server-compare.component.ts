@@ -180,15 +180,6 @@ export class ServerCompareComponent
   zones: any[] = [];
   regions: any[] = [];
 
-  fields: any[] = [
-    { name: "Vendor", key: "vendor" },
-    { name: "Processor", key: "processor" },
-    { name: "Memory", key: "memory" },
-    { name: "Storage", key: "storage" },
-    { name: "Accelerator", key: "gpu" },
-    { name: "Accelerator Memory", key: "gpu_memory" },
-  ];
-
   clipboardIcon = "clipboard";
 
   instanceProperties: any[] = [];

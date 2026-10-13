@@ -784,34 +784,37 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu") {
+                      @if (column.type === "accelerator") {
                         <td>
                           <div class="text-sm text-white whitespace-nowrap">
-                            {{ recommendation.accelerator_count | gpuCount }}
+                            {{
+                              recommendation.accelerator_count
+                                | acceleratorCount
+                            }}
                             @if (
                               getComparableResourceDelta(
                                 recommendation,
                                 "accelerator_count"
                               );
-                              as gpuDelta
+                              as acceleratorDelta
                             ) {
                               @if (
-                                getParenthesizedDeltaLabel(gpuDelta);
-                                as gpuDeltaLabel
+                                getParenthesizedDeltaLabel(acceleratorDelta);
+                                as acceleratorDeltaLabel
                               ) {
                                 <span
                                   class="advisor-table-delta whitespace-nowrap"
                                   [class.advisor-table-delta--positive]="
-                                    gpuDelta.tone === 'positive'
+                                    acceleratorDelta.tone === 'positive'
                                   "
                                   [class.advisor-table-delta--negative]="
-                                    gpuDelta.tone === 'negative'
+                                    acceleratorDelta.tone === 'negative'
                                   "
                                   [class.advisor-table-delta--neutral]="
-                                    gpuDelta.tone === 'neutral'
+                                    acceleratorDelta.tone === 'neutral'
                                   "
                                 >
-                                  {{ gpuDeltaLabel }}
+                                  {{ acceleratorDeltaLabel }}
                                 </span>
                               }
                             }
@@ -825,11 +828,12 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu_memory_min") {
+                      @if (column.type === "accelerator_memory_min") {
                         <td>
                           <div class="text-sm text-white">
                             {{
-                              recommendation.accelerator_memory_min | gpuMemory
+                              recommendation.accelerator_memory_min
+                                | acceleratorMemory
                             }}
                           </div>
                           @if (
@@ -837,38 +841,40 @@
                               recommendation,
                               "accelerator_memory_min"
                             );
-                            as gpuMemoryMinDelta
+                            as acceleratorMemoryMinDelta
                           ) {
                             @if (
-                              getDeltaLabel(gpuMemoryMinDelta);
-                              as gpuMemoryMinDeltaLabel
+                              getDeltaLabel(acceleratorMemoryMinDelta);
+                              as acceleratorMemoryMinDeltaLabel
                             ) {
                               <div class="advisor-table-cell-secondary">
                                 <span
                                   class="advisor-table-delta"
                                   [class.advisor-table-delta--positive]="
-                                    gpuMemoryMinDelta.tone === 'positive'
+                                    acceleratorMemoryMinDelta.tone ===
+                                    'positive'
                                   "
                                   [class.advisor-table-delta--negative]="
-                                    gpuMemoryMinDelta.tone === 'negative'
+                                    acceleratorMemoryMinDelta.tone ===
+                                    'negative'
                                   "
                                   [class.advisor-table-delta--neutral]="
-                                    gpuMemoryMinDelta.tone === 'neutral'
+                                    acceleratorMemoryMinDelta.tone === 'neutral'
                                   "
                                 >
-                                  {{ gpuMemoryMinDeltaLabel }}
+                                  {{ acceleratorMemoryMinDeltaLabel }}
                                 </span>
                               </div>
                             }
                           }
                         </td>
                       }
-                      @if (column.type === "gpu_memory_total") {
+                      @if (column.type === "accelerator_memory_total") {
                         <td>
                           <div class="text-sm text-white">
                             {{
                               recommendation.accelerator_memory_total
-                                | gpuMemory
+                                | acceleratorMemory
                             }}
                           </div>
                           @if (
@@ -876,33 +882,36 @@
                               recommendation,
                               "accelerator_memory_total"
                             );
-                            as gpuMemoryTotalDelta
+                            as acceleratorMemoryTotalDelta
                           ) {
                             @if (
-                              getDeltaLabel(gpuMemoryTotalDelta);
-                              as gpuMemoryTotalDeltaLabel
+                              getDeltaLabel(acceleratorMemoryTotalDelta);
+                              as acceleratorMemoryTotalDeltaLabel
                             ) {
                               <div class="advisor-table-cell-secondary">
                                 <span
                                   class="advisor-table-delta"
                                   [class.advisor-table-delta--positive]="
-                                    gpuMemoryTotalDelta.tone === 'positive'
+                                    acceleratorMemoryTotalDelta.tone ===
+                                    'positive'
                                   "
                                   [class.advisor-table-delta--negative]="
-                                    gpuMemoryTotalDelta.tone === 'negative'
+                                    acceleratorMemoryTotalDelta.tone ===
+                                    'negative'
                                   "
                                   [class.advisor-table-delta--neutral]="
-                                    gpuMemoryTotalDelta.tone === 'neutral'
+                                    acceleratorMemoryTotalDelta.tone ===
+                                    'neutral'
                                   "
                                 >
-                                  {{ gpuMemoryTotalDeltaLabel }}
+                                  {{ acceleratorMemoryTotalDeltaLabel }}
                                 </span>
                               </div>
                             }
                           }
                         </td>
                       }
-                      @if (column.type === "gpu_model") {
+                      @if (column.type === "accelerator_model") {
                         <td>
                           <div class="text-sm text-white flex gap-1">
                             <span>{{

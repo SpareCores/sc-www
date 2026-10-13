@@ -23,11 +23,10 @@ export type TableColumnType =
   | "benchmark"
   | "benchmark_score_per_price"
   | "memory"
-  | "gpu"
-  | "gpu_memory"
-  | "gpu_memory_min"
-  | "gpu_memory_total"
-  | "gpu_model"
+  | "accelerator"
+  | "accelerator_memory_min"
+  | "accelerator_memory_total"
+  | "accelerator_model"
   | "storage"
   | "price"
   | "priceMonthly"
@@ -106,27 +105,27 @@ const COLUMNS = {
   cpuCache: { name: "CPU CACHE", type: "cpu_cache" },
   cpuModel: { name: "CPU MODEL", type: "cpu_model" },
   direction: { name: "DIRECTION", type: "text", key: "direction" },
-  gpu: {
+  accelerator: {
     name: "XPU",
-    type: "gpu",
+    type: "accelerator",
     orderField: "accelerator_count",
     info: COLUMN_XPU_TOOLTIP,
   },
-  gpuMemoryMin: {
+  acceleratorMemoryMin: {
     name: "XPU MIN MEMORY",
     info: COLUMN_XPU_TOOLTIP,
-    type: "gpu_memory_min",
+    type: "accelerator_memory_min",
     orderField: "accelerator_memory_min",
   },
-  gpuMemoryTotal: {
+  acceleratorMemoryTotal: {
     name: "XPU TOTAL MEMORY",
     info: COLUMN_XPU_TOOLTIP,
-    type: "gpu_memory_total",
+    type: "accelerator_memory_total",
     orderField: "accelerator_memory_total",
   },
-  gpuModel: {
+  acceleratorModel: {
     name: "XPU MODEL",
-    type: "gpu_model",
+    type: "accelerator_model",
     info: COLUMN_XPU_TOOLTIP,
   },
   hwVirt: {
@@ -189,16 +188,16 @@ const COLUMNS = {
     orderField: "score_per_price",
     info: COLUMN_SCORE_PER_PRICE_TOOLTIP,
   },
-  serverGpuMemoryMin: {
+  serverAcceleratorMemoryMin: {
     name: "XPU MIN MEMORY",
     info: COLUMN_XPU_TOOLTIP,
-    type: "gpu_memory_min",
+    type: "accelerator_memory_min",
     key: "server.accelerator_memory_min",
   },
-  serverGpuMemoryTotal: {
+  serverAcceleratorMemoryTotal: {
     name: "XPU TOTAL MEMORY",
     info: COLUMN_XPU_TOOLTIP,
-    type: "gpu_memory_total",
+    type: "accelerator_memory_total",
     key: "server.accelerator_memory_total",
   },
   startTime: {
@@ -336,10 +335,10 @@ export function buildServerListingColumns(): TableColumn[] {
     { ...COLUMNS.benchmark, show: true },
     { ...COLUMNS.benchmarkEfficiency, show: true },
     { ...COLUMNS.memory, show: true },
-    { ...COLUMNS.gpu, show: true },
-    { ...COLUMNS.gpuMemoryMin, show: false },
-    { ...COLUMNS.gpuMemoryTotal, show: false },
-    { ...COLUMNS.gpuModel, show: false },
+    { ...COLUMNS.accelerator, show: true },
+    { ...COLUMNS.acceleratorMemoryMin, show: false },
+    { ...COLUMNS.acceleratorMemoryTotal, show: false },
+    { ...COLUMNS.acceleratorModel, show: false },
     { ...COLUMNS.storage, show: true },
     { ...COLUMNS.storageType, show: false },
     { ...COLUMNS.networkSpeed, show: false },
@@ -379,10 +378,18 @@ export function buildAdvisorColumns(workloadTooltip: string): TableColumn[] {
       show: true,
     },
     { ...COLUMNS.memory, key: "memory_amount", show: true },
-    { ...COLUMNS.gpu, key: "accelerator_count", show: true },
-    { ...COLUMNS.gpuMemoryMin, key: "accelerator_memory_min", show: false },
-    { ...COLUMNS.gpuMemoryTotal, key: "accelerator_memory_total", show: false },
-    { ...COLUMNS.gpuModel, key: "accelerator_model", show: false },
+    { ...COLUMNS.accelerator, key: "accelerator_count", show: true },
+    {
+      ...COLUMNS.acceleratorMemoryMin,
+      key: "accelerator_memory_min",
+      show: false,
+    },
+    {
+      ...COLUMNS.acceleratorMemoryTotal,
+      key: "accelerator_memory_total",
+      show: false,
+    },
+    { ...COLUMNS.acceleratorModel, key: "accelerator_model", show: false },
     { ...COLUMNS.storage, key: "storage_size", show: true },
     { ...COLUMNS.storageType, show: false },
     { ...COLUMNS.networkSpeed, key: "network_speed_baseline", show: false },
@@ -436,10 +443,14 @@ export function buildServerPricesColumns(): TableColumn[] {
     { ...COLUMNS.memory, show: true },
     { ...COLUMNS.storage, show: true },
     { ...COLUMNS.storageType, key: "server.storage_type", show: false },
-    { ...COLUMNS.gpu, orderField: "server.accelerator_count", show: true },
-    { ...COLUMNS.serverGpuMemoryMin, show: false },
-    { ...COLUMNS.serverGpuMemoryTotal, show: false },
-    { ...COLUMNS.gpuModel, show: false },
+    {
+      ...COLUMNS.accelerator,
+      orderField: "server.accelerator_count",
+      show: true,
+    },
+    { ...COLUMNS.serverAcceleratorMemoryMin, show: false },
+    { ...COLUMNS.serverAcceleratorMemoryTotal, show: false },
+    { ...COLUMNS.acceleratorModel, show: false },
     { ...COLUMNS.price, show: true },
     { ...COLUMNS.status, key: "server.status", show: false },
   ];

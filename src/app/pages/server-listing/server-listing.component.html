@@ -459,14 +459,16 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu_memory_min") {
+                      @if (column.type === "accelerator_memory_min") {
                         <td>
-                          {{ item.accelerator_memory_min | gpuMemory }}
+                          {{ item.accelerator_memory_min | acceleratorMemory }}
                         </td>
                       }
-                      @if (column.type === "gpu_memory_total") {
+                      @if (column.type === "accelerator_memory_total") {
                         <td>
-                          {{ item.accelerator_memory_total | gpuMemory }}
+                          {{
+                            item.accelerator_memory_total | acceleratorMemory
+                          }}
                         </td>
                       }
                       @if (column.type === "storage") {
@@ -481,10 +483,10 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu") {
+                      @if (column.type === "accelerator") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ item.accelerator_count | gpuCount }}
+                            {{ item.accelerator_count | acceleratorCount }}
                           </div>
                           @if (item.accelerator_model) {
                             <div class="text-xs text-white flex gap-1">
@@ -531,7 +533,7 @@
                           </div>
                         </td>
                       }
-                      @if (column.type === "gpu_model") {
+                      @if (column.type === "accelerator_model") {
                         <td>
                           @if (item.accelerator_model) {
                             <div class="text-sm text-white flex gap-1">

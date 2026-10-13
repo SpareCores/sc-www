@@ -1,13 +1,13 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { formatGpuMemory } from "./pipe-utils";
+import { formatAcceleratorMemory } from "./pipe-utils";
 
 @Pipe({
-  name: "gpuMemory",
+  name: "acceleratorMemory",
   standalone: true,
 })
-export class GpuMemoryPipe implements PipeTransform {
+export class AcceleratorMemoryPipe implements PipeTransform {
   transform(value: number | null | undefined, empty = "-"): string {
     if (value === null || value === undefined) return empty;
-    return formatGpuMemory(value);
+    return formatAcceleratorMemory(value);
   }
 }

@@ -163,8 +163,8 @@ describe("AdvisorComponent", () => {
           vcpus: 4,
           memory_amount: 4096,
           accelerator_count: 1,
-          gpu_memory_min: 8,
-          gpu_memory_total: 0,
+          accelerator_memory_min: 8,
+          accelerator_memory_total: 0,
           storage_size: 80,
           cpu_l1d_cache: 64,
           cpu_l2_cache: 1024,
@@ -1822,7 +1822,7 @@ describe("AdvisorComponent", () => {
     const memoryDelta = memoryPrimaryLine.querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
-    const gpuDelta = cells[visibleColumnIndex("XPU")].querySelector(
+    const acceleratorDelta = cells[visibleColumnIndex("XPU")].querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
     const storageDelta = cells[visibleColumnIndex("STORAGE")].querySelector(
@@ -1846,7 +1846,7 @@ describe("AdvisorComponent", () => {
       "4800 MHz (DDR5)",
     );
     expect(memoryDelta.textContent?.trim()).toBe("(+100%)");
-    expect(gpuDelta.textContent?.trim()).toBe("(+100%)");
+    expect(acceleratorDelta.textContent?.trim()).toBe("(+100%)");
     expect(storageDelta.textContent?.trim()).toBe("(+100%)");
   }));
 
@@ -1918,7 +1918,9 @@ describe("AdvisorComponent", () => {
     const memoryCell = cells[
       visibleColumnIndex("MEMORY")
     ] as HTMLTableCellElement;
-    const gpuCell = cells[visibleColumnIndex("XPU")] as HTMLTableCellElement;
+    const acceleratorCell = cells[
+      visibleColumnIndex("XPU")
+    ] as HTMLTableCellElement;
     const memoryPrimaryLine = memoryCell.querySelector(
       "div.text-sm",
     ) as HTMLElement;
@@ -1926,17 +1928,19 @@ describe("AdvisorComponent", () => {
       "div.text-xs",
     ) as HTMLElement;
     const memoryDelta = memoryPrimaryLine.querySelector(".advisor-table-delta");
-    const gpuDelta = gpuCell.querySelector(".advisor-table-delta");
+    const acceleratorDelta = acceleratorCell.querySelector(
+      ".advisor-table-delta",
+    );
     const cpuCacheDelta = cpuCacheCell.querySelector(".advisor-table-delta");
 
     expect(normalizeText(cpuCacheCell.textContent)).toContain("L1: 64 KiB");
     expect(normalizeText(memoryPrimaryLine.textContent)).toBe("4.0 GiB");
     expect(normalizeText(memorySecondaryLine.textContent)).toBe("4800 MHz");
-    expect(normalizeText(gpuCell.textContent)).toContain("1");
+    expect(normalizeText(acceleratorCell.textContent)).toContain("1");
     expect(normalizeText(cpuCacheCell.textContent)).not.toContain("0%");
-    expect(normalizeText(gpuCell.textContent)).not.toContain("0%");
+    expect(normalizeText(acceleratorCell.textContent)).not.toContain("0%");
     expect(memoryDelta).toBeNull();
-    expect(gpuDelta).toBeNull();
+    expect(acceleratorDelta).toBeNull();
     expect(cpuCacheDelta).toBeNull();
   }));
 

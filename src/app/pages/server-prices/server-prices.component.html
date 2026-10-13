@@ -286,15 +286,19 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu_memory_min") {
-                        <td>
-                          {{ server.server.accelerator_memory_min | gpuMemory }}
-                        </td>
-                      }
-                      @if (column.type === "gpu_memory_total") {
+                      @if (column.type === "accelerator_memory_min") {
                         <td>
                           {{
-                            server.server.accelerator_memory_total | gpuMemory
+                            server.server.accelerator_memory_min
+                              | acceleratorMemory
+                          }}
+                        </td>
+                      }
+                      @if (column.type === "accelerator_memory_total") {
+                        <td>
+                          {{
+                            server.server.accelerator_memory_total
+                              | acceleratorMemory
                           }}
                         </td>
                       }
@@ -320,10 +324,12 @@
                           </div>
                         </td>
                       }
-                      @if (column.type === "gpu") {
+                      @if (column.type === "accelerator") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ server.server.accelerator_count | gpuCount }}
+                            {{
+                              server.server.accelerator_count | acceleratorCount
+                            }}
                           </div>
                           @if (server.server.accelerator_model) {
                             <div class="text-xs text-white flex gap-1">
@@ -349,7 +355,7 @@
                           </div>
                         </td>
                       }
-                      @if (column.type === "gpu_model") {
+                      @if (column.type === "accelerator_model") {
                         <td>
                           @if (server.server.accelerator_model) {
                             <div class="text-sm text-white flex gap-1">
