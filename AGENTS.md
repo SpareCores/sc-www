@@ -46,7 +46,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 ### SSR Safety Guardrails
 
-- Ensure SSR safety using browser guards (`isPlatformBrowser`) or the Angular 20 `afterNextRender()` / `afterRender()` hooks.
+- Ensure SSR safety using browser guards (`isPlatformBrowser`) or the Angular 20 `afterNextRender()` / `afterEveryRender()` hooks.
 - Never access global browser primitives (`window`, `document`, `localStorage`) directly in the main component lifecycle execution path without an SSR safety guard.
 
 ## HTML Templates (`*.html`)
