@@ -417,7 +417,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               }
               if (this.serverDetails.accelerator_count) {
                 this.features.push({
-                  name: "Accelerator",
+                  name: this.serverDetails.accelerator_type ?? "Accelerator",
                   value: this.serverDetails.accelerator_count,
                 });
               }
