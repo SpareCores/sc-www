@@ -363,13 +363,15 @@
                       }
                       @if (column.type === "price") {
                         <td>
-                          @if (item[column.key || "price"]) {
+                          @let priceValue = item[column.key || "price"];
+                          @if (
+                            priceValue !== null && priceValue !== undefined
+                          ) {
                             <div class="text-sm text-white whitespace-nowrap">
-                              {{ item[column.key || "price"] }}
+                              {{ priceValue }}
                               {{ displayedCurrency.slug }}
                             </div>
-                          }
-                          @if (!item[column.key || "price"]) {
+                          } @else {
                             <div class="text-sm text-white">-</div>
                           }
                         </td>
