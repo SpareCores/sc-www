@@ -249,7 +249,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   ];
   private readonly priceOrderWarnings: Record<string, string> = {
     only_orderable:
-      "Servers without a known price are already excluded when ordering by price, $ efficiency or $Core, so this filter has no additional effect.",
+      "Servers without active pricing are automatically excluded when sorting by price or cost efficiency, making this filter redundant. Sort by other metrics to view servers that are not available to order.",
   };
   private readonly noParameterWarnings: Record<string, string> = {};
 
