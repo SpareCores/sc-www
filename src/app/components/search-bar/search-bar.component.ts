@@ -22,7 +22,10 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { isAbortError } from "../../services/keeper-http-client";
 import { ToastService } from "../../services/toast.service";
 import { SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID } from "../../services/toast-ids";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import {
+  TooltipVariant,
+  UiTooltipService,
+} from "../../services/ui-tooltip.service";
 import { Button } from "../button/button";
 import {
   SearchBarCustomControls,
@@ -122,6 +125,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   noTopPaddingCategoryIds = input<string[]>([]);
   customControls = input<SearchBarCustomControl[]>([]);
   parameterPlacements = input<SearchBarParameterPlacement[]>([]);
+  parameterWarnings = input<Record<string, string>>({});
 
   searchChanged = output<SearchBarQuery>();
   customControlChanged = output<SearchBarCustomControlChange>();
@@ -985,13 +989,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     event: MouseEvent | FocusEvent,
     content: string,
     autoHide = false,
+    variant: TooltipVariant = "default",
   ) {
     this.tooltipContent = content;
     const tooltip = this.tooltip().nativeElement;
-    this.uiTooltip.show(tooltip, event, {
-      left: "anchor-right",
-      top: "anchor-below",
-    });
+    this.uiTooltip.show(
+      tooltip,
+      event,
+      {
+        left: "anchor-right",
+        top: "anchor-below",
+      },
+      variant,
+    );
 
     if (autoHide) {
       setTimeout(() => {

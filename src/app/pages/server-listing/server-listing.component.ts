@@ -239,6 +239,26 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   orderBy: string | undefined = undefined;
   orderDir: OrderDir | undefined = undefined;
 
+  private readonly priceOrderFields = [
+    "min_price",
+    "min_price_ondemand",
+    "min_price_ondemand_monthly",
+    "min_price_spot",
+    "score_per_price",
+    "selected_benchmark_score_per_price",
+  ];
+  private readonly priceOrderWarnings: Record<string, string> = {
+    only_orderable:
+      "Servers without a known price are already excluded when ordering by price, $ efficiency or $Core, so this filter has no additional effect.",
+  };
+  private readonly noParameterWarnings: Record<string, string> = {};
+
+  get parameterWarnings(): Record<string, string> {
+    return this.orderBy && this.priceOrderFields.includes(this.orderBy)
+      ? this.priceOrderWarnings
+      : this.noParameterWarnings;
+  }
+
   servers: ServerPriceWithPKs[] | any[] = [];
 
   openApiJson: any = openApiSpec;
