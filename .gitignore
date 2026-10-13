@@ -92,9 +92,6 @@ src/assets/legal/
 src/assets/surveys/
 src/assets/articles/drafts/
 
-# custom copilot instructions (dev)
-.github/copilot-instructions.md
-
 # cursor files
 .cursor/
 .cursorignore
