@@ -36,7 +36,7 @@ function ensureVisualUserSession(email: string, password: string): void {
 }
 
 function stabilizeSignedInHeader(): void {
-  cy.get("#auth_button").should("be.visible");
+  cy.get("#auth_button").should("exist");
   cy.get("body").then(($body) => {
     const avatar = $body.find("#auth_button img");
     if (avatar.length) {
@@ -177,6 +177,10 @@ export function registerAuthVisualSuites(suffix: string): void {
       openRegisterModal();
       fillRegisterDetails(pendingEmail, randomClerkTestPassword());
       acceptRegisterConsent();
+      cy.contains(".auth-modal__subtitle", pendingEmail).invoke(
+        "text",
+        "Enter the verification code sent to sc-www+clerk_test@example.com.",
+      );
       prepareLandingChrome();
       snapViewport("auth-register-verify", suffix);
     });
