@@ -85,6 +85,14 @@ const summarizeModalOptions: ModalOptions = {
   closable: true,
 };
 
+const SIMILAR_SERVER_CATEGORIES: Partial<
+  Record<string, "score" | "score_per_price" | "specs">
+> = {
+  byScore: "score",
+  byPerformancePerPrice: "score_per_price",
+  bySpecs: "specs",
+};
+
 const DEFAULT_EMBEDDABLE_CHARTS = [
   { id: "workload_profile", name: "Workload Profiles" },
   { id: "bw_mem", name: "Memory Bandwidth" },
@@ -162,6 +170,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private uiTooltip = inject(UiTooltipService);
   private serverLoadId = 0;
   private loadAbortController: AbortController | null = null;
+  private similarAbortController: AbortController | null = null;
   similarDropdown = viewChild<FlowbiteDropdownDirective>("similarDropdown");
 
   readonly burstableInstanceWarningTitle = BURSTABLE_INSTANCE_WARNING_TITLE;
@@ -773,6 +782,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   private resetServerState() {
+    this.summarizeModal?.hide();
+    this.modalEmbed?.hide();
+    this.isModalOpen = false;
+    this.similarAbortController?.abort();
     this.cleanupBrowserArtifacts();
     this.SEOHandler.cleanupStructuredData(this.document);
     this.serverDetails = undefined as never;
@@ -824,6 +837,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.loadAbortController?.abort();
+    this.similarAbortController?.abort();
     this.cleanupBrowserArtifacts();
 
     this.summarizeModal?.hide();
@@ -1541,43 +1555,30 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   selectSimilarServerOption(event: any, updateURL: boolean = true) {
     this.selectedSimilarOption = event;
-    switch (this.selectedSimilarOption.key) {
-      case "byScore":
-        this.keeperAPI
-          .getServerSimilarServers(
-            this.serverDetails.vendor_id,
-            this.serverDetails.api_reference,
-            "score",
-            7,
-          )
-          .then((servers: any) => {
+    const category = SIMILAR_SERVER_CATEGORIES[this.selectedSimilarOption.key];
+    if (category) {
+      this.similarAbortController?.abort();
+      this.similarAbortController = new AbortController();
+      const { signal } = this.similarAbortController;
+
+      this.keeperAPI
+        .getServerSimilarServers(
+          this.serverDetails.vendor_id,
+          this.serverDetails.api_reference,
+          category,
+          7,
+          { signal },
+        )
+        .then((servers: any) => {
+          if (!signal.aborted) {
             this.similarServers = servers?.body;
-          });
-        break;
-      case "byPerformancePerPrice":
-        this.keeperAPI
-          .getServerSimilarServers(
-            this.serverDetails.vendor_id,
-            this.serverDetails.api_reference,
-            "score_per_price",
-            7,
-          )
-          .then((servers: any) => {
-            this.similarServers = servers?.body;
-          });
-        break;
-      case "bySpecs":
-        this.keeperAPI
-          .getServerSimilarServers(
-            this.serverDetails.vendor_id,
-            this.serverDetails.api_reference,
-            "specs",
-            7,
-          )
-          .then((servers: any) => {
-            this.similarServers = servers?.body;
-          });
-        break;
+          }
+        })
+        .catch((error) => {
+          if (!signal.aborted) {
+            console.error(error);
+          }
+        });
     }
 
     if (updateURL) {
