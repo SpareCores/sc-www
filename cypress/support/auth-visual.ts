@@ -1,64 +1,33 @@
 import {
-  bypassClerkBotProtection,
+  DATABASES_FILTERED_URL,
+  SERVER_COMPARE_URL,
+  SERVERS_FILTERED_URL,
+  UNLOCKED_BOOKMARK_BUTTON,
+  loadAdvisorExample,
+  openBookmarksPage,
+  openPageHeaderSaveModal,
+} from "./bookmarks";
+import {
+  acceptRegisterConsent,
+  clerkTestEmail,
+  deleteClerkTestUser,
+  expectAuthModalStep,
+  fillRegisterDetails,
+  openGuestAuthButton,
+  openRegisterModal,
   randomClerkTestPassword,
+  registerClerkTestUser,
+  signOutClerkTestUser,
+  skipWithoutClerk,
 } from "./clerk-testing";
+import { mockCollectionsApi } from "./collections-mock";
 import { E2EEvent } from "./generics";
-
-export const SERVER_COMPARE_URL =
-  "/servers/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYTEubWVkaXVtIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjNmdkLm1lZGl1bSJ9XQ%3D%3D";
 
 const PLACEHOLDER_AVATAR =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
-const DATABASES_FILTERED = "/databases?vendor=aws&vcpus_min=2&vcpus_max=2";
-const SERVERS_FILTERED = "/servers?vendor=hcloud&gpu_min=1&gpu_memory_min=1";
 const SERVER_DETAILS = "/server/gcp/t2d-standard-1";
 const DATABASE_DETAILS = "/database/gcp/db-c4a-highmem-48";
-
-function waitForClerk(): void {
-  cy.window({ timeout: 30000 }).should((win) => {
-    expect(win).to.have.property("Clerk");
-    expect((win as Window & { Clerk: { loaded: boolean } }).Clerk.loaded).to.eq(
-      true,
-    );
-  });
-}
-
-function fillRegisterDetails(email: string, password: string): void {
-  cy.get('input[name="firstName"]').clear().type("Test");
-  cy.get('input[name="lastName"]').clear().type("User");
-  cy.get('input[name="emailAddress"]').clear().type(email);
-  cy.get('input[name="password"]').clear().type(password, { log: false });
-  cy.get('.auth-modal__form button[type="submit"]')
-    .first()
-    .should("not.be.disabled")
-    .click();
-}
-
-function expectRegisterStep(title: string): void {
-  cy.get(".auth-modal__title", { timeout: 30000 }).should(($title) => {
-    const text = $title.text().replace(/\s+/g, " ").trim();
-    const error = Cypress.$(".auth-modal__error").text().trim();
-    expect(text, error || "register step").to.eq(title);
-  });
-}
-
-function registerClerkTestUser(email: string, password: string): void {
-  bypassClerkBotProtection();
-  E2EEvent.visitURL("/", 2000);
-  waitForClerk();
-  openGuestAuthButton("Register");
-  cy.get(".auth-modal__title").should("contain.text", "Create your account");
-  fillRegisterDetails(email, password);
-  expectRegisterStep("One last step");
-  cy.get('input[name="legalAccepted"]').check({ force: true });
-  cy.contains("button", "Continue").should("not.be.disabled").click();
-  expectRegisterStep("Verify your email");
-  cy.get('input[name="verificationCode"]').clear().type("424242");
-  cy.contains("button", "Verify email").should("not.be.disabled").click();
-  cy.get(".auth-modal", { timeout: 30000 }).should("not.exist");
-  cy.get("#auth_button", { timeout: 30000 }).should("be.visible");
-}
 
 function ensureVisualUserSession(email: string, password: string): void {
   cy.session(["auth-visual-clerk-test", email], () => {
@@ -121,46 +90,6 @@ function prepareServerCompareChrome(): void {
   });
 }
 
-function clearAllBookmarks(): void {
-  E2EEvent.visitURL("/bookmarks", 4000);
-  cy.get("sc-loading-spinner", { timeout: 20000 }).should("not.exist");
-
-  const deleteRemaining = (): void => {
-    cy.get("body").then(($body) => {
-      if ($body.find('button[aria-label="Delete"]').length === 0) {
-        cy.contains("No bookmarks match the current filters.").should(
-          "be.visible",
-        );
-        return;
-      }
-
-      cy.get('button[aria-label="Delete"]').first().click();
-      cy.get("sc-loading-spinner", { timeout: 20000 }).should("not.exist");
-      deleteRemaining();
-    });
-  };
-
-  deleteRemaining();
-}
-
-function openGuestAuthButton(label: "Register" | "Log in"): void {
-  cy.get("body").then(($body) => {
-    const match = $body.find("button").filter((_, el) => {
-      const text = (el.textContent || "").trim();
-      return text === label && Cypress.$(el).is(":visible");
-    });
-
-    if (match.length) {
-      cy.wrap(match.first()).click();
-      return;
-    }
-
-    cy.get("#menu_button").should("be.visible").click();
-    cy.get("#menu_options").should("be.visible");
-    cy.contains("#menu_options button", label).should("be.visible").click();
-  });
-}
-
 function snap(name: string, suffix: string): void {
   E2EEvent.hideScrollbarsForScreenshot();
   cy.compareSnapshot(`${name}${suffix}`);
@@ -177,6 +106,16 @@ function snapViewport(name: string, suffix: string): void {
 
 export function registerAuthVisualSuites(suffix: string): void {
   describe("Auth visual — guest modals", () => {
+    let pendingEmail: string | undefined;
+
+    skipWithoutClerk();
+
+    afterEach(() => {
+      const email = pendingEmail;
+      pendingEmail = undefined;
+      deleteClerkTestUser(email);
+    });
+
     it("compares sign-in modal", () => {
       E2EEvent.visitURL("/", 2000);
       openGuestAuthButton("Log in");
@@ -223,38 +162,23 @@ export function registerAuthVisualSuites(suffix: string): void {
     });
 
     it("compares registration consent step", () => {
-      bypassClerkBotProtection();
-      const runId = Date.now();
-      const email = `sc-www+clerk_test+consent+${runId}@example.com`;
-      const password = randomClerkTestPassword();
+      pendingEmail = clerkTestEmail("consent");
 
-      E2EEvent.visitURL("/", 2000);
-      waitForClerk();
-      openGuestAuthButton("Register");
-      fillRegisterDetails(email, password);
-      expectRegisterStep("One last step");
+      openRegisterModal();
+      fillRegisterDetails(pendingEmail, randomClerkTestPassword());
+      expectAuthModalStep("One last step");
       prepareLandingChrome();
       snapViewport("auth-register-consent", suffix);
-      cy.task("deleteClerkUserByEmail", email, { timeout: 20000 });
     });
 
     it("compares registration verify step", () => {
-      bypassClerkBotProtection();
-      const runId = Date.now();
-      const email = `sc-www+clerk_test+verify+${runId}@example.com`;
-      const password = randomClerkTestPassword();
+      pendingEmail = clerkTestEmail("verify");
 
-      E2EEvent.visitURL("/", 2000);
-      waitForClerk();
-      openGuestAuthButton("Register");
-      fillRegisterDetails(email, password);
-      expectRegisterStep("One last step");
-      cy.get('input[name="legalAccepted"]').check({ force: true });
-      cy.contains("button", "Continue").should("not.be.disabled").click();
-      expectRegisterStep("Verify your email");
+      openRegisterModal();
+      fillRegisterDetails(pendingEmail, randomClerkTestPassword());
+      acceptRegisterConsent();
       prepareLandingChrome();
       snapViewport("auth-register-verify", suffix);
-      cy.task("deleteClerkUserByEmail", email, { timeout: 20000 });
     });
   });
 
@@ -262,28 +186,30 @@ export function registerAuthVisualSuites(suffix: string): void {
     let visualEmail: string | undefined;
     let visualPassword: string | undefined;
 
+    skipWithoutClerk();
+
     before(() => {
-      const runId = Date.now();
-      visualEmail = `sc-www+clerk_test+visual${suffix || ""}+${runId}@example.com`;
+      visualEmail = clerkTestEmail(`visual${suffix || ""}`);
       visualPassword = randomClerkTestPassword();
       ensureVisualUserSession(visualEmail, visualPassword);
     });
 
     beforeEach(() => {
-      expect(visualEmail, "visualEmail").to.be.a("string").and.not.be.empty;
-      expect(visualPassword, "visualPassword").to.be.a("string").and.not.be
-        .empty;
+      mockCollectionsApi();
+      expect(visualEmail, "visualEmail")
+        .to.be.a("string")
+        .and.have.length.greaterThan(0);
+      expect(visualPassword, "visualPassword")
+        .to.be.a("string")
+        .and.have.length.greaterThan(0);
       ensureVisualUserSession(visualEmail!, visualPassword!);
     });
 
     after(() => {
-      if (!visualEmail) {
-        return;
-      }
       const email = visualEmail;
       visualEmail = undefined;
       visualPassword = undefined;
-      cy.task("deleteClerkUserByEmail", email, { timeout: 20000 });
+      deleteClerkTestUser(email);
     });
 
     it("compares signed-in header", () => {
@@ -317,9 +243,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares unlocked server listing bookmarks", () => {
       E2EEvent.visitURL("/servers", 4000);
-      cy.get(
-        "sc-bookmark-button button.bookmark-button:not(.bookmark-button--locked)",
-      )
+      cy.get(UNLOCKED_BOOKMARK_BUTTON)
         .first()
         .should("be.visible");
       cy.get(
@@ -333,9 +257,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares unlocked database listing bookmarks", () => {
       E2EEvent.visitURL("/databases", 4000);
-      cy.get(
-        "sc-bookmark-button button.bookmark-button:not(.bookmark-button--locked)",
-      )
+      cy.get(UNLOCKED_BOOKMARK_BUTTON)
         .first()
         .should("be.visible");
       cy.get(
@@ -349,9 +271,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares unlocked server details bookmark", () => {
       E2EEvent.visitURL(SERVER_DETAILS, 4000);
-      cy.get(
-        "sc-bookmark-button button.bookmark-button:not(.bookmark-button--locked)",
-      )
+      cy.get(UNLOCKED_BOOKMARK_BUTTON)
         .first()
         .should("be.visible");
       stabilizeSignedInHeader();
@@ -361,9 +281,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares unlocked database details bookmark", () => {
       E2EEvent.visitURL(DATABASE_DETAILS, 4000);
-      cy.get(
-        "sc-bookmark-button button.bookmark-button:not(.bookmark-button--locked)",
-      )
+      cy.get(UNLOCKED_BOOKMARK_BUTTON)
         .first()
         .should("be.visible");
       stabilizeSignedInHeader();
@@ -372,18 +290,18 @@ export function registerAuthVisualSuites(suffix: string): void {
     });
 
     it("compares empty bookmarks page", () => {
-      clearAllBookmarks();
+      openBookmarksPage();
+      cy.contains("No bookmarks match the current filters.").should(
+        "be.visible",
+      );
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       snap("auth-bookmarks-empty", suffix);
     });
 
     it("compares populated bookmarks page", () => {
-      clearAllBookmarks();
       E2EEvent.visitURL("/servers", 4000);
-      cy.get(
-        "sc-bookmark-button button.bookmark-button:not(.bookmark-button--locked)",
-      )
+      cy.get(UNLOCKED_BOOKMARK_BUTTON)
         .first()
         .should("be.visible")
         .click();
@@ -391,8 +309,7 @@ export function registerAuthVisualSuites(suffix: string): void {
         timeout: 20000,
       }).should("have.length.at.least", 1);
 
-      E2EEvent.visitURL("/bookmarks", 4000);
-      cy.get("sc-loading-spinner", { timeout: 20000 }).should("not.exist");
+      openBookmarksPage();
       cy.get("article.bookmarks-card").should("have.length.at.least", 1);
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
@@ -400,15 +317,8 @@ export function registerAuthVisualSuites(suffix: string): void {
     });
 
     it("compares save-search modal on servers", () => {
-      clearAllBookmarks();
-      E2EEvent.visitURL(SERVERS_FILTERED, 4000);
-      cy.get("button.page-header__bookmark:not(.page-header__bookmark--locked)")
-        .should("be.visible")
-        .and("not.be.disabled")
-        .click();
-      cy.get("#server-listing-save-search-modal")
-        .should("not.have.class", "hidden")
-        .and("be.visible");
+      E2EEvent.visitURL(SERVERS_FILTERED_URL, 4000);
+      openPageHeaderSaveModal("server-listing-save-search-modal");
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("servers_table");
@@ -416,15 +326,8 @@ export function registerAuthVisualSuites(suffix: string): void {
     });
 
     it("compares save-search modal on databases", () => {
-      clearAllBookmarks();
-      E2EEvent.visitURL(DATABASES_FILTERED, 4000);
-      cy.get("button.page-header__bookmark:not(.page-header__bookmark--locked)")
-        .should("be.visible")
-        .and("not.be.disabled")
-        .click();
-      cy.get("#database-listing-save-search-modal")
-        .should("not.have.class", "hidden")
-        .and("be.visible");
+      E2EEvent.visitURL(DATABASES_FILTERED_URL, 4000);
+      openPageHeaderSaveModal("database-listing-save-search-modal");
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("databases_table");
@@ -432,31 +335,16 @@ export function registerAuthVisualSuites(suffix: string): void {
     });
 
     it("compares save-comparison modal", () => {
-      clearAllBookmarks();
       E2EEvent.visitURL(SERVER_COMPARE_URL, 4000);
-      cy.get("button.page-header__bookmark:not(.page-header__bookmark--locked)")
-        .should("be.visible")
-        .and("not.be.disabled")
-        .click();
-      cy.get("#server-compare-save-modal")
-        .should("not.have.class", "hidden")
-        .and("be.visible");
+      openPageHeaderSaveModal("server-compare-save-modal");
       stabilizeSignedInHeader();
       prepareServerCompareChrome();
       snap("auth-save-comparison-modal", suffix);
     });
 
     it("compares save-assessment modal", () => {
-      clearAllBookmarks();
-      E2EEvent.visitURL("/advisor", 4000);
-      cy.get("#advisor_example_button").should("be.visible").click();
-      cy.get("button.page-header__bookmark:not(.page-header__bookmark--locked)")
-        .should("be.visible")
-        .and("not.be.disabled")
-        .click();
-      cy.get("#advisor-save-modal")
-        .should("not.have.class", "hidden")
-        .and("be.visible");
+      loadAdvisorExample();
+      openPageHeaderSaveModal("advisor-save-modal");
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideBaselineServerCaretForScreenshot();
@@ -464,11 +352,7 @@ export function registerAuthVisualSuites(suffix: string): void {
     });
 
     it("compares signed-out header after sign-out", () => {
-      E2EEvent.visitURL("/", 2000);
-      cy.get("#auth_button").should("be.visible").click();
-      cy.get("#auth_options").should("be.visible");
-      cy.contains("#auth_options button", "Sign Out").click();
-      cy.get("#auth_button").should("not.exist");
+      signOutClerkTestUser();
       prepareLandingChrome();
       snap("auth-signed-out-header", suffix);
     });

@@ -1,3 +1,4 @@
+import { skipWithoutClerk } from "../support/clerk-testing";
 import { E2EEvent } from "../support/generics";
 
 function assertRegisterModalOpened(): void {
@@ -32,6 +33,8 @@ function expandGeoSection(titleSelector: string): void {
 }
 
 describe("Guest feature limits", () => {
+  skipWithoutClerk();
+
   it("opens register from the server compare limit toast", () => {
     E2EEvent.visitURL("/servers", 4000);
     cy.get('[id^="server_compare_checkbox_"]')

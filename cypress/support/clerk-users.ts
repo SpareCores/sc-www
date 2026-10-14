@@ -1,8 +1,15 @@
 type ClerkUserSummary = {
   id: string;
+  email_addresses?: { email_address: string }[];
 };
 
+const CLERK_TEST_EMAIL_PATTERN = /\+clerk_test(\+[^@]*)?@example\.com$/;
+
 export async function deleteClerkUserByEmail(email: string): Promise<null> {
+  if (!CLERK_TEST_EMAIL_PATTERN.test(email)) {
+    throw new Error(`Refusing to delete non-test Clerk user: ${email}`);
+  }
+
   const secretKey = process.env.CLERK_SECRET_KEY;
   if (!secretKey) {
     throw new Error("CLERK_SECRET_KEY is required to delete Clerk test users");
@@ -25,7 +32,12 @@ export async function deleteClerkUserByEmail(email: string): Promise<null> {
   }
 
   const users = (await listResponse.json()) as ClerkUserSummary[];
-  for (const user of users) {
+  const matchingUsers = users.filter((user) =>
+    user.email_addresses?.some(
+      (address) => address.email_address.toLowerCase() === email.toLowerCase(),
+    ),
+  );
+  for (const user of matchingUsers) {
     const deleteResponse = await fetch(
       `https://api.clerk.com/v1/users/${user.id}`,
       {
