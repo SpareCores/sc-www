@@ -210,7 +210,7 @@
                       </span>
                       @if (region.inactive) {
                         @let inactivePriceNote =
-                          "Last known price, not currently orderable";
+                          getInactivePriceNote(region.inactiveObservedAt);
                         <button
                           type="button"
                           class="inline-flex"

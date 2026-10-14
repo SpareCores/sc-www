@@ -1,4 +1,4 @@
-import { Location, isPlatformBrowser } from "@angular/common";
+import { Location, formatDate, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   DestroyRef,
@@ -788,6 +788,18 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+  getInactivePriceNote(observedAt: string | undefined): string {
+    if (!observedAt) {
+      return "Last known price, not currently orderable.";
+    }
+
+    const timestamp = /(Z|[+-]\d{2}:?\d{2})$/.test(observedAt)
+      ? observedAt
+      : `${observedAt}Z`;
+
+    return `Last known price (at ${formatDate(timestamp, "yyyy-MM-dd HH:mm", "en-US", "UTC")} UTC), not currently orderable.`;
+  }
+
   hideWarningTooltip() {
     this.uiTooltip.hide(this.warningTooltipRef()?.nativeElement);
   }
@@ -807,6 +819,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             r.vendor_id === price.vendor_id && r.region_id === price.region_id,
         );
         const allocation = price.allocation || "spot";
+        const inactiveObservedAt =
+          price.status !== Status.Active ? price.observed_at : undefined;
         if (!region) {
           const data: any = {
             vendor_id: price.vendor_id,
@@ -814,6 +828,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             display_name: price.region.display_name,
             api_reference: price.region.api_reference,
             inactive: price.status !== Status.Active,
+            inactiveObservedAt,
             spot: {
               price: 0,
               unit: price.unit,
@@ -834,6 +849,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           region[allocation].price += price.price;
           region[allocation].count++;
           region.inactive ||= price.status !== Status.Active;
+          if (
+            inactiveObservedAt &&
+            (!region.inactiveObservedAt ||
+              inactiveObservedAt > region.inactiveObservedAt)
+          ) {
+            region.inactiveObservedAt = inactiveObservedAt;
+          }
         }
       });
 
