@@ -262,6 +262,27 @@ describe("KeeperHttpClient", () => {
       expect(httpMock.match(requestUrl()).length).toBe(0);
     }));
 
+    it("cancels the in-flight request when aborted while pending", fakeAsync(() => {
+      const controller = new AbortController();
+      let rejected: unknown;
+
+      client
+        .request({ method: "GET", path, signal: controller.signal })
+        .catch((err) => (rejected = err));
+
+      flushMicrotasks();
+      const req = httpMock.expectOne(requestUrl());
+
+      controller.abort();
+      flushMicrotasks();
+
+      expect(isAbortError(rejected)).toBeTrue();
+      expect(req.cancelled).toBeTrue();
+
+      tick(RETRY_INTERVALS[0]);
+      expect(httpMock.match(requestUrl()).length).toBe(0);
+    }));
+
     (["POST", "PATCH", "DELETE"] as const).forEach((method) => {
       it(`does not retry ${method} on 408`, fakeAsync(() => {
         let rejected: unknown;

@@ -6,7 +6,7 @@ import {
   HttpClient as HttpClientSDK,
   HttpResponse,
 } from "../../../sdk/http-client";
-import { firstValueFrom } from "rxjs";
+import { Observable, firstValueFrom, fromEvent, map, race } from "rxjs";
 import { AuthStateService } from "../core/auth";
 
 type CancelToken = NonNullable<FullRequestParams["cancelToken"]>;
@@ -161,6 +161,23 @@ async function waitForDelay(
   });
 }
 
+function firstValueFromWithSignal<T>(
+  source: Observable<T>,
+  signal?: AbortSignal | null,
+): Promise<T> {
+  throwIfAborted(signal);
+  if (!signal) {
+    return firstValueFrom(source);
+  }
+
+  const aborted$ = fromEvent(signal, "abort").pipe(
+    map(() => {
+      throw createAbortError(signal.reason);
+    }),
+  );
+  return firstValueFrom(race(source, aborted$));
+}
+
 export class KeeperHttpClient extends HttpClientSDK {
   private requestAbortControllers = new Map<CancelToken, AbortController>();
 
@@ -293,20 +310,13 @@ export class KeeperHttpClient extends HttpClientSDK {
 
     try {
       const headers = await this.buildHeaders(type, signal);
-      const requestOptions: any = {
-        body,
-        headers,
-        observe,
-      };
-      if (signal) {
-        requestOptions.signal = signal;
-      }
-      return await firstValueFrom(
-        this.angularHttp.request(
-          method || "GET",
-          url.toString(),
-          requestOptions,
-        ),
+      return await firstValueFromWithSignal(
+        this.angularHttp.request(method || "GET", url.toString(), {
+          body,
+          headers,
+          observe,
+        }),
+        signal,
       );
     } catch (err: any) {
       if (isAbortError(err)) {
