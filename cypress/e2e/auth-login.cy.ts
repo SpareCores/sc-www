@@ -1,4 +1,7 @@
-import { UNLOCKED_BOOKMARK_BUTTON, openBookmarksPage } from "../support/bookmarks";
+import {
+  UNLOCKED_BOOKMARK_BUTTON,
+  openBookmarksPage,
+} from "../support/bookmarks";
 import {
   CLERK_TEST_CODE,
   completeDeviceVerificationIfAsked,

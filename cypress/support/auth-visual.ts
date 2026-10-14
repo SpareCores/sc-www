@@ -243,9 +243,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares unlocked server listing bookmarks", () => {
       E2EEvent.visitURL("/servers", 4000);
-      cy.get(UNLOCKED_BOOKMARK_BUTTON)
-        .first()
-        .should("be.visible");
+      cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
       cy.get(
         "button.page-header__bookmark:not(.page-header__bookmark--locked)",
       ).should("be.visible");
@@ -257,9 +255,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares unlocked database listing bookmarks", () => {
       E2EEvent.visitURL("/databases", 4000);
-      cy.get(UNLOCKED_BOOKMARK_BUTTON)
-        .first()
-        .should("be.visible");
+      cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
       cy.get(
         "button.page-header__bookmark:not(.page-header__bookmark--locked)",
       ).should("be.visible");
@@ -271,9 +267,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares unlocked server details bookmark", () => {
       E2EEvent.visitURL(SERVER_DETAILS, 4000);
-      cy.get(UNLOCKED_BOOKMARK_BUTTON)
-        .first()
-        .should("be.visible");
+      cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
       stabilizeSignedInHeader();
       prepareServerDetailsChrome();
       snap("auth-unlocked-server-details-bookmark", suffix);
@@ -281,9 +275,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares unlocked database details bookmark", () => {
       E2EEvent.visitURL(DATABASE_DETAILS, 4000);
-      cy.get(UNLOCKED_BOOKMARK_BUTTON)
-        .first()
-        .should("be.visible");
+      cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
       stabilizeSignedInHeader();
       prepareDatabaseDetailsChrome();
       snap("auth-unlocked-database-details-bookmark", suffix);
@@ -301,10 +293,7 @@ export function registerAuthVisualSuites(suffix: string): void {
 
     it("compares populated bookmarks page", () => {
       E2EEvent.visitURL("/servers", 4000);
-      cy.get(UNLOCKED_BOOKMARK_BUTTON)
-        .first()
-        .should("be.visible")
-        .click();
+      cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible").click();
       cy.get("sc-bookmark-button button.bookmark-button--active", {
         timeout: 20000,
       }).should("have.length.at.least", 1);

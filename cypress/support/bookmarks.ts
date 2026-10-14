@@ -17,9 +17,7 @@ export function openBookmarksPage(): void {
 
 export function loadAdvisorExample(): void {
   E2EEvent.visitURL("/advisor", 4000);
-  cy.get("#advisor_example_button")
-    .should("be.visible")
-    .click({ force: true });
+  cy.get("#advisor_example_button").should("be.visible").click({ force: true });
 }
 
 export function openPageHeaderSaveModal(modalId: string): void {

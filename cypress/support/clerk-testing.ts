@@ -85,10 +85,7 @@ export function expectAuthModalStep(title: string): void {
   });
 }
 
-function openGuestAuthModal(
-  label: "Register" | "Log in",
-  title: string,
-): void {
+function openGuestAuthModal(label: "Register" | "Log in", title: string): void {
   bypassClerkBotProtection();
   E2EEvent.visitURL("/", 2000);
   waitForClerk();

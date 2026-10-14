@@ -447,9 +447,7 @@ describe("ServerListingComponent query param handling", () => {
     expect(benchmarkColumn()?.show).toBeTrue();
 
     const columns = component.possibleColumns
-      .map((column) =>
-        column.type === "benchmark" ? 0 : column.show ? 1 : 0,
-      )
+      .map((column) => (column.type === "benchmark" ? 0 : column.show ? 1 : 0))
       .reduce((acc: number, bit) => (acc << 1) | bit, 0);
     queryParams.next({ columns: String(columns) });
     tick();
