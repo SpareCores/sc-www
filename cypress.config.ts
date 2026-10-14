@@ -39,12 +39,17 @@ export default defineConfig({
 
       getCompareSnapshotPlugin(on, config);
 
+      const publishableKey = process.env["NG_APP_CLERK_PUBLISHABLE_KEY"];
+      const secretKey = process.env["CLERK_SECRET_KEY"];
+      const clerkAvailable = !!publishableKey && !!secretKey;
+      config.expose = { ...config.expose, CLERK_AVAILABLE: clerkAvailable };
+      if (!clerkAvailable) {
+        return config;
+      }
+
       return clerkSetup({
         config,
-        options: {
-          publishableKey: process.env["NG_APP_CLERK_PUBLISHABLE_KEY"],
-          secretKey: process.env["CLERK_SECRET_KEY"],
-        },
+        options: { publishableKey, secretKey },
       });
     },
   },

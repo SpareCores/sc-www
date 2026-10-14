@@ -55,7 +55,12 @@ jobs:
         env:
           LEGAL_TOKEN: ${{ secrets.LEGAL_TOKEN }}
           LEGAL_URL: ${{ secrets.LEGAL_URL }}
-        run: 'curl -s -L -H "Authorization: token ${LEGAL_TOKEN}" ${LEGAL_URL} | tar xz --strip-components=1'
+        run: |
+          if [ -z "${LEGAL_TOKEN}" ] || [ -z "${LEGAL_URL}" ]; then
+            echo "Legal docs secrets are not available, skipping."
+            exit 0
+          fi
+          curl -s -L -H "Authorization: token ${LEGAL_TOKEN}" ${LEGAL_URL} | tar xz --strip-components=1
       - name: Cypress run
         uses: cypress-io/github-action@v7.1.9
         with:
