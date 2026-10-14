@@ -31,9 +31,9 @@ import {
 } from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { PageHeader } from "../../components/page-header/page-header";
-import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
-import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
+import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
@@ -106,9 +106,9 @@ export type RegionVendorMetadata = {
     LucideInfo,
     LucideScale,
     CountryIdtoNamePipe,
-    GpuCountPipe,
+    AcceleratorCountPipe,
     StoragePipe,
-    GpuMemoryPipe,
+    AcceleratorMemoryPipe,
     LucideCheck,
     LucideX,
     RouterModule,

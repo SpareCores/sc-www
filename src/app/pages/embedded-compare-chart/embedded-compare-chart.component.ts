@@ -55,7 +55,7 @@ export class EmbeddedCompareChartComponent implements OnInit, OnDestroy {
   instancePropertyCategories: any[] = [
     { name: "CPU", category: "cpu", properties: [] },
     { name: "Memory", category: "memory", properties: [] },
-    { name: "GPU", category: "gpu", properties: [] },
+    { name: "Accelerators", category: "gpu", properties: [] },
     { name: "Storage", category: "storage", properties: [] },
     { name: "Network", category: "network", properties: [] },
   ];

@@ -457,7 +457,7 @@
                 <th>INSTANCE</th>
                 <th>vCPUs</th>
                 <th>MEMORY</th>
-                <th>GPUs</th>
+                <th>Accelerators</th>
               </tr>
             </thead>
             <tbody>
@@ -480,7 +480,7 @@
                   </td>
                   <td>{{ server.vcpus }}</td>
                   <td>{{ getMemory(server.memory_amount) }}</td>
-                  <td>{{ server.gpu_count | gpuCount }}</td>
+                  <td>{{ server.accelerator_count | acceleratorCount }}</td>
                 </tr>
               }
             </tbody>
@@ -511,7 +511,7 @@
                 <th>vCPUs</th>
                 <th>MEMORY</th>
                 @if (selectedSimilarOption.key === "bySpecs") {
-                  <th>GPUs</th>
+                  <th>Accelerators</th>
                 }
                 @if (selectedSimilarOption.key === "byScore") {
                   <th>SCORE</th>
@@ -544,7 +544,7 @@
                   <td>{{ getMemory(server.memory_amount) }}</td>
                   @if (selectedSimilarOption.key === "bySpecs") {
                     <td>
-                      {{ server.gpu_count | gpuCount }}
+                      {{ server.accelerator_count | acceleratorCount }}
                     </td>
                   }
                   @if (selectedSimilarOption.key === "byScore") {

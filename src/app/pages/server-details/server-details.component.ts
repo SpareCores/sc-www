@@ -54,7 +54,7 @@ import {
 } from "../../components/server-property-card/server-property-card.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
-import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
 import { formatStorageSize } from "../../pipes/pipe-utils";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { AnalyticsService } from "../../services/analytics.service";
@@ -132,7 +132,7 @@ interface PropertyCategoryDefinition {
     RouterModule,
     BaseChartDirective,
     ReduceUnitNamePipe,
-    GpuCountPipe,
+    AcceleratorCountPipe,
     ServerChartsComponent,
     ServerLstopoComponent,
     ServerPropertyCardComponent,
@@ -201,7 +201,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     [];
 
   similarOptions: any[] = [
-    { name: "By GPU, CPU and memory specs", key: "bySpecs" },
+    { name: "By accelerator, CPU and memory specs", key: "bySpecs" },
     { name: "By CPU performance", key: "byScore" },
     { name: "By CPU performance per price", key: "byPerformancePerPrice" },
   ];
@@ -211,7 +211,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     { name: "General", category: "meta" },
     { name: "CPU", category: "cpu" },
     { name: "Memory", category: "memory" },
-    { name: "GPU", category: "gpu" },
+    { name: "Accelerators", category: "gpu" },
     { name: "Storage", category: "storage" },
     { name: "Network", category: "network" },
   ];
@@ -439,10 +439,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   ),
                 });
               }
-              if (this.serverDetails.gpu_count) {
+              if (this.serverDetails.accelerator_count) {
                 this.features.push({
-                  name: "GPU",
-                  value: this.serverDetails.gpu_count,
+                  name: "Accelerator",
+                  value: this.serverDetails.accelerator_count,
                 });
               }
 
@@ -1143,7 +1143,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       return html;
     }
 
-    if (name === "gpus") {
+    if (name === "accelerators") {
       let html = "<ul>";
       (prop as any[]).forEach((s: any) => {
         html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
@@ -1438,9 +1438,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         },
         {
           "@type": "QuantitativeValue",
-          name: "Graphics processing units",
-          unitText: "GPU(s)",
-          value: this.serverDetails.gpu_count,
+          name: "Accelerators",
+          unitText: "accelerator(s)",
+          value: this.serverDetails.accelerator_count,
         },
       ],
     };
@@ -1464,7 +1464,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   diffSpec(s: ServerPKs) {
     return (
-      Math.abs(Number(this.serverDetails.gpu_count) - Number(s.gpu_count)) *
+      Math.abs(
+        Number(this.serverDetails.accelerator_count) -
+          Number(s.accelerator_count),
+      ) *
         10e6 +
       Math.abs(Number(this.serverDetails.vcpus) - Number(s.vcpus)) * 10e3 +
       Math.abs(

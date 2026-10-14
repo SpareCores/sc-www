@@ -58,7 +58,8 @@ export namespace ServerPrices {
         | "Apple"
         | "Hygon"
         | "Intel"
-        | "Microsoft";
+        | "Microsoft"
+        | "NVIDIA";
       /** Processor family */
       cpu_family?:
         | "ARM"
@@ -66,6 +67,7 @@ export namespace ServerPrices {
         | "ARMv9"
         | "Ampere Altra"
         | "EPYC"
+        | "Grace"
         | "Xeon"
         | "Yitian";
       /**
@@ -663,7 +665,7 @@ export namespace ServerPrices {
        * Bundled storage type
        * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
-      storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      storage_type?: "hdd" | "ssd" | "nvme ssd";
       /**
        * Countries
        * Filter for regions in the provided list of countries.
@@ -742,16 +744,11 @@ export namespace ServerPrices {
         | "A10"
         | "A100"
         | "A10G"
-        | "A16"
-        | "A40"
         | "B200"
         | "B300"
-        | "G59"
-        | "GB200"
-        | "GB300"
+        | "GH200"
         | "H100"
         | "H200"
-        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
@@ -765,14 +762,8 @@ export namespace ServerPrices {
         | "T4G"
         | "V100"
         | "V100S"
-        | "V520"
         | "V620"
-        | "V710"
-        | "v3"
-        | "v5e"
-        | "v5p"
-        | "v6e"
-        | "v7x";
+        | "V710";
       /**
        * Limit
        * Maximum number of results.

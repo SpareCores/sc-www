@@ -146,7 +146,7 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
       {
         id: "research-academic-collaboration-content",
         description: [
-          'Beyond active research collaboration on cloud cost driving factors, Spare Cores provides a highly scalable dashboarding solution for the CEU Business Analytics curriculum as part of <a href="https://gabors-data-analysis.com/lab" target="_blank" rel="noopener noreferrer">Gabors Data Analysis and AI Lab</a>. This live deployment allows students and researchers to interact with real-world data, proving the platform\'s utility in high-concurrency educational and analytical environments.',
+          'Beyond hosting production-focused engineering internship programs and active research collaboration on cloud cost driving factors, Spare Cores provides a highly scalable dashboarding solution for the CEU Business Analytics curriculum as part of <a href="https://gabors-data-analysis.com/lab" target="_blank" rel="noopener noreferrer">Gabors Data Analysis and AI Lab</a>. This live deployment allows students and researchers to interact with real-world data, proving the platform\'s utility in high-concurrency educational and analytical environments.',
         ],
         dividerAfter: true,
         logos: [
@@ -155,6 +155,12 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
             alt: "Central European University logo",
             href: "https://www.ceu.edu/",
             src: "/assets/images/partners/ceu_logo.svg",
+          },
+          {
+            name: "Eötvös Loránd University",
+            alt: "Eötvös Loránd University (ELTE) logo",
+            href: "https://www.elte.hu/en",
+            src: "/assets/images/partners/elte_logo.png",
           },
         ],
       },

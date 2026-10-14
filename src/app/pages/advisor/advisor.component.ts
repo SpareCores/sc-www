@@ -58,12 +58,12 @@ import {
 } from "../../components/search-bar/search-bar.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
-import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
-import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
+import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -371,9 +371,9 @@ function invertAdvisorDeltaTone(
 
 type AdvisorComparableResourceKey =
   | "memory_amount"
-  | "gpu_count"
-  | "gpu_memory_min"
-  | "gpu_memory_total"
+  | "accelerator_count"
+  | "accelerator_memory_min"
+  | "accelerator_memory_total"
   | "storage_size"
   | "cpu_l1d_cache"
   | "cpu_l2_cache"
@@ -401,13 +401,13 @@ type AdvisorComparableResourceKey =
     LoadingSpinnerComponent,
     PageHeader,
     PaginationComponent,
-    GpuCountPipe,
+    AcceleratorCountPipe,
     CpuCacheSizePipe,
     Ipv4CountPipe,
     MonthlyTrafficPipe,
     NetworkSpeedPipe,
     StoragePipe,
-    GpuMemoryPipe,
+    AcceleratorMemoryPipe,
     RouterLink,
     SearchBarComponent,
     CollectionSaveModalComponent,

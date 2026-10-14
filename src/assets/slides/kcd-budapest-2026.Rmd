@@ -6,6 +6,7 @@ author:
 date: "2026-10-30"
 conference: "KCD Budapest 2026"
 conference_url: "https://kcdbudapest.hu/"
+conference_talk_url: "https://kcdbudapest.hu/agenda/#session-1336916"
 location: "Budapest, Hungary"
 revealjs-plugins:
   - boxoverlay

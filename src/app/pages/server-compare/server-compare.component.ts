@@ -185,15 +185,6 @@ export class ServerCompareComponent
   zones: any[] = [];
   regions: any[] = [];
 
-  fields: any[] = [
-    { name: "Vendor", key: "vendor" },
-    { name: "Processor", key: "processor" },
-    { name: "Memory", key: "memory" },
-    { name: "Storage", key: "storage" },
-    { name: "GPU", key: "gpu" },
-    { name: "GPU Memory", key: "gpu_memory" },
-  ];
-
   clipboardIcon = "clipboard";
 
   instanceProperties: any[] = [];
@@ -208,7 +199,7 @@ export class ServerCompareComponent
     { name: "Metadata", category: "meta", properties: [] },
     { name: "CPU", category: "cpu", properties: [] },
     { name: "Memory", category: "memory", properties: [] },
-    { name: "GPU", category: "gpu", properties: [] },
+    { name: "Accelerators", category: "gpu", properties: [] },
     { name: "Storage", category: "storage", properties: [] },
     { name: "Network", category: "network", properties: [] },
   ];

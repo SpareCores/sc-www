@@ -84,7 +84,7 @@ export function formatStorageSize(
   return `${formatValue(numericSize / 1000)} TB`;
 }
 
-export function formatGpuMemory(
+export function formatAcceleratorMemory(
   memoryMib: number | null | undefined,
   emptyValue = "-",
 ): string {
@@ -174,19 +174,19 @@ export function formatMonthlyTraffic(
   return `${formatValue(transformedValue)} ${unit}`;
 }
 
-export function formatGpuCount(
-  gpuCount: number | null | undefined,
+export function formatAcceleratorCount(
+  acceleratorCount: number | null | undefined,
   emptyValue: string | null = null,
 ): number | string | null {
-  if (gpuCount === null || gpuCount === undefined) {
+  if (acceleratorCount === null || acceleratorCount === undefined) {
     return emptyValue;
   }
 
-  if (gpuCount >= 1) {
-    return gpuCount;
+  if (acceleratorCount >= 1) {
+    return acceleratorCount;
   }
 
-  switch (gpuCount) {
+  switch (acceleratorCount) {
     case 0.5:
       return "½";
     case 0.3333:
@@ -202,7 +202,7 @@ export function formatGpuCount(
     case 0.0417:
       return "1⁄24";
     default:
-      return gpuCount;
+      return acceleratorCount;
   }
 }
 

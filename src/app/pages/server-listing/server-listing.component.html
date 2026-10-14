@@ -459,14 +459,16 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu_memory_min") {
+                      @if (column.type === "accelerator_memory_min") {
                         <td>
-                          {{ item.gpu_memory_min | gpuMemory }}
+                          {{ item.accelerator_memory_min | acceleratorMemory }}
                         </td>
                       }
-                      @if (column.type === "gpu_memory_total") {
+                      @if (column.type === "accelerator_memory_total") {
                         <td>
-                          {{ item.gpu_memory_total | gpuMemory }}
+                          {{
+                            item.accelerator_memory_total | acceleratorMemory
+                          }}
                         </td>
                       }
                       @if (column.type === "storage") {
@@ -481,14 +483,14 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu") {
+                      @if (column.type === "accelerator") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ item.gpu_count | gpuCount }}
+                            {{ item.accelerator_count | acceleratorCount }}
                           </div>
-                          @if (item.gpu_model) {
+                          @if (item.accelerator_model) {
                             <div class="text-xs text-white flex gap-1">
-                              <span>{{ item.gpu_model }}</span>
+                              <span>{{ item.accelerator_model }}</span>
                             </div>
                           }
                         </td>
@@ -531,19 +533,19 @@
                           </div>
                         </td>
                       }
-                      @if (column.type === "gpu_model") {
+                      @if (column.type === "accelerator_model") {
                         <td>
-                          @if (item.gpu_model) {
+                          @if (item.accelerator_model) {
                             <div class="text-sm text-white flex gap-1">
-                              <span>{{ item.gpu_model }}</span>
+                              <span>{{ item.accelerator_model }}</span>
                             </div>
                           }
                           <div class="text-xs text-white">
-                            @if (item.gpu_manufacturer) {
-                              <span>{{ item.gpu_manufacturer }} </span>
+                            @if (item.accelerator_manufacturer) {
+                              <span>{{ item.accelerator_manufacturer }} </span>
                             }
-                            @if (item.gpu_family) {
-                              <span>{{ item.gpu_family }} </span>
+                            @if (item.accelerator_family) {
+                              <span>{{ item.accelerator_family }} </span>
                             }
                           </div>
                         </td>

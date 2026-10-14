@@ -1,7 +1,7 @@
 import {
   formatCpuCacheSize,
-  formatGpuCount,
-  formatGpuMemory,
+  formatAcceleratorCount,
+  formatAcceleratorMemory,
   formatIpv4Count,
   formatMemoryAmount,
   formatMonthlyTraffic,
@@ -22,8 +22,8 @@ type TableColumnLike = {
 
 type TableServerLike = {
   memory_amount?: number | null;
-  gpu_memory_min?: number | null;
-  gpu_memory_total?: number | null;
+  accelerator_memory_min?: number | null;
+  accelerator_memory_total?: number | null;
   storage_size?: number | null;
 };
 
@@ -212,12 +212,12 @@ export function getServerPropertyValue(
     return formatStorageSize(server.storage_size);
   }
 
-  if (name === "gpu_memory_min") {
-    return formatGpuMemory(server.gpu_memory_min);
+  if (name === "accelerator_memory_min") {
+    return formatAcceleratorMemory(server.accelerator_memory_min);
   }
 
-  if (name === "gpu_memory_total") {
-    return formatGpuMemory(server.gpu_memory_total);
+  if (name === "accelerator_memory_total") {
+    return formatAcceleratorMemory(server.accelerator_memory_total);
   }
 
   if (NETWORK_SPEED_PROPERTY_IDS.has(name)) {
@@ -236,8 +236,8 @@ export function getServerPropertyValue(
     return formatIpv4Count(prop as number);
   }
 
-  if (name === "gpu_count") {
-    return formatGpuCount(prop as number, "-") ?? "-";
+  if (name === "accelerator_count") {
+    return formatAcceleratorCount(prop as number, "-") ?? "-";
   }
 
   if (typeof prop === "number") {

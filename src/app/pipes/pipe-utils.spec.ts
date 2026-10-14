@@ -1,7 +1,7 @@
 import {
   formatBinaryMemoryDisplay,
   formatBytes,
-  formatGpuMemory,
+  formatAcceleratorMemory,
   formatKebabTitle,
   formatStorageSize,
   formatValue,
@@ -82,16 +82,16 @@ describe("formatStorageSize", () => {
   });
 });
 
-describe("formatGpuMemory", () => {
+describe("formatAcceleratorMemory", () => {
   it("returns empty value for null and undefined", () => {
-    expect(formatGpuMemory(null)).toBe("-");
-    expect(formatGpuMemory(undefined)).toBe("-");
+    expect(formatAcceleratorMemory(null)).toBe("-");
+    expect(formatAcceleratorMemory(undefined)).toBe("-");
   });
 
   it("converts MiB to GiB via formatValue", () => {
-    expect(formatGpuMemory(512)).toBe("0.5 GiB");
-    expect(formatGpuMemory(16384)).toBe("16 GiB");
-    expect(formatGpuMemory(0)).toBe("0 GiB");
+    expect(formatAcceleratorMemory(512)).toBe("0.5 GiB");
+    expect(formatAcceleratorMemory(16384)).toBe("16 GiB");
+    expect(formatAcceleratorMemory(0)).toBe("0 GiB");
   });
 });
 

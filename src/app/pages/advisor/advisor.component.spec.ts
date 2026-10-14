@@ -162,9 +162,9 @@ describe("AdvisorComponent", () => {
           status: "active",
           vcpus: 4,
           memory_amount: 4096,
-          gpu_count: 1,
-          gpu_memory_min: 8,
-          gpu_memory_total: 0,
+          accelerator_count: 1,
+          accelerator_memory_min: 8,
+          accelerator_memory_total: 0,
           storage_size: 80,
           cpu_l1d_cache: 64,
           cpu_l2_cache: 1024,
@@ -583,7 +583,7 @@ describe("AdvisorComponent", () => {
       "WORKLOAD",
       "$ EFFICIENCY",
       "MEMORY",
-      "GPUs",
+      "XPU",
       "STORAGE",
       "BEST PRICE",
     ]);
@@ -1788,7 +1788,7 @@ describe("AdvisorComponent", () => {
         memory_amount: 8192,
         memory_speed: 4800,
         memory_generation: "DDR5",
-        gpu_count: 2,
+        accelerator_count: 2,
         storage_size: 160,
         cpu_l1d_cache: 128,
         cpu_l2_cache: 2048,
@@ -1822,7 +1822,7 @@ describe("AdvisorComponent", () => {
     const memoryDelta = memoryPrimaryLine.querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
-    const gpuDelta = cells[visibleColumnIndex("GPUs")].querySelector(
+    const acceleratorDelta = cells[visibleColumnIndex("XPU")].querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
     const storageDelta = cells[visibleColumnIndex("STORAGE")].querySelector(
@@ -1846,7 +1846,7 @@ describe("AdvisorComponent", () => {
       "4800 MHz (DDR5)",
     );
     expect(memoryDelta.textContent?.trim()).toBe("(+100%)");
-    expect(gpuDelta.textContent?.trim()).toBe("(+100%)");
+    expect(acceleratorDelta.textContent?.trim()).toBe("(+100%)");
     expect(storageDelta.textContent?.trim()).toBe("(+100%)");
   }));
 
@@ -1854,23 +1854,26 @@ describe("AdvisorComponent", () => {
     component.selectedBaselineServer.set({
       vendor_id: "aws",
       api_reference: "large",
-      gpu_count: 1,
+      accelerator_count: 1,
     });
     component.recommendations.set([
       {
         vendor_id: "aws",
         api_reference: "large",
-        gpu_count: null,
+        accelerator_count: null,
       },
       {
         vendor_id: "aws",
         api_reference: "c7a.large",
-        gpu_count: 2,
+        accelerator_count: 2,
       },
     ] as never[]);
 
     const candidate = component.recommendations()[1];
-    const delta = component.getComparableResourceDelta(candidate, "gpu_count");
+    const delta = component.getComparableResourceDelta(
+      candidate,
+      "accelerator_count",
+    );
 
     expect(delta?.baselineValue).toBe(1);
     expect(delta?.percentageDelta).toBe(100);
@@ -1889,7 +1892,7 @@ describe("AdvisorComponent", () => {
         server_id: "srv-1",
         memory_amount: 4096,
         memory_speed: 4800,
-        gpu_count: 1,
+        accelerator_count: 1,
         storage_size: 80,
         cpu_l1d_cache: 64,
         cpu_l2_cache: 1024,
@@ -1915,7 +1918,9 @@ describe("AdvisorComponent", () => {
     const memoryCell = cells[
       visibleColumnIndex("MEMORY")
     ] as HTMLTableCellElement;
-    const gpuCell = cells[visibleColumnIndex("GPUs")] as HTMLTableCellElement;
+    const acceleratorCell = cells[
+      visibleColumnIndex("XPU")
+    ] as HTMLTableCellElement;
     const memoryPrimaryLine = memoryCell.querySelector(
       "div.text-sm",
     ) as HTMLElement;
@@ -1923,17 +1928,19 @@ describe("AdvisorComponent", () => {
       "div.text-xs",
     ) as HTMLElement;
     const memoryDelta = memoryPrimaryLine.querySelector(".advisor-table-delta");
-    const gpuDelta = gpuCell.querySelector(".advisor-table-delta");
+    const acceleratorDelta = acceleratorCell.querySelector(
+      ".advisor-table-delta",
+    );
     const cpuCacheDelta = cpuCacheCell.querySelector(".advisor-table-delta");
 
     expect(normalizeText(cpuCacheCell.textContent)).toContain("L1: 64 KiB");
     expect(normalizeText(memoryPrimaryLine.textContent)).toBe("4.0 GiB");
     expect(normalizeText(memorySecondaryLine.textContent)).toBe("4800 MHz");
-    expect(normalizeText(gpuCell.textContent)).toContain("1");
+    expect(normalizeText(acceleratorCell.textContent)).toContain("1");
     expect(normalizeText(cpuCacheCell.textContent)).not.toContain("0%");
-    expect(normalizeText(gpuCell.textContent)).not.toContain("0%");
+    expect(normalizeText(acceleratorCell.textContent)).not.toContain("0%");
     expect(memoryDelta).toBeNull();
-    expect(gpuDelta).toBeNull();
+    expect(acceleratorDelta).toBeNull();
     expect(cpuCacheDelta).toBeNull();
   }));
 
@@ -2450,7 +2457,7 @@ describe("AdvisorComponent", () => {
       "WORKLOAD",
       "$ EFFICIENCY",
       "MEMORY",
-      "GPUs",
+      "XPU",
       "STORAGE",
       "BEST PRICE",
     ]);
