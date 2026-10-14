@@ -114,8 +114,9 @@ describe("CollectionsStore", () => {
     await flushAuthEffects();
     listFavoriteServers.calls.reset();
 
-    userId.set("user_test");
-    isAuthenticated.set(true);
+    authInProgress.set(true);
+    await flushAuthEffects();
+    authInProgress.set(false);
     await flushAuthEffects();
 
     expect(listFavoriteServers).not.toHaveBeenCalled();
