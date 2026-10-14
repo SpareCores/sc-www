@@ -549,7 +549,6 @@ export class ServerCompareComponent
           },
         });
         this.isLoading = false;
-        return;
       }
     } else if (param) {
       const decodedInstances = decodeBase64JsonUrlState(
@@ -569,16 +568,15 @@ export class ServerCompareComponent
           },
         });
         this.isLoading = false;
-        return;
-      }
+      } else {
+        this.instances = decodedInstances.value;
+        this.instancesRaw = this.instances.length > 0 ? param : "";
+        this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
 
-      this.instances = decodedInstances.value;
-      this.instancesRaw = this.instances.length > 0 ? param : "";
-      this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
-
-      if (!this.instances?.length) {
-        this.applyGuideChrome();
-        this.isLoading = false;
+        if (!this.instances?.length) {
+          this.applyGuideChrome();
+          this.isLoading = false;
+        }
       }
     } else {
       this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
