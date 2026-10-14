@@ -500,9 +500,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this.refreshColumns(false);
 
         // will process later
-        if (query.benchmark) {
-          benchmarkDataEncoded = query.benchmark;
-        }
+        benchmarkDataEncoded = query.benchmark || null;
 
         // we don't want to search yet on initial load
         // as we need to decode the benchmark URL param first,
@@ -512,9 +510,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
             this.syncSelectedBenchmarkConfig(benchmarkDataEncoded);
           }
           if (
-            this.benchmarksLoaded &&
-            (this.previousSearchParams === null ||
-              !areSearchParamsEqual(this.previousSearchParams, query))
+            this.previousSearchParams === null ||
+            !areSearchParamsEqual(this.previousSearchParams, query)
           ) {
             this.previousSearchParams = toSearchParams(query);
             this._searchServers(true);
@@ -620,6 +617,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           id: SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
           title: "Failed to load server filters.",
         });
+
+        this.previousSearchParams = toSearchParams(this.query);
+        this._searchServers(true);
       })
       .finally(() => {
         if (
@@ -628,9 +628,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         ) {
           this.benchmarkLoadAbortController = null;
           isInitialLoad = false;
-          if (!this.benchmarksLoaded) {
-            this.isLoading = false;
-          }
         }
       });
 
@@ -769,7 +766,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.selectedBenchmarkConfig = nextBenchmarkConfig;
+    if (nextBenchmarkConfig !== this._selectedBenchmarkConfig) {
+      this.selectedBenchmarkConfig = nextBenchmarkConfig;
+    }
   }
 
   setSpecialList() {
