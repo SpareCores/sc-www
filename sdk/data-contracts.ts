@@ -669,6 +669,8 @@ export enum GpuModels {
   A10G = "A10G",
   B200 = "B200",
   B300 = "B300",
+  GB200 = "GB200",
+  GB300 = "GB300",
   GH200 = "GH200",
   H100 = "H100",
   H200 = "H200",
@@ -7612,6 +7614,12 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
    */
   currency?: string | null;
   /**
+   * Active only
+   * Filter for active resources only.
+   * @default true
+   */
+  only_active?: boolean | null;
+  /**
    * Vendor
    * A Vendor's ID.
    */
@@ -8099,7 +8107,28 @@ export interface ServerTaskBlockReasonCodesInspectorServerVendorServerTaskBlockR
 export type ServerTaskBlockReasonCodesInspectorServerVendorServerTaskBlockReasonCodesGetData =
   InspectorTaskBlockReasonCodesResponse;
 
-export interface TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetParams {
+export interface DatabaseTaskBlockReasonCodesInspectorDatabaseVendorDatabaseTaskBlockReasonCodesGetParams {
+  /**
+   * Tasks
+   * Inspector task names to evaluate.
+   */
+  tasks: string[];
+  /**
+   * Vendor
+   * A Vendor's ID.
+   */
+  vendor: string;
+  /**
+   * Database
+   * A Database's ID or API reference.
+   */
+  database: string;
+}
+
+export type DatabaseTaskBlockReasonCodesInspectorDatabaseVendorDatabaseTaskBlockReasonCodesGetData =
+  InspectorTaskBlockReasonCodesResponse;
+
+export interface ServersTaskBlockReasonCodesInspectorServersTaskBlockReasonCodesGetParams {
   /**
    * Tasks
    * Inspector task names to evaluate.
@@ -8107,11 +8136,21 @@ export interface TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetParams {
   tasks: string[];
 }
 
-/** Response Task Block Reason Codes Inspector Task Block Reason Codes Get */
-export type TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetData = Record<
-  string,
-  Record<string, InspectorTaskBlockReasonCodesResponse>
->;
+/** Response Servers Task Block Reason Codes Inspector Servers Task Block Reason Codes Get */
+export type ServersTaskBlockReasonCodesInspectorServersTaskBlockReasonCodesGetData =
+  Record<string, Record<string, InspectorTaskBlockReasonCodesResponse>>;
+
+export interface DatabasesTaskBlockReasonCodesInspectorDatabasesTaskBlockReasonCodesGetParams {
+  /**
+   * Tasks
+   * Inspector task names to evaluate.
+   */
+  tasks: string[];
+}
+
+/** Response Databases Task Block Reason Codes Inspector Databases Task Block Reason Codes Get */
+export type DatabasesTaskBlockReasonCodesInspectorDatabasesTaskBlockReasonCodesGetData =
+  Record<string, Record<string, InspectorTaskBlockReasonCodesResponse>>;
 
 export interface SearchRegionsRegionsGetParams {
   /**
@@ -9412,6 +9451,8 @@ export interface SearchServersServersGetParams {
     | "A10G"
     | "B200"
     | "B300"
+    | "GB200"
+    | "GB300"
     | "GH200"
     | "H100"
     | "H200"
@@ -11087,6 +11128,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A10G"
     | "B200"
     | "B300"
+    | "GB200"
+    | "GB300"
     | "GH200"
     | "H100"
     | "H200"

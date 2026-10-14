@@ -269,6 +269,18 @@ getParameterType(parameter);
       >
         <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
       </button>
+      } @if (warning(); as warningText) {
+      <button
+        type="button"
+        class="tooltip-trigger"
+        aria-label="Show filter warning"
+        (mouseenter)="emitTooltip($event, warningText, 'warning')"
+        (mouseleave)="hideTooltip.emit()"
+        (focus)="emitTooltip($event, warningText, 'warning')"
+        (blur)="hideTooltip.emit()"
+      >
+        <svg lucideTriangleAlert class="benchmark-note-icon"></svg>
+      </button>
       }
     </div>
   </div>

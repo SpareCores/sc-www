@@ -198,11 +198,38 @@
                 region of availabilityRegions;
                 track region.vendor_id + "_" + region.region_id
               ) {
-                <tr class="availability_line">
+                <tr
+                  class="availability_line"
+                  [class.opacity-60]="region.inactive"
+                >
                   <td>
-                    <div>
-                      <b>{{ region.display_name }}</b> /
-                      {{ region.api_reference }}
+                    <div class="flex items-center gap-1">
+                      <span>
+                        <b>{{ region.display_name }}</b> /
+                        {{ region.api_reference }}
+                      </span>
+                      @if (region.inactive) {
+                        @let inactivePriceNote =
+                          getInactivePriceNote(region.inactiveObservedAt);
+                        <button
+                          type="button"
+                          class="inline-flex"
+                          [attr.aria-label]="inactivePriceNote"
+                          (mouseenter)="
+                            showWarningTooltip($event, inactivePriceNote)
+                          "
+                          (mouseleave)="hideWarningTooltip()"
+                          (focus)="
+                            showWarningTooltip($event, inactivePriceNote)
+                          "
+                          (blur)="hideWarningTooltip()"
+                        >
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                          ></svg>
+                        </button>
+                      }
                     </div>
                   </td>
                   @if (region["spot"].price) {
@@ -747,4 +774,12 @@
       }
     </div>
   </div>
+</div>
+
+<div
+  #warningTooltip
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+>
+  {{ warningTooltipContent() }}
 </div>

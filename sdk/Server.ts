@@ -59,7 +59,7 @@ export class Server<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Query the current prices of a single server by its vendor id and server id.
+   * @description Query the prices of a single server by its vendor id and server id.
    *
    * @tags Server Details
    * @name GetServerPricesServerVendorServerPricesGet

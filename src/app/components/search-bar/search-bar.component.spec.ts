@@ -45,6 +45,7 @@ describe("SearchBarComponent", () => {
         left: "anchor-right",
         top: "anchor-below",
       },
+      "default",
     );
 
     component.hideTooltip();

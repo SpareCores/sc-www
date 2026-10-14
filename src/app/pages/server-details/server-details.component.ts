@@ -1,4 +1,4 @@
-import { Location, isPlatformBrowser } from "@angular/common";
+import { Location, formatDate, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   DestroyRef,
@@ -11,6 +11,7 @@ import {
   Renderer2,
   ViewChild,
   inject,
+  signal,
   viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -27,6 +28,7 @@ import {
   ServerDescription,
   ServerPKs,
   ServerPrice,
+  Status,
 } from "../../../../sdk/data-contracts";
 import type { RequestParams } from "../../../../sdk/http-client";
 import {
@@ -63,6 +65,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
@@ -156,6 +159,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private renderer = inject(Renderer2);
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
+  private uiTooltip = inject(UiTooltipService);
   private serverLoadId = 0;
   private loadAbortController: AbortController | null = null;
   similarDropdown = viewChild<FlowbiteDropdownDirective>("similarDropdown");
@@ -179,6 +183,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   description = "";
   cardPriceDescription = "";
+  hasInactivePrices = false;
   title = "";
   seoKeywords = "";
 
@@ -247,6 +252,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   modalEmbed: any;
   private summarizeModal: Modal | null = null;
   summarizeModalRef = viewChild<ElementRef<HTMLElement>>("summarizeModal");
+  warningTooltipRef = viewChild<ElementRef<HTMLElement>>("warningTooltip");
+  warningTooltipContent = signal("");
 
   embeddableCharts = [...DEFAULT_EMBEDDABLE_CHARTS];
 
@@ -293,7 +300,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.keeperAPI.getServerSimilarServers(vendor, id, "specs", 7, {
             signal: loadAbortController.signal,
           }),
-          this.keeperAPI.getServerPrices(vendor, id, undefined, {
+          this.keeperAPI.getServerPrices(vendor, id, undefined, false, {
             signal: loadAbortController.signal,
           }),
           this.keeperAPI.getServerBenchmark(vendor, id, {
@@ -352,10 +359,22 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   (b) => b.benchmark_id === "stress_ng:bestn",
                 )?.score;
 
+              const isOrderable =
+                this.serverDetails.status === Status.Active ||
+                this.serverDetails.status === Status.PlannedForRetirement;
+              this.hasInactivePrices = false;
+
               if (prices) {
-                this.serverDetails.prices = JSON.parse(
-                  JSON.stringify(prices),
-                )?.sort((a: any, b: any) => a.price - b.price);
+                this.serverDetails.prices = (
+                  JSON.parse(JSON.stringify(prices)) as ExtendedServerPrice[]
+                )
+                  .filter(
+                    (price) => !isOrderable || price.status === Status.Active,
+                  )
+                  .sort((a, b) => a.price - b.price);
+                this.hasInactivePrices = this.serverDetails.prices.some(
+                  (price) => price.status !== Status.Active,
+                );
 
                 if (this.serverDetails.prices?.length > 0) {
                   this.serverDetails.min_price = this.serverDetails.prices
@@ -441,7 +460,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               }
               if (this.serverDetails.accelerator_count) {
                 this.features.push({
-                  name: "Accelerator",
+                  name: this.serverDetails.accelerator_type ?? "Accelerator",
                   value: this.serverDetails.accelerator_count,
                 });
               }
@@ -525,7 +544,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 const roundedPrice =
                   Math.round(this.serverDetails.prices[0].price * 1000000) /
                   1000000;
-                this.cardPriceDescription = ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
+                this.cardPriceDescription = this.hasInactivePrices
+                  ? ` The last known price was ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`
+                  : ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
               }
 
               const fullDescription =
@@ -843,6 +864,34 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
+  showWarningTooltip(event: MouseEvent | FocusEvent, content: string) {
+    this.uiTooltip.showIfPresent({
+      tooltipElement: this.warningTooltipRef()?.nativeElement,
+      event,
+      content,
+      variant: "warning",
+      onShow: (tooltipContent) => {
+        this.warningTooltipContent.set(tooltipContent);
+      },
+    });
+  }
+
+  getInactivePriceNote(observedAt: string | undefined): string {
+    if (!observedAt) {
+      return "Last known price, not currently orderable.";
+    }
+
+    const timestamp = /(Z|[+-]\d{2}:?\d{2})$/.test(observedAt)
+      ? observedAt
+      : `${observedAt}Z`;
+
+    return `Last known price (at ${formatDate(timestamp, "yyyy-MM-dd HH:mm", "en-US", "UTC")} UTC), not currently orderable.`;
+  }
+
+  hideWarningTooltip() {
+    this.uiTooltip.hide(this.warningTooltipRef()?.nativeElement);
+  }
+
   refreshPricesGraphs() {
     this.updateChart1();
     this.updateChart2();
@@ -858,12 +907,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             r.vendor_id === price.vendor_id && r.region_id === price.region_id,
         );
         const allocation = price.allocation || "spot";
+        const inactiveObservedAt =
+          price.status !== Status.Active ? price.observed_at : undefined;
         if (!region) {
           const data: any = {
             vendor_id: price.vendor_id,
             region_id: price.region_id,
             display_name: price.region.display_name,
             api_reference: price.region.api_reference,
+            inactive: price.status !== Status.Active,
+            inactiveObservedAt,
             spot: {
               price: 0,
               unit: price.unit,
@@ -883,6 +936,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         } else {
           region[allocation].price += price.price;
           region[allocation].count++;
+          region.inactive ||= price.status !== Status.Active;
+          if (
+            inactiveObservedAt &&
+            (!region.inactiveObservedAt ||
+              inactiveObservedAt > region.inactiveObservedAt)
+          ) {
+            region.inactiveObservedAt = inactiveObservedAt;
+          }
         }
       });
 
@@ -1392,7 +1453,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if (
       !this.serverDetails ||
       !this.serverDetails.prices ||
-      !this.serverDetails.prices.length
+      !this.serverDetails.prices.length ||
+      this.hasInactivePrices
     ) {
       return;
     }

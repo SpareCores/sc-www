@@ -97,6 +97,7 @@ export class KeeperAPIService {
     vendor: string,
     id: string,
     currency?: string,
+    onlyActive?: boolean,
     params: RequestParams = {},
   ): Promise<any> {
     return this.ServerController.getServerPricesServerVendorServerPricesGet(
@@ -104,6 +105,7 @@ export class KeeperAPIService {
         vendor,
         server: id,
         currency,
+        only_active: onlyActive,
       },
       params,
     );

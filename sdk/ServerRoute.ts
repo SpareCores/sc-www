@@ -652,7 +652,7 @@ export namespace Server {
   }
 
   /**
-   * @description Query the current prices of a single server by its vendor id and server id.
+   * @description Query the prices of a single server by its vendor id and server id.
    * @tags Server Details
    * @name GetServerPricesServerVendorServerPricesGet
    * @summary Get Server Prices
@@ -990,6 +990,12 @@ export namespace Server {
        * @default "USD"
        */
       currency?: string | null;
+      /**
+       * Active only
+       * Filter for active resources only.
+       * @default true
+       */
+      only_active?: boolean | null;
     };
     export type RequestBody = never;
     export type RequestHeaders = {};

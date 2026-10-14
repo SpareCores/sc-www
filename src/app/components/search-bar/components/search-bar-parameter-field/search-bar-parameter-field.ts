@@ -8,11 +8,16 @@ import {
   output,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
+import {
+  LucideDynamicIcon,
+  LucideInfo,
+  LucideTriangleAlert,
+} from "@lucide/angular";
 import { NumbersOnlyDirective } from "../../../../directives/numbers-only.directive";
 import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
 import { ToastService } from "../../../../services/toast.service";
 import { CPU_CACHE_INPUT_ERROR_TOAST_ID } from "../../../../services/toast-ids";
+import type { TooltipVariant } from "../../../../services/ui-tooltip.service";
 import type {
   BenchmarkFilterOption,
   ComplianceFrameworkMetadata,
@@ -58,6 +63,7 @@ type CpuCacheRangeFocusLossSkip = {
     FormsModule,
     LucideDynamicIcon,
     LucideInfo,
+    LucideTriangleAlert,
     BenchmarkIconPipe,
     NumbersOnlyDirective,
     SearchBarMultiSelect,
@@ -79,6 +85,7 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
   complianceFrameworks = input<ComplianceFrameworkMetadata[]>([]);
   vendors = input<VendorMetadata[]>([]);
   storageIds = input<StorageMetadata[]>([]);
+  warning = input<string | undefined>(undefined);
 
   valueChanged = output<void>();
   filterServers = output<void>();
@@ -440,12 +447,16 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
     }
   }
 
-  emitTooltip(event: MouseEvent | FocusEvent, content: string | undefined) {
+  emitTooltip(
+    event: MouseEvent | FocusEvent,
+    content: string | undefined,
+    variant?: TooltipVariant,
+  ) {
     if (!content) {
       return;
     }
 
-    this.showTooltip.emit({ event, content });
+    this.showTooltip.emit({ event, content, variant });
   }
 
   commitParameterInput(event: Event) {
