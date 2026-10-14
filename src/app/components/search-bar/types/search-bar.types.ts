@@ -3,6 +3,7 @@ import type {
   BenchmarkConfig,
   Server,
 } from "../../../../../sdk/data-contracts";
+import type { TooltipVariant } from "../../../services/ui-tooltip.service";
 
 export type SearchBarParameter = {
   name: string;
@@ -90,6 +91,7 @@ export type SearchBarCustomControlChange = {
 export type SearchBarTooltipEvent = {
   event: MouseEvent | FocusEvent;
   content: string;
+  variant?: TooltipVariant;
 };
 
 export type SearchBarParameterTemplateContext = {

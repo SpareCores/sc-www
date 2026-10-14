@@ -4,6 +4,7 @@ import {
   BenchmarkScore,
   ServerPKs,
   ServerPrice,
+  Status,
 } from "../../../../sdk/data-contracts";
 
 export type ServerDetailsForFaqs = {
@@ -23,7 +24,7 @@ export type ServerDetailsForFaqs = {
   accelerator_family?: string | null;
   accelerator_model?: string | null;
   benchmark_scores: BenchmarkScore[];
-  prices: Pick<ServerPrice, "price" | "currency">[];
+  prices: Pick<ServerPrice, "price" | "currency" | "status">[];
   family?: string | null;
   vendor: {
     name: string;
@@ -115,7 +116,15 @@ export function buildServerFaqs(input: BuildServerFaqsInput): AccordionItem[] {
     });
   }
 
-  if (serverDetails.prices[0]) {
+  if (
+    serverDetails.prices[0] &&
+    serverDetails.prices.some((price) => price.status !== Status.Active)
+  ) {
+    faqs.push({
+      title: `How much does the ${displayName} server cost?`,
+      content: `The ${displayName} server is currently not available to order. The last known pricing started at ${serverDetails.prices[0].price} ${serverDetails.prices[0].currency} per hour in ${serverDetails.prices.length} regions and zones, with a maximum price of ${serverDetails.prices.slice(-1)[0].price} ${serverDetails.prices.slice(-1)[0].currency}.`,
+    });
+  } else if (serverDetails.prices[0]) {
     faqs.push({
       title: `How much does the ${displayName} server cost?`,
       content: `The pricing for ${displayName} servers starts at ${serverDetails.prices[0].price} ${serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options): currently, we track the prices in ${serverDetails.prices.length} regions and zones every 5 minutes, and the maximum price stands at ${serverDetails.prices.slice(-1)[0].price} ${serverDetails.prices.slice(-1)[0].currency}.`,

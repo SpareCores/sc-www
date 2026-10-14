@@ -99,9 +99,12 @@
           [complianceFrameworks]="complianceFrameworks"
           [vendors]="vendors"
           [storageIds]="storageIds"
+          [warning]="parameterWarnings()[parameter.name]"
           (valueChanged)="valueChanged()"
           (filterServers)="filterServers()"
-          (showTooltip)="showTooltip($event.event, $event.content)"
+          (showTooltip)="
+            showTooltip($event.event, $event.content, false, $event.variant)
+          "
           (hideTooltip)="hideTooltip()"
         ></sc-search-bar-parameter-field>
       }

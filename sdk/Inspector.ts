@@ -11,11 +11,15 @@
  */
 
 import {
+  DatabaseTaskBlockReasonCodesInspectorDatabaseVendorDatabaseTaskBlockReasonCodesGetData,
+  DatabaseTaskBlockReasonCodesInspectorDatabaseVendorDatabaseTaskBlockReasonCodesGetParams,
+  DatabasesTaskBlockReasonCodesInspectorDatabasesTaskBlockReasonCodesGetData,
+  DatabasesTaskBlockReasonCodesInspectorDatabasesTaskBlockReasonCodesGetParams,
   HTTPValidationError,
   ServerTaskBlockReasonCodesInspectorServerVendorServerTaskBlockReasonCodesGetData,
   ServerTaskBlockReasonCodesInspectorServerVendorServerTaskBlockReasonCodesGetParams,
-  TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetData,
-  TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetParams,
+  ServersTaskBlockReasonCodesInspectorServersTaskBlockReasonCodesGetData,
+  ServersTaskBlockReasonCodesInspectorServersTaskBlockReasonCodesGetParams,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
@@ -27,7 +31,7 @@ export class Inspector<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Return block reason codes for the requested server's inspector tasks.
+   * @description Return block reason codes for the requested Server's inspector tasks.
    *
    * @tags Inspector
    * @name ServerTaskBlockReasonCodesInspectorServerVendorServerTaskBlockReasonCodesGet
@@ -54,22 +58,71 @@ export class Inspector<SecurityDataType = unknown> {
         ...params,
       });
   /**
-   * @description Return block reason codes for every active server, nested by vendor ID then server API reference.
+   * @description Return block reason codes for the requested Database's inspector tasks.
    *
    * @tags Inspector
-   * @name TaskBlockReasonCodesInspectorTaskBlockReasonCodesGet
-   * @summary Task Block Reason Codes
-   * @request GET:/inspector/task_block_reason_codes
+   * @name DatabaseTaskBlockReasonCodesInspectorDatabaseVendorDatabaseTaskBlockReasonCodesGet
+   * @summary Database Task Block Reason Codes
+   * @request GET:/inspector/database/{vendor}/{database}/task_block_reason_codes
    */
-  taskBlockReasonCodesInspectorTaskBlockReasonCodesGet = (
-    query: TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetParams,
+  databaseTaskBlockReasonCodesInspectorDatabaseVendorDatabaseTaskBlockReasonCodesGet =
+    (
+      {
+        vendor,
+        database,
+        ...query
+      }: DatabaseTaskBlockReasonCodesInspectorDatabaseVendorDatabaseTaskBlockReasonCodesGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<
+        DatabaseTaskBlockReasonCodesInspectorDatabaseVendorDatabaseTaskBlockReasonCodesGetData,
+        HTTPValidationError
+      >({
+        path: `/inspector/database/${vendor}/${database}/task_block_reason_codes`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      });
+  /**
+   * @description Return block reason codes for every active Server, nested by vendor ID then server API reference.
+   *
+   * @tags Inspector
+   * @name ServersTaskBlockReasonCodesInspectorServersTaskBlockReasonCodesGet
+   * @summary Servers Task Block Reason Codes
+   * @request GET:/inspector/servers/task_block_reason_codes
+   */
+  serversTaskBlockReasonCodesInspectorServersTaskBlockReasonCodesGet = (
+    query: ServersTaskBlockReasonCodesInspectorServersTaskBlockReasonCodesGetParams,
     params: RequestParams = {},
   ) =>
     this.http.request<
-      TaskBlockReasonCodesInspectorTaskBlockReasonCodesGetData,
+      ServersTaskBlockReasonCodesInspectorServersTaskBlockReasonCodesGetData,
       HTTPValidationError
     >({
-      path: `/inspector/task_block_reason_codes`,
+      path: `/inspector/servers/task_block_reason_codes`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Return block reason codes for every active Database, nested by vendor ID then database API reference.
+   *
+   * @tags Inspector
+   * @name DatabasesTaskBlockReasonCodesInspectorDatabasesTaskBlockReasonCodesGet
+   * @summary Databases Task Block Reason Codes
+   * @request GET:/inspector/databases/task_block_reason_codes
+   */
+  databasesTaskBlockReasonCodesInspectorDatabasesTaskBlockReasonCodesGet = (
+    query: DatabasesTaskBlockReasonCodesInspectorDatabasesTaskBlockReasonCodesGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      DatabasesTaskBlockReasonCodesInspectorDatabasesTaskBlockReasonCodesGetData,
+      HTTPValidationError
+    >({
+      path: `/inspector/databases/task_block_reason_codes`,
       method: "GET",
       query: query,
       format: "json",
