@@ -6,14 +6,14 @@ date: 2026-10-15
 teaser: "How ~80 stress-ng CPU methods scale with SMT, many cores, and Arm, and why the SCore uses div16."
 # 320x220
 image: /assets/images/blog/thumbnails/stress-ng-cpu-methods.webp
-image_alt: Bar chart of the multi-core scaling factor of stress-ng CPU methods on a single hyper-threaded core.
+image_alt: Spare Cores benchmark page of the stress-ng div16 multi-core workload, with the score distribution across 3,625 server types.
 author: Adam Toth
 tags: [benchmark, performance, score, compute power, scalability, vcpu]
 ---
 
 <!--
 EDITOR NOTES (remove before publishing):
-- Charts and thumbnail are placeholders; see the HTML comment specs next to each image.
+- Charts are placeholders; see the HTML comment specs next to each image.
 - Source data: Linear DEV-297 (copied from Slack, June 2024).
 -->
 
