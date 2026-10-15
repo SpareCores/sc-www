@@ -61,8 +61,8 @@ lists all of them with a short description, and the implementation lives in
 <a href="https://github.com/ColinIanKing/stress-ng" target="_blank" rel="noopener">stress-ng GitHub repository</a>.
 
 When the `--metrics` flag is set, `stress-ng` reports the number of "bogo
-operations" per second: how many times the method's loop completed. Note that
-`stress-ng` normalizes the bogo-ops of each method using a per-method
+operations" per second: a scaled count of the method's completed iterations.
+Note that `stress-ng` normalizes the bogo-ops of each method using a per-method
 reference rate hardcoded in `stress-cpu.c`, so the absolute numbers are
 roughly in the same ballpark across methods (mostly between 1000 and 5000 on a modern x86
 core). This makes the methods somewhat comparable, but it does not mean a
@@ -212,7 +212,7 @@ On `c6i.metal`, the range was much wider:
   scaled as if all 128 hyper-threads were real cores.
 - `hanoi` (52x), `bitops` (52x), `jmp` (56x), and `matrixprod` (56x) scaled
   even worse than the physical core count.
-- The median method scaled 82x, and `all` 93x.
+- The median method scaled 81x, and `all` 93x.
 
 So, depending on which method you pick, the very same server is either a 52
 or a 126 "core" machine. 🤯
