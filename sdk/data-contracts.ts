@@ -674,6 +674,7 @@ export enum GpuModels {
   GH200 = "GH200",
   H100 = "H100",
   H200 = "H200",
+  HL205 = "HL-205",
   L20 = "L20",
   L4 = "L4",
   L40S = "L40S",
@@ -681,12 +682,12 @@ export enum GpuModels {
   P4 = "P4",
   RTX5000 = "RTX 5000",
   RTXPRO4500 = "RTX PRO 4500",
-  RTXPRO6000BlackwellServerEdition = "RTX PRO 6000 Blackwell Server Edition",
   RTXPro6000 = "RTX Pro 6000",
   T4 = "T4",
   T4G = "T4G",
   V100 = "V100",
   V100S = "V100S",
+  V520 = "V520",
   V620 = "V620",
   V710 = "V710",
 }
@@ -694,7 +695,6 @@ export enum GpuModels {
 /** GpuManufacturers */
 export enum GpuManufacturers {
   AMD = "AMD",
-  Google = "Google",
   Habana = "Habana",
   NVIDIA = "NVIDIA",
 }
@@ -708,7 +708,6 @@ export enum GpuFamilies {
   Hopper = "Hopper",
   Pascal = "Pascal",
   RadeonProNavi = "Radeon Pro Navi",
-  TPU = "TPU",
   Turing = "Turing",
   Volta = "Volta",
 }
@@ -1257,6 +1256,64 @@ export enum Allocation {
 export enum AcceleratorType {
   GPU = "GPU",
   TPU = "TPU",
+}
+
+/** AcceleratorModels */
+export enum AcceleratorModels {
+  A10 = "A10",
+  A100 = "A100",
+  A10G = "A10G",
+  B200 = "B200",
+  B300 = "B300",
+  GB200 = "GB200",
+  GB300 = "GB300",
+  GH200 = "GH200",
+  H100 = "H100",
+  H200 = "H200",
+  HL205 = "HL-205",
+  L20 = "L20",
+  L4 = "L4",
+  L40S = "L40S",
+  P100 = "P100",
+  P4 = "P4",
+  RTX5000 = "RTX 5000",
+  RTXPRO4500 = "RTX PRO 4500",
+  RTXPro6000 = "RTX Pro 6000",
+  T4 = "T4",
+  T4G = "T4G",
+  V100 = "V100",
+  V100S = "V100S",
+  V520 = "V520",
+  V620 = "V620",
+  V710 = "V710",
+  Tpu7 = "tpu7",
+  V3 = "v3",
+  V5E = "v5e",
+  V5P = "v5p",
+  V6E = "v6e",
+  V7X = "v7x",
+}
+
+/** AcceleratorManufacturers */
+export enum AcceleratorManufacturers {
+  AMD = "AMD",
+  Google = "Google",
+  Habana = "Habana",
+  NVIDIA = "NVIDIA",
+}
+
+/** AcceleratorFamilies */
+export enum AcceleratorFamilies {
+  AdaLovelace = "Ada Lovelace",
+  Ampere = "Ampere",
+  Blackwell = "Blackwell",
+  Gaudi = "Gaudi",
+  Hopper = "Hopper",
+  Pascal = "Pascal",
+  RadeonProNavi = "Radeon Pro Navi",
+  TPU = "TPU",
+  Turing = "Turing",
+  Volta = "Volta",
 }
 
 /**
@@ -8181,7 +8238,6 @@ export interface SearchServersServersGetParams {
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
    * @min 1
-   * @max 256
    * @default 1
    */
   vcpus_min?: number;
@@ -9431,7 +9487,7 @@ export interface SearchServersServersGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
@@ -9441,7 +9497,6 @@ export interface SearchServersServersGetParams {
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
-    | "TPU"
     | "Turing"
     | "Volta";
   /** GPU model */
@@ -9456,6 +9511,7 @@ export interface SearchServersServersGetParams {
     | "GH200"
     | "H100"
     | "H200"
+    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
@@ -9463,14 +9519,87 @@ export interface SearchServersServersGetParams {
     | "P4"
     | "RTX 5000"
     | "RTX PRO 4500"
-    | "RTX PRO 6000 Blackwell Server Edition"
     | "RTX Pro 6000"
     | "T4"
     | "T4G"
     | "V100"
     | "V100S"
+    | "V520"
     | "V620"
     | "V710";
+  /**
+   * Accelerator type
+   * Type of the accelerator, e.g. GPU or TPU.
+   */
+  accelerator_type?: "GPU" | "TPU";
+  /**
+   * Accelerator count
+   * Required number of accelerators (e.g. GPUs or TPUs).
+   */
+  accelerator_min?: number | null;
+  /**
+   * Maximum accelerator count
+   * Maximum number of accelerators. Set to 0 to search for servers without accelerators.
+   */
+  accelerator_max?: number | null;
+  /**
+   * Required accelerator memory
+   * Required amount of accelerator memory (GB) in each accelerator.
+   */
+  accelerator_memory_min?: number | null;
+  /**
+   * Total accelerator memory
+   * Required amount of total accelerator memory (GBs) in all accelerators.
+   */
+  accelerator_memory_total?: number | null;
+  /** Accelerator manufacturer */
+  accelerator_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+  /** Accelerator family */
+  accelerator_family?:
+    | "Ada Lovelace"
+    | "Ampere"
+    | "Blackwell"
+    | "Gaudi"
+    | "Hopper"
+    | "Pascal"
+    | "Radeon Pro Navi"
+    | "TPU"
+    | "Turing"
+    | "Volta";
+  /** Accelerator model */
+  accelerator_model?:
+    | "A10"
+    | "A100"
+    | "A10G"
+    | "B200"
+    | "B300"
+    | "GB200"
+    | "GB300"
+    | "GH200"
+    | "H100"
+    | "H200"
+    | "HL-205"
+    | "L20"
+    | "L4"
+    | "L40S"
+    | "P100"
+    | "P4"
+    | "RTX 5000"
+    | "RTX PRO 4500"
+    | "RTX Pro 6000"
+    | "T4"
+    | "T4G"
+    | "V100"
+    | "V100S"
+    | "V520"
+    | "V620"
+    | "V710"
+    | "tpu7"
+    | "v3"
+    | "v5e"
+    | "v5p"
+    | "v6e"
+    | "v7x";
   /**
    * Maximum price
    * Maximum best price of the server in the requested currency, using the price allocation selected via best_price_allocation (hourly price, or monthly price when MONTHLY is selected), including the optional extra traffic and storage costs.
@@ -9536,7 +9665,6 @@ export interface SearchDatabasesDatabasesGetParams {
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
    * @min 1
-   * @max 256
    * @default 1
    */
   vcpus_min?: number;
@@ -10417,7 +10545,6 @@ export interface SearchServerPricesServerPricesGetParams {
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
    * @min 1
-   * @max 256
    * @default 1
    */
   vcpus_min?: number;
@@ -11108,7 +11235,7 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
@@ -11118,7 +11245,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
-    | "TPU"
     | "Turing"
     | "Volta";
   /** GPU model */
@@ -11133,6 +11259,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "GH200"
     | "H100"
     | "H200"
+    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
@@ -11140,12 +11267,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "P4"
     | "RTX 5000"
     | "RTX PRO 4500"
-    | "RTX PRO 6000 Blackwell Server Edition"
     | "RTX Pro 6000"
     | "T4"
     | "T4G"
     | "V100"
     | "V100S"
+    | "V520"
     | "V620"
     | "V710";
   /**

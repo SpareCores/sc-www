@@ -35,7 +35,6 @@ export namespace ServerPrices {
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
-       * @max 256
        * @default 1
        */
       vcpus_min?: number;
@@ -726,7 +725,7 @@ export namespace ServerPrices {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
@@ -736,7 +735,6 @@ export namespace ServerPrices {
         | "Hopper"
         | "Pascal"
         | "Radeon Pro Navi"
-        | "TPU"
         | "Turing"
         | "Volta";
       /** GPU model */
@@ -751,6 +749,7 @@ export namespace ServerPrices {
         | "GH200"
         | "H100"
         | "H200"
+        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
@@ -758,12 +757,12 @@ export namespace ServerPrices {
         | "P4"
         | "RTX 5000"
         | "RTX PRO 4500"
-        | "RTX PRO 6000 Blackwell Server Edition"
         | "RTX Pro 6000"
         | "T4"
         | "T4G"
         | "V100"
         | "V100S"
+        | "V520"
         | "V620"
         | "V710";
       /**
