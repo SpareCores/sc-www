@@ -3,7 +3,7 @@
 title: "Burning CPU Cycles: Comparing stress-ng CPU Methods"
 date: 2026-10-15
 # ~100 character
-teaser: "How almost 80 stress-ng CPU methods scale with SMT, many cores, and Arm, and why we picked div16 for the SCore."
+teaser: "How ~80 stress-ng CPU methods scale with SMT, many cores, and Arm, and why the SCore uses div16."
 # 320x220
 image: /assets/images/blog/thumbnails/stress-ng-cpu-methods.webp
 image_alt: Bar chart of the multi-core scaling factor of stress-ng CPU methods on a single hyper-threaded core.
@@ -62,11 +62,12 @@ lists all of them with a short description, and the implementation lives in
 
 When the `--metrics` flag is set, `stress-ng` reports the number of "bogo
 operations" per second: a scaled count of the method's completed iterations.
-Note that `stress-ng` normalizes the bogo-ops of each method using a per-method
-reference rate hardcoded in `stress-cpu.c`, so the absolute numbers are
-roughly in the same ballpark across methods (mostly between 1000 and 5000 on a modern x86
-core). This makes the methods somewhat comparable, but it does not mean a
-`div16` bogo-op is the same amount of work as a `trig` bogo-op.
+Note that `stress-ng` normalizes the bogo-ops of each method using a
+per-method reference rate hardcoded in `stress-cpu.c`, so the absolute
+numbers are roughly in the same ballpark across methods (mostly between 1000
+and 5000 on a modern x86 core). This makes the methods somewhat comparable,
+but it does not mean a `div16` bogo-op is the same amount of work as a `trig`
+bogo-op.
 
 The default method is `all`, which cycles through every other method one
 iteration at a time. This sounds like a fair average, but as we will see
@@ -164,7 +165,7 @@ doing the work. Still, the scaling factors were all over the place:
 - On the other end, `crc16` (2.02x), `logmap` (2.01x), `correlate` (1.97x),
   `explog` (1.97x), and `intconversion` (1.93x) reported practically double
   the performance, as if there were two physical cores.
-- The median method landed at 1.29x, and the default `all` method at 1.50x.
+- The median method landed at 1.28x, and the default `all` method at 1.50x.
 
 Our understanding is that methods saturating a single execution unit of the
 core, such as the integer divider, leave nothing for the sibling hyper-thread
