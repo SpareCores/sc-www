@@ -1,6 +1,6 @@
 ---
 # ~50 chars
-title: "Burning CPU Cycles: Comparing stress-ng CPU Methods"
+title: Burning CPU Cycles with stress-ng
 date: 2026-10-15
 # ~100 character
 teaser: "How ~80 stress-ng CPU methods scale with SMT, many cores, and Arm, and why the SCore uses div16."
@@ -77,7 +77,7 @@ But why do we care about the method at all? Because we wanted a single number
 describing the raw multi-core performance of a server: one that grows with the
 number of physical CPU cores, and doesn't reward or punish SMT (Simultaneous
 Multithreading, also known as Hyper-Threading) in surprising ways. As we
-described in the [vCPUs in the Real World](/article/multi-core-scalability)
+described in the [vCPUs in the Real World: Do They Truly Scale?](/article/multi-core-scalability)
 article, a vCPU is often just a hyper-thread, and a hyper-thread is not a
 core.
 
@@ -99,7 +99,7 @@ done
 > Editor's note (remove before publishing): the loop above was copied from
 > the original notes and starts two workers in the second run. The results
 > on every server other than `c6a.large` scale with the vCPU count (e.g.
-> ~126x on the 128 vCPU `c7a.32xlarge`), so the second run must have used
+> ~126x on the 128-vCPU `c7a.32xlarge`), so the second run must have used
 > one worker per vCPU (`--cpu 0` or `--cpu $(nproc)`) there. Please confirm
 > and fix the snippet. Also confirm the `stress-ng` version: the notes
 > mention v0.17.08 (commit `b7c7a587`), but `docker run` pulls the latest
@@ -181,7 +181,7 @@ as one would expect from four physical cores.
 
 ### Many-Core Scaling
 
-Things get more interesting with lots of cores. We compared two 128 vCPU
+Things get more interesting with lots of cores. We compared two 128-vCPU
 servers: `c7a.32xlarge` with 128 physical AMD Genoa cores and no SMT, and
 `c6i.metal` with 64 physical Intel cores in two sockets, each running two
 hyper-threads.
@@ -203,7 +203,7 @@ hyper-threads.
 On `c7a.32xlarge`, most methods scaled close to the core count: the median
 was 125x, with a range of 110x (`stats`) to 136x (`gray`). Yes, a few methods
 scaled slightly better than linearly, which we attribute to the noise of a
-single 10 second run.
+single 10-second run.
 
 On `c6i.metal`, the range was much wider:
 
@@ -215,8 +215,8 @@ On `c6i.metal`, the range was much wider:
   even worse than the physical core count.
 - The median method scaled 81x, and `all` 93x.
 
-So, depending on which method you pick, the very same server is either a 52
-or a 126 "core" machine. 🤯
+So, depending on which method you pick, the very same server is either a
+52-core or a 126-"core" machine. 🤯
 
 Note that `jmp`, the other finalist in our original evaluation, scaled below
 the physical core count on both large servers (116x on `c7a.32xlarge` and 56x
@@ -323,7 +323,7 @@ provide for each server.
 
 ## Caveats
 
-- Each result comes from a single 10 second run, so differences of a few
+- Each result comes from a single 10-second run, so differences of a few
   percent are within noise.
 - The results are from June 2024 and an older `stress-ng` release. The
   methods, their implementation, and their reference rates change between
@@ -340,8 +340,8 @@ provide for each server.
 ## Summary
 
 The CPU method of `stress-ng` matters a lot: the same server can look like a
-52 or a 126 core machine, and an Arm core can look 2x or 150x slower than an
-x86 core, depending on the method. We picked `div16` for the SCore because it
+52-core or a 126-core machine, and an Arm core can look 2x or 150x slower
+than an x86 core, depending on the method. We picked `div16` for the SCore because it
 scales with physical cores across vendors, architectures, and SMT settings,
 and because it measures something simple enough to explain.
 
