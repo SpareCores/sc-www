@@ -11,6 +11,7 @@ conference_talk_url: "https://kcdbudapest.hu/agenda/#session-1336916"
 location: "Budapest, Hungary"
 revealjs-plugins:
   - boxoverlay
+  - curtain
 format:
   revealjs:
     theme: [black, css/custom-4.2.1.css]
@@ -37,7 +38,7 @@ format:
 ---
 
 
-# {#cover-slide}
+# {#cover-slide data-curtain="close"}
 
 <script>
   // add custom CSS for the speaker view
@@ -79,8 +80,11 @@ format:
 TODO
 :::
 
+# {#teaser data-curtain="open"}
 
-# Introduction
+::: {.centered}
+<img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -30px;" />
+:::
 
 ::: {.notes}
 TODO
