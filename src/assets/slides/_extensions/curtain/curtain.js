@@ -152,11 +152,7 @@ function initCurtain(deck) {
       } else if (!shut && prev.shut) {
         setState("is-hidden");
       }
-    } else if (
-      prev &&
-      index > prev.index &&
-      (mode === "open" || (prev.shut && !shut))
-    ) {
+    } else if (prev && index > prev.index && prev.shut && !shut) {
       openCurtains(slide);
     } else if (shut) {
       setState("is-closed");

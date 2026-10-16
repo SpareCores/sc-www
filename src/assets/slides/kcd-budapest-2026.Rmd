@@ -87,7 +87,7 @@ TODO
 <img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -30px;" />
 :::
 
-# {#recap}
+# {#recap .center}
 
 ```{=html}
 <div class="agent-terminal">
@@ -114,11 +114,15 @@ TODO
 </div>
 ```
 
-# Introduction {data-curtain="open"}
+# Introduction
+
+TODO
 
 ::: {.notes}
 TODO
 :::
+
+## More introduction
 
 # Some slide
 
