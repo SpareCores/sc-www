@@ -16,7 +16,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { Modal, ModalOptions } from "flowbite";
-import { Subscription } from "rxjs";
+import { Subscription, of, switchMap } from "rxjs";
 import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
 import { LstopoSvgService } from "../../services/lstopo-svg.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
@@ -25,6 +25,9 @@ import { Button } from "../button/button";
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
 const LSTOPO_PATH_SUFFIX = "0/lstopo/lstopo.svg";
+// TODO: drop the legacy fallback once the sc-inspector-data backend rollout
+// moving lstopo under the "0" variant folder has completed (~2026-10-23)
+const LSTOPO_LEGACY_PATH_SUFFIX = "lstopo/lstopo.svg";
 
 const lstopoModalOptions: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -91,13 +94,23 @@ export class ServerLstopoComponent implements OnChanges {
     this.isLoading = true;
     this.resetRenderedSvg();
     this.svgWidth.emit(0);
-    this.lstopoUrl = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}/${LSTOPO_PATH_SUFFIX}`;
+    const serverBase = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}`;
+    const url = `${serverBase}/${LSTOPO_PATH_SUFFIX}`;
+    const legacyUrl = `${serverBase}/${LSTOPO_LEGACY_PATH_SUFFIX}`;
+    this.lstopoUrl = url;
 
-    const url = this.lstopoUrl;
     this.svgSub?.unsubscribe();
     this.svgSub = this.svgService
       .getSvg(url)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        // getSvg maps 404 and other errors to null, so retry the legacy path
+        switchMap((svg) => {
+          if (svg) return of(svg);
+          this.lstopoUrl = legacyUrl;
+          return this.svgService.getSvg(legacyUrl);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: (svg) => {
           try {
