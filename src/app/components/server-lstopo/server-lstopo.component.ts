@@ -24,7 +24,7 @@ import { Button } from "../button/button";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
-const LSTOPO_PATH_SUFFIX = "lstopo/lstopo.svg";
+const LSTOPO_PATH_SUFFIX = "0/lstopo/lstopo.svg";
 
 const lstopoModalOptions: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
