@@ -199,26 +199,12 @@ export const routes: Routes = [
         (m) => m.EmbeddedServerChartComponent,
       ),
   },
-  {
-    path: "embed_debug/:vendor/:id/:chartname",
-    loadComponent: () =>
-      import("./pages/embed-debug/embed-debug.component").then(
-        (m) => m.EmbedDebugComponent,
-      ),
-  },
 
   {
     path: "embed/compare/:chartname",
     loadComponent: () =>
       import("./pages/embedded-compare-chart/embedded-compare-chart.component").then(
         (m) => m.EmbeddedCompareChartComponent,
-      ),
-  },
-  {
-    path: "embed_compare_debug/:chartname",
-    loadComponent: () =>
-      import("./pages/embed-compare-preview/embed-compare-preview.component").then(
-        (m) => m.EmbedComparePreviewComponent,
       ),
   },
 

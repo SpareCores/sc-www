@@ -681,9 +681,8 @@
       <div class="space-y-4 flex flex-col">
         @if (serverDetails && isModalOpen) {
           <sc-embed-debug
-            [id]="serverDetails.server_id"
+            [id]="serverDetails.api_reference"
             [vendor]="serverDetails.vendor_id"
-            [isModal]="true"
             [charts]="embeddableCharts"
           >
           </sc-embed-debug>

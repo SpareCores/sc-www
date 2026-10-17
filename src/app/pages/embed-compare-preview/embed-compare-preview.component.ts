@@ -2,14 +2,12 @@ import {
   Component,
   Input,
   PLATFORM_ID,
-  OnInit,
   OnChanges,
   ElementRef,
   ViewChild,
   inject,
 } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
-import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -26,49 +24,23 @@ interface ChartOption {
   templateUrl: "./embed-compare-preview.component.html",
   styleUrl: "./embed-compare-preview.component.scss",
 })
-export class EmbedComparePreviewComponent implements OnInit, OnChanges {
+export class EmbedComparePreviewComponent implements OnChanges {
   private platformId = inject(PLATFORM_ID);
-  private route = inject(ActivatedRoute);
   private sanitizer = inject(DomSanitizer);
   private SEOHandler = inject(SeoHandlerService);
   private prismService = inject(PrismService);
 
   @Input() instances!: string;
   @Input() chartname!: string;
-  @Input() isModal!: boolean;
 
   src: any;
 
   height = "710px";
   width: string = "100%";
 
-  @Input() charts: ChartOption[] = [
-    { id: "bw_mem", name: "Memory Bandwidth" },
-    { id: "compress", name: "Compression" },
-    { id: "geekbench", name: "Geekbench Single- and Multi-core" },
-    { id: "geekbench_single", name: "Geekbench Single-core" },
-    { id: "geekbench_multi", name: "Geekbench Multi-core" },
-    { id: "openssl", name: "OpenSSL" },
-    { id: "stress_ng", name: "Stress-ng div16" },
-    { id: "stress_ng_pct", name: "Stress-ng Relative" },
-    { id: "llm_inference", name: "LLM Inference" },
-    { id: "static_web", name: "Static Web Server" },
-    { id: "redis", name: "Redis" },
-  ];
+  @Input() charts: ChartOption[] = [];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
-
-  ngOnInit() {
-    this.route.params.subscribe((params) => {
-      this.chartname = params["chartname"] || this.chartname;
-      this.setup();
-    });
-
-    this.route.queryParams.subscribe((params) => {
-      this.instances = params["instances"] || this.instances;
-      this.setup();
-    });
-  }
 
   setup() {
     if (this.chartname && this.instances) {
