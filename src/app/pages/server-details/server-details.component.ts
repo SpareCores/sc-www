@@ -72,6 +72,7 @@ import { buildServerFaqs } from "./server-details-faqs";
 import {
   BURSTABLE_INSTANCE_WARNING_BODY,
   BURSTABLE_INSTANCE_WARNING_TITLE,
+  HIDDEN_SERVER_PROPERTY_IDS,
 } from "./server-details.constants";
 
 const optionsModal: ModalOptions = {
@@ -1233,7 +1234,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         (category) => category.category === property.category,
       );
       const value = this.getProperty(property);
-      if (!group || !value) {
+      if (!group || !value || HIDDEN_SERVER_PROPERTY_IDS.has(property.id)) {
         return;
       }
 
