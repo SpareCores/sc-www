@@ -9,7 +9,7 @@
         <col [style.minWidth]="getServerColumnWidth(server)" />
       }
     </colgroup>
-    @if (isChartShown("generic") || showChart === "nvbandwidth") {
+    @if (isChartShown("generic") || isTableOnlyChartShown()) {
       <thead id="server-compare-table-header">
         <tr>
           <th #tableFirstCol id="server-compare-table-first-col"></th>
@@ -39,7 +39,7 @@
                 </a>
                 <div
                   class="flex gap-2 justify-center"
-                  [class.hidden]="showChart === 'nvbandwidth'"
+                  [class.hidden]="isTableOnlyChartShown()"
                 >
                   @if (isBestPrice(server)) {
                     <div

@@ -792,6 +792,13 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
     return categoryId === "passmark_cpu" || categoryId === "passmark_other";
   }
 
+  isTableOnlyChartShown(): boolean {
+    return (
+      this.showChart === "nvbandwidth" ||
+      this.isPassmarkBenchmarkCategory(this.showChart)
+    );
+  }
+
   hasCompareChart(categoryId: string): boolean {
     switch (categoryId) {
       case "bw_mem":
