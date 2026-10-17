@@ -385,6 +385,7 @@ export class ServerCompareComponent
     { id: "geekbench_multi", name: "Geekbench Multi-core" },
     { id: "passmark_cpu", name: "PassMark CPU" },
     { id: "passmark_other", name: "PassMark Memory" },
+    { id: "stress_ng_full", name: "Stress-ng Stressors" },
     { id: "stress_ng", name: "Stress-ng div16" },
     { id: "stress_ng_pct", name: "Stress-ng Relative" },
     { id: "llm_inference", name: "LLM Inference" },
