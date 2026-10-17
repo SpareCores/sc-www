@@ -735,6 +735,30 @@
             </td>
           }
         </tr>
+        @if (!isChartShown("generic")) {
+          <tr>
+            <td></td>
+            @for (
+              server of servers;
+              track server.vendor_id + "_" + server.server_id
+            ) {
+              <th
+                scope="col"
+                class="compact-number-header-cell compare-table-header-cell"
+              >
+                <a
+                  class="block ml-auto w-fit underline decoration-dotted whitespace-nowrap"
+                  href="/server/{{ server.vendor_id }}/{{
+                    server.api_reference
+                  }}"
+                  target="_blank"
+                >
+                  {{ toUpper(server.display_name) }}
+                </a>
+              </th>
+            }
+          </tr>
+        }
         @for (section of nvbandwidthSections; track section.name) {
           <tr class="compare-instance-section-gap" aria-hidden="true">
             <td></td>
