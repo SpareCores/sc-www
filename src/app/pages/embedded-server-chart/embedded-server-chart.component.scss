@@ -36,3 +36,8 @@
     height: 100%;
   }
 }
+
+:host ::ng-deep #passmark_cpu,
+:host ::ng-deep #passmark_other {
+  overflow-y: auto;
+}

@@ -117,7 +117,7 @@
         }
       </tbody>
     </table>
-    @if (getBenchmarkCategory("passmark:cpu").length > 7) {
+    @if (!isEmbedded && getBenchmarkCategory("passmark:cpu").length > 7) {
       <div
         class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
         id="passmark_cpu_more"
