@@ -100,6 +100,7 @@
                 <a
                   class="block w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto"
                   [routerLink]="['/vendors', server.vendor_id]"
+                  [attr.target]="isEmbedded ? '_blank' : null"
                 >
                   <img
                     [src]="server.vendor.logo"
@@ -113,6 +114,7 @@
                 <a
                   class="text-white text-sm ml-auto underline decoration-dotted"
                   [routerLink]="['/vendors', server.vendor_id]"
+                  [attr.target]="isEmbedded ? '_blank' : null"
                 >
                   {{ server.vendor.name }}
                 </a>

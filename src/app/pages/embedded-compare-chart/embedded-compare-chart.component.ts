@@ -47,6 +47,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
   benchmarkMeta: any;
 
   instancePropertyCategories: any[] = [
+    { name: "Metadata", category: "meta", properties: [] },
     { name: "CPU", category: "cpu", properties: [] },
     { name: "Memory", category: "memory", properties: [] },
     { name: "Accelerators", category: "gpu", properties: [] },
