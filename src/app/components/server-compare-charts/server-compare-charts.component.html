@@ -467,7 +467,9 @@
           }
         }
       }
-      @if (hasVisibleWorkloadProfileChart() && !isEmbedded) {
+      @if (
+        hasVisibleWorkloadProfileChart() && isChartShown("workload_profile")
+      ) {
         <tr class="section_header" id="benchmark_line_workload_profile">
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
@@ -511,7 +513,7 @@
                   </span>
                 </span>
               </h3>
-              @if (!pinnedRow.trailingColSpan) {
+              @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                 <div class="flex items-stretch gap-4 shrink-0">
                   <sc-button
                     [label]="
@@ -540,26 +542,28 @@
           }
           @if (pinnedRow.trailingColSpan) {
             <td [colSpan]="1" class="compare-section-header-action-cell">
-              <div class="flex justify-end items-stretch gap-4">
-                <sc-button
-                  [label]="
-                    (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
-                  "
-                  [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
-                  iconPosition="start"
-                  size="small"
-                  (click)="toggleWorkloadProfileDetails()"
-                ></sc-button>
-                <sc-button
-                  [icon]="clipboardIcon"
-                  ariaLabel="Copy benchmark section link"
-                  size="small"
-                  buttonClass="shrink-0"
-                  (click)="
-                    clipboardURL($event, 'benchmark_line_workload_profile')
-                  "
-                ></sc-button>
-              </div>
+              @if (!isEmbedded) {
+                <div class="flex justify-end items-stretch gap-4">
+                  <sc-button
+                    [label]="
+                      (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
+                    "
+                    [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
+                    iconPosition="start"
+                    size="small"
+                    (click)="toggleWorkloadProfileDetails()"
+                  ></sc-button>
+                  <sc-button
+                    [icon]="clipboardIcon"
+                    ariaLabel="Copy benchmark section link"
+                    size="small"
+                    buttonClass="shrink-0"
+                    (click)="
+                      clipboardURL($event, 'benchmark_line_workload_profile')
+                    "
+                  ></sc-button>
+                </div>
+              }
             </td>
           }
         </tr>

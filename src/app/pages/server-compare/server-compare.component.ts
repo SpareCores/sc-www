@@ -373,6 +373,7 @@ export class ServerCompareComponent
   instancesRaw!: string;
 
   embeddableCharts = [
+    { id: "workload_profile", name: "Workload Profiles" },
     { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
     { id: "bw_mem", name: "Memory Bandwidth" },
     { id: "compress", name: "Compression" },
