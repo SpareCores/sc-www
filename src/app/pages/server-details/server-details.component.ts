@@ -242,16 +242,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   warningTooltipRef = viewChild<ElementRef<HTMLElement>>("warningTooltip");
   warningTooltipContent = signal("");
 
-  embeddableCharts = [
-    { id: "workload_profile", name: "Workload Profiles" },
-    { id: "bw_mem", name: "Memory Bandwidth" },
-    { id: "compress", name: "Compression" },
-    { id: "geek_single", name: "Geekbench Single-core" },
-    { id: "geek_multi", name: "Geekbench Multi-core" },
-    { id: "ssl", name: "OpenSSL" },
-    { id: "static_web", name: "Static Web Server" },
-    { id: "redis", name: "Redis" },
-  ];
+  embeddableCharts: { id: string; name: string }[] = [];
 
   @ViewChild("giscusParent") giscusParent!: ElementRef;
 
@@ -559,60 +550,63 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
               this.generateSchemaJSON();
 
-              if (this.serverDetails.vcpus && this.serverDetails.vcpus > 1) {
-                this.embeddableCharts.push({
-                  id: "stress_ng_div16",
-                  name: "Stress-ng div16",
-                });
-                this.embeddableCharts.push({
-                  id: "stress_ng_relative",
-                  name: "Stress-ng relative",
-                });
-              }
-
-              // Add LLM charts if benchmark data is available
-              const hasLLMPromptData = this.benchmarksByCategory.some(
-                (c) => c.benchmark_id === "llm_speed:prompt_processing",
+              const benchmarkIds: string[] = this.benchmarksByCategory.map(
+                (c) => c.benchmark_id,
               );
-              const hasLLMGenerationData = this.benchmarksByCategory.some(
-                (c) => c.benchmark_id === "llm_speed:text_generation",
-              );
-
-              if (hasLLMPromptData) {
-                this.embeddableCharts.push({
-                  id: "llm_prompt",
-                  name: "LLM Prompt Processing",
-                });
-              }
-
-              if (hasLLMGenerationData) {
-                this.embeddableCharts.push({
-                  id: "llm_generation",
-                  name: "LLM Text Generation",
-                });
-              }
-
-              if (
-                this.benchmarksByCategory.some(
-                  (c) => c.benchmark_id === "pgbench:heavy_read_only",
-                )
-              ) {
-                this.embeddableCharts.push({
-                  id: "pgbench",
-                  name: "pgbench Heavy Read-Only",
-                });
-              }
-
-              if (
-                this.benchmarksByCategory.some((c) =>
-                  c.benchmark_id.startsWith("nvbandwidth:"),
-                )
-              ) {
-                this.embeddableCharts.push({
+              const isMultiCore =
+                !!this.serverDetails.vcpus && this.serverDetails.vcpus > 1;
+              this.embeddableCharts = [
+                {
+                  id: "workload_profile",
+                  name: "Workload Profiles",
+                  show: true,
+                },
+                {
                   id: "nvbandwidth",
                   name: "GPU Bandwidth and Latency",
-                });
-              }
+                  show: benchmarkIds.some((id) =>
+                    id.startsWith("nvbandwidth:"),
+                  ),
+                },
+                { id: "bw_mem", name: "Memory Bandwidth", show: true },
+                { id: "compress", name: "Compression", show: true },
+                { id: "ssl", name: "OpenSSL", show: true },
+                {
+                  id: "geek_single",
+                  name: "Geekbench Single-core",
+                  show: true,
+                },
+                { id: "geek_multi", name: "Geekbench Multi-core", show: true },
+                {
+                  id: "stress_ng_div16",
+                  name: "Stress-ng div16",
+                  show: isMultiCore,
+                },
+                {
+                  id: "stress_ng_relative",
+                  name: "Stress-ng relative",
+                  show: isMultiCore,
+                },
+                {
+                  id: "llm_prompt",
+                  name: "LLM Prompt Processing",
+                  show: benchmarkIds.includes("llm_speed:prompt_processing"),
+                },
+                {
+                  id: "llm_generation",
+                  name: "LLM Text Generation",
+                  show: benchmarkIds.includes("llm_speed:text_generation"),
+                },
+                { id: "static_web", name: "Static Web Server", show: true },
+                { id: "redis", name: "Redis", show: true },
+                {
+                  id: "pgbench",
+                  name: "pgbench Heavy Read-Only",
+                  show: benchmarkIds.includes("pgbench:heavy_read_only"),
+                },
+              ]
+                .filter((chart) => chart.show)
+                .map(({ id, name }) => ({ id, name }));
 
               if (isPlatformBrowser(this.platformId)) {
                 setTimeout(() => {
