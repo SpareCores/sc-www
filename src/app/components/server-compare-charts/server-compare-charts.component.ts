@@ -64,6 +64,16 @@ import { ServerCompareMemoryChartComponent } from "../charts/memory/server-compa
 import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import {
+  NVBANDWIDTH_TITLE,
+  NvbandwidthCompareBenchmark,
+  NvbandwidthEnvironmentRow,
+  NvbandwidthSection,
+  buildNvbandwidthEnvironmentRows,
+  buildNvbandwidthSections,
+  formatNvbandwidthScore,
+  isNvbandwidthBenchmark,
+} from "../charts/nvbandwidth/nvbandwidth.utils";
+import {
   BenchmarkMultiBarChartItem,
   MultiBarBenchmarkMeta,
   MultiBarServer,
@@ -155,6 +165,8 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
   readonly layoutChanged = output<void>();
   readonly isCompareMetadataPropertyHidden = isCompareMetadataPropertyHidden;
   readonly isBaselineServer = isCompareBaselineServer;
+  readonly nvbandwidthTitle = NVBANDWIDTH_TITLE;
+  readonly formatNvbandwidthScore = formatNvbandwidthScore;
 
   @ViewChild("tooltipcompareDefault") tooltip!: ElementRef<HTMLElement>;
 
@@ -185,6 +197,11 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
 
   clipboardIcon = "clipboard";
   workloadProfileShowMore = false;
+  nvbandwidthSections: NvbandwidthSection<
+    number | string,
+    NvbandwidthCompareBenchmark
+  >[] = [];
+  nvbandwidthEnvironmentRows: NvbandwidthEnvironmentRow[] = [];
 
   ngOnChanges() {
     this.comparePinnedRowLayout =
@@ -235,6 +252,20 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
         chartTemplate.chart.id === this.showChart || this.showChart === "all"
       );
     });
+
+    this.nvbandwidthSections = buildNvbandwidthSections(
+      this.benchmarkMeta as NvbandwidthCompareBenchmark[],
+      (benchmark) => {
+        const values = benchmark.configs?.[0]?.values;
+        return values?.some((value) => typeof value === "number")
+          ? values
+          : null;
+      },
+    );
+    this.nvbandwidthEnvironmentRows = buildNvbandwidthEnvironmentRows(
+      this.benchmarkMeta,
+      this.servers.map((server) => server.benchmark_scores),
+    );
   }
 
   isChartShown(id: string): boolean {
@@ -974,6 +1005,7 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
       !found &&
       !String(benchmark.benchmark_id ?? "").startsWith("stress_ng:") &&
       !String(benchmark.benchmark_id ?? "").startsWith("pgbench:") &&
+      !isNvbandwidthBenchmark(benchmark.benchmark_id) &&
       !this.benchmarkCategories.some((c: any) =>
         c.benchmarks.includes(benchmark.benchmark_id),
       )

@@ -5,6 +5,12 @@
     [benchmarkMeta]="benchmarkMeta"
   ></sc-workload-profile-panel>
 }
+@if (isChartShown("nvbandwidth")) {
+  <sc-nvbandwidth-card
+    [benchmarkMeta]="benchmarkMeta"
+    [benchmarkScores]="serverDetails?.benchmark_scores"
+  ></sc-nvbandwidth-card>
+}
 @if (isChartShown("bw_mem")) {
   <sc-server-memory-chart
     [serverDetails]="serverDetails"

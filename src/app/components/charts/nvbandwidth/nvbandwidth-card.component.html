@@ -1,0 +1,130 @@
+@if (sections().length) {
+  <div
+    class="w-full px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg flex flex-col gap-4"
+    id="nvbandwidth"
+  >
+    <div class="flex items-center" style="min-height: 42px">
+      <h3 class="text-2xl flex items-center gap-2">
+        <svg [lucideIcon]="'nvbandwidth' | benchmarkIcon" class="h-6 w-6"></svg>
+        {{ title }}
+      </h3>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
+      <div class="flex flex-col gap-6">
+        @for (section of leftSections(); track section.name) {
+          <ng-container
+            [ngTemplateOutlet]="sectionTable"
+            [ngTemplateOutletContext]="{ $implicit: section }"
+          ></ng-container>
+        }
+      </div>
+      <div class="flex flex-col gap-6">
+        @if (environmentRows().length) {
+          <table class="nvbandwidth_table">
+            <thead>
+              <tr>
+                <th>Benchmark Environment</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of environmentRows(); track row.key) {
+                @let value = row.values[0];
+                <tr>
+                  <td>
+                    <div class="flex gap-2 items-center">
+                      <b>{{ row.name }}</b>
+                      @if (row.description) {
+                        <svg
+                          lucideInfo
+                          class="h-4 w-4 shrink-0 text-gray-200"
+                          (mouseenter)="showTooltip($event, row.description)"
+                          (mouseleave)="hideTooltip()"
+                        ></svg>
+                      }
+                    </div>
+                  </td>
+                  <td class="nvbandwidth_value">
+                    @if (value === "check" || value === "x") {
+                      <svg
+                        [lucideIcon]="value"
+                        class="h-4 w-4 ml-auto"
+                        [class.text-emerald-400]="value === 'check'"
+                        [class.text-white]="value === 'x'"
+                      ></svg>
+                    } @else {
+                      {{ value }}
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+        @for (section of rightSections(); track section.name) {
+          <ng-container
+            [ngTemplateOutlet]="sectionTable"
+            [ngTemplateOutletContext]="{ $implicit: section }"
+          ></ng-container>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<ng-template #sectionTable let-section>
+  <table class="nvbandwidth_table">
+    <thead>
+      <tr>
+        <th>{{ section.name }}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of section.rows; track row.benchmark.benchmark_id) {
+        <tr>
+          <td>
+            <div class="flex gap-2 items-center">
+              <b>{{ row.name }}</b>
+              @if (row.benchmark.higher_is_better === false) {
+                <svg
+                  [lucideIcon]="'circle-arrow-down'"
+                  class="h-4 w-4 shrink-0 text-gray-200"
+                  (mouseenter)="showTooltip($event, 'Lower is better.')"
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
+              @if (row.benchmark.description) {
+                <svg
+                  lucideInfo
+                  class="h-4 w-4 shrink-0 text-gray-200"
+                  (mouseenter)="showTooltip($event, row.benchmark.description)"
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
+              @if (row.benchmark.note) {
+                <svg
+                  lucideTriangleAlert
+                  class="benchmark-note-icon"
+                  (mouseenter)="
+                    showTooltip($event, row.benchmark.note, 'warning')
+                  "
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
+            </div>
+          </td>
+          <td class="nvbandwidth_value">{{ row.values[0] }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>
+
+<div
+  #tooltip
+  style="opacity: 0; display: none"
+  class="tooltip-panel max-w-225 fixed z-100 pointer-events-none"
+>
+  {{ tooltipContent() }}
+</div>
