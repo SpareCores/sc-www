@@ -1,0 +1,133 @@
+@if (sections().length) {
+  <div
+    class="w-full px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg flex flex-col gap-4 relative overflow-hidden"
+    id="stress_ng_full"
+    [class.stress_ng_collapsed]="collapsed()"
+  >
+    <div class="flex items-center" style="min-height: 42px">
+      <h3 class="text-2xl flex items-center gap-2">
+        <svg [lucideIcon]="'stress_ng' | benchmarkIcon" class="h-6 w-6"></svg>
+        {{ title }}
+      </h3>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-6">
+      @for (column of columns(); track $index) {
+        <div class="flex flex-col gap-6">
+          @for (section of column; track section.name) {
+            <ng-container
+              [ngTemplateOutlet]="sectionTable"
+              [ngTemplateOutletContext]="{ $implicit: section }"
+            ></ng-container>
+          }
+        </div>
+      }
+    </div>
+    @if (collapsible()) {
+      @if (collapsed()) {
+        <div
+          class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
+          style="
+            background: linear-gradient(
+              360deg,
+              #06263a 23.44%,
+              rgba(6, 38, 58, 0) 100%
+            );
+          "
+        >
+          <sc-button
+            label="Show more"
+            size="small"
+            data-ph-capture-attribute-sc-event="stress_ng_full show more"
+            (click)="toggleExpanded()"
+          ></sc-button>
+        </div>
+      } @else {
+        <div class="w-full pt-3 flex justify-center">
+          <sc-button
+            label="Show less"
+            size="small"
+            data-ph-capture-attribute-sc-event="stress_ng_full show less"
+            (click)="toggleExpanded()"
+          ></sc-button>
+        </div>
+      }
+    }
+  </div>
+}
+
+<ng-template #sectionTable let-section>
+  <table class="stress_ng_table">
+    <colgroup>
+      <col class="stress_ng_col_name" />
+      <col class="stress_ng_col_single" />
+      <col class="stress_ng_col_multi" />
+      <col class="stress_ng_col_scaling" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th>{{ section.name }}</th>
+        <th class="stress_ng_value">Single</th>
+        <th class="stress_ng_value">Multi</th>
+        <th class="stress_ng_value">Scaling</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of section.rows; track row.benchmark.benchmark_id) {
+        <tr>
+          <td>
+            <div class="flex gap-2 items-center">
+              <b>{{ row.name }}</b>
+              @if (row.benchmark.higher_is_better === false) {
+                <svg
+                  lucideCircleArrowDown
+                  class="h-4 w-4 shrink-0 text-gray-200"
+                  (mouseenter)="showTooltip($event, 'Lower is better.')"
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
+              @if (row.benchmark.description) {
+                <svg
+                  lucideInfo
+                  class="h-4 w-4 shrink-0 text-gray-200"
+                  (mouseenter)="showTooltip($event, row.benchmark.description)"
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
+              @if (rowNote(row.benchmark.benchmark_id); as note) {
+                <svg
+                  lucideTriangleAlert
+                  class="benchmark-note-icon"
+                  (mouseenter)="showTooltip($event, note, 'warning')"
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
+            </div>
+          </td>
+          <td
+            class="stress_ng_value"
+            (mouseenter)="showTooltip($event, row.single.exact)"
+            (mouseleave)="hideTooltip()"
+          >
+            {{ row.single.text }}
+          </td>
+          <td
+            class="stress_ng_value"
+            (mouseenter)="showTooltip($event, row.multi.exact)"
+            (mouseleave)="hideTooltip()"
+          >
+            {{ row.multi.text }}
+          </td>
+          <td class="stress_ng_value">{{ row.scaling }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>
+
+<div
+  #tooltip
+  style="opacity: 0; display: none"
+  class="tooltip-panel max-w-225 fixed z-100 pointer-events-none"
+>
+  {{ tooltipContent() }}
+</div>

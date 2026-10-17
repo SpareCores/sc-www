@@ -69,6 +69,7 @@ import { initGiscus } from "../../tools/initGiscus";
 import { ServerEmbedDialogComponent } from "../../components/embed-dialog/server-embed-dialog.component";
 import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
 import { hasWorkloadProfileChartData } from "../../components/charts/workload-profile/workload-profile.utils";
+import { isStressNgStressor } from "../../components/charts/stress-ng-full/stress-ng-full.utils";
 import { MemoryChartBuilderService } from "../../components/charts/memory/memory-chart-builder.service";
 import { BenchmarkMultiBarChartBuilderService } from "../../components/charts/multi-bar/benchmark-multi-bar-chart-builder.service";
 import { MultiBarBenchmarkGroup } from "../../components/charts/multi-bar/benchmark-multi-bar-chart.types";
@@ -630,6 +631,15 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   id: "passmark_other",
                   name: "PassMark Memory",
                   show: benchmarkIds.includes("passmark:other"),
+                },
+                {
+                  id: "stress_ng_full",
+                  name: "Stress-ng stressors",
+                  show: (this.benchmarkMeta ?? []).some(
+                    (benchmark) =>
+                      isStressNgStressor(benchmark) &&
+                      benchmarkIds.includes(benchmark.benchmark_id),
+                  ),
                 },
                 {
                   id: "stress_ng_div16",

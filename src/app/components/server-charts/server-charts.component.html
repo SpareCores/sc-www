@@ -207,6 +207,14 @@
   </div>
 }
 
+@if (isChartShown("stress_ng_full")) {
+  <sc-stress-ng-full-card
+    [benchmarkMeta]="benchmarkMeta"
+    [benchmarkScores]="serverDetails?.benchmark_scores"
+    [collapsible]="!isEmbedded"
+  ></sc-stress-ng-full-card>
+}
+
 @if (isChartShown("stress_ng_div16") && hasStressNgChart()) {
   <sc-benchmark-line-chart
     benchmarkKey="stress_ng"
