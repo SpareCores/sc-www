@@ -63,7 +63,7 @@
   ></sc-geekbench-radar-chart>
 }
 
-@if (isChartShown("passmark:cpu") && passmarkCPUData?.length) {
+@if (isChartShown("passmark_cpu") && passmarkCPUData?.length) {
   <div class="block_half" id="passmark_cpu">
     <div class="flex items-center" style="min-height: 42px">
       <h3 class="text-2xl flex items-center gap-2">
@@ -149,7 +149,7 @@
   </div>
 }
 
-@if (isChartShown("passmark:other") && passmarkOTHERData?.length) {
+@if (isChartShown("passmark_other") && passmarkOTHERData?.length) {
   <div class="block_half" id="passmark_other">
     <div class="flex items-center" style="min-height: 42px">
       <h3 class="text-2xl flex items-center gap-2">

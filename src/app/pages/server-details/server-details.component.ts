@@ -579,6 +579,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 },
                 { id: "geek_multi", name: "Geekbench Multi-core", show: true },
                 {
+                  id: "passmark_cpu",
+                  name: "PassMark CPU",
+                  show: benchmarkIds.includes("passmark:cpu"),
+                },
+                {
+                  id: "passmark_other",
+                  name: "PassMark Memory",
+                  show: benchmarkIds.includes("passmark:other"),
+                },
+                {
                   id: "stress_ng_div16",
                   name: "Stress-ng div16",
                   show: isMultiCore,
