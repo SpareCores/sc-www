@@ -9,7 +9,7 @@
         <col [style.minWidth]="getServerColumnWidth(server)" />
       }
     </colgroup>
-    @if (isChartShown("generic")) {
+    @if (isChartShown("generic") || showChart === "nvbandwidth") {
       <thead id="server-compare-table-header">
         <tr>
           <th #tableFirstCol id="server-compare-table-first-col"></th>
@@ -37,7 +37,10 @@
                 >
                   {{ toUpper(server.display_name) }}
                 </a>
-                <div class="flex gap-2 justify-center">
+                <div
+                  class="flex gap-2 justify-center"
+                  [class.hidden]="showChart === 'nvbandwidth'"
+                >
                   @if (isBestPrice(server)) {
                     <div
                       class="text-emerald-400 text-xl"
@@ -735,30 +738,6 @@
             </td>
           }
         </tr>
-        @if (!isChartShown("generic")) {
-          <tr>
-            <td></td>
-            @for (
-              server of servers;
-              track server.vendor_id + "_" + server.server_id
-            ) {
-              <th
-                scope="col"
-                class="compact-number-header-cell compare-table-header-cell"
-              >
-                <a
-                  class="block ml-auto w-fit underline decoration-dotted whitespace-nowrap"
-                  href="/server/{{ server.vendor_id }}/{{
-                    server.api_reference
-                  }}"
-                  target="_blank"
-                >
-                  {{ toUpper(server.display_name) }}
-                </a>
-              </th>
-            }
-          </tr>
-        }
         @for (section of nvbandwidthSections; track section.name) {
           <tr class="compare-instance-section-gap" aria-hidden="true">
             <td></td>
