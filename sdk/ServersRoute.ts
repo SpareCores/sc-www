@@ -32,7 +32,6 @@ export namespace Servers {
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
-       * @max 256
        * @default 1
        */
       vcpus_min?: number;
@@ -1282,7 +1281,7 @@ export namespace Servers {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
@@ -1292,7 +1291,6 @@ export namespace Servers {
         | "Hopper"
         | "Pascal"
         | "Radeon Pro Navi"
-        | "TPU"
         | "Turing"
         | "Volta";
       /** GPU model */
@@ -1307,6 +1305,7 @@ export namespace Servers {
         | "GH200"
         | "H100"
         | "H200"
+        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
@@ -1314,14 +1313,87 @@ export namespace Servers {
         | "P4"
         | "RTX 5000"
         | "RTX PRO 4500"
-        | "RTX PRO 6000 Blackwell Server Edition"
         | "RTX Pro 6000"
         | "T4"
         | "T4G"
         | "V100"
         | "V100S"
+        | "V520"
         | "V620"
         | "V710";
+      /**
+       * Accelerator type
+       * Type of the accelerator, e.g. GPU or TPU.
+       */
+      accelerator_type?: "GPU" | "TPU";
+      /**
+       * Accelerator count
+       * Required number of accelerators (e.g. GPUs or TPUs).
+       */
+      accelerator_min?: number | null;
+      /**
+       * Maximum accelerator count
+       * Maximum number of accelerators. Set to 0 to search for servers without accelerators.
+       */
+      accelerator_max?: number | null;
+      /**
+       * Required accelerator memory
+       * Required amount of accelerator memory (GB) in each accelerator.
+       */
+      accelerator_memory_min?: number | null;
+      /**
+       * Total accelerator memory
+       * Required amount of total accelerator memory (GBs) in all accelerators.
+       */
+      accelerator_memory_total?: number | null;
+      /** Accelerator manufacturer */
+      accelerator_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+      /** Accelerator family */
+      accelerator_family?:
+        | "Ada Lovelace"
+        | "Ampere"
+        | "Blackwell"
+        | "Gaudi"
+        | "Hopper"
+        | "Pascal"
+        | "Radeon Pro Navi"
+        | "TPU"
+        | "Turing"
+        | "Volta";
+      /** Accelerator model */
+      accelerator_model?:
+        | "A10"
+        | "A100"
+        | "A10G"
+        | "B200"
+        | "B300"
+        | "GB200"
+        | "GB300"
+        | "GH200"
+        | "H100"
+        | "H200"
+        | "HL-205"
+        | "L20"
+        | "L4"
+        | "L40S"
+        | "P100"
+        | "P4"
+        | "RTX 5000"
+        | "RTX PRO 4500"
+        | "RTX Pro 6000"
+        | "T4"
+        | "T4G"
+        | "V100"
+        | "V100S"
+        | "V520"
+        | "V620"
+        | "V710"
+        | "tpu7"
+        | "v3"
+        | "v5e"
+        | "v5p"
+        | "v6e"
+        | "v7x";
       /**
        * Maximum price
        * Maximum best price of the server in the requested currency, using the price allocation selected via best_price_allocation (hourly price, or monthly price when MONTHLY is selected), including the optional extra traffic and storage costs.

@@ -37,7 +37,6 @@ export namespace Databases {
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
-       * @max 256
        * @default 1
        */
       vcpus_min?: number;
