@@ -373,16 +373,16 @@ export class ServerCompareComponent
   instancesRaw!: string;
 
   embeddableCharts = [
+    { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
     { id: "bw_mem", name: "Memory Bandwidth" },
     { id: "compress", name: "Compression" },
+    { id: "openssl", name: "OpenSSL" },
     { id: "geekbench", name: "Geekbench Single- and Multi-core" },
     { id: "geekbench_single", name: "Geekbench Single-core" },
     { id: "geekbench_multi", name: "Geekbench Multi-core" },
-    { id: "openssl", name: "OpenSSL" },
     { id: "stress_ng", name: "Stress-ng div16" },
     { id: "stress_ng_pct", name: "Stress-ng Relative" },
     { id: "llm_inference", name: "LLM Inference" },
-    { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
     { id: "static_web", name: "Static Web Server" },
     { id: "redis", name: "Redis" },
     { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
