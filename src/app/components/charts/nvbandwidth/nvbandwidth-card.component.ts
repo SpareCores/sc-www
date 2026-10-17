@@ -9,6 +9,7 @@ import {
   viewChild,
 } from "@angular/core";
 import {
+  LucideCircleArrowDown,
   LucideDynamicIcon,
   LucideInfo,
   LucideTriangleAlert,
@@ -16,6 +17,7 @@ import {
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
   NVBANDWIDTH_TITLE,
   NvbandwidthSection,
@@ -25,16 +27,19 @@ import {
   nvbandwidthGroupId,
 } from "./nvbandwidth.utils";
 
-const LEFT_COLUMN_GROUPS = ["all", "p2p", "slot"];
+const RIGHT_COLUMN_GROUPS = ["efficiency"];
 
-function sectionGroup(section: NvbandwidthSection<string>): string {
-  return nvbandwidthGroupId(section.rows[0]?.benchmark.benchmark_id);
+function isRightColumnSection(section: NvbandwidthSection<string>): boolean {
+  return RIGHT_COLUMN_GROUPS.includes(
+    nvbandwidthGroupId(section.rows[0]?.benchmark.benchmark_id),
+  );
 }
 
 @Component({
   selector: "sc-nvbandwidth-card",
   imports: [
     NgTemplateOutlet,
+    LucideCircleArrowDown,
     LucideDynamicIcon,
     LucideInfo,
     LucideTriangleAlert,
@@ -66,15 +71,11 @@ export class NvbandwidthCardComponent {
   );
 
   leftSections = computed(() =>
-    LEFT_COLUMN_GROUPS.flatMap((group) =>
-      this.sections().filter((section) => sectionGroup(section) === group),
-    ),
+    this.sections().filter((section) => !isRightColumnSection(section)),
   );
 
   rightSections = computed(() =>
-    this.sections().filter(
-      (section) => !LEFT_COLUMN_GROUPS.includes(sectionGroup(section)),
-    ),
+    this.sections().filter((section) => isRightColumnSection(section)),
   );
 
   environmentRows = computed(() =>
@@ -97,6 +98,14 @@ export class NvbandwidthCardComponent {
         this.tooltipContent.set(tooltipContent);
       },
     });
+  }
+
+  rowNote(benchmarkId: string): string {
+    return (
+      getBenchmarkMetaNote(this.benchmarkMeta() ?? undefined, benchmarkId, {
+        includeBenchmarkName: false,
+      }) || ""
+    );
   }
 
   hideTooltip() {

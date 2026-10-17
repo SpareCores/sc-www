@@ -12,6 +12,7 @@ import {
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
+  LucideCircleArrowDown,
   LucideCircleArrowUp,
   LucideDynamicIcon,
   LucideInfo,
@@ -119,6 +120,7 @@ import {
   imports: [
     CommonModule,
     LucideDynamicIcon,
+    LucideCircleArrowDown,
     LucideCircleArrowUp,
     LucideInfo,
     LucideTriangleAlert,

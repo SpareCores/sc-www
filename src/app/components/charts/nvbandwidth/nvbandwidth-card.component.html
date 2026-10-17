@@ -88,7 +88,7 @@
               <b>{{ row.name }}</b>
               @if (row.benchmark.higher_is_better === false) {
                 <svg
-                  [lucideIcon]="'circle-arrow-down'"
+                  lucideCircleArrowDown
                   class="h-4 w-4 shrink-0 text-gray-200"
                   (mouseenter)="showTooltip($event, 'Lower is better.')"
                   (mouseleave)="hideTooltip()"
@@ -102,13 +102,11 @@
                   (mouseleave)="hideTooltip()"
                 ></svg>
               }
-              @if (row.benchmark.note) {
+              @if (rowNote(row.benchmark.benchmark_id); as note) {
                 <svg
                   lucideTriangleAlert
                   class="benchmark-note-icon"
-                  (mouseenter)="
-                    showTooltip($event, row.benchmark.note, 'warning')
-                  "
+                  (mouseenter)="showTooltip($event, note, 'warning')"
                   (mouseleave)="hideTooltip()"
                 ></svg>
               }

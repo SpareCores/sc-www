@@ -603,6 +603,17 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 });
               }
 
+              if (
+                this.benchmarksByCategory.some((c) =>
+                  c.benchmark_id.startsWith("nvbandwidth:"),
+                )
+              ) {
+                this.embeddableCharts.push({
+                  id: "nvbandwidth",
+                  name: "GPU Bandwidth and Latency",
+                });
+              }
+
               if (isPlatformBrowser(this.platformId)) {
                 setTimeout(() => {
                   const showDetails =

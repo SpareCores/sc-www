@@ -3,7 +3,14 @@ import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 export const NVBANDWIDTH_BENCHMARK_PREFIX = "nvbandwidth:";
 export const NVBANDWIDTH_TITLE = "GPU Bandwidth and Latency";
 
-const NVBANDWIDTH_GROUP_ORDER = ["all", "slot", "p2p", "efficiency"];
+const NVBANDWIDTH_GROUP_ORDER = ["all", "p2p", "slot", "efficiency"];
+
+const NVBANDWIDTH_GROUP_LABELS: Record<string, string> = {
+  all: "Node (all GPUs)",
+  p2p: "Peer-to-peer",
+  slot: "Single GPU slot",
+  efficiency: "Efficiency",
+};
 
 const NVBANDWIDTH_ENVIRONMENT_FIELDS = [
   { key: "driver_version", name: "Driver Version" },
@@ -79,7 +86,9 @@ export function buildNvbandwidthSections<T, B extends Benchmark = Benchmark>(
     if (!values?.length) {
       return;
     }
-    const name = benchmark.subcategory || groupId(benchmark);
+    const group = groupId(benchmark);
+    const name =
+      benchmark.subcategory || NVBANDWIDTH_GROUP_LABELS[group] || group;
     let section = sections.find((s) => s.name === name);
     if (!section) {
       section = { name, rows: [] };

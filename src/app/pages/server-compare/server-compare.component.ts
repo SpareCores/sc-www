@@ -382,6 +382,7 @@ export class ServerCompareComponent
     { id: "stress_ng", name: "Stress-ng div16" },
     { id: "stress_ng_pct", name: "Stress-ng Relative" },
     { id: "llm_inference", name: "LLM Inference" },
+    { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
     { id: "static_web", name: "Static Web Server" },
     { id: "redis", name: "Redis" },
     { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
