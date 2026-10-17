@@ -68,6 +68,15 @@ import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { ServerEmbedDialogComponent } from "../../components/embed-dialog/server-embed-dialog.component";
 import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
+import { hasWorkloadProfileChartData } from "../../components/charts/workload-profile/workload-profile.utils";
+import { MemoryChartBuilderService } from "../../components/charts/memory/memory-chart-builder.service";
+import { BenchmarkMultiBarChartBuilderService } from "../../components/charts/multi-bar/benchmark-multi-bar-chart-builder.service";
+import { MultiBarBenchmarkGroup } from "../../components/charts/multi-bar/benchmark-multi-bar-chart.types";
+import {
+  ChartFromBenchmarkTemplate,
+  redisChartTemplate,
+  staticWebChartTemplate,
+} from "./chartFromBenchmarks";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
 import { buildServerFaqs } from "./server-details-faqs";
 import {
@@ -143,6 +152,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
   private uiTooltip = inject(UiTooltipService);
+  private memoryChartBuilder = inject(MemoryChartBuilderService);
+  private multiBarChartBuilder = inject(BenchmarkMultiBarChartBuilderService);
   private serverLoadId = 0;
   similarDropdown = viewChild<FlowbiteDropdownDirective>("similarDropdown");
 
@@ -555,13 +566,25 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               const benchmarkIds: string[] = this.benchmarksByCategory.map(
                 (c) => c.benchmark_id,
               );
+              const hasBenchmarkPrefix = (prefix: string) =>
+                benchmarkIds.some((id) => id.startsWith(prefix));
+              const hasMultiBarChart = (
+                chartTemplate: ChartFromBenchmarkTemplate,
+              ) =>
+                !!this.multiBarChartBuilder.buildDetailsChart(
+                  JSON.parse(JSON.stringify(chartTemplate)),
+                  this.benchmarksByCategory as MultiBarBenchmarkGroup[],
+                );
               const isMultiCore =
                 !!this.serverDetails.vcpus && this.serverDetails.vcpus > 1;
               this.embeddableCharts = [
                 {
                   id: "workload_profile",
                   name: "Workload Profiles",
-                  show: true,
+                  show: hasWorkloadProfileChartData({
+                    benchmarkMeta: this.benchmarkMeta,
+                    benchmarkScores: this.serverDetails.benchmark_scores,
+                  }),
                 },
                 {
                   id: "nvbandwidth",
@@ -570,15 +593,34 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     id.startsWith("nvbandwidth:"),
                   ),
                 },
-                { id: "bw_mem", name: "Memory Bandwidth", show: true },
-                { id: "compress", name: "Compression", show: true },
-                { id: "ssl", name: "OpenSSL", show: true },
+                {
+                  id: "bw_mem",
+                  name: "Memory Bandwidth",
+                  show:
+                    this.memoryChartBuilder.getAvailableDetailsOptions(
+                      this.benchmarksByCategory,
+                    ).length > 0,
+                },
+                {
+                  id: "compress",
+                  name: "Compression",
+                  show: hasBenchmarkPrefix("compression_text:"),
+                },
+                {
+                  id: "ssl",
+                  name: "OpenSSL",
+                  show: benchmarkIds.includes("openssl"),
+                },
                 {
                   id: "geek_single",
                   name: "Geekbench Single-core",
-                  show: true,
+                  show: hasBenchmarkPrefix("geekbench:"),
                 },
-                { id: "geek_multi", name: "Geekbench Multi-core", show: true },
+                {
+                  id: "geek_multi",
+                  name: "Geekbench Multi-core",
+                  show: hasBenchmarkPrefix("geekbench:"),
+                },
                 {
                   id: "passmark_cpu",
                   name: "PassMark CPU",
@@ -609,8 +651,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   name: "LLM Text Generation",
                   show: benchmarkIds.includes("llm_speed:text_generation"),
                 },
-                { id: "static_web", name: "Static Web Server", show: true },
-                { id: "redis", name: "Redis", show: true },
+                {
+                  id: "static_web",
+                  name: "Static Web Server",
+                  show: hasMultiBarChart(staticWebChartTemplate),
+                },
+                {
+                  id: "redis",
+                  name: "Redis",
+                  show: hasMultiBarChart(redisChartTemplate),
+                },
                 {
                   id: "pgbench",
                   name: "pgbench Heavy Read-Only",
