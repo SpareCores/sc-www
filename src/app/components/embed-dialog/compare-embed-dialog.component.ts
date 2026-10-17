@@ -3,6 +3,7 @@ import {
   Input,
   PLATFORM_ID,
   OnChanges,
+  OnDestroy,
   ElementRef,
   ViewChild,
   inject,
@@ -20,7 +21,7 @@ import { EmbedChartOption } from "./embed-dialog.types";
   templateUrl: "./compare-embed-dialog.component.html",
   styleUrl: "./compare-embed-dialog.component.scss",
 })
-export class CompareEmbedDialogComponent implements OnChanges {
+export class CompareEmbedDialogComponent implements OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private sanitizer = inject(DomSanitizer);
   private SEOHandler = inject(SeoHandlerService);
@@ -30,6 +31,7 @@ export class CompareEmbedDialogComponent implements OnChanges {
   @Input() chartname!: string;
 
   src: any;
+  private codeBlockInterval?: ReturnType<typeof setInterval>;
 
   height = "710px";
   width: string = "100%";
@@ -50,6 +52,10 @@ export class CompareEmbedDialogComponent implements OnChanges {
     this.updateSrc();
   }
 
+  ngOnDestroy() {
+    clearInterval(this.codeBlockInterval);
+  }
+
   isBrowser() {
     return isPlatformBrowser(this.platformId);
   }
@@ -66,8 +72,12 @@ export class CompareEmbedDialogComponent implements OnChanges {
 
   updateSrc() {
     this.setup();
+    if (!this.chartname) {
+      return;
+    }
     if (this.isBrowser()) {
-      const checkExist = setInterval(() => {
+      clearInterval(this.codeBlockInterval);
+      this.codeBlockInterval = setInterval(() => {
         if (
           this.iframeCodeBlockElement &&
           this.iframeCodeBlockElement.nativeElement
@@ -79,7 +89,7 @@ export class CompareEmbedDialogComponent implements OnChanges {
               this.iframeCodeBlockElement.nativeElement,
             );
           }, 0);
-          clearInterval(checkExist);
+          clearInterval(this.codeBlockInterval);
         }
       }, 100);
     }

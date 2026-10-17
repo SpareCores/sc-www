@@ -37,6 +37,8 @@
     } @else {
       <p class="text-white">Select which chart to show.</p>
     }
-    <iframe #myIframe [src]="src" [style]="getStyles()"></iframe>
+    @if (src) {
+      <iframe #myIframe [src]="src" [style]="getStyles()"></iframe>
+    }
   </div>
 }

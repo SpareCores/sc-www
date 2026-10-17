@@ -4,6 +4,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   PLATFORM_ID,
   ElementRef,
   HostListener,
@@ -21,7 +22,9 @@ import { EmbedChartOption } from "./embed-dialog.types";
   templateUrl: "./server-embed-dialog.component.html",
   styleUrl: "./server-embed-dialog.component.scss",
 })
-export class ServerEmbedDialogComponent implements OnChanges, AfterViewInit {
+export class ServerEmbedDialogComponent
+  implements OnChanges, AfterViewInit, OnDestroy
+{
   private static readonly ASPECT_RATIO = 0.6;
   private platformId = inject(PLATFORM_ID);
   private sanitizer = inject(DomSanitizer);
@@ -33,6 +36,7 @@ export class ServerEmbedDialogComponent implements OnChanges, AfterViewInit {
   @Input() chartname!: string;
 
   src: any;
+  private codeBlockInterval?: ReturnType<typeof setInterval>;
 
   height = "510px";
   width: string = "100%";
@@ -44,6 +48,10 @@ export class ServerEmbedDialogComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges() {
     this.updateSrc();
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.codeBlockInterval);
   }
 
   ngAfterViewInit() {
@@ -80,11 +88,16 @@ export class ServerEmbedDialogComponent implements OnChanges, AfterViewInit {
   }
 
   updateSrc() {
+    if (!this.chartname) {
+      return;
+    }
+    const isFirstSrc = !this.src;
     this.src = this.sanitizer.bypassSecurityTrustResourceUrl(
       `${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`,
     );
     if (this.isBrowser()) {
-      const checkExist = setInterval(() => {
+      clearInterval(this.codeBlockInterval);
+      this.codeBlockInterval = setInterval(() => {
         if (
           this.iframeCodeBlockElement &&
           this.iframeCodeBlockElement.nativeElement
@@ -96,9 +109,12 @@ export class ServerEmbedDialogComponent implements OnChanges, AfterViewInit {
               this.iframeCodeBlockElement.nativeElement,
             );
           }, 0);
-          clearInterval(checkExist);
+          clearInterval(this.codeBlockInterval);
         }
       }, 100);
+      if (isFirstSrc) {
+        setTimeout(() => this.adjustIframeHeight());
+      }
     }
   }
 
