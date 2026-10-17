@@ -14,13 +14,14 @@ import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { PrismService } from "../../services/prism.service";
+import { EmbedChartOption } from "./embed-dialog.types";
 @Component({
-  selector: "sc-embed-debug",
+  selector: "sc-server-embed-dialog",
   imports: [FormsModule],
-  templateUrl: "./embed-debug.component.html",
-  styleUrl: "./embed-debug.component.scss",
+  templateUrl: "./server-embed-dialog.component.html",
+  styleUrl: "./server-embed-dialog.component.scss",
 })
-export class EmbedDebugComponent implements OnChanges, AfterViewInit {
+export class ServerEmbedDialogComponent implements OnChanges, AfterViewInit {
   private static readonly ASPECT_RATIO = 0.6;
   private platformId = inject(PLATFORM_ID);
   private sanitizer = inject(DomSanitizer);
@@ -36,7 +37,7 @@ export class EmbedDebugComponent implements OnChanges, AfterViewInit {
   height = "510px";
   width: string = "100%";
 
-  @Input() charts: { id: string; name: string }[] = [];
+  @Input() charts: EmbedChartOption[] = [];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
   @ViewChild("myIframe") iframeRef?: ElementRef<HTMLIFrameElement>;
@@ -64,7 +65,7 @@ export class EmbedDebugComponent implements OnChanges, AfterViewInit {
 
     const iframeEl = this.iframeRef.nativeElement;
     const heightPx =
-      iframeEl.offsetWidth * EmbedDebugComponent.ASPECT_RATIO + "px";
+      iframeEl.offsetWidth * ServerEmbedDialogComponent.ASPECT_RATIO + "px";
     this.height = heightPx;
   }
 

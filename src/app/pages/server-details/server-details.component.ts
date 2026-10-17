@@ -66,7 +66,8 @@ import { ToastService } from "../../services/toast.service";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { initGiscus } from "../../tools/initGiscus";
-import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
+import { ServerEmbedDialogComponent } from "../../components/embed-dialog/server-embed-dialog.component";
+import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
 import { buildServerFaqs } from "./server-details-faqs";
 import {
@@ -121,7 +122,7 @@ interface PropertyCategoryDefinition {
     ServerChartsComponent,
     ServerLstopoComponent,
     ServerPropertyCardComponent,
-    EmbedDebugComponent,
+    ServerEmbedDialogComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
     BookmarkButton,
@@ -243,7 +244,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   warningTooltipRef = viewChild<ElementRef<HTMLElement>>("warningTooltip");
   warningTooltipContent = signal("");
 
-  embeddableCharts: { id: string; name: string }[] = [];
+  embeddableCharts: EmbedChartOption[] = [];
 
   @ViewChild("giscusParent") giscusParent!: ElementRef;
 

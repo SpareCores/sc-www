@@ -12,19 +12,15 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { PrismService } from "../../services/prism.service";
-
-interface ChartOption {
-  id: string;
-  name: string;
-}
+import { EmbedChartOption } from "./embed-dialog.types";
 
 @Component({
-  selector: "sc-embed-compare-preview",
+  selector: "sc-compare-embed-dialog",
   imports: [FormsModule],
-  templateUrl: "./embed-compare-preview.component.html",
-  styleUrl: "./embed-compare-preview.component.scss",
+  templateUrl: "./compare-embed-dialog.component.html",
+  styleUrl: "./compare-embed-dialog.component.scss",
 })
-export class EmbedComparePreviewComponent implements OnChanges {
+export class CompareEmbedDialogComponent implements OnChanges {
   private platformId = inject(PLATFORM_ID);
   private sanitizer = inject(DomSanitizer);
   private SEOHandler = inject(SeoHandlerService);
@@ -38,7 +34,7 @@ export class EmbedComparePreviewComponent implements OnChanges {
   height = "710px";
   width: string = "100%";
 
-  @Input() charts: ChartOption[] = [];
+  @Input() charts: EmbedChartOption[] = [];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
 

@@ -680,12 +680,12 @@
       </div>
       <div class="space-y-4 flex flex-col">
         @if (serverDetails && isModalOpen) {
-          <sc-embed-debug
+          <sc-server-embed-dialog
             [id]="serverDetails.api_reference"
             [vendor]="serverDetails.vendor_id"
             [charts]="embeddableCharts"
           >
-          </sc-embed-debug>
+          </sc-server-embed-dialog>
         }
       </div>
     </div>

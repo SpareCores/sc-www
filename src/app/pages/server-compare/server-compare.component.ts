@@ -42,7 +42,8 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
-import { EmbedComparePreviewComponent } from "../embed-compare-preview/embed-compare-preview.component";
+import { CompareEmbedDialogComponent } from "../../components/embed-dialog/compare-embed-dialog.component";
+import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { ToastService } from "../../services/toast.service";
@@ -133,7 +134,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     FormsModule,
     RouterModule,
     ServerCompareChartsComponent,
-    EmbedComparePreviewComponent,
+    CompareEmbedDialogComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
     CollectionSaveModalComponent,
@@ -372,7 +373,7 @@ export class ServerCompareComponent
   instances: any[] = [];
   instancesRaw!: string;
 
-  embeddableCharts = [
+  embeddableCharts: EmbedChartOption[] = [
     { id: "generic", name: "Server Specs and Prices" },
     { id: "workload_profile", name: "Workload Profiles" },
     { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
