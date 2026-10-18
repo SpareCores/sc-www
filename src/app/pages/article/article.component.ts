@@ -113,6 +113,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
             if (isPlatformBrowser(this.platformId)) {
               // Wait for the articleDiv to be rendered
+              clearInterval(this.checkExistInterval);
               this.checkExistInterval = setInterval(() => {
                 if (this.articleDiv) {
                   // attach zoom images on click
