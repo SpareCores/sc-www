@@ -26,6 +26,7 @@ export class GlossaryService {
   private ngZone = inject(NgZone);
   private analytics = inject(AnalyticsService);
   private loaded: Promise<boolean> | null = null;
+  private viewsTracked = false;
 
   apply(element: HTMLElement): void {
     if (!isPlatformBrowser(this.platformId)) {
@@ -33,11 +34,13 @@ export class GlossaryService {
     }
 
     this.ngZone.runOutsideAngular(() => {
-      this.load().then((loaded) => {
-        if (loaded) {
-          this.document.defaultView?.SpareCoresGlossary?.apply(element);
-        }
-      });
+      this.load()
+        .then((loaded) => {
+          if (loaded) {
+            this.document.defaultView?.SpareCoresGlossary?.apply(element);
+          }
+        })
+        .catch((error) => this.analytics.SentryException(error));
     });
   }
 
@@ -50,22 +53,37 @@ export class GlossaryService {
           return;
         }
 
-        view.addEventListener("sc-glossary-view", (event) => {
-          const detail = (event as CustomEvent<GlossaryView>).detail;
-          this.analytics.trackEvent("glossary term view", {
-            term: detail?.term,
-            via: detail?.via,
-          });
-        });
+        this.trackViews(view);
 
         const script = this.document.createElement("script");
+        const fail = () => {
+          script.remove();
+          this.loaded = null;
+          resolve(false);
+        };
         script.src = GLOSSARY_SCRIPT_URL;
         script.async = true;
-        script.onload = () => resolve(Boolean(view.SpareCoresGlossary));
-        script.onerror = () => resolve(false);
+        script.onload = () =>
+          view.SpareCoresGlossary ? resolve(true) : fail();
+        script.onerror = fail;
         this.document.head.appendChild(script);
       });
     }
     return this.loaded;
+  }
+
+  private trackViews(view: Window): void {
+    if (this.viewsTracked) {
+      return;
+    }
+
+    this.viewsTracked = true;
+    view.addEventListener("sc-glossary-view", (event) => {
+      const detail = (event as CustomEvent<GlossaryView>).detail;
+      this.analytics.trackEvent("glossary term view", {
+        term: detail?.term,
+        via: detail?.via,
+      });
+    });
   }
 }
