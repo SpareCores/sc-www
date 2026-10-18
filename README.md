@@ -45,8 +45,9 @@ Note that NG_APP_SENTRY_DSN must be defined (though it can be left empty to disa
 
 The articles get tooltips for the terms of the docs' glossary from a script
 built by the docs site (sc-docusaurus), loaded from
-https://docs.sparecores.com/glossary.js by default; the
-NG_APP_GLOSSARY_SCRIPT_URL environment variable overrides it, e.g. with
+https://docs.sparecores.com/glossary.js by default. The
+NG_APP_GLOSSARY_SCRIPT_URL environment variable must be defined, like
+NG_APP_SENTRY_DSN (empty for the default), and overrides it, e.g. with
 http://localhost:3000/glossary.js for the docs running locally (`npm start`
 or `npm run serve`).
 
