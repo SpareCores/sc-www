@@ -1,9 +1,9 @@
 ---
 # ~50 chars
-title: Burning CPU Cycles with stress-ng
-date: 2026-10-15
+title: Burning CPU Cycles in a Wide Variety of Ways
+date: 2026-07-07
 # ~100 character
-teaser: "How ~80 stress-ng CPU methods scale with SMT, many cores, and Arm, and why the SCore uses div16."
+teaser: "Learn how ~80 stress-ng CPU methods scale based on physical core count, multithreading, and CPU architecture."
 # 320x220
 image: /assets/images/blog/thumbnails/stress-ng-cpu-methods.webp
 image_alt: Spare Cores benchmark page of the stress-ng div16 multi-core workload, with the score distribution across 3,625 server types.
