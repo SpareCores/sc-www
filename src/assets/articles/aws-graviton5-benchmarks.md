@@ -12,7 +12,7 @@ tags: [benchmark, performance, score, aws, vendor]
 ---
 
 <a href="https://www.aboutamazon.com/news/aws/aws-graviton-5-cpu-amazon-ec2" target="_blank" rel="noopener">AWS announced the general availability</a>
-of the new Graviton5-powered (ARM) `m9g` and `m9gd` instance families, promising "up to 25% better compute performance", "2.6x more L3 cache", "faster memory speeds", "15% higher network bandwidth", and "30% higher IOPS" than the previous generation.
+of the new Graviton5-powered (Arm) `m9g` and `m9gd` instance families, promising "up to 25% better compute performance", "2.6x more L3 cache", "faster memory speeds", "15% higher network bandwidth", and "30% higher IOPS" than the previous generation.
 
 This sounded very exciting already back in December when the new Graviton generation was announced at *AWS re:Invent 2025*, but we only had marketing claims at that time without the ability to actually measure performance -- so I was super happy to dig into the [Spare Cores](https://sparecores.com) data we automatically collected overnight by actually starting all new instance types and running 500+ benchmark workloads on each along with detailed hardware discovery tools.
 
