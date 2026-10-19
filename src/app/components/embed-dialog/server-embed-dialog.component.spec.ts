@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EmbedDebugComponent } from "./embed-debug.component";
+import { ServerEmbedDialogComponent } from "./server-embed-dialog.component";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
-describe("EmbedDebugComponent", () => {
-  let component: EmbedDebugComponent;
-  let fixture: ComponentFixture<EmbedDebugComponent>;
+describe("ServerEmbedDialogComponent", () => {
+  let component: ServerEmbedDialogComponent;
+  let fixture: ComponentFixture<ServerEmbedDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EmbedDebugComponent],
+      imports: [ServerEmbedDialogComponent],
       providers: [...sharedTestingProviders],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EmbedDebugComponent);
+    fixture = TestBed.createComponent(ServerEmbedDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

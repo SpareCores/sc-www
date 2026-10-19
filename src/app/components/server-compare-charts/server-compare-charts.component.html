@@ -9,7 +9,7 @@
         <col [style.minWidth]="getServerColumnWidth(server)" />
       }
     </colgroup>
-    @if (isChartShown("generic") || showChart === "nvbandwidth") {
+    @if (isChartShown("generic") || isTableOnlyChartShown()) {
       <thead id="server-compare-table-header">
         <tr>
           <th #tableFirstCol id="server-compare-table-first-col"></th>
@@ -39,7 +39,7 @@
                 </a>
                 <div
                   class="flex gap-2 justify-center"
-                  [class.hidden]="showChart === 'nvbandwidth'"
+                  [class.hidden]="isTableOnlyChartShown()"
                 >
                   @if (isBestPrice(server)) {
                     <div
@@ -100,6 +100,7 @@
                 <a
                   class="block w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto"
                   [routerLink]="['/vendors', server.vendor_id]"
+                  [attr.target]="isEmbedded ? '_blank' : null"
                 >
                   <img
                     [src]="server.vendor.logo"
@@ -113,6 +114,7 @@
                 <a
                   class="text-white text-sm ml-auto underline decoration-dotted"
                   [routerLink]="['/vendors', server.vendor_id]"
+                  [attr.target]="isEmbedded ? '_blank' : null"
                 >
                   {{ server.vendor.name }}
                 </a>
@@ -471,7 +473,9 @@
           }
         }
       }
-      @if (hasVisibleWorkloadProfileChart() && !isEmbedded) {
+      @if (
+        hasVisibleWorkloadProfileChart() && isChartShown("workload_profile")
+      ) {
         <tr class="section_header" id="benchmark_line_workload_profile">
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
@@ -515,7 +519,7 @@
                   </span>
                 </span>
               </h3>
-              @if (!pinnedRow.trailingColSpan) {
+              @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                 <div class="flex items-stretch gap-4 shrink-0">
                   <sc-button
                     [label]="
@@ -544,26 +548,28 @@
           }
           @if (pinnedRow.trailingColSpan) {
             <td [colSpan]="1" class="compare-section-header-action-cell">
-              <div class="flex justify-end items-stretch gap-4">
-                <sc-button
-                  [label]="
-                    (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
-                  "
-                  [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
-                  iconPosition="start"
-                  size="small"
-                  (click)="toggleWorkloadProfileDetails()"
-                ></sc-button>
-                <sc-button
-                  [icon]="clipboardIcon"
-                  ariaLabel="Copy benchmark section link"
-                  size="small"
-                  buttonClass="shrink-0"
-                  (click)="
-                    clipboardURL($event, 'benchmark_line_workload_profile')
-                  "
-                ></sc-button>
-              </div>
+              @if (!isEmbedded) {
+                <div class="flex justify-end items-stretch gap-4">
+                  <sc-button
+                    [label]="
+                      (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
+                    "
+                    [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
+                    iconPosition="start"
+                    size="small"
+                    (click)="toggleWorkloadProfileDetails()"
+                  ></sc-button>
+                  <sc-button
+                    [icon]="clipboardIcon"
+                    ariaLabel="Copy benchmark section link"
+                    size="small"
+                    buttonClass="shrink-0"
+                    (click)="
+                      clipboardURL($event, 'benchmark_line_workload_profile')
+                    "
+                  ></sc-button>
+                </div>
+              }
             </td>
           }
         </tr>
@@ -578,6 +584,7 @@
                 [showHeader]="false"
                 [servers]="workloadProfileCompareServers"
                 [benchmarkMeta]="workloadProfileBenchmarkMeta"
+                [isEmbedded]="isEmbedded"
                 (layoutChanged)="layoutChanged.emit()"
               ></sc-workload-profile-panel>
             </div>

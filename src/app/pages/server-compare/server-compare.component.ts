@@ -42,7 +42,8 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
-import { EmbedComparePreviewComponent } from "../embed-compare-preview/embed-compare-preview.component";
+import { CompareEmbedDialogComponent } from "../../components/embed-dialog/compare-embed-dialog.component";
+import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { ToastService } from "../../services/toast.service";
@@ -133,7 +134,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     FormsModule,
     RouterModule,
     ServerCompareChartsComponent,
-    EmbedComparePreviewComponent,
+    CompareEmbedDialogComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
     CollectionSaveModalComponent,
@@ -372,7 +373,9 @@ export class ServerCompareComponent
   instances: any[] = [];
   instancesRaw!: string;
 
-  embeddableCharts = [
+  embeddableCharts: EmbedChartOption[] = [
+    { id: "generic", name: "Server Specs and Prices" },
+    { id: "workload_profile", name: "Workload Profiles" },
     { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
     { id: "bw_mem", name: "Memory Bandwidth" },
     { id: "compress", name: "Compression" },
@@ -380,6 +383,8 @@ export class ServerCompareComponent
     { id: "geekbench", name: "Geekbench Single- and Multi-core" },
     { id: "geekbench_single", name: "Geekbench Single-core" },
     { id: "geekbench_multi", name: "Geekbench Multi-core" },
+    { id: "passmark_cpu", name: "PassMark CPU" },
+    { id: "passmark_other", name: "PassMark Memory" },
     { id: "stress_ng", name: "Stress-ng div16" },
     { id: "stress_ng_pct", name: "Stress-ng Relative" },
     { id: "llm_inference", name: "LLM Inference" },
