@@ -31,9 +31,9 @@ test.
 
 If you're here for the numbers, some highlights:
 
-- **SMT can double the score, or do nothing**: on a single hyper-threaded
-  core, running two workers instead of one gave anywhere between 0.97x and
-  2.02x the throughput, depending on the method.
+- **SMT can double the score, or do nothing**: on a single core with SMT
+  (Simultaneous Multithreading), running two workers instead of one gave
+  anywhere between 0.97x and 2.02x the throughput, depending on the method.
 - **Divisions track physical cores**: the `div8`, `div16`, `div32`, and
   `div64` methods scaled almost exactly with the number of physical cores on
   every server we tested.
@@ -75,10 +75,10 @@ below, it inherits all the quirks of the individual methods.
 
 But why do we care about the method at all? Because we wanted a single number
 describing the raw multi-core performance of a server: one that grows with the
-number of physical CPU cores, and doesn't reward or punish SMT (Simultaneous
-Multithreading, also known as Hyper-Threading) in surprising ways. As we
+number of physical CPU cores, and doesn't reward or punish SMT (branded as
+Hyper-Threading by Intel) in surprising ways. As we
 described in the [vCPUs in the Real World: Do They Truly Scale?](/article/multi-core-scalability)
-article, a vCPU is often just a hyper-thread, and a hyper-thread is not a
+article, a vCPU is often just an SMT thread, and an SMT thread is not a
 core.
 
 ## Methodology
@@ -141,7 +141,7 @@ This leaves us with 78 methods per server, including `all`.
 ### SMT Scaling
 
 Let's start with the smallest server: `c6a.large` comes with two vCPUs, which
-are the two hyper-threads of a single physical AMD core. Running two workers
+are the two SMT threads of a single physical AMD core. Running two workers
 instead of one should not double the performance, as there's only one core
 doing the work. Still, the scaling factors were all over the place:
 
@@ -154,26 +154,26 @@ doing the work. Still, the scaling factors were all over the place:
   -->
   <img class="zoomin w-full"
     title="Scaling factor of stress-ng CPU methods on c6a.large"
-    alt="Bar chart of the two-worker vs one-worker scaling factor of 78 stress-ng CPU methods on a single hyper-threaded AMD core, ranging from 0.97x to 2.02x."
+    alt="Bar chart of the two-worker vs one-worker scaling factor of 78 stress-ng CPU methods on a single AMD core with SMT, ranging from 0.97x to 2.02x."
     src="/assets/images/blog/stress-ng-cpu-methods/c6a-large-smt-scaling.webp"/>
-  <p>Throughput of two workers relative to one worker on a single hyper-threaded core (<code>c6a.large</code>)<br />(data collected and visualized by Spare Cores)</p>
+  <p>Throughput of two workers relative to one worker on a single core with SMT (<code>c6a.large</code>)<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 - The integer divisions (`div8`, `div16`, `div32`, `div64`), `jmp`, `gray`,
   `hanoi`, `fibonacci`, `floatconversion`, `sqrt`, `ln2`, and `int128float`
-  did not gain anything from the second hyper-thread (0.97x to 1.01x).
+  did not gain anything from the second SMT thread (0.97x to 1.01x).
 - On the other end, `crc16` (2.02x), `logmap` (2.01x), `correlate` (1.97x),
   `explog` (1.97x), and `intconversion` (1.93x) reported practically double
   the performance, as if there were two physical cores.
 - The median method landed at 1.28x, and the default `all` method at 1.50x.
 
 Our understanding is that methods saturating a single execution unit of the
-core, such as the integer divider, leave nothing for the sibling hyper-thread
+core, such as the integer divider, leave nothing for the sibling SMT thread
 to use. Methods with long dependency chains or memory stalls, on the other
-hand, leave a lot of the core idle, which the second hyper-thread happily
+hand, leave a lot of the core idle, which the second SMT thread happily
 fills.
 
-The `c6a.2xlarge` (four cores, eight hyper-threads) told the same story: the
+The `c6a.2xlarge` (four cores, eight SMT threads) told the same story: the
 `div8` to `div64` methods scaled exactly 4.0x, while `logmap` and `correlate`
 scaled ~7.9x, and `all` landed at 6.2x. Meanwhile, the two servers without SMT
 (`m7a.xlarge` and `c6g.xlarge`) scaled ~4.0x with practically every method,
@@ -184,7 +184,7 @@ as one would expect from four physical cores.
 Things get more interesting with lots of cores. We compared two 128-vCPU
 servers: `c7a.32xlarge` with 128 physical AMD Genoa cores and no SMT, and
 `c6i.metal` with 64 physical Intel cores in two sockets, each running two
-hyper-threads.
+SMT threads.
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <!--
@@ -210,7 +210,7 @@ On `c6i.metal`, the range was much wider:
 - `div8`, `div16`, `div32`, and `div64` scaled ~64x, matching the number of
   physical cores.
 - `logmap` (126x), `correlate` (126x), `explog` (124x), and `rgb` (121x)
-  scaled as if all 128 hyper-threads were real cores.
+  scaled as if all 128 SMT threads were real cores.
 - `hanoi` (52x), `bitops` (52x), `jmp` (56x), and `matrixprod` (56x) scaled
   even worse than the physical core count.
 - The median method scaled 81x, and `all` 93x.
@@ -298,7 +298,7 @@ Putting it all together, here's what we were looking for in a single CPU
 method, and how `div16` delivered:
 
 - It should scale with the number of physical cores, not with the number of
-  hyper-threads: `div16` scaled 1.00x on one SMT core, 4.0x on four SMT
+  SMT threads: `div16` scaled 1.00x on one SMT core, 4.0x on four SMT
   cores, 65x on 64 SMT cores, and 128x on 128 non-SMT cores.
 - It should not be dominated by an exotic data type that some architectures
   emulate in software: `div16` uses 16-bit unsigned integers, and a Graviton2
@@ -323,6 +323,19 @@ provide for each server.
 
 ## Caveats
 
+`stress-ng` was not designed as a benchmarking tool. Our
+<a href="https://docs.sparecores.com/images/stress-ng/limitations" target="_blank" rel="noopener">stress-ng documentation</a>
+lists what these measurements do not deliver: bogo-ops count each stressor's
+own unit of work, so results are only comparable for the same stressor on the
+same `stress-ng` version, and they show how fast a server runs a synthetic
+loop, not how fast an application runs.
+<a href="https://github.com/ColinIanKing/stress-ng" target="_blank" rel="noopener"><code>stress-ng</code>'s own documentation</a>
+also warns against using the tool as a precise benchmark suite. Still, as we
+wrote in the [Unlocking Cloud Compute Performance](/article/cloud-compute-performance-benchmarks)
+article, it does result in meaningful and useful metrics with the right
+selection of the CPU stress method. Also note the following limitations of
+the experiments in this post:
+
 - Each result comes from a single 10-second run, so differences of a few
   percent are within noise.
 - The results are from June 2024 and an older `stress-ng` release. The
@@ -341,9 +354,9 @@ provide for each server.
 
 The CPU method of `stress-ng` matters a lot: the same server can look like a
 52-core or a 126-core machine, and an Arm core can look 2x or 150x slower
-than an x86 core, depending on the method. We picked `div16` for the SCore because it
-scales with physical cores across vendors, architectures, and SMT settings,
-and because it measures something simple enough to explain.
+than an x86 core, depending on the method. We picked `div16` for the SCore
+because it scales with physical cores across vendors, architectures, and SMT
+settings, and because it measures something simple enough to explain.
 
 ## Feedback
 
