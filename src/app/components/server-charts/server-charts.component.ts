@@ -34,6 +34,7 @@ import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.co
 import { MemoryBenchmarkMeta } from "../charts/memory/memory-chart.types";
 import { NvbandwidthCardComponent } from "../charts/nvbandwidth/nvbandwidth-card.component";
 import { ServerMemoryChartComponent } from "../charts/memory/server-memory-chart.component";
+import { StressNgFullCardComponent } from "../charts/stress-ng-full/stress-ng-full-card.component";
 import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import {
@@ -63,6 +64,7 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
     ServerMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
     NvbandwidthCardComponent,
+    StressNgFullCardComponent,
     WorkloadProfilePanelComponent,
   ],
   templateUrl: "./server-charts.component.html",
