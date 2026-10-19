@@ -39,6 +39,8 @@ export class BenchmarkIconPipe implements PipeTransform {
       case lowerCase.includes("static_web"):
         return "image-up";
       case lowerCase.includes("stress_ng"):
+      case lowerCase.includes("nvbandwidth"):
+      case lowerCase.includes("gpu_bandwidth"):
         return "cpu";
       case lowerCase.includes("workload_profile"):
       case lowerCase.includes("workload"):

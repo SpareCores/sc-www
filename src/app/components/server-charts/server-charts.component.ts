@@ -19,6 +19,7 @@ import {
   staticWebChartTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { DecimalPipe } from "@angular/common";
 import { Button } from "../button/button";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
 import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
@@ -31,7 +32,9 @@ import {
 } from "../charts/line/benchmark-line-chart.types";
 import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
 import { MemoryBenchmarkMeta } from "../charts/memory/memory-chart.types";
+import { NvbandwidthCardComponent } from "../charts/nvbandwidth/nvbandwidth-card.component";
 import { ServerMemoryChartComponent } from "../charts/memory/server-memory-chart.component";
+import { StressNgFullCardComponent } from "../charts/stress-ng-full/stress-ng-full-card.component";
 import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import {
@@ -53,12 +56,15 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
     FormsModule,
     RouterModule,
     BenchmarkIconPipe,
+    DecimalPipe,
     BenchmarkLineChartComponent,
     CompressionChartComponent,
     GeekbenchRadarChartComponent,
     LlmInferenceChartComponent,
     ServerMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
+    NvbandwidthCardComponent,
+    StressNgFullCardComponent,
     WorkloadProfilePanelComponent,
   ],
   templateUrl: "./server-charts.component.html",

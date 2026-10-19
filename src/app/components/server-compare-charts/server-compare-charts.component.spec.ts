@@ -504,6 +504,7 @@ describe("ServerCompareChartsComponent", () => {
   });
 
   it("renders workload profiles in a dedicated section above benchmark categories", () => {
+    component.showChart = "workload_profile";
     component.servers = [
       {
         vendor_id: "aws",
@@ -567,6 +568,7 @@ describe("ServerCompareChartsComponent", () => {
   });
 
   it("hides workload profiles when no scores exist", () => {
+    component.showChart = "workload_profile";
     component.servers = buildServers(2) as unknown as typeof component.servers;
     component.benchmarkMeta = [
       {
@@ -586,6 +588,7 @@ describe("ServerCompareChartsComponent", () => {
   });
 
   it("renders flat workload profile detail rows for compared servers", () => {
+    component.showChart = "workload_profile";
     component.servers = [
       {
         vendor_id: "aws",

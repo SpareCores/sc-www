@@ -87,6 +87,11 @@
       z-index: 30;
     }
 
+    tr.compare-dropdown-header-row {
+      position: relative;
+      z-index: 30;
+    }
+
     tr {
       @apply bg-primary;
 
