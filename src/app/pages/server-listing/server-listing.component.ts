@@ -58,10 +58,7 @@ import {
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { AnalyticsService } from "../../services/analytics.service";
 import { Modal, ModalOptions } from "flowbite";
-import {
-  dismissPageHttpToasts,
-  showInvalidUrlParamToast,
-} from "../../services/page-toast.helpers";
+import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { ToastService } from "../../services/toast.service";
 import {
   BAD_BENCHMARK_URL_TOAST_ID,
@@ -700,10 +697,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
     this.introductionModal?.hide();
     this.introductionModal = null;
-    dismissPageHttpToasts(this.toastService, [
-      QUERY_ERROR_SERVERS_TOAST_ID,
-      SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
-    ]);
+    this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+    this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
     this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
   }
 
@@ -940,7 +935,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     const searchAbortController = new AbortController();
     this.searchAbortController = searchAbortController;
     this.isLoading = true;
-    dismissPageHttpToasts(this.toastService, QUERY_ERROR_SERVERS_TOAST_ID);
+    this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
 
     let query = JSON.parse(JSON.stringify(this.query));
 

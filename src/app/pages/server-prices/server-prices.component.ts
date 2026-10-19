@@ -54,7 +54,6 @@ import {
   toSearchParams,
 } from "../../tools/listing-search-params";
 import { ToastService } from "../../services/toast.service";
-import { dismissPageHttpToasts } from "../../services/page-toast.helpers";
 import { QUERY_ERROR_SERVER_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
@@ -354,10 +353,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.searchAbortController?.abort();
     this.subscription.unsubscribe();
-    dismissPageHttpToasts(
-      this.toastService,
-      QUERY_ERROR_SERVER_PRICES_TOAST_ID,
-    );
+    this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
   }
 
   toggleCollapse() {
@@ -446,10 +442,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     const searchAbortController = new AbortController();
     this.searchAbortController = searchAbortController;
     this.isLoading = true;
-    dismissPageHttpToasts(
-      this.toastService,
-      QUERY_ERROR_SERVER_PRICES_TOAST_ID,
-    );
+    this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
 
     let query = JSON.parse(JSON.stringify(this.query));
 

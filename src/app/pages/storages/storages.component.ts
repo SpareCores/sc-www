@@ -30,7 +30,6 @@ import { SearchBarComponent } from "../../components/search-bar/search-bar.compo
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { StoragePipe } from "../../pipes/storage.pipe";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import { dismissPageHttpToasts } from "../../services/page-toast.helpers";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ToastService } from "../../services/toast.service";
 import { QUERY_ERROR_STORAGE_PRICES_TOAST_ID } from "../../services/toast-ids";
@@ -184,10 +183,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.searchAbortController?.abort();
     this.subscription.unsubscribe();
-    dismissPageHttpToasts(
-      this.toastService,
-      QUERY_ERROR_STORAGE_PRICES_TOAST_ID,
-    );
+    this.toastService.removeToast(QUERY_ERROR_STORAGE_PRICES_TOAST_ID);
   }
 
   toggleCollapse() {
@@ -255,10 +251,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
     const searchAbortController = new AbortController();
     this.searchAbortController = searchAbortController;
     this.isLoading = true;
-    dismissPageHttpToasts(
-      this.toastService,
-      QUERY_ERROR_STORAGE_PRICES_TOAST_ID,
-    );
+    this.toastService.removeToast(QUERY_ERROR_STORAGE_PRICES_TOAST_ID);
 
     this.keeperAPI
       .getStoragePrices(this.query, {

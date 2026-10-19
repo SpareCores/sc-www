@@ -7,16 +7,6 @@ type InvalidUrlToastAction = {
   onClick: () => void;
 };
 
-export function dismissPageHttpToasts(
-  toastService: Pick<ToastService, "removeToast">,
-  ownedToastIds: string | string[],
-): void {
-  const toastIds = Array.isArray(ownedToastIds)
-    ? ownedToastIds
-    : [ownedToastIds];
-  toastIds.forEach((toastId) => toastService.removeToast(toastId));
-}
-
 export function showInvalidUrlParamToast(
   toastService: Pick<ToastService, "show">,
   platformId: object,

@@ -65,10 +65,7 @@ import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import {
-  dismissPageHttpToasts,
-  showInvalidUrlParamToast,
-} from "../../services/page-toast.helpers";
+import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
   DatabaseCompare,
@@ -385,7 +382,7 @@ export class DatabaseCompareComponent
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.stickyLayout.destroy();
-    dismissPageHttpToasts(this.toastService, DATABASE_COMPARE_ERROR_TOAST_ID);
+    this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
     this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
   }
 
@@ -620,7 +617,7 @@ export class DatabaseCompareComponent
     const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
-    dismissPageHttpToasts(this.toastService, DATABASE_COMPARE_ERROR_TOAST_ID);
+    this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
 
     this.instances = [];
     this.instancesRaw = "";

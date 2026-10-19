@@ -1,21 +1,7 @@
-import {
-  dismissPageHttpToasts,
-  showInvalidUrlParamToast,
-} from "./page-toast.helpers";
+import { showInvalidUrlParamToast } from "./page-toast.helpers";
 import type { ToastService } from "./toast.service";
 
 describe("page toast helpers", () => {
-  it("dismissPageHttpToasts clears owned ids", () => {
-    const toastService = jasmine.createSpyObj<
-      Pick<ToastService, "removeToast">
-    >("toastService", ["removeToast"]);
-
-    dismissPageHttpToasts(toastService, ["query-error", "bad-url"]);
-
-    expect(toastService.removeToast).toHaveBeenCalledWith("query-error");
-    expect(toastService.removeToast).toHaveBeenCalledWith("bad-url");
-  });
-
   it("showInvalidUrlParamToast shows the standard Invalid URL toast in the browser", () => {
     const toastService = jasmine.createSpyObj<Pick<ToastService, "show">>(
       "toastService",

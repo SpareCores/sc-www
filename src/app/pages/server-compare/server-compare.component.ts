@@ -45,10 +45,7 @@ import { ServerCompareChartsComponent } from "../../components/server-compare-ch
 import { EmbedComparePreviewComponent } from "../embed-compare-preview/embed-compare-preview.component";
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
-import {
-  dismissPageHttpToasts,
-  showInvalidUrlParamToast,
-} from "../../services/page-toast.helpers";
+import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { ToastService } from "../../services/toast.service";
 import {
   BAD_SERVER_COMPARE_URL_TOAST_ID,
@@ -505,7 +502,7 @@ export class ServerCompareComponent
     }
 
     this.stickyLayout.destroy();
-    dismissPageHttpToasts(this.toastService, SERVER_COMPARE_ERROR_TOAST_ID);
+    this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
     this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
   }
 
@@ -513,7 +510,7 @@ export class ServerCompareComponent
     const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
-    dismissPageHttpToasts(this.toastService, SERVER_COMPARE_ERROR_TOAST_ID);
+    this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
 
     this.instances = [];
     this.instancesRaw = "";

@@ -29,7 +29,6 @@ import { PaginationComponent } from "../../components/pagination/pagination.comp
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import { dismissPageHttpToasts } from "../../services/page-toast.helpers";
 import { ToastService } from "../../services/toast.service";
 import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -184,10 +183,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.searchAbortController?.abort();
     this.subscription.unsubscribe();
-    dismissPageHttpToasts(
-      this.toastService,
-      QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID,
-    );
+    this.toastService.removeToast(QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID);
   }
 
   toggleCollapse() {
@@ -255,10 +251,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
     const searchAbortController = new AbortController();
     this.searchAbortController = searchAbortController;
     this.isLoading = true;
-    dismissPageHttpToasts(
-      this.toastService,
-      QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID,
-    );
+    this.toastService.removeToast(QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID);
 
     this.keeperAPI
       .getTrafficPrices(this.query, {
