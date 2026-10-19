@@ -923,6 +923,14 @@
                     <span class="compare-section-header-title__text">
                       {{ stressNgTitle }}
                     </span>
+                    <span class="compare-section-header-title__icons">
+                      <svg
+                        lucideCircleArrowUp
+                        class="h-4 w-4 text-gray-200 shrink-0"
+                        (mouseenter)="showTooltip($event, 'Higher is better.')"
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
+                    </span>
                   </span>
                 </h3>
                 <div class="flex items-stretch gap-4 shrink-0">

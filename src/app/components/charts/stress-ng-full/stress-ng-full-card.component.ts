@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import {
   LucideCircleArrowDown,
+  LucideCircleArrowUp,
   LucideDynamicIcon,
   LucideInfo,
   LucideTriangleAlert,
@@ -30,6 +31,7 @@ import {
   imports: [
     NgTemplateOutlet,
     LucideCircleArrowDown,
+    LucideCircleArrowUp,
     LucideDynamicIcon,
     LucideInfo,
     LucideTriangleAlert,
