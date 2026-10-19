@@ -872,10 +872,14 @@
                     @if (value === "check" || value === "x") {
                       <svg
                         [lucideIcon]="value"
+                        aria-hidden="true"
                         class="h-4 w-4 shrink-0 justify-self-end"
                         [class.text-emerald-400]="value === 'check'"
                         [class.text-white]="value === 'x'"
                       ></svg>
+                      <span class="sr-only">{{
+                        value === "check" ? "Yes" : "No"
+                      }}</span>
                     } @else {
                       <span>{{ value }}</span>
                     }
