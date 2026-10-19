@@ -32,7 +32,6 @@ export namespace Servers {
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
-       * @max 256
        * @default 1
        */
       vcpus_min?: number;
@@ -55,8 +54,7 @@ export namespace Servers {
         | "Apple"
         | "Hygon"
         | "Intel"
-        | "Microsoft"
-        | "NVIDIA";
+        | "Microsoft";
       /** Processor family */
       cpu_family?:
         | "ARM"
@@ -64,7 +62,6 @@ export namespace Servers {
         | "ARMv9"
         | "Ampere Altra"
         | "EPYC"
-        | "Grace"
         | "Xeon"
         | "Yitian";
       /**
@@ -659,12 +656,6 @@ export namespace Servers {
         | "1640"
         | "1650"
         | "1680"
-        | "2"
-        | "3"
-        | "4"
-        | "5"
-        | "6"
-        | "7"
         | "af-south-1"
         | "ams"
         | "ap-east-1"
@@ -682,7 +673,6 @@ export namespace Servers {
         | "ap-southeast-6"
         | "ap-southeast-7"
         | "ap-southeast-8"
-        | "AP-SOUTHEAST-SYD"
         | "AP-SOUTHEAST-SYD-2"
         | "AP-SOUTH-MUM"
         | "AP-SOUTH-MUM-1"
@@ -700,9 +690,7 @@ export namespace Servers {
         | "bom"
         | "brazilsouth"
         | "brazilsoutheast"
-        | "brazilus"
         | "ca-central-1"
-        | "CA-EAST-TOR"
         | "canadacentral"
         | "canadaeast"
         | "ca-west-1"
@@ -711,19 +699,15 @@ export namespace Servers {
         | "centralus"
         | "centraluseuap"
         | "chilecentral"
-        | "cmh"
         | "cn-beijing"
         | "cn-chengdu"
         | "cn-fuzhou"
         | "cn-guangzhou"
         | "cn-hangzhou"
-        | "cn-hangzhou-acdr-ut-3"
         | "cn-heyuan"
         | "cn-hongkong"
         | "cn-huhehaote"
         | "cn-nanjing"
-        | "cn-north-1"
-        | "cn-northwest-1"
         | "cn-qingdao"
         | "cn-shanghai"
         | "cn-shenzhen"
@@ -742,7 +726,6 @@ export namespace Servers {
         | "eastus"
         | "eastus2"
         | "eastus2euap"
-        | "eastusstg"
         | "es-mad1"
         | "eu-central-1"
         | "eu-central-2"
@@ -789,15 +772,12 @@ export namespace Servers {
         | "me-central-1"
         | "me-east-1"
         | "mel"
-        | "me-south-1"
         | "mex"
         | "mexicocentral"
         | "mia"
-        | "msp"
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
-        | "newzealandnorth"
         | "nl-ams1"
         | "northcentralus"
         | "northeurope"
@@ -811,7 +791,6 @@ export namespace Servers {
         | "qatarcentral"
         | "RBX"
         | "RBX-A"
-        | "RBX-ARCHIVE"
         | "sa-east-1"
         | "sao"
         | "SBG"
@@ -828,11 +807,9 @@ export namespace Servers {
         | "southafricanorth"
         | "southafricawest"
         | "southcentralus"
-        | "southcentralusstg"
         | "southeastasia"
         | "southindia"
         | "spaincentral"
-        | "stl"
         | "sto"
         | "swedencentral"
         | "switzerlandnorth"
@@ -864,7 +841,13 @@ export namespace Servers {
         | "westus"
         | "westus2"
         | "westus3"
-        | "yto";
+        | "yto"
+        | "fsn1"
+        | "nbg1"
+        | "hel1"
+        | "ash"
+        | "hil"
+        | "sin";
       /**
        * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
@@ -883,7 +866,6 @@ export namespace Servers {
         | "alicloud~cn-fuzhou"
         | "alicloud~cn-guangzhou"
         | "alicloud~cn-hangzhou"
-        | "alicloud~cn-hangzhou-acdr-ut-3"
         | "alicloud~cn-heyuan"
         | "alicloud~cn-hongkong"
         | "alicloud~cn-huhehaote"
@@ -921,8 +903,6 @@ export namespace Servers {
         | "aws~ap-southeast-7"
         | "aws~ca-central-1"
         | "aws~ca-west-1"
-        | "aws~cn-north-1"
-        | "aws~cn-northwest-1"
         | "aws~eu-central-1"
         | "aws~eu-central-2"
         | "aws~eu-north-1"
@@ -933,7 +913,6 @@ export namespace Servers {
         | "aws~eu-west-3"
         | "aws~il-central-1"
         | "aws~me-central-1"
-        | "aws~me-south-1"
         | "aws~mx-central-1"
         | "aws~sa-east-1"
         | "aws~us-east-1"
@@ -948,7 +927,6 @@ export namespace Servers {
         | "azure~belgiumcentral"
         | "azure~brazilsouth"
         | "azure~brazilsoutheast"
-        | "azure~brazilus"
         | "azure~canadacentral"
         | "azure~canadaeast"
         | "azure~centralindia"
@@ -960,7 +938,6 @@ export namespace Servers {
         | "azure~eastus"
         | "azure~eastus2"
         | "azure~eastus2euap"
-        | "azure~eastusstg"
         | "azure~francecentral"
         | "azure~francesouth"
         | "azure~germanynorth"
@@ -977,7 +954,6 @@ export namespace Servers {
         | "azure~koreasouth"
         | "azure~malaysiawest"
         | "azure~mexicocentral"
-        | "azure~newzealandnorth"
         | "azure~northcentralus"
         | "azure~northeurope"
         | "azure~norwayeast"
@@ -987,7 +963,6 @@ export namespace Servers {
         | "azure~southafricanorth"
         | "azure~southafricawest"
         | "azure~southcentralus"
-        | "azure~southcentralusstg"
         | "azure~southeastasia"
         | "azure~southindia"
         | "azure~spaincentral"
@@ -1047,19 +1022,17 @@ export namespace Servers {
         | "gcp~1640"
         | "gcp~1650"
         | "gcp~1680"
-        | "hcloud~2"
-        | "hcloud~3"
-        | "hcloud~4"
-        | "hcloud~5"
-        | "hcloud~6"
-        | "hcloud~7"
+        | "hcloud~ash"
+        | "hcloud~fsn1"
+        | "hcloud~hel1"
+        | "hcloud~hil"
+        | "hcloud~nbg1"
+        | "hcloud~sin"
         | "ovh~AP-SOUTH-MUM"
         | "ovh~AP-SOUTH-MUM-1"
-        | "ovh~AP-SOUTHEAST-SYD"
         | "ovh~AP-SOUTHEAST-SYD-2"
         | "ovh~BHS"
         | "ovh~BHS5"
-        | "ovh~CA-EAST-TOR"
         | "ovh~DE"
         | "ovh~DE1"
         | "ovh~EU-SOUTH-MIL"
@@ -1070,7 +1043,6 @@ export namespace Servers {
         | "ovh~GRA9"
         | "ovh~RBX"
         | "ovh~RBX-A"
-        | "ovh~RBX-ARCHIVE"
         | "ovh~SBG"
         | "ovh~SBG5"
         | "ovh~SBG7"
@@ -1102,7 +1074,6 @@ export namespace Servers {
         | "vultr~blr"
         | "vultr~bom"
         | "vultr~cdg"
-        | "vultr~cmh"
         | "vultr~del"
         | "vultr~dfw"
         | "vultr~ewr"
@@ -1118,7 +1089,6 @@ export namespace Servers {
         | "vultr~mel"
         | "vultr~mex"
         | "vultr~mia"
-        | "vultr~msp"
         | "vultr~mxp"
         | "vultr~nrt"
         | "vultr~ord"
@@ -1127,7 +1097,6 @@ export namespace Servers {
         | "vultr~sea"
         | "vultr~sgp"
         | "vultr~sjc"
-        | "vultr~stl"
         | "vultr~sto"
         | "vultr~syd"
         | "vultr~tlv"
@@ -1282,7 +1251,7 @@ export namespace Servers {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
@@ -1292,7 +1261,6 @@ export namespace Servers {
         | "Hopper"
         | "Pascal"
         | "Radeon Pro Navi"
-        | "TPU"
         | "Turing"
         | "Volta";
       /** GPU model */
@@ -1304,9 +1272,9 @@ export namespace Servers {
         | "B300"
         | "GB200"
         | "GB300"
-        | "GH200"
         | "H100"
         | "H200"
+        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
@@ -1314,14 +1282,74 @@ export namespace Servers {
         | "P4"
         | "RTX 5000"
         | "RTX PRO 4500"
-        | "RTX PRO 6000 Blackwell Server Edition"
-        | "RTX Pro 6000"
+        | "RTX PRO 6000"
         | "T4"
         | "T4G"
         | "V100"
         | "V100S"
+        | "V520"
         | "V620"
         | "V710";
+      /**
+       * ASIC count
+       * Required number of ASICs (Application-Specific Integrated Circuits, e.g. Google TPUs), including all non-GPU accelerators.
+       */
+      asic_min?: number | null;
+      /**
+       * Maximum ASIC count
+       * Maximum number of ASICs (Application-Specific Integrated Circuits, e.g. Google TPUs). Set to 0 to search for servers without ASICs.
+       */
+      asic_max?: number | null;
+      /**
+       * Required ASIC memory
+       * Required amount of ASIC (Application-Specific Integrated Circuit, e.g. Google TPU) memory (GB) in each ASIC.
+       */
+      asic_memory_min?: number | null;
+      /**
+       * Total ASIC memory
+       * Required amount of total ASIC (Application-Specific Integrated Circuit, e.g. Google TPU) memory (GBs) in all ASICs.
+       */
+      asic_memory_total?: number | null;
+      /**
+       * ASIC manufacturer
+       * Manufacturer of the ASIC (Application-Specific Integrated Circuit), e.g. Google.
+       */
+      asic_manufacturer?: "Google";
+      /**
+       * ASIC family
+       * Family of the ASIC (Application-Specific Integrated Circuit), e.g. TPU.
+       */
+      asic_family?: "TPU";
+      /**
+       * ASIC model
+       * Model of the ASIC (Application-Specific Integrated Circuit), e.g. v5e.
+       */
+      asic_model?: "tpu7" | "v3" | "v5e" | "v5p" | "v6e" | "v7x";
+      /**
+       * Accelerator type
+       * Type of the accelerator, e.g. GPU or TPU.
+       */
+      accelerator_type?: "GPU" | "TPU";
+      /**
+       * Accelerator count
+       * Required number of accelerators (e.g. GPUs or TPUs).
+       */
+      accelerator_min?: number | null;
+      /**
+       * Maximum accelerator count
+       * Maximum number of accelerators. Set to 0 to search for servers without accelerators.
+       */
+      accelerator_max?: number | null;
+      /**
+       * Required accelerator memory
+       * Required amount of accelerator memory (GB) in each accelerator.
+       */
+      accelerator_memory_min?: number | null;
+      /**
+       * Total accelerator memory
+       * Required amount of total accelerator memory (GBs) in all accelerators.
+       */
+      accelerator_memory_total?: number | null;
       /**
        * Maximum price
        * Maximum best price of the server in the requested currency, using the price allocation selected via best_price_allocation (hourly price, or monthly price when MONTHLY is selected), including the optional extra traffic and storage costs.

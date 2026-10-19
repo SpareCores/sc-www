@@ -51,13 +51,17 @@
                   </td>
                   <td class="nvbandwidth_value">
                     @if (value === "check" || value === "x") {
-                      <svg
-                        [lucideIcon]="value"
-                        aria-hidden="true"
-                        class="h-4 w-4 ml-auto"
+                      <div
+                        class="flex justify-end"
                         [class.text-emerald-400]="value === 'check'"
                         [class.text-white]="value === 'x'"
-                      ></svg>
+                      >
+                        <svg
+                          [lucideIcon]="value"
+                          aria-hidden="true"
+                          class="h-4 w-4"
+                        ></svg>
+                      </div>
                       <span class="sr-only">{{
                         value === "check" ? "Yes" : "No"
                       }}</span>
