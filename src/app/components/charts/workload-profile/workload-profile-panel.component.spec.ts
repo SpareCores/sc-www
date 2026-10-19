@@ -285,7 +285,7 @@ describe("WorkloadProfilePanelComponent", () => {
       new MouseEvent("mouseenter"),
     );
     fixture.detectChanges();
-    expect(fixture.componentInstance.tooltipContent).toBe(
+    expect(fixture.componentInstance.tooltipContent()).toBe(
       "Limited scaling above 32 vCPUs.",
     );
     expect(

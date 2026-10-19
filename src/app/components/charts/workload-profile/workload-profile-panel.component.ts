@@ -1,7 +1,6 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   ElementRef,
@@ -179,7 +178,6 @@ export class WorkloadProfilePanelComponent {
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
   private tooltipService = inject(ChartTooltipService);
-  private cdr = inject(ChangeDetectorRef);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   scoreGaugeDirective = viewChild<BaseChartDirective>("scoreGauge");
@@ -309,7 +307,7 @@ export class WorkloadProfilePanelComponent {
   readonly getImpactColorClass = getImpactColorClass;
   readonly scoreGaugePlugins = [scoreGaugeTickPlugin];
 
-  tooltipContent = "";
+  readonly tooltipContent = signal("");
 
   constructor() {
     effect(() => {
@@ -342,10 +340,7 @@ export class WorkloadProfilePanelComponent {
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
-      onShow: (text) => {
-        this.tooltipContent = text;
-        this.cdr.detectChanges();
-      },
+      onShow: (text) => this.tooltipContent.set(text),
     });
   }
 
@@ -355,16 +350,13 @@ export class WorkloadProfilePanelComponent {
       event: el,
       content,
       variant: "warning-wide",
-      onShow: (text) => {
-        this.tooltipContent = text;
-        this.cdr.detectChanges();
-      },
+      onShow: (text) => this.tooltipContent.set(text),
     });
   }
 
   hideTooltip(): void {
     this.tooltipService.hide(this.tooltip()?.nativeElement);
-    this.tooltipContent = "";
+    this.tooltipContent.set("");
   }
 
   onAccordionChanged(index: number): void {
