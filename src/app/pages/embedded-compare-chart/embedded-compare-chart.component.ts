@@ -47,6 +47,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
   benchmarkMeta: any;
 
   instancePropertyCategories: any[] = [
+    { name: "Metadata", category: "meta", properties: [] },
     { name: "CPU", category: "cpu", properties: [] },
     { name: "Memory", category: "memory", properties: [] },
     { name: "Accelerators", category: "gpu", properties: [] },
@@ -156,6 +157,40 @@ export class EmbeddedCompareChartComponent implements OnInit {
         "compression_text:ratio",
         "compression_text:decompress",
         "compression_text:compress",
+      ],
+      data: [],
+      show_more: false,
+      hidden: true,
+    },
+    {
+      name: "PassMark (CPU)",
+      id: "passmark_cpu",
+      benchmarks: [
+        "passmark:cpu_compression_test",
+        "passmark:cpu_encryption_test",
+        "passmark:cpu_extended_instructions_test",
+        "passmark:cpu_floating_point_maths_test",
+        "passmark:cpu_integer_maths_test",
+        "passmark:cpu_mark",
+        "passmark:cpu_physics_test",
+        "passmark:cpu_prime_numbers_test",
+        "passmark:cpu_single_threaded_test",
+        "passmark:cpu_string_sorting_test",
+      ],
+      data: [],
+      show_more: false,
+      hidden: true,
+    },
+    {
+      name: "PassMark (Memory)",
+      id: "passmark_other",
+      benchmarks: [
+        "passmark:database_operations",
+        "passmark:memory_latency",
+        "passmark:memory_mark",
+        "passmark:memory_read_cached",
+        "passmark:memory_read_uncached",
+        "passmark:memory_write",
       ],
       data: [],
       show_more: false,

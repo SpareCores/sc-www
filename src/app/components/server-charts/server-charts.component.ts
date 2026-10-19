@@ -19,6 +19,7 @@ import {
   staticWebChartTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { DecimalPipe } from "@angular/common";
 import { Button } from "../button/button";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
 import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
@@ -54,6 +55,7 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
     FormsModule,
     RouterModule,
     BenchmarkIconPipe,
+    DecimalPipe,
     BenchmarkLineChartComponent,
     CompressionChartComponent,
     GeekbenchRadarChartComponent,
