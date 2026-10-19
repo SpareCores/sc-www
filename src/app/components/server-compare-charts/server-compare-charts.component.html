@@ -874,13 +874,17 @@
                 <td>
                   <div class="compare-table-metric-cell">
                     @if (value === "check" || value === "x") {
-                      <svg
-                        [lucideIcon]="value"
-                        aria-hidden="true"
-                        class="h-4 w-4 shrink-0 justify-self-end"
+                      <div
+                        class="justify-self-end"
                         [class.text-emerald-400]="value === 'check'"
                         [class.text-white]="value === 'x'"
-                      ></svg>
+                      >
+                        <svg
+                          [lucideIcon]="value"
+                          aria-hidden="true"
+                          class="h-4 w-4 shrink-0"
+                        ></svg>
+                      </div>
                       <span class="sr-only">{{
                         value === "check" ? "Yes" : "No"
                       }}</span>
