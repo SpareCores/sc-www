@@ -1,0 +1,27 @@
+:host {
+  display: contents;
+}
+
+.nvbandwidth_table {
+  @apply w-full text-white self-start;
+
+  thead {
+    th {
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 leading-5 font-normal uppercase;
+    }
+  }
+
+  tbody {
+    tr {
+      @apply bg-secondary border-b border-gray-200 border-solid;
+    }
+
+    td {
+      @apply px-5 py-3 text-left text-sm;
+    }
+
+    td.nvbandwidth_value {
+      @apply text-right whitespace-nowrap;
+    }
+  }
+}
