@@ -28,7 +28,10 @@ Cutting to the chase, we ran the PostgreSQL benchmark on all of the available Gr
   <p>PostgreSQL TPM for EC2 vs RDS running on Graviton families m6g - m9g.</p>
 </div>
 
-When we consider this data on a per-vCPU basis (shown below), it’s a bit easier to see (a) the improvement across the Graviton generations, (b) the nearly linear scaling of the performance with the vCPU count and (c) the performance boost of RDS over the generic self-managed databases running on EC2. 
+When we consider this data on a per-vCPU basis (shown below), it’s a bit easier to see that
+1. the overall performance improves across the Graviton generations, 
+2. the performance scales nearly linear (at first) with the vCPU count before dipping a bit for the ultra-large instances, and 
+3. the performance boost of RDS over the generic self-managed databases running on EC2. 
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
