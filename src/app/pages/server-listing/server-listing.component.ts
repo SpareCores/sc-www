@@ -188,13 +188,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       icon: "layers",
       collapsed: true,
     },
-    { category_id: "gpu", name: "GPU", icon: "gpu", collapsed: true },
     {
       category_id: "accelerator",
       name: "Accelerator",
       icon: "cpu",
       collapsed: true,
     },
+    { category_id: "gpu", name: "GPU", icon: "gpu", collapsed: true },
+    { category_id: "asic", name: "ASIC", icon: "cpu-ai", collapsed: true },
     {
       category_id: "memory",
       name: "Memory",
