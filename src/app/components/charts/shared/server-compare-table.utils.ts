@@ -53,6 +53,7 @@ const HIDDEN_COMPARE_METADATA_PROPERTY_IDS = new Set([
   "server_id",
   "name",
   "api_reference",
+  "api_reference_object",
   "display_name",
   "description",
   "observed_at",

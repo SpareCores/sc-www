@@ -9,7 +9,7 @@
         <col [style.minWidth]="getServerColumnWidth(server)" />
       }
     </colgroup>
-    @if (isChartShown("generic")) {
+    @if (isChartShown("generic") || showChart === "nvbandwidth") {
       <thead id="server-compare-table-header">
         <tr>
           <th #tableFirstCol id="server-compare-table-first-col"></th>
@@ -37,7 +37,10 @@
                 >
                   {{ toUpper(server.display_name) }}
                 </a>
-                <div class="flex gap-2 justify-center">
+                <div
+                  class="flex gap-2 justify-center"
+                  [class.hidden]="showChart === 'nvbandwidth'"
+                >
                   @if (isBestPrice(server)) {
                     <div
                       class="text-emerald-400 text-xl"
@@ -687,6 +690,206 @@
             <!-- spacer -->
           </tr>
         }
+      }
+      @if (nvbandwidthSections.length && isChartShown("nvbandwidth")) {
+        <tr class="section_header" id="benchmark_line_nvbandwidth">
+          <td [colSpan]="pinnedRow.contentColSpan">
+            <div class="compare-section-header-row">
+              <h3 class="text-xl font-semibold m-0 flex items-center">
+                <span class="compare-section-header-title">
+                  <svg
+                    [lucideIcon]="'nvbandwidth' | benchmarkIcon"
+                    class="h-6 w-6 shrink-0"
+                  ></svg>
+                  <span class="compare-section-header-title__text">
+                    {{ nvbandwidthTitle }}
+                  </span>
+                </span>
+              </h3>
+              @if (!isEmbedded && !pinnedRow.trailingColSpan) {
+                <div class="flex items-stretch gap-4 shrink-0">
+                  <sc-button
+                    [icon]="clipboardIcon"
+                    ariaLabel="Copy benchmark section link"
+                    size="small"
+                    buttonClass="shrink-0"
+                    (click)="clipboardURL($event, 'benchmark_line_nvbandwidth')"
+                  ></sc-button>
+                </div>
+              }
+            </div>
+          </td>
+          @if (pinnedRow.actionSpacerColSpan) {
+            <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
+          }
+          @if (pinnedRow.trailingColSpan) {
+            <td [colSpan]="1" class="compare-section-header-action-cell">
+              @if (!isEmbedded) {
+                <div class="flex justify-end items-stretch gap-4">
+                  <sc-button
+                    [icon]="clipboardIcon"
+                    ariaLabel="Copy benchmark section link"
+                    size="small"
+                    buttonClass="shrink-0"
+                    (click)="clipboardURL($event, 'benchmark_line_nvbandwidth')"
+                  ></sc-button>
+                </div>
+              }
+            </td>
+          }
+        </tr>
+        @for (section of nvbandwidthSections; track section.name) {
+          <tr class="compare-instance-section-gap" aria-hidden="true">
+            <td></td>
+            <td [colSpan]="servers.length"></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ml-4 text-sm font-normal uppercase">
+                {{ section.name }}
+              </div>
+            </td>
+            <td [colSpan]="servers.length"></td>
+          </tr>
+          @for (row of section.rows; track row.benchmark.benchmark_id) {
+            <tr>
+              <td>
+                <div class="ml-4 flex gap-2 items-center whitespace-nowrap">
+                  {{ row.name }}
+                  @if (row.benchmark.higher_is_better === false) {
+                    <svg
+                      lucideCircleArrowDown
+                      class="h-4 w-4 shrink-0 text-gray-200"
+                      (mouseenter)="showTooltip($event, 'Lower is better.')"
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                  @if (row.benchmark.description) {
+                    <svg
+                      lucideInfo
+                      class="h-4 w-4 shrink-0 text-gray-200"
+                      (mouseenter)="
+                        showTooltip($event, row.benchmark.description)
+                      "
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                  @if (getBenchmarkRowNote(row.benchmark.benchmark_id)) {
+                    <svg
+                      lucideTriangleAlert
+                      class="benchmark-note-icon"
+                      (mouseenter)="
+                        showWarningTooltip(
+                          $event,
+                          getBenchmarkRowNote(row.benchmark.benchmark_id)
+                        )
+                      "
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                </div>
+              </td>
+              @for (value of row.values; track $index) {
+                <td
+                  class="compact-number"
+                  [style]="isBestStyle(value, row.values, row.benchmark)"
+                >
+                  <div class="compare-table-metric-cell">
+                    <span>{{
+                      formatNvbandwidthScore(value, row.benchmark.unit)
+                    }}</span>
+                    @if (baselineServer) {
+                      <div class="compare-table-delta-row">
+                        @if (
+                          getBenchmarkValueDelta(
+                            value,
+                            row.values,
+                            $index,
+                            row.benchmark
+                          );
+                          as valueDelta
+                        ) {
+                          <span
+                            class="compare-table-delta"
+                            [class.compare-table-delta--positive]="
+                              valueDelta.tone === 'positive'
+                            "
+                            [class.compare-table-delta--negative]="
+                              valueDelta.tone === 'negative'
+                            "
+                            [class.compare-table-delta--neutral]="
+                              valueDelta.tone === 'neutral'
+                            "
+                          >
+                            {{ valueDelta.label }}
+                          </span>
+                        } @else {
+                          <span
+                            class="compare-table-delta-placeholder"
+                            aria-hidden="true"
+                            >&nbsp;</span
+                          >
+                        }
+                      </div>
+                    }
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        }
+        @if (nvbandwidthEnvironmentRows.length) {
+          <tr class="compare-instance-section-gap" aria-hidden="true">
+            <td></td>
+            <td [colSpan]="servers.length"></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ml-4 text-sm font-normal uppercase">
+                Benchmark Environment
+              </div>
+            </td>
+            <td [colSpan]="servers.length"></td>
+          </tr>
+          @for (row of nvbandwidthEnvironmentRows; track row.key) {
+            <tr>
+              <td>
+                <div class="ml-4 flex gap-2 items-center whitespace-nowrap">
+                  {{ row.name }}
+                  @if (row.description) {
+                    <svg
+                      lucideInfo
+                      class="h-4 w-4 shrink-0 text-gray-200"
+                      (mouseenter)="showTooltip($event, row.description)"
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                </div>
+              </td>
+              @for (value of row.values; track $index) {
+                <td>
+                  <div class="compare-table-metric-cell">
+                    @if (value === "check" || value === "x") {
+                      <svg
+                        [lucideIcon]="value"
+                        aria-hidden="true"
+                        class="h-4 w-4 shrink-0 justify-self-end"
+                        [class.text-emerald-400]="value === 'check'"
+                        [class.text-white]="value === 'x'"
+                      ></svg>
+                      <span class="sr-only">{{
+                        value === "check" ? "Yes" : "No"
+                      }}</span>
+                    } @else {
+                      <span>{{ value }}</span>
+                    }
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        }
+        <tr class="h-[1rem]"></tr>
       }
       @for (
         benchmarkCategory of benchmarkCategories;
