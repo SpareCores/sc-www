@@ -7,6 +7,11 @@
   justify-content: space-between;
 }
 
+sc-server-compare-charts {
+  overflow-y: auto;
+  min-height: 0;
+}
+
 :host ::ng-deep .block_full_short_inline {
   @apply px-4 py-4 bg-transparent flex flex-col gap-4 relative overflow-hidden;
   width: calc(100%);
