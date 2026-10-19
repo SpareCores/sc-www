@@ -1,11 +1,14 @@
 @if (hasWorkloadProfiles()) {
   <div
     class="w-full h-auto overflow-visible relative flex flex-col gap-4 workload-profile-charts-to-hide-for-test"
+    [attr.id]="isEmbedded() ? 'workload_profile' : null"
     [ngClass]="{
       'px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]':
-        layout() === 'compare',
+        layout() === 'compare' && !isEmbedded(),
       'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]':
-        layout() === 'details',
+        layout() === 'details' && !isEmbedded(),
+      block_full_inline: layout() === 'compare' && isEmbedded(),
+      block_full: layout() === 'details' && isEmbedded(),
     }"
   >
     @if (showHeader()) {

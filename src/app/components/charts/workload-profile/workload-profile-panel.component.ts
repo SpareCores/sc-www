@@ -192,6 +192,7 @@ export class WorkloadProfilePanelComponent {
   servers = input<WorkloadProfileCompareServer[]>([]);
   serverDetails = input<WorkloadProfileDetailsServer | undefined>(undefined);
   showHeader = input(true);
+  isEmbedded = input(false);
 
   readonly layoutChanged = output<void>();
   readonly activeAccordionIndex = signal(-1);

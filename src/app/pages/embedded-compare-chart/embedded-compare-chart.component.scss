@@ -47,6 +47,10 @@
   }
 }
 
+:host ::ng-deep #workload_profile {
+  overflow-y: auto;
+}
+
 @media screen and (max-width: 1024px) {
   :host ::ng-deep .block_full_short_inline {
     width: calc(100%);

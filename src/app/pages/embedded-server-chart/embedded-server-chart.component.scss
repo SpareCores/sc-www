@@ -39,6 +39,7 @@
 
 :host ::ng-deep #passmark_cpu,
 :host ::ng-deep #passmark_other,
-:host ::ng-deep #nvbandwidth {
+:host ::ng-deep #nvbandwidth,
+:host ::ng-deep #workload_profile {
   overflow-y: auto;
 }
