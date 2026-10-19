@@ -9,8 +9,6 @@ import {
 import { Observable, firstValueFrom, fromEvent, map, race } from "rxjs";
 import { AuthStateService } from "../core/auth";
 
-type CancelToken = NonNullable<FullRequestParams["cancelToken"]>;
-
 export const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000];
 export const RETRY_INTERVALS_SSR = [100, 200];
 
@@ -179,8 +177,6 @@ function firstValueFromWithSignal<T>(
 }
 
 export class KeeperHttpClient extends HttpClientSDK {
-  private requestAbortControllers = new Map<CancelToken, AbortController>();
-
   constructor(
     private angularHttp: HttpClient,
     @Inject(PLATFORM_ID) private platformId: object,
@@ -196,7 +192,6 @@ export class KeeperHttpClient extends HttpClientSDK {
     type,
     query,
     signal,
-    cancelToken,
   }: FullRequestParams): Promise<HttpResponse<T, E>> => {
     const url = new URL(
       (isPlatformBrowser(this.platformId)
@@ -209,67 +204,21 @@ export class KeeperHttpClient extends HttpClientSDK {
       url.search = queryStr;
     }
 
-    const requestSignal = this.getRequestSignal(cancelToken, signal);
+    const response: any = await this._requestWithRetries(
+      method,
+      url,
+      body,
+      type,
+      signal ?? undefined,
+    );
 
-    try {
-      const response: any = await this._requestWithRetries(
-        method,
-        url,
-        body,
-        type,
-        requestSignal,
-      );
-
-      return response;
-    } finally {
-      if (cancelToken !== undefined && cancelToken !== null) {
-        this.requestAbortControllers.delete(cancelToken);
-      }
-    }
-  };
-
-  public override abortRequest = (cancelToken: CancelToken) => {
-    const abortController = this.requestAbortControllers.get(cancelToken);
-
-    if (abortController) {
-      abortController.abort();
-      this.requestAbortControllers.delete(cancelToken);
-    }
+    return response;
   };
 
   private getRetryIntervals(): number[] {
     return isPlatformBrowser(this.platformId)
       ? RETRY_INTERVALS
       : RETRY_INTERVALS_SSR;
-  }
-
-  private getRequestSignal(
-    cancelToken?: FullRequestParams["cancelToken"],
-    signal?: AbortSignal | null,
-  ): AbortSignal | undefined {
-    if (cancelToken === undefined || cancelToken === null) {
-      return signal ?? undefined;
-    }
-
-    let controller = this.requestAbortControllers.get(cancelToken);
-    if (!controller) {
-      controller = new AbortController();
-      this.requestAbortControllers.set(cancelToken, controller);
-    }
-
-    if (signal) {
-      if (signal.aborted) {
-        controller.abort(signal.reason);
-      } else {
-        signal.addEventListener(
-          "abort",
-          () => controller?.abort(signal.reason),
-          { once: true },
-        );
-      }
-    }
-
-    return controller.signal;
   }
 
   private async buildHeaders(
