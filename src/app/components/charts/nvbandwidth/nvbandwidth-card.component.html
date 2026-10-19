@@ -38,7 +38,7 @@
                 <tr>
                   <td>
                     <div class="flex gap-2 items-center">
-                      <b>{{ row.name }}</b>
+                      <span>{{ row.name }}</span>
                       @if (row.description) {
                         <svg
                           lucideInfo
@@ -90,7 +90,7 @@
         <tr>
           <td>
             <div class="flex gap-2 items-center">
-              <b>{{ row.name }}</b>
+              <span>{{ row.name }}</span>
               @if (row.benchmark.higher_is_better === false) {
                 <svg
                   lucideCircleArrowDown
