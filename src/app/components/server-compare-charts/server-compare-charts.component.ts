@@ -944,6 +944,43 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
     }
   }
 
+  hasEmbeddableChart(chartId: string): boolean {
+    switch (chartId) {
+      case "generic":
+        return true;
+      case "workload_profile":
+        return this.hasVisibleWorkloadProfileChart();
+      case "nvbandwidth":
+        return this.nvbandwidthSections.length > 0;
+      case "stress_ng_full":
+        return this.stressNgSections().length > 0;
+      case "pgbench":
+        return this.hasPgbenchCompareChart();
+    }
+
+    const multiBarChart = this.multiBarCharts.find(
+      (chartItem) => chartItem.chart.id === chartId,
+    );
+    if (multiBarChart) {
+      return this.hasMultiBarCompareChart(multiBarChart);
+    }
+
+    const categoryId =
+      chartId === "geekbench_single" || chartId === "geekbench_multi"
+        ? "geekbench"
+        : chartId;
+    const category = this.benchmarkCategories.find(
+      (benchmarkCategory) => benchmarkCategory.id === categoryId,
+    );
+    if (!category?.data?.length) {
+      return false;
+    }
+
+    return (
+      this.isPassmarkBenchmarkCategory(chartId) || this.hasCompareChart(chartId)
+    );
+  }
+
   hasMultiBarCompareChart(chartItem: BenchmarkMultiBarChartItem): boolean {
     return !!this.multiBarBuilder.buildCompareChart(
       chartItem.chart,
