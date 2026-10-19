@@ -1,6 +1,7 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   ElementRef,
@@ -178,6 +179,7 @@ export class WorkloadProfilePanelComponent {
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
   private tooltipService = inject(ChartTooltipService);
+  private cdr = inject(ChangeDetectorRef);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   scoreGaugeDirective = viewChild<BaseChartDirective>("scoreGauge");
@@ -342,6 +344,7 @@ export class WorkloadProfilePanelComponent {
       content,
       onShow: (text) => {
         this.tooltipContent = text;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -354,6 +357,7 @@ export class WorkloadProfilePanelComponent {
       variant: "warning-wide",
       onShow: (text) => {
         this.tooltipContent = text;
+        this.cdr.detectChanges();
       },
     });
   }
