@@ -283,7 +283,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true;
     this.onResize();
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.subscription.add(
@@ -323,11 +322,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.keeperAPI.getZones({ signal: loadAbortController.signal }),
         ])
           .then((dataAll) => {
-            if (
-              this.destroyRef.destroyed ||
-              loadId !== this.serverLoadId ||
-              this.loadAbortController !== loadAbortController
-            ) {
+            if (this.destroyRef.destroyed || loadId !== this.serverLoadId) {
               return;
             }
 
@@ -720,8 +715,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             if (
               this.destroyRef.destroyed ||
               loadId !== this.serverLoadId ||
-              loadAbortController.signal.aborted ||
-              this.loadAbortController !== loadAbortController
+              loadAbortController.signal.aborted
             ) {
               return;
             }
