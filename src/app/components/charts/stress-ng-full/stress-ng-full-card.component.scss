@@ -30,7 +30,7 @@
 
   thead {
     th {
-      @apply bg-secondary border-b border-gray-200 border-solid text-left px-3 py-2 leading-5 font-semibold uppercase tracking-wide;
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-3 py-2 leading-5 font-normal uppercase;
     }
 
     th.stress_ng_value {

@@ -44,7 +44,7 @@ export class StressNgFullCardComponent {
 
   benchmarkMeta = input<Benchmark[] | null>([]);
   benchmarkScores = input<BenchmarkScore[] | null>([]);
-  collapsible = input(true);
+  isEmbedded = input(false);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
   tooltipContent = signal("");
@@ -58,7 +58,7 @@ export class StressNgFullCardComponent {
 
   columns = computed(() => splitStressNgColumns(this.sections()));
 
-  collapsed = computed(() => this.collapsible() && !this.expanded());
+  collapsed = computed(() => !this.isEmbedded() && !this.expanded());
 
   toggleExpanded() {
     this.expanded.update((expanded) => !expanded);
