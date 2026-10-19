@@ -416,12 +416,18 @@
                         @if (
                           propertyValue === "check" || propertyValue === "x"
                         ) {
-                          <svg
-                            [lucideIcon]="propertyValue"
-                            class="h-4 w-4 shrink-0 justify-self-end"
-                            [class.text-emerald-400]="propertyValue === 'check'"
+                          <div
+                            class="justify-self-end"
+                            [class.text-emerald-400]="
+                              propertyValue === 'check'
+                            "
                             [class.text-white]="propertyValue === 'x'"
-                          ></svg>
+                          >
+                            <svg
+                              [lucideIcon]="propertyValue"
+                              class="h-4 w-4 shrink-0"
+                            ></svg>
+                          </div>
                         } @else {
                           <span [textContent]="propertyValue"></span>
                         }
