@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject, isDevMode } from "@angular/core";
 import { Router } from "@angular/router";
 import { Clerk } from "@clerk/clerk-js";
 import type {
@@ -195,6 +195,8 @@ export class ClerkService {
       routerReplace: (url: string) => this.navigateRouter(url, true),
       telemetry: false,
     });
-    (window as Window & { Clerk: Clerk }).Clerk = this.clerk;
+    if (isDevMode() || "Cypress" in window) {
+      (window as Window & { Clerk: Clerk }).Clerk = this.clerk;
+    }
   }
 }
