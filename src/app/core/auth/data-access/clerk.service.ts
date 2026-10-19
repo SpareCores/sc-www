@@ -89,14 +89,14 @@ export class ClerkService {
       return null;
     }
 
-    await this.init();
-
-    const session = this.clerk?.session;
-    if (!session) {
-      return null;
-    }
-
     try {
+      await this.init();
+
+      const session = this.clerk?.session;
+      if (!session) {
+        return null;
+      }
+
       return (
         (await session.getToken(template ? { template } : undefined)) ?? null
       );

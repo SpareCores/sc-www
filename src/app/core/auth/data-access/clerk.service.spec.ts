@@ -88,6 +88,16 @@ describe("ClerkService", () => {
     await expectAsync(service.getToken()).toBeResolvedTo(null);
   });
 
+  it("returns null token when Clerk fails to load", async () => {
+    const service = createService();
+    const target = service as unknown as {
+      initPromise: Promise<void> | null;
+    };
+    target.initPromise = Promise.reject(new Error("load failed"));
+
+    await expectAsync(service.getToken()).toBeResolvedTo(null);
+  });
+
   it("passes Force redirect URLs when afterAuthUrl is set", async () => {
     const service = createService();
     const handleRedirectCallback = jasmine.createSpy().and.resolveTo();
