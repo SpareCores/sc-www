@@ -17,7 +17,6 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 - Never inject comments, JSDocs, TODOs, or annotations. Do not reorganize imports.
 - **Anti-Guessing Guard**: If a task is structurally ambiguous, ask a binary or multiple-choice question before editing. Never guess UI placement or backend contracts.
 - Never run builds, tests, or package manager commands autonomously unless explicitly requested.
-- Never add `Co-Authored-By` or any other AI attribution trailer to commit messages or PR descriptions, even if older commits contain one.
 
 ### Context & Tool Management
 
@@ -28,6 +27,18 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 ### Formatting
 
 - Follow the repo's Prettier defaults (`npm run prettier:check`): double quotes, semicolons, trailing commas, 2-space indentation, 80-character lines.
+
+### Commits
+
+- Commit, amend, push, or rewrite history only when explicitly asked. Before rewriting, check the remote (`git status -sb`) and confirm before any force push.
+- Use Conventional Commits with a scope: `<type>(<scope>): <description>`, e.g. `fix(server-listing): keep benchmark state consistent with the URL`.
+- Types: `feat`, `fix`, `refactor`, `test`, `chore`, `docs`, `ci`.
+- Scope is the affected feature, component, or folder in kebab-case (`auth`, `server-details`, `toasts`, `http`). For tests use `e2e`, `visual-tests`, or the tested feature; for agent rules use `agents`.
+- Subject: lowercase, imperative mood, no trailing period, at most 72 characters.
+- Add a body only when the change needs context: blank line after the subject, wrapped at 72 characters, explaining what changed and why (bullet lists are fine).
+- Linear IDs are tracked via the branch name; add one to the message only when referencing a different issue.
+- Keep commits atomic and ordered so each one builds on its own.
+- Never add `Co-Authored-By` or any other AI attribution trailer to commits or PR descriptions, even if older commits contain one.
 
 ## TypeScript Files (`*.ts`)
 
