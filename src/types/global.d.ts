@@ -13,6 +13,7 @@ declare global {
     NG_APP_SENTRY_PROFILE_SAMPLE_RATE?: string;
     NG_APP_SENTRY_ENVIRONMENT?: string;
     NG_APP_SENTRY_RELEASE?: string;
+    NG_APP_GLOSSARY_SCRIPT_URL?: string;
   }
 
   interface ImportMeta {
@@ -22,6 +23,9 @@ declare global {
   interface Window {
     HSComboBox?: {
       autoInit?: () => void;
+    };
+    SpareCoresGlossary?: {
+      apply: (root: Element) => void;
     };
   }
 }

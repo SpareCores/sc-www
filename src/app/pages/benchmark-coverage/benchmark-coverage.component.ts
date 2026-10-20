@@ -643,6 +643,6 @@ export class BenchmarkCoverageComponent implements OnInit {
       stress_ng: "stressngfull",
     };
     const dir = dirMapping[benchmarkFamily] ?? benchmarkFamily;
-    return `${this.INSPECTOR_DATA_ROOT_URL}/${vendorId}/${apiReference}/${dir}`;
+    return `${this.INSPECTOR_DATA_ROOT_URL}/${vendorId}/${apiReference}/0/${dir}`;
   }
 }

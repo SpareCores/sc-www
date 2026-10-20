@@ -67,12 +67,24 @@ import { ToastService } from "../../services/toast.service";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { initGiscus } from "../../tools/initGiscus";
-import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
+import { ServerEmbedDialogComponent } from "../../components/embed-dialog/server-embed-dialog.component";
+import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
+import { hasWorkloadProfileChartData } from "../../components/charts/workload-profile/workload-profile.utils";
+import { isStressNgStressor } from "../../components/charts/stress-ng-full/stress-ng-full.utils";
+import { MemoryChartBuilderService } from "../../components/charts/memory/memory-chart-builder.service";
+import { BenchmarkMultiBarChartBuilderService } from "../../components/charts/multi-bar/benchmark-multi-bar-chart-builder.service";
+import { MultiBarBenchmarkGroup } from "../../components/charts/multi-bar/benchmark-multi-bar-chart.types";
+import {
+  ChartFromBenchmarkTemplate,
+  redisChartTemplate,
+  staticWebChartTemplate,
+} from "./chartFromBenchmarks";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
 import { buildServerFaqs } from "./server-details-faqs";
 import {
   BURSTABLE_INSTANCE_WARNING_BODY,
   BURSTABLE_INSTANCE_WARNING_TITLE,
+  HIDDEN_SERVER_PROPERTY_IDS,
 } from "./server-details.constants";
 
 const optionsModal: ModalOptions = {
@@ -147,7 +159,7 @@ interface PropertyCategoryDefinition {
     ServerChartsComponent,
     ServerLstopoComponent,
     ServerPropertyCardComponent,
-    EmbedDebugComponent,
+    ServerEmbedDialogComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
     BookmarkButton,
@@ -168,6 +180,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
   private uiTooltip = inject(UiTooltipService);
+  private memoryChartBuilder = inject(MemoryChartBuilderService);
+  private multiBarChartBuilder = inject(BenchmarkMultiBarChartBuilderService);
   private serverLoadId = 0;
   private loadAbortController: AbortController | null = null;
   private similarAbortController: AbortController | null = null;
@@ -264,7 +278,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   warningTooltipRef = viewChild<ElementRef<HTMLElement>>("warningTooltip");
   warningTooltipContent = signal("");
 
-  embeddableCharts = [...DEFAULT_EMBEDDABLE_CHARTS];
+  embeddableCharts: EmbedChartOption[] = [];
 
   @ViewChild("giscusParent") giscusParent!: ElementRef;
 
@@ -587,49 +601,121 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
               this.generateSchemaJSON();
 
-              if (this.serverDetails.vcpus && this.serverDetails.vcpus > 1) {
-                this.embeddableCharts.push({
+              const benchmarkIds: string[] = this.benchmarksByCategory.map(
+                (c) => c.benchmark_id,
+              );
+              const hasBenchmarkPrefix = (prefix: string) =>
+                benchmarkIds.some((id) => id.startsWith(prefix));
+              const hasMultiBarChart = (
+                chartTemplate: ChartFromBenchmarkTemplate,
+              ) =>
+                !!this.multiBarChartBuilder.buildDetailsChart(
+                  JSON.parse(JSON.stringify(chartTemplate)),
+                  this.benchmarksByCategory as MultiBarBenchmarkGroup[],
+                );
+              const isMultiCore =
+                !!this.serverDetails.vcpus && this.serverDetails.vcpus > 1;
+              this.embeddableCharts = [
+                {
+                  id: "workload_profile",
+                  name: "Workload Profiles",
+                  show: hasWorkloadProfileChartData({
+                    benchmarkMeta: this.benchmarkMeta,
+                    benchmarkScores: this.serverDetails.benchmark_scores,
+                  }),
+                },
+                {
+                  id: "nvbandwidth",
+                  name: "GPU Bandwidth and Latency",
+                  show: benchmarkIds.some((id) =>
+                    id.startsWith("nvbandwidth:"),
+                  ),
+                },
+                {
+                  id: "bw_mem",
+                  name: "Memory Bandwidth",
+                  show:
+                    this.memoryChartBuilder.getAvailableDetailsOptions(
+                      this.benchmarksByCategory,
+                    ).length > 0,
+                },
+                {
+                  id: "compress",
+                  name: "Compression",
+                  show: hasBenchmarkPrefix("compression_text:"),
+                },
+                {
+                  id: "ssl",
+                  name: "OpenSSL",
+                  show: benchmarkIds.includes("openssl"),
+                },
+                {
+                  id: "geek_single",
+                  name: "Geekbench Single-core",
+                  show: hasBenchmarkPrefix("geekbench:"),
+                },
+                {
+                  id: "geek_multi",
+                  name: "Geekbench Multi-core",
+                  show: hasBenchmarkPrefix("geekbench:"),
+                },
+                {
+                  id: "passmark_cpu",
+                  name: "PassMark CPU",
+                  show: benchmarkIds.includes("passmark:cpu"),
+                },
+                {
+                  id: "passmark_other",
+                  name: "PassMark Memory",
+                  show: benchmarkIds.includes("passmark:other"),
+                },
+                {
+                  id: "stress_ng_full",
+                  name: "Stress-ng stressors",
+                  show: (this.benchmarkMeta ?? []).some(
+                    (benchmark) =>
+                      isStressNgStressor(benchmark) &&
+                      benchmarkIds.includes(benchmark.benchmark_id),
+                  ),
+                },
+                {
                   id: "stress_ng_div16",
                   name: "Stress-ng div16",
-                });
-                this.embeddableCharts.push({
+                  show: isMultiCore,
+                },
+                {
                   id: "stress_ng_relative",
                   name: "Stress-ng relative",
-                });
-              }
-
-              // Add LLM charts if benchmark data is available
-              const hasLLMPromptData = this.benchmarksByCategory.some(
-                (c) => c.benchmark_id === "llm_speed:prompt_processing",
-              );
-              const hasLLMGenerationData = this.benchmarksByCategory.some(
-                (c) => c.benchmark_id === "llm_speed:text_generation",
-              );
-
-              if (hasLLMPromptData) {
-                this.embeddableCharts.push({
+                  show: isMultiCore,
+                },
+                {
                   id: "llm_prompt",
                   name: "LLM Prompt Processing",
-                });
-              }
-
-              if (hasLLMGenerationData) {
-                this.embeddableCharts.push({
+                  show: benchmarkIds.includes("llm_speed:prompt_processing"),
+                },
+                {
                   id: "llm_generation",
                   name: "LLM Text Generation",
-                });
-              }
-
-              if (
-                this.benchmarksByCategory.some(
-                  (c) => c.benchmark_id === "pgbench:heavy_read_only",
-                )
-              ) {
-                this.embeddableCharts.push({
+                  show: benchmarkIds.includes("llm_speed:text_generation"),
+                },
+                {
+                  id: "static_web",
+                  name: "Static Web Server",
+                  show: hasMultiBarChart(staticWebChartTemplate),
+                },
+                {
+                  id: "redis",
+                  name: "Redis",
+                  show: hasMultiBarChart(redisChartTemplate),
+                },
+                {
                   id: "pgbench",
                   name: "pgbench Heavy Read-Only",
-                });
-              }
+                  show: benchmarkIds.includes("pgbench:heavy_read_only"),
+                },
+              ]
+                .filter((chart) => chart.show)
+                .map(({ id, name }) => ({ id, name }));
 
               if (isPlatformBrowser(this.platformId)) {
                 setTimeout(() => {
@@ -1324,7 +1410,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         (category) => category.category === property.category,
       );
       const value = this.getProperty(property);
-      if (!group || !value) {
+      if (!group || !value || HIDDEN_SERVER_PROPERTY_IDS.has(property.id)) {
         return;
       }
 
