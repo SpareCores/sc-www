@@ -1,0 +1,798 @@
+@let profileData = profile(); @if (auth.profileModalOpen() && profileData) {
+<div class="auth-modal" (click)="close()">
+  <div
+    class="auth-modal__panel profile-modal__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Profile"
+    data-testid="profile-modal"
+    (click)="$event.stopPropagation()"
+  >
+    @let reverifyState = reverify();
+    <sc-button
+      class="auth-modal__close"
+      [class.profile-modal__close]="!reverifyState"
+      variant="close"
+      icon="x"
+      ariaLabel="Close profile modal"
+      data-testid="profile-close"
+      [disabled]="!!busy()"
+      (buttonClick)="close()"
+    ></sc-button>
+
+    @if (reverifyState) {
+    <div class="auth-modal__body">
+      <div class="auth-modal__header">
+        <h2 class="auth-modal__title">Verify it's you</h2>
+        <p class="auth-modal__subtitle">
+          @if (reverifyState.mode === "password") { Enter your current password
+          to continue. } @else { Enter the verification code sent to {{
+          reverifyState.emailAddress }}. }
+        </p>
+      </div>
+
+      <form
+        class="auth-modal__form"
+        #reverifyForm="ngForm"
+        novalidate
+        (ngSubmit)="submitReverify(reverifyForm)"
+      >
+        @if (reverifyState.mode === "password") {
+        <label class="auth-modal__field">
+          <span>Password</span>
+          <div class="auth-modal__password">
+            <input
+              [type]="showPassword() ? 'text' : 'password'"
+              name="reverifyPassword"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+              [(ngModel)]="reverifyPassword"
+            />
+            <button
+              type="button"
+              class="auth-modal__password-toggle"
+              [attr.aria-label]="
+                showPassword() ? 'Hide password' : 'Show password'
+              "
+              (click)="showPassword.set(!showPassword())"
+            >
+              <svg
+                [lucideIcon]="showPassword() ? 'eye-off' : 'eye'"
+                aria-hidden="true"
+              ></svg>
+            </button>
+          </div>
+        </label>
+        } @else {
+        <label class="auth-modal__field">
+          <span>Verification code</span>
+          <input
+            type="text"
+            name="reverifyCode"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            placeholder="Enter verification code"
+            required
+            [(ngModel)]="reverifyCode"
+          />
+        </label>
+        } @if (reverifyError()) {
+        <p class="auth-modal__error">{{ reverifyError() }}</p>
+        }
+
+        <div class="auth-modal__actions">
+          <sc-button
+            type="button"
+            label="Back"
+            icon="chevron-left"
+            iconPosition="start"
+            variant="outline"
+            color="brand"
+            size="small"
+            buttonClass="w-full !justify-center"
+            [disabled]="!!busy()"
+            (buttonClick)="cancelReverify()"
+          ></sc-button>
+          <sc-button
+            type="submit"
+            label="Continue"
+            icon="chevron-right"
+            size="small"
+            buttonClass="w-full !justify-center"
+            data-ph-capture-attribute-sc-event="profile reverify"
+            [loading]="busy() === 'reverify'"
+            [disabled]="reverifyForm.invalid || !!busy()"
+          ></sc-button>
+        </div>
+      </form>
+    </div>
+    } @else {
+    <div class="auth-modal__body profile-modal__body">
+      <div class="profile-modal__layout">
+        <nav
+          class="profile-modal__tabs"
+          role="tablist"
+          aria-label="Profile sections"
+          aria-orientation="vertical"
+        >
+          <button
+            type="button"
+            role="tab"
+            class="profile-modal__tab"
+            data-testid="profile-tab-account"
+            data-ph-capture-attribute-sc-event="profile tab"
+            data-ph-capture-attribute-profile-tab="account"
+            [class.profile-modal__tab--active]="tab() === 'account'"
+            [attr.aria-selected]="tab() === 'account'"
+            (click)="selectTab('account')"
+          >
+            <svg lucideCircleUser aria-hidden="true"></svg>
+            Account
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="profile-modal__tab"
+            data-testid="profile-tab-security"
+            data-ph-capture-attribute-sc-event="profile tab"
+            data-ph-capture-attribute-profile-tab="security"
+            [class.profile-modal__tab--active]="tab() === 'security'"
+            [attr.aria-selected]="tab() === 'security'"
+            (click)="selectTab('security')"
+          >
+            <svg lucideShield aria-hidden="true"></svg>
+            Security
+          </button>
+        </nav>
+
+        <div class="profile-modal__content" role="tabpanel">
+          @if (tab() === "account") {
+          <section class="profile-modal__section" data-testid="profile-section">
+            <h3 class="profile-modal__section-title">Profile</h3>
+            @if (editor() === "name") {
+            <form
+              class="profile-modal__editor"
+              #nameForm="ngForm"
+              novalidate
+              (ngSubmit)="saveName(nameForm)"
+            >
+              <div class="profile-modal__avatar-row">
+                @if (profileData.imageUrl) {
+                <img
+                  class="profile-modal__avatar"
+                  [src]="profileData.imageUrl"
+                  alt="Profile image"
+                />
+                }
+                <div class="profile-modal__avatar-actions">
+                  <input
+                    #avatarInput
+                    type="file"
+                    class="profile-modal__file"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    (change)="uploadAvatar($event)"
+                  />
+                  <sc-button
+                    label="Upload"
+                    size="small"
+                    variant="outline"
+                    color="brand"
+                    data-ph-capture-attribute-sc-event="profile avatar upload"
+                    [loading]="busy() === 'avatar'"
+                    [disabled]="!!busy()"
+                    (buttonClick)="avatarInput.click()"
+                  ></sc-button>
+                  @if (profileData.hasImage) {
+                  <sc-button
+                    label="Remove"
+                    size="small"
+                    variant="outline"
+                    color="danger"
+                    data-ph-capture-attribute-sc-event="profile avatar remove"
+                    [disabled]="!!busy()"
+                    (buttonClick)="removeAvatar()"
+                  ></sc-button>
+                  }
+                </div>
+              </div>
+              <div class="auth-modal__grid">
+                <label class="auth-modal__field">
+                  <span>First name</span>
+                  <input
+                    type="text"
+                    name="firstName"
+                    autocomplete="given-name"
+                    placeholder="First name"
+                    [(ngModel)]="firstName"
+                  />
+                </label>
+                <label class="auth-modal__field">
+                  <span>Last name</span>
+                  <input
+                    type="text"
+                    name="lastName"
+                    autocomplete="family-name"
+                    placeholder="Last name"
+                    [(ngModel)]="lastName"
+                  />
+                </label>
+              </div>
+              <div class="profile-modal__editor-actions">
+                <sc-button
+                  label="Cancel"
+                  size="small"
+                  variant="outline"
+                  color="brand"
+                  [disabled]="!!busy()"
+                  (buttonClick)="closeEditor()"
+                ></sc-button>
+                <sc-button
+                  type="submit"
+                  label="Save"
+                  size="small"
+                  data-ph-capture-attribute-sc-event="profile name save"
+                  [loading]="busy() === 'name'"
+                  [disabled]="!!busy()"
+                ></sc-button>
+              </div>
+            </form>
+            } @else {
+            <div class="profile-modal__row">
+              <div class="profile-modal__identity">
+                @if (profileData.imageUrl) {
+                <img
+                  class="profile-modal__avatar"
+                  [src]="profileData.imageUrl"
+                  alt="Profile image"
+                />
+                }
+                <span class="profile-modal__value">
+                  {{ profileData.displayName || "No name set" }}
+                </span>
+              </div>
+              <button
+                type="button"
+                class="auth-modal__footer-link"
+                data-testid="profile-edit"
+                data-ph-capture-attribute-sc-event="profile name edit"
+                [disabled]="!!busy()"
+                (click)="openEditor('name')"
+              >
+                Update profile
+              </button>
+            </div>
+            }
+            <ng-container
+              [ngTemplateOutlet]="feedbackMessage"
+              [ngTemplateOutletContext]="{ $implicit: 'profile' }"
+            ></ng-container>
+          </section>
+
+          <section class="profile-modal__section" data-testid="profile-emails">
+            <h3 class="profile-modal__section-title">Email addresses</h3>
+            <ul class="profile-modal__list">
+              @for (email of profileData.emails; track email.id) {
+              <li class="profile-modal__item">
+                <div class="profile-modal__row">
+                  <div class="profile-modal__identity">
+                    <svg lucideMail aria-hidden="true"></svg>
+                    <span class="profile-modal__value">
+                      {{ email.emailAddress }}
+                    </span>
+                    @if (email.isPrimary) {
+                    <span class="profile-modal__badge">Primary</span>
+                    } @if (!email.isVerified) {
+                    <span
+                      class="profile-modal__badge profile-modal__badge--warning"
+                      >Unverified</span
+                    >
+                    }
+                  </div>
+                  @if (!email.isPrimary && !isConfirming("email", email.id)) {
+                  <div class="profile-modal__row-actions">
+                    @if (email.isVerified) {
+                    <button
+                      type="button"
+                      class="auth-modal__footer-link"
+                      data-ph-capture-attribute-sc-event="profile email primary"
+                      [disabled]="!!busy()"
+                      (click)="setPrimaryEmail(email.id)"
+                    >
+                      Set as primary
+                    </button>
+                    } @else {
+                    <button
+                      type="button"
+                      class="auth-modal__footer-link"
+                      data-ph-capture-attribute-sc-event="profile email verify"
+                      [disabled]="!!busy()"
+                      (click)="verifyExistingEmail(email.id)"
+                    >
+                      Verify
+                    </button>
+                    }
+                    <button
+                      type="button"
+                      class="auth-modal__footer-link profile-modal__danger-link"
+                      [disabled]="!!busy()"
+                      (click)="askConfirm('email', email.id)"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  }
+                </div>
+                @if (isConfirming("email", email.id)) {
+                <ng-container
+                  [ngTemplateOutlet]="confirmPanel"
+                  [ngTemplateOutletContext]="{
+                    $implicit:
+                      email.emailAddress +
+                      ' will be removed from this account and can no longer be used to sign in.',
+                    label: 'Remove',
+                    event: 'profile email remove',
+                  }"
+                ></ng-container>
+                }
+              </li>
+              }
+            </ul>
+
+            @if (editor() === "email-add") {
+            <form
+              class="profile-modal__editor"
+              #emailForm="ngForm"
+              novalidate
+              (ngSubmit)="addEmail(emailForm)"
+            >
+              <label class="auth-modal__field">
+                <span>Email address</span>
+                <input
+                  type="email"
+                  name="newEmail"
+                  placeholder="Enter your email address"
+                  autocomplete="email"
+                  required
+                  email
+                  [(ngModel)]="newEmail"
+                />
+              </label>
+              <div class="profile-modal__editor-actions">
+                <sc-button
+                  label="Cancel"
+                  size="small"
+                  variant="outline"
+                  color="brand"
+                  [disabled]="!!busy()"
+                  (buttonClick)="closeEditor()"
+                ></sc-button>
+                <sc-button
+                  type="submit"
+                  label="Add"
+                  size="small"
+                  data-ph-capture-attribute-sc-event="profile email add"
+                  [loading]="busy() === 'email-add'"
+                  [disabled]="emailForm.invalid || !!busy()"
+                ></sc-button>
+              </div>
+            </form>
+            } @else if (editor() === "email-verify") {
+            <form class="profile-modal__editor" (ngSubmit)="submitEmailCode()">
+              <label class="auth-modal__field">
+                <span>Verification code</span>
+                <input
+                  type="text"
+                  name="emailCode"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  placeholder="Enter verification code"
+                  [(ngModel)]="emailCode"
+                />
+              </label>
+              <div class="profile-modal__editor-actions">
+                <sc-button
+                  label="Cancel"
+                  size="small"
+                  variant="outline"
+                  color="brand"
+                  [disabled]="!!busy()"
+                  (buttonClick)="closeEditor()"
+                ></sc-button>
+                <sc-button
+                  label="Resend code"
+                  size="small"
+                  variant="outline"
+                  color="brand"
+                  [loading]="busy() === 'email-resend'"
+                  [disabled]="!!busy()"
+                  (buttonClick)="resendEmailCode()"
+                ></sc-button>
+                <sc-button
+                  type="submit"
+                  label="Verify"
+                  size="small"
+                  data-ph-capture-attribute-sc-event="profile email verify code"
+                  [loading]="busy() === 'email-verify'"
+                  [disabled]="!emailCode().trim() || !!busy()"
+                ></sc-button>
+              </div>
+            </form>
+            } @else {
+            <button
+              type="button"
+              class="auth-modal__footer-link profile-modal__add"
+              data-ph-capture-attribute-sc-event="profile email add open"
+              [disabled]="!!busy()"
+              (click)="openEditor('email-add')"
+            >
+              <svg lucidePlus aria-hidden="true"></svg>
+              Add email address
+            </button>
+            }
+            <ng-container
+              [ngTemplateOutlet]="feedbackMessage"
+              [ngTemplateOutletContext]="{ $implicit: 'emails' }"
+            ></ng-container>
+          </section>
+
+          <section class="profile-modal__section" data-testid="profile-github">
+            <h3 class="profile-modal__section-title">Connected accounts</h3>
+            @let github = profileData.github; @if (github) {
+            <div class="profile-modal__row">
+              <div class="profile-modal__identity">
+                <svg lucideIcon="github" aria-hidden="true"></svg>
+                <span class="profile-modal__value"
+                  >GitHub · {{ github.label }}</span
+                >
+                @if (!github.isVerified) {
+                <span class="profile-modal__badge profile-modal__badge--warning"
+                  >Requires action</span
+                >
+                }
+              </div>
+              @if (!isConfirming("github")) {
+              <div class="profile-modal__row-actions">
+                @if (!github.isVerified) {
+                <button
+                  type="button"
+                  class="auth-modal__footer-link"
+                  data-ph-capture-attribute-sc-event="profile github reconnect"
+                  [disabled]="!!busy()"
+                  (click)="connectGitHub()"
+                >
+                  Reconnect
+                </button>
+                }
+                <button
+                  type="button"
+                  class="auth-modal__footer-link profile-modal__danger-link"
+                  [disabled]="!!busy()"
+                  (click)="askConfirm('github')"
+                >
+                  Disconnect
+                </button>
+              </div>
+              }
+            </div>
+            @if (!github.isVerified && github.error) {
+            <p class="auth-modal__error">{{ github.error }}</p>
+            } @if (isConfirming("github")) {
+            <ng-container
+              [ngTemplateOutlet]="confirmPanel"
+              [ngTemplateOutletContext]="{
+                $implicit:
+                  'Your GitHub account will be disconnected and can no longer be used to sign in.',
+                label: 'Disconnect',
+                event: 'profile github disconnect',
+              }"
+            ></ng-container>
+            } } @else {
+            <sc-button
+              label="Connect GitHub"
+              icon="github"
+              iconPosition="start"
+              size="small"
+              variant="outline"
+              color="brand"
+              data-ph-capture-attribute-sc-event="profile github connect"
+              [loading]="busy() === 'github-connect'"
+              [disabled]="!!busy()"
+              (buttonClick)="connectGitHub()"
+            ></sc-button>
+            }
+            <ng-container
+              [ngTemplateOutlet]="feedbackMessage"
+              [ngTemplateOutletContext]="{ $implicit: 'github' }"
+            ></ng-container>
+          </section>
+          } @else { @if (profileData.showPasswordSection) {
+          <section
+            class="profile-modal__section"
+            data-testid="profile-password"
+          >
+            <h3 class="profile-modal__section-title">Password</h3>
+            @if (editor() === "password") {
+            <form
+              class="profile-modal__editor"
+              #passwordForm="ngForm"
+              novalidate
+              (ngSubmit)="savePassword(passwordForm)"
+            >
+              @if (profileData.passwordEnabled) {
+              <label class="auth-modal__field">
+                <span>Current password</span>
+                <input
+                  [type]="showPassword() ? 'text' : 'password'"
+                  name="currentPassword"
+                  placeholder="Enter your current password"
+                  autocomplete="current-password"
+                  required
+                  [(ngModel)]="currentPassword"
+                />
+              </label>
+              }
+              <label class="auth-modal__field">
+                <span>New password</span>
+                <div class="auth-modal__password">
+                  <input
+                    [type]="showPassword() ? 'text' : 'password'"
+                    name="newPassword"
+                    placeholder="Create a new password"
+                    autocomplete="new-password"
+                    required
+                    minlength="8"
+                    [(ngModel)]="newPassword"
+                  />
+                  <button
+                    type="button"
+                    class="auth-modal__password-toggle"
+                    [attr.aria-label]="
+                      showPassword() ? 'Hide password' : 'Show password'
+                    "
+                    (click)="showPassword.set(!showPassword())"
+                  >
+                    <svg
+                      [lucideIcon]="showPassword() ? 'eye-off' : 'eye'"
+                      aria-hidden="true"
+                    ></svg>
+                  </button>
+                </div>
+              </label>
+              <label class="auth-modal__field">
+                <span>Confirm password</span>
+                <input
+                  [type]="showPassword() ? 'text' : 'password'"
+                  name="confirmPassword"
+                  placeholder="Repeat the new password"
+                  autocomplete="new-password"
+                  required
+                  minlength="8"
+                  [(ngModel)]="confirmPassword"
+                />
+              </label>
+              <label class="auth-modal__checkbox">
+                <input
+                  type="checkbox"
+                  name="signOutOtherSessions"
+                  [(ngModel)]="signOutOtherSessions"
+                />
+                <span>Sign out of all other devices</span>
+              </label>
+              <div class="profile-modal__editor-actions">
+                <sc-button
+                  label="Cancel"
+                  size="small"
+                  variant="outline"
+                  color="brand"
+                  [disabled]="!!busy()"
+                  (buttonClick)="closeEditor()"
+                ></sc-button>
+                <sc-button
+                  type="submit"
+                  label="Save"
+                  size="small"
+                  data-ph-capture-attribute-sc-event="profile password save"
+                  [loading]="busy() === 'password'"
+                  [disabled]="passwordForm.invalid || !!busy()"
+                ></sc-button>
+              </div>
+            </form>
+            } @else {
+            <div class="profile-modal__row">
+              <span class="profile-modal__value">
+                {{ profileData.passwordEnabled ? "••••••••••" : "Not set" }}
+              </span>
+              <button
+                type="button"
+                class="auth-modal__footer-link"
+                data-ph-capture-attribute-sc-event="profile password edit"
+                [disabled]="!!busy()"
+                (click)="openEditor('password')"
+              >
+                {{ profileData.passwordEnabled ? "Update password" : "Set
+                password" }}
+              </button>
+            </div>
+            }
+            <ng-container
+              [ngTemplateOutlet]="feedbackMessage"
+              [ngTemplateOutletContext]="{ $implicit: 'password' }"
+            ></ng-container>
+          </section>
+          }
+
+          <section class="profile-modal__section" data-testid="profile-devices">
+            <h3 class="profile-modal__section-title">Active devices</h3>
+            @if (sessionsLoading()) {
+            <div class="profile-modal__loading">
+              <sc-loading-spinner size="sm"></sc-loading-spinner>
+            </div>
+            } @else {
+            <ul class="profile-modal__list">
+              @for (session of sessions(); track session.id) {
+              <li class="profile-modal__item">
+                <div class="profile-modal__row">
+                  <div class="profile-modal__device">
+                    <div class="profile-modal__identity">
+                      @if (session.isMobile) {
+                      <svg lucideSmartphone aria-hidden="true"></svg>
+                      } @else {
+                      <svg lucideMonitor aria-hidden="true"></svg>
+                      }
+                      <span class="profile-modal__value">
+                        {{ session.device }} · {{ session.browser }}
+                      </span>
+                      @if (session.isCurrent) {
+                      <span class="profile-modal__badge">This device</span>
+                      }
+                    </div>
+                    <span class="profile-modal__meta">
+                      @if (session.location) { {{ session.location }} · } @if
+                      (session.ipAddress) { {{ session.ipAddress }} · } {{
+                      session.lastActiveAt | date: "medium" }}
+                    </span>
+                  </div>
+                  @if (!session.isCurrent && !isConfirming("session",
+                  session.id)) {
+                  <button
+                    type="button"
+                    class="auth-modal__footer-link profile-modal__danger-link"
+                    [disabled]="!!busy()"
+                    (click)="askConfirm('session', session.id)"
+                  >
+                    Sign out
+                  </button>
+                  }
+                </div>
+                @if (isConfirming("session", session.id)) {
+                <ng-container
+                  [ngTemplateOutlet]="confirmPanel"
+                  [ngTemplateOutletContext]="{
+                    $implicit: 'This device will be signed out of your account.',
+                    label: 'Sign out',
+                    event: 'profile session revoke',
+                  }"
+                ></ng-container>
+                }
+              </li>
+              }
+            </ul>
+            }
+            <ng-container
+              [ngTemplateOutlet]="feedbackMessage"
+              [ngTemplateOutletContext]="{ $implicit: 'devices' }"
+            ></ng-container>
+          </section>
+
+          @if (profileData.canDelete) {
+          <section
+            class="profile-modal__section profile-modal__section--danger"
+            data-testid="profile-delete"
+          >
+            <h3 class="profile-modal__section-title">Delete account</h3>
+            @if (editor() === "delete") {
+            <form class="profile-modal__editor" (ngSubmit)="deleteAccount()">
+              <p class="auth-modal__subtitle">
+                Are you sure you want to delete your account? This action is
+                permanent and irreversible.
+              </p>
+              <label class="auth-modal__field">
+                <span
+                  >Type "{{ deleteConfirmationText }}" below to continue.</span
+                >
+                <input
+                  type="text"
+                  name="deleteConfirmation"
+                  autocomplete="off"
+                  [placeholder]="deleteConfirmationText"
+                  [(ngModel)]="deleteConfirmation"
+                />
+              </label>
+              <div class="profile-modal__editor-actions">
+                <sc-button
+                  label="Cancel"
+                  size="small"
+                  variant="outline"
+                  color="brand"
+                  [disabled]="!!busy()"
+                  (buttonClick)="closeEditor()"
+                ></sc-button>
+                <sc-button
+                  type="submit"
+                  label="Delete account"
+                  size="small"
+                  color="danger"
+                  data-testid="profile-delete-submit"
+                  data-ph-capture-attribute-sc-event="profile account delete"
+                  [loading]="busy() === 'delete'"
+                  [disabled]="!canDelete() || !!busy()"
+                ></sc-button>
+              </div>
+            </form>
+            } @else {
+            <div class="profile-modal__row">
+              <span class="profile-modal__meta">
+                Permanently delete your account and all associated data.
+              </span>
+              <sc-button
+                label="Delete account"
+                size="small"
+                variant="outline"
+                color="danger"
+                data-testid="profile-delete-open"
+                data-ph-capture-attribute-sc-event="profile account delete open"
+                [disabled]="!!busy()"
+                (buttonClick)="openEditor('delete')"
+              ></sc-button>
+            </div>
+            }
+            <ng-container
+              [ngTemplateOutlet]="feedbackMessage"
+              [ngTemplateOutletContext]="{ $implicit: 'delete' }"
+            ></ng-container>
+          </section>
+          } }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+}
+
+<ng-template #feedbackMessage let-section>
+  @let message = feedbackFor(section); @if (message) {
+  <p
+    [class.auth-modal__error]="message.type === 'error'"
+    [class.auth-modal__info]="message.type === 'info'"
+  >
+    {{ message.message }}
+  </p>
+  }
+</ng-template>
+
+<ng-template #confirmPanel let-message let-label="label" let-event="event">
+  <div class="profile-modal__confirm">
+    <p>{{ message }}</p>
+    <div class="profile-modal__editor-actions">
+      <sc-button
+        label="Cancel"
+        size="small"
+        variant="outline"
+        color="brand"
+        [disabled]="!!busy()"
+        (buttonClick)="cancelConfirm()"
+      ></sc-button>
+      <sc-button
+        size="small"
+        color="danger"
+        [label]="label"
+        [attr.data-ph-capture-attribute-sc-event]="event"
+        [loading]="busy() === 'confirm'"
+        [disabled]="!!busy()"
+        (buttonClick)="confirmAction()"
+      ></sc-button>
+    </div>
+  </div>
+</ng-template>
