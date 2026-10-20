@@ -15,4 +15,3 @@ export { ProfileService } from "./data-access/profile.service";
 export { authGuard, blockLandingDuringAuthGuard } from "./guards/auth.guard";
 export { authInterceptor } from "./interceptors/auth.interceptor";
 export { provideAuthFeature } from "./auth-feature.providers";
-export { CLERK_APPEARANCE, CLERK_TEXTS } from "./clerk-configuration";

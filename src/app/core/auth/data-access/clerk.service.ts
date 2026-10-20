@@ -7,10 +7,8 @@ import type {
   SignUpResource,
   UserResource,
 } from "@clerk/shared/types";
-import { ui } from "@clerk/ui/no-rhc";
 import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
 import { authUrls } from "../auth.utils";
-import { CLERK_APPEARANCE, CLERK_TEXTS } from "../clerk-configuration";
 
 @Injectable({ providedIn: "root" })
 export class ClerkService {
@@ -66,22 +64,8 @@ export class ClerkService {
     await this.clerk?.signOut(() => undefined);
   }
 
-  openUserProfileModal(): void {
-    const user = this.clerk?.user;
-    const hidePasswordSection =
-      !!user &&
-      !user.passwordEnabled &&
-      !!user.externalAccounts?.some((account) => account.provider === "github");
-
-    const elements: Record<string, { display: string }> = {};
-    if (hidePasswordSection) {
-      elements["profileSection__password"] = { display: "none" };
-    }
-
-    this.clerk?.openUserProfile({
-      apiKeysProps: { hide: true },
-      appearance: Object.keys(elements).length ? { elements } : undefined,
-    });
+  async clearActiveSession(): Promise<void> {
+    await this.clerk?.setActive({ session: null });
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -186,9 +170,6 @@ export class ClerkService {
     this.clerk = new Clerk(CLERK_PUBLISHABLE_KEY);
     const urls = authUrls();
     await this.clerk.load({
-      ui,
-      appearance: CLERK_APPEARANCE,
-      localization: CLERK_TEXTS,
       signInUrl: urls.origin,
       signUpUrl: urls.origin,
       routerPush: (url: string) => this.navigateRouter(url),
