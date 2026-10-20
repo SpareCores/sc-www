@@ -1,23 +1,22 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EmbedComparePreviewComponent } from "./embed-compare-preview.component";
+import { CompareEmbedDialogComponent } from "./compare-embed-dialog.component";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
-describe("EmbedComparePreviewComponent", () => {
-  let component: EmbedComparePreviewComponent;
-  let fixture: ComponentFixture<EmbedComparePreviewComponent>;
+describe("CompareEmbedDialogComponent", () => {
+  let component: CompareEmbedDialogComponent;
+  let fixture: ComponentFixture<CompareEmbedDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EmbedComparePreviewComponent],
+      imports: [CompareEmbedDialogComponent],
       providers: [...sharedTestingProviders],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EmbedComparePreviewComponent);
+    fixture = TestBed.createComponent(CompareEmbedDialogComponent);
     component = fixture.componentInstance;
     component.instances = "server-a,server-b";
     component.chartname = "score";
-    component.isModal = false;
     fixture.detectChanges();
   });
 

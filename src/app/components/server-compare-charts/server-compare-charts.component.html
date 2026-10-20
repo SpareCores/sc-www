@@ -9,7 +9,7 @@
         <col [style.minWidth]="getServerColumnWidth(server)" />
       }
     </colgroup>
-    @if (isChartShown("generic") || showChart === "nvbandwidth") {
+    @if (isChartShown("generic") || isTableOnlyChartShown()) {
       <thead id="server-compare-table-header">
         <tr>
           <th #tableFirstCol id="server-compare-table-first-col"></th>
@@ -39,7 +39,7 @@
                 </a>
                 <div
                   class="flex gap-2 justify-center"
-                  [class.hidden]="showChart === 'nvbandwidth'"
+                  [class.hidden]="isTableOnlyChartShown()"
                 >
                   @if (isBestPrice(server)) {
                     <div
@@ -100,6 +100,7 @@
                 <a
                   class="block w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto"
                   [routerLink]="['/vendors', server.vendor_id]"
+                  [attr.target]="isEmbedded ? '_blank' : null"
                 >
                   <img
                     [src]="server.vendor.logo"
@@ -113,6 +114,7 @@
                 <a
                   class="text-white text-sm ml-auto underline decoration-dotted"
                   [routerLink]="['/vendors', server.vendor_id]"
+                  [attr.target]="isEmbedded ? '_blank' : null"
                 >
                   {{ server.vendor.name }}
                 </a>
@@ -416,12 +418,16 @@
                         @if (
                           propertyValue === "check" || propertyValue === "x"
                         ) {
-                          <svg
-                            [lucideIcon]="propertyValue"
-                            class="h-4 w-4 shrink-0 justify-self-end"
+                          <div
+                            class="justify-self-end"
                             [class.text-emerald-400]="propertyValue === 'check'"
                             [class.text-white]="propertyValue === 'x'"
-                          ></svg>
+                          >
+                            <svg
+                              [lucideIcon]="propertyValue"
+                              class="h-4 w-4 shrink-0"
+                            ></svg>
+                          </div>
                         } @else {
                           <span [textContent]="propertyValue"></span>
                         }
@@ -467,7 +473,9 @@
           }
         }
       }
-      @if (hasVisibleWorkloadProfileChart() && !isEmbedded) {
+      @if (
+        hasVisibleWorkloadProfileChart() && isChartShown("workload_profile")
+      ) {
         <tr class="section_header" id="benchmark_line_workload_profile">
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
@@ -511,7 +519,7 @@
                   </span>
                 </span>
               </h3>
-              @if (!pinnedRow.trailingColSpan) {
+              @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                 <div class="flex items-stretch gap-4 shrink-0">
                   <sc-button
                     [label]="
@@ -540,26 +548,28 @@
           }
           @if (pinnedRow.trailingColSpan) {
             <td [colSpan]="1" class="compare-section-header-action-cell">
-              <div class="flex justify-end items-stretch gap-4">
-                <sc-button
-                  [label]="
-                    (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
-                  "
-                  [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
-                  iconPosition="start"
-                  size="small"
-                  (click)="toggleWorkloadProfileDetails()"
-                ></sc-button>
-                <sc-button
-                  [icon]="clipboardIcon"
-                  ariaLabel="Copy benchmark section link"
-                  size="small"
-                  buttonClass="shrink-0"
-                  (click)="
-                    clipboardURL($event, 'benchmark_line_workload_profile')
-                  "
-                ></sc-button>
-              </div>
+              @if (!isEmbedded) {
+                <div class="flex justify-end items-stretch gap-4">
+                  <sc-button
+                    [label]="
+                      (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
+                    "
+                    [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
+                    iconPosition="start"
+                    size="small"
+                    (click)="toggleWorkloadProfileDetails()"
+                  ></sc-button>
+                  <sc-button
+                    [icon]="clipboardIcon"
+                    ariaLabel="Copy benchmark section link"
+                    size="small"
+                    buttonClass="shrink-0"
+                    (click)="
+                      clipboardURL($event, 'benchmark_line_workload_profile')
+                    "
+                  ></sc-button>
+                </div>
+              }
             </td>
           }
         </tr>
@@ -574,6 +584,7 @@
                 [showHeader]="false"
                 [servers]="workloadProfileCompareServers"
                 [benchmarkMeta]="workloadProfileBenchmarkMeta"
+                [isEmbedded]="isEmbedded"
                 (layoutChanged)="layoutChanged.emit()"
               ></sc-workload-profile-panel>
             </div>
@@ -870,13 +881,17 @@
                 <td>
                   <div class="compare-table-metric-cell">
                     @if (value === "check" || value === "x") {
-                      <svg
-                        [lucideIcon]="value"
-                        aria-hidden="true"
-                        class="h-4 w-4 shrink-0 justify-self-end"
+                      <div
+                        class="justify-self-end"
                         [class.text-emerald-400]="value === 'check'"
                         [class.text-white]="value === 'x'"
-                      ></svg>
+                      >
+                        <svg
+                          [lucideIcon]="value"
+                          aria-hidden="true"
+                          class="h-4 w-4 shrink-0"
+                        ></svg>
+                      </div>
                       <span class="sr-only">{{
                         value === "check" ? "Yes" : "No"
                       }}</span>
@@ -895,6 +910,248 @@
         benchmarkCategory of benchmarkCategories;
         track benchmarkCategory.id
       ) {
+        @if (
+          benchmarkCategory.id === "stress_ng" &&
+          stressNgSection() &&
+          isChartShown("stress_ng_full")
+        ) {
+          @let stressNgActiveSection = stressNgSection()!;
+          <tr
+            class="section_header compare-dropdown-header-row"
+            id="benchmark_line_stress_ng_full"
+          >
+            <td [colSpan]="pinnedRow.contentColSpan">
+              <div class="compare-section-header-row">
+                <h3 class="text-xl font-semibold m-0 flex items-center">
+                  <span class="compare-section-header-title">
+                    <svg
+                      [lucideIcon]="'stress_ng' | benchmarkIcon"
+                      class="h-6 w-6 shrink-0"
+                    ></svg>
+                    <span class="compare-section-header-title__text">
+                      {{ stressNgTitle }}
+                    </span>
+                    <span class="compare-section-header-title__icons">
+                      <svg
+                        lucideCircleArrowUp
+                        class="h-4 w-4 text-gray-200 shrink-0"
+                        (mouseenter)="showTooltip($event, 'Higher is better.')"
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
+                    </span>
+                  </span>
+                </h3>
+                <div class="flex items-stretch gap-4 shrink-0">
+                  <sc-button
+                    #stressNgSubcategoryDropdown="scFlowbiteDropdown"
+                    id="stress_ng_full_subcategory_button"
+                    scFlowbiteDropdown="stress_ng_full_subcategory_options"
+                    [dropdownEnabled]="isBrowserEnvironment()"
+                    [label]="stressNgActiveSection.name"
+                    icon="chevron-down"
+                    variant="dropdown"
+                    size="small"
+                    [title]="stressNgActiveSection.name"
+                  ></sc-button>
+                  <sc-button
+                    #stressNgMetricDropdown="scFlowbiteDropdown"
+                    id="stress_ng_full_metric_button"
+                    scFlowbiteDropdown="stress_ng_full_metric_options"
+                    [dropdownEnabled]="isBrowserEnvironment()"
+                    [label]="stressNgMetricName()"
+                    icon="chevron-down"
+                    variant="dropdown"
+                    size="small"
+                    [title]="stressNgMetricName()"
+                  ></sc-button>
+                  @if (!isEmbedded && !pinnedRow.trailingColSpan) {
+                    <sc-button
+                      [icon]="clipboardIcon"
+                      ariaLabel="Copy benchmark section link"
+                      size="small"
+                      buttonClass="shrink-0"
+                      (click)="
+                        clipboardURL($event, 'benchmark_line_stress_ng_full')
+                      "
+                    ></sc-button>
+                  }
+                </div>
+              </div>
+              <div
+                id="stress_ng_full_subcategory_options"
+                class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+              >
+                <ul
+                  class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                  aria-labelledby="stress_ng_full_subcategory_button"
+                >
+                  @for (section of stressNgSections(); track section.name) {
+                    <li>
+                      <button
+                        type="button"
+                        class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                        data-ph-capture-attribute-sc-event="stress_ng_full select subcategory"
+                        [attr.data-ph-capture-attribute-stress-ng-subcategory]="
+                          section.name
+                        "
+                        (click)="selectStressNgSubcategory(section.name)"
+                      >
+                        <div class="text-white text-sm">
+                          {{ section.name }}
+                        </div>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
+              <div
+                id="stress_ng_full_metric_options"
+                class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+              >
+                <ul
+                  class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                  aria-labelledby="stress_ng_full_metric_button"
+                >
+                  @for (option of stressNgMetricOptions; track option.id) {
+                    <li>
+                      <button
+                        type="button"
+                        class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                        data-ph-capture-attribute-sc-event="stress_ng_full select metric"
+                        [attr.data-ph-capture-attribute-stress-ng-metric]="
+                          option.id
+                        "
+                        (click)="selectStressNgMetric(option.id)"
+                      >
+                        <div class="text-white text-sm">
+                          {{ option.name }}
+                        </div>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </td>
+            @if (pinnedRow.actionSpacerColSpan) {
+              <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
+            }
+            @if (pinnedRow.trailingColSpan) {
+              <td [colSpan]="1" class="compare-section-header-action-cell">
+                @if (!isEmbedded) {
+                  <div class="flex justify-end items-stretch gap-4">
+                    <sc-button
+                      [icon]="clipboardIcon"
+                      ariaLabel="Copy benchmark section link"
+                      size="small"
+                      buttonClass="shrink-0"
+                      (click)="
+                        clipboardURL($event, 'benchmark_line_stress_ng_full')
+                      "
+                    ></sc-button>
+                  </div>
+                }
+              </td>
+            }
+          </tr>
+          @for (
+            row of stressNgActiveSection.rows;
+            track row.benchmark.benchmark_id
+          ) {
+            <tr>
+              <td>
+                <div class="ml-4 flex gap-2 items-center whitespace-nowrap">
+                  {{ row.name }}
+                  @if (row.benchmark.higher_is_better === false) {
+                    <svg
+                      lucideCircleArrowDown
+                      class="h-4 w-4 shrink-0 text-gray-200"
+                      (mouseenter)="showTooltip($event, 'Lower is better.')"
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                  @if (row.benchmark.description) {
+                    <svg
+                      lucideInfo
+                      class="h-4 w-4 shrink-0 text-gray-200"
+                      (mouseenter)="
+                        showTooltip($event, row.benchmark.description)
+                      "
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                  @if (getBenchmarkRowNote(row.benchmark.benchmark_id)) {
+                    <svg
+                      lucideTriangleAlert
+                      class="benchmark-note-icon"
+                      (mouseenter)="
+                        showWarningTooltip(
+                          $event,
+                          getBenchmarkRowNote(row.benchmark.benchmark_id)
+                        )
+                      "
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                </div>
+              </td>
+              @for (value of row.values; track $index) {
+                <td
+                  class="compact-number"
+                  [style]="isBestStyle(value, row.values, row.benchmark)"
+                >
+                  <div class="compare-table-metric-cell">
+                    <span
+                      (mouseenter)="
+                        showTooltip($event, stressNgExactValue(value))
+                      "
+                      (mouseleave)="hideTooltip()"
+                      >{{
+                        stressNgMetric() === "scaling"
+                          ? formatStressNgScalingValue(value)
+                          : (value | compactNumber)
+                      }}</span
+                    >
+                    @if (baselineServer) {
+                      <div class="compare-table-delta-row">
+                        @if (
+                          getBenchmarkValueDelta(
+                            value,
+                            row.values,
+                            $index,
+                            row.benchmark
+                          );
+                          as valueDelta
+                        ) {
+                          <span
+                            class="compare-table-delta"
+                            [class.compare-table-delta--positive]="
+                              valueDelta.tone === 'positive'
+                            "
+                            [class.compare-table-delta--negative]="
+                              valueDelta.tone === 'negative'
+                            "
+                            [class.compare-table-delta--neutral]="
+                              valueDelta.tone === 'neutral'
+                            "
+                          >
+                            {{ valueDelta.label }}
+                          </span>
+                        } @else {
+                          <span
+                            class="compare-table-delta-placeholder"
+                            aria-hidden="true"
+                            >&nbsp;</span
+                          >
+                        }
+                      </div>
+                    }
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+          <tr class="h-[1rem]"></tr>
+        }
         @if (benchmarkCategory.data.length && !benchmarkCategory.hidden) {
           @let isPassmark = isPassmarkBenchmarkCategory(benchmarkCategory.id);
           @let canToggleDetails = !isPassmark;
