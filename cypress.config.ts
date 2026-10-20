@@ -8,7 +8,7 @@ const customizeChromeHeadless = (
   launchOptions: Cypress.BeforeBrowserLaunchOptions,
 ) => {
   if (browser.family === "chromium" && browser.isHeadless) {
-    launchOptions.args.push("--window-size=1440,1080");
+    launchOptions.args.push("--window-size=1600,1200");
     launchOptions.args.push("--force-device-scale-factor=1");
     launchOptions.args.push("--hide-scrollbars");
   }
@@ -35,9 +35,8 @@ export default defineConfig({
           return deleteClerkUserByEmail(email);
         },
       });
-      on("before:browser:launch", customizeChromeHeadless);
-
       getCompareSnapshotPlugin(on, config);
+      on("before:browser:launch", customizeChromeHeadless);
 
       const publishableKey = process.env["NG_APP_CLERK_PUBLISHABLE_KEY"];
       const secretKey = process.env["CLERK_SECRET_KEY"];
