@@ -308,9 +308,9 @@ on scaling, so picking `div16` among them was mostly a matter of taste. But
 servers.
 
 That's why the SCore is the `div16` bogo-ops per second. We run `div16` with
-every worker count from one up to the number of vCPUs: the single-core SCore
-is the result with one worker, and the multi-core SCore is the highest result
-across all worker counts.
+a range of worker counts from one up to the number of vCPUs: the single-core
+SCore is the result with one worker, and the multi-core SCore is the highest
+result across the tested worker counts.
 
 Of course, the SCore is just one metric. If your workload benefits from SMT,
 you should look at application-specific benchmarks instead, which we also
