@@ -17,6 +17,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 - Never inject comments, JSDocs, TODOs, or annotations. Do not reorganize imports.
 - **Anti-Guessing Guard**: If a task is structurally ambiguous, ask a binary or multiple-choice question before editing. Never guess UI placement or backend contracts.
 - Never run builds, tests, or package manager commands autonomously unless explicitly requested.
+- Never add `Co-Authored-By` or any other AI attribution trailer to commit messages or PR descriptions, even if older commits contain one.
 
 ### Context & Tool Management
 
