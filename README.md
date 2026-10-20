@@ -43,6 +43,13 @@ Note that NG_APP_SENTRY_DSN must be defined (though it can be left empty to disa
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")
 - NG_APP_SENTRY_RELEASE
 
+The articles get tooltips for the terms of the docs' glossary from a script
+built by the docs site (sc-docusaurus), loaded from
+https://docs.sparecores.com/glossary.js by default; the
+NG_APP_GLOSSARY_SCRIPT_URL environment variable overrides it, e.g. with
+http://localhost:3000/glossary.js for the docs running locally (`npm start`
+or `npm run serve`).
+
 The server-side (runtime) environment variables for sending emails (e.g. on the contact form) are:
 
 - SMTP_HOST
