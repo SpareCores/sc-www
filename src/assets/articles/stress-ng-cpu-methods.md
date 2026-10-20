@@ -24,8 +24,11 @@ before picking `div16`. We never published the actual numbers, though, nor
 explained in detail why we went with integer divisions instead of something
 fancier, like matrix products or FFTs.
 
-So we dug up the raw results from our June 2024 experiments, cleaned them up,
-and looked at them again with fresh eyes. It turns out the choice of the CPU
+So we dug up the raw results of the experiments we ran in June 2024 while
+designing the SCore, cleaned them up, and looked at them again with fresh eyes.
+This is a look back at past research: we did not rerun the tests for this
+post, so the numbers reflect the servers and the `stress-ng` release we used
+back then. It turns out the choice of the CPU
 burning method matters a lot more than one would expect from a "simple" stress
 test.
 
@@ -87,8 +90,8 @@ core.
 
 ## Methodology
 
-We ran each CPU method twice on each server for 10 seconds: once with a
-single worker, and once with one worker per vCPU. We used the official Docker
+Back in June 2024, we ran each CPU method twice on each server for 10
+seconds: once with a single worker, and once with one worker per vCPU. We used the official Docker
 image of `stress-ng`, and the following loop, where `/tmp/tests` listed all
 the method names:
 
@@ -333,8 +336,8 @@ the experiments in this post:
 
 - Each result comes from a single 10-second run, so differences of a few
   percent are within noise.
-- The results are from June 2024 and an older `stress-ng` release. The
-  methods, their implementation, and their reference rates change between
+- These are historical results from June 2024, collected with `stress-ng`
+  0.17.08. The methods, their implementation, and their reference rates change between
   releases, so the exact numbers will differ with a recent version.
 - We used the official Docker image, so the compiler and C library choices of
   that image (for example, the missing complex number support) affect the
