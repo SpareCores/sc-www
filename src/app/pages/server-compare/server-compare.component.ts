@@ -52,10 +52,6 @@ import {
   BAD_SERVER_COMPARE_URL_TOAST_ID,
   SERVER_COMPARE_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
-import {
-  INVALID_SERVER_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
-  INVALID_SERVER_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
-} from "../../services/url-toast-content";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PrismService } from "../../services/prism.service";
 import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
@@ -114,7 +110,6 @@ const EMBEDDABLE_CHARTS: EmbedChartOption[] = [
   { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
 ];
 
-const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_COMPARE_URL_TOAST_BODY = "Select servers to compare.";
 const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Server Navigator page";
 const SERVER_COMPARE_GUIDE_TITLE = "Server Compare Guide";
