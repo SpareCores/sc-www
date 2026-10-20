@@ -94,8 +94,8 @@ We’ll be writing more on our database and other high concurrency benchmarks so
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="Per-vCPU PostgreSQL Benchmark Scores within AWS Graviton Families"
-    alt="Per-vCPU PostgreSQL Benchmark Scores within AWS Graviton Families"
+    title="Database Benchmark Score of the N2 (with SMT) and the T2D (no SMT) at Various Concurrency Levels"
+    alt="Database Benchmark Score of the N2 (with SMT) and the T2D (no SMT) at Various Concurrency Levels",
     src="/assets/images/blog/pgbench-early-results/database-benchmark-with-SMT-vs-without.png"/>
-  <p>PostgreSQL TPM per vCPU for EC2 vs RDS running on Graviton families m6g - m9g.</p>
+  <p>Database Benchmark Scores for GCP's N2 (with SMT) and the T2D (no SMT) at Various Concurrency Levels.</p>
 </div>
