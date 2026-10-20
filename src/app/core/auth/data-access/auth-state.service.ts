@@ -69,6 +69,7 @@ export class AuthStateService {
   private authSyncInFlight = false;
   private authEpoch = 0;
   private authSyncTimer: ReturnType<typeof setTimeout> | null = null;
+  private authSyncPending = false;
   private onVisibilityChange: (() => void) | null = null;
   private onWindowFocus: (() => void) | null = null;
   private accountDeleted = false;
@@ -211,6 +212,7 @@ export class AuthStateService {
   private clearAuthPending(): void {
     this.flow.setPending(false);
     this.setAuthOverlayVisible(false);
+    this.flushPendingAuthSync();
   }
 
   async handleGitHubCallback(): Promise<GitHubCallbackResult> {
@@ -224,6 +226,7 @@ export class AuthStateService {
     if (!this.gitHubCallbackPromise) {
       this.gitHubCallbackPromise = this.processGitHubCallback().finally(() => {
         this.gitHubCallbackPromise = null;
+        this.flushPendingAuthSync();
       });
     }
     return this.gitHubCallbackPromise;
@@ -758,6 +761,7 @@ export class AuthStateService {
       throw error;
     } finally {
       this.activating = false;
+      this.flushPendingAuthSync();
     }
   }
 
@@ -765,6 +769,7 @@ export class AuthStateService {
     if (!this.finalizePromise) {
       this.finalizePromise = this.runFinalize(kind).finally(() => {
         this.finalizePromise = null;
+        this.flushPendingAuthSync();
       });
     }
     return this.finalizePromise;
@@ -901,29 +906,11 @@ export class AuthStateService {
 
     this.boundAuthRevalidation = true;
 
-    const scheduleSync = () => {
-      if (
-        this.document.visibilityState !== "visible" ||
-        this.isAuthTransitionActive()
-      ) {
-        return;
-      }
-
-      if (this.authSyncTimer !== null) {
-        return;
-      }
-
-      this.authSyncTimer = setTimeout(() => {
-        this.authSyncTimer = null;
-        void this.revalidateClerkState();
-      }, 100);
-    };
-
     this.onVisibilityChange = () => {
-      scheduleSync();
+      this.scheduleAuthSync();
     };
     this.onWindowFocus = () => {
-      scheduleSync();
+      this.scheduleAuthSync();
     };
 
     this.ngZone.runOutsideAngular(() => {
@@ -949,7 +936,36 @@ export class AuthStateService {
     });
   }
 
+  private scheduleAuthSync(): void {
+    if (this.document.visibilityState !== "visible") {
+      return;
+    }
+
+    if (this.isAuthTransitionActive()) {
+      this.authSyncPending = true;
+      return;
+    }
+
+    if (this.authSyncTimer !== null) {
+      return;
+    }
+
+    this.authSyncPending = false;
+    this.authSyncTimer = setTimeout(() => {
+      this.authSyncTimer = null;
+      void this.revalidateClerkState();
+    }, 100);
+  }
+
+  private flushPendingAuthSync(): void {
+    if (!this.authSyncPending || !this.boundAuthRevalidation) {
+      return;
+    }
+    this.ngZone.runOutsideAngular(() => this.scheduleAuthSync());
+  }
+
   private cancelScheduledAuthSync(): void {
+    this.authSyncPending = false;
     if (this.authSyncTimer !== null) {
       clearTimeout(this.authSyncTimer);
       this.authSyncTimer = null;
@@ -966,7 +982,11 @@ export class AuthStateService {
   }
 
   private async revalidateClerkState(): Promise<void> {
-    if (this.authSyncInFlight || this.isAuthTransitionActive()) {
+    if (this.authSyncInFlight) {
+      return;
+    }
+    if (this.isAuthTransitionActive()) {
+      this.authSyncPending = true;
       return;
     }
 
