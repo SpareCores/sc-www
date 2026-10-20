@@ -37,9 +37,13 @@ If you're here for the numbers, some highlights:
 - **Divisions track physical cores**: the `div8`, `div16`, `div32`, and
   `div64` methods scaled almost exactly with the number of physical cores on
   every server we tested.
-- **Arm hates `long double`**: on a Graviton2 core, most methods doing
-  `long double` math ran 5x to 69x slower than on an AMD core, while the
-  median method was only ~2x slower.
+- **Arm lags behind in `long double` math**: on a Graviton2 core, most
+  methods doing `long double` math ran 5x to 69x slower than on an AMD core,
+  while the median method was only ~2x slower. Note that CPU architectures
+  handle high-precision floating point in different ways: 64-bit Arm uses
+  128-bit IEEE 754 quad precision, which may require software emulation,
+  while x86 typically uses 80-bit extended precision on dedicated x87 FPU
+  hardware.
 - **The method changes the ranking**: an Intel Ice Lake core was 2.1x faster
   than an AMD Genoa core on `longdouble`, but 3.4x slower on `callfunc`.
 
