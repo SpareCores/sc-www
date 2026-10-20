@@ -1,4 +1,4 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent, visualSnapshotName } from "../support/generics";
 
 describe("Visual regression tests (small screen - 800px)", () => {
   beforeEach(() => {
@@ -17,7 +17,10 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Hide resource tracker video for screenshot consistency
     cy.get("#resource-tracker-video").invoke("css", "display", "none");
 
-    cy.compareSnapshot("landing-page-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("landing-page", "mobile"),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of the landing page with the mobile menu open", () => {
@@ -30,7 +33,10 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     E2EEvent.openMobileMenuForScreenshot();
 
-    cy.compareSnapshot("landing-page-mobile-menu-open-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("landing-page-mobile-menu-open", "mobile"),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of servers list (Hetzner / GPU >=1)", () => {
@@ -42,7 +48,10 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Hide table results for screenshot consistency
     E2EEvent.hideListingTableResultsForScreenshot("servers_table");
 
-    cy.compareSnapshot("servers-hcloud-gpu1-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("servers-hcloud-gpu1", "mobile"),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of databases list (AWS / 2 vCPUs)", () => {
@@ -54,7 +63,10 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Hide table results for screenshot consistency
     E2EEvent.hideListingTableResultsForScreenshot("databases_table");
 
-    cy.compareSnapshot("databases-aws-vcpus2-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("databases-aws-vcpus2", "mobile"),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of design page", () => {
@@ -63,7 +75,10 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
 
-    cy.compareSnapshot("design-page-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("design-page", "mobile"),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of server details page", () => {
@@ -99,7 +114,10 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     E2EEvent.hideWorkloadProfileChartsForScreenshot();
 
-    cy.compareSnapshot("server-details-gcp-t2d-standard-1-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("server-details-gcp-t2d-standard-1", "mobile"),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of database details page", () => {
@@ -113,7 +131,13 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     E2EEvent.hideDatabaseCardPriceForScreenshot();
 
-    cy.compareSnapshot("database-details-gcp-db-c4a-highmem-48-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName(
+        "database-details-gcp-db-c4a-highmem-48",
+        "mobile",
+      ),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of server comparison page", () => {
@@ -167,7 +191,13 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     E2EEvent.hideWorkloadProfileChartsForScreenshot();
 
-    cy.compareSnapshot("server-comparison-aws-a1-medium-c6gd-medium-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName(
+        "server-comparison-aws-a1-medium-c6gd-medium",
+        "mobile",
+      ),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of advisor page", () => {
@@ -180,7 +210,10 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.contains("No matches yet").should("be.visible");
     cy.get("#serverSearchBar").should("be.visible");
 
-    cy.compareSnapshot("advisor-page-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("advisor-page", "mobile"),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of legal documents page", () => {
@@ -193,7 +226,10 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.get("table.items_table tbody tr").should("have.length.at.least", 1);
 
     // Capture the visual snapshot
-    cy.compareSnapshot("legal-documents-list-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("legal-documents-list", "mobile"),
+      exactName: true,
+    });
   });
 
   it("should compare screenshot of partners page", () => {
@@ -205,6 +241,9 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.contains("Strategic & Ecosystem Partners").should("be.visible");
     cy.get(".partner-logos").should("have.length.at.least", 1);
 
-    cy.compareSnapshot("partners-page-small");
+    cy.compareSnapshot({
+      name: visualSnapshotName("partners-page", "mobile"),
+      exactName: true,
+    });
   });
 });

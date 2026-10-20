@@ -21,7 +21,7 @@ import {
   skipWithoutClerk,
 } from "./clerk-testing";
 import { mockCollectionsApi } from "./collections-mock";
-import { E2EEvent } from "./generics";
+import { E2EEvent, VisualSizePrefix, visualSnapshotName } from "./generics";
 
 const PLACEHOLDER_AVATAR =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -90,21 +90,53 @@ function prepareServerCompareChrome(): void {
   });
 }
 
-function snap(name: string, suffix: string): void {
+function snap(name: string, prefix: VisualSizePrefix): void {
   E2EEvent.hideScrollbarsForScreenshot();
-  cy.compareSnapshot(`${name}${suffix}`);
+  cy.compareSnapshot({
+    name: visualSnapshotName(name, prefix),
+    exactName: true,
+  });
 }
 
-function snapViewport(name: string, suffix: string): void {
+function snapViewport(name: string, prefix: VisualSizePrefix): void {
   cy.scrollTo(0, 0);
   E2EEvent.hideScrollbarsForScreenshot({ lockOverflow: true });
   cy.compareSnapshot({
-    name: `${name}${suffix}`,
+    name: visualSnapshotName(name, prefix),
+    exactName: true,
     cypressScreenshotOptions: { capture: "viewport" },
   });
 }
 
-export function registerAuthVisualSuites(suffix: string): void {
+function snapUntil(
+  name: string,
+  prefix: VisualSizePrefix,
+  bottomSelector: string,
+  padding = 16,
+): void {
+  cy.scrollTo(0, 0);
+  cy.get(bottomSelector).first().should("be.visible");
+  cy.window().then((win) => {
+    const bottom = win.document
+      .querySelector(bottomSelector)
+      ?.getBoundingClientRect().bottom;
+    expect(bottom, `${bottomSelector} bottom`).to.be.a("number");
+    const width = win.document.documentElement.clientWidth;
+    const height = Math.ceil((bottom ?? 0) + padding);
+    const fitsViewport = height <= win.innerHeight;
+    E2EEvent.hideScrollbarsForScreenshot({ lockOverflow: fitsViewport });
+    cy.compareSnapshot({
+      name: visualSnapshotName(name, prefix),
+      exactName: true,
+      cypressScreenshotOptions: {
+        capture: fitsViewport ? "viewport" : "fullPage",
+        clip: { x: 0, y: 0, width, height },
+      },
+    });
+  });
+}
+
+export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
   describe("Auth visual — guest modals", () => {
     let pendingEmail: string | undefined;
 
@@ -124,7 +156,7 @@ export function registerAuthVisualSuites(suffix: string): void {
         "Sign in to Spare Cores",
       );
       prepareLandingChrome();
-      snapViewport("auth-sign-in-modal", suffix);
+      snapViewport("auth-sign-in-modal", prefix);
     });
 
     it("compares default registration subtitle", () => {
@@ -139,7 +171,7 @@ export function registerAuthVisualSuites(suffix: string): void {
         "Welcome! Please fill in the details to get started.",
       );
       prepareLandingChrome();
-      snapViewport("auth-register-default-subtitle", suffix);
+      snapViewport("auth-register-default-subtitle", prefix);
     });
 
     it("compares feature registration subtitle", () => {
@@ -158,7 +190,8 @@ export function registerAuthVisualSuites(suffix: string): void {
       );
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("servers_table");
-      snapViewport("auth-register-feature-subtitle", suffix);
+      cy.get("sc-pagination").invoke("css", "visibility", "hidden");
+      snapViewport("auth-register-feature-subtitle", prefix);
     });
 
     it("compares registration consent step", () => {
@@ -168,7 +201,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       fillRegisterDetails(pendingEmail, randomClerkTestPassword());
       expectAuthModalStep("One last step");
       prepareLandingChrome();
-      snapViewport("auth-register-consent", suffix);
+      snapViewport("auth-register-consent", prefix);
     });
 
     it("compares registration verify step", () => {
@@ -182,7 +215,7 @@ export function registerAuthVisualSuites(suffix: string): void {
         "Enter the verification code sent to sc-www+clerk_test@example.com.",
       );
       prepareLandingChrome();
-      snapViewport("auth-register-verify", suffix);
+      snapViewport("auth-register-verify", prefix);
     });
   });
 
@@ -193,7 +226,7 @@ export function registerAuthVisualSuites(suffix: string): void {
     skipWithoutClerk();
 
     before(() => {
-      visualEmail = clerkTestEmail(`visual${suffix || ""}`);
+      visualEmail = clerkTestEmail(`visual-${prefix}`);
       visualPassword = randomClerkTestPassword();
       ensureVisualUserSession(visualEmail, visualPassword);
     });
@@ -220,7 +253,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       E2EEvent.visitURL("/", 2000);
       stabilizeSignedInHeader();
       prepareLandingChrome();
-      snap("auth-signed-in-header", suffix);
+      snapUntil("auth-signed-in-header", prefix, ".sc-shell-chrome");
     });
 
     it("compares signed-in account menu", () => {
@@ -229,7 +262,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       cy.get("#auth_options").should("be.visible");
       stabilizeSignedInHeader();
       prepareLandingChrome();
-      snap("auth-signed-in-account-menu", suffix);
+      snapUntil("auth-signed-in-account-menu", prefix, "#auth_options");
     });
 
     it("compares edit profile", () => {
@@ -240,9 +273,15 @@ export function registerAuthVisualSuites(suffix: string): void {
       cy.get(".cl-userProfile-root, .cl-modalContent, .cl-card", {
         timeout: 20000,
       }).should("be.visible");
+      cy.get(".cl-userProfile-root")
+        .contains(visualEmail!)
+        .invoke("text", "sc-www+clerk_test@example.com");
+      cy.get(".cl-userProfile-root .cl-avatarBox")
+        .should("have.length.at.least", 1)
+        .invoke("css", "visibility", "hidden");
       stabilizeSignedInHeader();
       prepareLandingChrome();
-      snap("auth-edit-profile", suffix);
+      snapViewport("auth-edit-profile", prefix);
     });
 
     it("compares unlocked server listing bookmarks", () => {
@@ -254,7 +293,11 @@ export function registerAuthVisualSuites(suffix: string): void {
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("servers_table");
-      snap("auth-unlocked-server-listing-bookmarks", suffix);
+      snapUntil(
+        "auth-unlocked-server-listing-bookmarks",
+        prefix,
+        "sc-page-header + div",
+      );
     });
 
     it("compares unlocked database listing bookmarks", () => {
@@ -266,7 +309,11 @@ export function registerAuthVisualSuites(suffix: string): void {
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("databases_table");
-      snap("auth-unlocked-database-listing-bookmarks", suffix);
+      snapUntil(
+        "auth-unlocked-database-listing-bookmarks",
+        prefix,
+        "sc-page-header + div",
+      );
     });
 
     it("compares unlocked server details bookmark", () => {
@@ -274,7 +321,11 @@ export function registerAuthVisualSuites(suffix: string): void {
       cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
       stabilizeSignedInHeader();
       prepareServerDetailsChrome();
-      snap("auth-unlocked-server-details-bookmark", suffix);
+      snapUntil(
+        "auth-unlocked-server-details-bookmark",
+        prefix,
+        "#server_base_info_box",
+      );
     });
 
     it("compares unlocked database details bookmark", () => {
@@ -282,7 +333,11 @@ export function registerAuthVisualSuites(suffix: string): void {
       cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
       stabilizeSignedInHeader();
       prepareDatabaseDetailsChrome();
-      snap("auth-unlocked-database-details-bookmark", suffix);
+      snapUntil(
+        "auth-unlocked-database-details-bookmark",
+        prefix,
+        "#database_base_info_box",
+      );
     });
 
     it("compares empty bookmarks page", () => {
@@ -292,7 +347,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       );
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
-      snap("auth-bookmarks-empty", suffix);
+      snap("auth-bookmarks-empty", prefix);
     });
 
     it("compares populated bookmarks page", () => {
@@ -306,7 +361,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       cy.get("article.bookmarks-card").should("have.length.at.least", 1);
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
-      snap("auth-bookmarks-populated", suffix);
+      snap("auth-bookmarks-populated", prefix);
     });
 
     it("compares save-search modal on servers", () => {
@@ -315,7 +370,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("servers_table");
-      snap("auth-save-search-servers-modal", suffix);
+      snapViewport("auth-save-search-servers-modal", prefix);
     });
 
     it("compares save-search modal on databases", () => {
@@ -324,7 +379,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("databases_table");
-      snap("auth-save-search-databases-modal", suffix);
+      snapViewport("auth-save-search-databases-modal", prefix);
     });
 
     it("compares save-comparison modal", () => {
@@ -332,7 +387,7 @@ export function registerAuthVisualSuites(suffix: string): void {
       openPageHeaderSaveModal("server-compare-save-modal");
       stabilizeSignedInHeader();
       prepareServerCompareChrome();
-      snap("auth-save-comparison-modal", suffix);
+      snapViewport("auth-save-comparison-modal", prefix);
     });
 
     it("compares save-assessment modal", () => {
@@ -341,13 +396,13 @@ export function registerAuthVisualSuites(suffix: string): void {
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideBaselineServerCaretForScreenshot();
-      snap("auth-save-assessment-modal", suffix);
+      snapViewport("auth-save-assessment-modal", prefix);
     });
 
     it("compares signed-out header after sign-out", () => {
       signOutClerkTestUser();
       prepareLandingChrome();
-      snap("auth-signed-out-header", suffix);
+      snapUntil("auth-signed-out-header", prefix, ".sc-shell-chrome");
     });
   });
 }

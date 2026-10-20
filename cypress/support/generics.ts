@@ -11,6 +11,15 @@ Cypress.Commands.overwrite("log", function (log, ...args) {
 
 const baseUrl = "http://localhost:4200";
 
+export type VisualSizePrefix = "mobile" | "tablet" | "desktop";
+
+export function visualSnapshotName(
+  name: string,
+  prefix: VisualSizePrefix,
+): string {
+  return `${prefix}-${name}`;
+}
+
 export abstract class E2EEvent {
   // special events
   public static buildAbsoluteURL(url: string) {

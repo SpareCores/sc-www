@@ -1,3 +1,3 @@
 import { registerAuthVisualSuites } from "../support/auth-visual";
 
-registerAuthVisualSuites("");
+registerAuthVisualSuites("desktop");

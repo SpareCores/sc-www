@@ -5,5 +5,5 @@ describe("Auth visual (small screen - 800px)", () => {
     cy.viewport(800, 900);
   });
 
-  registerAuthVisualSuites("-small");
+  registerAuthVisualSuites("mobile");
 });
