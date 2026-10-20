@@ -53,7 +53,7 @@ format:
 ::: {.centered}
 <img src="images/budapest-cube.png"
      style="height: 220px; width: auto; background-color:transparent; margin-top: -50px;" />
-<img src="images/kcd.png"
+<img src="images/kcd-aligned-budapest.png"
      style="height: 220px; width: auto; background-color:transparent; margin-top: -45px;" />
 :::
 
@@ -116,13 +116,64 @@ TODO
 </div>
 ```
 
-# Introduction
+# {#introduction}
 
-TODO
+::: {.centered}
+<img src="images/cloud-bleeding.png" style="max-height: 90%; max-width: 90%; margin-top: -50px;" />
+:::
 
 ::: {.notes}
-TODO
+Our main goal is to stop cloud waste, and while there are many ways to do this,
+some even works, such as:
+
+- identifying idle resources
+- automatically scaling down resources when they're not needed
+- deleting unused resources or migrating e.g. to cheaper storage tiers etc
+
+We focus on:
 :::
+
+# {#vcpu transition="fade-in slide-out"}  
+
+::: {.notes}
+Like what on earth is even a virtual CPU?! Right?
+
+There's a conceptual uncertainty and massive visibility problem here,
+as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory,
+versus a dedicated CPU core of a state-of-the-art server -- with massive CPU cache and high memory bandwidth.
+
+Which means that your applications could run much much faster!
+:::
+
+::: {.centered}
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+  <img src="images/small-big-computer-annotated.jpg" style="display: block; width: 100%;">
+  <video autoplay muted loop playsinline data-autoplay
+         src="images/vincent-confused.webm"
+         style="position: absolute; left: 45%; bottom: 1.5%;
+                transform: translateX(-50%); width: 50%;
+                background: transparent; pointer-events: none;">
+  </video>
+</div>
+:::
+
+# {#vcpu-guess .center}
+
+::: {.notes}
+Now, I'd like to host a quick guessing game if you don't mind.
+
+Any ideas how much faster is the best performing vCPU compared to the slowest?
+I don't mean a comparing cloud servers with hundreds of cores with a potato,
+indeed just focusing on the single-core performance -- like doing as many integer divisions in a second as possible.
+:::
+
+<div class="centered">
+  <p style="font-size: 78px;">Guess the Number!</p>
+  <p style="font-size: 56px; margin-top: 60px;">
+    How much better is the highest performing 2-vCPU cloud server's single-core performance compared to the lowest?
+  </p>
+</div>
+
 
 ## More introduction
 

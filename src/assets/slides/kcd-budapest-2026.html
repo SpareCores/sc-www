@@ -159,7 +159,7 @@ Attila Nagy
   document.getElementById("title-slide").remove();
 </script>
 <div class="centered">
-<p><img src="images/budapest-cube.png" style="height: 220px; width: auto; background-color:transparent; margin-top: -50px;"> <img src="images/kcd.png" style="height: 220px; width: auto; background-color:transparent; margin-top: -45px;"></p>
+<p><img src="images/budapest-cube.png" style="height: 220px; width: auto; background-color:transparent; margin-top: -50px;"> <img src="images/kcd-aligned-budapest.png" style="height: 220px; width: auto; background-color:transparent; margin-top: -45px;"></p>
 </div>
 <h1 class="subtitle" style="color:#eee;font-size:2em; text-align: center; margin-top: 40px; color:#34d399;">
 563 Things<br>Karpenter Didn’t Know About
@@ -226,12 +226,19 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 </div>
 </section>
 
-<section>
 <section id="introduction" class="title-slide slide level1">
-<h1>Introduction</h1>
-<p>TODO</p>
+<h1></h1>
+<div class="centered">
+<p><img src="images/cloud-bleeding.png" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
+</div>
 <aside class="notes">
-<p>TODO</p>
+<p>Our main goal is to stop cloud waste, and while there are many ways to do this, some even works, such as:</p>
+<ul>
+<li>identifying idle resources</li>
+<li>automatically scaling down resources when they’re not needed</li>
+<li>deleting unused resources or migrating e.g.&nbsp;to cheaper storage tiers etc</li>
+</ul>
+<p>We focus on:</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -243,6 +250,59 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
+</section>
+
+<section id="vcpu" class="title-slide slide level1" data-transition="fade-in slide-out">
+<h1></h1>
+<aside class="notes">
+<p>Like what on earth is even a virtual CPU?! Right?</p>
+<p>There’s a conceptual uncertainty and massive visibility problem here, as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory, versus a dedicated CPU core of a state-of-the-art server – with massive CPU cache and high memory bandwidth.</p>
+<p>Which means that your applications could run much much faster!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="centered">
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+<p><img src="images/small-big-computer-annotated.jpg" style="display: block; width: 100%;"> <video autoplay="" muted="" loop="" playsinline="" data-autoplay="" src="images/vincent-confused.webm" style="position: absolute; left: 45%; bottom: 1.5%;
+                transform: translateX(-50%); width: 50%;
+                background: transparent; pointer-events: none;"> </video></p>
+</div>
+</div>
+</section>
+
+<section>
+<section id="vcpu-guess" class="title-slide slide level1 center">
+<h1></h1>
+<aside class="notes">
+<p>Now, I’d like to host a quick guessing game if you don’t mind.</p>
+<p>Any ideas how much faster is the best performing vCPU compared to the slowest? I don’t mean a comparing cloud servers with hundreds of cores with a potato, indeed just focusing on the single-core performance – like doing as many integer divisions in a second as possible.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="centered">
+<p style="font-size: 78px;">
+Guess the Number!
+</p>
+<p style="font-size: 56px; margin-top: 60px;">
+How much better is the highest performing 2-vCPU cloud server’s single-core performance compared to the lowest?
+</p>
+</div>
 </section>
 <section id="more-introduction" class="slide level2">
 <h2>More introduction</h2>
