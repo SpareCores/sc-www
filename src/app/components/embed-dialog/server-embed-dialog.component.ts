@@ -4,7 +4,7 @@ import {
   Component,
   Input,
   OnChanges,
-  OnInit,
+  OnDestroy,
   PLATFORM_ID,
   ElementRef,
   HostListener,
@@ -13,19 +13,20 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
-import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { PrismService } from "../../services/prism.service";
+import { EmbedChartOption } from "./embed-dialog.types";
 @Component({
-  selector: "sc-embed-debug",
+  selector: "sc-server-embed-dialog",
   imports: [FormsModule],
-  templateUrl: "./embed-debug.component.html",
-  styleUrl: "./embed-debug.component.scss",
+  templateUrl: "./server-embed-dialog.component.html",
+  styleUrl: "./server-embed-dialog.component.scss",
 })
-export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
+export class ServerEmbedDialogComponent
+  implements OnChanges, AfterViewInit, OnDestroy
+{
   private static readonly ASPECT_RATIO = 0.6;
   private platformId = inject(PLATFORM_ID);
-  private route = inject(ActivatedRoute);
   private sanitizer = inject(DomSanitizer);
   private SEOHandler = inject(SeoHandlerService);
   private prismService = inject(PrismService);
@@ -33,43 +34,24 @@ export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() vendor!: string;
   @Input() id!: string;
   @Input() chartname!: string;
-  @Input() isModal!: boolean;
 
   src: any;
+  private codeBlockInterval?: ReturnType<typeof setInterval>;
 
   height = "510px";
   width: string = "100%";
 
-  @Input() charts = [
-    { id: "bw_mem", name: "Memory Bandwidth" },
-    { id: "compress", name: "Compression" },
-    { id: "geek_single", name: "Geekbench Single-core" },
-    { id: "geek_multi", name: "Geekbench Multi-core" },
-    { id: "ssl", name: "OpenSSL" },
-    { id: "stress_ng_div16", name: "Stress-ng div16" },
-    { id: "stress_ng_relative", name: "Stress-ng Relative" },
-    { id: "llm_inference", name: "LLM Inference" },
-    { id: "static_web", name: "Static Web Server" },
-    { id: "redis", name: "Redis" },
-  ];
+  @Input() charts: EmbedChartOption[] = [];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
   @ViewChild("myIframe") iframeRef?: ElementRef<HTMLIFrameElement>;
 
-  ngOnInit() {
-    this.route.params.subscribe((params) => {
-      this.vendor = params["vendor"];
-      this.id = params["id"];
-      this.chartname = params["chartname"];
-
-      this.src = this.sanitizer.bypassSecurityTrustResourceUrl(
-        `${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`,
-      );
-    });
-  }
-
   ngOnChanges() {
     this.updateSrc();
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.codeBlockInterval);
   }
 
   ngAfterViewInit() {
@@ -91,7 +73,7 @@ export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
 
     const iframeEl = this.iframeRef.nativeElement;
     const heightPx =
-      iframeEl.offsetWidth * EmbedDebugComponent.ASPECT_RATIO + "px";
+      iframeEl.offsetWidth * ServerEmbedDialogComponent.ASPECT_RATIO + "px";
     this.height = heightPx;
   }
 
@@ -106,11 +88,16 @@ export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   updateSrc() {
+    if (!this.chartname) {
+      return;
+    }
+    const isFirstSrc = !this.src;
     this.src = this.sanitizer.bypassSecurityTrustResourceUrl(
       `${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`,
     );
     if (this.isBrowser()) {
-      const checkExist = setInterval(() => {
+      clearInterval(this.codeBlockInterval);
+      this.codeBlockInterval = setInterval(() => {
         if (
           this.iframeCodeBlockElement &&
           this.iframeCodeBlockElement.nativeElement
@@ -122,9 +109,12 @@ export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
               this.iframeCodeBlockElement.nativeElement,
             );
           }, 0);
-          clearInterval(checkExist);
+          clearInterval(this.codeBlockInterval);
         }
       }, 100);
+      if (isFirstSrc) {
+        setTimeout(() => this.adjustIframeHeight());
+      }
     }
   }
 

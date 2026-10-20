@@ -1,6 +1,7 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
   Component,
+  computed,
   ElementRef,
   inject,
   Input,
@@ -8,7 +9,9 @@ import {
   OnDestroy,
   output,
   PLATFORM_ID,
+  signal,
   ViewChild,
+  viewChild,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
@@ -101,6 +104,14 @@ import {
   toCompareDeltaView,
   type CompareDeltaView,
 } from "../charts/shared/server-compare-table.utils";
+import {
+  STRESS_NG_METRIC_OPTIONS,
+  STRESS_NG_TITLE,
+  StressNgCompareBenchmark,
+  StressNgMetric,
+  buildStressNgCompareSections,
+} from "../charts/stress-ng-full/stress-ng-full.utils";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -135,6 +146,7 @@ import {
     BenchmarkMultiBarChartComponent,
     WorkloadProfilePanelComponent,
     Button,
+    FlowbiteDropdownDirective,
   ],
   providers: [CompareChartLegendVisibilityService],
   templateUrl: "./server-compare-charts.component.html",
@@ -205,6 +217,38 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
   >[] = [];
   nvbandwidthEnvironmentRows: NvbandwidthEnvironmentRow[] = [];
 
+  readonly stressNgTitle = STRESS_NG_TITLE;
+  readonly stressNgMetricOptions = STRESS_NG_METRIC_OPTIONS;
+  stressNgMetricDropdown = viewChild<FlowbiteDropdownDirective>(
+    "stressNgMetricDropdown",
+  );
+  stressNgSubcategoryDropdown = viewChild<FlowbiteDropdownDirective>(
+    "stressNgSubcategoryDropdown",
+  );
+  private stressNgBenchmarks = signal<StressNgCompareBenchmark[]>([]);
+  stressNgMetric = signal<StressNgMetric>("multi");
+  private stressNgSelectedSubcategory = signal<string | null>(null);
+  stressNgSections = computed(() =>
+    buildStressNgCompareSections(
+      this.stressNgBenchmarks(),
+      this.stressNgMetric(),
+    ),
+  );
+  stressNgSection = computed(() => {
+    const sections = this.stressNgSections();
+    return (
+      sections.find(
+        (section) => section.name === this.stressNgSelectedSubcategory(),
+      ) ?? sections[0]
+    );
+  });
+  stressNgMetricName = computed(
+    () =>
+      this.stressNgMetricOptions.find(
+        (option) => option.id === this.stressNgMetric(),
+      )?.name ?? "",
+  );
+
   ngOnChanges() {
     this.comparePinnedRowLayout =
       compareTableLayout.resolveCompareUnpinnedRowLayout(this.servers.length);
@@ -268,6 +312,9 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
       this.benchmarkMeta,
       this.servers.map((server) => server.benchmark_scores),
     );
+    this.stressNgBenchmarks.set([
+      ...((this.benchmarkMeta ?? []) as StressNgCompareBenchmark[]),
+    ]);
   }
 
   isChartShown(id: string): boolean {
@@ -792,6 +839,36 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
     return categoryId === "passmark_cpu" || categoryId === "passmark_other";
   }
 
+  selectStressNgMetric(metric: StressNgMetric): void {
+    this.stressNgMetric.set(metric);
+    this.stressNgMetricDropdown()?.hide();
+  }
+
+  selectStressNgSubcategory(name: string): void {
+    this.stressNgSelectedSubcategory.set(name);
+    this.stressNgSubcategoryDropdown()?.hide();
+  }
+
+  formatStressNgScalingValue(value: number | string): string {
+    return typeof value === "number" ? `${value.toFixed(2)}×` : "-";
+  }
+
+  stressNgExactValue(value: number | string): string | undefined {
+    return typeof value === "number" ? value.toString() : undefined;
+  }
+
+  isBrowserEnvironment(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
+  isTableOnlyChartShown(): boolean {
+    return (
+      this.showChart === "nvbandwidth" ||
+      this.showChart === "stress_ng_full" ||
+      this.isPassmarkBenchmarkCategory(this.showChart)
+    );
+  }
+
   hasCompareChart(categoryId: string): boolean {
     switch (categoryId) {
       case "bw_mem":
@@ -865,6 +942,43 @@ export class ServerCompareChartsComponent implements OnChanges, OnDestroy {
       default:
         return false;
     }
+  }
+
+  hasEmbeddableChart(chartId: string): boolean {
+    switch (chartId) {
+      case "generic":
+        return true;
+      case "workload_profile":
+        return this.hasVisibleWorkloadProfileChart();
+      case "nvbandwidth":
+        return this.nvbandwidthSections.length > 0;
+      case "stress_ng_full":
+        return this.stressNgSections().length > 0;
+      case "pgbench":
+        return this.hasPgbenchCompareChart();
+    }
+
+    const multiBarChart = this.multiBarCharts.find(
+      (chartItem) => chartItem.chart.id === chartId,
+    );
+    if (multiBarChart) {
+      return this.hasMultiBarCompareChart(multiBarChart);
+    }
+
+    const categoryId =
+      chartId === "geekbench_single" || chartId === "geekbench_multi"
+        ? "geekbench"
+        : chartId;
+    const category = this.benchmarkCategories.find(
+      (benchmarkCategory) => benchmarkCategory.id === categoryId,
+    );
+    if (!category?.data?.length) {
+      return false;
+    }
+
+    return (
+      this.isPassmarkBenchmarkCategory(chartId) || this.hasCompareChart(chartId)
+    );
   }
 
   hasMultiBarCompareChart(chartItem: BenchmarkMultiBarChartItem): boolean {

@@ -60,13 +60,17 @@
                   >{{ family.framework }}</span
                 >
               </span>
-              <svg
-                [lucideIcon]="
-                  family.isExpanded ? 'chevron-down' : 'chevron-right'
-                "
-                class="toc_family_chevron h-4 w-4 shrink-0"
+              <span
+                class="toc_family_chevron flex shrink-0 overflow-hidden"
                 [class.toc_family_chevron_hidden]="isCollapsed()"
-              ></svg>
+              >
+                <svg
+                  [lucideIcon]="
+                    family.isExpanded ? 'chevron-down' : 'chevron-right'
+                  "
+                  class="h-4 w-4 shrink-0"
+                ></svg>
+              </span>
             </button>
 
             <!-- Family sub-items -->

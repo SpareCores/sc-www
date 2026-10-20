@@ -42,7 +42,8 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
-import { EmbedComparePreviewComponent } from "../embed-compare-preview/embed-compare-preview.component";
+import { CompareEmbedDialogComponent } from "../../components/embed-dialog/compare-embed-dialog.component";
+import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { ToastService } from "../../services/toast.service";
@@ -86,6 +87,27 @@ const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
 };
+
+const EMBEDDABLE_CHARTS: EmbedChartOption[] = [
+  { id: "generic", name: "Server Specs and Prices" },
+  { id: "workload_profile", name: "Workload Profiles" },
+  { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
+  { id: "bw_mem", name: "Memory Bandwidth" },
+  { id: "compress", name: "Compression" },
+  { id: "openssl", name: "OpenSSL" },
+  { id: "geekbench", name: "Geekbench Single- and Multi-core" },
+  { id: "geekbench_single", name: "Geekbench Single-core" },
+  { id: "geekbench_multi", name: "Geekbench Multi-core" },
+  { id: "passmark_cpu", name: "PassMark CPU" },
+  { id: "passmark_other", name: "PassMark Memory" },
+  { id: "stress_ng_full", name: "Stress-ng Stressors" },
+  { id: "stress_ng", name: "Stress-ng div16" },
+  { id: "stress_ng_pct", name: "Stress-ng Relative" },
+  { id: "llm_inference", name: "LLM Inference" },
+  { id: "static_web", name: "Static Web Server" },
+  { id: "redis", name: "Redis" },
+  { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
+];
 
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_COMPARE_URL_TOAST_BODY = "Select servers to compare.";
@@ -133,7 +155,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     FormsModule,
     RouterModule,
     ServerCompareChartsComponent,
-    EmbedComparePreviewComponent,
+    CompareEmbedDialogComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
     CollectionSaveModalComponent,
@@ -162,6 +184,7 @@ export class ServerCompareComponent
   private auth = inject(AuthStateService);
   private collectionsUi = inject(CollectionsUiService);
   saveComparisonModal = viewChild(CollectionSaveModalComponent);
+  compareCharts = viewChild(ServerCompareChartsComponent);
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
@@ -372,21 +395,7 @@ export class ServerCompareComponent
   instances: any[] = [];
   instancesRaw!: string;
 
-  embeddableCharts = [
-    { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
-    { id: "bw_mem", name: "Memory Bandwidth" },
-    { id: "compress", name: "Compression" },
-    { id: "openssl", name: "OpenSSL" },
-    { id: "geekbench", name: "Geekbench Single- and Multi-core" },
-    { id: "geekbench_single", name: "Geekbench Single-core" },
-    { id: "geekbench_multi", name: "Geekbench Multi-core" },
-    { id: "stress_ng", name: "Stress-ng div16" },
-    { id: "stress_ng_pct", name: "Stress-ng Relative" },
-    { id: "llm_inference", name: "LLM Inference" },
-    { id: "static_web", name: "Static Web Server" },
-    { id: "redis", name: "Redis" },
-    { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
-  ];
+  embeddableCharts: EmbedChartOption[] = EMBEDDABLE_CHARTS;
 
   modalEmbed: any;
 
@@ -1671,6 +1680,12 @@ export class ServerCompareComponent
   }
 
   openModal() {
+    const compareCharts = this.compareCharts();
+    this.embeddableCharts = compareCharts
+      ? EMBEDDABLE_CHARTS.filter((chart) =>
+          compareCharts.hasEmbeddableChart(chart.id),
+        )
+      : EMBEDDABLE_CHARTS;
     this.modalEmbed?.show();
   }
 

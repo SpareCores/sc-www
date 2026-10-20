@@ -37,7 +37,6 @@ export enum VendorRegions {
   AlicloudCnFuzhou = "alicloud~cn-fuzhou",
   AlicloudCnGuangzhou = "alicloud~cn-guangzhou",
   AlicloudCnHangzhou = "alicloud~cn-hangzhou",
-  AlicloudCnHangzhouAcdrUt3 = "alicloud~cn-hangzhou-acdr-ut-3",
   AlicloudCnHeyuan = "alicloud~cn-heyuan",
   AlicloudCnHongkong = "alicloud~cn-hongkong",
   AlicloudCnHuhehaote = "alicloud~cn-huhehaote",
@@ -75,8 +74,6 @@ export enum VendorRegions {
   AwsApSoutheast7 = "aws~ap-southeast-7",
   AwsCaCentral1 = "aws~ca-central-1",
   AwsCaWest1 = "aws~ca-west-1",
-  AwsCnNorth1 = "aws~cn-north-1",
-  AwsCnNorthwest1 = "aws~cn-northwest-1",
   AwsEuCentral1 = "aws~eu-central-1",
   AwsEuCentral2 = "aws~eu-central-2",
   AwsEuNorth1 = "aws~eu-north-1",
@@ -87,7 +84,6 @@ export enum VendorRegions {
   AwsEuWest3 = "aws~eu-west-3",
   AwsIlCentral1 = "aws~il-central-1",
   AwsMeCentral1 = "aws~me-central-1",
-  AwsMeSouth1 = "aws~me-south-1",
   AwsMxCentral1 = "aws~mx-central-1",
   AwsSaEast1 = "aws~sa-east-1",
   AwsUsEast1 = "aws~us-east-1",
@@ -102,7 +98,6 @@ export enum VendorRegions {
   AzureBelgiumcentral = "azure~belgiumcentral",
   AzureBrazilsouth = "azure~brazilsouth",
   AzureBrazilsoutheast = "azure~brazilsoutheast",
-  AzureBrazilus = "azure~brazilus",
   AzureCanadacentral = "azure~canadacentral",
   AzureCanadaeast = "azure~canadaeast",
   AzureCentralindia = "azure~centralindia",
@@ -114,7 +109,6 @@ export enum VendorRegions {
   AzureEastus = "azure~eastus",
   AzureEastus2 = "azure~eastus2",
   AzureEastus2Euap = "azure~eastus2euap",
-  AzureEastusstg = "azure~eastusstg",
   AzureFrancecentral = "azure~francecentral",
   AzureFrancesouth = "azure~francesouth",
   AzureGermanynorth = "azure~germanynorth",
@@ -131,7 +125,6 @@ export enum VendorRegions {
   AzureKoreasouth = "azure~koreasouth",
   AzureMalaysiawest = "azure~malaysiawest",
   AzureMexicocentral = "azure~mexicocentral",
-  AzureNewzealandnorth = "azure~newzealandnorth",
   AzureNorthcentralus = "azure~northcentralus",
   AzureNortheurope = "azure~northeurope",
   AzureNorwayeast = "azure~norwayeast",
@@ -141,7 +134,6 @@ export enum VendorRegions {
   AzureSouthafricanorth = "azure~southafricanorth",
   AzureSouthafricawest = "azure~southafricawest",
   AzureSouthcentralus = "azure~southcentralus",
-  AzureSouthcentralusstg = "azure~southcentralusstg",
   AzureSoutheastasia = "azure~southeastasia",
   AzureSouthindia = "azure~southindia",
   AzureSpaincentral = "azure~spaincentral",
@@ -201,19 +193,17 @@ export enum VendorRegions {
   Gcp1640 = "gcp~1640",
   Gcp1650 = "gcp~1650",
   Gcp1680 = "gcp~1680",
-  Hcloud2 = "hcloud~2",
-  Hcloud3 = "hcloud~3",
-  Hcloud4 = "hcloud~4",
-  Hcloud5 = "hcloud~5",
-  Hcloud6 = "hcloud~6",
-  Hcloud7 = "hcloud~7",
+  HcloudAsh = "hcloud~ash",
+  HcloudFsn1 = "hcloud~fsn1",
+  HcloudHel1 = "hcloud~hel1",
+  HcloudHil = "hcloud~hil",
+  HcloudNbg1 = "hcloud~nbg1",
+  HcloudSin = "hcloud~sin",
   OvhAPSOUTHMUM = "ovh~AP-SOUTH-MUM",
   OvhAPSOUTHMUM1 = "ovh~AP-SOUTH-MUM-1",
-  OvhAPSOUTHEASTSYD = "ovh~AP-SOUTHEAST-SYD",
   OvhAPSOUTHEASTSYD2 = "ovh~AP-SOUTHEAST-SYD-2",
   OvhBHS = "ovh~BHS",
   OvhBHS5 = "ovh~BHS5",
-  OvhCAEASTTOR = "ovh~CA-EAST-TOR",
   OvhDE = "ovh~DE",
   OvhDE1 = "ovh~DE1",
   OvhEUSOUTHMIL = "ovh~EU-SOUTH-MIL",
@@ -224,7 +214,6 @@ export enum VendorRegions {
   OvhGRA9 = "ovh~GRA9",
   OvhRBX = "ovh~RBX",
   OvhRBXA = "ovh~RBX-A",
-  OvhRBXARCHIVE = "ovh~RBX-ARCHIVE",
   OvhSBG = "ovh~SBG",
   OvhSBG5 = "ovh~SBG5",
   OvhSBG7 = "ovh~SBG7",
@@ -256,7 +245,6 @@ export enum VendorRegions {
   VultrBlr = "vultr~blr",
   VultrBom = "vultr~bom",
   VultrCdg = "vultr~cdg",
-  VultrCmh = "vultr~cmh",
   VultrDel = "vultr~del",
   VultrDfw = "vultr~dfw",
   VultrEwr = "vultr~ewr",
@@ -272,7 +260,6 @@ export enum VendorRegions {
   VultrMel = "vultr~mel",
   VultrMex = "vultr~mex",
   VultrMia = "vultr~mia",
-  VultrMsp = "vultr~msp",
   VultrMxp = "vultr~mxp",
   VultrNrt = "vultr~nrt",
   VultrOrd = "vultr~ord",
@@ -281,7 +268,6 @@ export enum VendorRegions {
   VultrSea = "vultr~sea",
   VultrSgp = "vultr~sgp",
   VultrSjc = "vultr~sjc",
-  VultrStl = "vultr~stl",
   VultrSto = "vultr~sto",
   VultrSyd = "vultr~syd",
   VultrTlv = "vultr~tlv",
@@ -435,12 +421,6 @@ export enum Regions {
   Value1640 = "1640",
   Value1650 = "1650",
   Value1680 = "1680",
-  Value2 = "2",
-  Value3 = "3",
-  Value4 = "4",
-  Value5 = "5",
-  Value6 = "6",
-  Value7 = "7",
   AfSouth1 = "af-south-1",
   Ams = "ams",
   ApEast1 = "ap-east-1",
@@ -458,7 +438,6 @@ export enum Regions {
   ApSoutheast6 = "ap-southeast-6",
   ApSoutheast7 = "ap-southeast-7",
   ApSoutheast8 = "ap-southeast-8",
-  APSOUTHEASTSYD = "AP-SOUTHEAST-SYD",
   APSOUTHEASTSYD2 = "AP-SOUTHEAST-SYD-2",
   APSOUTHMUM = "AP-SOUTH-MUM",
   APSOUTHMUM1 = "AP-SOUTH-MUM-1",
@@ -476,9 +455,7 @@ export enum Regions {
   Bom = "bom",
   Brazilsouth = "brazilsouth",
   Brazilsoutheast = "brazilsoutheast",
-  Brazilus = "brazilus",
   CaCentral1 = "ca-central-1",
-  CAEASTTOR = "CA-EAST-TOR",
   Canadacentral = "canadacentral",
   Canadaeast = "canadaeast",
   CaWest1 = "ca-west-1",
@@ -487,19 +464,15 @@ export enum Regions {
   Centralus = "centralus",
   Centraluseuap = "centraluseuap",
   Chilecentral = "chilecentral",
-  Cmh = "cmh",
   CnBeijing = "cn-beijing",
   CnChengdu = "cn-chengdu",
   CnFuzhou = "cn-fuzhou",
   CnGuangzhou = "cn-guangzhou",
   CnHangzhou = "cn-hangzhou",
-  CnHangzhouAcdrUt3 = "cn-hangzhou-acdr-ut-3",
   CnHeyuan = "cn-heyuan",
   CnHongkong = "cn-hongkong",
   CnHuhehaote = "cn-huhehaote",
   CnNanjing = "cn-nanjing",
-  CnNorth1 = "cn-north-1",
-  CnNorthwest1 = "cn-northwest-1",
   CnQingdao = "cn-qingdao",
   CnShanghai = "cn-shanghai",
   CnShenzhen = "cn-shenzhen",
@@ -518,7 +491,6 @@ export enum Regions {
   Eastus = "eastus",
   Eastus2 = "eastus2",
   Eastus2Euap = "eastus2euap",
-  Eastusstg = "eastusstg",
   EsMad1 = "es-mad1",
   EuCentral1 = "eu-central-1",
   EuCentral2 = "eu-central-2",
@@ -565,15 +537,12 @@ export enum Regions {
   MeCentral1 = "me-central-1",
   MeEast1 = "me-east-1",
   Mel = "mel",
-  MeSouth1 = "me-south-1",
   Mex = "mex",
   Mexicocentral = "mexicocentral",
   Mia = "mia",
-  Msp = "msp",
   MxCentral1 = "mx-central-1",
   Mxp = "mxp",
   NaSouth1 = "na-south-1",
-  Newzealandnorth = "newzealandnorth",
   NlAms1 = "nl-ams1",
   Northcentralus = "northcentralus",
   Northeurope = "northeurope",
@@ -587,7 +556,6 @@ export enum Regions {
   Qatarcentral = "qatarcentral",
   RBX = "RBX",
   RBXA = "RBX-A",
-  RBXARCHIVE = "RBX-ARCHIVE",
   SaEast1 = "sa-east-1",
   Sao = "sao",
   SBG = "SBG",
@@ -604,11 +572,9 @@ export enum Regions {
   Southafricanorth = "southafricanorth",
   Southafricawest = "southafricawest",
   Southcentralus = "southcentralus",
-  Southcentralusstg = "southcentralusstg",
   Southeastasia = "southeastasia",
   Southindia = "southindia",
   Spaincentral = "spaincentral",
-  Stl = "stl",
   Sto = "sto",
   Swedencentral = "swedencentral",
   Switzerlandnorth = "switzerlandnorth",
@@ -641,6 +607,12 @@ export enum Regions {
   Westus2 = "westus2",
   Westus3 = "westus3",
   Yto = "yto",
+  Fsn1 = "fsn1",
+  Nbg1 = "nbg1",
+  Hel1 = "hel1",
+  Ash = "ash",
+  Hil = "hil",
+  Sin = "sin",
 }
 
 /**
@@ -671,9 +643,9 @@ export enum GpuModels {
   B300 = "B300",
   GB200 = "GB200",
   GB300 = "GB300",
-  GH200 = "GH200",
   H100 = "H100",
   H200 = "H200",
+  HL205 = "HL-205",
   L20 = "L20",
   L4 = "L4",
   L40S = "L40S",
@@ -681,12 +653,12 @@ export enum GpuModels {
   P4 = "P4",
   RTX5000 = "RTX 5000",
   RTXPRO4500 = "RTX PRO 4500",
-  RTXPRO6000BlackwellServerEdition = "RTX PRO 6000 Blackwell Server Edition",
-  RTXPro6000 = "RTX Pro 6000",
+  RTXPRO6000 = "RTX PRO 6000",
   T4 = "T4",
   T4G = "T4G",
   V100 = "V100",
   V100S = "V100S",
+  V520 = "V520",
   V620 = "V620",
   V710 = "V710",
 }
@@ -694,7 +666,6 @@ export enum GpuModels {
 /** GpuManufacturers */
 export enum GpuManufacturers {
   AMD = "AMD",
-  Google = "Google",
   Habana = "Habana",
   NVIDIA = "NVIDIA",
 }
@@ -708,7 +679,6 @@ export enum GpuFamilies {
   Hopper = "Hopper",
   Pascal = "Pascal",
   RadeonProNavi = "Radeon Pro Navi",
-  TPU = "TPU",
   Turing = "Turing",
   Volta = "Volta",
 }
@@ -795,7 +765,6 @@ export enum CpuManufacturers {
   Hygon = "Hygon",
   Intel = "Intel",
   Microsoft = "Microsoft",
-  NVIDIA = "NVIDIA",
 }
 
 /** CpuFlags */
@@ -1103,7 +1072,6 @@ export enum CpuFamilies {
   ARMv9 = "ARMv9",
   AmpereAltra = "Ampere Altra",
   EPYC = "EPYC",
-  Grace = "Grace",
   Xeon = "Xeon",
   Yitian = "Yitian",
 }
@@ -1238,6 +1206,26 @@ export enum BenchmarkComponentMissingPolicy {
  */
 export enum BenchmarkComponentAggregationMethod {
   WeightedGeometricMean = "weighted_geometric_mean",
+}
+
+/** AsicModels */
+export enum AsicModels {
+  Tpu7 = "tpu7",
+  V3 = "v3",
+  V5E = "v5e",
+  V5P = "v5p",
+  V6E = "v6e",
+  V7X = "v7x",
+}
+
+/** AsicManufacturers */
+export enum AsicManufacturers {
+  Google = "Google",
+}
+
+/** AsicFamilies */
+export enum AsicFamilies {
+  TPU = "TPU",
 }
 
 /**
@@ -1639,7 +1627,10 @@ export interface ComplianceFramework {
   observed_at?: string;
 }
 
-/** CompoundSource */
+/**
+ * CompoundSource
+ * Benchmark score aggregated from the scores of several component benchmarks.
+ */
 export interface CompoundSource {
   /**
    * Kind
@@ -2728,7 +2719,10 @@ export interface Disk {
   description?: string | null;
 }
 
-/** ExtrapolatedSource */
+/**
+ * ExtrapolatedSource
+ * Benchmark score derived from the server's own measurements of other benchmarks.
+ */
 export interface ExtrapolatedSource {
   /**
    * Kind
@@ -2779,7 +2773,10 @@ export interface IdNameAndDescriptionAndCategory {
  */
 export type InspectorTaskBlockReasonCodesResponse = Record<string, string[]>;
 
-/** MeasuredSource */
+/**
+ * MeasuredSource
+ * Benchmark score measured directly by the Inspector.
+ */
 export interface MeasuredSource {
   /**
    * Kind
@@ -5594,12 +5591,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -5617,7 +5608,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -5635,9 +5625,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -5646,19 +5634,15 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -5677,7 +5661,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -5724,15 +5707,12 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -5746,7 +5726,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -5763,11 +5742,9 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -5799,7 +5776,13 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -5818,7 +5801,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -5856,8 +5838,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -5868,7 +5848,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -5883,7 +5862,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -5895,7 +5873,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -5912,7 +5889,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -5922,7 +5898,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -5982,19 +5957,17 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -6005,7 +5978,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -6037,7 +6009,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -6053,7 +6024,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -6062,7 +6032,6 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -6157,12 +6126,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -6180,7 +6143,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -6198,9 +6160,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -6209,19 +6169,15 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -6240,7 +6196,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -6287,15 +6242,12 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -6309,7 +6261,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -6326,11 +6277,9 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -6362,7 +6311,13 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -6381,7 +6336,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -6419,8 +6373,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -6431,7 +6383,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -6446,7 +6397,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -6458,7 +6408,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -6475,7 +6424,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -6485,7 +6433,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -6545,19 +6492,17 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -6568,7 +6513,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -6600,7 +6544,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -6616,7 +6559,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -6625,7 +6567,6 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -6721,12 +6662,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -6744,7 +6679,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -6762,9 +6696,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -6773,19 +6705,15 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -6804,7 +6732,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -6851,15 +6778,12 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -6873,7 +6797,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -6890,11 +6813,9 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -6926,7 +6847,13 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Countries
    * Filter for regions in the provided list of countries.
@@ -6989,7 +6916,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -7027,8 +6953,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -7039,7 +6963,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -7054,7 +6977,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -7066,7 +6988,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -7083,7 +7004,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -7093,7 +7013,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -7153,19 +7072,17 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -7176,7 +7093,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -7208,7 +7124,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -7224,7 +7139,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -7233,7 +7147,6 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -7357,7 +7270,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -7395,8 +7307,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -7407,7 +7317,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -7422,7 +7331,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -7434,7 +7342,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -7451,7 +7358,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -7461,7 +7367,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -7521,19 +7426,17 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -7544,7 +7447,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -7576,7 +7478,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -7592,7 +7493,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -7601,7 +7501,6 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -7746,7 +7645,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -7784,8 +7682,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -7796,7 +7692,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -7811,7 +7706,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -7823,7 +7717,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -7840,7 +7733,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -7850,7 +7742,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -7910,19 +7801,17 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -7933,7 +7822,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -7965,7 +7853,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -7981,7 +7868,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -7990,7 +7876,6 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -8181,7 +8066,6 @@ export interface SearchServersServersGetParams {
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
    * @min 1
-   * @max 256
    * @default 1
    */
   vcpus_min?: number;
@@ -8204,8 +8088,7 @@ export interface SearchServersServersGetParams {
     | "Apple"
     | "Hygon"
     | "Intel"
-    | "Microsoft"
-    | "NVIDIA";
+    | "Microsoft";
   /** Processor family */
   cpu_family?:
     | "ARM"
@@ -8213,7 +8096,6 @@ export interface SearchServersServersGetParams {
     | "ARMv9"
     | "Ampere Altra"
     | "EPYC"
-    | "Grace"
     | "Xeon"
     | "Yitian";
   /**
@@ -8808,12 +8690,6 @@ export interface SearchServersServersGetParams {
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -8831,7 +8707,6 @@ export interface SearchServersServersGetParams {
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -8849,9 +8724,7 @@ export interface SearchServersServersGetParams {
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -8860,19 +8733,15 @@ export interface SearchServersServersGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -8891,7 +8760,6 @@ export interface SearchServersServersGetParams {
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -8938,15 +8806,12 @@ export interface SearchServersServersGetParams {
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -8960,7 +8825,6 @@ export interface SearchServersServersGetParams {
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -8977,11 +8841,9 @@ export interface SearchServersServersGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -9013,7 +8875,13 @@ export interface SearchServersServersGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -9032,7 +8900,6 @@ export interface SearchServersServersGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -9070,8 +8937,6 @@ export interface SearchServersServersGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -9082,7 +8947,6 @@ export interface SearchServersServersGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -9097,7 +8961,6 @@ export interface SearchServersServersGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -9109,7 +8972,6 @@ export interface SearchServersServersGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -9126,7 +8988,6 @@ export interface SearchServersServersGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -9136,7 +8997,6 @@ export interface SearchServersServersGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -9196,19 +9056,17 @@ export interface SearchServersServersGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -9219,7 +9077,6 @@ export interface SearchServersServersGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -9251,7 +9108,6 @@ export interface SearchServersServersGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -9267,7 +9123,6 @@ export interface SearchServersServersGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -9276,7 +9131,6 @@ export interface SearchServersServersGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -9431,7 +9285,7 @@ export interface SearchServersServersGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
@@ -9441,7 +9295,6 @@ export interface SearchServersServersGetParams {
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
-    | "TPU"
     | "Turing"
     | "Volta";
   /** GPU model */
@@ -9453,9 +9306,9 @@ export interface SearchServersServersGetParams {
     | "B300"
     | "GB200"
     | "GB300"
-    | "GH200"
     | "H100"
     | "H200"
+    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
@@ -9463,14 +9316,74 @@ export interface SearchServersServersGetParams {
     | "P4"
     | "RTX 5000"
     | "RTX PRO 4500"
-    | "RTX PRO 6000 Blackwell Server Edition"
-    | "RTX Pro 6000"
+    | "RTX PRO 6000"
     | "T4"
     | "T4G"
     | "V100"
     | "V100S"
+    | "V520"
     | "V620"
     | "V710";
+  /**
+   * ASIC count
+   * Required number of ASICs (Application-Specific Integrated Circuits, e.g. Google TPUs), including all non-GPU accelerators.
+   */
+  asic_min?: number | null;
+  /**
+   * Maximum ASIC count
+   * Maximum number of ASICs (Application-Specific Integrated Circuits, e.g. Google TPUs). Set to 0 to search for servers without ASICs.
+   */
+  asic_max?: number | null;
+  /**
+   * Required ASIC memory
+   * Required amount of ASIC (Application-Specific Integrated Circuit, e.g. Google TPU) memory (GB) in each ASIC.
+   */
+  asic_memory_min?: number | null;
+  /**
+   * Total ASIC memory
+   * Required amount of total ASIC (Application-Specific Integrated Circuit, e.g. Google TPU) memory (GBs) in all ASICs.
+   */
+  asic_memory_total?: number | null;
+  /**
+   * ASIC manufacturer
+   * Manufacturer of the ASIC (Application-Specific Integrated Circuit), e.g. Google.
+   */
+  asic_manufacturer?: "Google";
+  /**
+   * ASIC family
+   * Family of the ASIC (Application-Specific Integrated Circuit), e.g. TPU.
+   */
+  asic_family?: "TPU";
+  /**
+   * ASIC model
+   * Model of the ASIC (Application-Specific Integrated Circuit), e.g. v5e.
+   */
+  asic_model?: "tpu7" | "v3" | "v5e" | "v5p" | "v6e" | "v7x";
+  /**
+   * Accelerator type
+   * Type of the accelerator, e.g. GPU or TPU.
+   */
+  accelerator_type?: "GPU" | "TPU";
+  /**
+   * Accelerator count
+   * Required number of accelerators (e.g. GPUs or TPUs).
+   */
+  accelerator_min?: number | null;
+  /**
+   * Maximum accelerator count
+   * Maximum number of accelerators. Set to 0 to search for servers without accelerators.
+   */
+  accelerator_max?: number | null;
+  /**
+   * Required accelerator memory
+   * Required amount of accelerator memory (GB) in each accelerator.
+   */
+  accelerator_memory_min?: number | null;
+  /**
+   * Total accelerator memory
+   * Required amount of total accelerator memory (GBs) in all accelerators.
+   */
+  accelerator_memory_total?: number | null;
   /**
    * Maximum price
    * Maximum best price of the server in the requested currency, using the price allocation selected via best_price_allocation (hourly price, or monthly price when MONTHLY is selected), including the optional extra traffic and storage costs.
@@ -9536,7 +9449,6 @@ export interface SearchDatabasesDatabasesGetParams {
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
    * @min 1
-   * @max 256
    * @default 1
    */
   vcpus_min?: number;
@@ -9833,12 +9745,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -9856,7 +9762,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -9874,9 +9779,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -9885,19 +9788,15 @@ export interface SearchDatabasesDatabasesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -9916,7 +9815,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -9963,15 +9861,12 @@ export interface SearchDatabasesDatabasesGetParams {
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -9985,7 +9880,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -10002,11 +9896,9 @@ export interface SearchDatabasesDatabasesGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -10038,7 +9930,13 @@ export interface SearchDatabasesDatabasesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -10057,7 +9955,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -10095,8 +9992,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -10107,7 +10002,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -10122,7 +10016,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -10134,7 +10027,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -10151,7 +10043,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -10161,7 +10052,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -10221,19 +10111,17 @@ export interface SearchDatabasesDatabasesGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -10244,7 +10132,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -10276,7 +10163,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -10292,7 +10178,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -10301,7 +10186,6 @@ export interface SearchDatabasesDatabasesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -10417,7 +10301,6 @@ export interface SearchServerPricesServerPricesGetParams {
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
    * @min 1
-   * @max 256
    * @default 1
    */
   vcpus_min?: number;
@@ -10440,8 +10323,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Apple"
     | "Hygon"
     | "Intel"
-    | "Microsoft"
-    | "NVIDIA";
+    | "Microsoft";
   /** Processor family */
   cpu_family?:
     | "ARM"
@@ -10449,7 +10331,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ARMv9"
     | "Ampere Altra"
     | "EPYC"
-    | "Grace"
     | "Xeon"
     | "Yitian";
   /**
@@ -10559,12 +10440,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -10582,7 +10457,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -10600,9 +10474,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -10611,19 +10483,15 @@ export interface SearchServerPricesServerPricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -10642,7 +10510,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -10689,15 +10556,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -10711,7 +10575,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -10728,11 +10591,9 @@ export interface SearchServerPricesServerPricesGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -10764,7 +10625,13 @@ export interface SearchServerPricesServerPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -10783,7 +10650,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -10821,8 +10687,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -10833,7 +10697,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -10848,7 +10711,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -10860,7 +10722,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -10877,7 +10738,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -10887,7 +10747,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -10947,19 +10806,17 @@ export interface SearchServerPricesServerPricesGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -10970,7 +10827,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -11002,7 +10858,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -11018,7 +10873,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -11027,7 +10881,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -11108,7 +10961,7 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Google" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
@@ -11118,7 +10971,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Hopper"
     | "Pascal"
     | "Radeon Pro Navi"
-    | "TPU"
     | "Turing"
     | "Volta";
   /** GPU model */
@@ -11130,9 +10982,9 @@ export interface SearchServerPricesServerPricesGetParams {
     | "B300"
     | "GB200"
     | "GB300"
-    | "GH200"
     | "H100"
     | "H200"
+    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
@@ -11140,12 +10992,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "P4"
     | "RTX 5000"
     | "RTX PRO 4500"
-    | "RTX PRO 6000 Blackwell Server Edition"
-    | "RTX Pro 6000"
+    | "RTX PRO 6000"
     | "T4"
     | "T4G"
     | "V100"
     | "V100S"
+    | "V520"
     | "V620"
     | "V710";
   /**
@@ -11270,12 +11122,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -11293,7 +11139,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -11311,9 +11156,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -11322,19 +11165,15 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -11353,7 +11192,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -11400,15 +11238,12 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -11422,7 +11257,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -11439,11 +11273,9 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -11475,7 +11307,13 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -11494,7 +11332,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -11532,8 +11369,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -11544,7 +11379,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -11559,7 +11393,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -11571,7 +11404,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -11588,7 +11420,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -11598,7 +11429,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -11658,19 +11488,17 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -11681,7 +11509,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -11713,7 +11540,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -11729,7 +11555,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -11738,7 +11563,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -11904,12 +11728,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -11927,7 +11745,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -11945,9 +11762,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -11956,19 +11771,15 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -11987,7 +11798,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -12034,15 +11844,12 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -12056,7 +11863,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -12073,11 +11879,9 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -12109,7 +11913,13 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -12128,7 +11938,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -12166,8 +11975,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -12178,7 +11985,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -12193,7 +11999,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -12205,7 +12010,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -12222,7 +12026,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -12232,7 +12035,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -12292,19 +12094,17 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -12315,7 +12115,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -12347,7 +12146,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -12363,7 +12161,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -12372,7 +12169,6 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"
@@ -12534,12 +12330,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "1640"
     | "1650"
     | "1680"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
     | "af-south-1"
     | "ams"
     | "ap-east-1"
@@ -12557,7 +12347,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "ap-southeast-6"
     | "ap-southeast-7"
     | "ap-southeast-8"
-    | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
@@ -12575,9 +12364,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
-    | "brazilus"
     | "ca-central-1"
-    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
@@ -12586,19 +12373,15 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
-    | "cmh"
     | "cn-beijing"
     | "cn-chengdu"
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
-    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
     | "cn-nanjing"
-    | "cn-north-1"
-    | "cn-northwest-1"
     | "cn-qingdao"
     | "cn-shanghai"
     | "cn-shenzhen"
@@ -12617,7 +12400,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "eastus"
     | "eastus2"
     | "eastus2euap"
-    | "eastusstg"
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
@@ -12664,15 +12446,12 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "me-central-1"
     | "me-east-1"
     | "mel"
-    | "me-south-1"
     | "mex"
     | "mexicocentral"
     | "mia"
-    | "msp"
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
-    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -12686,7 +12465,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "qatarcentral"
     | "RBX"
     | "RBX-A"
-    | "RBX-ARCHIVE"
     | "sa-east-1"
     | "sao"
     | "SBG"
@@ -12703,11 +12481,9 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
-    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
-    | "stl"
     | "sto"
     | "swedencentral"
     | "switzerlandnorth"
@@ -12739,7 +12515,13 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto";
+    | "yto"
+    | "fsn1"
+    | "nbg1"
+    | "hel1"
+    | "ash"
+    | "hil"
+    | "sin";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -12758,7 +12540,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
-    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -12796,8 +12577,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "aws~ap-southeast-7"
     | "aws~ca-central-1"
     | "aws~ca-west-1"
-    | "aws~cn-north-1"
-    | "aws~cn-northwest-1"
     | "aws~eu-central-1"
     | "aws~eu-central-2"
     | "aws~eu-north-1"
@@ -12808,7 +12587,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "aws~eu-west-3"
     | "aws~il-central-1"
     | "aws~me-central-1"
-    | "aws~me-south-1"
     | "aws~mx-central-1"
     | "aws~sa-east-1"
     | "aws~us-east-1"
@@ -12823,7 +12601,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "azure~belgiumcentral"
     | "azure~brazilsouth"
     | "azure~brazilsoutheast"
-    | "azure~brazilus"
     | "azure~canadacentral"
     | "azure~canadaeast"
     | "azure~centralindia"
@@ -12835,7 +12612,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "azure~eastus"
     | "azure~eastus2"
     | "azure~eastus2euap"
-    | "azure~eastusstg"
     | "azure~francecentral"
     | "azure~francesouth"
     | "azure~germanynorth"
@@ -12852,7 +12628,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
-    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -12862,7 +12637,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "azure~southafricanorth"
     | "azure~southafricawest"
     | "azure~southcentralus"
-    | "azure~southcentralusstg"
     | "azure~southeastasia"
     | "azure~southindia"
     | "azure~spaincentral"
@@ -12922,19 +12696,17 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "gcp~1640"
     | "gcp~1650"
     | "gcp~1680"
-    | "hcloud~2"
-    | "hcloud~3"
-    | "hcloud~4"
-    | "hcloud~5"
-    | "hcloud~6"
-    | "hcloud~7"
+    | "hcloud~ash"
+    | "hcloud~fsn1"
+    | "hcloud~hel1"
+    | "hcloud~hil"
+    | "hcloud~nbg1"
+    | "hcloud~sin"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
-    | "ovh~AP-SOUTHEAST-SYD"
     | "ovh~AP-SOUTHEAST-SYD-2"
     | "ovh~BHS"
     | "ovh~BHS5"
-    | "ovh~CA-EAST-TOR"
     | "ovh~DE"
     | "ovh~DE1"
     | "ovh~EU-SOUTH-MIL"
@@ -12945,7 +12717,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "ovh~GRA9"
     | "ovh~RBX"
     | "ovh~RBX-A"
-    | "ovh~RBX-ARCHIVE"
     | "ovh~SBG"
     | "ovh~SBG5"
     | "ovh~SBG7"
@@ -12977,7 +12748,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "vultr~blr"
     | "vultr~bom"
     | "vultr~cdg"
-    | "vultr~cmh"
     | "vultr~del"
     | "vultr~dfw"
     | "vultr~ewr"
@@ -12993,7 +12763,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "vultr~mel"
     | "vultr~mex"
     | "vultr~mia"
-    | "vultr~msp"
     | "vultr~mxp"
     | "vultr~nrt"
     | "vultr~ord"
@@ -13002,7 +12771,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "vultr~sea"
     | "vultr~sgp"
     | "vultr~sjc"
-    | "vultr~stl"
     | "vultr~sto"
     | "vultr~syd"
     | "vultr~tlv"

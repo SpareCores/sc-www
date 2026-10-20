@@ -38,12 +38,14 @@
               </td>
               <td>
                 @if (property.value === "check" || property.value === "x") {
-                  <div class="property_value">
+                  <div
+                    class="property_value"
+                    [class.text-emerald-400]="property.value === 'check'"
+                    [class.text-white]="property.value === 'x'"
+                  >
                     <svg
                       [lucideIcon]="property.value"
                       class="h-4 w-4 shrink-0"
-                      [class.text-emerald-400]="property.value === 'check'"
-                      [class.text-white]="property.value === 'x'"
                     ></svg>
                   </div>
                 } @else if (property.routerLink) {
