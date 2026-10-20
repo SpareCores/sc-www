@@ -19,6 +19,8 @@ import {
   AUTH_MESSAGES,
   AUTH_OVERLAY_CLASS,
   AUTH_OVERLAY_ID,
+  PROFILE_RETURN_PARAM,
+  PROFILE_RETURN_VALUE,
 } from "../auth.constants";
 import type {
   AuthKind,
@@ -64,11 +66,14 @@ export class AuthStateService {
   private accountDeleted = false;
   private signedOutIdentityCleared = false;
 
-  private readonly _user = signal<UserResource | null>(null);
+  private readonly _user = signal<UserResource | null>(null, {
+    equal: () => false,
+  });
   readonly user = this._user.asReadonly();
 
   readonly signInModalOpen = signal(false);
   readonly signUpModalOpen = signal(false);
+  readonly profileModalOpen = signal(false);
   readonly signUpSubtitle = signal<string>(AUTH_MESSAGES.defaultSignUpSubtitle);
   private readonly githubConsent = signal(false);
   readonly githubConsentActive = computed(() => this.githubConsent());
@@ -96,6 +101,7 @@ export class AuthStateService {
     await this.clerk.init();
     this.syncUserFromClerk();
     this.bindClerkListener();
+    this.resumeProfileFromQuery();
     this.setAuthOverlayVisible(this.authInProgress());
     if (this.finalizePromise || this.isAuthCallbackRoute()) {
       return;
@@ -642,7 +648,22 @@ export class AuthStateService {
   }
 
   openUserProfile(): void {
-    this.clerk.openUserProfileModal();
+    if (!this.isAuthenticated()) {
+      return;
+    }
+    this.profileModalOpen.set(true);
+  }
+
+  closeUserProfile(): void {
+    this.profileModalOpen.set(false);
+  }
+
+  refreshUser(): void {
+    this.syncUserFromClerk();
+  }
+
+  markAccountDeleted(deleted: boolean): void {
+    this.accountDeleted = deleted;
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -654,10 +675,11 @@ export class AuthStateService {
     this._user.set(user);
 
     if (user) {
-      this.watchAccountDeletion(user);
       this.identifyAnalyticsUser(user);
       return;
     }
+
+    this.profileModalOpen.set(false);
 
     const accountDeleted = this.accountDeleted;
     this.accountDeleted = false;
@@ -813,6 +835,22 @@ export class AuthStateService {
     return this.flow.githubIntent();
   }
 
+  private resumeProfileFromQuery(): void {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get(PROFILE_RETURN_PARAM) !== PROFILE_RETURN_VALUE) {
+      return;
+    }
+
+    params.delete(PROFILE_RETURN_PARAM);
+    const query = params.toString();
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
+    );
+    this.openUserProfile();
+  }
+
   private isAuthCallbackRoute(): boolean {
     return (
       isPlatformBrowser(this.platformId) &&
@@ -871,25 +909,6 @@ export class AuthStateService {
         ),
       };
     }
-  }
-
-  private watchAccountDeletion(user: UserResource): void {
-    const target = user as UserResource & { __scDeleteWrapped?: boolean };
-    if (target.__scDeleteWrapped || typeof user.delete !== "function") {
-      return;
-    }
-
-    const originalDelete = user.delete.bind(user);
-    user.delete = async () => {
-      this.accountDeleted = true;
-      try {
-        await originalDelete();
-      } catch (error) {
-        this.accountDeleted = false;
-        throw error;
-      }
-    };
-    target.__scDeleteWrapped = true;
   }
 
   private redirectFromBookmarks(): void {

@@ -1,13 +1,17 @@
-export { AUTH_MESSAGES } from "./auth.constants";
+export { AUTH_MESSAGES, PROFILE_DELETE_CONFIRMATION } from "./auth.constants";
 export type {
   LoginPayload,
   LoginResult,
   PasswordResetResult,
+  ProfileResult,
+  ProfileSession,
+  ProfileView,
   RegisterConsentPayload,
   RegisterDetailsPayload,
   RegisterResult,
 } from "./auth.types";
 export { AuthStateService } from "./data-access/auth-state.service";
+export { ProfileService } from "./data-access/profile.service";
 export { authGuard, blockLandingDuringAuthGuard } from "./guards/auth.guard";
 export { authInterceptor } from "./interceptors/auth.interceptor";
 export { provideAuthFeature } from "./auth-feature.providers";

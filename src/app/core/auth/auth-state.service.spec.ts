@@ -50,7 +50,6 @@ describe("AuthStateService", () => {
       lastName?: string | null;
       username?: string | null;
       imageUrl?: string | null;
-      delete?: jasmine.Spy;
     } | null,
   ): void {
     (
@@ -123,7 +122,6 @@ describe("AuthStateService", () => {
   it("opens custom auth modals when Clerk is available", () => {
     const auth = createAuth();
     const clerk = {
-      openUserProfile: jasmine.createSpy("openUserProfile"),
       signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
       user: null,
     };
@@ -136,9 +134,47 @@ describe("AuthStateService", () => {
     auth.signUp();
     expect(auth.signUpModalOpen()).toBeTrue();
     expect(auth.signInModalOpen()).toBeFalse();
+  });
+
+  it("opens the profile modal only for signed-in users", () => {
+    const auth = createAuth();
 
     auth.openUserProfile();
-    expect(clerk.openUserProfile).toHaveBeenCalled();
+    expect(auth.profileModalOpen()).toBeFalse();
+
+    setUser(auth, { id: "user_1", firstName: "Jane" });
+    auth.openUserProfile();
+    expect(auth.profileModalOpen()).toBeTrue();
+
+    auth.closeUserProfile();
+    expect(auth.profileModalOpen()).toBeFalse();
+  });
+
+  it("closes the profile modal when the user signs out", () => {
+    const auth = createAuth();
+    setUser(auth, { id: "user_1", firstName: "Jane" });
+    auth.openUserProfile();
+
+    setUser(auth, null);
+
+    expect(auth.profileModalOpen()).toBeFalse();
+  });
+
+  it("reopens the profile modal after a GitHub connect redirect", async () => {
+    const auth = createAuth();
+    setClerkInstance({
+      user: { id: "user_1", firstName: "Jane" },
+      session: { id: "sess_1" },
+      addListener: jasmine.createSpy("addListener"),
+    });
+    go("/servers?profile=connected&tab=1");
+
+    await auth.init();
+
+    expect(auth.profileModalOpen()).toBeTrue();
+    expect(`${window.location.pathname}${window.location.search}`).toBe(
+      "/servers?tab=1",
+    );
   });
 
   it("clears the remembered return URL when Login or Register is closed", () => {
@@ -167,11 +203,9 @@ describe("AuthStateService", () => {
       imageUrl: "https://example.com/avatar.png",
     };
     const clerk: {
-      openUserProfile: jasmine.Spy;
       signOut: jasmine.Spy;
       user: typeof signedInUser | null;
     } = {
-      openUserProfile: jasmine.createSpy("openUserProfile"),
       signOut: jasmine.createSpy("signOut").and.resolveTo(undefined),
       user: signedInUser,
     };
@@ -213,6 +247,7 @@ describe("AuthStateService", () => {
       }),
     );
     expect(() => auth.openUserProfile()).not.toThrow();
+    expect(auth.profileModalOpen()).toBeFalse();
     await expectAsync(auth.signOut()).toBeResolved();
   });
 
@@ -1442,77 +1477,61 @@ describe("AuthStateService", () => {
     expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
   });
 
-  it("tracks account deletion only after a successful Clerk delete", async () => {
+  it("tracks account deletion when the deletion is marked", () => {
     const auth = createAuth();
     const analytics = analyticsService();
     const trackSpy = spyOn(analytics, "trackEvent");
     const identifySpy = spyOn(analytics, "identify");
     const resetSpy = spyOn(analytics, "reset");
-    const deleteSpy = jasmine.createSpy("delete").and.resolveTo(undefined);
-    const signedInUser = {
+    setUser(auth, {
       id: "user_1",
       firstName: "Jane",
       lastName: "Doe",
       username: "jane",
       imageUrl: "",
-      delete: deleteSpy,
-    };
-    setClerkInstance({ user: signedInUser });
-    setUser(auth, signedInUser);
+    });
 
-    await signedInUser.delete();
+    auth.markAccountDeleted(true);
     setUser(auth, null);
 
-    expect(deleteSpy).toHaveBeenCalled();
     expect(identifySpy).toHaveBeenCalledWith("user_1");
     expect(trackSpy).toHaveBeenCalledWith("auth account deleted", {});
     expect(resetSpy).toHaveBeenCalled();
   });
 
-  it("redirects away from bookmarks after account deletion", async () => {
+  it("redirects away from bookmarks after account deletion", () => {
     const auth = createAuth();
     spyOn(analyticsService(), "trackEvent");
-    const signedInUser = {
+    setUser(auth, {
       id: "user_1",
       firstName: "Jane",
       lastName: "Doe",
       username: "jane",
       imageUrl: "",
-      delete: jasmine.createSpy("delete").and.resolveTo(undefined),
-    };
-    setClerkInstance({ user: signedInUser });
-    setUser(auth, signedInUser);
+    });
     const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
     go("/bookmarks");
 
-    await signedInUser.delete();
+    auth.markAccountDeleted(true);
     setUser(auth, null);
 
     expect(navigate).toHaveBeenCalledOnceWith("/");
     expect(auth.isAuthenticated()).toBeFalse();
   });
 
-  it("does not track account deletion when Clerk delete fails", async () => {
+  it("does not track account deletion when the mark is cleared", () => {
     const auth = createAuth();
-    const analytics = analyticsService();
-    const trackSpy = spyOn(analytics, "trackEvent");
-    const deleteSpy = jasmine
-      .createSpy("delete")
-      .and.rejectWith(new Error("delete failed"));
-    const signedInUser = {
+    const trackSpy = spyOn(analyticsService(), "trackEvent");
+    setUser(auth, {
       id: "user_1",
       firstName: "Jane",
       lastName: "Doe",
       username: "jane",
       imageUrl: "",
-      delete: deleteSpy,
-    };
-    setClerkInstance({ user: signedInUser });
-    setUser(auth, signedInUser);
+    });
 
-    await expectAsync(signedInUser.delete()).toBeRejectedWithError(
-      "delete failed",
-    );
+    auth.markAccountDeleted(true);
+    auth.markAccountDeleted(false);
     setUser(auth, null);
 
     expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
