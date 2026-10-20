@@ -95,19 +95,10 @@ the method names:
 <pre class="command-line" data-prompt="$" data-continuation-str="\"><code class="language-sh">
 for i in $(cat /tmp/tests); do \
   cpu1=$(docker run --rm -ti ghcr.io/colinianking/stress-ng --metrics --cpu 1 --cpu-method $i -t 10 | egrep 'metrc.*cpu' | awk '{print $9}'); \
-  cpu2=$(docker run --rm -ti ghcr.io/colinianking/stress-ng --metrics --cpu 2 --cpu-method $i -t 10 | egrep 'metrc.*cpu' | awk '{print $9}'); \
+  cpu2=$(docker run --rm -ti ghcr.io/colinianking/stress-ng --metrics --cpu $(nproc) --cpu-method $i -t 10 | egrep 'metrc.*cpu' | awk '{print $9}'); \
   echo "$i;$cpu1;$cpu2"; \
 done
 </code></pre>
-
-> Editor's note (remove before publishing): the loop above was copied from
-> the original notes and starts two workers in the second run. The results
-> on every server other than `c6a.large` scale with the vCPU count (e.g.
-> ~126x on the 128-vCPU `c7a.32xlarge`), so the second run must have used
-> one worker per vCPU (`--cpu 0` or `--cpu $(nproc)`) there. Please confirm
-> and fix the snippet. Also confirm the `stress-ng` version: the notes
-> mention v0.17.08 (commit `b7c7a587`), but `docker run` pulls the latest
-> image at the time of the run.
 
 The metric reported below is the bogo-ops per second based on wall clock time,
 and the "scaling factor" is the multi-worker result divided by the
