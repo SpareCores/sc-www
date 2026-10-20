@@ -2,73 +2,43 @@ import {
   Component,
   Input,
   PLATFORM_ID,
-  OnInit,
   OnChanges,
+  OnDestroy,
   ElementRef,
   ViewChild,
   inject,
 } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
-import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { PrismService } from "../../services/prism.service";
-
-interface ChartOption {
-  id: string;
-  name: string;
-}
+import { EmbedChartOption } from "./embed-dialog.types";
 
 @Component({
-  selector: "sc-embed-compare-preview",
+  selector: "sc-compare-embed-dialog",
   imports: [FormsModule],
-  templateUrl: "./embed-compare-preview.component.html",
-  styleUrl: "./embed-compare-preview.component.scss",
+  templateUrl: "./compare-embed-dialog.component.html",
+  styleUrl: "./compare-embed-dialog.component.scss",
 })
-export class EmbedComparePreviewComponent implements OnInit, OnChanges {
+export class CompareEmbedDialogComponent implements OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
-  private route = inject(ActivatedRoute);
   private sanitizer = inject(DomSanitizer);
   private SEOHandler = inject(SeoHandlerService);
   private prismService = inject(PrismService);
 
   @Input() instances!: string;
   @Input() chartname!: string;
-  @Input() isModal!: boolean;
 
   src: any;
+  private codeBlockInterval?: ReturnType<typeof setInterval>;
 
   height = "710px";
   width: string = "100%";
 
-  @Input() charts: ChartOption[] = [
-    { id: "bw_mem", name: "Memory Bandwidth" },
-    { id: "compress", name: "Compression" },
-    { id: "geekbench", name: "Geekbench Single- and Multi-core" },
-    { id: "geekbench_single", name: "Geekbench Single-core" },
-    { id: "geekbench_multi", name: "Geekbench Multi-core" },
-    { id: "openssl", name: "OpenSSL" },
-    { id: "stress_ng", name: "Stress-ng div16" },
-    { id: "stress_ng_pct", name: "Stress-ng Relative" },
-    { id: "llm_inference", name: "LLM Inference" },
-    { id: "static_web", name: "Static Web Server" },
-    { id: "redis", name: "Redis" },
-  ];
+  @Input() charts: EmbedChartOption[] = [];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
-
-  ngOnInit() {
-    this.route.params.subscribe((params) => {
-      this.chartname = params["chartname"] || this.chartname;
-      this.setup();
-    });
-
-    this.route.queryParams.subscribe((params) => {
-      this.instances = params["instances"] || this.instances;
-      this.setup();
-    });
-  }
 
   setup() {
     if (this.chartname && this.instances) {
@@ -80,6 +50,10 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.updateSrc();
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.codeBlockInterval);
   }
 
   isBrowser() {
@@ -98,8 +72,12 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
 
   updateSrc() {
     this.setup();
+    if (!this.chartname) {
+      return;
+    }
     if (this.isBrowser()) {
-      const checkExist = setInterval(() => {
+      clearInterval(this.codeBlockInterval);
+      this.codeBlockInterval = setInterval(() => {
         if (
           this.iframeCodeBlockElement &&
           this.iframeCodeBlockElement.nativeElement
@@ -111,7 +89,7 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
               this.iframeCodeBlockElement.nativeElement,
             );
           }, 0);
-          clearInterval(checkExist);
+          clearInterval(this.codeBlockInterval);
         }
       }, 100);
     }

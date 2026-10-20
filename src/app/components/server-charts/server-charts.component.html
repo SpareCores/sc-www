@@ -3,7 +3,15 @@
     layout="details"
     [serverDetails]="serverDetails"
     [benchmarkMeta]="benchmarkMeta"
+    [isEmbedded]="isEmbedded"
   ></sc-workload-profile-panel>
+}
+@if (isChartShown("nvbandwidth")) {
+  <sc-nvbandwidth-card
+    [benchmarkMeta]="benchmarkMeta"
+    [benchmarkScores]="serverDetails?.benchmark_scores"
+    [isEmbedded]="isEmbedded"
+  ></sc-nvbandwidth-card>
 }
 @if (isChartShown("bw_mem")) {
   <sc-server-memory-chart
@@ -56,7 +64,7 @@
   ></sc-geekbench-radar-chart>
 }
 
-@if (isChartShown("passmark:cpu") && passmarkCPUData?.length) {
+@if (isChartShown("passmark_cpu") && passmarkCPUData?.length) {
   <div class="block_half" id="passmark_cpu">
     <div class="flex items-center" style="min-height: 42px">
       <h3 class="text-2xl flex items-center gap-2">
@@ -104,13 +112,13 @@
               </div>
             </td>
             <td class="passmark-score-col">
-              {{ cpuBenchmark.score }}
+              {{ cpuBenchmark.score | number }}
             </td>
           </tr>
         }
       </tbody>
     </table>
-    @if (getBenchmarkCategory("passmark:cpu").length > 7) {
+    @if (!isEmbedded && getBenchmarkCategory("passmark:cpu").length > 7) {
       <div
         class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
         id="passmark_cpu_more"
@@ -142,7 +150,7 @@
   </div>
 }
 
-@if (isChartShown("passmark:other") && passmarkOTHERData?.length) {
+@if (isChartShown("passmark_other") && passmarkOTHERData?.length) {
   <div class="block_half" id="passmark_other">
     <div class="flex items-center" style="min-height: 42px">
       <h3 class="text-2xl flex items-center gap-2">
@@ -190,13 +198,21 @@
               </div>
             </td>
             <td class="passmark-score-col">
-              {{ otherBenchmark.score }}
+              {{ otherBenchmark.score | number }}
             </td>
           </tr>
         }
       </tbody>
     </table>
   </div>
+}
+
+@if (isChartShown("stress_ng_full")) {
+  <sc-stress-ng-full-card
+    [benchmarkMeta]="benchmarkMeta"
+    [benchmarkScores]="serverDetails?.benchmark_scores"
+    [isEmbedded]="isEmbedded"
+  ></sc-stress-ng-full-card>
 }
 
 @if (isChartShown("stress_ng_div16") && hasStressNgChart()) {
