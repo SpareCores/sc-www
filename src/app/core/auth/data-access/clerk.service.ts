@@ -2,6 +2,7 @@ import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject, isDevMode } from "@angular/core";
 import { Router } from "@angular/router";
 import { Clerk } from "@clerk/clerk-js";
+import { isClerkRuntimeError, isNetworkError } from "@clerk/shared/error";
 import type {
   SignInResource,
   SignUpResource,
@@ -124,9 +125,11 @@ export class ClerkService {
       return true;
     } catch (error) {
       console.error("Failed to synchronize Clerk client state:", error);
-      this.analytics.SentryException(error, {
-        tags: { feature: "clerk-sync" },
-      });
+      if (!this.isTransientNetworkError(error)) {
+        this.analytics.SentryException(error, {
+          tags: { feature: "clerk-sync" },
+        });
+      }
       return false;
     }
   }
@@ -147,6 +150,23 @@ export class ClerkService {
 
   addListener(listener: () => void): (() => void) | undefined {
     return this.clerk?.addListener(listener) as (() => void) | undefined;
+  }
+
+  private isTransientNetworkError(error: unknown): boolean {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      return true;
+    }
+    if (isClerkRuntimeError(error) && error.code === "network_error") {
+      return true;
+    }
+    if (!(error instanceof Error)) {
+      return false;
+    }
+    return (
+      isNetworkError(error) ||
+      (error instanceof TypeError &&
+        /failed to fetch|load failed|network/i.test(error.message))
+    );
   }
 
   private navigateRouter(url: string, replace = false): Promise<boolean> {
