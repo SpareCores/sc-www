@@ -270,13 +270,13 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       cy.get("#auth_button").should("be.visible").click();
       cy.get("#auth_options").should("be.visible");
       cy.contains("#auth_options button", "Edit Profile").click();
-      cy.get(".cl-userProfile-root, .cl-modalContent, .cl-card", {
-        timeout: 20000,
-      }).should("be.visible");
-      cy.get(".cl-userProfile-root")
+      cy.get('[data-testid="profile-modal"]', { timeout: 20000 }).should(
+        "be.visible",
+      );
+      cy.get('[data-testid="profile-emails"]')
         .contains(visualEmail!)
         .invoke("text", "sc-www+clerk_test@example.com");
-      cy.get(".cl-userProfile-root .cl-avatarBox")
+      cy.get('[data-testid="profile-modal"] .profile-modal__avatar')
         .should("have.length.at.least", 1)
         .invoke("css", "visibility", "hidden");
       stabilizeSignedInHeader();

@@ -18,11 +18,13 @@ import {
 import { mockCollectionsApi } from "../support/collections-mock";
 import { E2EEvent } from "../support/generics";
 
-function openClerkUserProfile(): void {
+function openUserProfile(): void {
   cy.get("#auth_button").should("be.visible").click();
   cy.get("#auth_options").should("be.visible");
   cy.contains("#auth_options button", "Edit Profile").click();
-  cy.get(".cl-userProfile-root", { timeout: 20000 }).should("be.visible");
+  cy.get('[data-testid="profile-modal"]', { timeout: 20000 }).should(
+    "be.visible",
+  );
 }
 
 function expectBookmarkCount(count: number): void {
@@ -78,16 +80,16 @@ describe("Clerk email login", () => {
     expectBookmarkCount(1);
   });
 
-  it("opens the Clerk profile for the signed-in user and closes it", () => {
+  it("opens the profile for the signed-in user and closes it", () => {
     loginClerkTestUser(user.email, user.password);
-    openClerkUserProfile();
+    openUserProfile();
 
-    cy.get(".cl-userProfile-root")
+    cy.get('[data-testid="profile-emails"]')
       .should("contain.text", "Email addresses")
-      .and("contain.text", user.email.slice(0, 20));
-    cy.get(".cl-modalCloseButton").click();
+      .and("contain.text", user.email);
+    cy.get('[data-testid="profile-close"] button').click();
 
-    cy.get(".cl-userProfile-root").should("not.exist");
+    cy.get('[data-testid="profile-modal"]').should("not.exist");
     cy.get("#auth_button").should("be.visible");
   });
 
@@ -125,15 +127,15 @@ describe("Clerk account deletion", () => {
   skipWithoutClerk();
   const user = withRegisteredClerkTestUser("delete");
 
-  it("deletes the account from the Clerk profile", () => {
+  it("deletes the account from the profile", () => {
     loginClerkTestUser(user.email, user.password);
-    openClerkUserProfile();
-    cy.get(".cl-navbarButton__security").click();
-    cy.get(".cl-profileSectionPrimaryButton__danger").click();
-    cy.get('.cl-userProfile-root input[name="deleteConfirmation"]').type(
-      "Delete account",
-    );
-    cy.contains(".cl-userProfile-root .cl-formButtonPrimary", "Delete account")
+    openUserProfile();
+    cy.get('[data-testid="profile-tab-security"]').click();
+    cy.get('[data-testid="profile-delete-open"] button').click();
+    cy.get(
+      '[data-testid="profile-modal"] input[name="deleteConfirmation"]',
+    ).type("Delete account");
+    cy.get('[data-testid="profile-delete-submit"] button')
       .should("not.be.disabled")
       .click();
 
