@@ -67,6 +67,7 @@ export class AuthStateService {
   private boundListener = false;
   private boundAuthRevalidation = false;
   private authSyncInFlight = false;
+  private authEpoch = 0;
   private authSyncTimer: ReturnType<typeof setTimeout> | null = null;
   private onVisibilityChange: (() => void) | null = null;
   private onWindowFocus: (() => void) | null = null;
@@ -641,6 +642,8 @@ export class AuthStateService {
   }
 
   async signOut(): Promise<void> {
+    this.authEpoch++;
+    this.cancelScheduledAuthSync();
     this.closeSignIn();
     this.closeSignUp();
     try {
@@ -651,6 +654,7 @@ export class AuthStateService {
       this.activating = false;
       this.finalizePromise = null;
       this.gitHubCallbackPromise = null;
+      this.authEpoch++;
       this.setUser(null);
     }
   }
@@ -931,10 +935,7 @@ export class AuthStateService {
     });
 
     this.destroyRef.onDestroy(() => {
-      if (this.authSyncTimer != null) {
-        clearTimeout(this.authSyncTimer);
-        this.authSyncTimer = null;
-      }
+      this.cancelScheduledAuthSync();
       if (this.onVisibilityChange) {
         this.document.removeEventListener(
           "visibilitychange",
@@ -946,6 +947,13 @@ export class AuthStateService {
       }
       this.boundAuthRevalidation = false;
     });
+  }
+
+  private cancelScheduledAuthSync(): void {
+    if (this.authSyncTimer !== null) {
+      clearTimeout(this.authSyncTimer);
+      this.authSyncTimer = null;
+    }
   }
 
   private isAuthTransitionActive(): boolean {
@@ -962,10 +970,11 @@ export class AuthStateService {
       return;
     }
 
+    const epoch = this.authEpoch;
     this.authSyncInFlight = true;
     try {
       const synced = await this.clerk.syncClerkState();
-      if (!synced) {
+      if (!synced || epoch !== this.authEpoch) {
         return;
       }
       await this.activateReloadedSessionIfNeeded();
