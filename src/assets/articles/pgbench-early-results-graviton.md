@@ -30,7 +30,7 @@ Cutting to the chase, we ran the PostgreSQL benchmark on all of the available Gr
 
 When we consider this data on a per-vCPU basis (shown below), it’s a bit easier to see that
 1. the overall performance improves across the Graviton generations, 
-2. the performance scales nearly linear (at first) with the vCPU count before dipping a bit for the ultra-large instances, and 
+2. the performance scales nearly linearly (at first) with the vCPU count before dipping a bit for the ultra-large instances, and 
 3. the performance boost of RDS over the generic self-managed databases running on EC2. 
 
 <div class="text-center m-2.5 mt-8 mb-6">
