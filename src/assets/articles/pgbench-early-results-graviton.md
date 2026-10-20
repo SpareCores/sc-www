@@ -90,6 +90,12 @@ And for those who would prefer to play in the raw numbers, here’s the same dat
 
 ## Coming soon... 
 
-We’ll be writing more on our database and other high concurrency benchmarks soon. As a sneak peak, here's an example of how concurrent database queries perform on two SKUs with and without simultaneous multithreading (specifically, GCPs ... TODO ...).
+We’ll be writing more on our database and other high concurrency benchmarks soon. As a sneak peak, here's an example of how two SKUs with and without simultaneous multithreading (SMT) perform on the database workload with multiple concurrent queries. Specifically, the plot below shows GCP's N2 standard series (which uses SMT) vs the T2D standard (which doesn't).
 
-PLOT 3
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin w-full"
+    title="Per-vCPU PostgreSQL Benchmark Scores within AWS Graviton Families"
+    alt="Per-vCPU PostgreSQL Benchmark Scores within AWS Graviton Families"
+    src="/assets/images/blog/pgbench-early-results/database-benchmark-with-SMT-vs-without.png"/>
+  <p>PostgreSQL TPM per vCPU for EC2 vs RDS running on Graviton families m6g - m9g.</p>
+</div>
