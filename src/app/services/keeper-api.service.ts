@@ -31,7 +31,7 @@ import { Debug } from "../../../sdk/Debug";
 import { BenchmarkScoreStats } from "../../../sdk/BenchmarkScoreStats";
 import { Databases } from "../../../sdk/Databases";
 import { Database } from "../../../sdk/Database";
-import { RequestParams } from "../../../sdk/http-client";
+import type { RequestParams } from "../../../sdk/http-client";
 
 type KeeperApiResponse<T> = {
   body?: T;
@@ -79,11 +79,18 @@ export class KeeperAPIService {
   public V2Controller: V2 = new V2(this.httpClient);
   public debugController: Debug = new Debug(this.httpClient);
 
-  public getServerV2(vendor: string, id: string): Promise<any> {
-    return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet({
-      vendor,
-      server: id,
-    });
+  public getServerV2(
+    vendor: string,
+    id: string,
+    params: RequestParams = {},
+  ): Promise<any> {
+    return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet(
+      {
+        vendor,
+        server: id,
+      },
+      params,
+    );
   }
 
   public getServerPrices(
@@ -91,18 +98,27 @@ export class KeeperAPIService {
     id: string,
     currency?: string,
     onlyActive?: boolean,
+    params: RequestParams = {},
   ): Promise<any> {
-    return this.ServerController.getServerPricesServerVendorServerPricesGet({
-      vendor,
-      server: id,
-      currency,
-      only_active: onlyActive,
-    });
+    return this.ServerController.getServerPricesServerVendorServerPricesGet(
+      {
+        vendor,
+        server: id,
+        currency,
+        only_active: onlyActive,
+      },
+      params,
+    );
   }
 
-  public getServerBenchmark(vendor: string, id: string): Promise<any> {
+  public getServerBenchmark(
+    vendor: string,
+    id: string,
+    params: RequestParams = {},
+  ): Promise<any> {
     return this.ServerController.getServerBenchmarksServerVendorServerBenchmarksGet(
       { vendor, server: id },
+      params,
     );
   }
 
@@ -111,15 +127,22 @@ export class KeeperAPIService {
     id: string,
     category: "family" | "specs" | "score" | "score_per_price",
     limit: number,
+    params: RequestParams = {},
   ): Promise<any> {
     return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNumGet(
       { vendor, server: id, by: category, num: limit },
+      params,
     );
   }
 
-  public getServerDescriptions(vendor: string, id: string): Promise<any> {
+  public getServerDescriptions(
+    vendor: string,
+    id: string,
+    params: RequestParams = {},
+  ): Promise<any> {
     return this.ServerController.getServerDescriptionsServerVendorServerDescriptionsGet(
       { vendor, server: id },
+      params,
     );
   }
 
@@ -132,9 +155,11 @@ export class KeeperAPIService {
 
   public searchDatabases(
     query: SearchDatabasesDatabasesGetParams,
+    params: RequestParams = {},
   ): Promise<KeeperApiResponse<SearchDatabasesDatabasesGetData>> {
     return this.DatabasesController.searchDatabasesDatabasesGet(
       query,
+      params,
     ) as unknown as Promise<KeeperApiResponse<SearchDatabasesDatabasesGetData>>;
   }
 
@@ -183,8 +208,12 @@ export class KeeperAPIService {
 
   public searchServerPrices(
     query: SearchServerPricesServerPricesGetParams,
+    params: RequestParams = {},
   ): Promise<any> {
-    return this.ServerPricesController.searchServerPricesServerPricesGet(query);
+    return this.ServerPricesController.searchServerPricesServerPricesGet(
+      query,
+      params,
+    );
   }
 
   public parsePromptFor(
@@ -228,8 +257,8 @@ export class KeeperAPIService {
     return this.TableController.tableRegionTableRegionGet(params);
   }
 
-  public getZones(): Promise<any> {
-    return this.TableController.tableZoneTableZoneGet();
+  public getZones(params: RequestParams = {}): Promise<any> {
+    return this.TableController.tableZoneTableZoneGet(params);
   }
 
   public getServers(): Promise<any> {
@@ -248,8 +277,8 @@ export class KeeperAPIService {
     });
   }
 
-  public getServerMeta(): Promise<any> {
-    return this.TableController.tableMetadataServerTableServerMetaGet();
+  public getServerMeta(params: RequestParams = {}): Promise<any> {
+    return this.TableController.tableMetadataServerTableServerMetaGet(params);
   }
 
   public getComplianceFrameworks(params: RequestParams = {}): Promise<any> {
@@ -274,18 +303,28 @@ export class KeeperAPIService {
 
   public getStoragePrices(
     query: SearchStoragePricesStoragePricesGetParams,
+    params: RequestParams = {},
   ): Promise<any> {
-    return this.StorageController.searchStoragePricesStoragePricesGet(query);
+    return this.StorageController.searchStoragePricesStoragePricesGet(
+      query,
+      params,
+    );
   }
 
   public getTrafficPrices(
     query: SearchTrafficPricesTrafficPricesGetParams,
+    params: RequestParams = {},
   ): Promise<any> {
-    return this.TrafficController.searchTrafficPricesTrafficPricesGet(query);
+    return this.TrafficController.searchTrafficPricesTrafficPricesGet(
+      query,
+      params,
+    );
   }
 
-  public getBenchmarkConfigs(): Promise<any> {
-    return this.BenchmarksController.searchBenchmarkConfigsBenchmarkConfigsGet();
+  public getBenchmarkConfigs(params: RequestParams = {}): Promise<any> {
+    return this.BenchmarksController.searchBenchmarkConfigsBenchmarkConfigsGet(
+      params,
+    );
   }
 
   public getDebugInfo(params: RequestParams = {}): Promise<any> {
