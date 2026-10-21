@@ -16,7 +16,7 @@ import {
   selector: "sc-instance-favorite-context-menu",
   imports: [OverlayModule, LucideBookmarkPlus, LucideBookmarkOff],
   templateUrl: "./instance-favorite-context-menu.html",
-  styleUrl: "./instance-favorite-context-menu.scss",
+  styleUrl: "./instance-favorite-context-menu.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstanceFavoriteContextMenu {

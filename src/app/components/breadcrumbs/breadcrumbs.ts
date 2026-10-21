@@ -11,7 +11,7 @@ export type BreadcrumbSegment = {
   selector: "sc-breadcrumbs",
   imports: [RouterLink],
   templateUrl: "./breadcrumbs.html",
-  styleUrl: "./breadcrumbs.scss",
+  styleUrl: "./breadcrumbs.css",
 })
 export class Breadcrumbs {
   @Input() segments: BreadcrumbSegment[] = [];

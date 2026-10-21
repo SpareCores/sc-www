@@ -16,7 +16,7 @@ import { LucideX } from "@lucide/angular";
   selector: "sc-search-bar-multi-select",
   imports: [FormsModule, LucideX],
   templateUrl: "./search-bar-multi-select.html",
-  styleUrl: "./search-bar-multi-select.scss",
+  styleUrl: "./search-bar-multi-select.css",
 })
 export class SearchBarMultiSelect {
   private readonly host = inject(ElementRef<HTMLElement>);

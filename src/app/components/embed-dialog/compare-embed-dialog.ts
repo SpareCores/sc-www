@@ -19,7 +19,7 @@ import { EmbedChartOption } from "./embed-dialog.types";
   selector: "sc-compare-embed-dialog",
   imports: [FormsModule],
   templateUrl: "./compare-embed-dialog.html",
-  styleUrl: "./compare-embed-dialog.scss",
+  styleUrl: "./compare-embed-dialog.css",
 })
 export class CompareEmbedDialog implements OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);

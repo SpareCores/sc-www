@@ -19,7 +19,7 @@ import { UiTooltip } from "../../services/ui-tooltip";
   selector: "sc-benchmark-workloads-sidebar",
   imports: [LucideDynamicIcon, BenchmarkIconPipe],
   templateUrl: "./benchmark-workloads-sidebar.html",
-  styleUrl: "./benchmark-workloads-sidebar.scss",
+  styleUrl: "./benchmark-workloads-sidebar.css",
 })
 export class BenchmarkWorkloadsSidebar {
   private platformId = inject(PLATFORM_ID);

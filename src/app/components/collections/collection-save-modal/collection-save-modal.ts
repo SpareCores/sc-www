@@ -35,7 +35,6 @@ export type CollectionSaveModalMode = "create" | "edit";
   selector: "sc-collection-save-modal",
   imports: [FormsModule, Button, Modal],
   templateUrl: "./collection-save-modal.html",
-  styleUrl: "./collection-save-modal.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionSaveModal implements OnDestroy {

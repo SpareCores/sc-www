@@ -96,7 +96,7 @@ type ApiResponse<T> = {
     SearchBarParameterField,
   ],
   templateUrl: "./search-bar.html",
-  styleUrl: "./search-bar.scss",
+  styleUrl: "./search-bar.css",
   encapsulation: ViewEncapsulation.None,
 })
 export class SearchBar implements OnInit, OnDestroy {

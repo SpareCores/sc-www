@@ -19,7 +19,7 @@ import { Subscription } from "rxjs";
   selector: "sc-survey-fill",
   imports: [SurveyModule, RouterModule],
   templateUrl: "./survey-fill.html",
-  styleUrl: "./survey-fill.scss",
+  styleUrl: "./survey-fill.css",
 })
 export class SurveyFill implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
