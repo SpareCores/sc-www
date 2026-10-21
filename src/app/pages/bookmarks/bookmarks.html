@@ -35,9 +35,9 @@
               <button
                 type="button"
                 id="bookmarks_sort_button"
-                [scFlowbiteDropdown]="'bookmarks_sort_options'"
+                [scDropdown]="sortPanel"
                 [dropdownTriggerType]="'none'"
-                #sortDropdown="scFlowbiteDropdown"
+                #sortDropdown="scDropdown"
                 class="bookmarks-sort-control__label"
                 (click)="toggleSortDropdown($event)"
               >
@@ -354,29 +354,35 @@
     </div>
   </div>
 
-  <div
-    id="bookmarks_sort_options"
-    class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="bookmarks_sort_button"
+  <ng-template #sortPanel>
+    <div
+      id="bookmarks_sort_options"
+      class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
     >
-      @for (option of sortOptions; track option.value) {
-        <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-          (click)="selectSortBy(option.value)"
-          (keydown.enter)="selectSortBy(option.value); $event.preventDefault()"
-          (keydown.space)="selectSortBy(option.value); $event.preventDefault()"
-          role="option"
-          [attr.aria-selected]="option.value === sortBy()"
-          tabindex="0"
-        >
-          <div class="text-white text-sm">{{ option.label }}</div>
-        </li>
-      }
-    </ul>
-  </div>
+      <ul
+        class="py-2 px-1 text-sm text-gray-700"
+        aria-labelledby="bookmarks_sort_button"
+      >
+        @for (option of sortOptions; track option.value) {
+          <li
+            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+            (click)="selectSortBy(option.value)"
+            (keydown.enter)="
+              selectSortBy(option.value); $event.preventDefault()
+            "
+            (keydown.space)="
+              selectSortBy(option.value); $event.preventDefault()
+            "
+            role="option"
+            [attr.aria-selected]="option.value === sortBy()"
+            tabindex="0"
+          >
+            <div class="text-white text-sm">{{ option.label }}</div>
+          </li>
+        }
+      </ul>
+    </div>
+  </ng-template>
 
   <sc-collection-save-modal
     modalId="bookmarks-edit-modal"

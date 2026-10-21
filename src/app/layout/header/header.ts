@@ -38,7 +38,9 @@ import {
 } from "@lucide/angular";
 import { Analytics } from "../../services/analytics";
 import { CompareSelection } from "../../services/compare-selection";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
+import { DROPDOWN_LAYER } from "../../services/overlay/dropdown-layer";
+import { NeetoCal } from "../../services/neeto-cal";
 import { AuthState } from "../../core/auth";
 
 @Component({
@@ -72,11 +74,12 @@ import { AuthState } from "../../core/auth";
     LucideTrash,
     LucideUser,
     RouterLink,
-    FlowbiteDropdown,
+    Dropdown,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
   ],
+  providers: [{ provide: DROPDOWN_LAYER, useValue: "top" }],
   templateUrl: "./header.html",
   styleUrl: "./header.scss",
 })
@@ -84,13 +87,14 @@ export class Header {
   private router = inject(Router);
   private serverCompare = inject(CompareSelection);
   private analytics = inject(Analytics);
+  private neetoCal = inject(NeetoCal);
   protected readonly auth = inject(AuthState);
 
-  menuDropdown = viewChild<FlowbiteDropdown>("menuDropdown");
-  aboutDropdown = viewChild<FlowbiteDropdown>("aboutDropdown");
-  authDropdown = viewChild<FlowbiteDropdown>("authDropdown");
-  compareDropdown = viewChild<FlowbiteDropdown>("compareDropdown");
-  navigatorDropdown = viewChild<FlowbiteDropdown>("navigatorDropdown");
+  menuDropdown = viewChild<Dropdown>("menuDropdown");
+  aboutDropdown = viewChild<Dropdown>("aboutDropdown");
+  authDropdown = viewChild<Dropdown>("authDropdown");
+  compareDropdown = viewChild<Dropdown>("compareDropdown");
+  navigatorDropdown = viewChild<Dropdown>("navigatorDropdown");
 
   closeMenu() {
     this.menuDropdown()?.hide();
@@ -110,6 +114,10 @@ export class Header {
 
   closeAuth() {
     this.authDropdown()?.hide();
+  }
+
+  initMeetingButtons() {
+    this.neetoCal.initialize();
   }
 
   signIn(): void {
