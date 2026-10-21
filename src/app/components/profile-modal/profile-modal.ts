@@ -19,7 +19,7 @@ import {
   type ProfileSession,
 } from "../../core/auth";
 import { Button } from "../button/button";
-import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
+import { LoadingSpinner } from "../loading-spinner/loading-spinner";
 
 type ProfileTab = "account" | "security";
 type ProfileSection =
@@ -69,7 +69,7 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     LucidePlus,
     LucideShield,
     LucideSmartphone,
-    LoadingSpinnerComponent,
+    LoadingSpinner,
   ],
   templateUrl: "./profile-modal.html",
   styleUrls: ["../auth-modal.scss", "./profile-modal.scss"],

@@ -3,7 +3,7 @@ import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
 import { Button } from "../button/button";
-import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
+import { LoadingSpinner } from "../loading-spinner/loading-spinner";
 
 type RegisterBusy = "submit" | "verify" | "resend" | "github";
 type RegisterStep = "details" | "consent" | "verify";
@@ -21,7 +21,7 @@ const DETAILS_PARAMS = new Set([
 
 @Component({
   selector: "sc-register-modal",
-  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinnerComponent],
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner],
   templateUrl: "./register-modal.html",
   styleUrl: "../auth-modal.scss",
 })

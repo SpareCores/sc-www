@@ -1,0 +1,141 @@
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+
+import { BenchmarkLineChart } from "./benchmark-line-chart";
+import { sharedTestingProviders } from "../../../../testing/testbed.providers";
+import {
+  BenchmarkLineChartData,
+  BenchmarkLineChartOptions,
+  BenchmarkLineSelectorOption,
+  LineBenchmarkMeta,
+  LineChartServer,
+} from "./benchmark-line-chart.types";
+
+const chartData: BenchmarkLineChartData = {
+  labels: [1],
+  datasets: [{ data: [10], label: "A" }],
+};
+
+const chartOptions: BenchmarkLineChartOptions = {};
+const selectorOptions: BenchmarkLineSelectorOption[] = [{ name: "sha256" }];
+
+describe("BenchmarkLineChart", () => {
+  let component: BenchmarkLineChart;
+  let fixture: ComponentFixture<BenchmarkLineChart>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [BenchmarkLineChart],
+      providers: [...sharedTestingProviders],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(BenchmarkLineChart);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput("chartData", chartData);
+    fixture.componentRef.setInput("chartOptions", chartOptions);
+    fixture.componentRef.setInput("selectorOptions", selectorOptions);
+    fixture.componentRef.setInput("selectedOptionName", "sha256");
+    fixture.detectChanges();
+  });
+
+  it("creates the presenter", () => {
+    expect(component).toBeTruthy();
+    expect(component.hasSelector()).toBeTrue();
+  });
+
+  it("emits selector changes", () => {
+    spyOn(component.selectorSelected, "emit");
+    component.selectOption(0);
+    expect(component.selectorSelected.emit).toHaveBeenCalledWith(0);
+  });
+
+  it("builds compare ssl charts from raw inputs", () => {
+    const servers: LineChartServer[] = [
+      {
+        display_name: "Server A",
+        benchmark_scores: [
+          {
+            vendor_id: "vendor-a",
+            server_id: "server-a",
+            benchmark_id: "openssl",
+            config: { algo: "sha256", block_size: 16 },
+            score: 22,
+          },
+        ],
+      },
+    ];
+    const benchmarkMeta: LineBenchmarkMeta[] = [
+      {
+        benchmark_id: "openssl",
+        name: "OpenSSL",
+        description: null,
+        framework: "openssl",
+        configs: [{ config: { algo: "sha256", block_size: 16 } }],
+      },
+    ];
+
+    fixture.componentRef.setInput("chartData", undefined);
+    fixture.componentRef.setInput("chartOptions", undefined);
+    fixture.componentRef.setInput("selectorOptions", []);
+    fixture.componentRef.setInput("selectedOptionName", "");
+    fixture.componentRef.setInput("chartSource", "compare-ssl");
+    fixture.componentRef.setInput("chartType", "bar");
+    fixture.componentRef.setInput("servers", servers);
+    fixture.componentRef.setInput("benchmarkMeta", benchmarkMeta);
+    fixture.detectChanges();
+
+    expect(component.hasSelector()).toBeTrue();
+    expect(component.resolvedSelectedOptionName()).toBe("sha256");
+  });
+
+  it("builds details pgbench charts from raw inputs", () => {
+    fixture.componentRef.setInput("chartData", undefined);
+    fixture.componentRef.setInput("chartOptions", undefined);
+    fixture.componentRef.setInput("selectorOptions", []);
+    fixture.componentRef.setInput("selectedOptionName", "");
+    fixture.componentRef.setInput("chartSource", "details-pgbench");
+    fixture.componentRef.setInput("chartType", "line");
+    fixture.componentRef.setInput("detailsServer", {
+      display_name: "Server A",
+      vcpus: 4,
+    });
+    fixture.componentRef.setInput("benchmarksByCategory", [
+      {
+        benchmark_id: "pgbench:heavy_read_only",
+        benchmarks: [
+          {
+            vendor_id: "vendor-a",
+            server_id: "server-a",
+            benchmark_id: "pgbench:heavy_read_only",
+            config: { concurrency: 2 },
+            score: 120,
+          },
+        ],
+      },
+    ]);
+    fixture.componentRef.setInput("benchmarkMeta", [
+      {
+        benchmark_id: "pgbench:heavy_read_only",
+        name: "pgbench Heavy Read-Only",
+        unit: "Transactions per minute (TPM)",
+      },
+    ]);
+    fixture.detectChanges();
+
+    expect(component.resolvedChartOptions()?.scales?.y?.title?.text).toBe(
+      "Transactions per minute (TPM)",
+    );
+  });
+
+  it("renders a content-sized selector with compression-style option buttons", () => {
+    const hostElement = fixture.nativeElement as HTMLElement;
+    const optionsPanel = hostElement.querySelector(`#${component.optionsId}`);
+    const firstOptionButton = optionsPanel?.querySelector("button");
+    const firstOptionLabel = firstOptionButton?.querySelector("div");
+
+    expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
+    expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
+    expect(firstOptionLabel?.classList.contains("text-white")).toBeTrue();
+  });
+});

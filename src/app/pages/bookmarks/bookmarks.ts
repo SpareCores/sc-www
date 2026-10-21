@@ -24,12 +24,12 @@ import { LucideDynamicIcon } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
 import {
   BreadcrumbSegment,
-  BreadcrumbsComponent,
-} from "../../components/breadcrumbs/breadcrumbs.component";
+  Breadcrumbs,
+} from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
 import { CollectionsStore } from "../../collections/collections.store";
 import type {
   BookmarksCardViewModel,
@@ -103,15 +103,15 @@ function normalizeBookmarksNameQuery(value: string): string {
   selector: "sc-bookmarks",
   imports: [
     RouterModule,
-    BreadcrumbsComponent,
+    Breadcrumbs,
     PageHeader,
     Button,
-    LoadingSpinnerComponent,
+    LoadingSpinner,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
     LucideDynamicIcon,
-    CollectionSaveModalComponent,
+    CollectionSaveModal,
     FlowbiteDropdownDirective,
   ],
   templateUrl: "./bookmarks.html",
@@ -127,7 +127,7 @@ export class Bookmarks implements OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private auth = inject(AuthStateService);
 
-  private saveModal = viewChild(CollectionSaveModalComponent);
+  private saveModal = viewChild(CollectionSaveModal);
   private noteModalRef = viewChild<ElementRef<HTMLElement>>("noteModal");
   private tooltipRef = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   private sortDropdown = viewChild<FlowbiteDropdownDirective>("sortDropdown");
