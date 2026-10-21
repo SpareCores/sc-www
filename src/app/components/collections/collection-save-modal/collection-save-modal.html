@@ -37,9 +37,9 @@
             [attr.aria-invalid]="showNameWarning() ? true : null"
           />
           @if (showNameWarning()) {
-          <span class="text-xs text-red-400">
-            Name must be at least {{ nameMinLength }} characters.
-          </span>
+            <span class="text-xs text-red-400">
+              Name must be at least {{ nameMinLength }} characters.
+            </span>
           }
         </label>
         <label class="flex flex-col gap-2 text-white text-sm">

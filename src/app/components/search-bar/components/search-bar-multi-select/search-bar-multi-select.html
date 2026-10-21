@@ -5,26 +5,26 @@
 >
   <div class="search-bar-multi-select__control">
     @for (option of selected(); track option) {
-    <span class="search-bar-multi-select__badge">
-      {{ option }}
-      <button
-        type="button"
-        class="search-bar-multi-select__badge-remove"
-        (click)="removeOption(option, $event)"
-        [disabled]="disabled()"
-        [attr.aria-label]="'Remove ' + option"
-        data-ph-capture-attribute-sc-event="server listing filter"
-        data-ph-capture-attribute-server-listing-filter-type="multi-select-remove"
-        [attr.data-ph-capture-attribute-server-listing-filter-id]="
+      <span class="search-bar-multi-select__badge">
+        {{ option }}
+        <button
+          type="button"
+          class="search-bar-multi-select__badge-remove"
+          (click)="removeOption(option, $event)"
+          [disabled]="disabled()"
+          [attr.aria-label]="'Remove ' + option"
+          data-ph-capture-attribute-sc-event="server listing filter"
+          data-ph-capture-attribute-server-listing-filter-type="multi-select-remove"
+          [attr.data-ph-capture-attribute-server-listing-filter-id]="
             parameterName()
           "
-        [attr.data-ph-capture-attribute-server-listing-filter-category]="
+          [attr.data-ph-capture-attribute-server-listing-filter-category]="
             filterCategoryId()
           "
-      >
-        <svg lucideX class="h-3 w-3"></svg>
-      </button>
-    </span>
+        >
+          <svg lucideX class="h-3 w-3"></svg>
+        </button>
+      </span>
     }
 
     <input
@@ -45,7 +45,9 @@
       (keydown)="onSearchKeydown($event)"
       data-ph-capture-attribute-sc-event="server listing filter"
       data-ph-capture-attribute-server-listing-filter-type="multi-select-search"
-      [attr.data-ph-capture-attribute-server-listing-filter-id]="parameterName()"
+      [attr.data-ph-capture-attribute-server-listing-filter-id]="
+        parameterName()
+      "
       [attr.data-ph-capture-attribute-server-listing-filter-category]="
         filterCategoryId()
       "
@@ -54,38 +56,39 @@
   </div>
 
   @if (dropdownOpen() && !disabled()) {
-  <div
-    #optionsPanel
-    role="listbox"
-    [id]="listboxId()"
-    class="search-bar-multi-select__panel custom-scrollbar"
-  >
-    @if (filteredOptions().length) { @for (option of filteredOptions(); track
-    option; let index = $index) {
     <div
-      role="option"
-      [id]="optionId(index)"
-      class="search-bar-multi-select__option"
-      [class.search-bar-multi-select__option--active]="
+      #optionsPanel
+      role="listbox"
+      [id]="listboxId()"
+      class="search-bar-multi-select__panel custom-scrollbar"
+    >
+      @if (filteredOptions().length) {
+        @for (option of filteredOptions(); track option; let index = $index) {
+          <div
+            role="option"
+            [id]="optionId(index)"
+            class="search-bar-multi-select__option"
+            [class.search-bar-multi-select__option--active]="
               activeIndex() === index
             "
-      aria-selected="false"
-      (mousedown)="$event.preventDefault()"
-      (click)="selectOption(option)"
-      data-ph-capture-attribute-sc-event="server listing filter"
-      data-ph-capture-attribute-server-listing-filter-type="multi-select-option"
-      [attr.data-ph-capture-attribute-server-listing-filter-id]="
+            aria-selected="false"
+            (mousedown)="$event.preventDefault()"
+            (click)="selectOption(option)"
+            data-ph-capture-attribute-sc-event="server listing filter"
+            data-ph-capture-attribute-server-listing-filter-type="multi-select-option"
+            [attr.data-ph-capture-attribute-server-listing-filter-id]="
               parameterName()
             "
-      [attr.data-ph-capture-attribute-server-listing-filter-category]="
+            [attr.data-ph-capture-attribute-server-listing-filter-category]="
               filterCategoryId()
             "
-    >
-      {{ option }}
+          >
+            {{ option }}
+          </div>
+        }
+      } @else {
+        <div class="search-bar-multi-select__hint">No matching flags.</div>
+      }
     </div>
-    } } @else {
-    <div class="search-bar-multi-select__hint">No matching flags.</div>
-    }
-  </div>
   }
 </div>
