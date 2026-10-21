@@ -1,6 +1,6 @@
 import type {
-  DatabaseCompare,
-  ServerCompare,
+  ComparedDatabase,
+  ComparedServer,
 } from "../services/server-compare.service";
 
 export type BenchmarkUrlState = {
@@ -23,7 +23,7 @@ function isOptionalString(value: unknown): value is string | undefined {
 
 function isZoneAndRegion(
   value: unknown,
-): value is ServerCompare["zonesRegions"][number] {
+): value is ComparedServer["zonesRegions"][number] {
   return (
     isRecord(value) &&
     typeof value.region === "string" &&
@@ -45,7 +45,7 @@ function isCompareItemWithIdKey(
 
 export function isServerCompareUrlState(
   value: unknown,
-): value is ServerCompare[] {
+): value is ComparedServer[] {
   return (
     Array.isArray(value) &&
     value.every(
@@ -60,7 +60,7 @@ export function isServerCompareUrlState(
 
 export function isDatabaseCompareUrlState(
   value: unknown,
-): value is DatabaseCompare[] {
+): value is ComparedDatabase[] {
   return (
     Array.isArray(value) &&
     value.every((item) => isCompareItemWithIdKey(item, "database"))

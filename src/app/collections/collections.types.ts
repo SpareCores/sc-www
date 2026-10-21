@@ -1,10 +1,10 @@
 import type { SearchBarQuery } from "../components/search-bar/types/search-bar.types";
 import type {
-  DatabaseCompare,
-  ServerCompare,
+  ComparedDatabase,
+  ComparedServer,
 } from "../services/server-compare.service";
 
-export type SavedComparisonInstance = ServerCompare | DatabaseCompare;
+export type SavedComparisonInstance = ComparedServer | ComparedDatabase;
 
 export const COLLECTION_TYPES = {
   favoriteServers: "favorite_servers",

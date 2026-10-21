@@ -33,7 +33,7 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
-  ServerCompare,
+  ComparedServer,
   ServerCompareService,
   ZoneAndRegion,
 } from "../../services/server-compare.service";
@@ -1244,7 +1244,7 @@ export class ServerCompareComponent
     }
   }
 
-  private applyCompareSelectionFromService(selection: ServerCompare[]): void {
+  private applyCompareSelectionFromService(selection: ComparedServer[]): void {
     if (this.isLoading) {
       return;
     }
@@ -1578,7 +1578,7 @@ export class ServerCompareComponent
     return !!saved && this.compareCollections.isDeletingComparison(saved.id);
   }
 
-  private getCompareInstancesForSave(): ServerCompare[] {
+  private getCompareInstancesForSave(): ComparedServer[] {
     return this.instances.map((instance) => ({
       display_name: instance.display_name,
       vendor: instance.vendor,
@@ -1594,8 +1594,8 @@ export class ServerCompareComponent
       server?: string;
       zonesRegions?: ZoneAndRegion[];
     }>,
-  ): ServerCompare[] {
-    const selection: ServerCompare[] = [];
+  ): ComparedServer[] {
+    const selection: ComparedServer[] = [];
 
     for (let i = 0; i < servers.length; i++) {
       const server = servers[i];
