@@ -173,40 +173,13 @@ describe("ClerkService", () => {
     });
   });
 
-  it("opens the user profile with API keys hidden", () => {
+  it("clears the active session", async () => {
     const service = createService();
-    const openUserProfile = jasmine.createSpy("openUserProfile");
-    setClerk(service, {
-      user: { passwordEnabled: true, externalAccounts: [] },
-      openUserProfile,
-    });
+    const setActive = jasmine.createSpy("setActive").and.resolveTo(undefined);
+    setClerk(service, { setActive });
 
-    service.openUserProfileModal();
+    await service.clearActiveSession();
 
-    expect(openUserProfile).toHaveBeenCalledOnceWith({
-      apiKeysProps: { hide: true },
-      appearance: undefined,
-    });
-  });
-
-  it("hides the password section for GitHub-only users", () => {
-    const service = createService();
-    const openUserProfile = jasmine.createSpy("openUserProfile");
-    setClerk(service, {
-      user: {
-        passwordEnabled: false,
-        externalAccounts: [{ provider: "github" }],
-      },
-      openUserProfile,
-    });
-
-    service.openUserProfileModal();
-
-    expect(openUserProfile).toHaveBeenCalledOnceWith({
-      apiKeysProps: { hide: true },
-      appearance: {
-        elements: { profileSection__password: { display: "none" } },
-      },
-    });
+    expect(setActive).toHaveBeenCalledOnceWith({ session: null });
   });
 });

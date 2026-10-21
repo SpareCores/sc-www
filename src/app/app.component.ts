@@ -21,6 +21,7 @@ import { register } from "swiper/element/bundle";
 import { PromoBanner } from "./components/promo-banner/promo-banner";
 import { LoginModal } from "./components/login-modal/login-modal";
 import { RegisterModal } from "./components/register-modal/register-modal";
+import { ProfileModal } from "./components/profile-modal/profile-modal";
 import {
   PROMO_BANNER_BY_PATH,
   type PromoBannerDismissalGroup,
@@ -40,6 +41,7 @@ const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
     PromoBanner,
     LoginModal,
     RegisterModal,
+    ProfileModal,
     HeaderComponent,
     FooterComponent,
     RouterModule,

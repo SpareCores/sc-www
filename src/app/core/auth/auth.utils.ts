@@ -47,6 +47,17 @@ export function authErrorMessage(error: unknown, fallback: string): string {
   return clerkAuthError(error, fallback).message;
 }
 
+export function isReverificationRequired(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const errors = (error as { errors?: Array<{ code?: string }> }).errors;
+  return !!errors?.some(
+    (item) => item.code === "session_reverification_required",
+  );
+}
+
 export function authUrls(): { origin: string; authCallback: string } {
   const origin = window.location.origin;
   return {
