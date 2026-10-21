@@ -1,7 +1,7 @@
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
-import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
+import { AUTH_MESSAGES, AuthState } from "../../core/auth";
 import { Button } from "../button/button";
 import { LoadingSpinner } from "../loading-spinner/loading-spinner";
 
@@ -26,7 +26,7 @@ const DETAILS_PARAMS = new Set([
   styleUrl: "../auth-modal.scss",
 })
 export class RegisterModal {
-  protected readonly auth = inject(AuthStateService);
+  protected readonly auth = inject(AuthState);
 
   protected step: RegisterStep = "details";
   protected method: RegisterMethod = "email";

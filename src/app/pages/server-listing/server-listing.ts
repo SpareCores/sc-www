@@ -16,7 +16,7 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { KeeperAPI } from "../../services/keeper-api";
 import {
   OrderDir,
   ServerPKs,
@@ -33,7 +33,7 @@ import {
 } from "../../tools/listing-search-params";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import {
   LucideDynamicIcon,
@@ -53,20 +53,20 @@ import type { SearchBarParameter } from "../../components/search-bar/types/searc
 import { Pagination } from "../../components/pagination/pagination";
 import {
   ComparedServer,
-  ServerCompareService,
-} from "../../services/server-compare.service";
+  CompareSelection,
+} from "../../services/compare-selection";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { AnalyticsService } from "../../services/analytics.service";
+import { Analytics } from "../../services/analytics";
 import { Modal, ModalOptions } from "flowbite";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 import {
   BAD_BENCHMARK_URL_TOAST_ID,
   QUERY_ERROR_SERVERS_TOAST_ID,
   SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
 import { INVALID_BENCHMARK_URL_TOAST_BODY } from "../../services/url-toast-content";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
@@ -81,14 +81,14 @@ import { formatNumberInputValue } from "../../pipes/pipe-utils";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
-import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { CollectionsUi } from "../../collections/collections-ui";
 import {
   isDefaultListingQuery,
   SAVED_ITEM_FALLBACK_NOTE,
   normalizeSearchQuery,
 } from "../../collections/collections.utils";
 import type { SavedSearchItem } from "../../collections/collections.types";
-import { AuthStateService } from "../../core/auth";
+import { AuthState } from "../../core/auth";
 import {
   BestPriceAllocationType,
   bestPriceAllocationTypes,
@@ -147,20 +147,20 @@ const serverListingIntroductionModalOptions: ModalOptions = {
 })
 export class ServerListing implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
-  private keeperAPI = inject(KeeperAPIService);
+  private keeperAPI = inject(KeeperAPI);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private SEOHandler = inject(SeoHandlerService);
+  private SEOHandler = inject(SeoHandler);
   currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
   allocationDropdown = viewChild<FlowbiteDropdown>("allocationDropdown");
   pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
-  private analytics = inject(AnalyticsService);
-  private serverCompare = inject(ServerCompareService);
-  private toastService = inject(ToastService);
+  private analytics = inject(Analytics);
+  private serverCompare = inject(CompareSelection);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
-  private uiTooltip = inject(UiTooltipService);
-  private collectionsUi = inject(CollectionsUiService);
-  private auth = inject(AuthStateService);
+  private uiTooltip = inject(UiTooltip);
+  private collectionsUi = inject(CollectionsUi);
+  private auth = inject(AuthState);
   saveSearchModal = viewChild(CollectionSaveModal);
 
   isCollapsed = false;

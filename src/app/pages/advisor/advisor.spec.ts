@@ -34,17 +34,17 @@ import {
   ADVISOR_TABLE_COLUMNS,
   ADVISOR_WORKLOAD_SCORE_TOOLTIP,
 } from "./advisor.constants";
-import { DropdownManagerService } from "../../services/dropdown-manager.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ServerCompareService } from "../../services/server-compare.service";
-import { ToastService } from "../../services/toast.service";
+import { DropdownManager } from "../../services/dropdown-manager";
+import { KeeperAPI } from "../../services/keeper-api";
+import { SeoHandler } from "../../services/seo-handler";
+import { CompareSelection } from "../../services/compare-selection";
+import { Toast } from "../../services/toast";
 import {
   ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID,
   BAD_ADVISOR_BASELINE_URL_TOAST_ID,
   QUERY_ERROR_ADVISOR_TOAST_ID,
 } from "../../services/toast-ids";
-import { NeetoCalService } from "../../services/neeto-cal.service";
+import { NeetoCal } from "../../services/neeto-cal";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import {
   COLUMN_BENCHMARK_EFFICIENCY_TOOLTIP,
@@ -311,7 +311,7 @@ describe("Advisor", () => {
       providers: [
         ...sharedTestingProviders,
         {
-          provide: DropdownManagerService,
+          provide: DropdownManager,
           useValue: {
             initDropdown,
           },
@@ -323,7 +323,7 @@ describe("Advisor", () => {
           },
         },
         {
-          provide: KeeperAPIService,
+          provide: KeeperAPI,
           useValue: {
             getServersSelect,
             getServerBenchmarkMeta,
@@ -341,17 +341,17 @@ describe("Advisor", () => {
           },
         },
         {
-          provide: SeoHandlerService,
+          provide: SeoHandler,
           useValue: {
             updateTitleAndMetaTags,
           },
         },
         {
-          provide: ServerCompareService,
+          provide: CompareSelection,
           useValue: compareService,
         },
         {
-          provide: ToastService,
+          provide: Toast,
           useValue: {
             show: showToast,
             showHttpError,
@@ -359,7 +359,7 @@ describe("Advisor", () => {
           },
         },
         {
-          provide: NeetoCalService,
+          provide: NeetoCal,
           useValue: {
             initialize: initializeNeetoCal,
           },

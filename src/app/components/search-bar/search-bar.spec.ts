@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { SearchBar } from "./search-bar";
 import { SearchBarParameterField } from "./components";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import type { SearchBarParameter } from "./types/search-bar.types";
 
@@ -27,7 +27,7 @@ describe("SearchBar", () => {
   });
 
   it("uses the shared tooltip service for parameter descriptions", () => {
-    const tooltipService = TestBed.inject(UiTooltipService);
+    const tooltipService = TestBed.inject(UiTooltip);
     const showSpy = spyOn(tooltipService, "show");
     const hideSpy = spyOn(tooltipService, "hide");
     const target = document.createElement("button");

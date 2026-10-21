@@ -31,10 +31,10 @@ import {
   ServerPropertySection,
 } from "../../components/server-property-card/server-property-card";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
-import { AnalyticsService } from "../../services/analytics.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ToastService } from "../../services/toast.service";
+import { Analytics } from "../../services/analytics";
+import { KeeperAPI } from "../../services/keeper-api";
+import { SeoHandler } from "../../services/seo-handler";
+import { Toast } from "../../services/toast";
 import { VENDOR_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 
 declare let Datamap: any;
@@ -83,10 +83,10 @@ export class VendorDetails implements OnInit, OnDestroy {
   private document = inject<Document>(DOCUMENT);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private keeperAPI = inject(KeeperAPIService);
-  private SEOHandler = inject(SeoHandlerService);
-  private analytics = inject(AnalyticsService);
-  private toastService = inject(ToastService);
+  private keeperAPI = inject(KeeperAPI);
+  private SEOHandler = inject(SeoHandler);
+  private analytics = inject(Analytics);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
   private renderer = inject(Renderer2);
   private countryNamePipe = new CountryIdtoNamePipe();

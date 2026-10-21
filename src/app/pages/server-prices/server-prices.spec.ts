@@ -7,10 +7,10 @@ import {
 import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { ServerPrices } from "./server-prices";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_SERVER_PRICES_TOAST_ID } from "../../services/toast-ids";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("ServerPrices", () => {
@@ -33,7 +33,7 @@ describe("ServerPrices", () => {
   });
 
   it("uses the shared tooltip service for column info tooltips", () => {
-    const tooltipService = TestBed.inject(UiTooltipService);
+    const tooltipService = TestBed.inject(UiTooltip);
     const showSpy = spyOn(tooltipService, "show");
     const hideSpy = spyOn(tooltipService, "hide");
     const target = document.createElement("span");
@@ -105,8 +105,8 @@ describe("ServerPrices", () => {
   });
 
   it("shows query-error toast when search fails with 422 and clears it on retry success", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const toastService = TestBed.inject(Toast);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const showHttpError = spyOn(toastService, "showHttpError");
     const removeToast = spyOn(toastService, "removeToast");
     let resolveSecond!: (value: any) => void;
@@ -165,7 +165,7 @@ describe("ServerPrices", () => {
   }));
 
   it("aborts the previous search when a newer one starts", () => {
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const signals: AbortSignal[] = [];
 
     spyOn(keeperAPI, "searchServerPrices").and.callFake(
@@ -184,7 +184,7 @@ describe("ServerPrices", () => {
   });
 
   it("aborts the active search on destroy", () => {
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     let activeSignal: AbortSignal | undefined;
 
     spyOn(keeperAPI, "searchServerPrices").and.callFake(

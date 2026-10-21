@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import type { ToastService } from "./toast.service";
+import type { Toast } from "./toast";
 import { INVALID_URL_TOAST_TITLE } from "./url-toast-content";
 
 type InvalidUrlToastAction = {
@@ -8,7 +8,7 @@ type InvalidUrlToastAction = {
 };
 
 export function showInvalidUrlParamToast(
-  toastService: Pick<ToastService, "show">,
+  toastService: Pick<Toast, "show">,
   platformId: object,
   options: {
     id: string;

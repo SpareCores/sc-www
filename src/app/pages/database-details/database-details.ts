@@ -23,7 +23,7 @@ import {
 } from "../../../../sdk/data-contracts";
 import openApiSpec from "../../../../sdk/openapi.json";
 import { BenchmarkLineChart } from "../../components/charts/line/benchmark-line-chart";
-import { BenchmarkLineChartBuilderService } from "../../components/charts/line/benchmark-line-chart-builder.service";
+import { BenchmarkLineChartBuilder } from "../../components/charts/line/benchmark-line-chart-builder";
 import {
   PgbenchChartResult,
   PgbenchScore,
@@ -44,11 +44,11 @@ import {
   ServerPropertySection,
   ServerPropertyTooltip,
 } from "../../components/server-property-card/server-property-card";
-import { AnalyticsService } from "../../services/analytics.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ServerCompareService } from "../../services/server-compare.service";
-import { ToastService } from "../../services/toast.service";
+import { Analytics } from "../../services/analytics";
+import { KeeperAPI } from "../../services/keeper-api";
+import { SeoHandler } from "../../services/seo-handler";
+import { CompareSelection } from "../../services/compare-selection";
+import { Toast } from "../../services/toast";
 import { DATABASE_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
@@ -105,12 +105,12 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
 })
 export class DatabaseDetails implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
-  private keeperAPI = inject(KeeperAPIService);
-  private lineChartBuilder = inject(BenchmarkLineChartBuilderService);
-  private SEOHandler = inject(SeoHandlerService);
-  private analytics = inject(AnalyticsService);
-  private toastService = inject(ToastService);
-  private serverCompare = inject(ServerCompareService);
+  private keeperAPI = inject(KeeperAPI);
+  private lineChartBuilder = inject(BenchmarkLineChartBuilder);
+  private SEOHandler = inject(SeoHandler);
+  private analytics = inject(Analytics);
+  private toastService = inject(Toast);
+  private serverCompare = inject(CompareSelection);
 
   isLoading = true;
   databaseDetails: LoadedDatabase | null = null;

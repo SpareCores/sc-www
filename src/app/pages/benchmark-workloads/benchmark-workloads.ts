@@ -27,10 +27,10 @@ import {
   LucidePackageOpen,
   LucideRefreshCcwDot,
 } from "@lucide/angular";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { SeoHandler } from "../../services/seo-handler";
+import { KeeperAPI } from "../../services/keeper-api";
 import { isAbortError } from "../../services/keeper-http-client";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 import { BENCHMARK_WORKLOADS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import {
   Benchmark,
@@ -87,9 +87,9 @@ export class BenchmarkWorkloads implements OnInit {
   private static readonly MOBILE_BREAKPOINT_PX = 1024;
 
   private document = inject(DOCUMENT);
-  private keeperAPI = inject(KeeperAPIService);
-  private toastService = inject(ToastService);
-  private seoHandler = inject(SeoHandlerService);
+  private keeperAPI = inject(KeeperAPI);
+  private toastService = inject(Toast);
+  private seoHandler = inject(SeoHandler);
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
 

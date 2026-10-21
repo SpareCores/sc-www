@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Component, OnInit, PLATFORM_ID, inject } from "@angular/core";
-import { AuthStateService } from "../../core/auth";
-import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { AuthState } from "../../core/auth";
+import { CollectionsUi } from "../../collections/collections-ui";
 
 @Component({
   selector: "sc-auth-callback",
@@ -13,8 +13,8 @@ import { CollectionsUiService } from "../../collections/collections-ui.service";
   `,
 })
 export class AuthCallback implements OnInit {
-  private readonly auth = inject(AuthStateService);
-  private readonly collectionsUi = inject(CollectionsUiService);
+  private readonly auth = inject(AuthState);
+  private readonly collectionsUi = inject(CollectionsUi);
   private readonly platformId = inject(PLATFORM_ID);
 
   async ngOnInit(): Promise<void> {

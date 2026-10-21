@@ -12,9 +12,9 @@ import {
 } from "@lucide/angular";
 import {
   AUTH_MESSAGES,
-  AuthStateService,
+  AuthState,
   PROFILE_DELETE_CONFIRMATION,
-  ProfileService,
+  Profile,
   type ProfileResult,
   type ProfileSession,
 } from "../../core/auth";
@@ -76,8 +76,8 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
   host: { "(document:keydown.escape)": "close()" },
 })
 export class ProfileModal {
-  protected readonly auth = inject(AuthStateService);
-  private readonly profileService = inject(ProfileService);
+  protected readonly auth = inject(AuthState);
+  private readonly profileService = inject(Profile);
 
   protected readonly profile = this.profileService.profile;
   protected readonly deleteConfirmationText = PROFILE_DELETE_CONFIRMATION;

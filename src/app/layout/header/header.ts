@@ -36,10 +36,10 @@ import {
   LucideTrash,
   LucideUser,
 } from "@lucide/angular";
-import { AnalyticsService } from "../../services/analytics.service";
-import { ServerCompareService } from "../../services/server-compare.service";
+import { Analytics } from "../../services/analytics";
+import { CompareSelection } from "../../services/compare-selection";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { AuthStateService } from "../../core/auth";
+import { AuthState } from "../../core/auth";
 
 @Component({
   selector: "sc-header",
@@ -82,9 +82,9 @@ import { AuthStateService } from "../../core/auth";
 })
 export class Header {
   private router = inject(Router);
-  private serverCompare = inject(ServerCompareService);
-  private analytics = inject(AnalyticsService);
-  protected readonly auth = inject(AuthStateService);
+  private serverCompare = inject(CompareSelection);
+  private analytics = inject(Analytics);
+  protected readonly auth = inject(AuthState);
 
   menuDropdown = viewChild<FlowbiteDropdown>("menuDropdown");
   aboutDropdown = viewChild<FlowbiteDropdown>("aboutDropdown");

@@ -11,8 +11,8 @@ import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Model } from "survey-core";
 import { HttpClient } from "@angular/common/http";
 import { surveyTheme } from "./survey_theme";
-import { AnalyticsService } from "../../services/analytics.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { Analytics } from "../../services/analytics";
+import { SeoHandler } from "../../services/seo-handler";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -24,8 +24,8 @@ import { Subscription } from "rxjs";
 export class SurveyFill implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
-  private SEOhandler = inject(SeoHandlerService);
-  private analytics = inject(AnalyticsService);
+  private SEOhandler = inject(SeoHandler);
+  private analytics = inject(Analytics);
   private route = inject(ActivatedRoute);
 
   surveyModel!: Model;

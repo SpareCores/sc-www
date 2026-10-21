@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FundingInformation } from "./funding-information";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 
 describe("FundingInformation", () => {
   let component: FundingInformation;
@@ -12,7 +12,7 @@ describe("FundingInformation", () => {
       imports: [FundingInformation],
       providers: [
         {
-          provide: SeoHandlerService,
+          provide: SeoHandler,
           useValue: { updateTitleAndMetaTags: jasmine.createSpy() },
         },
       ],

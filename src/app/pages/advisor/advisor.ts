@@ -64,11 +64,11 @@ import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
 import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { NeetoCalService } from "../../services/neeto-cal.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ServerCompareService } from "../../services/server-compare.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { NeetoCal } from "../../services/neeto-cal";
+import { SeoHandler } from "../../services/seo-handler";
+import { CompareSelection } from "../../services/compare-selection";
+import { Toast } from "../../services/toast";
 import {
   ADVISOR_BASELINE_BENCHMARK_ERROR_TOAST_ID,
   ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID,
@@ -77,14 +77,14 @@ import {
   BAD_ADVISOR_BASELINE_URL_TOAST_ID,
   QUERY_ERROR_ADVISOR_TOAST_ID,
 } from "../../services/toast-ids";
-import { AuthStateService } from "../../core/auth";
-import { AssessmentCollectionsService } from "../../collections/assessment-collections.service";
+import { AuthState } from "../../core/auth";
+import { AssessmentCollections } from "../../collections/assessment-collections";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
-import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { CollectionsUi } from "../../collections/collections-ui";
 import type { SavedAssessmentItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import type { SearchBarQuery } from "../../components/search-bar/types/search-bar.types";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import {
   INVALID_BASELINE_URL_TOAST_BODY,
   INVALID_URL_TOAST_TITLE,
@@ -98,7 +98,7 @@ import {
   CurrencyOption,
 } from "../../tools/shared_data";
 import { TableColumn, buildAdvisorColumns } from "../../tools/table-columns";
-import { AdvisorUiService } from "./advisor-ui.service";
+import { AdvisorUi } from "./advisor-ui";
 import {
   ADVISOR_AVERAGE_UTILIZATION_TITLE,
   ADVISOR_AVERAGE_UTILIZATION_TOOLTIP,
@@ -417,19 +417,19 @@ type AdvisorComparableResourceKey =
 })
 export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
-  private seoHandler = inject(SeoHandlerService);
-  private keeperApi = inject(KeeperAPIService);
+  private seoHandler = inject(SeoHandler);
+  private keeperApi = inject(KeeperAPI);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private serverCompare = inject(ServerCompareService);
-  private toastService = inject(ToastService);
+  private serverCompare = inject(CompareSelection);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
-  private auth = inject(AuthStateService);
-  private assessmentCollections = inject(AssessmentCollectionsService);
-  private collectionsUi = inject(CollectionsUiService);
-  private neetoCalService = inject(NeetoCalService);
-  private uiTooltip = inject(UiTooltipService);
-  readonly advisorUi = inject(AdvisorUiService);
+  private auth = inject(AuthState);
+  private assessmentCollections = inject(AssessmentCollections);
+  private collectionsUi = inject(CollectionsUi);
+  private neetoCalService = inject(NeetoCal);
+  private uiTooltip = inject(UiTooltip);
+  readonly advisorUi = inject(AdvisorUi);
   saveAssessmentModal = viewChild(CollectionSaveModal);
   readonly currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
   readonly pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");

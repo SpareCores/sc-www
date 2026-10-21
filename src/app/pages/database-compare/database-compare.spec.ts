@@ -3,15 +3,15 @@ import { ActivatedRoute, convertToParamMap } from "@angular/router";
 import { of } from "rxjs";
 
 import { DatabaseCompare } from "./database-compare";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { BAD_DATABASE_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("DatabaseCompare", () => {
   let component: DatabaseCompare;
   let fixture: ComponentFixture<DatabaseCompare>;
-  let toastService: ToastService;
+  let toastService: Toast;
 
   const getDatabase = jasmine.createSpy("getDatabase");
   const getDatabasePrices = jasmine.createSpy("getDatabasePrices");
@@ -53,7 +53,7 @@ describe("DatabaseCompare", () => {
           },
         },
         {
-          provide: KeeperAPIService,
+          provide: KeeperAPI,
           useValue: {
             getDatabase,
             getDatabasePrices,
@@ -69,7 +69,7 @@ describe("DatabaseCompare", () => {
 
     fixture = TestBed.createComponent(DatabaseCompare);
     component = fixture.componentInstance;
-    toastService = TestBed.inject(ToastService);
+    toastService = TestBed.inject(Toast);
     fixture.detectChanges();
   });
 

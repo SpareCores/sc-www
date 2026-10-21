@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkWorkloadsSidebar } from "./benchmark-workloads-sidebar";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("BenchmarkWorkloadsSidebar", () => {
@@ -29,7 +29,7 @@ describe("BenchmarkWorkloadsSidebar", () => {
   });
 
   it("uses the shared tooltip service when the sidebar is collapsed", () => {
-    const tooltipService = TestBed.inject(UiTooltipService);
+    const tooltipService = TestBed.inject(UiTooltip);
     const showSpy = spyOn(tooltipService, "show");
     const hideSpy = spyOn(tooltipService, "hide");
     const target = document.createElement("button");

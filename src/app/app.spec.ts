@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { App } from "./app";
-import { AnalyticsService } from "./services/analytics.service";
+import { Analytics } from "./services/analytics";
 import { sharedTestingProviders } from "../testing/testbed.providers";
 import {
   ADVISOR_PROMO_BANNER,
@@ -33,7 +33,7 @@ describe("App", () => {
       providers: [
         ...nonRouterTestingProviders,
         {
-          provide: AnalyticsService,
+          provide: Analytics,
           useValue: {
             initializeTracking,
             trackEvent,

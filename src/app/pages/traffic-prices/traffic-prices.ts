@@ -28,10 +28,10 @@ import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner
 import { Pagination } from "../../components/pagination/pagination";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { availableCurrencies, CurrencyOption } from "../../tools/shared_data";
 import {
   buildTrafficPricesColumns,
@@ -60,12 +60,12 @@ import {
 })
 export class TrafficPrices implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
-  private keeperAPI = inject(KeeperAPIService);
-  private toastService = inject(ToastService);
+  private keeperAPI = inject(KeeperAPI);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private SEOHandler = inject(SeoHandlerService);
+  private SEOHandler = inject(SeoHandler);
   currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
   pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
 

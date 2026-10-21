@@ -29,9 +29,9 @@ import {
 } from "./components/promo-banner/promo-banner.constants";
 import { Footer } from "./layout/footer/footer";
 import { Header } from "./layout/header/header";
-import { AnalyticsService } from "./services/analytics.service";
-import { AuthStateService } from "./core/auth";
-import { NeetoCalService } from "./services/neeto-cal.service";
+import { Analytics } from "./services/analytics";
+import { AuthState } from "./core/auth";
+import { NeetoCal } from "./services/neeto-cal";
 
 const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
 
@@ -53,10 +53,10 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
   private router = inject(Router);
-  private analytics = inject(AnalyticsService);
+  private analytics = inject(Analytics);
   private metaTagService = inject(Meta);
-  private neetoCalService = inject(NeetoCalService);
-  protected readonly auth = inject(AuthStateService);
+  private neetoCalService = inject(NeetoCal);
+  protected readonly auth = inject(AuthState);
 
   title = "sc-www";
 

@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 
 import { Regions as Regions } from "./regions";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { KeeperAPI } from "../../services/keeper-api";
 
 describe("Regions", () => {
   const keeperApiService = {
@@ -29,7 +29,7 @@ describe("Regions", () => {
           useValue: "server",
         },
         {
-          provide: KeeperAPIService,
+          provide: KeeperAPI,
           useValue: keeperApiService,
         },
       ],

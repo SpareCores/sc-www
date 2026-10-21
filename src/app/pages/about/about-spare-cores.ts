@@ -11,8 +11,8 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { isPlatformBrowser } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { NeetoCalService } from "../../services/neeto-cal.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { NeetoCal } from "../../services/neeto-cal";
+import { SeoHandler } from "../../services/seo-handler";
 
 @Component({
   selector: "sc-about-spare-cores",
@@ -22,8 +22,8 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 })
 export class AboutSpareCores implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
-  private SEOHandler = inject(SeoHandlerService);
-  private neetoCalService = inject(NeetoCalService);
+  private SEOHandler = inject(SeoHandler);
+  private neetoCalService = inject(NeetoCal);
 
   breadcrumbs: BreadcrumbSegment[] = [
     {

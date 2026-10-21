@@ -4,8 +4,8 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { ArticlesService, SlidesMeta } from "../../services/articles.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ArticlesApi, SlidesMeta } from "../../services/articles-api";
+import { SeoHandler } from "../../services/seo-handler";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 import {
   LucideDynamicIcon,
@@ -27,9 +27,9 @@ import {
   styleUrl: "./talks.scss",
 })
 export class Talks implements OnInit {
-  private SEOHandler = inject(SeoHandlerService);
+  private SEOHandler = inject(SeoHandler);
   private route = inject(ActivatedRoute);
-  private articles = inject(ArticlesService);
+  private articles = inject(ArticlesApi);
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },

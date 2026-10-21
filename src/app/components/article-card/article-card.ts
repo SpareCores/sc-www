@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { ArticleMeta } from "../../services/articles.service";
+import { ArticleMeta } from "../../services/articles-api";
 import { RouterLink } from "@angular/router";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 

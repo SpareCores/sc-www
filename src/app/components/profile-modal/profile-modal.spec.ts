@@ -1,16 +1,12 @@
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import {
-  AuthStateService,
-  ProfileService,
-  type ProfileView,
-} from "../../core/auth";
+import { AuthState, Profile, type ProfileView } from "../../core/auth";
 import { ProfileModal } from "./profile-modal";
 
 describe("ProfileModal", () => {
   let fixture: ComponentFixture<ProfileModal>;
-  let profileService: jasmine.SpyObj<ProfileService>;
+  let profileService: jasmine.SpyObj<Profile>;
   const profileModalOpen = signal(true);
   const closeUserProfile = jasmine.createSpy("closeUserProfile");
   const profile = signal<ProfileView | null>({
@@ -34,8 +30,8 @@ describe("ProfileModal", () => {
   });
 
   beforeEach(async () => {
-    profileService = jasmine.createSpyObj<ProfileService>(
-      "ProfileService",
+    profileService = jasmine.createSpyObj<Profile>(
+      "Profile",
       ["updateName", "listSessions"],
       { profile },
     );
@@ -49,10 +45,10 @@ describe("ProfileModal", () => {
       providers: [
         ...sharedTestingProviders,
         {
-          provide: AuthStateService,
+          provide: AuthState,
           useValue: { profileModalOpen, closeUserProfile },
         },
-        { provide: ProfileService, useValue: profileService },
+        { provide: Profile, useValue: profileService },
       ],
     }).compileComponents();
 

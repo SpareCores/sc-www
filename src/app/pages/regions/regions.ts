@@ -10,8 +10,8 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { SeoHandler } from "../../services/seo-handler";
+import { KeeperAPI } from "../../services/keeper-api";
 import {
   OrderDir,
   TableRegionTableRegionGetData,
@@ -66,9 +66,9 @@ const colors = [
 export class Regions implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
-  private SEOHandler = inject(SeoHandlerService);
+  private SEOHandler = inject(SeoHandler);
   private renderer = inject(Renderer2);
-  private API = inject(KeeperAPIService);
+  private API = inject(KeeperAPI);
   private router = inject(Router);
 
   breadcrumbs: BreadcrumbSegment[] = [

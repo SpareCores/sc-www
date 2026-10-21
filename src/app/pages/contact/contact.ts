@@ -11,7 +11,7 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import * as crypto from "crypto-js";
 import { Button } from "../../components/button/button";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 
 @Component({
   selector: "sc-contact",
@@ -21,7 +21,7 @@ import { ToastService } from "../../services/toast.service";
 })
 export class Contact {
   private fb = inject(FormBuilder);
-  private toastService = inject(ToastService);
+  private toastService = inject(Toast);
 
   contactForm: FormGroup;
   powSolution!: number;

@@ -6,7 +6,7 @@ import { Button } from "../../components/button/button";
 import { ThemeText } from "../../components/theme-text/theme-text";
 import { DesignPageCard } from "../../components/design-page-card/design-page-card";
 import { DownloadableLogoCollection } from "../../components/downloadable-logo-collection/downloadable-logo-collection";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 import { DESIGN_COLOR_COPY_TOAST_ID } from "../../services/toast-ids";
 
 type LogoDownloadItems = {
@@ -33,7 +33,7 @@ type LogoDownloadManifest = {
 })
 export class Design implements OnInit {
   private http = inject(HttpClient);
-  private toastService = inject(ToastService);
+  private toastService = inject(Toast);
   private readonly platformId = inject(PLATFORM_ID);
 
   logoDownloadsBasePath: string = "assets/images/logos/download";

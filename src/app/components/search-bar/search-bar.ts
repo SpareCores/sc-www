@@ -18,14 +18,11 @@ import { FormsModule } from "@angular/forms";
 import { LucideChevronDown, LucideDynamicIcon } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { KeeperAPI } from "../../services/keeper-api";
 import { isAbortError } from "../../services/keeper-http-client";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 import { SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID } from "../../services/toast-ids";
-import {
-  TooltipVariant,
-  UiTooltipService,
-} from "../../services/ui-tooltip.service";
+import { TooltipVariant, UiTooltip } from "../../services/ui-tooltip";
 import { Button } from "../button/button";
 import {
   SearchBarCustomControls,
@@ -106,9 +103,9 @@ type ApiResponse<T> = {
 })
 export class SearchBar implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
-  private keeperAPI = inject(KeeperAPIService);
-  private toastService = inject(ToastService);
-  private uiTooltip = inject(UiTooltipService);
+  private keeperAPI = inject(KeeperAPI);
+  private toastService = inject(Toast);
+  private uiTooltip = inject(UiTooltip);
 
   query = input<SearchBarQuery>({});
   searchParameters = input.required<SearchBarParameter[]>();

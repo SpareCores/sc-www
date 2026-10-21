@@ -27,14 +27,14 @@ import {
   lineChartOptionsStressNG,
   lineChartOptionsStressNGPercent,
 } from "../../../pages/server-details/chartOptions";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import {
   injectCompareLegendVisibility,
   syncCompareLegendData,
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
 import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
-import { BenchmarkLineChartBuilderService } from "./benchmark-line-chart-builder.service";
+import { BenchmarkLineChartBuilder } from "./benchmark-line-chart-builder";
 import {
   BenchmarkBarChartData,
   BenchmarkBarChartOptions,
@@ -81,8 +81,8 @@ export class BenchmarkLineChart {
   private static readonly defaultSslOptionName = "sha256";
 
   private platformId = inject(PLATFORM_ID);
-  private tooltipService = inject(ChartTooltipService);
-  private builder = inject(BenchmarkLineChartBuilderService);
+  private tooltipService = inject(ChartTooltip);
+  private builder = inject(BenchmarkLineChartBuilder);
   private legendVisibility = injectCompareLegendVisibility();
 
   selectorDropdown = viewChild<FlowbiteDropdown>("selectorDropdown");

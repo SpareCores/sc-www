@@ -18,7 +18,7 @@ import {
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { Button } from "../../button/button";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
   STRESS_NG_TITLE,
@@ -42,7 +42,7 @@ import {
   styleUrl: "./stress-ng-full-card.scss",
 })
 export class StressNgFullCard {
-  private tooltipService = inject(ChartTooltipService);
+  private tooltipService = inject(ChartTooltip);
 
   benchmarkMeta = input<Benchmark[] | null>([]);
   benchmarkScores = input<BenchmarkScore[] | null>([]);

@@ -20,7 +20,7 @@ import { BaseChartDirective } from "ng2-charts";
 import { ChartData, ChartOptions } from "chart.js";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
-import { CompressionChartBuilderService } from "./compression-chart-builder.service";
+import { CompressionChartBuilder } from "./compression-chart-builder";
 import {
   CompareCompressionOption,
   CompressionBenchmarkGroup,
@@ -35,7 +35,7 @@ import {
   lineChartOptionsCompareCompress,
   lineChartOptionsCompareDecompress,
 } from "../../../pages/server-details/chartOptions";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
   injectCompareLegendVisibility,
@@ -69,8 +69,8 @@ export class CompressionChart {
   private static nextId = 0;
 
   private platformId = inject(PLATFORM_ID);
-  private builder = inject(CompressionChartBuilderService);
-  private tooltipService = inject(ChartTooltipService);
+  private builder = inject(CompressionChartBuilder);
+  private tooltipService = inject(ChartTooltip);
   private legendVisibility = injectCompareLegendVisibility();
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");

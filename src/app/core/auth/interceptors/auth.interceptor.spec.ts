@@ -11,7 +11,7 @@ import { PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { firstValueFrom } from "rxjs";
 import { WWW_API_BASE_URI } from "../auth.constants";
-import { AuthStateService } from "../data-access/auth-state.service";
+import { AuthState } from "../data-access/auth-state";
 import { authInterceptor } from "./auth.interceptor";
 
 describe("authInterceptor", () => {
@@ -34,7 +34,7 @@ describe("authInterceptor", () => {
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
         {
-          provide: AuthStateService,
+          provide: AuthState,
           useValue: { getToken },
         },
       ],
