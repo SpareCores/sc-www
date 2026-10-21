@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -46,7 +46,6 @@ import {
   selector: "sc-benchmark-multi-bar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     Button,
     LucideDynamicIcon,
     LucideInfo,

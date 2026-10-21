@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   computed,
@@ -129,7 +129,6 @@ import {
 @Component({
   selector: "sc-server-compare-charts",
   imports: [
-    CommonModule,
     LucideDynamicIcon,
     LucideCircleArrowDown,
     LucideCircleArrowUp,

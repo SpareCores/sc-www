@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
@@ -22,13 +21,7 @@ const DETAILS_PARAMS = new Set([
 
 @Component({
   selector: "sc-register-modal",
-  imports: [
-    CommonModule,
-    FormsModule,
-    Button,
-    LucideDynamicIcon,
-    LoadingSpinnerComponent,
-  ],
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinnerComponent],
   templateUrl: "./register-modal.html",
   styleUrl: "../auth-modal.scss",
 })

@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
@@ -11,13 +10,7 @@ type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
 
 @Component({
   selector: "sc-login-modal",
-  imports: [
-    CommonModule,
-    FormsModule,
-    Button,
-    LucideDynamicIcon,
-    LoadingSpinnerComponent,
-  ],
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinnerComponent],
   templateUrl: "./login-modal.html",
   styleUrl: "../auth-modal.scss",
 })

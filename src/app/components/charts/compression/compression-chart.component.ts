@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -48,7 +48,6 @@ import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown
   selector: "sc-compression-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     Button,
     LucideDynamicIcon,
     LucideInfo,
