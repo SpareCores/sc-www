@@ -1,5 +1,4 @@
 ﻿// Hide scrollbars on modal body while keeping drag-to-pan scroll functional
-.lstopo-modal-wrapper,
 .lstopo-modal-body {
   scrollbar-width: none;
   &::-webkit-scrollbar {
