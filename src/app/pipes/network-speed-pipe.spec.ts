@@ -1,4 +1,4 @@
-import { NetworkSpeedPipe } from "./network-speed.pipe";
+import { NetworkSpeedPipe } from "./network-speed-pipe";
 
 describe("NetworkSpeedPipe", () => {
   const pipe = new NetworkSpeedPipe();

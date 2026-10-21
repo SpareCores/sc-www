@@ -6,7 +6,7 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { ArticlesApi, SlidesMeta } from "../../services/articles-api";
 import { SeoHandler } from "../../services/seo-handler";
-import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
+import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
 import {
   LucideDynamicIcon,
   LucideHourglass,

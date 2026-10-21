@@ -30,7 +30,7 @@ import {
   ServerPropertyRow,
   ServerPropertySection,
 } from "../../components/server-property-card/server-property-card";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";

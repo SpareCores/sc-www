@@ -33,8 +33,8 @@ import {
   staticWebChartCompareTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
 import { ExtendedServerDetails } from "../../pages/server-details/server-details";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
+import { CompactNumberPipe } from "../../pipes/compact-number-pipe";
 import { Toast } from "../../services/toast";
 import { Button } from "../button/button";
 import { CompressionChartBuilder } from "../charts/compression/compression-chart-builder";

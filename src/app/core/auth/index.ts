@@ -12,6 +12,6 @@ export type {
 } from "./auth.types";
 export { AuthState } from "./data-access/auth-state";
 export { Profile } from "./data-access/profile";
-export { authGuard, blockLandingDuringAuthGuard } from "./guards/auth.guard";
-export { authInterceptor } from "./interceptors/auth.interceptor";
+export { authGuard, blockLandingDuringAuthGuard } from "./guards/auth-guard";
+export { authInterceptor } from "./interceptors/auth-interceptor";
 export { provideAuthFeature } from "./auth-feature.providers";

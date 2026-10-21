@@ -50,7 +50,7 @@ import { SeoHandler } from "../../services/seo-handler";
 import { CompareSelection } from "../../services/compare-selection";
 import { Toast } from "../../services/toast";
 import { DATABASE_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
-import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
+import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name-pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
 
 type LoadedDatabase = Database & {

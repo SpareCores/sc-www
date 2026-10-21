@@ -6,7 +6,7 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { SeoHandler } from "../../services/seo-handler";
-import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
+import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
 
 @Component({
   selector: "sc-legal-documents",

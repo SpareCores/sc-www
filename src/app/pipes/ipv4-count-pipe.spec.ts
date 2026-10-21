@@ -1,4 +1,4 @@
-import { Ipv4CountPipe } from "./ipv4-count.pipe";
+import { Ipv4CountPipe } from "./ipv4-count-pipe";
 
 describe("Ipv4CountPipe", () => {
   const pipe = new Ipv4CountPipe();

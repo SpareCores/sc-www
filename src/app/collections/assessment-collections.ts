@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { CollectionsStore } from "./collections.store";
+import { CollectionsStore } from "./collections-store";
 import type { SearchBarQuery } from "../components/search-bar/types/search-bar.types";
 import { assessmentComparableQuery } from "./collections.utils";
 import { mutationKey } from "../shared/store/with-mutation-status";

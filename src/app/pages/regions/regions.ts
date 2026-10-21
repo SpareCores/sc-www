@@ -16,7 +16,7 @@ import {
   OrderDir,
   TableRegionTableRegionGetData,
 } from "../../../../sdk/data-contracts";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { FormsModule } from "@angular/forms";
 import { isPlatformBrowser } from "@angular/common";
 import {

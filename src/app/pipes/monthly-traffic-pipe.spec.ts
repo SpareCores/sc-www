@@ -1,4 +1,4 @@
-import { MonthlyTrafficPipe } from "./monthly-traffic.pipe";
+import { MonthlyTrafficPipe } from "./monthly-traffic-pipe";
 
 describe("MonthlyTrafficPipe", () => {
   const pipe = new MonthlyTrafficPipe();

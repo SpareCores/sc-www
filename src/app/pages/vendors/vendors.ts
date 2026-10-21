@@ -12,7 +12,7 @@ import {
   TableRegionTableRegionGetData,
 } from "../../../../sdk/data-contracts";
 import { LucideChevronRight } from "@lucide/angular";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { Router, RouterModule } from "@angular/router";
 
 @Component({

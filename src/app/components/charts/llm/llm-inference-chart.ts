@@ -19,7 +19,7 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
-import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import {
   barChartOptionsSSL,
   barChartOptionsSSLCompare,
