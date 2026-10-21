@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { Header } from "./header";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
@@ -57,7 +57,7 @@ describe("Header", () => {
   it("configures the mobile menu dropdown to stay within the viewport", () => {
     const menuDropdown = fixture.debugElement
       .query(By.css("#menu_button"))
-      .injector.get(FlowbiteDropdownDirective);
+      .injector.get(FlowbiteDropdown);
 
     expect(menuDropdown.dropdownPlacement()).toBe("bottom-end");
     expect(menuDropdown.dropdownFlip()).toBeTrue();
@@ -84,7 +84,7 @@ describe("Header", () => {
 
     const compareDropdown = fixture.debugElement
       .query(By.css("#compare_button"))
-      .injector.get(FlowbiteDropdownDirective);
+      .injector.get(FlowbiteDropdown);
 
     expect(compareDropdown.dropdownPlacement()).toBe("bottom-end");
     expect(compareDropdown.dropdownFlip()).toBeTrue();

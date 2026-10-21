@@ -36,7 +36,7 @@ import { StoragePipe } from "../../pipes/storage.pipe";
 import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { Pagination } from "../../components/pagination/pagination";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { AnalyticsService } from "../../services/analytics.service";
 import {
   AllocationType,
@@ -116,7 +116,7 @@ export type RegionVendorMetadata = {
     SearchBar,
     Pagination,
     LoadingSpinner,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
   ],
   templateUrl: "./server-prices.html",
   styleUrl: "./server-prices.scss",
@@ -128,10 +128,9 @@ export class ServerPrices implements OnInit, OnDestroy {
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
-  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
-  allocationDropdown =
-    viewChild<FlowbiteDropdownDirective>("allocationDropdown");
-  pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
+  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
+  allocationDropdown = viewChild<FlowbiteDropdown>("allocationDropdown");
+  pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);

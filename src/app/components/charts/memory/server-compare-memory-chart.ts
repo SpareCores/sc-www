@@ -14,7 +14,7 @@ import { BaseChartDirective } from "ng2-charts";
 import { Button } from "../../button/button";
 import { CompareMemoryChartOption } from "../shared/memory-chart.types";
 import { MemoryChartBuilderService } from "./memory-chart-builder.service";
-import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
 import {
   bindCompareLegendChart,
   injectCompareLegendVisibility,
@@ -24,7 +24,7 @@ import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 @Component({
   selector: "sc-server-compare-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Button, BaseChartDirective, FlowbiteDropdownDirective],
+  imports: [Button, BaseChartDirective, FlowbiteDropdown],
   templateUrl: "./server-compare-memory-chart.html",
   styles: [
     `
@@ -41,7 +41,7 @@ export class ServerCompareMemoryChart {
   private builder = inject(MemoryChartBuilderService);
   private legendVisibility = injectCompareLegendVisibility();
 
-  dropdownBWmem = viewChild(FlowbiteDropdownDirective);
+  dropdownBWmem = viewChild(FlowbiteDropdown);
 
   servers = input<MemoryChartServer[]>([]);
   benchmarkMeta = input<MemoryBenchmarkMeta[]>([]);

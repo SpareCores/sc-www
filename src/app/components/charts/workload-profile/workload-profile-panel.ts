@@ -24,7 +24,7 @@ import { ChartConfiguration, Plugin, ArcElement } from "chart.js";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { Accordion } from "../../accordion/accordion";
-import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import { WorkloadProfileRadarChart } from "./workload-profile-radar-chart";
@@ -167,7 +167,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
     Accordion,
     WorkloadProfileRadarChart,
     BaseChartDirective,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
   ],
   templateUrl: "./workload-profile-panel.html",
   styleUrls: ["./workload-profile-panel.scss"],
@@ -181,7 +181,7 @@ export class WorkloadProfilePanel {
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   scoreGaugeDirective = viewChild<BaseChartDirective>("scoreGauge");
-  profileDropdown = viewChild<FlowbiteDropdownDirective>("profileDropdown");
+  profileDropdown = viewChild<FlowbiteDropdown>("profileDropdown");
 
   readonly idBase = `workload_profile_panel_${WorkloadProfilePanel.nextId++}`;
   readonly profileButtonId = `${this.idBase}_button`;

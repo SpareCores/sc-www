@@ -33,7 +33,7 @@ import {
   syncCompareLegendData,
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
-import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
 import { BenchmarkMultiBarChartBuilderService } from "./benchmark-multi-bar-chart-builder.service";
 import {
   BenchmarkMultiBarChartItem,
@@ -51,7 +51,7 @@ import {
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
     BenchmarkIconPipe,
   ],
   templateUrl: "./benchmark-multi-bar-chart.html",
@@ -71,8 +71,8 @@ export class BenchmarkMultiBarChart {
   private builder = inject(BenchmarkMultiBarChartBuilderService);
   private legendVisibility = injectCompareLegendVisibility();
 
-  primaryDropdown = viewChild<FlowbiteDropdownDirective>("primaryDropdown");
-  secondaryDropdown = viewChild<FlowbiteDropdownDirective>("secondaryDropdown");
+  primaryDropdown = viewChild<FlowbiteDropdown>("primaryDropdown");
+  secondaryDropdown = viewChild<FlowbiteDropdown>("secondaryDropdown");
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
   chartItem = input.required<BenchmarkMultiBarChartItem>();

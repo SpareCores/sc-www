@@ -17,7 +17,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { Modal, ModalOptions } from "flowbite";
 import { Subscription, of, switchMap } from "rxjs";
-import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
+import { DragToPan } from "../../directives/drag-to-pan";
 import { LstopoSvgService } from "../../services/lstopo-svg.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { Button } from "../button/button";
@@ -36,7 +36,7 @@ const lstopoModalOptions: ModalOptions = {
 
 @Component({
   selector: "sc-server-lstopo",
-  imports: [Button, DragToPanDirective],
+  imports: [Button, DragToPan],
   templateUrl: "./server-lstopo.html",
   styleUrl: "./server-lstopo.scss",
   encapsulation: ViewEncapsulation.None,

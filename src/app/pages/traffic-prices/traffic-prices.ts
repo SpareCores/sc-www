@@ -27,7 +27,7 @@ import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { Pagination } from "../../components/pagination/pagination";
 import { SearchBar } from "../../components/search-bar/search-bar";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
 import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
@@ -53,7 +53,7 @@ import {
     SearchBar,
     Pagination,
     LoadingSpinner,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
   ],
   templateUrl: "./traffic-prices.html",
   styleUrl: "./traffic-prices.scss",
@@ -66,8 +66,8 @@ export class TrafficPrices implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
-  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
-  pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
+  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
+  pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
 
   private subscription = new Subscription();
   private searchRequestId = 0;
