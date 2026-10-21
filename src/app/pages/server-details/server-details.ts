@@ -1,3 +1,4 @@
+import { DialogRef } from "@angular/cdk/dialog";
 import { Location, formatDate, isPlatformBrowser } from "@angular/common";
 import {
   Component,
@@ -9,6 +10,7 @@ import {
   OnInit,
   PLATFORM_ID,
   Renderer2,
+  TemplateRef,
   ViewChild,
   inject,
   signal,
@@ -18,7 +20,6 @@ import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { LucideCheck, LucideTriangleAlert } from "@lucide/angular";
 import { Chart, ChartConfiguration, ChartData } from "chart.js";
-import { Modal, ModalOptions } from "flowbite";
 import { BaseChartDirective } from "ng2-charts";
 import { Subscription } from "rxjs";
 import {
@@ -43,6 +44,7 @@ import {
   formatNumberWithCommas,
 } from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { Modal } from "../../components/modal/modal";
 import { ServerCharts } from "../../components/server-charts/server-charts";
 import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
 import {
@@ -58,6 +60,7 @@ import { formatStorageSize } from "../../pipes/pipe-utils";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name-pipe";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
+import { ModalDialog } from "../../services/modal-dialog";
 import { SeoHandler } from "../../services/seo-handler";
 import { CompareSelection } from "../../services/compare-selection";
 import { Toast } from "../../services/toast";
@@ -83,16 +86,6 @@ import {
   BURSTABLE_INSTANCE_WARNING_TITLE,
   HIDDEN_SERVER_PROPERTY_IDS,
 } from "./server-details.constants";
-
-const optionsModal: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
-};
-
-const summarizeModalOptions: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
-};
 
 const SIMILAR_SERVER_CATEGORIES: Partial<
   Record<string, "score" | "score_per_price" | "specs">
@@ -160,6 +153,7 @@ interface PropertyCategoryDefinition {
     LoadingSpinner,
     Dropdown,
     BookmarkButton,
+    Modal,
   ],
   templateUrl: "./server-details.html",
   styleUrl: "./server-details.scss",
@@ -179,6 +173,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   private uiTooltip = inject(UiTooltip);
   private memoryChartBuilder = inject(MemoryChartBuilder);
   private multiBarChartBuilder = inject(BenchmarkMultiBarChartBuilder);
+  private modalDialog = inject(ModalDialog);
   private serverLoadId = 0;
   private loadAbortController: AbortController | null = null;
   private similarAbortController: AbortController | null = null;
@@ -269,9 +264,13 @@ export class ServerDetails implements OnInit, OnDestroy {
 
   activeFAQ: number = -1;
 
-  modalEmbed: any;
-  private summarizeModal: Modal | null = null;
-  summarizeModalRef = viewChild<ElementRef<HTMLElement>>("summarizeModal");
+  private embedModalTemplate =
+    viewChild.required<TemplateRef<unknown>>("embedModalTemplate");
+  private summarizeModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "summarizeModalTemplate",
+  );
+  private embedDialogRef: DialogRef | null = null;
+  private summarizeDialogRef: DialogRef | null = null;
   warningTooltipRef = viewChild<ElementRef<HTMLElement>>("warningTooltip");
   warningTooltipContent = signal("");
 
@@ -737,14 +736,6 @@ export class ServerDetails implements OnInit, OnDestroy {
                   }
                 }, 100);
 
-                const targetElModal =
-                  document.getElementById("embed-charts-modal");
-
-                this.modalEmbed = new Modal(targetElModal, optionsModal, {
-                  id: "embed-charts-modal",
-                  override: true,
-                });
-
                 // https://github.com/chartjs/Chart.js/issues/5387
                 // TODO: check and remove later
                 this.visibilityChangeHandler = () => {
@@ -859,8 +850,8 @@ export class ServerDetails implements OnInit, OnDestroy {
   }
 
   private resetServerState() {
-    this.summarizeModal?.hide();
-    this.modalEmbed?.hide();
+    this.summarizeDialogRef?.close();
+    this.embedDialogRef?.close();
     this.isModalOpen = false;
     this.similarAbortController?.abort();
     this.cleanupBrowserArtifacts();
@@ -917,8 +908,8 @@ export class ServerDetails implements OnInit, OnDestroy {
     this.similarAbortController?.abort();
     this.cleanupBrowserArtifacts();
 
-    this.summarizeModal?.hide();
-    this.summarizeModal = null;
+    this.summarizeDialogRef?.close();
+    this.embedDialogRef?.close();
 
     this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
     this.SEOHandler.cleanupStructuredData(this.document);
@@ -1689,15 +1680,16 @@ export class ServerDetails implements OnInit, OnDestroy {
   }
 
   openModal() {
-    this.isModalOpen = true;
-    this.modalEmbed?.show();
-  }
+    if (this.embedDialogRef) {
+      return;
+    }
 
-  closeModal() {
-    this.modalEmbed?.hide();
-    setTimeout(() => {
+    this.isModalOpen = true;
+    this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
+    this.embedDialogRef.closed.subscribe(() => {
+      this.embedDialogRef = null;
       this.isModalOpen = false;
-    }, 300);
+    });
   }
 
   loadServerDescriptions(
@@ -1758,27 +1750,17 @@ export class ServerDetails implements OnInit, OnDestroy {
       return;
     }
 
-    if (!isPlatformBrowser(this.platformId)) {
+    if (this.summarizeDialogRef) {
       return;
     }
 
     this.isSummarizeModalOpen = true;
-
-    if (!this.summarizeModal) {
-      const modalElement = this.summarizeModalRef()?.nativeElement;
-
-      if (modalElement) {
-        this.summarizeModal = new Modal(modalElement, summarizeModalOptions);
-      }
-    }
-
-    this.summarizeModal?.show();
-  }
-
-  closeSummarizeModal(): void {
-    this.summarizeModal?.hide();
-    setTimeout(() => {
+    this.summarizeDialogRef = this.modalDialog.open(
+      this.summarizeModalTemplate(),
+    );
+    this.summarizeDialogRef.closed.subscribe(() => {
+      this.summarizeDialogRef = null;
       this.isSummarizeModalOpen = false;
-    }, 300);
+    });
   }
 }

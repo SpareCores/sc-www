@@ -1,0 +1,33 @@
+<div
+  class="flex w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] flex-col bg-secondary rounded-lg shadow border border-solid border-emerald-400"
+  [class]="sizeClass()"
+>
+  <div
+    class="flex justify-between gap-4 p-4 md:p-5 border-b border-gray-600"
+    [class.items-center]="!!title()"
+    [class.items-start]="!title()"
+  >
+    <div class="min-w-0" [attr.id]="titleId">
+      @if (title()) {
+        <h2 class="text-xl font-medium text-white">{{ title() }}</h2>
+      }
+      <ng-content select="[modalHeader]"></ng-content>
+    </div>
+    @if (showClose()) {
+      <sc-button
+        variant="close"
+        icon="x"
+        ariaLabel="Close modal"
+        [attr.data-ph-capture-attribute-sc-event]="closeCaptureEvent()"
+        [attr.data-ph-capture-attribute-server-listing-search-prompt-action]="
+          closeCaptureAction()
+        "
+        (buttonClick)="close()"
+      ></sc-button>
+    }
+  </div>
+  <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+    <ng-content></ng-content>
+  </div>
+  <ng-content select="[modalFooter]"></ng-content>
+</div>
