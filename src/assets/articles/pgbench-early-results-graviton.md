@@ -3,7 +3,7 @@
 title: "New PostgreSQL Benchmark: A First Look"
 date: 2026-10-19
 # ~100 character
-teaser: "High-concurrency database metrics on AWS Graviton, and effects of SMT on performance."
+teaser: "High-concurrency database metrics on four AWS Graviton generations, and effects of SMT on performance."
 # 320x220
 image: /assets/images/blog/thumbnails/database-benchmark-smt-wise.webp
 image_alt: Database benchmark scores of GCP's N2 (with SMT) and T2D (no SMT) at various concurrencies.
