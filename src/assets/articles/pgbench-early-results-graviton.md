@@ -90,7 +90,7 @@ And for those who would prefer to play in the raw numbers, here’s the same dat
 
 ## Coming soon... 
 
-We’ll be writing more on our database and other high concurrency benchmarks soon. As a sneak peak, here's an example of how two SKUs with and without simultaneous multithreading (SMT) perform on the database workload with multiple concurrent queries. Specifically, the plot below shows GCP's N2 standard series (which uses SMT) vs the T2D standard (which doesn't).
+We’ll be writing more on our database and other high concurrency benchmarks soon. Here's a sneak peak at the performance patterns of matched-size machines running with and without Hyperthreading and/or Simultaneous Multithreading (SMT). 
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -99,3 +99,5 @@ We’ll be writing more on our database and other high concurrency benchmarks so
     src="/assets/images/blog/pgbench-early-results/database-benchmark-with-SMT-vs-without.png"/>
   <p>Database Benchmark Scores for GCP's N2 (with SMT) and the T2D (no SMT) at Various Concurrency Levels.</p>
 </div>
+
+Performance tends to peak or plateau when the number of concurrent processes is close to the number of physical cores. For machines without Hyperthreading/Simultaneous Multithreading (SMT) this is around the number of vCPUs (V), whereas for those with Hyperthreading/SMT it's closer to V/2. Interestingly, this is exactly what we see above when we compare GCP's N2 standard series (with Intel cores and Hyperthreading) and the T2D standard series (with AMD and no SMT) on our new high-concurrency database metric: The N2 plateaus around V/2 and the T2D at V. 
