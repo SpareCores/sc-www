@@ -315,6 +315,7 @@
                     <button
                       type="button"
                       class="auth-modal__footer-link profile-modal__danger-link"
+                      data-ph-capture-attribute-sc-event="profile email remove open"
                       [disabled]="!!busy()"
                       (click)="askConfirm('email', email.id)"
                     >
@@ -465,6 +466,7 @@
                 <button
                   type="button"
                   class="auth-modal__footer-link profile-modal__danger-link"
+                  data-ph-capture-attribute-sc-event="profile github disconnect open"
                   [disabled]="!!busy()"
                   (click)="askConfirm('github')"
                 >
@@ -655,6 +657,7 @@
                   <button
                     type="button"
                     class="auth-modal__footer-link profile-modal__danger-link"
+                    data-ph-capture-attribute-sc-event="profile session revoke open"
                     [disabled]="!!busy()"
                     (click)="askConfirm('session', session.id)"
                   >
