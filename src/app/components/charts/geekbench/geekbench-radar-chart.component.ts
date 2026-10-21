@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -38,7 +38,6 @@ import {
   selector: "sc-geekbench-radar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     LucideDynamicIcon,
     LucideCircleArrowUp,
     LucideInfo,

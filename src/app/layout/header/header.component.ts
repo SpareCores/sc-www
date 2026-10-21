@@ -4,7 +4,7 @@ import {
   CdkDragHandle,
   CdkDropList,
 } from "@angular/cdk/drag-drop";
-import { CommonModule } from "@angular/common";
+
 import { Component, inject, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Button } from "../../components/button/button";
@@ -72,7 +72,6 @@ import { AuthStateService } from "../../core/auth";
     LucideTrash,
     LucideUser,
     RouterLink,
-    CommonModule,
     FlowbiteDropdownDirective,
     CdkDropList,
     CdkDrag,
