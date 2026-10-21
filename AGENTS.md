@@ -7,7 +7,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 ### Chat Behavior
 
 - Answer concisely. Drop filler words and hedging.
-- No post-task summaries or change reports. Respond with at most one short sentence upon completion.
+- No post-task summaries or change reports. Respond with at most one short sentence upon completion, except for the disclosures required below.
 - Always state what was not verified and any steps the user must run (e.g. lockfile updates, baseline regeneration), even if that takes more than one sentence.
 
 ### Engineering Guards
