@@ -37,7 +37,7 @@ When we consider this data on a per-vCPU basis (shown below), it’s a bit easie
   <img class="zoomin w-full"
     title="Per-vCPU PostgreSQL Benchmark Scores within AWS Graviton Families"
     alt="Per-vCPU PostgreSQL Benchmark Scores within AWS Graviton Families"
-    src="/assets/images/blog/pgbench-early-results/pgbench-tpm-per-vpu-graviton-ec2-and-rds.png"/>
+    src="/assets/images/blog/pgbench-early-results/pgbench-tpm-per-vcpu-graviton-ec2-and-rds.png"/>
   <p>PostgreSQL TPM per vCPU for EC2 vs RDS running on Graviton families m6g - m9g.</p>
 </div>
 
