@@ -56,53 +56,37 @@
       (confirmed)="confirmSaveAssessment($event)"
     ></sc-collection-save-modal>
 
-    <div
-      #introductionModal
-      id="advisor-introduction-modal"
-      tabindex="-1"
-      class="advisor-video-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
-    >
-      <div class="relative w-full max-w-4xl mx-auto my-auto">
-        <div
-          class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
-        >
-          <div
-            class="flex items-center justify-between p-4 border-b border-gray-600"
-          >
-            <h2 class="text-xl font-medium text-white">Advisor introduction</h2>
-            <sc-button
-              variant="close"
-              icon="x"
-              ariaLabel="Close modal"
-              (buttonClick)="closeIntroductionModal()"
-            ></sc-button>
-          </div>
-          <div class="p-4">
-            @if (showIntroductionVideo) {
-              <iframe
-                width="100%"
-                height="auto"
-                src="https://www.youtube.com/embed/4QwvxaLTW2k"
-                title="Spare Cores advisor introduction"
-                frameborder="0"
-                allow="
-                  accelerometer;
-                  autoplay;
-                  clipboard-write;
-                  encrypted-media;
-                  gyroscope;
-                  picture-in-picture;
-                  web-share;
-                "
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-                class="advisor-video-frame"
-              ></iframe>
-            }
-          </div>
+    <ng-template #introductionModalTemplate>
+      <sc-modal
+        id="advisor-introduction-modal"
+        title="Advisor introduction"
+        size="4xl"
+      >
+        <div class="p-4">
+          @if (showIntroductionVideo) {
+            <iframe
+              width="100%"
+              height="auto"
+              src="https://www.youtube.com/embed/4QwvxaLTW2k"
+              title="Spare Cores advisor introduction"
+              frameborder="0"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+                web-share;
+              "
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              class="advisor-video-frame"
+            ></iframe>
+          }
         </div>
-      </div>
-    </div>
+      </sc-modal>
+    </ng-template>
 
     <div class="advisor-page-body mx-2 xl:mx-0">
       <div

@@ -1,12 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "selector",
-  plugins: [require("flowbite/plugin")],
-  content: [
-    "./src/**/*.{html,ts,scss}",
-    "./src/assets/articles/*.md",
-    "./node_modules/flowbite/**/*.js",
-  ],
+  content: ["./src/**/*.{html,ts,scss}", "./src/assets/articles/*.md"],
   theme: {
     extend: {
       fontFamily: {

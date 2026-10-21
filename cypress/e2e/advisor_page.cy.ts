@@ -72,10 +72,7 @@ describe("Advisor page", () => {
       .and("contain", "workload_id=workload_profile:web");
 
     cy.get('[id="advisor_introduction_button"]').should("be.visible").click();
-    cy.get('[id="advisor-introduction-modal"]').should(
-      "not.have.class",
-      "hidden",
-    );
+    cy.get('[id="advisor-introduction-modal"]').should("be.visible");
     cy.get('[id="advisor-introduction-modal"] iframe').should(
       "have.attr",
       "title",
@@ -84,7 +81,7 @@ describe("Advisor page", () => {
     cy.get('[id="advisor-introduction-modal"] button[type="button"]')
       .first()
       .click({ force: true });
-    cy.get('[id="advisor-introduction-modal"]').should("have.class", "hidden");
+    cy.get('[id="advisor-introduction-modal"]').should("not.exist");
 
     cy.get('[id="custom_control_input_baseline_server"]').as(
       "baselineServerInput",
