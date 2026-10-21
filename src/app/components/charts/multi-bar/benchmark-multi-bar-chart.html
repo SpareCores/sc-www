@@ -28,10 +28,10 @@
         }
       </h3>
       <sc-button
-        #primaryDropdown="scFlowbiteDropdown"
+        #primaryDropdown="scDropdown"
         [id]="buttonId"
-        [scFlowbiteDropdown]="optionsId"
-        [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
+        [scDropdown]="primaryPanel"
+        [dropdownEnabled]="!!chartData()"
         [label]="currentOption().name || ''"
         icon="chevron-down"
         variant="dropdown"
@@ -61,12 +61,10 @@
     >
       @if (hasSecondaryOptions()) {
         <sc-button
-          #secondaryDropdown="scFlowbiteDropdown"
+          #secondaryDropdown="scDropdown"
           [id]="secondaryButtonId"
-          [scFlowbiteDropdown]="secondaryOptionsId"
-          [dropdownEnabled]="
-            isBrowserEnvironment() && !!chartData() && hasSecondaryOptions()
-          "
+          [scDropdown]="secondaryPanel"
+          [dropdownEnabled]="!!chartData() && hasSecondaryOptions()"
           [label]="currentSecondaryOption()?.name || ''"
           icon="chevron-down"
           variant="dropdown"
@@ -75,10 +73,10 @@
         ></sc-button>
       }
       <sc-button
-        #primaryDropdown="scFlowbiteDropdown"
+        #primaryDropdown="scDropdown"
         [id]="buttonId"
-        [scFlowbiteDropdown]="optionsId"
-        [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
+        [scDropdown]="primaryPanel"
+        [dropdownEnabled]="!!chartData()"
         [label]="currentOption().name || ''"
         icon="chevron-down"
         variant="dropdown"
@@ -102,36 +100,38 @@
   </div>
 }
 
-<div
-  [id]="optionsId"
-  class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    [attr.aria-labelledby]="buttonId"
+<ng-template #primaryPanel>
+  <div
+    [id]="optionsId"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
   >
-    @for (
-      chartTemplate of chart().options;
-      track chartTemplate.benchmark_id;
-      let i = $index
-    ) {
-      <li>
-        <button
-          type="button"
-          class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
-          (click)="selectOption(i)"
-        >
-          <div class="text-white text-sm">{{ chartTemplate.name }}</div>
-        </button>
-      </li>
-    }
-  </ul>
-</div>
+    <ul
+      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      [attr.aria-labelledby]="buttonId"
+    >
+      @for (
+        chartTemplate of chart().options;
+        track chartTemplate.benchmark_id;
+        let i = $index
+      ) {
+        <li>
+          <button
+            type="button"
+            class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+            (click)="selectOption(i)"
+          >
+            <div class="text-white text-sm">{{ chartTemplate.name }}</div>
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
-@if (hasSecondaryOptions()) {
+<ng-template #secondaryPanel>
   <div
     [id]="secondaryOptionsId"
-    class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -154,7 +154,7 @@
       }
     </ul>
   </div>
-}
+</ng-template>
 
 <div
   #tooltipDefault

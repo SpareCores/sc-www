@@ -42,7 +42,7 @@ import {
   syncCompareLegendData,
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
-import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
+import { Dropdown } from "../../../directives/dropdown";
 
 @Component({
   selector: "sc-compression-chart",
@@ -53,7 +53,7 @@ import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,
-    FlowbiteDropdown,
+    Dropdown,
     BenchmarkIconPipe,
   ],
   templateUrl: "./compression-chart.html",
@@ -74,8 +74,8 @@ export class CompressionChart {
   private legendVisibility = injectCompareLegendVisibility();
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
-  selectorDropdown = viewChild<FlowbiteDropdown>("selectorDropdown");
-  coresDropdown = viewChild<FlowbiteDropdown>("coresDropdown");
+  selectorDropdown = viewChild<Dropdown>("selectorDropdown");
+  coresDropdown = viewChild<Dropdown>("coresDropdown");
 
   layout = input<"details" | "compare">("details");
   benchmarksByCategory = input<CompressionBenchmarkGroup[]>([]);
