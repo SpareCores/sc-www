@@ -175,20 +175,6 @@ input[type="number"]::-webkit-outer-spin-button {
   margin: 0; /* This removes the extra space created by the spinners */
 }
 
-.cl-formFieldInput:not([type="checkbox"]):not([type="radio"]),
-.cl-input:not([type="checkbox"]):not([type="radio"]) {
-  border-radius: 0.5rem !important;
-}
-
-.cl-formFieldInput[type="checkbox"],
-.cl-input[type="checkbox"] {
-  border-radius: 0.25rem !important;
-}
-
-.cl-otpCodeFieldInput {
-  border: 1px solid #34d399 !important;
-}
-
 @keyframes spin-slot {
   from {
     transform: rotateX(0deg);

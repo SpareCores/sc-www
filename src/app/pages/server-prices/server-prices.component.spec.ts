@@ -163,4 +163,40 @@ describe("ServerPricesComponent", () => {
     ).toBe(2);
     expect(showHttpError).not.toHaveBeenCalled();
   }));
+
+  it("aborts the previous search when a newer one starts", () => {
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const signals: AbortSignal[] = [];
+
+    spyOn(keeperAPI, "searchServerPrices").and.callFake(
+      (_query: any, params: any = {}) => {
+        signals.push(params.signal);
+        return new Promise(() => {});
+      },
+    );
+
+    (component as any)._searchServers(true);
+    (component as any)._searchServers(true);
+
+    expect(signals.length).toBe(2);
+    expect(signals[0].aborted).toBeTrue();
+    expect(signals[1].aborted).toBeFalse();
+  });
+
+  it("aborts the active search on destroy", () => {
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    let activeSignal: AbortSignal | undefined;
+
+    spyOn(keeperAPI, "searchServerPrices").and.callFake(
+      (_query: any, params: any = {}) => {
+        activeSignal = params.signal;
+        return new Promise(() => {});
+      },
+    );
+
+    (component as any)._searchServers(true);
+    component.ngOnDestroy();
+
+    expect(activeSignal?.aborted).toBeTrue();
+  });
 });
