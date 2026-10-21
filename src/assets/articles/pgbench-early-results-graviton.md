@@ -18,7 +18,7 @@ Since this benchmark is also one of our first tests of high concurrency workload
 
 ## Benchmark Results
 
-Cutting to the chase, we ran the PostgreSQL benchmark on all of the available Graviton machines in addition to their corresponding Amazon-managed RDS instances. As shown in the figure below, the performance followed a similar pattern to our earlier-reported results with TPM increasing with successive generations. Interestingly, we also saw a 3.9%-15.7% boost in TPM for the Amazon-managed RDS instances over the database running on the equivalent EC2 instances (tuned via industry standard methodology). 
+Cutting to the chase, we ran the PostgreSQL benchmark on all of the available Graviton machines in addition to their corresponding Amazon-managed RDS instances. As shown in the figure below, the performance followed a similar pattern to our earlier-reported results with TPM increasing with successive generations. Interestingly, we also saw a 3.7%-15.7% boost in TPM for the Amazon-managed RDS instances over the database running on the equivalent EC2 instances (tuned via industry standard methodology). 
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -90,7 +90,7 @@ And for those who would prefer to play in the raw numbers, here’s the same dat
 
 ## Coming soon... 
 
-We’ll be writing more on our database and other high concurrency benchmarks soon. Here's a sneak peak at the performance patterns of matched-size machines running with and without Hyperthreading and/or Simultaneous Multithreading (SMT). 
+We’ll be writing more on our database and other high concurrency benchmarks soon. Here's a sneak peek at the performance patterns of matched-size machines running with and without Hyperthreading and/or Simultaneous Multithreading (SMT). 
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
