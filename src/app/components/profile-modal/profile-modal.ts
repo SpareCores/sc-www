@@ -431,11 +431,6 @@ export class ProfileModal {
       pending.cancel();
       return;
     }
-    if (result.status === "complete") {
-      await pending.retry();
-      return;
-    }
-
     this.pendingReverify = pending;
     this.clearReverify();
     this.reverify.set(

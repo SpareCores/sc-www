@@ -41,6 +41,9 @@ export type ProfileResult =
 export type ReverifyResult =
   | { status: "password" }
   | { status: "code"; emailAddress: string }
+  | { status: "error"; message: string };
+
+export type ReverifyCompleteResult =
   | { status: "complete" }
   | { status: "error"; message: string };
 

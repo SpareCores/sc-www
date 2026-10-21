@@ -20,6 +20,7 @@ import type {
   ProfileSession,
   ProfileSessionsResult,
   ProfileView,
+  ReverifyCompleteResult,
   ReverifyResult,
 } from "../auth.types";
 import { authErrorMessage, isReverificationRequired } from "../auth.utils";
@@ -271,7 +272,7 @@ export class ProfileService {
 
   async completeReverification(
     payload: { password: string } | { code: string },
-  ): Promise<ReverifyResult> {
+  ): Promise<ReverifyCompleteResult> {
     const session = this.clerk.session;
     if (!session) {
       return this.notReady();
