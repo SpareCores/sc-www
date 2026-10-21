@@ -229,11 +229,8 @@ export class ProfileService {
       return this.failure(error, AUTH_MESSAGES.unableToDeleteAccount);
     }
 
-    try {
-      await this.clerk.clearActiveSession();
-    } finally {
-      this.auth.refreshUser();
-    }
+    await this.clerk.clearActiveSession().catch(() => undefined);
+    this.auth.refreshUser();
     return { status: "complete" };
   }
 

@@ -391,7 +391,13 @@ export class ProfileModal {
 
     this.feedback.set(null);
     this.busy.set(key);
-    const result = await action();
+    let result: ProfileResult;
+    try {
+      result = await action();
+    } catch (error) {
+      this.busy.set(null);
+      throw error;
+    }
     if (result.status !== "redirecting") {
       this.busy.set(null);
     }

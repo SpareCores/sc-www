@@ -103,4 +103,15 @@ describe("ProfileModal", () => {
       lastName: "Doe",
     });
   });
+
+  it("unlocks the modal when an action rejects", async () => {
+    profileService.updateName.and.rejectWith(new Error("boom"));
+    const modal = fixture.componentInstance as unknown as {
+      busy(): string | null;
+      saveName(form: { invalid: boolean }): Promise<void>;
+    };
+
+    await expectAsync(modal.saveName({ invalid: false })).toBeRejected();
+    expect(modal.busy()).toBeNull();
+  });
 });

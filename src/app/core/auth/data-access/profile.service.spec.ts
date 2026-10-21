@@ -137,6 +137,20 @@ describe("ProfileService", () => {
     expect(setActive).toHaveBeenCalledOnceWith({ session: null });
   });
 
+  it("completes the deletion when clearing the session fails", async () => {
+    const user = createUser();
+    const setActive = jasmine
+      .createSpy("setActive")
+      .and.rejectWith(new Error("offline"));
+    const { service, auth } = createService({ user, setActive });
+    const refreshSpy = spyOn(auth, "refreshUser").and.callThrough();
+
+    const result = await service.deleteAccount();
+
+    expect(result).toEqual({ status: "complete" });
+    expect(refreshSpy).toHaveBeenCalled();
+  });
+
   it("clears the deletion mark when deleting fails", async () => {
     const user = createUser({
       delete: jasmine.createSpy("delete").and.rejectWith(new Error("nope")),
