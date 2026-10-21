@@ -10,7 +10,7 @@ import {
   flushMicrotasks,
   tick,
 } from "@angular/core/testing";
-import { AuthStateService } from "../core/auth";
+import { AuthState } from "../core/auth";
 import {
   KeeperHttpClient,
   RETRY_INTERVALS,
@@ -25,7 +25,7 @@ import {
 describe("KeeperHttpClient", () => {
   let client: KeeperHttpClient;
   let httpMock: HttpTestingController;
-  let auth: jasmine.SpyObj<Pick<AuthStateService, "getToken">>;
+  let auth: jasmine.SpyObj<Pick<AuthState, "getToken">>;
   const path = "/servers";
   const baseUri = import.meta.env.NG_APP_BACKEND_BASE_URI || "";
 
@@ -34,10 +34,9 @@ describe("KeeperHttpClient", () => {
   }
 
   function setup(platformId: object = "browser" as unknown as object) {
-    auth = jasmine.createSpyObj<Pick<AuthStateService, "getToken">>(
-      "AuthStateService",
-      ["getToken"],
-    );
+    auth = jasmine.createSpyObj<Pick<AuthState, "getToken">>("AuthState", [
+      "getToken",
+    ]);
     auth.getToken.and.resolveTo(null);
 
     TestBed.configureTestingModule({
@@ -46,7 +45,7 @@ describe("KeeperHttpClient", () => {
         provideHttpClientTesting(),
         { provide: PLATFORM_ID, useValue: platformId },
         {
-          provide: AuthStateService,
+          provide: AuthState,
           useValue: auth,
         },
       ],
@@ -56,7 +55,7 @@ describe("KeeperHttpClient", () => {
     client = new KeeperHttpClient(
       angularHttp,
       platformId,
-      auth as unknown as AuthStateService,
+      auth as unknown as AuthState,
     );
     httpMock = TestBed.inject(HttpTestingController);
   }

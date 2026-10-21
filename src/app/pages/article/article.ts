@@ -18,14 +18,14 @@ import { isPlatformBrowser } from "@angular/common";
 import { MarkdownModule, MarkdownService } from "ngx-markdown";
 import { DomSanitizer } from "@angular/platform-browser";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ArticlesService } from "../../services/articles.service";
+import { SeoHandler } from "../../services/seo-handler";
+import { ArticlesApi } from "../../services/articles-api";
 import { Lightbox, LightboxModule } from "ngx-lightbox";
 import * as yaml from "js-yaml";
 import { initGiscus } from "../../tools/initGiscus";
-import { ToastService } from "../../services/toast.service";
-import { PrismService } from "../../services/prism.service";
-import { GlossaryService } from "../../services/glossary.service";
+import { Toast } from "../../services/toast";
+import { PrismHighlighter } from "../../services/prism-highlighter";
+import { Glossary } from "../../services/glossary";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -44,15 +44,15 @@ export class Article implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
   private route = inject(ActivatedRoute);
-  private SEOHandler = inject(SeoHandlerService);
+  private SEOHandler = inject(SeoHandler);
   private markdownService = inject(MarkdownService);
   private domSanitizer = inject(DomSanitizer);
-  private articleHandler = inject(ArticlesService);
+  private articleHandler = inject(ArticlesApi);
   private lightbox = inject(Lightbox);
   private renderer = inject(Renderer2);
-  private toastService = inject(ToastService);
-  private prismService = inject(PrismService);
-  private glossaryService = inject(GlossaryService);
+  private toastService = inject(Toast);
+  private prismService = inject(PrismHighlighter);
+  private glossaryService = inject(Glossary);
 
   @ViewChild("articleDiv") articleDiv!: ElementRef;
   private subscription = new Subscription();

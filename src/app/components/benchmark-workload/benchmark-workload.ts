@@ -17,7 +17,7 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { Status } from "../../../../sdk/data-contracts";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import {
   BenchmarkWorkloadExample,
   BenchmarkWorkloadItem,
@@ -49,7 +49,7 @@ interface HistogramBin {
 })
 export class BenchmarkWorkload {
   private platformId = inject(PLATFORM_ID);
-  private uiTooltip = inject(UiTooltipService);
+  private uiTooltip = inject(UiTooltip);
   readonly isBrowser = isPlatformBrowser(this.platformId);
 
   readonly workload = input.required<BenchmarkWorkloadItem>();

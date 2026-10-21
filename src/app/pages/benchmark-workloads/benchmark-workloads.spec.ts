@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkWorkloads } from "./benchmark-workloads";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { BENCHMARK_WORKLOADS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { Status } from "../../../../sdk/data-contracts";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
@@ -64,7 +64,7 @@ describe("BenchmarkWorkloads", () => {
       providers: [
         ...sharedTestingProviders,
         {
-          provide: KeeperAPIService,
+          provide: KeeperAPI,
           useValue: keeperApiService,
         },
       ],
@@ -120,7 +120,7 @@ describe("BenchmarkWorkloads", () => {
   });
 
   it("shows http error toast when workloads load fails with 500", async () => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
     keeperApiService.getBenchmarkWorkloads.and.rejectWith({ status: 500 });
 
@@ -135,7 +135,7 @@ describe("BenchmarkWorkloads", () => {
   });
 
   it("shows http error toast when workloads load fails with 404", async () => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
     keeperApiService.getBenchmarkWorkloads.and.rejectWith({
       status: 404,
@@ -157,7 +157,7 @@ describe("BenchmarkWorkloads", () => {
   });
 
   it("does not show toast when workloads load is aborted", async () => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
     keeperApiService.getBenchmarkWorkloads.and.rejectWith(
       new DOMException("The operation was aborted.", "AbortError"),

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkWorkload } from "./benchmark-workload";
 import { Status } from "../../../../sdk/data-contracts";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("BenchmarkWorkload", () => {
@@ -53,7 +53,7 @@ describe("BenchmarkWorkload", () => {
   });
 
   it("uses the shared tooltip service for status and direction tooltips", () => {
-    const tooltipService = TestBed.inject(UiTooltipService);
+    const tooltipService = TestBed.inject(UiTooltip);
     const showSpy = spyOn(tooltipService, "show");
     const hideSpy = spyOn(tooltipService, "hide");
     const target = document.createElement("button");

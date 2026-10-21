@@ -2,7 +2,7 @@ import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NgForm } from "@angular/forms";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
+import { AUTH_MESSAGES, AuthState } from "../../core/auth";
 import { LoginModal } from "./login-modal";
 
 type LoginModalInternals = {
@@ -19,11 +19,11 @@ type LoginModalInternals = {
 describe("LoginModal", () => {
   let fixture: ComponentFixture<LoginModal>;
   let modal: LoginModalInternals;
-  let auth: jasmine.SpyObj<AuthStateService>;
+  let auth: jasmine.SpyObj<AuthState>;
   const validForm = { invalid: false } as NgForm;
 
   beforeEach(async () => {
-    auth = jasmine.createSpyObj<AuthStateService>("AuthStateService", [
+    auth = jasmine.createSpyObj<AuthState>("AuthState", [
       "submitLogin",
       "startPasswordReset",
       "completePasswordReset",
@@ -36,7 +36,7 @@ describe("LoginModal", () => {
       providers: [
         ...sharedTestingProviders,
         {
-          provide: AuthStateService,
+          provide: AuthState,
           useValue: { ...auth, signInModalOpen: signal(true) },
         },
       ],

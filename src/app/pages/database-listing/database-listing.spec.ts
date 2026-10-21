@@ -8,17 +8,17 @@ import { Router } from "@angular/router";
 import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { DatabaseListing } from "./database-listing";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_DATABASES_TOAST_ID } from "../../services/toast-ids";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("DatabaseListing", () => {
   let component: DatabaseListing;
   let fixture: ComponentFixture<DatabaseListing>;
   let router: Router;
-  let keeperAPI: KeeperAPIService;
+  let keeperAPI: KeeperAPI;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -29,7 +29,7 @@ describe("DatabaseListing", () => {
     fixture = TestBed.createComponent(DatabaseListing);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
-    keeperAPI = TestBed.inject(KeeperAPIService);
+    keeperAPI = TestBed.inject(KeeperAPI);
     fixture.detectChanges();
   });
 
@@ -38,7 +38,7 @@ describe("DatabaseListing", () => {
   });
 
   it("uses the shared tooltip service for column info tooltips", () => {
-    const tooltipService = TestBed.inject(UiTooltipService);
+    const tooltipService = TestBed.inject(UiTooltip);
     const showSpy = spyOn(tooltipService, "show");
     const hideSpy = spyOn(tooltipService, "hide");
     const target = document.createElement("span");
@@ -212,7 +212,7 @@ describe("DatabaseListing", () => {
   }));
 
   it("shows query-error toast when search fails with 422 and clears it on retry success", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
     const removeToast = spyOn(toastService, "removeToast");
     let resolveSecond!: (value: any) => void;

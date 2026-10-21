@@ -8,8 +8,8 @@ import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { VendorDetails } from "./vendor-details";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { VENDOR_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 
 describe("VendorDetails", () => {
@@ -54,7 +54,7 @@ describe("VendorDetails", () => {
           },
         },
         {
-          provide: KeeperAPIService,
+          provide: KeeperAPI,
           useValue: {
             getVendors,
             getRegions: () =>
@@ -153,7 +153,7 @@ describe("VendorDetails", () => {
   });
 
   it("shows http error toast when vendor load fails with 500", async () => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
     getVendors.and.rejectWith({ status: 500 });
 
@@ -227,7 +227,7 @@ describe("VendorDetails", () => {
   }));
 
   it("ignores stale vendor failure after a newer vendor load", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
     let rejectFirst!: (reason?: any) => void;
 

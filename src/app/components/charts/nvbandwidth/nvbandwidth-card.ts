@@ -16,7 +16,7 @@ import {
 } from "@lucide/angular";
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
   NVBANDWIDTH_TITLE,
@@ -49,7 +49,7 @@ function isRightColumnSection(section: NvbandwidthSection<string>): boolean {
   styleUrl: "./nvbandwidth-card.scss",
 })
 export class NvbandwidthCard {
-  private tooltipService = inject(ChartTooltipService);
+  private tooltipService = inject(ChartTooltip);
 
   benchmarkMeta = input<Benchmark[] | null>([]);
   benchmarkScores = input<BenchmarkScore[] | null>([]);

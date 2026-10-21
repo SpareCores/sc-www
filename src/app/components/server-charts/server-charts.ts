@@ -35,13 +35,13 @@ import { MemoryBenchmarkMeta } from "../charts/memory/memory-chart.types";
 import { NvbandwidthCard } from "../charts/nvbandwidth/nvbandwidth-card";
 import { ServerMemoryChart } from "../charts/memory/server-memory-chart";
 import { StressNgFullCard } from "../charts/stress-ng-full/stress-ng-full-card";
-import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
+import { BenchmarkMultiBarChartBuilder } from "../charts/multi-bar/benchmark-multi-bar-chart-builder";
 import { BenchmarkMultiBarChart } from "../charts/multi-bar/benchmark-multi-bar-chart";
 import {
   BenchmarkMultiBarChartItem,
   MultiBarBenchmarkGroup,
 } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
-import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
+import { ChartTooltip } from "../charts/shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../charts/shared/chart-tooltip.utils";
 import { WorkloadProfilePanel } from "../charts/workload-profile/workload-profile-panel";
 import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload-profile.utils";
@@ -71,8 +71,8 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
   styleUrl: "./server-charts.scss",
 })
 export class ServerCharts implements OnChanges {
-  private tooltipService = inject(ChartTooltipService);
-  private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
+  private tooltipService = inject(ChartTooltip);
+  private multiBarBuilder = inject(BenchmarkMultiBarChartBuilder);
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef<HTMLElement>;
 

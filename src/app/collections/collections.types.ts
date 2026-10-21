@@ -2,7 +2,7 @@ import type { SearchBarQuery } from "../components/search-bar/types/search-bar.t
 import type {
   ComparedDatabase,
   ComparedServer,
-} from "../services/server-compare.service";
+} from "../services/compare-selection";
 
 export type SavedComparisonInstance = ComparedServer | ComparedDatabase;
 

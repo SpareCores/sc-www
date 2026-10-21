@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   inject,
 } from "@angular/core";
-import { AnalyticsService } from "../../services/analytics.service";
+import { Analytics } from "../../services/analytics";
 import { Button } from "../button/button";
 
 type DownloadItemVm = {
@@ -25,7 +25,7 @@ type DownloadItemVm = {
 })
 export class DownloadableLogoCollection implements OnChanges {
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly analytics = inject(AnalyticsService);
+  private readonly analytics = inject(Analytics);
 
   @Input() folderName: string = "";
   @Input() fileNames: string[] = [];

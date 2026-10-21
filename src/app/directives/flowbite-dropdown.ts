@@ -12,8 +12,8 @@ import {
 import { Dropdown } from "flowbite";
 import {
   DropdownBehaviorOptions,
-  DropdownManagerService,
-} from "../services/dropdown-manager.service";
+  DropdownManager,
+} from "../services/dropdown-manager";
 
 @Directive({
   selector: "[scFlowbiteDropdown]",
@@ -23,7 +23,7 @@ import {
 export class FlowbiteDropdown implements AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private elementRef = inject(ElementRef<HTMLElement>);
-  private dropdownManager = inject(DropdownManagerService);
+  private dropdownManager = inject(DropdownManager);
   private viewReady = signal(false);
 
   scFlowbiteDropdown = input.required<string>();

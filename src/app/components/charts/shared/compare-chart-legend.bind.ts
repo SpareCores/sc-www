@@ -3,15 +3,15 @@ import {
   applyCompareDatasetVisibility,
   withCompareLegendBehavior,
 } from "./chart-legend.utils";
-import { CompareChartLegendVisibilityService } from "./compare-chart-legend-visibility.service";
+import { CompareChartLegendVisibility } from "./compare-chart-legend-visibility";
 
 export function injectCompareLegendVisibility() {
-  return inject(CompareChartLegendVisibilityService, { optional: true });
+  return inject(CompareChartLegendVisibility, { optional: true });
 }
 
 export function syncCompareLegendData<T>(
   data: T | undefined,
-  visibility: CompareChartLegendVisibilityService | null | undefined,
+  visibility: CompareChartLegendVisibility | null | undefined,
 ): T | undefined {
   if (!data) {
     return data;
@@ -25,7 +25,7 @@ export function syncCompareLegendData<T>(
 
 export function syncCompareLegendOptions<T extends { plugins?: object }>(
   options: T | undefined,
-  visibility: CompareChartLegendVisibilityService | null | undefined,
+  visibility: CompareChartLegendVisibility | null | undefined,
 ): T | undefined {
   if (!options) {
     return options;
@@ -42,7 +42,7 @@ export function bindCompareLegendChart<
   TOptions extends { plugins?: object } | undefined,
 >(
   chart: { data: TData; options: TOptions } | undefined,
-  visibility: CompareChartLegendVisibilityService | null | undefined,
+  visibility: CompareChartLegendVisibility | null | undefined,
 ): { data: TData; options: TOptions } | undefined {
   if (!chart) {
     return undefined;

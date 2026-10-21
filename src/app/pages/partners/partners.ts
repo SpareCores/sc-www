@@ -4,7 +4,7 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import {
   PARTNER_CATEGORIES,
   PARTNER_INTEREST_SECTION,
@@ -22,7 +22,7 @@ import { PartnerCategory, PartnerInterestSection } from "./partners.types";
   styleUrl: "./partners.scss",
 })
 export class Partners implements OnInit {
-  private readonly seoHandler = inject(SeoHandlerService);
+  private readonly seoHandler = inject(SeoHandler);
 
   readonly pageTitle = PARTNERS_PAGE_TITLE;
   readonly pageDescription = PARTNERS_PAGE_DESCRIPTION;

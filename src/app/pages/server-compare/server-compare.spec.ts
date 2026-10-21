@@ -8,17 +8,17 @@ import { ActivatedRoute, convertToParamMap, Router } from "@angular/router";
 import { EMPTY, Subject } from "rxjs";
 
 import { ServerCompare } from "./server-compare";
-import { AnalyticsService } from "../../services/analytics.service";
-import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { PrismService } from "../../services/prism.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { Analytics } from "../../services/analytics";
+import { ChartTooltip } from "../../components/charts/shared/chart-tooltip";
+import { KeeperAPI } from "../../services/keeper-api";
+import { PrismHighlighter } from "../../services/prism-highlighter";
+import { SeoHandler } from "../../services/seo-handler";
 import {
   ComparedServer,
   ServerCompareBaseline,
-  ServerCompareService,
-} from "../../services/server-compare.service";
-import { ToastService } from "../../services/toast.service";
+  CompareSelection,
+} from "../../services/compare-selection";
+import { Toast } from "../../services/toast";
 import {
   BAD_SERVER_COMPARE_URL_TOAST_ID,
   SERVER_COMPARE_ERROR_TOAST_ID,
@@ -96,7 +96,7 @@ describe("ServerCompare", () => {
           },
         },
         {
-          provide: KeeperAPIService,
+          provide: KeeperAPI,
           useValue: {
             getServerMeta,
             getServerBenchmarkMeta,
@@ -109,13 +109,13 @@ describe("ServerCompare", () => {
           },
         },
         {
-          provide: SeoHandlerService,
+          provide: SeoHandler,
           useValue: {
             updateTitleAndMetaTags,
           },
         },
         {
-          provide: ServerCompareService,
+          provide: CompareSelection,
           useValue: {
             clearCompare,
             toggleCompare,
@@ -126,7 +126,7 @@ describe("ServerCompare", () => {
           },
         },
         {
-          provide: ToastService,
+          provide: Toast,
           useValue: {
             show: showToast,
             removeToast,
@@ -134,20 +134,20 @@ describe("ServerCompare", () => {
           },
         },
         {
-          provide: PrismService,
+          provide: PrismHighlighter,
           useValue: {
             highlightAll,
           },
         },
         {
-          provide: ChartTooltipService,
+          provide: ChartTooltip,
           useValue: {
             showIfPresent,
             hide: hideTooltip,
           },
         },
         {
-          provide: AnalyticsService,
+          provide: Analytics,
           useValue: {
             SentryException: sentryException,
           },

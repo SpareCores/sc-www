@@ -10,8 +10,8 @@ export type {
   RegisterDetailsPayload,
   RegisterResult,
 } from "./auth.types";
-export { AuthStateService } from "./data-access/auth-state.service";
-export { ProfileService } from "./data-access/profile.service";
+export { AuthState } from "./data-access/auth-state";
+export { Profile } from "./data-access/profile";
 export { authGuard, blockLandingDuringAuthGuard } from "./guards/auth.guard";
 export { authInterceptor } from "./interceptors/auth.interceptor";
 export { provideAuthFeature } from "./auth-feature.providers";

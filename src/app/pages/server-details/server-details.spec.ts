@@ -8,8 +8,8 @@ import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 
 import { ServerDetails } from "./server-details";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -75,13 +75,13 @@ describe("ServerDetails", () => {
 describe("ServerDetails route reloads", () => {
   let component: ServerDetails;
   let fixture: ComponentFixture<ServerDetails>;
-  let keeperAPI: jasmine.SpyObj<KeeperAPIService>;
+  let keeperAPI: jasmine.SpyObj<KeeperAPI>;
   const params$ = new BehaviorSubject({ vendor: "aws", id: "old" });
 
   beforeEach(async () => {
     const pending = () => new Promise(() => {});
 
-    keeperAPI = jasmine.createSpyObj<KeeperAPIService>("KeeperAPIService", [
+    keeperAPI = jasmine.createSpyObj<KeeperAPI>("KeeperAPI", [
       "getServerMeta",
       "getServerBenchmarkMeta",
       "getServerSimilarServers",
@@ -174,7 +174,7 @@ describe("ServerDetails route reloads", () => {
           },
         },
         {
-          provide: KeeperAPIService,
+          provide: KeeperAPI,
           useValue: keeperAPI,
         },
       ],
@@ -185,7 +185,7 @@ describe("ServerDetails route reloads", () => {
   });
 
   it("clears stale server details before showing a failed route load", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
 
     fixture.detectChanges();

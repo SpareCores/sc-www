@@ -47,9 +47,9 @@ import {
   PGBENCH_HEAVY_READ_ONLY_ID,
   PgbenchScore,
 } from "../../components/charts/line/benchmark-line-chart.types";
-import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
+import { ChartTooltip } from "../../components/charts/shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../../components/charts/shared/chart-tooltip.utils";
-import { CompareChartLegendVisibilityService } from "../../components/charts/shared/compare-chart-legend-visibility.service";
+import { CompareChartLegendVisibility } from "../../components/charts/shared/compare-chart-legend-visibility";
 import {
   formatCompareDeltaLabel,
   formatCompareSignedPercentageDeltaLabel,
@@ -63,16 +63,16 @@ import { PageHeader } from "../../components/page-header/page-header";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
-import { AnalyticsService } from "../../services/analytics.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { Analytics } from "../../services/analytics";
+import { KeeperAPI } from "../../services/keeper-api";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import {
   ComparedDatabase,
   DatabaseCompareBaseline,
-  ServerCompareService,
-} from "../../services/server-compare.service";
-import { ToastService } from "../../services/toast.service";
+  CompareSelection,
+} from "../../services/compare-selection";
+import { Toast } from "../../services/toast";
 import {
   BAD_DATABASE_COMPARE_URL_TOAST_ID,
   DATABASE_COMPARE_ERROR_TOAST_ID,
@@ -81,10 +81,10 @@ import {
   INVALID_DATABASE_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
   INVALID_DATABASE_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
 } from "../../services/url-toast-content";
-import { CompareCollectionsService } from "../../collections/compare-collections.service";
+import { CompareCollections } from "../../collections/compare-collections";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
-import { CollectionsUiService } from "../../collections/collections-ui.service";
-import { AuthStateService } from "../../core/auth";
+import { CollectionsUi } from "../../collections/collections-ui";
+import { AuthState } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import {
@@ -94,7 +94,7 @@ import {
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
-import { AdvisorUiService } from "../advisor/advisor-ui.service";
+import { AdvisorUi } from "../advisor/advisor-ui";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import * as compareTableLayout from "../shared/compare-table/compare-table-layout.utils";
 import {
@@ -186,25 +186,25 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
   ],
   templateUrl: "./database-compare.html",
   styleUrl: "./database-compare.scss",
-  providers: [CompareChartLegendVisibilityService],
+  providers: [CompareChartLegendVisibility],
 })
 export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
-  private keeperAPI = inject(KeeperAPIService);
-  private seoHandler = inject(SeoHandlerService);
-  private serverCompare = inject(ServerCompareService);
-  private analytics = inject(AnalyticsService);
+  private keeperAPI = inject(KeeperAPI);
+  private seoHandler = inject(SeoHandler);
+  private serverCompare = inject(CompareSelection);
+  private analytics = inject(Analytics);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private toastService = inject(ToastService);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
-  private advisorUi = inject(AdvisorUiService);
-  private chartTooltip = inject(ChartTooltipService);
-  private legendVisibility = inject(CompareChartLegendVisibilityService);
-  private compareCollections = inject(CompareCollectionsService);
-  private auth = inject(AuthStateService);
-  private collectionsUi = inject(CollectionsUiService);
+  private advisorUi = inject(AdvisorUi);
+  private chartTooltip = inject(ChartTooltip);
+  private legendVisibility = inject(CompareChartLegendVisibility);
+  private compareCollections = inject(CompareCollections);
+  private auth = inject(AuthState);
+  private collectionsUi = inject(CollectionsUi);
   saveComparisonModal = viewChild(CollectionSaveModal);
   private readonly pendingSaveComparisonClose = signal(false);
   private readonly editingComparisonId = signal<string | null>(null);

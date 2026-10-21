@@ -1,11 +1,11 @@
 import { Component, DestroyRef, OnInit, inject } from "@angular/core";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { VENDORS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import {
   OrderDir,
@@ -22,10 +22,10 @@ import { Router, RouterModule } from "@angular/router";
   styleUrl: "./vendors.scss",
 })
 export class Vendors implements OnInit {
-  private SEOHandler = inject(SeoHandlerService);
-  private API = inject(KeeperAPIService);
+  private SEOHandler = inject(SeoHandler);
+  private API = inject(KeeperAPI);
   private router = inject(Router);
-  private toastService = inject(ToastService);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
   private vendorsLoadId = 0;
 

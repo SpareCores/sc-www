@@ -29,10 +29,10 @@ import {
 } from "@lucide/angular";
 import { ThemeText } from "../../components/theme-text/theme-text";
 import { Button } from "../../components/button/button";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { isPlatformBrowser } from "@angular/common";
-import { NeetoCalService } from "../../services/neeto-cal.service";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { NeetoCal } from "../../services/neeto-cal";
+import { UiTooltip } from "../../services/ui-tooltip";
 
 interface Quote {
   quote: string;
@@ -68,9 +68,9 @@ interface Quote {
 })
 export class AboutNavigator implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
-  private SEOHandler = inject(SeoHandlerService);
-  private neetoCalService = inject(NeetoCalService);
-  private uiTooltip = inject(UiTooltipService);
+  private SEOHandler = inject(SeoHandler);
+  private neetoCalService = inject(NeetoCal);
+  private uiTooltip = inject(UiTooltip);
 
   vendors: any[] = [
     "✅ Amazon Web Services (Done)",

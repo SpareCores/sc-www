@@ -4,7 +4,7 @@ import { CdkDragDrop } from "@angular/cdk/drag-drop";
 
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { Header } from "./header";
-import { ServerCompareService } from "../../services/server-compare.service";
+import { CompareSelection } from "../../services/compare-selection";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("Header", () => {
@@ -64,7 +64,7 @@ describe("Header", () => {
   });
 
   it("configures the compare dropdown to stay within the viewport", () => {
-    const serverCompare = TestBed.inject(ServerCompareService);
+    const serverCompare = TestBed.inject(CompareSelection);
     serverCompare.selectedForCompare = [
       {
         display_name: "a",
@@ -91,7 +91,7 @@ describe("Header", () => {
   });
 
   it("delegates compare reordering to the compare service", () => {
-    const serverCompare = TestBed.inject(ServerCompareService);
+    const serverCompare = TestBed.inject(CompareSelection);
     const reorderSelectedForCompare = spyOn(
       serverCompare,
       "reorderSelectedForCompare",
@@ -106,7 +106,7 @@ describe("Header", () => {
   });
 
   it("removes a server from the compare selection", () => {
-    const serverCompare = TestBed.inject(ServerCompareService);
+    const serverCompare = TestBed.inject(CompareSelection);
     const toggleCompare = spyOn(serverCompare, "toggleCompare");
     const server = {
       display_name: "m7a.4xlarge",
@@ -121,7 +121,7 @@ describe("Header", () => {
   });
 
   it("shows the target icon next to the baseline server", () => {
-    const serverCompare = TestBed.inject(ServerCompareService);
+    const serverCompare = TestBed.inject(CompareSelection);
     serverCompare.selectedForCompare = [
       {
         display_name: "m7a.4xlarge",
@@ -159,7 +159,7 @@ describe("Header", () => {
   });
 
   it("toggles baseline selection from the compare menu", () => {
-    const serverCompare = TestBed.inject(ServerCompareService);
+    const serverCompare = TestBed.inject(CompareSelection);
     const toggleBaselineServer = spyOn(
       serverCompare,
       "toggleBaselineServer",
@@ -191,7 +191,7 @@ describe("Header", () => {
   });
 
   it("shows the Compare button off the compare page", () => {
-    const serverCompare = TestBed.inject(ServerCompareService);
+    const serverCompare = TestBed.inject(CompareSelection);
     serverCompare.selectedForCompare = [
       {
         display_name: "m7a.4xlarge",
@@ -217,7 +217,7 @@ describe("Header", () => {
   });
 
   it("hides the Compare button on the compare page", () => {
-    const serverCompare = TestBed.inject(ServerCompareService);
+    const serverCompare = TestBed.inject(CompareSelection);
     serverCompare.selectedForCompare = [
       {
         display_name: "m7a.4xlarge",
@@ -243,7 +243,7 @@ describe("Header", () => {
   });
 
   it("shows Servers and Databases section titles with Compare databases", () => {
-    const serverCompare = TestBed.inject(ServerCompareService);
+    const serverCompare = TestBed.inject(CompareSelection);
     serverCompare.selectedForCompare = [
       {
         display_name: "m7a.4xlarge",

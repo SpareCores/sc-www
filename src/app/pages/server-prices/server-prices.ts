@@ -14,11 +14,11 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { KeeperAPI } from "../../services/keeper-api";
 import { OrderDir, ServerPriceWithPKs } from "../../../../sdk/data-contracts";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import {
   LucideDynamicIcon,
@@ -37,7 +37,7 @@ import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { Pagination } from "../../components/pagination/pagination";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { AnalyticsService } from "../../services/analytics.service";
+import { Analytics } from "../../services/analytics";
 import {
   AllocationType,
   allocationTypes,
@@ -46,16 +46,16 @@ import {
 } from "../../tools/shared_data";
 import {
   ComparedServer,
-  ServerCompareService,
-} from "../../services/server-compare.service";
+  CompareSelection,
+} from "../../services/compare-selection";
 import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import {
   areSearchParamsEqual,
   toSearchParams,
 } from "../../tools/listing-search-params";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_SERVER_PRICES_TOAST_ID } from "../../services/toast-ids";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
@@ -123,18 +123,18 @@ export type RegionVendorMetadata = {
 })
 export class ServerPrices implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
-  private keeperAPI = inject(KeeperAPIService);
+  private keeperAPI = inject(KeeperAPI);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private SEOHandler = inject(SeoHandlerService);
-  private analytics = inject(AnalyticsService);
+  private SEOHandler = inject(SeoHandler);
+  private analytics = inject(Analytics);
   currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
   allocationDropdown = viewChild<FlowbiteDropdown>("allocationDropdown");
   pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
-  private serverCompare = inject(ServerCompareService);
-  private toastService = inject(ToastService);
+  private serverCompare = inject(CompareSelection);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
-  private uiTooltip = inject(UiTooltipService);
+  private uiTooltip = inject(UiTooltip);
 
   private subscription = new Subscription();
   private searchRequestId = 0;

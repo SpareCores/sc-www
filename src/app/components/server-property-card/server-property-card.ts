@@ -15,7 +15,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
 import { Button } from "../button/button";
-import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
+import { ChartTooltip } from "../charts/shared/chart-tooltip";
 
 export interface ServerPropertyTooltip {
   key: string;
@@ -42,7 +42,7 @@ export interface ServerPropertySection {
   styleUrl: "./server-property-card.scss",
 })
 export class ServerPropertyCard {
-  private tooltipService = inject(ChartTooltipService);
+  private tooltipService = inject(ChartTooltip);
 
   cardTitle = input.required<string>();
   cardId = input.required<string>();

@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { AnalyticsService } from "../../services/analytics.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { Analytics } from "../../services/analytics";
+import { KeeperAPI } from "../../services/keeper-api";
 import { Benchmark } from "../../../../sdk/data-contracts";
 import { ServerCharts } from "../../components/server-charts/server-charts";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { LucideExternalLink } from "@lucide/angular";
 import { Subscription } from "rxjs";
 
@@ -15,10 +15,10 @@ import { Subscription } from "rxjs";
   styleUrl: "./embedded-server-chart.scss",
 })
 export class EmbeddedServerChart implements OnInit, OnDestroy {
-  private SEOHandler = inject(SeoHandlerService);
+  private SEOHandler = inject(SeoHandler);
   private route = inject(ActivatedRoute);
-  private analytics = inject(AnalyticsService);
-  private keeperAPI = inject(KeeperAPIService);
+  private analytics = inject(Analytics);
+  private keeperAPI = inject(KeeperAPI);
 
   benchmarkMeta!: Benchmark[];
   benchmarksByCategory!: any[];

@@ -8,11 +8,11 @@ import {
 import { ServerCompareCharts } from "../../components/server-compare-charts/server-compare-charts";
 import { LucideExternalLink } from "@lucide/angular";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AnalyticsService } from "../../services/analytics.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { Analytics } from "../../services/analytics";
+import { KeeperAPI } from "../../services/keeper-api";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ToastService } from "../../services/toast.service";
+import { SeoHandler } from "../../services/seo-handler";
+import { Toast } from "../../services/toast";
 import { BAD_SERVER_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import {
   INVALID_SERVER_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
@@ -32,13 +32,13 @@ import {
   styleUrl: "./embedded-compare-chart.scss",
 })
 export class EmbeddedCompareChart implements OnInit, OnDestroy {
-  private SEOHandler = inject(SeoHandlerService);
+  private SEOHandler = inject(SeoHandler);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private analytics = inject(AnalyticsService);
-  private keeperAPI = inject(KeeperAPIService);
+  private analytics = inject(Analytics);
+  private keeperAPI = inject(KeeperAPI);
   private platformId = inject(PLATFORM_ID);
-  private toastService = inject(ToastService);
+  private toastService = inject(Toast);
 
   showChart: string = "all";
 

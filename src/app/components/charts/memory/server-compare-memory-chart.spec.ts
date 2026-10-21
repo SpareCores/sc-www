@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ServerCompareMemoryChart } from "./server-compare-memory-chart";
-import { DropdownManagerService } from "../../../services/dropdown-manager.service";
+import { DropdownManager } from "../../../services/dropdown-manager";
 import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 
@@ -15,7 +15,7 @@ describe("ServerCompareMemoryChart", () => {
       providers: [
         ...sharedTestingProviders,
         {
-          provide: DropdownManagerService,
+          provide: DropdownManager,
           useValue: {
             initDropdown: () =>
               Promise.resolve({ hide: jasmine.createSpy("hide") }),

@@ -8,9 +8,9 @@ import {
 import { OverlayModule } from "@angular/cdk/overlay";
 import { LucideBookmarkOff, LucideBookmarkPlus } from "@lucide/angular";
 import {
-  CollectionsUiService,
+  CollectionsUi,
   type BookmarkEntityKind,
-} from "../../../collections/collections-ui.service";
+} from "../../../collections/collections-ui";
 
 @Component({
   selector: "sc-instance-favorite-context-menu",
@@ -20,7 +20,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstanceFavoriteContextMenu {
-  private collectionsUi = inject(CollectionsUiService);
+  private collectionsUi = inject(CollectionsUi);
 
   kind = input.required<BookmarkEntityKind>();
   vendorId = input.required<string>();

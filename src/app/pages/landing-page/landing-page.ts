@@ -10,14 +10,14 @@ import {
   afterNextRender,
   inject,
 } from "@angular/core";
-import { ArticleMeta, ArticlesService } from "../../services/articles.service";
+import { ArticleMeta, ArticlesApi } from "../../services/articles-api";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { KeeperAPI } from "../../services/keeper-api";
 import { isAbortError } from "../../services/keeper-http-client";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_LANDING_TOAST_ID } from "../../services/toast-ids";
 import { spinner_initial_data } from "../../tools/spinner_initial_data";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import { ThemeText } from "../../components/theme-text/theme-text";
 import { Button } from "../../components/button/button";
@@ -36,9 +36,9 @@ import {
   SearchServersServersGetData,
   TableRegionTableRegionGetData,
 } from "../../../../sdk/data-contracts";
-import { AnalyticsService } from "../../services/analytics.service";
-import { NeetoCalService } from "../../services/neeto-cal.service";
-import { PrismService } from "../../services/prism.service";
+import { Analytics } from "../../services/analytics";
+import { NeetoCal } from "../../services/neeto-cal";
+import { PrismHighlighter } from "../../services/prism-highlighter";
 import {
   SlotMachineContents,
   SlotMachineRegionItem,
@@ -70,14 +70,14 @@ import {
 })
 export class LandingPage implements OnInit {
   private platformId = inject(PLATFORM_ID);
-  private keeperAPI = inject(KeeperAPIService);
-  private toastService = inject(ToastService);
+  private keeperAPI = inject(KeeperAPI);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
-  private SEOHandler = inject(SeoHandlerService);
-  private articles = inject(ArticlesService);
-  private analyticsService = inject(AnalyticsService);
-  private neetoCalService = inject(NeetoCalService);
-  private prismService = inject(PrismService);
+  private SEOHandler = inject(SeoHandler);
+  private articles = inject(ArticlesApi);
+  private analyticsService = inject(Analytics);
+  private neetoCalService = inject(NeetoCal);
+  private prismService = inject(PrismHighlighter);
   private cdr = inject(ChangeDetectorRef);
   private searchRequestId = 0;
   private searchAbortController: AbortController | null = null;
