@@ -40,42 +40,20 @@
     aria-label="CPU and System Topology diagram"
     [innerHTML]="inlineSvg"
   ></div>
-
-  <div
-    #lstopoModal
-    id="lstopo-modal"
-    tabindex="-1"
-    class="lstopo-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
-  >
-    <div class="relative w-full max-w-[87.5rem] mx-auto my-auto">
-      <div
-        class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
-      >
-        <div
-          class="flex items-center justify-between p-4 border-b border-gray-600"
-        >
-          <h3 class="text-xl font-medium text-white">
-            CPU and System Topology
-          </h3>
-          <sc-button
-            variant="close"
-            icon="x"
-            ariaLabel="Close modal"
-            (buttonClick)="closeLstopoModal()"
-          ></sc-button>
-        </div>
-        <div class="lstopo-modal-body overflow-auto max-h-[80vh]" scDragToPan>
-          <div
-            class="lstopo-container lstopo-modal-svg"
-            role="img"
-            aria-label="CPU and System Topology diagram"
-            [innerHTML]="modalSvg"
-          ></div>
-        </div>
-      </div>
-    </div>
-  </div>
 }
+
+<ng-template #lstopoModalTemplate>
+  <sc-modal id="lstopo-modal" title="CPU and System Topology" size="wide">
+    <div class="lstopo-modal-body overflow-auto max-h-[80vh]" scDragToPan>
+      <div
+        class="lstopo-container lstopo-modal-svg"
+        role="img"
+        aria-label="CPU and System Topology diagram"
+        [innerHTML]="modalSvg"
+      ></div>
+    </div>
+  </sc-modal>
+</ng-template>
 
 <div
   #lstopoTooltip
