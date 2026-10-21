@@ -41,7 +41,7 @@
     "@ngrx/operators": "^20.1.0",
     "@ngrx/signals": "^20.1.0",
     "@preline/combobox": "^2.5.2",
-    "@sentry/angular": "^9.47.1",
+    "@sentry/angular": "^10.76.2",
     "buffer": "^6.0.3",
     "chart.js": "^4.3.0",
     "chartjs-plugin-annotation": "^3.0.1",
