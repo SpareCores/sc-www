@@ -1,4 +1,4 @@
-import { AccordionItem } from "../../components/accordion/accordion.component";
+import { AccordionItem } from "../../components/accordion/accordion";
 import { formatStorageSize } from "../../pipes/pipe-utils";
 import {
   BenchmarkScore,
