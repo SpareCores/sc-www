@@ -39,7 +39,7 @@ import {
 } from "../../../../sdk/data-contracts";
 import { BenchmarkWorkload } from "../../components/benchmark-workload/benchmark-workload";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { ScrollSpyDirective } from "../../directives/scroll-spy.directive";
+import { ScrollSpy } from "../../directives/scroll-spy";
 import { BenchmarkWorkloadsSidebar } from "../../components/benchmark-workloads-sidebar/benchmark-workloads-sidebar";
 import {
   BenchmarkFamily,
@@ -72,7 +72,7 @@ type RawBenchmarkWorkloadConfig = {
     LucideRefreshCcwDot,
     BenchmarkWorkload,
     LoadingSpinner,
-    ScrollSpyDirective,
+    ScrollSpy,
     BenchmarkWorkloadsSidebar,
     BenchmarkIconPipe,
   ],

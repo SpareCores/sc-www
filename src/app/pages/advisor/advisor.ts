@@ -56,7 +56,7 @@ import {
   SearchBarParameter,
   SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
@@ -391,7 +391,7 @@ type AdvisorComparableResourceKey =
     CommonModule,
     Button,
     Breadcrumbs,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
     LucideArrowDownNarrowWide,
     LucideArrowDownWideNarrow,
     LucideChevronLeft,
@@ -431,9 +431,8 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private uiTooltip = inject(UiTooltipService);
   readonly advisorUi = inject(AdvisorUiService);
   saveAssessmentModal = viewChild(CollectionSaveModal);
-  readonly currencyDropdown =
-    viewChild<FlowbiteDropdownDirective>("currencyDropdown");
-  readonly pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
+  readonly currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
+  readonly pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
   readonly searchBar = viewChild(SearchBar);
   readonly introductionModalRef =
     viewChild<ElementRef<HTMLElement>>("introductionModal");

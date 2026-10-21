@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DropdownManagerService } from "../services/dropdown-manager.service";
-import { FlowbiteDropdownDirective } from "./flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "./flowbite-dropdown";
 
 @Component({
   standalone: true,
@@ -15,14 +15,14 @@ import { FlowbiteDropdownDirective } from "./flowbite-dropdown.directive";
     </button>
     <div id="target"></div>
   `,
-  imports: [FlowbiteDropdownDirective],
+  imports: [FlowbiteDropdown],
 })
 class HostComponent {
   targetId = "target";
   enabled = true;
 }
 
-describe("FlowbiteDropdownDirective", () => {
+describe("FlowbiteDropdown", () => {
   let fixture: ComponentFixture<HostComponent>;
   let initDropdownSpy: jasmine.Spy;
   let dropdownSpy: { hide: jasmine.Spy };
