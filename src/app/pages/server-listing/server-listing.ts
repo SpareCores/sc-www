@@ -47,7 +47,7 @@ import {
 } from "@lucide/angular";
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import type { SearchBarParameter } from "../../components/search-bar/types/search-bar.types";
 import { Pagination } from "../../components/pagination/pagination";
@@ -71,12 +71,12 @@ import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
 import specialServerListsData from "./special-lists.js";
-import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
-import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
-import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
-import { StoragePipe } from "../../pipes/storage.pipe";
-import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
-import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
+import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size-pipe";
+import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic-pipe";
+import { StoragePipe } from "../../pipes/storage-pipe";
+import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
+import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
 import { formatNumberInputValue } from "../../pipes/pipe-utils";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";

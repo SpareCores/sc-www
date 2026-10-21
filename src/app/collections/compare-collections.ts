@@ -1,7 +1,7 @@
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { Router } from "@angular/router";
-import { CollectionsStore } from "./collections.store";
+import { CollectionsStore } from "./collections-store";
 import type { SavedComparisonInstance } from "./collections.types";
 import { mutationKey } from "../shared/store/with-mutation-status";
 import { canonicalizeCompareUrl } from "../pages/server-compare/compare-url-state.utils";

@@ -14,7 +14,7 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { NumbersOnly } from "../../../../directives/numbers-only";
-import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon-pipe";
 import { Toast } from "../../../../services/toast";
 import { CPU_CACHE_INPUT_ERROR_TOAST_ID } from "../../../../services/toast-ids";
 import type { TooltipVariant } from "../../../../services/ui-tooltip";

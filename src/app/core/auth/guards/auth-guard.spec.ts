@@ -9,7 +9,7 @@ import {
   UrlTree,
 } from "@angular/router";
 import { AuthState } from "../data-access/auth-state";
-import { authGuard, blockLandingDuringAuthGuard } from "./auth.guard";
+import { authGuard, blockLandingDuringAuthGuard } from "./auth-guard";
 
 describe("auth guards", () => {
   let auth: {

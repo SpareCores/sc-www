@@ -30,7 +30,7 @@ import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
-import { CollectionsStore } from "../../collections/collections.store";
+import { CollectionsStore } from "../../collections/collections-store";
 import type {
   BookmarksCardViewModel,
   BookmarksFilterKey,

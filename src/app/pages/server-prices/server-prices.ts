@@ -29,11 +29,11 @@ import {
   LucideCheck,
   LucideX,
 } from "@lucide/angular";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { PageHeader } from "../../components/page-header/page-header";
-import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
-import { StoragePipe } from "../../pipes/storage.pipe";
-import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
+import { StoragePipe } from "../../pipes/storage-pipe";
+import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { Pagination } from "../../components/pagination/pagination";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";

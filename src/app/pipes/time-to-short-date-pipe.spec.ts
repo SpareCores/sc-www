@@ -1,4 +1,4 @@
-import { TimeToShortDatePipe } from "./time-to-short-date.pipe";
+import { TimeToShortDatePipe } from "./time-to-short-date-pipe";
 
 describe("TimeToShortDatePipe", () => {
   it("create an instance", () => {

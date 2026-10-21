@@ -19,7 +19,7 @@ import {
 import { BaseChartDirective } from "ng2-charts";
 import { ChartData, ChartOptions } from "chart.js";
 import { Button } from "../../button/button";
-import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { CompressionChartBuilder } from "./compression-chart-builder";
 import {
   CompareCompressionOption,

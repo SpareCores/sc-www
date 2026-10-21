@@ -18,7 +18,7 @@ import {
   redisChartTemplate,
   staticWebChartTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { DecimalPipe } from "@angular/common";
 import { Button } from "../button/button";
 import { CompressionChart } from "../charts/compression/compression-chart";

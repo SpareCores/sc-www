@@ -12,7 +12,7 @@ import { TestBed } from "@angular/core/testing";
 import { firstValueFrom } from "rxjs";
 import { WWW_API_BASE_URI } from "../auth.constants";
 import { AuthState } from "../data-access/auth-state";
-import { authInterceptor } from "./auth.interceptor";
+import { authInterceptor } from "./auth-interceptor";
 
 describe("authInterceptor", () => {
   function setup(options: { platformId?: string; token?: string | null }): {

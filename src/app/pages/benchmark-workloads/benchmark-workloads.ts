@@ -48,7 +48,7 @@ import {
   BenchmarkWorkloadExample,
   BenchmarkWorkloadItem,
 } from "./benchmark-workloads.models";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 
 type RawBenchmarkWorkloadConfig = {
   description?: unknown;
