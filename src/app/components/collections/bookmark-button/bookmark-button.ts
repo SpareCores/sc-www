@@ -23,7 +23,7 @@ import { UiTooltip } from "../../../services/ui-tooltip";
   selector: "sc-bookmark-button",
   imports: [LucideBookmark, LucideBookmarkPlus, LucideBookmarkOff],
   templateUrl: "./bookmark-button.html",
-  styleUrl: "./bookmark-button.scss",
+  styleUrl: "./bookmark-button.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookmarkButton {

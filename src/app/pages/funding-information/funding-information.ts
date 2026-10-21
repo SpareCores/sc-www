@@ -4,7 +4,7 @@ import { SeoHandler } from "../../services/seo-handler";
 @Component({
   selector: "sc-funding-information",
   templateUrl: "./funding-information.html",
-  styleUrl: "./funding-information.scss",
+  styleUrl: "./funding-information.css",
 })
 export class FundingInformation implements OnInit {
   private seoHandler = inject(SeoHandler);

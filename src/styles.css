@@ -3,8 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-$content-max-width: 1400px;
-
 @layer base {
   [type="text"],
   [type="email"],
@@ -375,12 +373,8 @@ $content-max-width: 1400px;
     @apply bg-[#06263a];
   }
 
-  .shadow_border {
-    border-color: rgba(#34d399, 0.2);
-  }
-
   .content {
-    max-width: $content-max-width;
+    max-width: 1400px;
     margin: auto;
   }
 

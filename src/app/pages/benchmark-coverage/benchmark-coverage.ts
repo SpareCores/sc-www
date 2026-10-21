@@ -76,7 +76,7 @@ import {
     SearchBar,
   ],
   templateUrl: "./benchmark-coverage.html",
-  styleUrls: ["./benchmark-coverage.scss"],
+  styleUrls: ["./benchmark-coverage.css"],
 })
 export class BenchmarkCoverage implements OnInit {
   private loadAbortController: AbortController | null = null;

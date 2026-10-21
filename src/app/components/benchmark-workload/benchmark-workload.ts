@@ -45,7 +45,7 @@ interface HistogramBin {
     DecimalPipe,
   ],
   templateUrl: "./benchmark-workload.html",
-  styleUrl: "./benchmark-workload.scss",
+  styleUrl: "./benchmark-workload.css",
 })
 export class BenchmarkWorkload {
   private platformId = inject(PLATFORM_ID);

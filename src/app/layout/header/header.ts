@@ -81,7 +81,7 @@ import { AuthState } from "../../core/auth";
   ],
   providers: [{ provide: DROPDOWN_LAYER, useValue: "top" }],
   templateUrl: "./header.html",
-  styleUrl: "./header.scss",
+  styleUrl: "./header.css",
 })
 export class Header {
   private router = inject(Router);
