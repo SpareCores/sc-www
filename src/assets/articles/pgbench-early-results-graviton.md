@@ -1,20 +1,20 @@
 ---
 # ~50 chars
-title: "PostgreSQL Benchmark on AWS Graviton"
+title: "New PostgreSQL Benchmark: A First Look"
 date: 2026-10-19
 # ~100 character
-teaser: "Extending the performance evaluations of Graviton instance families with high concurrency database metrics."
+teaser: "High-concurrency database metrics on AWS Graviton, and effects of SMT on performance."
 # 320x220
 image: /assets/images/blog/thumbnails/database-benchmark-smt-wise.webp
-image_alt: TODO.
+image_alt: Database benchmark scores of GCP's N2 (with SMT) and T2D (no SMT) at various concurrencies.
 author: Alex Trickey
-tags: [benchmark, performance, score, aws]
+tags: [benchmark, performance, score, postgres, aws, gcp]
 ---
 
 Spare Cores has added a new database benchmark and we’re excited to bring you some early results! We can now measure server performance on PostgreSQL workloads across our full range of monitored servers and we have extended our coverage to include managed PostgreSQL servers at several vendors. The new benchmark consists of a demanding read-only transaction containing subqueries hitting the core PostgreSQL functionality (joins, aggregations, indexes, hashes, TOAST, text search, and much more). The workload is run at four levels of concurrency and the resulting metric is the maximum transactions per minute (TPM) achieved by each server across any concurrency condition. You can check out the details in our benchmark introduction here: 
 [Measuring PostgreSQL Performance at Scale](/article/benchmark-pgbench-postgres).
 
-Since this benchmark is also one of our first tests of high concurrency workloads, we wanted our initial look to span the breadth of compute sizes. Given our recent work profiling the AWS Graviton 5-powered families, which includes servers ranging from 1 vCPU (4 GiB RAM) up to 192 vCPUs (and 768 GiB RAM), these felt like a natural choice. Our earlier analysis (which you can review here: [AWS Graviton5 Benchmarks](/article/aws-graviton5-benchmarks)) considered the m9g and m9gd, which have substantially larger L3 memory caches than previous generations. Our tests showed corresponding improvements in memory bandwidth performance for read, write, and mixed operations. These benefits carried over to computing tasks (such as compression, sorting, and mathematical operations), where we saw a 16-50% boost in performance, and to LLM inference where we saw a roughly 30% boost in performance across the board for Gemma (a 2B parameter LLM). Now we are extending these results to include our new high concurrency database benchmarks!
+Since this benchmark is also one of our first tests of high-concurrency workloads, we wanted our initial look to span the breadth of compute sizes. Given our recent work profiling the AWS Graviton 5-powered families, which includes servers ranging from 1 vCPU (4 GiB RAM) up to 192 vCPUs (and 768 GiB RAM), these felt like a natural choice. Our earlier analysis (which you can review here: [AWS Graviton5 Benchmarks](/article/aws-graviton5-benchmarks)) considered the m9g and m9gd, which have substantially larger L3 memory caches than previous generations. Our tests showed corresponding improvements in memory bandwidth performance for read, write, and mixed operations. These benefits carried over to computing tasks (such as compression, sorting, and mathematical operations), where we saw a 16-50% boost in performance, and to LLM inference where we saw a roughly 30% boost in performance across the board for Gemma (a 2B parameter LLM). Now we are extending these results to include our new high concurrency database benchmarks!
 
 ## Benchmark Results
 
@@ -90,14 +90,14 @@ And for those who would prefer to play in the raw numbers, here’s the same dat
 
 ## Coming soon... 
 
-We’ll be writing more on our database and other high concurrency benchmarks soon. Here's a sneak peek at the performance patterns of matched-size machines running with and without Hyperthreading and/or Simultaneous Multithreading (SMT). 
+We’ll be writing more on our database and other high-concurrency benchmarks soon. Here's a sneak peek at the performance patterns of matched-size machines running with and without Hyperthreading and/or Simultaneous Multithreading (SMT). 
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="Database Benchmark Score of the N2 (with SMT) and the T2D (no SMT) at Various Concurrency Levels"
-    alt="Database Benchmark Score of the N2 (with SMT) and the T2D (no SMT) at Various Concurrency Levels",
+    alt="Database Benchmark Score of the N2 (with SMT) and the T2D (no SMT) at Various Concurrency Levels"
     src="/assets/images/blog/pgbench-early-results/database-benchmark-with-SMT-vs-without.png"/>
-  <p>Database Benchmark Scores for GCP's N2 (with SMT) and the T2D (no SMT) at Various Concurrency Levels.</p>
+  <p>Database Benchmark Scores for GCP's N2 (with SMT) and T2D (no SMT) at Various Concurrency Levels.</p>
 </div>
 
 Performance tends to peak or plateau when the number of concurrent processes is close to the number of physical cores. For machines without Hyperthreading/Simultaneous Multithreading (SMT) this is around the number of vCPUs (V), whereas for those with Hyperthreading/SMT it's closer to V/2. Interestingly, this is exactly what we see above when we compare GCP's N2 standard series (with Intel cores and Hyperthreading) and the T2D standard series (with AMD and no SMT) on our new high-concurrency database metric: The N2 plateaus around V/2 and the T2D at V. 
