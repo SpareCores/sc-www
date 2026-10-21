@@ -62,7 +62,7 @@ jobs:
           fi
           curl -s -L -H "Authorization: token ${LEGAL_TOKEN}" ${LEGAL_URL} | tar xz --strip-components=1
       - name: Cypress run
-        uses: cypress-io/github-action@v7.1.9
+        uses: cypress-io/github-action@v7.4.6
         with:
           build: npm run prebuild
           start: npm start
