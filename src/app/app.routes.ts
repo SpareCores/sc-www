@@ -1,13 +1,13 @@
 import { Routes } from "@angular/router";
-import { LandingpageComponent } from "./pages/landingpage/landingpage.component";
-import { ServerListingComponent } from "./pages/server-listing/server-listing.component";
-import { ServerPricesComponent } from "./pages/server-prices/server-prices.component";
+import { LandingPage } from "./pages/landing-page/landing-page";
+import { ServerListing } from "./pages/server-listing/server-listing";
+import { ServerPrices } from "./pages/server-prices/server-prices";
 import { authGuard, blockLandingDuringAuthGuard } from "./core/auth";
 
 export const routes: Routes = [
   {
     path: "",
-    component: LandingpageComponent,
+    component: LandingPage,
     canActivate: [blockLandingDuringAuthGuard],
   },
   {
@@ -19,31 +19,31 @@ export const routes: Routes = [
   {
     path: "servers/compare",
     loadComponent: () =>
-      import("./pages/server-compare/server-compare.component").then(
-        (m) => m.ServerCompareComponent,
+      import("./pages/server-compare/server-compare").then(
+        (m) => m.ServerCompare,
       ),
   },
   {
     path: "servers/compare/:id",
     loadComponent: () =>
-      import("./pages/server-compare/server-compare.component").then(
-        (m) => m.ServerCompareComponent,
+      import("./pages/server-compare/server-compare").then(
+        (m) => m.ServerCompare,
       ),
   },
-  { path: "servers", component: ServerListingComponent },
-  { path: "servers/:id", component: ServerListingComponent },
+  { path: "servers", component: ServerListing },
+  { path: "servers/:id", component: ServerListing },
   {
     path: "databases/compare",
     loadComponent: () =>
-      import("./pages/database-compare/database-compare.component").then(
-        (m) => m.DatabaseCompareComponent,
+      import("./pages/database-compare/database-compare").then(
+        (m) => m.DatabaseCompare,
       ),
   },
   {
     path: "databases/compare/:id",
     loadComponent: () =>
-      import("./pages/database-compare/database-compare.component").then(
-        (m) => m.DatabaseCompareComponent,
+      import("./pages/database-compare/database-compare").then(
+        (m) => m.DatabaseCompare,
       ),
   },
   {
@@ -63,24 +63,20 @@ export const routes: Routes = [
   {
     path: "advisor",
     loadComponent: () =>
-      import("./pages/advisor/advisor.component").then(
-        (m) => m.AdvisorComponent,
-      ),
+      import("./pages/advisor/advisor").then((m) => m.Advisor),
   },
-  { path: "server_prices", component: ServerPricesComponent },
+  { path: "server_prices", component: ServerPrices },
   {
     path: "server/:vendor/:id",
     loadComponent: () =>
-      import("./pages/server-details/server-details.component").then(
-        (m) => m.ServerDetailsComponent,
+      import("./pages/server-details/server-details").then(
+        (m) => m.ServerDetails,
       ),
   },
   {
     path: "og/:vendor/:id",
     loadComponent: () =>
-      import("./pages/server-og/server-og.component").then(
-        (m) => m.ServerOGComponent,
-      ),
+      import("./pages/server-og/server-og").then((m) => m.ServerOG),
   },
 
   {
@@ -92,87 +88,75 @@ export const routes: Routes = [
   {
     path: "navigator/benchmark-coverage",
     loadComponent: () =>
-      import("./pages/benchmark-coverage/benchmark-coverage.component").then(
-        (m) => m.BenchmarkCoverageComponent,
+      import("./pages/benchmark-coverage/benchmark-coverage").then(
+        (m) => m.BenchmarkCoverage,
       ),
   },
 
   {
     path: "navigator/benchmark-workloads",
     loadComponent: () =>
-      import("./pages/benchmark-workloads/benchmark-workloads.component").then(
-        (c) => c.BenchmarkWorkloadsComponent,
+      import("./pages/benchmark-workloads/benchmark-workloads").then(
+        (c) => c.BenchmarkWorkloads,
       ),
   },
 
   {
     path: "article/:id",
     loadComponent: () =>
-      import("./pages/article/article.component").then(
-        (m) => m.ArticleComponent,
-      ),
+      import("./pages/article/article").then((m) => m.Article),
   },
   {
     path: "articles",
     loadComponent: () =>
-      import("./pages/articles/articles.component").then(
-        (m) => m.ArticlesComponent,
-      ),
+      import("./pages/articles/articles").then((m) => m.Articles),
   },
 
   {
     path: "talks",
-    loadComponent: () =>
-      import("./pages/talks/talks.component").then((m) => m.TalksComponent),
+    loadComponent: () => import("./pages/talks/talks").then((m) => m.Talks),
   },
 
   {
     path: "legal",
     loadComponent: () =>
-      import("./pages/legal-documents/legal-documents.component").then(
-        (m) => m.LegalDocumentsComponent,
+      import("./pages/legal-documents/legal-documents").then(
+        (m) => m.LegalDocuments,
       ),
   },
   { path: "legal/tos", redirectTo: "legal/terms-of-service" },
   {
     path: "legal/:id",
-    loadComponent: () =>
-      import("./pages/tos/tos.component").then((m) => m.TOSComponent),
+    loadComponent: () => import("./pages/tos/tos").then((m) => m.TOS),
   },
 
   {
     path: "regions",
     loadComponent: () =>
-      import("./pages/regions/regions.component").then(
-        (m) => m.RegionsComponent,
-      ),
+      import("./pages/regions/regions").then((m) => m.Regions),
   },
   {
     path: "vendors",
     loadComponent: () =>
-      import("./pages/vendors/vendors.component").then(
-        (m) => m.VendorsComponent,
-      ),
+      import("./pages/vendors/vendors").then((m) => m.Vendors),
   },
   {
     path: "vendors/:vendorId",
     loadComponent: () =>
-      import("./pages/vendor-details/vendor-details.component").then(
-        (m) => m.VendorDetailsComponent,
+      import("./pages/vendor-details/vendor-details").then(
+        (m) => m.VendorDetails,
       ),
   },
   {
     path: "storages",
     loadComponent: () =>
-      import("./pages/storages/storages.component").then(
-        (m) => m.StoragesComponent,
-      ),
+      import("./pages/storages/storages").then((m) => m.Storages),
   },
   {
     path: "traffic-prices",
     loadComponent: () =>
-      import("./pages/traffic-prices/traffic-prices.component").then(
-        (m) => m.TrafficPricesComponent,
+      import("./pages/traffic-prices/traffic-prices").then(
+        (m) => m.TrafficPrices,
       ),
   },
   { path: "datacenters", redirectTo: "regions" },
@@ -180,40 +164,34 @@ export const routes: Routes = [
   {
     path: "survey/:id",
     loadComponent: () =>
-      import("./pages/survey-fill/survey-fill.component").then(
-        (m) => m.SurveyFillComponent,
-      ),
+      import("./pages/survey-fill/survey-fill").then((m) => m.SurveyFill),
   },
   {
     path: "feedback/:id",
     loadComponent: () =>
-      import("./pages/survey-fill/survey-fill.component").then(
-        (m) => m.SurveyFillComponent,
-      ),
+      import("./pages/survey-fill/survey-fill").then((m) => m.SurveyFill),
   },
 
   {
     path: "embed/server/:vendor/:id/:chartname",
     loadComponent: () =>
-      import("./pages/embedded-server-chart/embedded-server-chart.component").then(
-        (m) => m.EmbeddedServerChartComponent,
+      import("./pages/embedded-server-chart/embedded-server-chart").then(
+        (m) => m.EmbeddedServerChart,
       ),
   },
 
   {
     path: "embed/compare/:chartname",
     loadComponent: () =>
-      import("./pages/embedded-compare-chart/embedded-compare-chart.component").then(
-        (m) => m.EmbeddedCompareChartComponent,
+      import("./pages/embedded-compare-chart/embedded-compare-chart").then(
+        (m) => m.EmbeddedCompareChart,
       ),
   },
 
   {
     path: "contact",
     loadComponent: () =>
-      import("./pages/contact/contact.component").then(
-        (m) => m.ContactComponent,
-      ),
+      import("./pages/contact/contact").then((m) => m.Contact),
   },
   {
     path: "bookmarks",
@@ -224,23 +202,17 @@ export const routes: Routes = [
   {
     path: "about/partners",
     loadComponent: () =>
-      import("./pages/partners/partners.component").then(
-        (c) => c.PartnersComponent,
-      ),
+      import("./pages/partners/partners").then((c) => c.Partners),
   },
   {
     path: "about/spare-cores",
     loadComponent: () =>
-      import("./pages/about/spare-cores.component").then(
-        (m) => m.AboutSpareCoresComponent,
-      ),
+      import("./pages/about/about-spare-cores").then((m) => m.AboutSpareCores),
   },
   {
     path: "about/navigator",
     loadComponent: () =>
-      import("./pages/about/navigator.component").then(
-        (m) => m.AboutNavigatorComponent,
-      ),
+      import("./pages/about/about-navigator").then((m) => m.AboutNavigator),
     data: { skipHydration: true },
   },
   {
@@ -254,15 +226,14 @@ export const routes: Routes = [
   {
     path: "hu/funding/bnl",
     loadComponent: () =>
-      import("./pages/funding-information/funding-information.component").then(
-        (c) => c.FundingInformationComponent,
+      import("./pages/funding-information/funding-information").then(
+        (c) => c.FundingInformation,
       ),
   },
 
   {
     path: "design",
-    loadComponent: () =>
-      import("./pages/design/design.component").then((c) => c.DesignComponent),
+    loadComponent: () => import("./pages/design/design").then((c) => c.Design),
   },
 
   { path: "**", redirectTo: "" },

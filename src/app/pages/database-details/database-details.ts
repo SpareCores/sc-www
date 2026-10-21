@@ -22,7 +22,7 @@ import {
   Vendor,
 } from "../../../../sdk/data-contracts";
 import openApiSpec from "../../../../sdk/openapi.json";
-import { BenchmarkLineChartComponent } from "../../components/charts/line/benchmark-line-chart.component";
+import { BenchmarkLineChart } from "../../components/charts/line/benchmark-line-chart";
 import { BenchmarkLineChartBuilderService } from "../../components/charts/line/benchmark-line-chart-builder.service";
 import {
   PgbenchChartResult,
@@ -33,17 +33,17 @@ import { formatNumberWithCommas } from "../../components/charts/shared/server-co
 import { lineChartOptionsPgbench } from "../server-details/chartOptions";
 import {
   BreadcrumbSegment,
-  BreadcrumbsComponent,
-} from "../../components/breadcrumbs/breadcrumbs.component";
+  Breadcrumbs,
+} from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import {
-  ServerPropertyCardComponent,
+  ServerPropertyCard,
   ServerPropertyRow,
   ServerPropertySection,
   ServerPropertyTooltip,
-} from "../../components/server-property-card/server-property-card.component";
+} from "../../components/server-property-card/server-property-card";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -90,11 +90,11 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
   selector: "sc-database-details",
   imports: [
     RouterModule,
-    BreadcrumbsComponent,
+    Breadcrumbs,
     Button,
-    LoadingSpinnerComponent,
-    ServerPropertyCardComponent,
-    BenchmarkLineChartComponent,
+    LoadingSpinner,
+    ServerPropertyCard,
+    BenchmarkLineChart,
     LucideCheck,
     ReduceUnitNamePipe,
     BookmarkButton,

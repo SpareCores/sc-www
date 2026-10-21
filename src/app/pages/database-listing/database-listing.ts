@@ -33,13 +33,13 @@ import {
 import openApiSpec from "../../../../sdk/openapi.json";
 import {
   BreadcrumbSegment,
-  BreadcrumbsComponent,
-} from "../../components/breadcrumbs/breadcrumbs.component";
+  Breadcrumbs,
+} from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
-import { PaginationComponent } from "../../components/pagination/pagination.component";
-import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
+import { Pagination } from "../../components/pagination/pagination";
+import { SearchBar } from "../../components/search-bar/search-bar";
 import type {
   SearchBarParameter,
   SearchBarQuery,
@@ -60,8 +60,8 @@ import {
   toSearchParams,
 } from "../../tools/listing-search-params";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
-import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
+import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";
+import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUiService } from "../../collections/collections-ui.service";
 import {
   isDefaultListingQuery,
@@ -110,7 +110,7 @@ type DatabaseListingQuery = Params &
   imports: [
     CommonModule,
     FormsModule,
-    BreadcrumbsComponent,
+    Breadcrumbs,
     LucideDynamicIcon,
     LucideCheck,
     LucideChevronLeft,
@@ -120,15 +120,15 @@ type DatabaseListingQuery = Params &
     RouterModule,
     Button,
     PageHeader,
-    SearchBarComponent,
-    PaginationComponent,
-    LoadingSpinnerComponent,
+    SearchBar,
+    Pagination,
+    LoadingSpinner,
     StoragePipe,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
     BookmarkButton,
-    InstanceFavoriteContextMenuComponent,
-    CollectionSaveModalComponent,
+    InstanceFavoriteContextMenu,
+    CollectionSaveModal,
   ],
   templateUrl: "./database-listing.html",
   styleUrl: "./database-listing.scss",
@@ -149,7 +149,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private uiTooltip = inject(UiTooltipService);
   private collectionsUi = inject(CollectionsUiService);
   private auth = inject(AuthStateService);
-  saveSearchModal = viewChild(CollectionSaveModalComponent);
+  saveSearchModal = viewChild(CollectionSaveModal);
   private serverCompare = inject(ServerCompareService);
 
   isCollapsed = false;
