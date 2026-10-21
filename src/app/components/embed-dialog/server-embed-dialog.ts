@@ -20,7 +20,7 @@ import { EmbedChartOption } from "./embed-dialog.types";
   selector: "sc-server-embed-dialog",
   imports: [FormsModule],
   templateUrl: "./server-embed-dialog.html",
-  styleUrl: "./server-embed-dialog.scss",
+  styleUrl: "./server-embed-dialog.css",
 })
 export class ServerEmbedDialog implements OnChanges, AfterViewInit, OnDestroy {
   private static readonly ASPECT_RATIO = 0.6;

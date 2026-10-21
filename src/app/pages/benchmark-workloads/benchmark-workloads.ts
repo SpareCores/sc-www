@@ -77,7 +77,7 @@ type RawBenchmarkWorkloadConfig = {
     BenchmarkIconPipe,
   ],
   templateUrl: "./benchmark-workloads.html",
-  styleUrl: "./benchmark-workloads.scss",
+  styleUrl: "./benchmark-workloads.css",
 })
 export class BenchmarkWorkloads implements OnInit {
   private static readonly SCROLL_OFFSET = 104;

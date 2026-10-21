@@ -12,7 +12,7 @@ type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
   selector: "sc-login-modal",
   imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner],
   templateUrl: "./login-modal.html",
-  styleUrl: "../auth-modal.scss",
+  styleUrl: "../auth-modal.css",
 })
 export class LoginModal {
   protected readonly auth = inject(AuthState);

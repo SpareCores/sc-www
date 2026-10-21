@@ -1,4 +1,4 @@
-﻿// Hide scrollbars on modal body while keeping drag-to-pan scroll functional
+/* Hide scrollbars on modal body while keeping drag-to-pan scroll functional */
 .lstopo-modal-body {
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -22,7 +22,7 @@
   height: auto;
 }
 
-// In the modal the SVG renders at its natural size (scroll/pan if needed)
+/* In the modal the SVG renders at its natural size (scroll/pan if needed) */
 .lstopo-modal-svg svg {
   width: auto !important;
   height: auto !important;

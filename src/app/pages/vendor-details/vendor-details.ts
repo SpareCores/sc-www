@@ -76,7 +76,7 @@ const VENDOR_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     CountryIdtoNamePipe,
   ],
   templateUrl: "./vendor-details.html",
-  styleUrl: "./vendor-details.scss",
+  styleUrl: "./vendor-details.css",
 })
 export class VendorDetails implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);

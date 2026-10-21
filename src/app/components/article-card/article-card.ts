@@ -7,7 +7,6 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
   selector: "sc-article-card",
   imports: [RouterLink, TimeToShortDatePipe],
   templateUrl: "./article-card.html",
-  styleUrl: "./article-card.scss",
 })
 export class ArticleCard {
   @Input() article!: ArticleMeta;

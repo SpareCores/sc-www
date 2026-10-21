@@ -1,13 +1,10 @@
 .content {
   min-height: 75vh;
 }
-
-:host ::ng-deep #server_base_info_box {
-  .bookmark-button,
-  .bookmark-button__icon {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
+:host ::ng-deep #server_base_info_box .bookmark-button,
+:host ::ng-deep #server_base_info_box .bookmark-button__icon {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .bounce-3 {
@@ -25,17 +22,17 @@
     animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
-
 :host ::ng-deep .block_half {
   @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
   width: calc(50% - 1rem);
   min-height: 460px;
   height: 460px;
-  .chart_div {
-    max-height: 350px !important;
-    height: 350px !important;
-    max-width: 100% !important;
-  }
+}
+
+:host ::ng-deep .block_half .chart_div {
+  max-height: 350px !important;
+  height: 350px !important;
+  max-width: 100% !important;
 }
 
 :host ::ng-deep .block_half_taller {
@@ -43,12 +40,13 @@
   width: calc(50% - 1rem);
   min-height: 530px;
   margin: auto;
-  .chart_div {
-    max-height: 530px;
-    max-width: 100% !important;
-    display: flex;
-    justify-content: center;
-  }
+}
+
+:host ::ng-deep .block_half_taller .chart_div {
+  max-height: 530px;
+  max-width: 100% !important;
+  display: flex;
+  justify-content: center;
 }
 
 :host ::ng-deep .block_full {
@@ -56,11 +54,12 @@
   width: calc(100%);
   min-height: 460px;
   height: 460px;
-  .chart_div {
-    max-height: 350px;
-    height: 350px !important;
-    max-width: 100% !important;
-  }
+}
+
+:host ::ng-deep .block_full .chart_div {
+  max-height: 350px;
+  height: 350px !important;
+  max-width: 100% !important;
 }
 
 :host ::ng-deep .block_half.open {
@@ -98,13 +97,12 @@
 .server-description-read-more {
   @apply text-emerald-400 hover:text-emerald-500 font-semibold text-left mt-auto;
 }
-
 .summarize-fab {
   @apply fixed bottom-6 right-6 z-40;
+}
 
-  ::ng-deep .sc-button {
-    @apply rounded-full;
-  }
+.summarize-fab ::ng-deep .sc-button {
+  @apply rounded-full;
 }
 
 .summarize-modal-paragraph {
@@ -203,14 +201,13 @@ div.giscus {
   transform: translateX(0);
   display: flex;
 }
-::ng-deep .property_value {
-  ul {
-    list-style-type: disc;
-    list-style-position: inside;
-    li {
-      margin-bottom: 0.25rem;
-    }
-  }
+::ng-deep .property_value ul {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+::ng-deep .property_value ul li {
+  margin-bottom: 0.25rem;
 }
 
 @media screen and (max-width: 800px) {

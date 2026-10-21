@@ -119,7 +119,7 @@ export type RegionVendorMetadata = {
     Dropdown,
   ],
   templateUrl: "./server-prices.html",
-  styleUrl: "./server-prices.scss",
+  styleUrl: "./server-prices.css",
 })
 export class ServerPrices implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
