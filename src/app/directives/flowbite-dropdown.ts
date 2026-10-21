@@ -20,7 +20,7 @@ import {
   standalone: true,
   exportAs: "scFlowbiteDropdown",
 })
-export class FlowbiteDropdownDirective implements AfterViewInit {
+export class FlowbiteDropdown implements AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private elementRef = inject(ElementRef<HTMLElement>);
   private dropdownManager = inject(DropdownManagerService);

@@ -1,17 +1,17 @@
 import { Component } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { NumbersOnlyDirective } from "./numbers-only.directive";
+import { NumbersOnly } from "./numbers-only";
 
 @Component({
   template: `
     <input id="decimal" scNumbersOnly />
     <input id="integer" scNumbersOnly [allowDecimal]="false" />
   `,
-  imports: [NumbersOnlyDirective],
+  imports: [NumbersOnly],
 })
 class HostComponent {}
 
-describe("NumbersOnlyDirective", () => {
+describe("NumbersOnly", () => {
   let fixture: ComponentFixture<HostComponent>;
   let decimalInput: HTMLInputElement;
   let integerInput: HTMLInputElement;

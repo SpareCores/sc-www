@@ -37,7 +37,7 @@ import {
   ServerCompareService,
   ZoneAndRegion,
 } from "../../services/server-compare.service";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { AnalyticsService } from "../../services/analytics.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details";
@@ -157,7 +157,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     ServerCompareCharts,
     CompareEmbedDialog,
     LoadingSpinner,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
     CollectionSaveModal,
   ],
   templateUrl: "./server-compare.html",
@@ -170,8 +170,8 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   private keeperAPI = inject(KeeperAPIService);
   private seoHandler = inject(SeoHandlerService);
   private serverCompare = inject(ServerCompareService);
-  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
-  baselineDropdown = viewChild<FlowbiteDropdownDirective>("baselineDropdown");
+  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
+  baselineDropdown = viewChild<FlowbiteDropdown>("baselineDropdown");
   private analytics = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);

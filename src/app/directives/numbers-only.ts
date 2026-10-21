@@ -6,7 +6,7 @@ const INTEGER_PATTERN = /^\d*$/;
 @Directive({
   selector: "[scNumbersOnly]",
 })
-export class NumbersOnlyDirective {
+export class NumbersOnly {
   allowDecimal = input(true);
   private lastValidValue = "";
 

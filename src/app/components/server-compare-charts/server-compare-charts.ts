@@ -111,7 +111,7 @@ import {
   StressNgMetric,
   buildStressNgCompareSections,
 } from "../charts/stress-ng-full/stress-ng-full.utils";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { WorkloadProfilePanel } from "../charts/workload-profile/workload-profile-panel";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -145,7 +145,7 @@ import {
     BenchmarkMultiBarChart,
     WorkloadProfilePanel,
     Button,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
   ],
   providers: [CompareChartLegendVisibilityService],
   templateUrl: "./server-compare-charts.html",
@@ -218,10 +218,10 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
 
   readonly stressNgTitle = STRESS_NG_TITLE;
   readonly stressNgMetricOptions = STRESS_NG_METRIC_OPTIONS;
-  stressNgMetricDropdown = viewChild<FlowbiteDropdownDirective>(
+  stressNgMetricDropdown = viewChild<FlowbiteDropdown>(
     "stressNgMetricDropdown",
   );
-  stressNgSubcategoryDropdown = viewChild<FlowbiteDropdownDirective>(
+  stressNgSubcategoryDropdown = viewChild<FlowbiteDropdown>(
     "stressNgSubcategoryDropdown",
   );
   private stressNgBenchmarks = signal<StressNgCompareBenchmark[]>([]);

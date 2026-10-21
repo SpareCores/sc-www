@@ -38,7 +38,7 @@ import {
 } from "@lucide/angular";
 import { AnalyticsService } from "../../services/analytics.service";
 import { ServerCompareService } from "../../services/server-compare.service";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { AuthStateService } from "../../core/auth";
 
 @Component({
@@ -72,7 +72,7 @@ import { AuthStateService } from "../../core/auth";
     LucideTrash,
     LucideUser,
     RouterLink,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
@@ -86,11 +86,11 @@ export class Header {
   private analytics = inject(AnalyticsService);
   protected readonly auth = inject(AuthStateService);
 
-  menuDropdown = viewChild<FlowbiteDropdownDirective>("menuDropdown");
-  aboutDropdown = viewChild<FlowbiteDropdownDirective>("aboutDropdown");
-  authDropdown = viewChild<FlowbiteDropdownDirective>("authDropdown");
-  compareDropdown = viewChild<FlowbiteDropdownDirective>("compareDropdown");
-  navigatorDropdown = viewChild<FlowbiteDropdownDirective>("navigatorDropdown");
+  menuDropdown = viewChild<FlowbiteDropdown>("menuDropdown");
+  aboutDropdown = viewChild<FlowbiteDropdown>("aboutDropdown");
+  authDropdown = viewChild<FlowbiteDropdown>("authDropdown");
+  compareDropdown = viewChild<FlowbiteDropdown>("compareDropdown");
+  navigatorDropdown = viewChild<FlowbiteDropdown>("navigatorDropdown");
 
   closeMenu() {
     this.menuDropdown()?.hide();

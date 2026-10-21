@@ -13,7 +13,7 @@ import {
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
-import { NumbersOnlyDirective } from "../../../../directives/numbers-only.directive";
+import { NumbersOnly } from "../../../../directives/numbers-only";
 import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
 import { ToastService } from "../../../../services/toast.service";
 import { CPU_CACHE_INPUT_ERROR_TOAST_ID } from "../../../../services/toast-ids";
@@ -65,7 +65,7 @@ type CpuCacheRangeFocusLossSkip = {
     LucideInfo,
     LucideTriangleAlert,
     BenchmarkIconPipe,
-    NumbersOnlyDirective,
+    NumbersOnly,
     SearchBarMultiSelect,
   ],
   templateUrl: "./search-bar-parameter-field.html",

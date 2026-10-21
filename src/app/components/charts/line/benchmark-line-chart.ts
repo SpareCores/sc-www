@@ -33,7 +33,7 @@ import {
   syncCompareLegendData,
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
-import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
+import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
 import { BenchmarkLineChartBuilderService } from "./benchmark-line-chart-builder.service";
 import {
   BenchmarkBarChartData,
@@ -64,7 +64,7 @@ import {
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
     BenchmarkIconPipe,
   ],
   templateUrl: "./benchmark-line-chart.html",
@@ -85,7 +85,7 @@ export class BenchmarkLineChart {
   private builder = inject(BenchmarkLineChartBuilderService);
   private legendVisibility = injectCompareLegendVisibility();
 
-  selectorDropdown = viewChild<FlowbiteDropdownDirective>("selectorDropdown");
+  selectorDropdown = viewChild<FlowbiteDropdown>("selectorDropdown");
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
   chartData = input<BenchmarkLineChartData | undefined>(undefined);

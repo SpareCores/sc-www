@@ -17,7 +17,7 @@ import { isPlatformBrowser, DOCUMENT } from "@angular/common";
     "[class.select-none]": "true",
   },
 })
-export class DragToPanDirective implements OnDestroy {
+export class DragToPan implements OnDestroy {
   private el = inject(ElementRef<HTMLElement>);
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);

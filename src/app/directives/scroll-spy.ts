@@ -13,7 +13,7 @@ import { isPlatformBrowser } from "@angular/common";
   selector: "[scScrollSpy]",
   standalone: true,
 })
-export class ScrollSpyDirective implements OnDestroy {
+export class ScrollSpy implements OnDestroy {
   scScrollSpy = input<string[]>();
   rootMargin = input("-180px 0px 0px 0px");
   threshold = input([0, 0.1, 0.5, 0.9, 1]);
