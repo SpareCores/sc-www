@@ -68,10 +68,6 @@ export class AuthStateService {
   private boundAuthRevalidation = false;
   private authSyncInFlight = false;
   private authEpoch = 0;
-  private authSyncTimer: ReturnType<typeof setTimeout> | null = null;
-  private authSyncPending = false;
-  private onVisibilityChange: (() => void) | null = null;
-  private onWindowFocus: (() => void) | null = null;
   private accountDeleted = false;
   private signedOutIdentityCleared = false;
 
@@ -110,6 +106,7 @@ export class AuthStateService {
     await this.clerk.init();
     this.syncUserFromClerk();
     this.bindClerkListener();
+    this.bindAuthRevalidation();
     this.resumeProfileFromQuery();
     this.bindAuthRevalidation();
     this.setAuthOverlayVisible(this.authInProgress());
@@ -212,7 +209,6 @@ export class AuthStateService {
   private clearAuthPending(): void {
     this.flow.setPending(false);
     this.setAuthOverlayVisible(false);
-    this.flushPendingAuthSync();
   }
 
   async handleGitHubCallback(): Promise<GitHubCallbackResult> {
@@ -226,7 +222,6 @@ export class AuthStateService {
     if (!this.gitHubCallbackPromise) {
       this.gitHubCallbackPromise = this.processGitHubCallback().finally(() => {
         this.gitHubCallbackPromise = null;
-        this.flushPendingAuthSync();
       });
     }
     return this.gitHubCallbackPromise;
@@ -646,7 +641,6 @@ export class AuthStateService {
 
   async signOut(): Promise<void> {
     this.authEpoch++;
-    this.cancelScheduledAuthSync();
     this.closeSignIn();
     this.closeSignUp();
     try {
@@ -761,7 +755,6 @@ export class AuthStateService {
       throw error;
     } finally {
       this.activating = false;
-      this.flushPendingAuthSync();
     }
   }
 
@@ -769,7 +762,6 @@ export class AuthStateService {
     if (!this.finalizePromise) {
       this.finalizePromise = this.runFinalize(kind).finally(() => {
         this.finalizePromise = null;
-        this.flushPendingAuthSync();
       });
     }
     return this.finalizePromise;
@@ -906,70 +898,17 @@ export class AuthStateService {
 
     this.boundAuthRevalidation = true;
 
-    this.onVisibilityChange = () => {
-      this.scheduleAuthSync();
-    };
-    this.onWindowFocus = () => {
-      this.scheduleAuthSync();
-    };
-
+    const revalidate = () => void this.revalidateClerkState();
     this.ngZone.runOutsideAngular(() => {
-      this.document.addEventListener(
-        "visibilitychange",
-        this.onVisibilityChange!,
-      );
-      win.addEventListener("focus", this.onWindowFocus!);
+      this.document.addEventListener("visibilitychange", revalidate);
+      win.addEventListener("focus", revalidate);
     });
 
     this.destroyRef.onDestroy(() => {
-      this.cancelScheduledAuthSync();
-      if (this.onVisibilityChange) {
-        this.document.removeEventListener(
-          "visibilitychange",
-          this.onVisibilityChange,
-        );
-      }
-      if (this.onWindowFocus) {
-        win.removeEventListener("focus", this.onWindowFocus);
-      }
+      this.document.removeEventListener("visibilitychange", revalidate);
+      win.removeEventListener("focus", revalidate);
       this.boundAuthRevalidation = false;
     });
-  }
-
-  private scheduleAuthSync(): void {
-    if (this.document.visibilityState !== "visible") {
-      return;
-    }
-
-    if (this.isAuthTransitionActive()) {
-      this.authSyncPending = true;
-      return;
-    }
-
-    if (this.authSyncTimer !== null) {
-      return;
-    }
-
-    this.authSyncPending = false;
-    this.authSyncTimer = setTimeout(() => {
-      this.authSyncTimer = null;
-      void this.revalidateClerkState();
-    }, 100);
-  }
-
-  private flushPendingAuthSync(): void {
-    if (!this.authSyncPending || !this.boundAuthRevalidation) {
-      return;
-    }
-    this.ngZone.runOutsideAngular(() => this.scheduleAuthSync());
-  }
-
-  private cancelScheduledAuthSync(): void {
-    this.authSyncPending = false;
-    if (this.authSyncTimer !== null) {
-      clearTimeout(this.authSyncTimer);
-      this.authSyncTimer = null;
-    }
   }
 
   private isAuthTransitionActive(): boolean {
@@ -982,11 +921,11 @@ export class AuthStateService {
   }
 
   private async revalidateClerkState(): Promise<void> {
-    if (this.authSyncInFlight) {
-      return;
-    }
-    if (this.isAuthTransitionActive()) {
-      this.authSyncPending = true;
+    if (
+      this.document.visibilityState !== "visible" ||
+      this.authSyncInFlight ||
+      this.isAuthTransitionActive()
+    ) {
       return;
     }
 
@@ -1027,9 +966,11 @@ export class AuthStateService {
       await this.clerk.setActive(sessionId);
     } catch (error) {
       console.error("Failed to activate Clerk session after reload", error);
-      this.analytics.SentryException(error, {
-        tags: { feature: "clerk-sync" },
-      });
+      if (!this.clerk.isTransientNetworkError(error)) {
+        this.analytics.SentryException(error, {
+          tags: { feature: "clerk-sync" },
+        });
+      }
     }
   }
 

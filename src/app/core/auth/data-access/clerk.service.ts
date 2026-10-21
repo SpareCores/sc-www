@@ -152,7 +152,7 @@ export class ClerkService {
     return this.clerk?.addListener(listener) as (() => void) | undefined;
   }
 
-  private isTransientNetworkError(error: unknown): boolean {
+  isTransientNetworkError(error: unknown): boolean {
     if (typeof navigator !== "undefined" && navigator.onLine === false) {
       return true;
     }

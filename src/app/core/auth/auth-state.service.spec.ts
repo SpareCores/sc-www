@@ -1,10 +1,5 @@
 import { PLATFORM_ID } from "@angular/core";
-import {
-  fakeAsync,
-  flushMicrotasks,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { fakeAsync, flushMicrotasks, TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import {
@@ -1634,7 +1629,6 @@ describe("AuthStateService", () => {
 
     setVisibilityState("visible");
     document.dispatchEvent(new Event("visibilitychange"));
-    tick(100);
     flushMicrotasks();
 
     expect(syncSpy).toHaveBeenCalledTimes(1);
@@ -1672,7 +1666,6 @@ describe("AuthStateService", () => {
 
     setVisibilityState("visible");
     document.dispatchEvent(new Event("visibilitychange"));
-    tick(100);
     flushMicrotasks();
 
     expect(setActiveSpy).toHaveBeenCalledOnceWith("sess_1");
@@ -1698,7 +1691,6 @@ describe("AuthStateService", () => {
 
     setVisibilityState("visible");
     document.dispatchEvent(new Event("visibilitychange"));
-    tick(100);
     flushMicrotasks();
 
     expect(setActiveSpy).not.toHaveBeenCalled();
@@ -1736,7 +1728,6 @@ describe("AuthStateService", () => {
 
     setVisibilityState("visible");
     window.dispatchEvent(new Event("focus"));
-    tick(100);
     flushMicrotasks();
 
     expect(syncSpy).toHaveBeenCalledTimes(1);
@@ -1753,7 +1744,6 @@ describe("AuthStateService", () => {
 
     setVisibilityState("hidden");
     document.dispatchEvent(new Event("visibilitychange"));
-    tick(100);
     flushMicrotasks();
 
     expect(syncSpy).not.toHaveBeenCalled();
@@ -1771,7 +1761,6 @@ describe("AuthStateService", () => {
     document.dispatchEvent(new Event("visibilitychange"));
     window.dispatchEvent(new Event("focus"));
     document.dispatchEvent(new Event("visibilitychange"));
-    tick(100);
     flushMicrotasks();
 
     expect(syncSpy).toHaveBeenCalledTimes(1);
@@ -1803,7 +1792,6 @@ describe("AuthStateService", () => {
 
     setVisibilityState("visible");
     document.dispatchEvent(new Event("visibilitychange"));
-    tick(100);
     flushMicrotasks();
 
     expect(syncSpy).toHaveBeenCalledTimes(1);
@@ -1823,7 +1811,6 @@ describe("AuthStateService", () => {
 
     setVisibilityState("visible");
     document.dispatchEvent(new Event("visibilitychange"));
-    tick(100);
     flushMicrotasks();
 
     expect(syncSpy).not.toHaveBeenCalled();
@@ -1862,5 +1849,155 @@ describe("AuthStateService", () => {
 
     expect(clerk.signOut).toHaveBeenCalled();
     expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  it("does not reactivate a session when a reload resolves during sign-out", fakeAsync(() => {
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    const auth = createAuth();
+    const { clerk, fireListener } = createClerkWithListener({
+      user: signedInUser,
+      session: { id: "sess_1" },
+      client: {
+        lastActiveSessionId: "sess_1",
+        sessions: [{ id: "sess_1", status: "active" }],
+      },
+    });
+    let resolveSignOut: () => void = () => undefined;
+    clerk.signOut = jasmine.createSpy("signOut").and.callFake(() => {
+      clerk.user = null;
+      clerk.session = null;
+      fireListener();
+      return new Promise<void>((resolve) => (resolveSignOut = resolve));
+    });
+    setClerkInstance(clerk);
+    setUser(auth, signedInUser);
+    let resolveSync: (synced: boolean) => void = () => undefined;
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.returnValue(
+      new Promise<boolean>((resolve) => (resolveSync = resolve)),
+    );
+    const setActiveSpy = spyOn(clerkService(), "setActive");
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+
+    auth.signOut();
+    flushMicrotasks();
+    expect(clerk.signOut).toHaveBeenCalled();
+
+    resolveSync(true);
+    flushMicrotasks();
+
+    expect(setActiveSpy).not.toHaveBeenCalled();
+
+    resolveSignOut();
+    flushMicrotasks();
+
+    expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  it("does not reactivate a session when a reload starts during sign-out", fakeAsync(() => {
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    const auth = createAuth();
+    const { clerk, fireListener } = createClerkWithListener({
+      user: signedInUser,
+      session: { id: "sess_1" },
+      client: {
+        lastActiveSessionId: "sess_1",
+        sessions: [{ id: "sess_1", status: "active" }],
+      },
+    });
+    let resolveSignOut: () => void = () => undefined;
+    clerk.signOut = jasmine.createSpy("signOut").and.returnValue(
+      new Promise<void>((resolve) => (resolveSignOut = resolve)).then(() => {
+        clerk.user = null;
+        clerk.session = null;
+        fireListener();
+      }),
+    );
+    setClerkInstance(clerk);
+    setUser(auth, signedInUser);
+    let resolveSync: (synced: boolean) => void = () => undefined;
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.returnValue(
+      new Promise<boolean>((resolve) => (resolveSync = resolve)),
+    );
+    const setActiveSpy = spyOn(clerkService(), "setActive");
+
+    auth.init();
+    flushMicrotasks();
+
+    auth.signOut();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+
+    resolveSignOut();
+    flushMicrotasks();
+    resolveSync(true);
+    flushMicrotasks();
+
+    expect(setActiveSpy).not.toHaveBeenCalled();
+    expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  function revalidateWithSetActiveError(error: Error): jasmine.Spy {
+    const auth = createAuth();
+    setClerkInstance(
+      createClerkWithListener({
+        client: {
+          lastActiveSessionId: "sess_1",
+          sessions: [{ id: "sess_1", status: "active" }],
+        },
+      }).clerk,
+    );
+    spyOn(clerkService(), "syncClerkState").and.resolveTo(true);
+    spyOn(clerkService(), "setActive").and.rejectWith(error);
+    spyOn(console, "error");
+    const sentrySpy = spyOn(analyticsService(), "SentryException");
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    return sentrySpy;
+  }
+
+  it("does not report transient network errors when reactivating after reload", fakeAsync(() => {
+    const sentrySpy = revalidateWithSetActiveError(
+      new TypeError("Failed to fetch"),
+    );
+
+    expect(sentrySpy).not.toHaveBeenCalled();
+  }));
+
+  it("reports non-network errors when reactivating after reload", fakeAsync(() => {
+    const error = new Error("boom");
+    const sentrySpy = revalidateWithSetActiveError(error);
+
+    expect(sentrySpy).toHaveBeenCalledOnceWith(error, {
+      tags: { feature: "clerk-sync" },
+    });
   }));
 });
