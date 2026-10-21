@@ -44,7 +44,7 @@ type TooltipListener = {
   selector: "sc-server-lstopo",
   imports: [Button, DragToPan, Modal],
   templateUrl: "./server-lstopo.html",
-  styleUrl: "./server-lstopo.scss",
+  styleUrl: "./server-lstopo.css",
   encapsulation: ViewEncapsulation.None,
 })
 export class ServerLstopo implements OnChanges {

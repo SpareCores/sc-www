@@ -137,7 +137,7 @@ import {
     Modal,
   ],
   templateUrl: "./server-listing.html",
-  styleUrl: "./server-listing.scss",
+  styleUrl: "./server-listing.css",
 })
 export class ServerListing implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);

@@ -185,7 +185,7 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
     CollectionSaveModal,
   ],
   templateUrl: "./database-compare.html",
-  styleUrl: "./database-compare.scss",
+  styleUrl: "./database-compare.css",
   providers: [CompareChartLegendVisibility],
 })
 export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {

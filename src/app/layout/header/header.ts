@@ -81,7 +81,7 @@ import { AuthState } from "../../core/auth";
     CdkDragHandle,
   ],
   templateUrl: "./header.html",
-  styleUrl: "./header.scss",
+  styleUrl: "./header.css",
 })
 export class Header {
   private router = inject(Router);

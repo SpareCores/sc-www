@@ -56,7 +56,7 @@ import {
     Dropdown,
   ],
   templateUrl: "./traffic-prices.html",
-  styleUrl: "./traffic-prices.scss",
+  styleUrl: "./traffic-prices.css",
 })
 export class TrafficPrices implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);

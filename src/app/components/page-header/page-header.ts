@@ -28,7 +28,7 @@ import { UiTooltip } from "../../services/ui-tooltip";
     LucideSquarePen,
   ],
   templateUrl: "./page-header.html",
-  styleUrl: "./page-header.scss",
+  styleUrl: "./page-header.css",
 })
 export class PageHeader {
   private uiTooltip = inject(UiTooltip);

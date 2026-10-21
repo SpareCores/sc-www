@@ -31,7 +31,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [BaseChartDirective],
   templateUrl: "./workload-profile-radar-chart.html",
-  styleUrls: ["./workload-profile-radar-chart.scss"],
+  styleUrls: ["./workload-profile-radar-chart.css"],
 })
 export class WorkloadProfileRadarChart {
   private platformId = inject(PLATFORM_ID);

@@ -1,0 +1,97 @@
+::ng-deep .html_content h1,
+::ng-deep .html_content h2,
+::ng-deep .html_content h3,
+::ng-deep .html_content h4,
+::ng-deep .html_content h5,
+::ng-deep .html_content h6 {
+  @apply font-bold text-emerald-400 my-4;
+}
+
+::ng-deep .html_content h1 {
+  @apply text-4xl;
+}
+
+::ng-deep .html_content h2 {
+  @apply text-2xl;
+  @apply my-10;
+}
+
+::ng-deep .html_content a {
+  @apply underline decoration-dotted;
+}
+
+::ng-deep .html_content a:hover {
+  @apply text-gray-500;
+}
+
+::ng-deep .html_content li {
+  @apply list-disc ml-4;
+  @apply text-lg;
+  @apply my-1;
+  @apply ml-8;
+}
+
+::ng-deep .html_content p {
+  @apply my-10;
+  @apply text-lg;
+}
+
+::ng-deep .html_content pre {
+  @apply bg-secondary;
+  padding: 10px 15px;
+  margin: 20px 10px;
+  border: 1px solid #34d399;
+  border-radius: 10px;
+}
+
+::ng-deep .html_content pre code {
+  padding: 0px;
+}
+
+::ng-deep .html_content code {
+  @apply bg-secondary;
+  padding: 2px 5px;
+}
+
+::ng-deep .html_content blockquote {
+  border-left: 1px solid #34d399;
+  padding: 0px 10px 0px 10px;
+  margin: 10px;
+}
+
+::ng-deep .html_content ul {
+  @apply mb-2;
+}
+
+::ng-deep .html_content img.zoomin {
+  cursor: zoom-in;
+}
+
+::ng-deep .html_content table {
+  @apply mx-auto;
+  @apply mb-2;
+}
+
+::ng-deep .html_content table thead {
+  @apply border-b border-emerald-400 border-solid;
+}
+
+::ng-deep .html_content table thead th {
+  @apply px-5 py-3 font-normal text-xs;
+}
+
+::ng-deep .html_content table tbody tr:nth-child(2n + 1) {
+  @apply bg-primary;
+}
+
+::ng-deep .html_content table tbody tr:nth-child(2n) {
+  @apply bg-secondary;
+}
+
+::ng-deep .html_content table tbody tr td {
+  @apply px-5 py-3 text-sm;
+}
+
+::ng-deep .html_content table tbody tr td a:hover {
+  opacity: 0.5;
+}
