@@ -226,4 +226,34 @@ describe("Visual regression tests", () => {
       exactName: true,
     });
   });
+
+  it("should compare screenshot of embedded server chart", () => {
+    E2EEvent.visitURL("/embed/server/gcp/t2d-standard-1/geek_single");
+
+    cy.get("sc-server-charts canvas").should("be.visible");
+
+    cy.compareSnapshot({
+      name: visualSnapshotName(
+        "embedded-server-chart-gcp-t2d-standard-1-geek-single",
+        "desktop",
+      ),
+      exactName: true,
+    });
+  });
+
+  it("should compare screenshot of embedded compare chart", () => {
+    E2EEvent.visitURL(
+      "/embed/compare/generic?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYTEubWVkaXVtIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjNmdkLm1lZGl1bSJ9XQ%3D%3D",
+    );
+
+    cy.get("sc-server-compare-charts canvas").should("be.visible");
+
+    cy.compareSnapshot({
+      name: visualSnapshotName(
+        "embedded-compare-chart-aws-a1-medium-c6gd-medium-generic",
+        "desktop",
+      ),
+      exactName: true,
+    });
+  });
 });
