@@ -68,7 +68,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
-  DatabaseCompare,
+  ComparedDatabase,
   DatabaseCompareBaseline,
   ServerCompareService,
 } from "../../services/server-compare.service";
@@ -233,7 +233,7 @@ export class DatabaseCompareComponent
   keywords = "cloud, database, dbaas, compare, sparecores";
 
   isLoading = true;
-  instances: DatabaseCompare[] = [];
+  instances: ComparedDatabase[] = [];
   instancesRaw = "";
   private lastEncodedCompareQuery: string | null = null;
   private compareDataReady = false;
@@ -1023,7 +1023,7 @@ export class DatabaseCompareComponent
       : "/databases/compare";
   }
 
-  private applySelectionFromService(selection: DatabaseCompare[]): void {
+  private applySelectionFromService(selection: ComparedDatabase[]): void {
     if (this.isLoading) {
       return;
     }
@@ -1296,7 +1296,7 @@ export class DatabaseCompareComponent
     return !!saved && this.compareCollections.isDeletingComparison(saved.id);
   }
 
-  private getCompareInstancesForSave(): DatabaseCompare[] {
+  private getCompareInstancesForSave(): ComparedDatabase[] {
     return this.instances.map((instance) => ({
       display_name: instance.display_name,
       vendor: instance.vendor,

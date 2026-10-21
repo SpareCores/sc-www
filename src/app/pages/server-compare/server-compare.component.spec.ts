@@ -14,7 +14,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { PrismService } from "../../services/prism.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
-  ServerCompare,
+  ComparedServer,
   ServerCompareBaseline,
   ServerCompareService,
 } from "../../services/server-compare.service";
@@ -42,7 +42,7 @@ describe("ServerCompareComponent", () => {
   const setBaselineServer = jasmine.createSpy("setBaselineServer");
   const syncCompareRoute = jasmine.createSpy("syncCompareRoute");
   const baselineChanged = new Subject<ServerCompareBaseline | null>();
-  const selectionChanged = new Subject<ServerCompare[]>();
+  const selectionChanged = new Subject<ComparedServer[]>();
   const sentryException = jasmine.createSpy("SentryException");
   const getServerMeta = jasmine.createSpy("getServerMeta");
   const getServerBenchmarkMeta = jasmine.createSpy("getServerBenchmarkMeta");

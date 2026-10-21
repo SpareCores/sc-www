@@ -16,7 +16,7 @@ export interface ZoneAndRegion {
   region: string;
 }
 
-export interface ServerCompare {
+export interface ComparedServer {
   display_name: string;
   vendor: string;
   server: string;
@@ -35,7 +35,7 @@ export interface ServerCompareBaseline {
   server: string;
 }
 
-export interface DatabaseCompare {
+export interface ComparedDatabase {
   display_name: string;
   vendor: string;
   database: string;
@@ -55,10 +55,10 @@ export class ServerCompareService implements OnDestroy {
   private toastService = inject(ToastService);
   private collectionsUi = inject(CollectionsUiService);
 
-  public selectedForCompare: ServerCompare[] = [];
-  public selectedDatabases: DatabaseCompare[] = [];
-  public selectionChanged: Subject<ServerCompare[]> = new Subject();
-  public databaseSelectionChanged: Subject<DatabaseCompare[]> = new Subject();
+  public selectedForCompare: ComparedServer[] = [];
+  public selectedDatabases: ComparedDatabase[] = [];
+  public selectionChanged: Subject<ComparedServer[]> = new Subject();
+  public databaseSelectionChanged: Subject<ComparedDatabase[]> = new Subject();
   public baselineChanged: Subject<ServerCompareBaseline | null> = new Subject();
   public databaseBaselineChanged: Subject<DatabaseCompareBaseline | null> =
     new Subject();
@@ -127,7 +127,7 @@ export class ServerCompareService implements OnDestroy {
     return true;
   }
 
-  toggleDatabaseCompare(event: boolean, database: DatabaseCompare) {
+  toggleDatabaseCompare(event: boolean, database: ComparedDatabase) {
     if (event && !this.canAddDatabaseToCompare(database)) {
       return false;
     }
@@ -180,7 +180,7 @@ export class ServerCompareService implements OnDestroy {
     return true;
   }
 
-  canAddDatabaseToCompare(database: DatabaseCompare): boolean {
+  canAddDatabaseToCompare(database: ComparedDatabase): boolean {
     if (this.auth.isAuthenticated()) {
       return true;
     }
@@ -366,7 +366,7 @@ export class ServerCompareService implements OnDestroy {
     this.databaseSelectionChanged.next(this.selectedDatabases);
   }
 
-  replaceServerCompareSelection(items: ServerCompare[]): void {
+  replaceServerCompareSelection(items: ComparedServer[]): void {
     this.selectedForCompare = items.map((item) => ({
       display_name: item.display_name,
       vendor: item.vendor,
@@ -376,7 +376,7 @@ export class ServerCompareService implements OnDestroy {
     this.selectionChanged.next(this.selectedForCompare);
   }
 
-  replaceDatabaseCompareSelection(items: DatabaseCompare[]): void {
+  replaceDatabaseCompareSelection(items: ComparedDatabase[]): void {
     this.selectedDatabases = items.map((item) => ({
       display_name: item.display_name,
       vendor: item.vendor,
