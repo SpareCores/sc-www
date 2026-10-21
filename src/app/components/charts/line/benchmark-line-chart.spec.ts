@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { By } from "@angular/platform-browser";
 
 import { BenchmarkLineChart } from "./benchmark-line-chart";
+import { Dropdown } from "../../../directives/dropdown";
+import { PageOverlayContainer } from "../../../services/overlay/page-overlay-container";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 import {
   BenchmarkLineChartData,
@@ -127,8 +130,17 @@ describe("BenchmarkLineChart", () => {
   });
 
   it("renders a content-sized selector with compression-style option buttons", () => {
-    const hostElement = fixture.nativeElement as HTMLElement;
-    const optionsPanel = hostElement.querySelector(`#${component.optionsId}`);
+    fixture.debugElement
+      .query(By.css(`#${component.buttonId}`))
+      .injector.get(Dropdown)
+      .open();
+    fixture.detectChanges();
+
+    const overlayElement =
+      TestBed.inject(PageOverlayContainer).getContainerElement();
+    const optionsPanel = overlayElement.querySelector(
+      `#${component.optionsId}`,
+    );
     const firstOptionButton = optionsPanel?.querySelector("button");
     const firstOptionLabel = firstOptionButton?.querySelector("div");
 

@@ -943,10 +943,9 @@
                 </h3>
                 <div class="flex items-stretch gap-4 shrink-0">
                   <sc-button
-                    #stressNgSubcategoryDropdown="scFlowbiteDropdown"
+                    #stressNgSubcategoryDropdown="scDropdown"
                     id="stress_ng_full_subcategory_button"
-                    scFlowbiteDropdown="stress_ng_full_subcategory_options"
-                    [dropdownEnabled]="isBrowserEnvironment()"
+                    [scDropdown]="stressNgSubcategoryPanel"
                     [label]="stressNgActiveSection.name"
                     icon="chevron-down"
                     variant="dropdown"
@@ -954,10 +953,9 @@
                     [title]="stressNgActiveSection.name"
                   ></sc-button>
                   <sc-button
-                    #stressNgMetricDropdown="scFlowbiteDropdown"
+                    #stressNgMetricDropdown="scDropdown"
                     id="stress_ng_full_metric_button"
-                    scFlowbiteDropdown="stress_ng_full_metric_options"
-                    [dropdownEnabled]="isBrowserEnvironment()"
+                    [scDropdown]="stressNgMetricPanel"
                     [label]="stressNgMetricName()"
                     icon="chevron-down"
                     variant="dropdown"
@@ -977,60 +975,64 @@
                   }
                 </div>
               </div>
-              <div
-                id="stress_ng_full_subcategory_options"
-                class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
-              >
-                <ul
-                  class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="stress_ng_full_subcategory_button"
+              <ng-template #stressNgSubcategoryPanel>
+                <div
+                  id="stress_ng_full_subcategory_options"
+                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
                 >
-                  @for (section of stressNgSections(); track section.name) {
-                    <li>
-                      <button
-                        type="button"
-                        class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
-                        data-ph-capture-attribute-sc-event="stress_ng_full select subcategory"
-                        [attr.data-ph-capture-attribute-stress-ng-subcategory]="
-                          section.name
-                        "
-                        (click)="selectStressNgSubcategory(section.name)"
-                      >
-                        <div class="text-white text-sm">
-                          {{ section.name }}
-                        </div>
-                      </button>
-                    </li>
-                  }
-                </ul>
-              </div>
-              <div
-                id="stress_ng_full_metric_options"
-                class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
-              >
-                <ul
-                  class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="stress_ng_full_metric_button"
+                  <ul
+                    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                    aria-labelledby="stress_ng_full_subcategory_button"
+                  >
+                    @for (section of stressNgSections(); track section.name) {
+                      <li>
+                        <button
+                          type="button"
+                          class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                          data-ph-capture-attribute-sc-event="stress_ng_full select subcategory"
+                          [attr.data-ph-capture-attribute-stress-ng-subcategory]="
+                            section.name
+                          "
+                          (click)="selectStressNgSubcategory(section.name)"
+                        >
+                          <div class="text-white text-sm">
+                            {{ section.name }}
+                          </div>
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              </ng-template>
+              <ng-template #stressNgMetricPanel>
+                <div
+                  id="stress_ng_full_metric_options"
+                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
                 >
-                  @for (option of stressNgMetricOptions; track option.id) {
-                    <li>
-                      <button
-                        type="button"
-                        class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
-                        data-ph-capture-attribute-sc-event="stress_ng_full select metric"
-                        [attr.data-ph-capture-attribute-stress-ng-metric]="
-                          option.id
-                        "
-                        (click)="selectStressNgMetric(option.id)"
-                      >
-                        <div class="text-white text-sm">
-                          {{ option.name }}
-                        </div>
-                      </button>
-                    </li>
-                  }
-                </ul>
-              </div>
+                  <ul
+                    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                    aria-labelledby="stress_ng_full_metric_button"
+                  >
+                    @for (option of stressNgMetricOptions; track option.id) {
+                      <li>
+                        <button
+                          type="button"
+                          class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                          data-ph-capture-attribute-sc-event="stress_ng_full select metric"
+                          [attr.data-ph-capture-attribute-stress-ng-metric]="
+                            option.id
+                          "
+                          (click)="selectStressNgMetric(option.id)"
+                        >
+                          <div class="text-white text-sm">
+                            {{ option.name }}
+                          </div>
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              </ng-template>
             </td>
             @if (pinnedRow.actionSpacerColSpan) {
               <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>

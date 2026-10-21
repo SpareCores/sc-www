@@ -111,7 +111,7 @@ import {
   StressNgMetric,
   buildStressNgCompareSections,
 } from "../charts/stress-ng-full/stress-ng-full.utils";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
 import { WorkloadProfilePanel } from "../charts/workload-profile/workload-profile-panel";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -145,7 +145,7 @@ import {
     BenchmarkMultiBarChart,
     WorkloadProfilePanel,
     Button,
-    FlowbiteDropdown,
+    Dropdown,
   ],
   providers: [CompareChartLegendVisibility],
   templateUrl: "./server-compare-charts.html",
@@ -218,10 +218,8 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
 
   readonly stressNgTitle = STRESS_NG_TITLE;
   readonly stressNgMetricOptions = STRESS_NG_METRIC_OPTIONS;
-  stressNgMetricDropdown = viewChild<FlowbiteDropdown>(
-    "stressNgMetricDropdown",
-  );
-  stressNgSubcategoryDropdown = viewChild<FlowbiteDropdown>(
+  stressNgMetricDropdown = viewChild<Dropdown>("stressNgMetricDropdown");
+  stressNgSubcategoryDropdown = viewChild<Dropdown>(
     "stressNgSubcategoryDropdown",
   );
   private stressNgBenchmarks = signal<StressNgCompareBenchmark[]>([]);
@@ -854,10 +852,6 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
 
   stressNgExactValue(value: number | string): string | undefined {
     return typeof value === "number" ? value.toString() : undefined;
-  }
-
-  isBrowserEnvironment(): boolean {
-    return isPlatformBrowser(this.platformId);
   }
 
   isTableOnlyChartShown(): boolean {

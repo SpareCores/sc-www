@@ -198,8 +198,8 @@
             <div>
               <sc-button
                 id="advisor_currency_button"
-                [scFlowbiteDropdown]="'advisor_currency_options'"
-                #currencyDropdown="scFlowbiteDropdown"
+                [scDropdown]="currencyPanel"
+                #currencyDropdown="scDropdown"
                 [label]="selectedCurrency().slug"
                 icon="credit-card"
                 variant="dropdown"
@@ -209,7 +209,7 @@
             <div>
               <sc-button
                 id="advisor_column_button"
-                [scFlowbiteDropdown]="'advisor_column_options'"
+                [scDropdown]="columnPanel"
                 label="Columns"
                 icon="columns-3-cog"
                 variant="dropdown"
@@ -1351,10 +1351,10 @@
             <div class="flex items-center gap-2">
               <sc-button
                 id="advisor_pagesize_button"
-                [scFlowbiteDropdown]="'advisor_pagesize_options'"
+                [scDropdown]="pageSizePanel"
                 [dropdownFlip]="true"
                 [dropdownPlacement]="'bottom-start'"
-                #pageDropdown="scFlowbiteDropdown"
+                #pageDropdown="scDropdown"
                 [label]="'' + limit()"
                 icon="chevron-down"
                 variant="dropdown"
@@ -1378,70 +1378,76 @@
   </div>
 </div>
 
-<div id="advisor_pagesize_options" class="advisor-dropdown-menu hidden w-44">
-  <ul
-    class="advisor-dropdown-menu-list px-1"
-    aria-labelledby="advisor_pagesize_button"
-  >
-    @for (pageLimit of pageLimits; track $index) {
-      <li
-        class="advisor-dropdown-menu-option"
-        (click)="selectPageSize(pageLimit)"
-        (keydown.enter)="selectPageSize(pageLimit)"
-        (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
-        role="option"
-        [attr.aria-selected]="pageLimit === limit()"
-        tabindex="0"
-      >
-        <div class="advisor-dropdown-menu-label">{{ pageLimit }}</div>
-      </li>
-    }
-  </ul>
-</div>
+<ng-template #pageSizePanel>
+  <div id="advisor_pagesize_options" class="advisor-dropdown-menu w-44">
+    <ul
+      class="advisor-dropdown-menu-list px-1"
+      aria-labelledby="advisor_pagesize_button"
+    >
+      @for (pageLimit of pageLimits; track $index) {
+        <li
+          class="advisor-dropdown-menu-option"
+          (click)="selectPageSize(pageLimit)"
+          (keydown.enter)="selectPageSize(pageLimit)"
+          (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
+          role="option"
+          [attr.aria-selected]="pageLimit === limit()"
+          tabindex="0"
+        >
+          <div class="advisor-dropdown-menu-label">{{ pageLimit }}</div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
-<div id="advisor_currency_options" class="advisor-dropdown-menu hidden w-52">
-  <ul
-    class="advisor-dropdown-menu-list px-1"
-    aria-labelledby="advisor_currency_button"
-  >
-    @for (currency of availableCurrencies; track currency.name) {
-      <li
-        class="advisor-dropdown-menu-option"
-        (click)="selectCurrency(currency)"
-        (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
-        (keydown.space)="selectCurrency(currency); $event.preventDefault()"
-        role="option"
-        [attr.aria-selected]="currency === selectedCurrency()"
-        tabindex="0"
-      >
-        <div class="advisor-dropdown-menu-label">
-          {{ currency.name }} ({{ currency.symbol }})
-        </div>
-      </li>
-    }
-  </ul>
-</div>
+<ng-template #currencyPanel>
+  <div id="advisor_currency_options" class="advisor-dropdown-menu w-52">
+    <ul
+      class="advisor-dropdown-menu-list px-1"
+      aria-labelledby="advisor_currency_button"
+    >
+      @for (currency of availableCurrencies; track currency.name) {
+        <li
+          class="advisor-dropdown-menu-option"
+          (click)="selectCurrency(currency)"
+          (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
+          (keydown.space)="selectCurrency(currency); $event.preventDefault()"
+          role="option"
+          [attr.aria-selected]="currency === selectedCurrency()"
+          tabindex="0"
+        >
+          <div class="advisor-dropdown-menu-label">
+            {{ currency.name }} ({{ currency.symbol }})
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
-<div id="advisor_column_options" class="advisor-dropdown-menu hidden w-56">
-  <ul
-    class="advisor-dropdown-menu-list px-3"
-    aria-labelledby="advisor_column_button"
-  >
-    @for (column of possibleColumns(); track column.name) {
-      <li class="advisor-dropdown-menu-option px-0 hover:bg-transparent">
-        <input
-          type="checkbox"
-          [checked]="column.show"
-          (change)="
-            setColumnVisibility(column.name, $any($event.target).checked)
-          "
-          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-        />
-        <div class="advisor-dropdown-menu-label">{{ column.name }}</div>
-      </li>
-    }
-  </ul>
-</div>
+<ng-template #columnPanel>
+  <div id="advisor_column_options" class="advisor-dropdown-menu w-56">
+    <ul
+      class="advisor-dropdown-menu-list px-3"
+      aria-labelledby="advisor_column_button"
+    >
+      @for (column of possibleColumns(); track column.name) {
+        <li class="advisor-dropdown-menu-option px-0 hover:bg-transparent">
+          <input
+            type="checkbox"
+            [checked]="column.show"
+            (change)="
+              setColumnVisibility(column.name, $any($event.target).checked)
+            "
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+          />
+          <div class="advisor-dropdown-menu-label">{{ column.name }}</div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
 @if (compareCount() >= 2 && selectedBaselineServer()) {
   <div class="advisor-compare-bar">

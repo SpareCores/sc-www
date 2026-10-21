@@ -60,7 +60,7 @@ import {
 } from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
 import { Analytics } from "../../services/analytics";
@@ -175,7 +175,7 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
     LoadingSpinner,
     BenchmarkLineChart,
     BenchmarkIconPipe,
-    FlowbiteDropdown,
+    Dropdown,
     LucideCheck,
     LucideCircleArrowUp,
     LucideDynamicIcon,
@@ -211,8 +211,8 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
   chartSectionTooltip = viewChild<ElementRef>("chartSectionTooltip");
-  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
-  baselineDropdown = viewChild<FlowbiteDropdown>("baselineDropdown");
+  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
+  baselineDropdown = viewChild<Dropdown>("baselineDropdown");
   scrollbarMirrorBottomEl = viewChild<ElementRef>("scrollbarMirrorBottomRef");
   readonly scrollbarMirrorController = ScrollbarMirrorController;
   readonly scrollbarMirror = signal<ScrollbarMirrorState>({

@@ -156,8 +156,8 @@
             <sc-button
               id="allocation_button"
               data-ph-capture-attribute-sc-event="server listing price allocation select"
-              [scFlowbiteDropdown]="'allocation_options'"
-              #allocationDropdown="scFlowbiteDropdown"
+              [scDropdown]="allocationPanel"
+              #allocationDropdown="scDropdown"
               [label]="bestPriceAllocation.name"
               icon="calendar-search"
               variant="dropdown"
@@ -168,8 +168,8 @@
             <sc-button
               id="currency_button"
               data-ph-capture-attribute-sc-event="server listing currency select"
-              [scFlowbiteDropdown]="'currency_options'"
-              #currencyDropdown="scFlowbiteDropdown"
+              [scDropdown]="currencyPanel"
+              #currencyDropdown="scDropdown"
               [label]="selectedCurrency.slug"
               icon="credit-card"
               variant="dropdown"
@@ -179,7 +179,7 @@
             <sc-button
               id="column_button"
               data-ph-capture-attribute-sc-event="server listing columns select"
-              [scFlowbiteDropdown]="'column_options'"
+              [scDropdown]="columnPanel"
               label="Columns"
               icon="columns-3-cog"
               variant="dropdown"
@@ -704,10 +704,10 @@
                 <sc-button
                   id="pagesize_button"
                   data-ph-capture-attribute-sc-event="server listing page size select"
-                  [scFlowbiteDropdown]="'pagesize_options'"
+                  [scDropdown]="pageSizePanel"
                   [dropdownFlip]="true"
                   [dropdownPlacement]="'bottom-start'"
-                  #pageDropdown="scFlowbiteDropdown"
+                  #pageDropdown="scDropdown"
                   [label]="'' + limit"
                   icon="chevron-down"
                   variant="dropdown"
@@ -755,103 +755,114 @@
   </div>
 }
 
-<div
-  id="pagesize_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
+<ng-template #pageSizePanel>
+  <div
+    id="pagesize_options"
+    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
   >
-    @for (pageLimit of pageLimits; track $index) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectPageSize(pageLimit)"
-        (keydown.enter)="selectPageSize(pageLimit)"
-        (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
-        role="option"
-        [attr.aria-selected]="pageLimit === limit"
-        tabindex="0"
-      >
-        <div class="text-white text-sm">{{ pageLimit }}</div>
-      </li>
-    }
-  </ul>
-</div>
+    <ul
+      class="py-2 px-1 text-sm text-gray-700"
+      aria-labelledby="dropdownDefaultButton"
+    >
+      @for (pageLimit of pageLimits; track $index) {
+        <li
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          (click)="selectPageSize(pageLimit)"
+          (keydown.enter)="selectPageSize(pageLimit)"
+          (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
+          role="option"
+          [attr.aria-selected]="pageLimit === limit"
+          tabindex="0"
+        >
+          <div class="text-white text-sm">{{ pageLimit }}</div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
-<div
-  id="allocation_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="allocation_button"
+<ng-template #allocationPanel>
+  <div
+    id="allocation_options"
+    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
   >
-    @for (
-      allocationType of bestPriceAllocationTypes;
-      track allocationType.name
-    ) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectAllocation(allocationType)"
-        (keydown.enter)="selectAllocation(allocationType)"
-        (keydown.space)="
-          selectAllocation(allocationType); $event.preventDefault()
-        "
-        role="option"
-        [attr.aria-selected]="allocationType === bestPriceAllocation"
-        tabindex="0"
-      >
-        <div class="text-white text-sm">{{ allocationType.name }}</div>
-      </li>
-    }
-  </ul>
-</div>
+    <ul
+      class="py-2 px-1 text-sm text-gray-700"
+      aria-labelledby="allocation_button"
+    >
+      @for (
+        allocationType of bestPriceAllocationTypes;
+        track allocationType.name
+      ) {
+        <li
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          (click)="selectAllocation(allocationType)"
+          (keydown.enter)="selectAllocation(allocationType)"
+          (keydown.space)="
+            selectAllocation(allocationType); $event.preventDefault()
+          "
+          role="option"
+          [attr.aria-selected]="allocationType === bestPriceAllocation"
+          tabindex="0"
+        >
+          <div class="text-white text-sm">{{ allocationType.name }}</div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
-<div
-  id="currency_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
->
-  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="currency_button">
-    @for (currency of availableCurrencies; track currency.name) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectCurrency(currency)"
-        (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
-        (keydown.space)="selectCurrency(currency); $event.preventDefault()"
-        role="option"
-        [attr.aria-selected]="currency === selectedCurrency"
-        tabindex="0"
-      >
-        <div class="text-white text-sm">
-          {{ currency.name }} ({{ currency.symbol }})
-        </div>
-      </li>
-    }
-  </ul>
-</div>
-
-<div
-  id="column_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-3 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
+<ng-template #currencyPanel>
+  <div
+    id="currency_options"
+    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
   >
-    @for (column of possibleColumns; track column.name) {
-      <li class="flex py-1 gap-2 items-center">
-        <input
-          type="checkbox"
-          [(ngModel)]="column.show"
-          (ngModelChange)="refreshColumns()"
-          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-        />
-        <div class="text-white text-sm">{{ column.name }}</div>
-      </li>
-    }
-  </ul>
-</div>
+    <ul
+      class="py-2 px-1 text-sm text-gray-700"
+      aria-labelledby="currency_button"
+    >
+      @for (currency of availableCurrencies; track currency.name) {
+        <li
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          (click)="selectCurrency(currency)"
+          (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
+          (keydown.space)="selectCurrency(currency); $event.preventDefault()"
+          role="option"
+          [attr.aria-selected]="currency === selectedCurrency"
+          tabindex="0"
+        >
+          <div class="text-white text-sm">
+            {{ currency.name }} ({{ currency.symbol }})
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #columnPanel>
+  <div
+    id="column_options"
+    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="py-2 px-3 text-sm text-gray-700"
+      aria-labelledby="dropdownDefaultButton"
+    >
+      @for (column of possibleColumns; track column.name) {
+        <li class="flex py-1 gap-2 items-center">
+          <input
+            type="checkbox"
+            [(ngModel)]="column.show"
+            (ngModelChange)="refreshColumns()"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+          />
+          <div class="text-white text-sm">{{ column.name }}</div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
 <div
   id="tooltipDefault"
