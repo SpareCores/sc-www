@@ -23,7 +23,7 @@ import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import { MemoryChartBuilder } from "./memory-chart-builder";
 import { ServerDetailsMemoryChartOption } from "../shared/memory-chart.types";
-import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
+import { Dropdown } from "../../../directives/dropdown";
 import {
   MemoryBenchmarkGroup,
   MemoryBenchmarkMeta,
@@ -39,7 +39,7 @@ import {
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,
-    FlowbiteDropdown,
+    Dropdown,
     BenchmarkIconPipe,
   ],
   templateUrl: "./server-memory-chart.html",
@@ -58,7 +58,7 @@ export class ServerMemoryChart {
   private builder = inject(MemoryChartBuilder);
   private tooltipService = inject(ChartTooltip);
 
-  memoryChartDropdown = viewChild(FlowbiteDropdown);
+  memoryChartDropdown = viewChild(Dropdown);
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
   serverDetails = input<MemoryDetailsServer | undefined>(undefined);

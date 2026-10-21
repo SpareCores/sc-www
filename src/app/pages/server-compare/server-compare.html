@@ -50,16 +50,16 @@
           <div class="flex flex-wrap gap-4 items-center justify-end w-full">
             <sc-button
               id="baseline_server_button"
-              [scFlowbiteDropdown]="'baseline_server_options'"
-              #baselineDropdown="scFlowbiteDropdown"
+              [scDropdown]="baselinePanel"
+              #baselineDropdown="scDropdown"
               [label]="getBaselineServerLabel()"
               icon="target"
               variant="dropdown"
             ></sc-button>
             <sc-button
               id="currency_button"
-              [scFlowbiteDropdown]="'currency_options'"
-              #currencyDropdown="scFlowbiteDropdown"
+              [scDropdown]="currencyPanel"
+              #currencyDropdown="scDropdown"
               [label]="selectedCurrency.slug"
               icon="credit-card"
               variant="dropdown"
@@ -314,53 +314,60 @@
   {{ tooltipContent }}
 </div>
 
-<div
-  id="baseline_server_options"
-  class="compare-dropdown-menu hidden bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="baseline_server_button"
+<ng-template #baselinePanel>
+  <div
+    id="baseline_server_options"
+    class="compare-dropdown-menu bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
   >
-    <li
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectBaselineServer(null)"
+    <ul
+      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="baseline_server_button"
     >
-      <div class="text-white text-sm">No baseline</div>
-    </li>
-    @for (server of servers; track server.vendor_id + "_" + server.server_id) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectBaselineServer(server)"
+        (click)="selectBaselineServer(null)"
       >
-        <div class="text-white text-sm">
-          {{ server.display_name }} ({{ server.vendor_id }})
-        </div>
+        <div class="text-white text-sm">No baseline</div>
       </li>
-    }
-  </ul>
-</div>
+      @for (
+        server of servers;
+        track server.vendor_id + "_" + server.server_id
+      ) {
+        <li
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          (click)="selectBaselineServer(server)"
+        >
+          <div class="text-white text-sm">
+            {{ server.display_name }} ({{ server.vendor_id }})
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
-<div
-  id="currency_options"
-  class="compare-dropdown-menu hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="dropdownDefaultButton"
+<ng-template #currencyPanel>
+  <div
+    id="currency_options"
+    class="compare-dropdown-menu bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
   >
-    @for (currency of availableCurrencies; track currency.name) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectCurrency(currency)"
-      >
-        <div class="text-white text-sm">
-          {{ currency.name }} ({{ currency.symbol }})
-        </div>
-      </li>
-    }
-  </ul>
-</div>
+    <ul
+      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="dropdownDefaultButton"
+    >
+      @for (currency of availableCurrencies; track currency.name) {
+        <li
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          (click)="selectCurrency(currency)"
+        >
+          <div class="text-white text-sm">
+            {{ currency.name }} ({{ currency.symbol }})
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
 <div
   id="embed-compare-modal"
