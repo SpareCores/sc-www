@@ -34,7 +34,7 @@ import {
   switchMap,
   tap,
 } from "rxjs";
-import { AuthStateService } from "../core/auth";
+import { AuthState } from "../core/auth";
 import {
   mutationKey,
   withMutationStatus,
@@ -46,7 +46,7 @@ import {
   setLoading,
   withRequestStatus,
 } from "../shared/store/with-request-status";
-import { CollectionsService } from "./collections.service";
+import { Collections } from "./collections";
 import {
   COLLECTION_TYPES,
   DEFAULT_BOOKMARKS_FILTERS,
@@ -281,7 +281,7 @@ export const CollectionsStore = signalStore(
       return sortByOrder(cards);
     }),
   })),
-  withMethods((store, collections = inject(CollectionsService)) => ({
+  withMethods((store, collections = inject(Collections)) => ({
     isFavoriteServer(vendorId: string, serverId: string): boolean {
       return !!store.serversEntityMap()[favoriteServerId(vendorId, serverId)];
     },
@@ -1175,7 +1175,7 @@ export const CollectionsStore = signalStore(
         return;
       }
 
-      const auth = inject(AuthStateService);
+      const auth = inject(AuthState);
       let loadedForUserId: string | null = null;
       effect(() => {
         if (auth.authInProgress()) {

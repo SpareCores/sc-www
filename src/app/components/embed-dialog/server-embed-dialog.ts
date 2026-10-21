@@ -13,8 +13,8 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { PrismService } from "../../services/prism.service";
+import { SeoHandler } from "../../services/seo-handler";
+import { PrismHighlighter } from "../../services/prism-highlighter";
 import { EmbedChartOption } from "./embed-dialog.types";
 @Component({
   selector: "sc-server-embed-dialog",
@@ -26,8 +26,8 @@ export class ServerEmbedDialog implements OnChanges, AfterViewInit, OnDestroy {
   private static readonly ASPECT_RATIO = 0.6;
   private platformId = inject(PLATFORM_ID);
   private sanitizer = inject(DomSanitizer);
-  private SEOHandler = inject(SeoHandlerService);
-  private prismService = inject(PrismService);
+  private SEOHandler = inject(SeoHandler);
+  private prismService = inject(PrismHighlighter);
 
   @Input() vendor!: string;
   @Input() id!: string;

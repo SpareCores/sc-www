@@ -1,8 +1,8 @@
 import { signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { of, throwError } from "rxjs";
-import { AuthStateService } from "../core/auth";
-import { CollectionsService } from "./collections.service";
+import { AuthState } from "../core/auth";
+import { Collections } from "./collections";
 import { CollectionsStore } from "./collections.store";
 import { favoriteServerId } from "./collections.types";
 
@@ -50,7 +50,7 @@ describe("CollectionsStore", () => {
       providers: [
         CollectionsStore,
         {
-          provide: AuthStateService,
+          provide: AuthState,
           useValue: {
             isAuthenticated: () => isAuthenticated(),
             authInProgress: () => authInProgress(),
@@ -58,7 +58,7 @@ describe("CollectionsStore", () => {
           },
         },
         {
-          provide: CollectionsService,
+          provide: Collections,
           useValue: {
             listFavoriteServers,
             listFavoriteDatabases,

@@ -1,7 +1,7 @@
 import type {
   ComparedDatabase,
   ComparedServer,
-} from "../services/server-compare.service";
+} from "../services/compare-selection";
 
 export type BenchmarkUrlState = {
   id: string;

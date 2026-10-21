@@ -13,7 +13,7 @@ import {
 import { BaseChartDirective } from "ng2-charts";
 import { Button } from "../../button/button";
 import { CompareMemoryChartOption } from "../shared/memory-chart.types";
-import { MemoryChartBuilderService } from "./memory-chart-builder.service";
+import { MemoryChartBuilder } from "./memory-chart-builder";
 import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
 import {
   bindCompareLegendChart,
@@ -38,7 +38,7 @@ export class ServerCompareMemoryChart {
   private static nextDropdownId = 0;
 
   private platformId = inject(PLATFORM_ID);
-  private builder = inject(MemoryChartBuilderService);
+  private builder = inject(MemoryChartBuilder);
   private legendVisibility = injectCompareLegendVisibility();
 
   dropdownBWmem = viewChild(FlowbiteDropdown);

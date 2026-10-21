@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AboutNavigator } from "./about-navigator";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("AboutNavigator", () => {
@@ -24,7 +24,7 @@ describe("AboutNavigator", () => {
   });
 
   it("uses the shared tooltip service for the planned vendors tooltip", () => {
-    const tooltipService = TestBed.inject(UiTooltipService);
+    const tooltipService = TestBed.inject(UiTooltip);
     const showSpy = spyOn(tooltipService, "show");
     const hideSpy = spyOn(tooltipService, "hide");
     const target = document.createElement("span");

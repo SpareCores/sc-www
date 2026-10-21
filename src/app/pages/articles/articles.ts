@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, inject } from "@angular/core";
-import { ArticleMeta, ArticlesService } from "../../services/articles.service";
+import { ArticleMeta, ArticlesApi } from "../../services/articles-api";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { ActivatedRoute } from "@angular/router";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { ArticleCard } from "../../components/article-card/article-card";
 import { Subscription } from "rxjs";
 
@@ -16,9 +16,9 @@ import { Subscription } from "rxjs";
   styleUrl: "./articles.scss",
 })
 export class Articles implements OnInit, OnDestroy {
-  private SEOHandler = inject(SeoHandlerService);
+  private SEOHandler = inject(SeoHandler);
   private route = inject(ActivatedRoute);
-  private articleHandler = inject(ArticlesService);
+  private articleHandler = inject(ArticlesApi);
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },

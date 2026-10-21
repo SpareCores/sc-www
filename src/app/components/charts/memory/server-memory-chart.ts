@@ -19,9 +19,9 @@ import {
 import { BaseChartDirective } from "ng2-charts";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
-import { MemoryChartBuilderService } from "./memory-chart-builder.service";
+import { MemoryChartBuilder } from "./memory-chart-builder";
 import { ServerDetailsMemoryChartOption } from "../shared/memory-chart.types";
 import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
 import {
@@ -55,8 +55,8 @@ export class ServerMemoryChart {
   private static nextDropdownId = 0;
 
   private platformId = inject(PLATFORM_ID);
-  private builder = inject(MemoryChartBuilderService);
-  private tooltipService = inject(ChartTooltipService);
+  private builder = inject(MemoryChartBuilder);
+  private tooltipService = inject(ChartTooltip);
 
   memoryChartDropdown = viewChild(FlowbiteDropdown);
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");

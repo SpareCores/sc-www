@@ -17,7 +17,7 @@ import {
   syncCompareLegendData,
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
-import { WorkloadProfileRadarChartBuilderService } from "./workload-profile-radar-chart-builder.service";
+import { WorkloadProfileRadarChartBuilder } from "./workload-profile-radar-chart-builder";
 import {
   WorkloadProfileBenchmarkMeta,
   WorkloadProfileCompareServer,
@@ -36,7 +36,7 @@ import {
 export class WorkloadProfileRadarChart {
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
-  private builder = inject(WorkloadProfileRadarChartBuilderService);
+  private builder = inject(WorkloadProfileRadarChartBuilder);
   private legendVisibility = injectCompareLegendVisibility();
 
   chartDirective = viewChild(BaseChartDirective);

@@ -6,8 +6,8 @@ import {
 } from "@angular/core/testing";
 
 import { TrafficPrices } from "./traffic-prices";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -54,8 +54,8 @@ describe("TrafficPrices", () => {
   });
 
   it("shows query-error toast when traffic prices search fails with 422", async () => {
-    const toastService = TestBed.inject(ToastService);
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const toastService = TestBed.inject(Toast);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const showHttpError = spyOn(toastService, "showHttpError");
     spyOn(keeperAPI, "getTrafficPrices").and.rejectWith({
       status: 422,
@@ -76,8 +76,8 @@ describe("TrafficPrices", () => {
   });
 
   it("ignores stale traffic-price failure after a newer search starts", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const toastService = TestBed.inject(Toast);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const showHttpError = spyOn(toastService, "showHttpError");
     let rejectFirst!: (reason?: any) => void;
     let resolveSecond!: (value: any) => void;
@@ -114,8 +114,8 @@ describe("TrafficPrices", () => {
   }));
 
   it("ignores stale traffic-price success after a newer search starts", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const toastService = TestBed.inject(Toast);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const removeToast = spyOn(toastService, "removeToast");
     let resolveFirst!: (value: any) => void;
     let resolveSecond!: (value: any) => void;
@@ -158,7 +158,7 @@ describe("TrafficPrices", () => {
   }));
 
   it("aborts the previous traffic-price search when a newer one starts", () => {
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const signals: AbortSignal[] = [];
 
     spyOn(keeperAPI, "getTrafficPrices").and.callFake(
@@ -177,7 +177,7 @@ describe("TrafficPrices", () => {
   });
 
   it("aborts the active traffic-price search on destroy", () => {
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     let activeSignal: AbortSignal | undefined;
 
     spyOn(keeperAPI, "getTrafficPrices").and.callFake(

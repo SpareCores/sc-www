@@ -3,10 +3,10 @@ import { ActivatedRoute } from "@angular/router";
 import { EMPTY } from "rxjs";
 
 import { EmbeddedCompareChart } from "./embedded-compare-chart";
-import { AnalyticsService } from "../../services/analytics.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ToastService } from "../../services/toast.service";
+import { Analytics } from "../../services/analytics";
+import { KeeperAPI } from "../../services/keeper-api";
+import { SeoHandler } from "../../services/seo-handler";
+import { Toast } from "../../services/toast";
 import { BAD_SERVER_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -60,7 +60,7 @@ describe("EmbeddedCompareChart", () => {
           },
         },
         {
-          provide: KeeperAPIService,
+          provide: KeeperAPI,
           useValue: {
             getServerMeta,
             getServerBenchmarkMeta,
@@ -73,17 +73,17 @@ describe("EmbeddedCompareChart", () => {
           },
         },
         {
-          provide: SeoHandlerService,
+          provide: SeoHandler,
           useValue: {},
         },
         {
-          provide: AnalyticsService,
+          provide: Analytics,
           useValue: {
             SentryException: sentryException,
           },
         },
         {
-          provide: ToastService,
+          provide: Toast,
           useValue: {
             show: showToast,
             removeToast,

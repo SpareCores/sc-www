@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from "@angular/core";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 
 @Component({
   selector: "sc-funding-information",
@@ -7,7 +7,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
   styleUrl: "./funding-information.scss",
 })
 export class FundingInformation implements OnInit {
-  private seoHandler = inject(SeoHandlerService);
+  private seoHandler = inject(SeoHandler);
 
   ngOnInit(): void {
     this.seoHandler.updateTitleAndMetaTags(

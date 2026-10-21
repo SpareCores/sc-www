@@ -3,8 +3,8 @@ import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { Storages } from "./storages";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_STORAGE_PRICES_TOAST_ID } from "../../services/toast-ids";
 
 describe("Storages", () => {
@@ -27,8 +27,8 @@ describe("Storages", () => {
   });
 
   it("shows query-error toast when storage prices search fails with 422", async () => {
-    const toastService = TestBed.inject(ToastService);
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const toastService = TestBed.inject(Toast);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const showHttpError = spyOn(toastService, "showHttpError");
     spyOn(keeperAPI, "getStoragePrices").and.rejectWith({
       status: 422,
@@ -79,7 +79,7 @@ describe("Storages", () => {
   });
 
   it("aborts the previous storage-price search when a newer one starts", () => {
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const signals: AbortSignal[] = [];
 
     spyOn(keeperAPI, "getStoragePrices").and.callFake(
@@ -98,7 +98,7 @@ describe("Storages", () => {
   });
 
   it("aborts the active storage-price search on destroy", () => {
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     let activeSignal: AbortSignal | undefined;
 
     spyOn(keeperAPI, "getStoragePrices").and.callFake(

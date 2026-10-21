@@ -1,11 +1,11 @@
 import { Component, OnInit, inject } from "@angular/core";
-import { ArticlesService, LegalMeta } from "../../services/articles.service";
+import { ArticlesApi, LegalMeta } from "../../services/articles-api";
 import { RouterModule } from "@angular/router";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 
 @Component({
@@ -15,8 +15,8 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
   styleUrl: "./legal-documents.scss",
 })
 export class LegalDocuments implements OnInit {
-  private SEOHandler = inject(SeoHandlerService);
-  private articles = inject(ArticlesService);
+  private SEOHandler = inject(SeoHandler);
+  private articles = inject(ArticlesApi);
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },

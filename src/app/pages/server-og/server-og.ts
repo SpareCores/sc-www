@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { AnalyticsService } from "../../services/analytics.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { SeoHandler } from "../../services/seo-handler";
+import { Analytics } from "../../services/analytics";
 import { formatStorageSize } from "../../pipes/pipe-utils";
 import { ServerDescription } from "../../../../sdk/data-contracts";
 import { Subscription } from "rxjs";
@@ -15,9 +15,9 @@ import { Subscription } from "rxjs";
 })
 export class ServerOG implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
-  private keeperAPI = inject(KeeperAPIService);
-  private analytics = inject(AnalyticsService);
-  private SEOHandler = inject(SeoHandlerService);
+  private keeperAPI = inject(KeeperAPI);
+  private analytics = inject(Analytics);
+  private SEOHandler = inject(SeoHandler);
 
   serverDetails!: any;
 

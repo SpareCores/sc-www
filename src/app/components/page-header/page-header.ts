@@ -15,7 +15,7 @@ import {
 } from "@lucide/angular";
 import { Button, ScButtonVariant } from "../button/button";
 import { FEATURE_REGISTER_HINT } from "../../collections/collections.utils";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 
 @Component({
   selector: "sc-page-header",
@@ -31,7 +31,7 @@ import { UiTooltipService } from "../../services/ui-tooltip.service";
   styleUrl: "./page-header.scss",
 })
 export class PageHeader {
-  private uiTooltip = inject(UiTooltipService);
+  private uiTooltip = inject(UiTooltip);
   private tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
 
   icon = input.required<string>();

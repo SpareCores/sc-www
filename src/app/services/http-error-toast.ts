@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { ToastOptions } from "./toast.service";
+import { ToastOptions } from "./toast";
 
 export const DEFAULT_HTTP_ERROR_DETAIL = "Please try again later.";
 

@@ -6,8 +6,8 @@ import {
 } from "../../../../sdk/data-contracts";
 
 import { LandingPage } from "./landing-page";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_LANDING_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -151,7 +151,7 @@ describe("LandingPage", () => {
         Map<string, TableRegionTableRegionGetData[number]>
       >;
     };
-    const keeperApi = TestBed.inject(KeeperAPIService);
+    const keeperApi = TestBed.inject(KeeperAPI);
     const getRegionsSpy = spyOn(keeperApi, "getRegions").and.returnValues(
       Promise.reject(new Error("region lookup failed")),
       Promise.resolve({
@@ -178,8 +178,8 @@ describe("LandingPage", () => {
   });
 
   it("shows query-error toast when welcome search fails with 422", async () => {
-    const toastService = fixture.debugElement.injector.get(ToastService);
-    const keeperAPI = fixture.debugElement.injector.get(KeeperAPIService);
+    const toastService = fixture.debugElement.injector.get(Toast);
+    const keeperAPI = fixture.debugElement.injector.get(KeeperAPI);
     const showHttpError = spyOn(toastService, "showHttpError");
     spyOn(toastService, "removeToast");
     spyOn(keeperAPI, "searchServers").and.returnValue(

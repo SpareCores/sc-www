@@ -22,7 +22,7 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { Allocation } from "../../../../sdk/data-contracts";
-import { AdvisorUiService } from "../../pages/advisor/advisor-ui.service";
+import { AdvisorUi } from "../../pages/advisor/advisor-ui";
 import * as compareTableLayout from "../../pages/shared/compare-table/compare-table-layout.utils";
 import {
   SERVER_COMPARE_TABLE_HOLDER_ID,
@@ -35,37 +35,37 @@ import {
 import { ExtendedServerDetails } from "../../pages/server-details/server-details";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 import { Button } from "../button/button";
-import { CompressionChartBuilderService } from "../charts/compression/compression-chart-builder.service";
+import { CompressionChartBuilder } from "../charts/compression/compression-chart-builder";
 import { CompressionChart } from "../charts/compression/compression-chart";
 import {
   CompressionBenchmarkMeta,
   CompressionServer,
 } from "../charts/compression/compression-chart.types";
-import { GeekbenchRadarChartBuilderService } from "../charts/geekbench/geekbench-radar-chart-builder.service";
+import { GeekbenchRadarChartBuilder } from "../charts/geekbench/geekbench-radar-chart-builder";
 import { GeekbenchRadarChart } from "../charts/geekbench/geekbench-radar-chart";
 import {
   GeekbenchBenchmarkMeta,
   GeekbenchCompareServer,
 } from "../charts/geekbench/geekbench-radar-chart.types";
-import { BenchmarkLineChartBuilderService } from "../charts/line/benchmark-line-chart-builder.service";
+import { BenchmarkLineChartBuilder } from "../charts/line/benchmark-line-chart-builder";
 import { BenchmarkLineChart } from "../charts/line/benchmark-line-chart";
 import {
   LineBenchmarkMeta,
   LineChartServer,
   PGBENCH_HEAVY_READ_ONLY_ID,
 } from "../charts/line/benchmark-line-chart.types";
-import { LlmInferenceChartBuilderService } from "../charts/llm/llm-inference-chart-builder.service";
+import { LlmInferenceChartBuilder } from "../charts/llm/llm-inference-chart-builder";
 import { LlmInferenceChart } from "../charts/llm/llm-inference-chart";
 import { LlmChartServer } from "../charts/llm/llm-inference-chart.types";
-import { MemoryChartBuilderService } from "../charts/memory/memory-chart-builder.service";
+import { MemoryChartBuilder } from "../charts/memory/memory-chart-builder";
 import {
   MemoryBenchmarkMeta,
   MemoryChartServer,
 } from "../charts/memory/memory-chart.types";
 import { ServerCompareMemoryChart } from "../charts/memory/server-compare-memory-chart";
-import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
+import { BenchmarkMultiBarChartBuilder } from "../charts/multi-bar/benchmark-multi-bar-chart-builder";
 import { BenchmarkMultiBarChart } from "../charts/multi-bar/benchmark-multi-bar-chart";
 import {
   NVBANDWIDTH_TITLE,
@@ -82,12 +82,12 @@ import {
   MultiBarBenchmarkMeta,
   MultiBarServer,
 } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
-import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
+import { ChartTooltip } from "../charts/shared/chart-tooltip";
 import {
   getBenchmarkMetaNote,
   getBenchmarkMetaNotes,
 } from "../charts/shared/chart-tooltip.utils";
-import { CompareChartLegendVisibilityService } from "../charts/shared/compare-chart-legend-visibility.service";
+import { CompareChartLegendVisibility } from "../charts/shared/compare-chart-legend-visibility";
 import {
   formatCompareDeltaLabel,
   formatCompareSignedPercentageDeltaLabel,
@@ -147,23 +147,23 @@ import {
     Button,
     FlowbiteDropdown,
   ],
-  providers: [CompareChartLegendVisibilityService],
+  providers: [CompareChartLegendVisibility],
   templateUrl: "./server-compare-charts.html",
   styleUrl: "./server-compare-charts.scss",
 })
 export class ServerCompareCharts implements OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject(DOCUMENT);
-  private toastService = inject(ToastService);
-  private tooltipService = inject(ChartTooltipService);
-  private geekbenchBuilder = inject(GeekbenchRadarChartBuilderService);
-  private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
-  private memoryBuilder = inject(MemoryChartBuilderService);
-  private compressionBuilder = inject(CompressionChartBuilderService);
-  private lineBuilder = inject(BenchmarkLineChartBuilderService);
-  private llmBuilder = inject(LlmInferenceChartBuilderService);
-  private advisorUi = inject(AdvisorUiService);
-  private legendVisibility = inject(CompareChartLegendVisibilityService);
+  private toastService = inject(Toast);
+  private tooltipService = inject(ChartTooltip);
+  private geekbenchBuilder = inject(GeekbenchRadarChartBuilder);
+  private multiBarBuilder = inject(BenchmarkMultiBarChartBuilder);
+  private memoryBuilder = inject(MemoryChartBuilder);
+  private compressionBuilder = inject(CompressionChartBuilder);
+  private lineBuilder = inject(BenchmarkLineChartBuilder);
+  private llmBuilder = inject(LlmInferenceChartBuilder);
+  private advisorUi = inject(AdvisorUi);
+  private legendVisibility = inject(CompareChartLegendVisibility);
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() baselineServer: ExtendedServerDetails | null = null;

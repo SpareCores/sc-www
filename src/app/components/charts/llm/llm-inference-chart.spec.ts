@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { LlmInferenceChart } from "./llm-inference-chart";
-import { DropdownManagerService } from "../../../services/dropdown-manager.service";
+import { DropdownManager } from "../../../services/dropdown-manager";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 import {
   LlmBarChartData,
@@ -29,7 +29,7 @@ describe("LlmInferenceChart", () => {
       providers: [
         ...sharedTestingProviders,
         {
-          provide: DropdownManagerService,
+          provide: DropdownManager,
           useValue: { initDropdown: () => Promise.resolve(undefined) },
         },
       ],

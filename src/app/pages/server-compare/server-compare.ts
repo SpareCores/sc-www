@@ -21,7 +21,7 @@ import {
   ScrollbarMirrorState,
 } from "../shared/compare-table/scrollbar-mirror.controller";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { KeeperAPI } from "../../services/keeper-api";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import {
   BreadcrumbSegment,
@@ -31,14 +31,14 @@ import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import {
   ComparedServer,
-  ServerCompareService,
+  CompareSelection,
   ZoneAndRegion,
-} from "../../services/server-compare.service";
+} from "../../services/compare-selection";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { AnalyticsService } from "../../services/analytics.service";
+import { Analytics } from "../../services/analytics";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details";
 import { ServerCompareCharts } from "../../components/server-compare-charts/server-compare-charts";
@@ -47,16 +47,16 @@ import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.typ
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
-import { ToastService } from "../../services/toast.service";
+import { Toast } from "../../services/toast";
 import {
   BAD_SERVER_COMPARE_URL_TOAST_ID,
   SERVER_COMPARE_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { PrismService } from "../../services/prism.service";
+import { PrismHighlighter } from "../../services/prism-highlighter";
 import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
 import serverComparesData from "./server-compares.js";
-import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
+import { ChartTooltip } from "../../components/charts/shared/chart-tooltip";
 import {
   decodeBase64JsonUrlState,
   isServerCompareUrlState,
@@ -77,10 +77,10 @@ import {
   type MemoryBenchmarkConfig,
   type MemoryBenchmarkMeta,
 } from "../../components/charts/memory/memory-chart.types";
-import { CompareCollectionsService } from "../../collections/compare-collections.service";
+import { CompareCollections } from "../../collections/compare-collections";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
-import { CollectionsUiService } from "../../collections/collections-ui.service";
-import { AuthStateService } from "../../core/auth";
+import { CollectionsUi } from "../../collections/collections-ui";
+import { AuthState } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 
@@ -164,23 +164,23 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
   styleUrl: "./server-compare.scss",
 })
 export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
-  private prismService = inject(PrismService);
+  private prismService = inject(PrismHighlighter);
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
-  private keeperAPI = inject(KeeperAPIService);
-  private seoHandler = inject(SeoHandlerService);
-  private serverCompare = inject(ServerCompareService);
+  private keeperAPI = inject(KeeperAPI);
+  private seoHandler = inject(SeoHandler);
+  private serverCompare = inject(CompareSelection);
   currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
   baselineDropdown = viewChild<FlowbiteDropdown>("baselineDropdown");
-  private analytics = inject(AnalyticsService);
+  private analytics = inject(Analytics);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private toastService = inject(ToastService);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
-  private tooltipService = inject(ChartTooltipService);
-  private compareCollections = inject(CompareCollectionsService);
-  private auth = inject(AuthStateService);
-  private collectionsUi = inject(CollectionsUiService);
+  private tooltipService = inject(ChartTooltip);
+  private compareCollections = inject(CompareCollections);
+  private auth = inject(AuthState);
+  private collectionsUi = inject(CollectionsUi);
   saveComparisonModal = viewChild(CollectionSaveModal);
   compareCharts = viewChild(ServerCompareCharts);
 

@@ -39,12 +39,12 @@ import {
   formatBookmarkedAt,
   formatBookmarkedAtExact,
 } from "../../collections/collections.utils";
-import { AuthStateService } from "../../core/auth";
+import { AuthState } from "../../core/auth";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { mutationKey } from "../../shared/store/with-mutation-status";
 
 type BookmarksFeature = {
@@ -120,12 +120,12 @@ function normalizeBookmarksNameQuery(value: string): string {
 })
 export class Bookmarks implements OnDestroy {
   private collectionsStore = inject(CollectionsStore);
-  private keeperAPI = inject(KeeperAPIService);
+  private keeperAPI = inject(KeeperAPI);
   private router = inject(Router);
-  private toastService = inject(ToastService);
-  private uiTooltip = inject(UiTooltipService);
+  private toastService = inject(Toast);
+  private uiTooltip = inject(UiTooltip);
   private platformId = inject(PLATFORM_ID);
-  private auth = inject(AuthStateService);
+  private auth = inject(AuthState);
 
   private saveModal = viewChild(CollectionSaveModal);
   private noteModalRef = viewChild<ElementRef<HTMLElement>>("noteModal");

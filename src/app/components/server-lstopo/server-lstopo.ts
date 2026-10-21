@@ -18,8 +18,8 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { Modal, ModalOptions } from "flowbite";
 import { Subscription, of, switchMap } from "rxjs";
 import { DragToPan } from "../../directives/drag-to-pan";
-import { LstopoSvgService } from "../../services/lstopo-svg.service";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { LstopoSvg } from "../../services/lstopo-svg";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { Button } from "../button/button";
 
 const LSTOPO_CDN_BASE =
@@ -51,13 +51,13 @@ export class ServerLstopo implements OnChanges {
   private platformId = inject(PLATFORM_ID);
   private elRef = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
-  private svgService = inject(LstopoSvgService);
+  private svgService = inject(LstopoSvg);
   private destroyRef = inject(DestroyRef);
 
   constructor() {
     this.destroyRef.onDestroy(() => this.resetRenderedSvg());
   }
-  private uiTooltip = inject(UiTooltipService);
+  private uiTooltip = inject(UiTooltip);
 
   lstopoUrl: string = "";
   inlineSvg: SafeHtml | null = null;

@@ -14,14 +14,14 @@ import { BehaviorSubject, of } from "rxjs";
 import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { ServerListing } from "./server-listing";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import {
   BAD_BENCHMARK_URL_TOAST_ID,
   QUERY_ERROR_SERVERS_TOAST_ID,
   SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { areSearchParamsEqual } from "../../tools/listing-search-params";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -29,7 +29,7 @@ describe("ServerListing", () => {
   let component: ServerListing;
   let fixture: ComponentFixture<ServerListing>;
   let router: Router;
-  let keeperAPI: KeeperAPIService;
+  let keeperAPI: KeeperAPI;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -40,7 +40,7 @@ describe("ServerListing", () => {
     fixture = TestBed.createComponent(ServerListing);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
-    keeperAPI = TestBed.inject(KeeperAPIService);
+    keeperAPI = TestBed.inject(KeeperAPI);
     fixture.detectChanges();
   });
 
@@ -49,7 +49,7 @@ describe("ServerListing", () => {
   });
 
   it("uses the shared tooltip service for column info tooltips", () => {
-    const tooltipService = TestBed.inject(UiTooltipService);
+    const tooltipService = TestBed.inject(UiTooltip);
     const showSpy = spyOn(tooltipService, "show");
     const hideSpy = spyOn(tooltipService, "hide");
     const target = document.createElement("span");
@@ -220,7 +220,7 @@ describe("ServerListing", () => {
   });
 
   it("clears the bad benchmark toast when the benchmark query becomes valid or disappears", () => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showToast = spyOn(toastService, "show");
     const removeToast = spyOn(toastService, "removeToast");
     const matchingConfig = {
@@ -260,7 +260,7 @@ describe("ServerListing", () => {
   });
 
   it("shows query-error toast when search fails with 422 and clears it on retry success", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
     const removeToast = spyOn(toastService, "removeToast");
     let resolveSecond!: (value: any) => void;
@@ -315,7 +315,7 @@ describe("ServerListing", () => {
   }));
 
   it("removes the bad benchmark toast on destroy", () => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const removeToast = spyOn(toastService, "removeToast");
 
     component.ngOnDestroy();
@@ -327,7 +327,7 @@ describe("ServerListing", () => {
 describe("ServerListing benchmark bootstrap", () => {
   let fixture: ComponentFixture<ServerListing>;
   let component: ServerListing;
-  let keeperAPI: KeeperAPIService;
+  let keeperAPI: KeeperAPI;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -337,7 +337,7 @@ describe("ServerListing benchmark bootstrap", () => {
 
     fixture = TestBed.createComponent(ServerListing);
     component = fixture.componentInstance;
-    keeperAPI = TestBed.inject(KeeperAPIService);
+    keeperAPI = TestBed.inject(KeeperAPI);
 
     spyOn(keeperAPI, "getServerBenchmarkMeta").and.callFake(() =>
       Promise.reject({ status: 500 }),
@@ -352,7 +352,7 @@ describe("ServerListing benchmark bootstrap", () => {
   });
 
   it("shows an error toast and searches without a benchmark when bootstrap fails", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showHttpError = spyOn(toastService, "showHttpError");
 
     fixture.detectChanges();
@@ -377,7 +377,7 @@ describe("ServerListing benchmark bootstrap", () => {
 describe("ServerListing query param handling", () => {
   let fixture: ComponentFixture<ServerListing>;
   let component: ServerListing;
-  let keeperAPI: KeeperAPIService;
+  let keeperAPI: KeeperAPI;
   let queryParams: BehaviorSubject<Params>;
 
   const defaultConfig = {
@@ -413,7 +413,7 @@ describe("ServerListing query param handling", () => {
       ],
     }).compileComponents();
 
-    keeperAPI = TestBed.inject(KeeperAPIService);
+    keeperAPI = TestBed.inject(KeeperAPI);
 
     spyOn(keeperAPI, "getServerBenchmarkMeta").and.callFake(
       () => benchmarkMeta() as never,
@@ -456,7 +456,7 @@ describe("ServerListing query param handling", () => {
   }));
 
   it("selects the default benchmark once a bad benchmark param is gone", fakeAsync(() => {
-    const toastService = TestBed.inject(ToastService);
+    const toastService = TestBed.inject(Toast);
     const showToast = spyOn(toastService, "show");
     const removeToast = spyOn(toastService, "removeToast");
     create();
@@ -486,7 +486,7 @@ describe("ServerListing query param handling", () => {
 
   it("still searches on filter changes after benchmark bootstrap fails", fakeAsync(() => {
     benchmarkMeta = () => Promise.reject({ status: 500 });
-    spyOn(TestBed.inject(ToastService), "showHttpError");
+    spyOn(TestBed.inject(Toast), "showHttpError");
     create();
     tick();
 

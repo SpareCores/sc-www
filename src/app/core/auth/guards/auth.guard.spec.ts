@@ -8,7 +8,7 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from "@angular/router";
-import { AuthStateService } from "../data-access/auth-state.service";
+import { AuthState } from "../data-access/auth-state";
 import { authGuard, blockLandingDuringAuthGuard } from "./auth.guard";
 
 describe("auth guards", () => {
@@ -39,7 +39,7 @@ describe("auth guards", () => {
       providers: [
         provideRouter([]),
         { provide: PLATFORM_ID, useValue: platformId },
-        { provide: AuthStateService, useValue: auth },
+        { provide: AuthState, useValue: auth },
       ],
     });
   }

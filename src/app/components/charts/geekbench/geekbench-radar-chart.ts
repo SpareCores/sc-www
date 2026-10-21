@@ -17,14 +17,14 @@ import {
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import {
   injectCompareLegendVisibility,
   syncCompareLegendData,
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
-import { GeekbenchRadarChartBuilderService } from "./geekbench-radar-chart-builder.service";
+import { GeekbenchRadarChartBuilder } from "./geekbench-radar-chart-builder";
 import {
   GeekbenchBenchmarkGroup,
   GeekbenchBenchmarkMeta,
@@ -56,8 +56,8 @@ import {
 })
 export class GeekbenchRadarChart {
   private platformId = inject(PLATFORM_ID);
-  private tooltipService = inject(ChartTooltipService);
-  private builder = inject(GeekbenchRadarChartBuilderService);
+  private tooltipService = inject(ChartTooltip);
+  private builder = inject(GeekbenchRadarChartBuilder);
   private legendVisibility = injectCompareLegendVisibility();
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");

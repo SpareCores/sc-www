@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { DropdownManagerService } from "../services/dropdown-manager.service";
+import { DropdownManager } from "../services/dropdown-manager";
 import { FlowbiteDropdown } from "./flowbite-dropdown";
 
 @Component({
@@ -39,7 +39,7 @@ describe("FlowbiteDropdown", () => {
       imports: [HostComponent],
       providers: [
         {
-          provide: DropdownManagerService,
+          provide: DropdownManager,
           useValue: { initDropdown: initDropdownSpy },
         },
       ],

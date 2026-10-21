@@ -9,10 +9,10 @@ import {
   inject,
 } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
-import { SeoHandlerService } from "../../services/seo-handler.service";
+import { SeoHandler } from "../../services/seo-handler";
 import { isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { PrismService } from "../../services/prism.service";
+import { PrismHighlighter } from "../../services/prism-highlighter";
 import { EmbedChartOption } from "./embed-dialog.types";
 
 @Component({
@@ -24,8 +24,8 @@ import { EmbedChartOption } from "./embed-dialog.types";
 export class CompareEmbedDialog implements OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private sanitizer = inject(DomSanitizer);
-  private SEOHandler = inject(SeoHandlerService);
-  private prismService = inject(PrismService);
+  private SEOHandler = inject(SeoHandler);
+  private prismService = inject(PrismHighlighter);
 
   @Input() instances!: string;
   @Input() chartname!: string;

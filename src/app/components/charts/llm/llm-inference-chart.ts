@@ -24,7 +24,7 @@ import {
   barChartOptionsSSL,
   barChartOptionsSSLCompare,
 } from "../../../pages/server-details/chartOptions";
-import { LlmInferenceChartBuilderService } from "./llm-inference-chart-builder.service";
+import { LlmInferenceChartBuilder } from "./llm-inference-chart-builder";
 import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
 import {
   LlmBarChartData,
@@ -34,7 +34,7 @@ import {
   LlmChartServer,
   LlmCompareChartsResult,
 } from "./llm-inference-chart.types";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
   injectCompareLegendVisibility,
@@ -68,8 +68,8 @@ export class LlmInferenceChart {
   private static nextId = 0;
 
   private platformId = inject(PLATFORM_ID);
-  private builder = inject(LlmInferenceChartBuilderService);
-  private tooltipService = inject(ChartTooltipService);
+  private builder = inject(LlmInferenceChartBuilder);
+  private tooltipService = inject(ChartTooltip);
   private legendVisibility = injectCompareLegendVisibility();
 
   modelDropdown = viewChild<FlowbiteDropdown>("modelDropdown");

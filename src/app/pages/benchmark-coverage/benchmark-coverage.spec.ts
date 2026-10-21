@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkCoverage } from "./benchmark-coverage";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
 import { BENCHMARK_COVERAGE_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -26,8 +26,8 @@ describe("BenchmarkCoverage", () => {
   });
 
   it("shows transient toast when debug load fails with 500", async () => {
-    const toastService = TestBed.inject(ToastService);
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const toastService = TestBed.inject(Toast);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const showHttpError = spyOn(toastService, "showHttpError");
     spyOn(keeperAPI, "getDebugInfo").and.rejectWith({ status: 500 });
     spyOn(keeperAPI, "getVendors").and.resolveTo({ body: [] });
@@ -41,8 +41,8 @@ describe("BenchmarkCoverage", () => {
   });
 
   it("does not show toast when debug load is aborted", async () => {
-    const toastService = TestBed.inject(ToastService);
-    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const toastService = TestBed.inject(Toast);
+    const keeperAPI = TestBed.inject(KeeperAPI);
     const showHttpError = spyOn(toastService, "showHttpError");
     spyOn(keeperAPI, "getDebugInfo").and.rejectWith(
       new DOMException("The operation was aborted.", "AbortError"),

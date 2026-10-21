@@ -25,7 +25,7 @@ import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { Accordion } from "../../accordion/accordion";
 import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import { WorkloadProfileRadarChart } from "./workload-profile-radar-chart";
 import {
@@ -177,7 +177,7 @@ export class WorkloadProfilePanel {
 
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
-  private tooltipService = inject(ChartTooltipService);
+  private tooltipService = inject(ChartTooltip);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   scoreGaugeDirective = viewChild<BaseChartDirective>("scoreGauge");

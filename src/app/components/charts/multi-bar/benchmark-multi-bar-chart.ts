@@ -26,7 +26,7 @@ import {
 } from "../../../pages/server-details/chartFromBenchmarks";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { cloneChartOptions } from "../shared/chart-options.utils";
-import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
   injectCompareLegendVisibility,
@@ -34,7 +34,7 @@ import {
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
 import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
-import { BenchmarkMultiBarChartBuilderService } from "./benchmark-multi-bar-chart-builder.service";
+import { BenchmarkMultiBarChartBuilder } from "./benchmark-multi-bar-chart-builder";
 import {
   BenchmarkMultiBarChartItem,
   MultiBarBenchmarkGroup,
@@ -67,8 +67,8 @@ export class BenchmarkMultiBarChart {
   private static nextId = 0;
 
   private platformId = inject(PLATFORM_ID);
-  private tooltipService = inject(ChartTooltipService);
-  private builder = inject(BenchmarkMultiBarChartBuilderService);
+  private tooltipService = inject(ChartTooltip);
+  private builder = inject(BenchmarkMultiBarChartBuilder);
   private legendVisibility = injectCompareLegendVisibility();
 
   primaryDropdown = viewChild<FlowbiteDropdown>("primaryDropdown");

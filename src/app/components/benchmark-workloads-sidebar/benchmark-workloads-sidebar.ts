@@ -13,7 +13,7 @@ import { isPlatformBrowser } from "@angular/common";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { BenchmarkFamily } from "../../pages/benchmark-workloads/benchmark-workloads.models";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 
 @Component({
   selector: "sc-benchmark-workloads-sidebar",
@@ -23,7 +23,7 @@ import { UiTooltipService } from "../../services/ui-tooltip.service";
 })
 export class BenchmarkWorkloadsSidebar {
   private platformId = inject(PLATFORM_ID);
-  private uiTooltip = inject(UiTooltipService);
+  private uiTooltip = inject(UiTooltip);
 
   benchmarkFamilies = input.required<BenchmarkFamily[]>();
   isCollapsed = input.required<boolean>();
