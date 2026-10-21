@@ -3,39 +3,40 @@
 <div class="promo-banner">
   <div class="promo-banner__body">
     @if (bannerMessage.lead) {
-    <span class="promo-banner__lead">{{ bannerMessage.lead }}</span>
+      <span class="promo-banner__lead">{{ bannerMessage.lead }}</span>
     }
     <span class="promo-banner__copy">{{ bannerMessage.body }}</span>
   </div>
 
   <div class="promo-banner__actions">
     @if (bannerMessage.ctaHref && bannerMessage.ctaLabel) {
-    <sc-button
-      [label]="bannerMessage.ctaLabel"
-      icon="chevron-right"
-      color="neutral"
-      size="small"
-      [routerLink]="bannerMessage.ctaHref"
-      [ariaLabel]="bannerMessage.ariaLabel || null"
-    ></sc-button>
+      <sc-button
+        [label]="bannerMessage.ctaLabel"
+        icon="chevron-right"
+        color="neutral"
+        size="small"
+        [routerLink]="bannerMessage.ctaHref"
+        [ariaLabel]="bannerMessage.ariaLabel || null"
+      ></sc-button>
     } @else if (bannerMessage.ctaLabel && bannerMessage.ctaId) {
-    <sc-button
-      [id]="bannerMessage.ctaId"
-      [label]="bannerMessage.ctaLabel"
-      icon="chevron-right"
-      color="neutral"
-      size="small"
-      [ariaLabel]="bannerMessage.ariaLabel || null"
-    ></sc-button>
-    } @if (dismissible()) {
-    <button
-      type="button"
-      class="promo-banner__close"
-      aria-label="Dismiss promo banner"
-      (click)="dismiss($event)"
-    >
-      <svg lucideX class="h-4 w-4"></svg>
-    </button>
+      <sc-button
+        [id]="bannerMessage.ctaId"
+        [label]="bannerMessage.ctaLabel"
+        icon="chevron-right"
+        color="neutral"
+        size="small"
+        [ariaLabel]="bannerMessage.ariaLabel || null"
+      ></sc-button>
+    }
+    @if (dismissible()) {
+      <button
+        type="button"
+        class="promo-banner__close"
+        aria-label="Dismiss promo banner"
+        (click)="dismiss($event)"
+      >
+        <svg lucideX class="h-4 w-4"></svg>
+      </button>
     }
   </div>
 </div>
