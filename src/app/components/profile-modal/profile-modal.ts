@@ -73,6 +73,7 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
   ],
   templateUrl: "./profile-modal.html",
   styleUrls: ["../auth-modal.scss", "./profile-modal.scss"],
+  host: { "(document:keydown.escape)": "close()" },
 })
 export class ProfileModal {
   protected readonly auth = inject(AuthStateService);
@@ -116,7 +117,7 @@ export class ProfileModal {
   }
 
   protected close(): void {
-    if (this.busy()) {
+    if (!this.auth.profileModalOpen() || this.busy()) {
       return;
     }
     this.auth.closeUserProfile();

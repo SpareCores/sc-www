@@ -71,6 +71,13 @@ describe("ProfileModal", () => {
     ).toContain("jane@example.com");
   });
 
+  it("closes on Escape", () => {
+    closeUserProfile.calls.reset();
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+
+    expect(closeUserProfile).toHaveBeenCalled();
+  });
+
   it("loads active devices when the security tab opens", async () => {
     element()
       .querySelector<HTMLButtonElement>('[data-testid="profile-tab-security"]')
