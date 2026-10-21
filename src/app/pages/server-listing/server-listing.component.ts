@@ -52,7 +52,7 @@ import { SearchBarComponent } from "../../components/search-bar/search-bar.compo
 import type { SearchBarParameter } from "../../components/search-bar/types/search-bar.types";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import {
-  ServerCompare,
+  ComparedServer,
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
@@ -638,11 +638,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       this.subscription.add(
         this.serverCompare.selectionChanged.subscribe(
-          (selectedServers: ServerCompare[]) => {
+          (selectedServers: ComparedServer[]) => {
             this.servers?.forEach((server: any) => {
               server.selected =
                 selectedServers.findIndex(
-                  (item: ServerCompare) =>
+                  (item: ComparedServer) =>
                     item.vendor === server.vendor_id &&
                     item.server === server.api_reference,
                 ) !== -1;

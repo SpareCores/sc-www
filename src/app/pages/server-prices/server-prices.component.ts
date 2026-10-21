@@ -45,7 +45,7 @@ import {
   availableCurrencies,
 } from "../../tools/shared_data";
 import {
-  ServerCompare,
+  ComparedServer,
   ServerCompareService,
 } from "../../services/server-compare.service";
 import { navigateListingQuery } from "../../tools/listing-query-navigate";
@@ -481,7 +481,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
               ) > -1,
             selected:
               this.serverCompare.selectedForCompare.findIndex(
-                (compareItem: ServerCompare) =>
+                (compareItem: ComparedServer) =>
                   compareItem.vendor === item.vendor_id &&
                   compareItem.server === item.server.api_reference &&
                   compareItem.zonesRegions.findIndex(

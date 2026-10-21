@@ -8,24 +8,24 @@ import {
   GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
 } from "./toast-ids";
 import { ToastService } from "./toast.service";
-import { ServerCompare, ServerCompareService } from "./server-compare.service";
+import { ComparedServer, ServerCompareService } from "./server-compare.service";
 
 describe("ServerCompareService", () => {
   let service: ServerCompareService;
 
-  const serverA: ServerCompare = {
+  const serverA: ComparedServer = {
     display_name: "A",
     vendor: "aws",
     server: "a1",
     zonesRegions: [],
   };
-  const serverB: ServerCompare = {
+  const serverB: ComparedServer = {
     display_name: "B",
     vendor: "gcp",
     server: "b1",
     zonesRegions: [],
   };
-  const serverC: ServerCompare = {
+  const serverC: ComparedServer = {
     display_name: "C",
     vendor: "azure",
     server: "c1",
@@ -232,7 +232,7 @@ describe("ServerCompareService", () => {
     const selectionChanged = jasmine.createSpy("selectionChanged");
     service.selectionChanged.subscribe(selectionChanged);
     service.setBaselineServer({ vendor: "aws", server: "a1" });
-    const hydrated: ServerCompare[] = [
+    const hydrated: ComparedServer[] = [
       {
         display_name: "S1",
         vendor: "aws",
