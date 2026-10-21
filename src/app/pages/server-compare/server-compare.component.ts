@@ -46,6 +46,7 @@ import { CompareEmbedDialogComponent } from "../../components/embed-dialog/compa
 import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
+import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { ToastService } from "../../services/toast.service";
 import {
   BAD_SERVER_COMPARE_URL_TOAST_ID,
@@ -109,7 +110,6 @@ const EMBEDDABLE_CHARTS: EmbedChartOption[] = [
   { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
 ];
 
-const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_COMPARE_URL_TOAST_BODY = "Select servers to compare.";
 const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Server Navigator page";
 const SERVER_COMPARE_GUIDE_TITLE = "Server Compare Guide";
@@ -511,6 +511,7 @@ export class ServerCompareComponent
 
     this.stickyLayout.destroy();
     this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
+    this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
   }
 
   setup() {
@@ -543,8 +544,15 @@ export class ServerCompareComponent
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
       } else {
-        this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/servers"]),
+          },
+        });
         this.isLoading = false;
       }
     } else if (param) {
@@ -556,29 +564,24 @@ export class ServerCompareComponent
       if (!decodedInstances.value) {
         console.warn("Invalid instances data in URL:", decodedInstances.error);
         this.applyGuideChrome();
-        if (isPlatformBrowser(this.platformId)) {
-          this.toastService.show({
-            title: INVALID_URL_TOAST_TITLE,
-            body: INVALID_COMPARE_URL_TOAST_BODY,
-            type: "error",
-            id: BAD_SERVER_COMPARE_URL_TOAST_ID,
-            action: {
-              label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
-              onClick: () => this.router.navigate(["/servers"]),
-            },
-          });
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/servers"]),
+          },
+        });
+        this.isLoading = false;
+      } else {
+        this.instances = decodedInstances.value;
+        this.instancesRaw = this.instances.length > 0 ? param : "";
+        this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
+
+        if (!this.instances?.length) {
+          this.applyGuideChrome();
+          this.isLoading = false;
         }
-        this.isLoading = false;
-        return;
-      }
-
-      this.instances = decodedInstances.value;
-      this.instancesRaw = this.instances.length > 0 ? param : "";
-      this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
-
-      if (!this.instances?.length) {
-        this.applyGuideChrome();
-        this.isLoading = false;
       }
     } else {
       this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);

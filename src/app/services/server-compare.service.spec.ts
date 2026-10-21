@@ -3,7 +3,10 @@ import { Router } from "@angular/router";
 
 import { AuthStateService } from "../core/auth";
 import { CollectionsUiService } from "../collections/collections-ui.service";
-import { GUEST_SERVER_COMPARE_LIMIT_TOAST_ID } from "./toast-ids";
+import {
+  GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+  GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+} from "./toast-ids";
 import { ToastService } from "./toast.service";
 import { ServerCompare, ServerCompareService } from "./server-compare.service";
 
@@ -283,6 +286,7 @@ describe("ServerCompareService", () => {
     const toastService = TestBed.inject(ToastService);
     const show = spyOn(toastService, "show");
     const auth = TestBed.inject(AuthStateService);
+    const collectionsUi = TestBed.inject(CollectionsUiService);
     spyOn(auth, "isAuthenticated").and.returnValue(false);
     service.selectedForCompare = [
       {
@@ -320,8 +324,58 @@ describe("ServerCompareService", () => {
     expect(added).toBeFalse();
     expect(service.selectedForCompare.length).toBe(4);
     expect(show).toHaveBeenCalledWith(
-      jasmine.objectContaining({ id: GUEST_SERVER_COMPARE_LIMIT_TOAST_ID }),
+      jasmine.objectContaining({
+        id: GUEST_SERVER_COMPARE_LIMIT_TOAST_ID,
+        type: "warning",
+        action: jasmine.objectContaining({
+          label: "Register for free to unlock unlimited comparisons!",
+          onClick: jasmine.any(Function),
+        }),
+      }),
     );
+    const toastArg = show.calls.mostRecent().args[0] as {
+      action?: { onClick: () => void };
+    };
+    toastArg.action?.onClick();
+    expect(collectionsUi.promptRegisterForFeature).toHaveBeenCalled();
+  });
+
+  it("prompts registration from the guest database compare limit toast", () => {
+    const toastService = TestBed.inject(ToastService);
+    const show = spyOn(toastService, "show");
+    const auth = TestBed.inject(AuthStateService);
+    const collectionsUi = TestBed.inject(CollectionsUiService);
+    spyOn(auth, "isAuthenticated").and.returnValue(false);
+    service.selectedDatabases = [
+      { display_name: "db-a", vendor: "aws", database: "db-a" },
+      { display_name: "db-b", vendor: "gcp", database: "db-b" },
+      { display_name: "db-c", vendor: "azure", database: "db-c" },
+      { display_name: "db-d", vendor: "aws", database: "db-d" },
+    ];
+
+    const added = service.toggleDatabaseCompare(true, {
+      display_name: "db-e",
+      vendor: "gcp",
+      database: "db-e",
+    });
+
+    expect(added).toBeFalse();
+    expect(service.selectedDatabases.length).toBe(4);
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        id: GUEST_DATABASE_COMPARE_LIMIT_TOAST_ID,
+        type: "warning",
+        action: jasmine.objectContaining({
+          label: "Register for free to unlock unlimited comparisons!",
+          onClick: jasmine.any(Function),
+        }),
+      }),
+    );
+    const toastArg = show.calls.mostRecent().args[0] as {
+      action?: { onClick: () => void };
+    };
+    toastArg.action?.onClick();
+    expect(collectionsUi.promptRegisterForFeature).toHaveBeenCalled();
   });
 
   it("replaces database compare selection above guest limit without toasts", () => {

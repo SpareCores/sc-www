@@ -8,6 +8,10 @@ export const NEWSLETTER_OPT_IN_KEY = "newsletterOptIn";
 export const NEWSLETTER_SUBSCRIBED_KEY = "newsletterSubscribed";
 export const AUTH_OVERLAY_CLASS = "sc-auth-pending";
 export const AUTH_OVERLAY_ID = "sc-auth-pending-overlay";
+export const PROFILE_RETURN_PARAM = "profile";
+export const PROFILE_RETURN_VALUE = "connected";
+export const PROFILE_AVATAR_MAX_BYTES = 10 * 1024 * 1024;
+export const PROFILE_DELETE_CONFIRMATION = "Delete account";
 
 export const AUTH_MESSAGES = {
   defaultSignUpSubtitle: "Welcome! Please fill in the details to get started.",
@@ -38,4 +42,31 @@ export const AUTH_MESSAGES = {
   unableToContinueGitHub: "Unable to continue with GitHub.",
   githubAuthorizationDenied:
     "Unable to continue with GitHub. Authorize Spare Cores to access your GitHub account to sign up or sign in.",
+  profileBrowserOnly: "Profile changes are only available in the browser.",
+  unableToUpdateProfile: "Unable to update your profile.",
+  profileUpdated: "Your profile has been updated.",
+  avatarInvalidType: "Upload a JPG, PNG, GIF or WEBP image.",
+  avatarTooLarge: "The image must be smaller than 10 MB.",
+  unableToUpdateAvatar: "Unable to update your profile image.",
+  unableToAddEmail: "Unable to add the email address.",
+  unableToRemoveEmail: "Unable to remove the email address.",
+  unableToSetPrimaryEmail: "Unable to set the primary email address.",
+  emailVerificationSent: "We sent a verification code to the new address.",
+  unableToConnectGitHub: "Unable to connect your GitHub account.",
+  unableToDisconnectGitHub: "Unable to disconnect your GitHub account.",
+  unableToUpdatePassword: "Unable to update your password.",
+  passwordUpdated: "Your password has been updated.",
+  passwordMismatch: "Passwords don't match.",
+  unableToLoadSessions: "Unable to load your active devices.",
+  unableToRevokeSession: "Unable to sign out the device.",
+  unableToDeleteAccount: "Unable to delete your account.",
+  unableToReverify: "Unable to verify your identity. Try again.",
+  emailRemoveWarning:
+    "will be removed from this account and can no longer be used to sign in.",
+  githubDisconnectWarning:
+    "Your GitHub account will be disconnected and can no longer be used to sign in.",
+  sessionRevokeWarning: "This device will be signed out of your account.",
+  unknownBrowser: "Unknown browser",
+  mobileDevice: "Mobile",
+  desktopDevice: "Desktop",
 } as const;
