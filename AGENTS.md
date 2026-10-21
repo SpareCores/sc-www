@@ -60,9 +60,9 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 ## TypeScript Files (`*.ts`)
 
-### Angular 20 & TS Architecture Standards
+### Angular 21 & TS Architecture Standards
 
-- Framework: Angular 20 standalone architecture with SSR enabled, using zone-based change detection.
+- Framework: Angular 21 standalone architecture with SSR enabled, using zone-based change detection.
 - Do not append file-level suffixes (like `.component.ts`) to filenames unless already established in the folder.
 - Never use `any`.
 - DI & Reactivity: Always use the functional `inject()` API instead of constructor injection. Use Signals for local state in new code, and `computed()` for derived state.
@@ -75,12 +75,12 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 ### SSR Safety Guardrails
 
-- Ensure SSR safety using browser guards (`isPlatformBrowser`) or the Angular 20 `afterNextRender()` / `afterEveryRender()` hooks.
+- Ensure SSR safety using browser guards (`isPlatformBrowser`) or the Angular 21 `afterNextRender()` / `afterEveryRender()` hooks.
 - Never access global browser primitives (`window`, `document`, `localStorage`) directly in the main component lifecycle execution path without an SSR safety guard.
 
 ## HTML Templates (`*.html`)
 
-### Angular 20 Template Standards
+### Angular 21 Template Standards
 
 - Always use modern control flow (`@if`, `@else`, `@for`, `@switch`); never legacy `*ngIf` or `*ngFor` directives.
 - For template local variables, use the `@let` syntax (e.g., `@let user = userSignal()`).
