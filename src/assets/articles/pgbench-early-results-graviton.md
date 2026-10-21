@@ -5,7 +5,7 @@ date: 2026-10-19
 # ~100 character
 teaser: "Extending the performance evaluations of Graviton instance families with high concurrency database metrics."
 # 320x220
-image: /assets/images/blog/thumbnails/TODO.webp
+image: /assets/images/blog/thumbnails/database-benchmark-smt-wise.webp
 image_alt: TODO.
 author: Alex Trickey
 tags: [benchmark, performance, score, aws]
