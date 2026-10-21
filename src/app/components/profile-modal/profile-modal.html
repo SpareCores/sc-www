@@ -327,9 +327,7 @@
                 <ng-container
                   [ngTemplateOutlet]="confirmPanel"
                   [ngTemplateOutletContext]="{
-                    $implicit:
-                      email.emailAddress +
-                      ' will be removed from this account and can no longer be used to sign in.',
+                    $implicit: email.emailAddress + ' ' + messages.emailRemoveWarning,
                     label: 'Remove',
                     event: 'profile email remove',
                   }"
@@ -481,8 +479,7 @@
             <ng-container
               [ngTemplateOutlet]="confirmPanel"
               [ngTemplateOutletContext]="{
-                $implicit:
-                  'Your GitHub account will be disconnected and can no longer be used to sign in.',
+                $implicit: messages.githubDisconnectWarning,
                 label: 'Disconnect',
                 event: 'profile github disconnect',
               }"
@@ -669,7 +666,7 @@
                 <ng-container
                   [ngTemplateOutlet]="confirmPanel"
                   [ngTemplateOutletContext]="{
-                    $implicit: 'This device will be signed out of your account.',
+                    $implicit: messages.sessionRevokeWarning,
                     label: 'Sign out',
                     event: 'profile session revoke',
                   }"

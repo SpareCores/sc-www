@@ -422,9 +422,12 @@ export class ProfileService {
       browser:
         [activity?.browserName, activity?.browserVersion]
           .filter(Boolean)
-          .join(" ") || "Unknown browser",
+          .join(" ") || AUTH_MESSAGES.unknownBrowser,
       device:
-        activity?.deviceType || (activity?.isMobile ? "Mobile" : "Desktop"),
+        activity?.deviceType ||
+        (activity?.isMobile
+          ? AUTH_MESSAGES.mobileDevice
+          : AUTH_MESSAGES.desktopDevice),
       isMobile: !!activity?.isMobile,
       location: [activity?.city, activity?.country].filter(Boolean).join(", "),
       ipAddress: activity?.ipAddress ?? "",

@@ -61,4 +61,12 @@ export const AUTH_MESSAGES = {
   unableToRevokeSession: "Unable to sign out the device.",
   unableToDeleteAccount: "Unable to delete your account.",
   unableToReverify: "Unable to verify your identity. Try again.",
+  emailRemoveWarning:
+    "will be removed from this account and can no longer be used to sign in.",
+  githubDisconnectWarning:
+    "Your GitHub account will be disconnected and can no longer be used to sign in.",
+  sessionRevokeWarning: "This device will be signed out of your account.",
+  unknownBrowser: "Unknown browser",
+  mobileDevice: "Mobile",
+  desktopDevice: "Desktop",
 } as const;

@@ -81,6 +81,7 @@ export class ProfileModal {
 
   protected readonly profile = this.profileService.profile;
   protected readonly deleteConfirmationText = PROFILE_DELETE_CONFIRMATION;
+  protected readonly messages = AUTH_MESSAGES;
 
   protected readonly tab = signal<ProfileTab>("account");
   protected readonly editor = signal<ProfileEditor | null>(null);
