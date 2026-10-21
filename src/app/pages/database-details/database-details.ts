@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   Component,
   DestroyRef,
@@ -90,7 +89,6 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
 @Component({
   selector: "sc-database-details",
   imports: [
-    CommonModule,
     RouterModule,
     BreadcrumbsComponent,
     Button,

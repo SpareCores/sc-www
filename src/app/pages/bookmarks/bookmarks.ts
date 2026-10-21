@@ -5,7 +5,7 @@ import {
   CdkDropList,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -102,7 +102,6 @@ function normalizeBookmarksNameQuery(value: string): string {
 @Component({
   selector: "sc-bookmarks",
   imports: [
-    CommonModule,
     RouterModule,
     BreadcrumbsComponent,
     PageHeader,
