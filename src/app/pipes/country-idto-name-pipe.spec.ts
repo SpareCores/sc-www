@@ -1,4 +1,4 @@
-import { CountryIdtoNamePipe } from "./country-idto-name.pipe";
+import { CountryIdtoNamePipe } from "./country-idto-name-pipe";
 
 describe("CountryIdtoNamePipe", () => {
   it("create an instance", () => {

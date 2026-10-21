@@ -52,10 +52,10 @@ import {
   ServerPropertyTooltip,
 } from "../../components/server-property-card/server-property-card";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
-import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { formatStorageSize } from "../../pipes/pipe-utils";
-import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
+import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name-pipe";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";

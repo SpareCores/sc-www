@@ -17,7 +17,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { isPlatformBrowser } from "@angular/common";
 import { MarkdownModule, MarkdownService } from "ngx-markdown";
 import { DomSanitizer } from "@angular/platform-browser";
-import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
+import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
 import { SeoHandler } from "../../services/seo-handler";
 import { ArticlesApi } from "../../services/articles-api";
 import { Lightbox, LightboxModule } from "ngx-lightbox";

@@ -4,7 +4,7 @@ import {
   makeEnvironmentProviders,
   provideAppInitializer,
 } from "@angular/core";
-import { CollectionsStore } from "./collections.store";
+import { CollectionsStore } from "./collections-store";
 
 export function provideCollectionsFeature(): EnvironmentProviders {
   return makeEnvironmentProviders([

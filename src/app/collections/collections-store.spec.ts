@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { of, throwError } from "rxjs";
 import { AuthState } from "../core/auth";
 import { Collections } from "./collections";
-import { CollectionsStore } from "./collections.store";
+import { CollectionsStore } from "./collections-store";
 import { favoriteServerId } from "./collections.types";
 
 describe("CollectionsStore", () => {

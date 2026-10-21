@@ -57,13 +57,13 @@ import {
   SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
-import { AcceleratorCountPipe } from "../../pipes/accelerator-count.pipe";
-import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
-import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
-import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
-import { StoragePipe } from "../../pipes/storage.pipe";
-import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory.pipe";
+import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size-pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
+import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
+import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic-pipe";
+import { NetworkSpeedPipe } from "../../pipes/network-speed-pipe";
+import { StoragePipe } from "../../pipes/storage-pipe";
+import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
 import { KeeperAPI } from "../../services/keeper-api";
 import { NeetoCal } from "../../services/neeto-cal";
 import { SeoHandler } from "../../services/seo-handler";

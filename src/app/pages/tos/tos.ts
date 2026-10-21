@@ -9,7 +9,7 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import * as yaml from "js-yaml";
-import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
+import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
 import {
   catchError,
   filter,

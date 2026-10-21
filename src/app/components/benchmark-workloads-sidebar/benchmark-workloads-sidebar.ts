@@ -12,7 +12,7 @@ import {
 import { isPlatformBrowser } from "@angular/common";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { BenchmarkFamily } from "../../pages/benchmark-workloads/benchmark-workloads.models";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { UiTooltip } from "../../services/ui-tooltip";
 
 @Component({

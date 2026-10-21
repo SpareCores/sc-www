@@ -24,7 +24,7 @@ import {
   ChartFromBenchmarkTemplate,
   ChartFromBenchmarkTemplateOptions,
 } from "../../../pages/server-details/chartFromBenchmarks";
-import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";

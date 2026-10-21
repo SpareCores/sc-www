@@ -37,7 +37,7 @@ import {
   VendorDebugInfo,
 } from "../../../../sdk/data-contracts";
 import { PercentPipe } from "@angular/common";
-import { PageLimitPipe } from "../../pipes/page-limit.pipe";
+import { PageLimitPipe } from "../../pipes/page-limit-pipe";
 import {
   BenchmarkFamilyFilterValue,
   FilterCategory,

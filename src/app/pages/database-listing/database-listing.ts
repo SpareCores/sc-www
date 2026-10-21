@@ -45,8 +45,8 @@ import type {
   SearchBarQuery,
 } from "../../components/search-bar/types/search-bar.types";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { StoragePipe } from "../../pipes/storage.pipe";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
+import { StoragePipe } from "../../pipes/storage-pipe";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";

@@ -2,7 +2,7 @@ import { PLATFORM_ID, signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { AuthState } from "../core/auth";
 import { CollectionsUi, type PendingFeatureAction } from "./collections-ui";
-import { CollectionsStore } from "./collections.store";
+import { CollectionsStore } from "./collections-store";
 import {
   FEATURE_REGISTER_SUBTITLE,
   PENDING_FEATURE_ACTION_KEY,

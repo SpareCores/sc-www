@@ -15,7 +15,7 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
-import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {

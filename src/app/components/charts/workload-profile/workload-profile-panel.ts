@@ -22,7 +22,7 @@ import {
 import { BaseChartDirective } from "ng2-charts";
 import { ChartConfiguration, Plugin, ArcElement } from "chart.js";
 import { Button } from "../../button/button";
-import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { Accordion } from "../../accordion/accordion";
 import { FlowbiteDropdown } from "../../../directives/flowbite-dropdown";
 import { ChartTooltip } from "../shared/chart-tooltip";

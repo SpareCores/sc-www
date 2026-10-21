@@ -28,7 +28,7 @@ import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner
 import { Pagination } from "../../components/pagination/pagination";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
-import { StoragePipe } from "../../pipes/storage.pipe";
+import { StoragePipe } from "../../pipes/storage-pipe";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { Toast } from "../../services/toast";

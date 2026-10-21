@@ -18,7 +18,7 @@ import {
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { Button } from "../../button/button";
-import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
+import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import { MemoryChartBuilder } from "./memory-chart-builder";

@@ -7,7 +7,7 @@ import {
   untracked,
 } from "@angular/core";
 import { AuthState } from "../core/auth";
-import { CollectionsStore } from "./collections.store";
+import { CollectionsStore } from "./collections-store";
 import {
   favoriteDatabaseId,
   favoriteServerId,
