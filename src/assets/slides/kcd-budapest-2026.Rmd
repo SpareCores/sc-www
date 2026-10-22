@@ -94,6 +94,27 @@ courtain!
 
 <!-- TODO Gergo add "once upon a time, in a not too far pub ...." -->
 
+
+::: {.notes}
+more interactive .. so 
+
+I met Attila a few weeks ago and he mentioned that he is struggling with a problem, and
+this was the conversation we had:
+
+G: Hey Attila, ... how are you doing, you look a bit concerned..
+A: TODO Attila speaker notes on nehezen skalazhato python app 
+
+- single-core performance,
+- we need to pick the optimal server,
+- we are fed up with it ...
+- we even came up with a mascot for it ...
+
+G: Ah, interesting. I think what we do at Spare Cores might be relevant for you.
+A: Really? Could you pls show me what it does and how it can help us?
+G: Sure.
+:::
+
+
 # {#recap .center}
 
 ```{=html}
@@ -590,6 +611,10 @@ WE will focus on the inspector now!
 high level numbers about the data we collect and make available
 :::
 
+::: {.notes}
+A: wait, do I need to write SQL to query this data?
+:::
+
 # $ curl sparecores.com/servers
 
 ::: {.centered}
@@ -601,22 +626,28 @@ high level numbers about the data we collect and make available
 ::: {.notes}
 The easiest way to query this data is through our web component, as you can see on the screen ...
 
-This is not only a list of servers, but you can filter, order, and search for specific instances.
-We already show some performance metrics by default, along with the cost efficiency based on the spot or on-demand pricing.
+G: What kind of server are we looking for?
+A: min 2 vCPU, 16 GB RAM, AWS, Oregon
+G: Any special network requirements? We track outbound traffic prices ...
+A: No.
+G: Anything else?
+A: Single core performance is important for usage.
+G: We support a bunch of benchmarks, e.g. PassMark CPU Single Threaded Test?
+G: Let's order by performance then.
+A: That metal server looks promising
+G: Let's see the details ...
 
-TODO Attila ideate on what filters are actually needed, eg
-- min vcpu=8
-- max memory=16
-- vendor=aws
-- region=us-west-2
-- Monthly inbound or outbound traffic ???
+Check server details page. Scoll over the benchmarks.
+- server metadata
+- benchmarks 
+- price diffs -> oops .. spot vs ondemand
 
-
-Example URL:
-https://sparecores.com/servers?benchmark=eyJpZCI6InN0cmVzc19uZzpiZXN0biIsImNvbmZpZyI6Int9In0%3D&best_price_allocation=ONDEMAND_ONLY&memory_max=16&order_by=selected_benchmark_score_per_price&order_dir=desc&vcpus_min=8&vendor=aws&vendor_regions=aws~us-west-2
-
-Gergo: change to single core instead of multi core -> efficiency gain c8a -> c6a
+G: Actually, it's $5 ondemand.
+A: That's too much. The devops team picked r5a.large .. can we find something better around the same price?
+G: ADVISOR!!
 :::
+
+<!-- TODO Gergo get lstopo on m8azn.metal-12xl -->
 
 ## $ curl sparecores.com/server/gcp/g2-standard-16
 
@@ -752,13 +783,26 @@ or plots as well for human inspection
 
 # $ curl sparecores.com/advisor
 
-
 <!-- TODO Gergo add advisor image and demo scenario for live walkthought
 
 https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
 
 https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
 -->
+
+::: {.notes}
+r5a.large
+"cpu_single_threaded_test"
+AWS
+Oregaon
+ondemand price
+TODO Gergo Marci ticket ne ugraljon az advisor a tetejere gombnyomasra
+TODO Gergo Marci ticket bad best price https://sparecores.com/advisor?vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&workload_id=passmark:cpu_single_threaded_test&workload_config=%7B%7D&avg_cpu_utilization=100&minimum_memory=16&price_allocation_enabled=true&best_price_allocation=ONDEMAND_ONLY (wrong region?)
+
+
+A: Can we query this in a programmatic way?
+G: yes ...
+:::
 
 # $ curl docs.sparecores.com/api
 
@@ -770,82 +814,9 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 
 ::: {.notes}
 for computers, we provide APIs ...
+
+is it something you could use?
 :::
-
-## $ pip install sparecores-data
-
-```py {code-line-numbers="2|3|4-6|7|10-11|16|21-29|30-34|36-39|41-60|53-54|62-69" style="margin-top: 20px !important; height: 640px;"}
->>> from rich import print as pp
->>> from sc_crawler.tables import Server
->>> from sc_data import db
->>> from sqlmodel import create_engine, Session, select
->>> engine = create_engine(f"sqlite:///{db.path}")
->>> session = Session(engine)
->>> server = session.exec(select(Server).where(Server.server_id == 'g4dn.xlarge')).one()
->>> pp(server)
-Server(
-    server_id='g4dn.xlarge',
-    vendor_id='aws',
-    display_name='g4dn.xlarge',
-    api_reference='g4dn.xlarge',
-    name='g4dn.xlarge',
-    family='g4dn',
-    description='Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge',
-
-    status=<Status.ACTIVE: 'active'>,
-    observed_at=datetime.datetime(2024, 6, 6, 10, 18, 4, 127254),
-
-    hypervisor='nitro',
-    vcpus=4,
-    cpu_cores=2,
-    cpu_allocation=<CpuAllocation.DEDICATED: 'Dedicated'>,
-    cpu_manufacturer='Intel',
-    cpu_family='Xeon',
-    cpu_model='8259CL',
-    cpu_architecture=<CpuArchitecture.X86_64: 'x86_64'>,
-    cpu_speed=3.5,
-    cpu_l1i_cache=64,
-    cpu_l1d_cache=32,
-    cpu_l2_cache=2048,
-    cpu_l3_cache=36608,
-    cpu_flags=["fpu", "vme", "avx512", ...],
-
-    memory_amount=16384,
-    memory_generation=<DdrGeneration.DDR4: 'DDR4'>,
-    memory_speed=3200,
-    memory_ecc=None,
-
-    gpu_count=1,
-    gpu_memory_min=16384,
-    gpu_memory_total=16384,
-    gpu_manufacturer='Nvidia',
-    gpu_family='Turing',
-    gpu_model='Tesla T4',
-    gpus=[
-        {
-            'manufacturer': 'Nvidia',
-            'family': 'Turing',
-            'model': 'Tesla T4',
-            'memory': 15360,
-            'firmware_version': '535.171.04',
-            'bios_version': '90.04.96.00.A0',
-            'graphics_clock': 1590,
-            'sm_clock': 1590,
-            'mem_clock': 5001,
-            'video_clock': 1470
-        }
-    ],
-
-    storage_size=125,
-    storage_type=<StorageType.NVME_SSD: 'nvme ssd'>,
-    storages=[{'size': 125, 'storage_type': 'nvme ssd'}],
-
-    network_speed=5.0,
-    inbound_traffic=0.0,
-    outbound_traffic=0.0,
-    ipv4=0,
-)
-```
 
 # {#gilty}
 
@@ -855,6 +826,9 @@ Server(
 
 ::: {.notes}
 TODO Attila add speaker notes
+
+- single core performance, GIL
+- I've looked at the database and compared the performance of GILty with a few benchmarks to see which matches the best
 :::
 
 ## {#gilty-and-friends}
@@ -865,6 +839,11 @@ TODO Attila add speaker notes
 
 ::: {.notes}
 TODO Attila speaker notes
+
+- GIL megkerulhetetlen
+- we need to provide infra to make it faster
+- using Spare Cores data in Karpenter?
+- we called it "Core Alone"
 :::
 
 # $ strace -e environment gilty.py
@@ -932,6 +911,9 @@ TODO Gergo add speaker notes
 
 Gergo: this is cool .. we could definitely use something like this at spare cores
 GH/Pulumit etc fajdalom .. schedule/stop/tasks.
+
+I've checked Gardener, Container API ... did not find anything plug and play.
+
 how to use your kubernetes controller for this?
 :::
 
