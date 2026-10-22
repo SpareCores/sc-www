@@ -174,29 +174,14 @@
 }
 
 .advisor-table-wrap {
-  @apply overflow-x-auto;
+  @apply overflow-x-auto scrollbar-thin;
   overflow-y: visible;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
   padding-left: 1px;
 }
 
 .advisor-table-loading-overlay {
   @apply absolute top-0 left-0 w-full h-full;
   background-color: color-mix(in oklab, var(--color-black) 20%, transparent);
-}
-
-.advisor-table-wrap::-webkit-scrollbar {
-  height: 2px;
-}
-
-.advisor-table-wrap::-webkit-scrollbar-track {
-  background: var(--color-gray-700);
-}
-
-.advisor-table-wrap::-webkit-scrollbar-thumb {
-  background-color: var(--color-emerald-400);
-  border-radius: 3px;
 }
 
 .advisor-results-table {

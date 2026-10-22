@@ -197,22 +197,8 @@
 }
 
 .table_scroll_wrapper {
+  @apply scrollbar-thin;
   overflow: visible;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
-}
-
-.table_scroll_wrapper::-webkit-scrollbar {
-  height: 2px;
-}
-
-.table_scroll_wrapper::-webkit-scrollbar-track {
-  background: var(--color-gray-700);
-}
-
-.table_scroll_wrapper::-webkit-scrollbar-thumb {
-  background-color: var(--color-emerald-400);
-  border-radius: 3px;
 }
 
 @media (width < theme(--breakpoint-wide)) {
