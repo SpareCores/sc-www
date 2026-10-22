@@ -61,7 +61,7 @@ sc-server-compare-charts {
 :host ::ng-deep #workload_profile {
   overflow-y: auto;
 }
-@media screen and (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   :host ::ng-deep .block_full_short_inline {
     width: calc(100%);
     max-height: calc(100vh - 140px);

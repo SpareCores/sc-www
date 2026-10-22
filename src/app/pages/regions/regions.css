@@ -42,7 +42,7 @@
   width: 100%;
 }
 
-@media screen and (max-width: 1280px) {
+@media (width < theme(--breakpoint-xl)) {
   .datamaps_div {
     width: calc(100% - 1rem);
     margin: 0.5rem;

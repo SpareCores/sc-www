@@ -173,7 +173,7 @@
     }
   }
 
-  @media (max-width: 1200px) {
+  @media (width < theme(--breakpoint-wide)) {
     thead {
       th {
         position: static !important;
@@ -215,7 +215,7 @@
   border-radius: 3px;
 }
 
-@media (max-width: 1200px) {
+@media (width < theme(--breakpoint-wide)) {
   .list_holder {
     min-width: 0;
   }

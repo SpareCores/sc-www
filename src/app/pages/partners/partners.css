@@ -36,7 +36,7 @@
     transparent;
 }
 
-@media (max-width: 767px) {
+@media (width < theme(--breakpoint-md)) {
   .partner-logos--two-rows-mobile {
     @apply flex-wrap justify-center pb-0;
 
