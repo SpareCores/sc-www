@@ -18,6 +18,7 @@ import {
 import { matchesAdvisorBaselineServer } from "./advisor.utils";
 
 const ADVISOR_EMPTY_VALUE = "-";
+const ADVISOR_LONG_UNIT_MAX_LENGTH = 25;
 const ADVISOR_MONTHLY_HOURS = 730;
 
 type AdvisorMonthlyPriceSource = Pick<
@@ -258,6 +259,16 @@ export class AdvisorUiService {
 
   formatMemory(item: Pick<ServerPKs, "memory_amount">): string {
     return this.formatGiBValue(item.memory_amount);
+  }
+
+  formatBenchmarkUnit(unit: string | null | undefined): string {
+    const trimmedUnit = unit?.trim() ?? "";
+
+    if (trimmedUnit.length < ADVISOR_LONG_UNIT_MAX_LENGTH) {
+      return trimmedUnit.replace(/\s*\([^)]*\)\s*$/, "") || trimmedUnit;
+    }
+
+    return trimmedUnit.match(/\(([^)]*)\)\s*$/)?.at(1) || trimmedUnit;
   }
 
   formatScore(value: number | null | undefined): string {

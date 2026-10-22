@@ -484,6 +484,11 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly benchmarkConfigInput = signal("");
   readonly selectedBenchmarkConfig =
     signal<SearchBarBenchmarkConfigOption | null>(null);
+  readonly selectedBenchmarkUnit = computed(() => {
+    return this.advisorUi.formatBenchmarkUnit(
+      this.selectedBenchmarkConfig()?.benchmarkTemplate?.unit,
+    );
+  });
   readonly benchmarkConfigOptions = signal<SearchBarBenchmarkConfigOption[]>(
     [],
   );
