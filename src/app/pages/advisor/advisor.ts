@@ -412,7 +412,7 @@ type AdvisorComparableResourceKey =
     Modal,
   ],
   templateUrl: "./advisor.html",
-  styleUrl: "./advisor.scss",
+  styleUrl: "./advisor.css",
 })
 export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);

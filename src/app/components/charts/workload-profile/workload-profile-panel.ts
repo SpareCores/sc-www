@@ -170,7 +170,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
     Dropdown,
   ],
   templateUrl: "./workload-profile-panel.html",
-  styleUrls: ["./workload-profile-panel.scss"],
+  styleUrls: ["./workload-profile-panel.css"],
 })
 export class WorkloadProfilePanel {
   private static nextId = 0;

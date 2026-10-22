@@ -29,7 +29,7 @@ import {
   selector: "sc-embedded-compare-chart",
   imports: [ServerCompareCharts, LucideExternalLink],
   templateUrl: "./embedded-compare-chart.html",
-  styleUrl: "./embedded-compare-chart.scss",
+  styleUrl: "./embedded-compare-chart.css",
 })
 export class EmbeddedCompareChart implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandler);

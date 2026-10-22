@@ -18,7 +18,7 @@ import { SeoHandler } from "../../services/seo-handler";
   selector: "sc-about-spare-cores",
   imports: [Breadcrumbs, RouterLink],
   templateUrl: "./about-spare-cores.html",
-  styleUrl: "./about-spare-cores.scss",
+  styleUrls: ["./about-shared.css", "./about-spare-cores.css"],
 })
 export class AboutSpareCores implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);

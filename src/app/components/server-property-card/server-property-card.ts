@@ -39,7 +39,7 @@ export interface ServerPropertySection {
   selector: "sc-server-property-card",
   imports: [LucideDynamicIcon, LucideInfo, Button, RouterLink],
   templateUrl: "./server-property-card.html",
-  styleUrl: "./server-property-card.scss",
+  styleUrl: "./server-property-card.css",
 })
 export class ServerPropertyCard {
   private tooltipService = inject(ChartTooltip);

@@ -72,7 +72,7 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     LoadingSpinner,
   ],
   templateUrl: "./profile-modal.html",
-  styleUrls: ["../auth-modal.scss", "./profile-modal.scss"],
+  styleUrls: ["../auth-modal.css", "./profile-modal.css"],
   host: { "(document:keydown.escape)": "close()" },
 })
 export class ProfileModal {

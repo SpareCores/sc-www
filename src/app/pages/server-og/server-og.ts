@@ -11,7 +11,6 @@ import { Subscription } from "rxjs";
   selector: "sc-server-og",
   imports: [],
   templateUrl: "./server-og.html",
-  styleUrl: "./server-og.scss",
 })
 export class ServerOG implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

@@ -12,7 +12,7 @@ import { Subscription } from "rxjs";
   selector: "sc-embedded-server-chart",
   imports: [ServerCharts, LucideExternalLink],
   templateUrl: "./embedded-server-chart.html",
-  styleUrl: "./embedded-server-chart.scss",
+  styleUrl: "./embedded-server-chart.css",
 })
 export class EmbeddedServerChart implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandler);

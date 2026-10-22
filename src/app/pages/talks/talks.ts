@@ -24,7 +24,7 @@ import {
     LucideScrollText,
   ],
   templateUrl: "./talks.html",
-  styleUrl: "./talks.scss",
+  styleUrl: "./talks.css",
 })
 export class Talks implements OnInit {
   private SEOHandler = inject(SeoHandler);
