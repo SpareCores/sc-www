@@ -1,7 +1,10 @@
 import { Injectable } from "@angular/core";
 import { TooltipItem } from "chart.js";
 import { radarChartOptions } from "../../../pages/server-details/chartOptions";
-import { radarDatasetColors } from "../shared/chart-colors.constants";
+import {
+  radarDatasetColors,
+  chartColors,
+} from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
   buildCompareTooltipTitle,
@@ -198,7 +201,7 @@ export class GeekbenchRadarChartBuilder {
             : {}),
           display: true,
           text: title,
-          color: "#FFF",
+          color: chartColors.white,
         },
       },
     };
