@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { GeekbenchRadarChartBuilder } from "./geekbench-radar-chart-builder";
+import { chartColor, chartColors } from "../shared/chart-colors.constants";
 
 describe("GeekbenchRadarChartBuilder", () => {
   let service: GeekbenchRadarChartBuilder;
@@ -56,9 +57,17 @@ describe("GeekbenchRadarChartBuilder", () => {
       ] as any,
     });
 
-    expect(charts?.singleData?.datasets[0].borderColor).toBe("#E5E7EB");
-    expect(charts?.singleData?.datasets[0].backgroundColor).toBe("#E5E7EB33");
-    expect(charts?.multiData?.datasets[0].borderColor).toBe("#34D399");
-    expect(charts?.multiData?.datasets[0].backgroundColor).toBe("#34D39933");
+    expect(charts?.singleData?.datasets[0].borderColor).toBe(
+      chartColors["gray-200"],
+    );
+    expect(charts?.singleData?.datasets[0].backgroundColor).toBe(
+      chartColor("gray-200", 0.2),
+    );
+    expect(charts?.multiData?.datasets[0].borderColor).toBe(
+      chartColors["emerald-400"],
+    );
+    expect(charts?.multiData?.datasets[0].backgroundColor).toBe(
+      chartColor("emerald-400", 0.2),
+    );
   });
 });
