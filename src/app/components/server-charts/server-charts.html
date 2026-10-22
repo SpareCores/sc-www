@@ -31,7 +31,7 @@
     benchmarkKey="openssl"
     chartSource="details-ssl"
     title="OpenSSL"
-    blockClass="block_full"
+    blockClass="chart-block--full"
     elementId="ssl_chart"
     canvasId="ssl_canvas"
     chartType="bar"
@@ -65,7 +65,7 @@
 }
 
 @if (isChartShown("passmark_cpu") && passmarkCPUData?.length) {
-  <div class="block_half" id="passmark_cpu">
+  <div class="chart-block--half" id="passmark_cpu">
     <div class="flex items-center" style="min-height: 42px">
       <h3 class="text-2xl flex items-center gap-2">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
@@ -151,7 +151,7 @@
 }
 
 @if (isChartShown("passmark_other") && passmarkOTHERData?.length) {
-  <div class="block_half" id="passmark_other">
+  <div class="chart-block--half" id="passmark_other">
     <div class="flex items-center" style="min-height: 42px">
       <h3 class="text-2xl flex items-center gap-2">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
@@ -220,7 +220,7 @@
     benchmarkKey="stress_ng"
     chartSource="details-stress-raw"
     title="Stress-ng Raw Scores"
-    blockClass="block_half"
+    blockClass="chart-block--half"
     elementId="stress_ng_div16_chart"
     canvasId="stress_ng_div16_canvas"
     chartType="line"
@@ -237,7 +237,7 @@
     benchmarkKey="stress_ng"
     chartSource="details-stress-percent"
     title="Stress-ng Relative Multicore Performance"
-    blockClass="block_half"
+    blockClass="chart-block--half"
     elementId="stress_ng_relative_chart"
     canvasId="stress_ng_relative_canvas"
     chartType="line"
@@ -275,7 +275,7 @@
     benchmarkKey="pgbench"
     chartSource="details-pgbench"
     [title]="pgbenchTitle"
-    blockClass="block_full"
+    blockClass="chart-block--full"
     elementId="pgbench_chart"
     canvasId="pgbench_canvas"
     chartType="line"

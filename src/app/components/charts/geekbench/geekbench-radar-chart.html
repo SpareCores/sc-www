@@ -49,11 +49,11 @@
     </div>
   }
 } @else {
-  <div class="block_full_short_geekbench">
+  <div class="chart-block--split-tall">
     @if (isBrowser) {
       <div class="charts_div justify-center">
         @if (showSingle() && resolvedSingleChartData()) {
-          <div chartType="bar" class="chart_div w-full flex justify-center">
+          <div chartType="bar" class="chart_div flex justify-center">
             <canvas
               style="max-width: 100%; width: 100%"
               baseChart
@@ -65,7 +65,7 @@
           </div>
         }
         @if (showMulti() && resolvedMultiChartData()) {
-          <div chartType="bar" class="chart_div w-full flex justify-center">
+          <div chartType="bar" class="chart_div flex justify-center">
             <canvas
               style="max-width: 100%; width: 100%"
               baseChart
