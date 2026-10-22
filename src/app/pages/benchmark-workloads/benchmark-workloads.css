@@ -8,12 +8,9 @@
   margin-left: 0.5rem;
   margin-right: 0.5rem;
 }
-
-.page_layout.layout_static {
-  ::ng-deep .filter_bar,
-  .list_holder {
-    transition: none !important;
-  }
+.page_layout.layout_static ::ng-deep .filter_bar,
+.page_layout.layout_static .list_holder {
+  transition: none !important;
 }
 
 .list_holder {

@@ -3,15 +3,15 @@
   background: transparent;
   height: 100vh;
 }
-
 :host ::ng-deep .block_half {
   @apply px-6 py-6 bg-secondary flex flex-col gap-4 relative overflow-hidden;
   width: calc(100%);
   max-height: calc(100vh - 64px);
   height: calc(100vh - 64px);
-  .chart_div {
-    height: 100%;
-  }
+}
+
+:host ::ng-deep .block_half .chart_div {
+  height: 100%;
 }
 
 :host ::ng-deep .block_half_taller {
@@ -20,11 +20,12 @@
   max-height: calc(100vh - 64px);
   height: calc(100vh - 64px);
   margin: auto;
-  .chart_div {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-  }
+}
+
+:host ::ng-deep .block_half_taller .chart_div {
+  height: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 :host ::ng-deep .block_full {
@@ -32,9 +33,10 @@
   width: calc(100%);
   max-height: calc(100vh - 64px);
   height: calc(100vh - 64px);
-  .chart_div {
-    height: 100%;
-  }
+}
+
+:host ::ng-deep .block_full .chart_div {
+  height: 100%;
 }
 
 :host ::ng-deep #passmark_cpu,

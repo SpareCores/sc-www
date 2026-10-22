@@ -47,7 +47,7 @@ const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
     RouterModule,
   ],
   templateUrl: "./app.html",
-  styleUrl: "./app.scss",
+  styleUrl: "./app.css",
 })
 export class App implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);

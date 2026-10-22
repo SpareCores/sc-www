@@ -39,7 +39,7 @@ import {
     Button,
   ],
   templateUrl: "./stress-ng-full-card.html",
-  styleUrl: "./stress-ng-full-card.scss",
+  styleUrl: "./stress-ng-full-card.css",
 })
 export class StressNgFullCard {
   private tooltipService = inject(ChartTooltip);

@@ -100,7 +100,7 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     BookmarkButton,
   ],
   templateUrl: "./database-details.html",
-  styleUrl: "./database-details.scss",
+  styleUrl: "./database-details.css",
   encapsulation: ViewEncapsulation.None,
 })
 export class DatabaseDetails implements OnInit, OnDestroy {

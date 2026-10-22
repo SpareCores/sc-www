@@ -156,7 +156,7 @@ interface PropertyCategoryDefinition {
     Modal,
   ],
   templateUrl: "./server-details.html",
-  styleUrl: "./server-details.scss",
+  styleUrl: "./server-details.css",
 })
 export class ServerDetails implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
