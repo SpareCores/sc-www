@@ -1,18 +1,3 @@
-@reference "../../../styles/tailwind.css";
-
-sc-database-details {
-  .content {
-    min-height: 75vh;
-  }
-
-  sc-benchmark-line-chart {
-    display: contents;
-  }
-}
-
-@media (width < theme(--breakpoint-wide)) {
-  sc-database-details .chart-block--half,
-  sc-database-details .chart-block--full {
-    width: 100%;
-  }
+.content {
+  min-height: 75vh;
 }

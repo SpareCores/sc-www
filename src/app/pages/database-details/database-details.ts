@@ -5,7 +5,6 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
-  ViewEncapsulation,
   afterNextRender,
   inject,
   viewChild,
@@ -101,7 +100,6 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
   ],
   templateUrl: "./database-details.html",
   styleUrl: "./database-details.css",
-  encapsulation: ViewEncapsulation.None,
 })
 export class DatabaseDetails implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
