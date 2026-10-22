@@ -1,3 +1,5 @@
+@reference "../../../../styles/tailwind.css";
+
 :host {
   display: contents;
 }
@@ -18,7 +20,7 @@
   height: 420px;
 }
 
-@media screen and (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .workload-profile-radar-chart__canvas--compare {
     width: 100%;
   }

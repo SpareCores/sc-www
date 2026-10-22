@@ -290,7 +290,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   @HostListener("window:resize")
   onResize() {
     if (isPlatformBrowser(this.platformId)) {
-      this.isSmallScreen = window.innerWidth <= 1178;
+      this.isSmallScreen = window.matchMedia("(width < 75rem)").matches;
     }
   }
 

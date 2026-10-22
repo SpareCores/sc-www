@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .profile-modal__panel {
   display: flex;
   flex-direction: column;
@@ -269,7 +271,7 @@
   padding: 0.5rem 0;
 }
 
-@media (max-width: 640px) {
+@media (width < theme(--breakpoint-sm)) {
   .profile-modal__panel {
     width: 100%;
     height: calc(100vh - 2rem);

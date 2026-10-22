@@ -2,6 +2,8 @@
   --font-sans: "Inter", sans-serif;
   --font-mono: "Roboto Mono", monospace, sans-serif;
 
+  --breakpoint-wide: 75rem;
+
   --color-emerald-100: #d1fae5;
   --color-emerald-200: #a7f3d0;
   --color-emerald-400: #34d399;

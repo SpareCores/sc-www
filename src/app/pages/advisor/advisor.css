@@ -105,7 +105,7 @@
   box-sizing: border-box;
 }
 
-@media (min-width: 1024px) {
+@media (width >= theme(--breakpoint-lg)) {
   .advisor-filter-bar:not(.advisor-filter-bar-collapsed)
     + .advisor-results
     .advisor-toolbar {
@@ -330,7 +330,7 @@
   flex: 1 1 9rem;
 }
 
-@media (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .advisor-page-body {
     @apply flex-col;
   }
@@ -398,7 +398,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (width < theme(--breakpoint-sm)) {
   .advisor-summary-alert {
     width: 100%;
     max-width: none;
