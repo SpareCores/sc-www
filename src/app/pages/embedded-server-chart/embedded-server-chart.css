@@ -5,11 +5,3 @@
   background: transparent;
   height: 100vh;
 }
-
-:host ::ng-deep #passmark_cpu,
-:host ::ng-deep #passmark_other,
-:host ::ng-deep #nvbandwidth,
-:host ::ng-deep #stress_ng_full,
-:host ::ng-deep #workload_profile {
-  overflow-y: auto;
-}

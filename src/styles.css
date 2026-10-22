@@ -45,6 +45,17 @@
   z-index: 40;
 }
 
+.chart-context--embedded
+  :is(
+    #passmark_cpu,
+    #passmark_other,
+    #nvbandwidth,
+    #stress_ng_full,
+    #workload_profile
+  ) {
+  overflow-y: auto;
+}
+
 .sc-modal-backdrop {
   @apply bg-gray-900/50;
 }

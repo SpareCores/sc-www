@@ -134,14 +134,6 @@ div.giscus {
   transform: translateX(0);
   display: flex;
 }
-::ng-deep .property_value ul {
-  list-style-type: disc;
-  list-style-position: inside;
-}
-
-::ng-deep .property_value ul li {
-  margin-bottom: 0.25rem;
-}
 
 @media (width < theme(--breakpoint-md)) {
   :host #lstopo {

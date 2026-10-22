@@ -13,7 +13,3 @@ sc-server-compare-charts {
   overflow-y: auto;
   min-height: 0;
 }
-
-:host ::ng-deep #workload_profile {
-  overflow-y: auto;
-}
