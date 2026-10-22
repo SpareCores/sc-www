@@ -12,7 +12,7 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
   selector: "sc-legal-documents",
   imports: [Breadcrumbs, RouterModule, TimeToShortDatePipe],
   templateUrl: "./legal-documents.html",
-  styleUrl: "./legal-documents.scss",
+  styleUrl: "./legal-documents.css",
 })
 export class LegalDocuments implements OnInit {
   private SEOHandler = inject(SeoHandler);

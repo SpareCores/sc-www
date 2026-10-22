@@ -13,7 +13,7 @@ import type { PromoBannerMessage } from "./promo-banner.constants";
   selector: "sc-promo-banner",
   imports: [Button, LucideX],
   templateUrl: "./promo-banner.html",
-  styleUrl: "./promo-banner.scss",
+  styleUrl: "./promo-banner.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "block",

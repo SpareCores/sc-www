@@ -46,7 +46,7 @@ function isRightColumnSection(section: NvbandwidthSection<string>): boolean {
     BenchmarkIconPipe,
   ],
   templateUrl: "./nvbandwidth-card.html",
-  styleUrl: "./nvbandwidth-card.scss",
+  styleUrl: "./nvbandwidth-card.css",
 })
 export class NvbandwidthCard {
   private tooltipService = inject(ChartTooltip);

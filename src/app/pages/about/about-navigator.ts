@@ -64,7 +64,7 @@ interface Quote {
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: "./about-navigator.html",
-  styleUrl: "./about-navigator.scss",
+  styleUrls: ["./about-shared.css", "./about-navigator.css"],
 })
 export class AboutNavigator implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);

@@ -149,7 +149,7 @@ import {
   ],
   providers: [CompareChartLegendVisibility],
   templateUrl: "./server-compare-charts.html",
-  styleUrl: "./server-compare-charts.scss",
+  styleUrl: "./server-compare-charts.css",
 })
 export class ServerCompareCharts implements OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);

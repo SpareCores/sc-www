@@ -28,7 +28,7 @@ export type ScButtonColor = "brand" | "neutral" | "danger" | "inverse";
   selector: "sc-button",
   imports: [NgTemplateOutlet, RouterLink, LucideDynamicIcon],
   templateUrl: "./button.html",
-  styleUrl: "./button.scss",
+  styleUrl: "./button.css",
 })
 export class Button {
   size = input<ScButtonSize>("default");

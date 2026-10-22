@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Repository-level rules for AI coding agents. Global rules apply to every task; the TypeScript, HTML template, and styling sections apply to `*.ts`, `*.html`, and `*.scss` files respectively.
+Repository-level rules for AI coding agents. Global rules apply to every task; the TypeScript, HTML template, and styling sections apply to `*.ts`, `*.html`, and `*.css` files respectively.
 
 ## Global Rules
 
@@ -63,7 +63,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 ### Angular 21 & TS Architecture Standards
 
 - Framework: Angular 21 standalone architecture with SSR enabled, using zone-based change detection.
-- Name components, services and directives without a type suffix, and name each file after its class in kebab-case (`LandingPage` in `landing-page.ts`, with `landing-page.html`, `.scss` and `.spec.ts` alongside). Pipes keep the `Pipe` class suffix; pipe, guard, interceptor and store files use a hyphenated type (`storage-pipe.ts`, `auth-guard.ts`).
+- Name components, services and directives without a type suffix, and name each file after its class in kebab-case (`LandingPage` in `landing-page.ts`, with `landing-page.html`, `.css` and `.spec.ts` alongside). Pipes keep the `Pipe` class suffix; pipe, guard, interceptor and store files use a hyphenated type (`storage-pipe.ts`, `auth-guard.ts`).
 - Never use `any`.
 - DI & Reactivity: Always use the functional `inject()` API instead of constructor injection. Use Signals for local state in new code, and `computed()` for derived state.
 - RxJS Management: Use `takeUntilDestroyed()` within an active injection context when observables are strictly required.
@@ -94,7 +94,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
   - Brand icons (`github`, `linkedin`, `twitter`, `facebook`, `youtube`, `codesandbox`) are custom definitions in that file with no static directive; use them by name, e.g. `<svg lucideIcon="github"></svg>`.
 - **Analytics**: Always use PostHog autocapture HTML attributes (for example: `data-ph-capture-attribute-sc-event="landing slot machine start"` + context targets like `data-ph-capture-attribute-slot-machine-action="start"`). Avoid manual TS tracking.
 
-## Styling (`*.html`, `*.scss`)
+## Styling (`*.html`, `*.css`)
 
 - Prefer Tailwind CSS v3 utilities. Mirror nearby design patterns (margins, padding, components) from currently opened or referenced files.
-- When extending a component that already has its own stylesheet (e.g. the auth modals' `auth-modal.scss`), follow that stylesheet's conventions instead.
+- When extending a component that already has its own stylesheet (e.g. the auth modals' `auth-modal.css`), follow that stylesheet's conventions instead.

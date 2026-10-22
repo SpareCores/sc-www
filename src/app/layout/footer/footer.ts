@@ -7,7 +7,7 @@ import { RouterLink } from "@angular/router";
   selector: "sc-footer",
   imports: [ThemeText, LucideDynamicIcon, LucideMail, RouterLink],
   templateUrl: "./footer.html",
-  styleUrl: "./footer.scss",
+  styleUrl: "./footer.css",
 })
 export class Footer {
   currentYear = new Date().getFullYear();

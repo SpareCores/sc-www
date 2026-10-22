@@ -160,7 +160,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     Modal,
   ],
   templateUrl: "./server-compare.html",
-  styleUrl: "./server-compare.scss",
+  styleUrl: "./server-compare.css",
 })
 export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   private prismService = inject(PrismHighlighter);

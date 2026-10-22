@@ -1,5 +1,3 @@
-@use "./_shared.scss";
-
 .repo_table {
   @apply w-full;
 

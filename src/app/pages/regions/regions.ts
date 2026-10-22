@@ -61,7 +61,7 @@ const colors = [
     LucideLeaf,
   ],
   templateUrl: "./regions.html",
-  styleUrl: "./regions.scss",
+  styleUrl: "./regions.css",
 })
 export class Regions implements OnInit {
   private platformId = inject(PLATFORM_ID);

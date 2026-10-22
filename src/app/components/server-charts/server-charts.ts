@@ -68,7 +68,7 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
     WorkloadProfilePanel,
   ],
   templateUrl: "./server-charts.html",
-  styleUrl: "./server-charts.scss",
+  styleUrl: "./server-charts.css",
 })
 export class ServerCharts implements OnChanges {
   private tooltipService = inject(ChartTooltip);

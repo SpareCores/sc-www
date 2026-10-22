@@ -1,0 +1,164 @@
+a {
+  @apply underline decoration-dotted;
+}
+a:hover {
+  @apply text-gray-500;
+}
+
+div.giscus {
+  margin-top: 35px;
+}
+::ng-deep .html_content h1,
+::ng-deep .html_content h2,
+::ng-deep .html_content h3,
+::ng-deep .html_content h4,
+::ng-deep .html_content h5,
+::ng-deep .html_content h6 {
+  @apply font-bold text-emerald-400 my-4;
+}
+
+::ng-deep .html_content h1 {
+  @apply text-4xl;
+}
+
+::ng-deep .html_content h2 {
+  @apply text-2xl;
+  @apply my-10;
+}
+
+::ng-deep .html_content a {
+  @apply underline decoration-dotted;
+}
+
+::ng-deep .html_content a:hover {
+  @apply text-gray-500;
+}
+
+::ng-deep .html_content ul li {
+  @apply list-disc;
+}
+
+::ng-deep .html_content ol li {
+  @apply list-decimal;
+}
+
+::ng-deep .html_content li {
+  @apply text-lg;
+  @apply my-1;
+  @apply ml-8;
+}
+
+::ng-deep .html_content p {
+  @apply my-10;
+  @apply text-lg;
+}
+
+::ng-deep .html_content div.code-toolbar {
+  width: calc(100% - 20px);
+  margin: 0px 10px;
+}
+
+::ng-deep .html_content blockquote {
+  border-left: 1px solid #34d399;
+  padding: 0px 10px 0px 10px;
+  margin: 10px;
+}
+
+::ng-deep .html_content ul {
+  @apply mb-2;
+}
+
+::ng-deep .html_content img.zoomin {
+  cursor: zoom-in;
+}
+
+::ng-deep .html_content table {
+  @apply mx-auto;
+  @apply mb-2;
+  /* make the tables scrollable */
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow: auto;
+}
+
+::ng-deep .html_content table thead {
+  @apply border-b border-emerald-400 border-solid;
+}
+
+::ng-deep .html_content table thead th {
+  @apply px-5 py-3 font-normal text-xs;
+}
+
+::ng-deep .html_content table tbody tr:nth-child(2n + 1) {
+  @apply bg-primary;
+}
+
+::ng-deep .html_content table tbody tr:nth-child(2n) {
+  @apply bg-secondary;
+}
+
+::ng-deep .html_content table tbody tr td {
+  @apply whitespace-nowrap;
+  @apply px-5 py-3 text-sm;
+}
+
+::ng-deep .html_content table tbody tr td a:hover {
+  opacity: 0.5;
+}
+
+::ng-deep .html_content table tbody td.file-size span.num,
+::ng-deep .html_content table tbody td.param-size span.num {
+  display: inline-block;
+  min-width: 3em;
+  text-align: right;
+  padding-right: 5px;
+}
+
+::ng-deep .html_content table tbody td.file-size span.num {
+  padding-right: 10px;
+}
+
+::ng-deep .html_content table tbody td.file-size span.unit,
+::ng-deep .html_content table tbody td.param-size span.unit {
+  display: inline-block;
+  min-width: 2em;
+  text-align: left;
+}
+
+::ng-deep .html_content table tbody td.cost-value span.num {
+  display: inline-block;
+  min-width: 5em;
+  text-align: right;
+  padding-right: 0.5em;
+}
+
+::ng-deep .html_content table::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+  background: #34d39933;
+}
+
+::ng-deep .html_content table::-webkit-scrollbar-thumb:horizontal {
+  background: #34d399;
+}
+
+::ng-deep .html_content .header-anchor {
+  opacity: 0;
+  text-decoration: none;
+  margin-left: 0.5rem;
+  transition: opacity 0.2s;
+}
+
+::ng-deep .html_content .header-anchor:hover {
+  @apply text-emerald-400;
+}
+
+::ng-deep .html_content h1:hover .header-anchor,
+::ng-deep .html_content h2:hover .header-anchor,
+::ng-deep .html_content h3:hover .header-anchor,
+::ng-deep .html_content h4:hover .header-anchor,
+::ng-deep .html_content h5:hover .header-anchor,
+::ng-deep .html_content h6:hover .header-anchor {
+  opacity: 1;
+}

@@ -23,7 +23,7 @@ const DETAILS_PARAMS = new Set([
   selector: "sc-register-modal",
   imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner],
   templateUrl: "./register-modal.html",
-  styleUrl: "../auth-modal.scss",
+  styleUrl: "../auth-modal.css",
 })
 export class RegisterModal {
   protected readonly auth = inject(AuthState);
