@@ -173,9 +173,7 @@
             [label]="baselineCompareButtonLabel()"
             icon="scale"
             iconPosition="start"
-            [variant]="
-              isBaselineSelectedForCompare() ? 'solid' : 'outline'
-            "
+            [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
             [disabled]="!selectedBaselineServer()"
             (click)="toggleBaselineCompare()"
           ></sc-button>
