@@ -40,3 +40,40 @@
   padding-right: 0.5rem !important;
   padding-left: 0.75rem !important;
 }
+
+.sc-kv-table {
+  @apply text-white;
+}
+
+.sc-kv-table thead {
+  height: 45px;
+}
+
+.sc-kv-table thead th {
+  @apply border-b border-solid border-gray-200 bg-secondary px-5 py-3 text-left leading-5 font-normal;
+}
+
+.sc-kv-table tbody tr {
+  @apply border-b border-solid border-gray-200 bg-secondary;
+}
+
+.sc-kv-table tbody td {
+  @apply px-5 py-3 text-left text-sm;
+}
+
+.sc-kv-table__label {
+  width: 250px;
+}
+
+.sc-kv-table--fixed-rows {
+  table-layout: fixed;
+}
+
+.sc-kv-table--fixed-rows thead th,
+.sc-kv-table--fixed-rows tbody td {
+  height: 45px;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
