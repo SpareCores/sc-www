@@ -246,7 +246,10 @@ describe("Visual regression tests", () => {
       "/embed/compare/generic?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYTEubWVkaXVtIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjNmdkLm1lZGl1bSJ9XQ%3D%3D",
     );
 
-    cy.get("sc-server-compare-charts canvas").should("be.visible");
+    cy.get("sc-server-compare-charts table#main-table tbody tr").should(
+      "have.length.at.least",
+      1,
+    );
 
     cy.compareSnapshot({
       name: visualSnapshotName(
