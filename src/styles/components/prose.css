@@ -63,6 +63,127 @@
   opacity: 0.5;
 }
 
+.sc-prose--article ul li {
+  @apply list-disc;
+}
+
+.sc-prose--article ol li {
+  @apply list-decimal;
+}
+
+.sc-prose--article li {
+  @apply text-lg;
+  @apply my-1;
+  @apply ml-8;
+}
+
+.sc-prose--article div.code-toolbar {
+  width: calc(100% - 20px);
+  margin: 0px 10px;
+}
+
+.sc-prose--article table {
+  @apply mx-auto;
+  @apply mb-2;
+  /* make the tables scrollable */
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.sc-prose--article table tbody tr td {
+  @apply whitespace-nowrap;
+  @apply px-5 py-3 text-sm;
+}
+
+.sc-prose--article table tbody td.file-size span.num,
+.sc-prose--article table tbody td.param-size span.num {
+  display: inline-block;
+  min-width: 3em;
+  text-align: right;
+  padding-right: 5px;
+}
+
+.sc-prose--article table tbody td.file-size span.num {
+  padding-right: 10px;
+}
+
+.sc-prose--article table tbody td.file-size span.unit,
+.sc-prose--article table tbody td.param-size span.unit {
+  display: inline-block;
+  min-width: 2em;
+  text-align: left;
+}
+
+.sc-prose--article table tbody td.cost-value span.num {
+  display: inline-block;
+  min-width: 5em;
+  text-align: right;
+  padding-right: 0.5em;
+}
+
+.sc-prose--article table::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+  background: color-mix(in oklab, var(--color-emerald-400) 20%, transparent);
+}
+
+.sc-prose--article table::-webkit-scrollbar-thumb:horizontal {
+  background: var(--color-emerald-400);
+}
+
+.sc-prose--article h1:hover .sc-header-anchor,
+.sc-prose--article h2:hover .sc-header-anchor,
+.sc-prose--article h3:hover .sc-header-anchor,
+.sc-prose--article h4:hover .sc-header-anchor,
+.sc-prose--article h5:hover .sc-header-anchor,
+.sc-prose--article h6:hover .sc-header-anchor {
+  opacity: 1;
+}
+
+.sc-prose--tos h1,
+.sc-prose--tos h2,
+.sc-prose--tos h3,
+.sc-prose--tos h4,
+.sc-prose--tos h5,
+.sc-prose--tos h6 {
+  @apply font-bold text-emerald-400 my-4;
+}
+
+.sc-prose--tos li {
+  @apply list-disc ml-4;
+  @apply text-lg;
+  @apply my-1;
+  @apply ml-8;
+}
+
+.sc-prose--tos pre {
+  @apply bg-secondary;
+  padding: 10px 15px;
+  margin: 20px 10px;
+  border: 1px solid var(--color-emerald-400);
+  border-radius: 10px;
+}
+
+.sc-prose--tos pre code {
+  padding: 0px;
+}
+
+.sc-prose--tos code {
+  @apply bg-secondary;
+  padding: 2px 5px;
+}
+
+.sc-prose--tos table {
+  @apply mx-auto;
+  @apply mb-2;
+}
+
+.sc-prose--tos table tbody tr td {
+  @apply px-5 py-3 text-sm;
+}
+
 a.sc-header-anchor {
   opacity: 0;
   margin-left: 0.5rem;
