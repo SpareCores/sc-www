@@ -64,36 +64,6 @@
   @apply bg-gray-900/50;
 }
 
-.sc-auth-pending-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background: var(--color-primary);
-}
-
-.sc-auth-pending-overlay__content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  text-align: center;
-}
-
-.sc-auth-pending-overlay__text {
-  margin: 0;
-  color: var(--color-white);
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
-.sc-auth-pending-overlay__text--error {
-  color: var(--color-red-400);
-}
-
 body {
   @apply bg-sky-950;
   scrollbar-gutter: stable;

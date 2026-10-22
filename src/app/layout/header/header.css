@@ -124,15 +124,3 @@ li {
     ),
     var(--color-primary);
 }
-
-.login_button {
-  background-color: var(--color-gray-200);
-  color: var(--color-gray-800);
-  padding: 6px 12px;
-  border-radius: 0.5rem;
-  border: none;
-  font-weight: 600;
-  display: flex;
-  cursor: pointer;
-  @apply hover:text-white hover:bg-emerald-400;
-}

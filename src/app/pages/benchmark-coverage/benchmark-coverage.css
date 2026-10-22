@@ -96,10 +96,6 @@
   @apply px-2 py-2 text-sm rounded-md border border-emerald-400 bg-transparent text-emerald-400;
 }
 
-.filter_chip_active {
-  @apply bg-emerald-400 text-white;
-}
-
 .dropdown_group_button:hover {
   @apply bg-emerald-400 text-white;
 }
