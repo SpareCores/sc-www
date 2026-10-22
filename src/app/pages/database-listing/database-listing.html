@@ -478,6 +478,7 @@
   >
     <div class="flex gap-4">
       <sc-button
+        labelClass="sc-button__label--fit"
         label="Clear"
         icon="circle-x"
         iconPosition="start"
@@ -487,6 +488,7 @@
         (click)="clearCompare()"
       ></sc-button>
       <sc-button
+        labelClass="sc-button__label--fit"
         [label]="'Compare (' + compareCount() + ')'"
         icon="scale"
         iconPosition="start"

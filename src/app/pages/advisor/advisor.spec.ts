@@ -962,9 +962,7 @@ describe("Advisor", () => {
       ".advisor-page",
     ) as HTMLElement;
 
-    expect(advisorPage.classList).toContain(
-      "advisor-page--loading-baseline-workloads",
-    );
+    expect(advisorPage.classList).toContain("cursor-wait-all");
     expect(getComputedStyle(advisorPage).cursor).toBe("wait");
 
     resolveBenchmarkScores?.({
@@ -985,9 +983,7 @@ describe("Advisor", () => {
 
     expect(loadedControl?.disabled).toBeFalse();
     expect(loadedControl?.loading).toBeFalse();
-    expect(advisorPage.classList).not.toContain(
-      "advisor-page--loading-baseline-workloads",
-    );
+    expect(advisorPage.classList).not.toContain("cursor-wait-all");
   }));
 
   it("shows a warning empty state when a baseline has no benchmark workloads", fakeAsync(() => {

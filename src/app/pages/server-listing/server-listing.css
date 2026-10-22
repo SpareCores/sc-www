@@ -31,22 +31,6 @@
   border: 3px solid var(--color-gray-400); /* creates padding around scroll thumb */
 }
 
-.benchmark-type-modal ::ng-deep .dropdown_group_button.sc-button {
-  @apply mx-2 w-auto px-2 py-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-xs focus:outline-hidden;
-  text-wrap: auto;
-}
-
-.benchmark-type-modal ::ng-deep .dropdown_group_button.sc-button:hover,
-.benchmark-type-modal ::ng-deep .dropdown_group_button.sc-button:focus {
-  @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white;
-}
-
-:host ::ng-deep .sc-floating-actions .sc-button__label {
-  overflow: visible;
-  text-overflow: clip;
-  min-width: max-content;
-}
-
 .button_list_holder {
   .button_list_item:nth-child(2n + 1) {
     @apply bg-primary;

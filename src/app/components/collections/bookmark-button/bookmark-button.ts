@@ -35,6 +35,7 @@ export class BookmarkButton {
   vendorId = input.required<string>();
   entityId = input.required<string>();
   disabled = input(false);
+  size = input<"default" | "large">("default");
 
   protected readonly registerHint = FEATURE_REGISTER_HINT;
 

@@ -1,8 +1,6 @@
 <div
   class="advisor-page w-full bg-primary"
-  [class.advisor-page--loading-baseline-workloads]="
-    isLoadingBaselineBenchmarkScores()
-  "
+  [class.cursor-wait-all]="isLoadingBaselineBenchmarkScores()"
 >
   <div class="content pt-16 pb-16">
     <sc-breadcrumbs [segments]="displayBreadcrumbs()"></sc-breadcrumbs>
@@ -117,6 +115,7 @@
 
         <div class="advisor-filter-bar-filters overflow-hidden bg-secondary">
           <sc-search-bar
+            class="search-bar--borderless"
             [query]="query()"
             [extraParameters]="advisorSearchBarExtraParameters()"
             [filterCategories]="advisorFilterCategories"

@@ -233,3 +233,7 @@
     border-top-right-radius: 0;
   }
 }
+
+:host(.workloads-sidebar--static) .filter_bar {
+  transition: none !important;
+}
