@@ -34,13 +34,13 @@
 
     <div class="flex gap-8 mx-2 xl:mx-0">
       <div
-        class="filter_bar bg-primary"
+        class="sc-filter-sidebar bg-primary"
         [ngClass]="{
-          collapsed: isCollapsed,
+          'sc-filter-sidebar--collapsed': isCollapsed,
         }"
       >
         <div
-          class="collapser bg-secondary"
+          class="sc-filter-sidebar__collapser bg-secondary"
           (click)="toggleCollapse()"
           tabindex="0"
           data-ph-capture-attribute-sc-event="database listing toggle sidebar"
@@ -60,12 +60,12 @@
       <div
         class="list_holder flex flex-col gap-4"
         [ngClass]="{
-          'limited-full': !isCollapsed,
+          'sc-listing-results--narrow': !isCollapsed,
           'w-full': isCollapsed,
         }"
       >
         <div
-          class="top_buttons w-[calc(100%-60px)] flex justify-end gap-4 items-center ml-auto"
+          class="sc-listing-toolbar w-[calc(100%-60px)] flex justify-end gap-4 items-center ml-auto"
         >
           <div class="min-w-0">
             <sc-button
@@ -472,7 +472,10 @@
 </div>
 
 @if (compareCount() >= 2) {
-  <div class="fixed_buttons" [class.fixed_buttons--collapsed]="isCollapsed">
+  <div
+    class="sc-floating-actions"
+    [class.sc-floating-actions--collapsed]="isCollapsed"
+  >
     <div class="flex gap-4">
       <sc-button
         label="Clear"

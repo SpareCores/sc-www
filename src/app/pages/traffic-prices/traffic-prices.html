@@ -20,13 +20,13 @@
 
     <div class="flex gap-8 mx-2 xl:mx-0">
       <div
-        class="filter_bar bg-primary"
+        class="sc-filter-sidebar bg-primary"
         [ngClass]="{
-          collapsed: isCollapsed,
+          'sc-filter-sidebar--collapsed': isCollapsed,
         }"
       >
         <div
-          class="collapser bg-secondary"
+          class="sc-filter-sidebar__collapser bg-secondary"
           (click)="toggleCollapse()"
           tabindex="0"
           data-ph-capture-attribute-sc-event="server listing toggle sidebar"
@@ -45,11 +45,13 @@
       <div
         class="list_holder flex flex-col gap-4"
         [ngClass]="{
-          'limited-full': !isCollapsed,
+          'sc-listing-results--narrow': !isCollapsed,
           'w-full': isCollapsed,
         }"
       >
-        <div class="top_buttons w-full flex justify-end gap-4 items-center">
+        <div
+          class="sc-listing-toolbar w-full flex justify-end gap-4 items-center"
+        >
           <sc-button
             id="currency_button"
             [scDropdown]="currencyPanel"

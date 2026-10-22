@@ -7,58 +7,6 @@
   aspect-ratio: 16 / 9;
 }
 
-.filter_bar {
-  position: relative;
-  width: 20rem;
-  transition: width 0.2s ease-in-out;
-
-  .top {
-    height: 4rem;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    padding: 0.5rem;
-    border-top: 1px solid var(--color-emerald-400);
-  }
-  .collapser {
-    position: absolute;
-    right: -52px;
-    top: 0;
-    height: 4rem;
-    width: 52px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    z-index: 1;
-    border-top-right-radius: 0.25rem;
-    border-bottom-right-radius: 0.25rem;
-    border-bottom: 1px solid;
-    border-right: 1px solid;
-    border-top: 1px solid;
-    border-color: var(--color-emerald-400);
-    cursor: pointer;
-  }
-
-  .filters {
-    border-right: 1px solid var(--color-emerald-400);
-    padding-bottom: 1rem;
-    height: calc(100% - 4rem);
-  }
-}
-
-.filter_bar.collapsed {
-  width: 0rem;
-  min-width: unset;
-}
-
-.top_buttons {
-  height: 4rem;
-}
-
-.limited-full {
-  width: calc(100% - 20rem);
-}
-
 .dropdown_input {
   @apply py-3 ps-14 pe-4 block w-full border-emerald-400 rounded-lg text-sm text-white bg-emerald-400;
   min-width: 300px;
@@ -93,33 +41,10 @@
   @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white;
 }
 
-.unit {
-  position: absolute;
-  right: 0.5rem;
-  top: 2.25rem;
-  transform: translateY(-2rem);
-}
-
-.fixed_buttons {
-  position: fixed;
-  bottom: 2rem;
-  left: calc(50% + 10rem);
-  transform: translateX(-50%);
-  z-index: 100;
-  sc-button {
-    width: max-content;
-    min-width: 9rem;
-  }
-}
-
-:host ::ng-deep .fixed_buttons .sc-button__label {
+:host ::ng-deep .sc-floating-actions .sc-button__label {
   overflow: visible;
   text-overflow: clip;
   min-width: max-content;
-}
-
-.fixed_buttons.fixed_buttons--collapsed {
-  left: 50%;
 }
 
 .button_list_holder {
