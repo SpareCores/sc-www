@@ -71,7 +71,7 @@ sc-database-details {
   }
 }
 
-@media (max-width: 1178px) {
+@media (width < theme(--breakpoint-wide)) {
   sc-database-details {
     .block_half {
       width: 100%;
