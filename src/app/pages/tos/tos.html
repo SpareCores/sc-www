@@ -20,7 +20,7 @@
           <h1 class="text-emerald-400 text-3xl font-bold mb-2">
             {{ article.meta.title }}
           </h1>
-          <div class="text-white html_content" [innerHTML]="article.body"></div>
+          <div class="text-white sc-prose" [innerHTML]="article.body"></div>
           <div class="w-full text-right mt-4 text-white">
             Last updated: {{ article.meta.date | timeToShortDate }}
           </div>
