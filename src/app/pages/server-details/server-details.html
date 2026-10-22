@@ -656,43 +656,26 @@
   </div>
 </ng-template>
 
-<div
-  id="embed-charts-modal"
-  tabindex="-1"
-  class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
->
-  <div class="relative w-full max-w-4xl max-h-full">
-    <div
-      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
-    >
-      <div
-        class="flex items-center justify-between p-2 md:p-5 border-b rounded-t"
-      >
-        <h3 class="text-xl font-medium text-white dark:text-white">
-          Embed Chart
-        </h3>
-        <sc-button
-          variant="close"
-          icon="x"
-          ariaLabel="Close modal"
-          data-ph-capture-attribute-sc-event="embed chart modal close"
-          data-ph-capture-attribute-server-listing-search-prompt-action="close"
-          (buttonClick)="closeModal()"
-        ></sc-button>
-      </div>
-      <div class="space-y-4 flex flex-col">
-        @if (serverDetails && isModalOpen) {
-          <sc-server-embed-dialog
-            [id]="serverDetails.api_reference"
-            [vendor]="serverDetails.vendor_id"
-            [charts]="embeddableCharts"
-          >
-          </sc-server-embed-dialog>
-        }
-      </div>
+<ng-template #embedModalTemplate>
+  <sc-modal
+    id="embed-charts-modal"
+    title="Embed Chart"
+    size="4xl"
+    closeCaptureEvent="embed chart modal close"
+    closeCaptureAction="close"
+  >
+    <div class="space-y-4 flex flex-col">
+      @if (serverDetails && isModalOpen) {
+        <sc-server-embed-dialog
+          [id]="serverDetails.api_reference"
+          [vendor]="serverDetails.vendor_id"
+          [charts]="embeddableCharts"
+        >
+        </sc-server-embed-dialog>
+      }
     </div>
-  </div>
-</div>
+  </sc-modal>
+</ng-template>
 
 @if (serverDetails && !isLoading) {
   <sc-button
@@ -710,72 +693,54 @@
   ></sc-button>
 }
 
-<div
-  #summarizeModal
-  id="server-summarize-modal"
-  tabindex="-1"
-  class="summarize-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
->
-  <div class="relative w-full max-w-3xl mx-auto my-auto">
-    <div
-      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
-    >
-      <div
-        class="flex items-start justify-between gap-4 p-4 md:p-6 border-b border-gray-600"
-      >
-        <div class="flex flex-col gap-2 min-w-0">
-          @if (serverDetails) {
-            <h2 class="text-xl md:text-2xl font-semibold text-white">
-              {{ serverDetails.display_name }}
-            </h2>
-          }
-          @if (serverDescription?.tagline) {
-            <p class="text-emerald-400 text-sm md:text-base">
-              {{ serverDescription!.tagline }}
-            </p>
-          }
-          @if (serverDescription?.categories?.length) {
-            <div class="server-description-categories mt-4">
-              @for (category of serverDescription!.categories; track category) {
-                <span class="server-description-category-pill">{{
-                  category
-                }}</span>
-              }
-            </div>
-          }
-        </div>
-        <sc-button
-          variant="close"
-          icon="x"
-          ariaLabel="Close modal"
-          data-ph-capture-attribute-sc-event="server details summarize close"
-          (buttonClick)="closeSummarizeModal()"
-        ></sc-button>
-      </div>
-      @if (serverDescription && isSummarizeModalOpen) {
-        <div
-          class="summarize-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
-        >
-          @if (serverDescription.bullet_points.length) {
-            <div class="summarize-modal-highlights">
-              <h3 class="text-lg font-semibold text-white mb-3">
-                Key highlights
-              </h3>
-              <ul class="summarize-modal-bullets">
-                @for (point of serverDescription.bullet_points; track point) {
-                  <li>{{ point }}</li>
-                }
-              </ul>
-            </div>
-          }
-          @for (paragraph of serverDescription.page; track $index) {
-            <p class="summarize-modal-paragraph">{{ paragraph }}</p>
+<ng-template #summarizeModalTemplate>
+  <sc-modal
+    id="server-summarize-modal"
+    size="3xl"
+    closeCaptureEvent="server details summarize close"
+  >
+    <div modalHeader class="flex flex-col gap-2 min-w-0">
+      @if (serverDetails) {
+        <h2 class="text-xl md:text-2xl font-semibold text-white">
+          {{ serverDetails.display_name }}
+        </h2>
+      }
+      @if (serverDescription?.tagline) {
+        <p class="text-emerald-400 text-sm md:text-base">
+          {{ serverDescription!.tagline }}
+        </p>
+      }
+      @if (serverDescription?.categories?.length) {
+        <div class="server-description-categories mt-4">
+          @for (category of serverDescription!.categories; track category) {
+            <span class="server-description-category-pill">{{ category }}</span>
           }
         </div>
       }
     </div>
-  </div>
-</div>
+    @if (serverDescription && isSummarizeModalOpen) {
+      <div
+        class="summarize-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
+      >
+        @if (serverDescription.bullet_points.length) {
+          <div class="summarize-modal-highlights">
+            <h3 class="text-lg font-semibold text-white mb-3">
+              Key highlights
+            </h3>
+            <ul class="summarize-modal-bullets">
+              @for (point of serverDescription.bullet_points; track point) {
+                <li>{{ point }}</li>
+              }
+            </ul>
+          </div>
+        }
+        @for (paragraph of serverDescription.page; track $index) {
+          <p class="summarize-modal-paragraph">{{ paragraph }}</p>
+        }
+      </div>
+    }
+  </sc-modal>
+</ng-template>
 
 <div
   #warningTooltip

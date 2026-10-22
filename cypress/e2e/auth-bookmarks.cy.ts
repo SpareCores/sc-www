@@ -57,7 +57,7 @@ function fillAndConfirmModal(
   cy.contains(`#${modalId} button`, "Confirm")
     .should("not.be.disabled")
     .click();
-  cy.get(`#${modalId}`, { timeout: 20000 }).should("have.class", "hidden");
+  cy.get(`#${modalId}`, { timeout: 20000 }).should("not.exist");
 }
 
 function saveFromPageHeader(
@@ -123,6 +123,7 @@ describe("Bookmarks behaviour", () => {
       .should("not.have.class", "hidden")
       .and("contain.text", note);
     cy.get('#bookmarks-note-modal button[aria-label="Close modal"]').click();
+    cy.get("#bookmarks-note-modal").should("not.exist");
 
     bookmarkCard(renamed).find('button[aria-label="Delete"]').click();
     cy.get("sc-loading-spinner", { timeout: 20000 }).should("not.exist");
