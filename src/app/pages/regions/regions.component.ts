@@ -18,7 +18,7 @@ import {
 } from "../../../../sdk/data-contracts";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { FormsModule } from "@angular/forms";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   LucideDynamicIcon,
   LucideChevronRight,
@@ -55,7 +55,6 @@ const colors = [
     BreadcrumbsComponent,
     CountryIdtoNamePipe,
     FormsModule,
-    CommonModule,
     RouterModule,
     LucideDynamicIcon,
     LucideChevronRight,
