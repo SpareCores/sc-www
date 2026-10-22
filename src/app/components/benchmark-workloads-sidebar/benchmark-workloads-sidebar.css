@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 :host {
   z-index: 1;
   position: sticky;
@@ -214,7 +216,7 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .filter_bar {
     width: min(18rem, calc(100vw - 1.25rem));
     min-width: min(18rem, calc(100vw - 1.25rem));

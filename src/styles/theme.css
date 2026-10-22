@@ -2,6 +2,8 @@
   --font-sans: "Inter", sans-serif;
   --font-mono: "Roboto Mono", monospace, sans-serif;
 
+  --breakpoint-wide: 75rem;
+
   --color-sky-975: oklch(25.7% 0.052 240.8);
 
   --color-primary: var(--color-sky-950);

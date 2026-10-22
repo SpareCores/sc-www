@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .bookmarks-search {
   display: flex;
   flex-wrap: wrap;
@@ -174,7 +176,7 @@
   line-height: 1;
 }
 
-@media (max-width: 78rem) {
+@media (width < theme(--breakpoint-wide)) {
   .bookmarks-stats {
     flex-wrap: nowrap;
     gap: 0.75rem;

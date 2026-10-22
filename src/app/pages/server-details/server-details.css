@@ -212,7 +212,7 @@ div.giscus {
   margin-bottom: 0.25rem;
 }
 
-@media screen and (max-width: 800px) {
+@media (width < theme(--breakpoint-md)) {
   :host ::ng-deep .block_half {
     width: calc(100%);
     margin: auto;
