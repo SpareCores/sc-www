@@ -100,22 +100,22 @@
 }
 
 .scrollbar_mirror_outer {
-  background: #374151;
+  background: var(--color-gray-700);
   overflow-y: hidden;
   scrollbar-width: thin;
-  scrollbar-color: #34d399 #374151;
+  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
 
   &::-webkit-scrollbar {
     height: 11px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #374151;
+    background: var(--color-gray-700);
   }
 
   &::-webkit-scrollbar-thumb {
     height: 11px;
-    background-color: #34d399;
+    background-color: var(--color-emerald-400);
     border-radius: 3px;
     border: 0;
   }
@@ -138,7 +138,7 @@
 
 ::-webkit-scrollbar-thumb {
   height: 6px;
-  background-color: #9ca3af;
+  background-color: var(--color-gray-400);
   border-radius: 20px; /* roundness of the scroll thumb */
 }
 :host ::ng-deep .block_full_inline {
@@ -236,5 +236,5 @@
   right: 0;
   bottom: 0;
   height: 0.3rem;
-  background-color: #34d399;
+  background-color: var(--color-emerald-400);
 }

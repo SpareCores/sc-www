@@ -19,7 +19,7 @@
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 9999px;
-  color: rgb(156 163 175 / 0.5);
+  color: color-mix(in oklab, var(--color-gray-400) 50%, transparent);
   transition: color 0.15s ease;
   position: relative;
   transform: translateY(-1px);
@@ -42,7 +42,7 @@
 }
 
 .bookmark-button--active {
-  color: rgb(52 211 153);
+  color: var(--color-emerald-400);
 }
 
 .bookmark-button--active .bookmark-button__icon--default {
@@ -54,7 +54,7 @@
 }
 
 .bookmark-button--can-add:hover:not(:disabled) {
-  color: rgb(52 211 153);
+  color: var(--color-emerald-400);
 }
 
 .bookmark-button--can-add:hover:not(:disabled) .bookmark-button__icon--default {
@@ -67,7 +67,7 @@
 }
 
 .bookmark-button--can-remove:hover:not(:disabled) {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .bookmark-button--can-remove:hover:not(:disabled)

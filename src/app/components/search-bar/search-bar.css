@@ -3,7 +3,7 @@
 .search_bar_content {
   .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: #34d399 #374151;
+    scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -12,13 +12,13 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #374151;
+    background: var(--color-gray-700);
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #34d399;
+    background-color: var(--color-emerald-400);
     border-radius: 20px;
-    border: 3px solid #34d399;
+    border: 3px solid var(--color-emerald-400);
   }
 
   width: 100%;
@@ -38,7 +38,7 @@
     justify-content: center;
     display: flex;
     padding: 0.5rem;
-    border-top: 1px solid #34d399;
+    border-top: 1px solid var(--color-emerald-400);
   }
 
   .top_search_input {
@@ -74,7 +74,7 @@
   }
 
   .filters {
-    border-right: 1px solid #34d399;
+    border-right: 1px solid var(--color-emerald-400);
     padding-bottom: 1rem;
     min-height: calc(100% - 4rem);
   }
@@ -89,7 +89,11 @@
   .filter-draft-input--compact.filter-draft-input--dirty {
     @apply border-solid border-yellow-500;
 
-    background-color: rgb(234 179 8 / 0.15);
+    background-color: color-mix(
+      in oklab,
+      var(--color-yellow-500) 15%,
+      transparent
+    );
   }
 
   .filter-draft-input--field.filter-draft-input--dirty {
@@ -130,7 +134,7 @@
   .cpu-cache-slider-tick {
     width: 1px;
     height: 0.5rem;
-    background: rgb(16 185 129 / 0.5);
+    background: color-mix(in oklab, var(--color-emerald-500) 50%, transparent);
   }
 
   .cpu-cache-slider-labels {
@@ -142,7 +146,7 @@
   .cpu-cache-slider-label {
     position: absolute;
     transform: translateX(-50%);
-    color: rgb(209 213 219);
+    color: var(--color-gray-300);
     font-size: 0.65rem;
     line-height: 1;
     white-space: nowrap;
@@ -261,7 +265,7 @@
 
   .custom-slider__input {
     width: 100%;
-    accent-color: #34d399;
+    accent-color: var(--color-emerald-400);
     cursor: pointer;
 
     &::-webkit-slider-thumb {
@@ -285,7 +289,7 @@
     display: flex;
     justify-content: space-between;
     gap: 0.5rem;
-    color: rgb(209 213 219);
+    color: var(--color-gray-300);
     font-size: 0.65rem;
     line-height: 1;
   }
@@ -315,11 +319,11 @@
   }
 
   .custom-stepper__field:focus-within {
-    box-shadow: 0 0 0 2px rgb(52 211 153);
+    box-shadow: 0 0 0 2px var(--color-emerald-400);
   }
 
   .custom-stepper__field.filter-draft-input--dirty:focus-within {
-    box-shadow: 0 0 0 2px rgb(234 179 8);
+    box-shadow: 0 0 0 2px var(--color-yellow-500);
   }
 
   .custom-stepper__button {

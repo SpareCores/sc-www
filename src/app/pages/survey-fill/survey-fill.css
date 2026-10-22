@@ -3,7 +3,7 @@
 }
 
 :host ::ng-deep label.sd-rating__item-star svg {
-  stroke: #34d399;
+  stroke: var(--color-emerald-400);
 }
 
 :host ::ng-deep div[data-name="legal_checkmark"] {
@@ -18,7 +18,7 @@
 }
 
 :host ::ng-deep code {
-  background-color: #06253a;
+  background-color: var(--color-secondary);
   padding: 2px 4px;
   border-radius: 4px;
 }
@@ -38,8 +38,8 @@
 }
 
 :host ::ng-deep input.sd-btn {
-  background-color: #34d399;
-  color: #fff;
+  background-color: var(--color-emerald-400);
+  color: var(--color-white);
   border-radius: 6px;
 }
 

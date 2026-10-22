@@ -13,9 +13,10 @@
   min-width: 12rem;
   padding: 0.25rem;
   border-radius: 0.5rem;
-  border: 1px solid rgb(52 211 153);
-  background: rgb(17 24 39);
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+  border: 1px solid var(--color-emerald-400);
+  background: var(--color-gray-900);
+  box-shadow: 0 10px 15px -3px
+    color-mix(in oklab, var(--color-black) 30%, transparent);
 }
 
 .instance-favorite-context-menu__item {
@@ -30,7 +31,7 @@
 }
 
 .instance-favorite-context-menu__item:hover:not(:disabled) {
-  background: rgb(31 41 55);
+  background: var(--color-gray-800);
 }
 
 .instance-favorite-context-menu__item:disabled {

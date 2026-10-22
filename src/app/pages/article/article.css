@@ -61,7 +61,7 @@ div.giscus {
 }
 
 ::ng-deep .html_content blockquote {
-  border-left: 1px solid #34d399;
+  border-left: 1px solid var(--color-emerald-400);
   padding: 0px 10px 0px 10px;
   margin: 10px;
 }
@@ -138,11 +138,11 @@ div.giscus {
 ::ng-deep .html_content table::-webkit-scrollbar {
   height: 4px;
   width: 4px;
-  background: #34d39933;
+  background: color-mix(in oklab, var(--color-emerald-400) 20%, transparent);
 }
 
 ::ng-deep .html_content table::-webkit-scrollbar-thumb:horizontal {
-  background: #34d399;
+  background: var(--color-emerald-400);
 }
 
 ::ng-deep .html_content .header-anchor {

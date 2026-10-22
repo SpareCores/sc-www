@@ -7,10 +7,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  border: 1px solid #34d399;
+  border: 1px solid var(--color-emerald-400);
   border-radius: 0.5rem;
-  background: #34d399;
-  box-shadow: 0px 16px 30px rgba(6, 38, 58, 0.28);
+  background: var(--color-emerald-400);
+  box-shadow: 0px 16px 30px
+    color-mix(in oklab, var(--color-secondary) 28%, transparent);
   padding: 0.5rem 1rem;
 }
 
@@ -24,7 +25,7 @@
 }
 
 .promo-banner__lead {
-  color: #111827;
+  color: var(--color-gray-900);
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.5rem;
@@ -32,7 +33,7 @@
 }
 
 .promo-banner__copy {
-  color: #ffffff;
+  color: var(--color-white);
   font-size: 0.95rem;
   line-height: 1.5rem;
   text-decoration-thickness: 1px;
@@ -56,17 +57,17 @@
   border: 0;
   border-radius: 9999px;
   background: transparent;
-  color: #111827;
+  color: var(--color-gray-900);
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .promo-banner__close:hover {
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .promo-banner__close:focus-visible {
-  outline: 2px solid #111827;
+  outline: 2px solid var(--color-gray-900);
   outline-offset: 2px;
 }
 
