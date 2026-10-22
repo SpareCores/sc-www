@@ -112,3 +112,11 @@
     display: none;
   }
 }
+
+@utility cursor-wait-all {
+  cursor: wait !important;
+
+  & * {
+    cursor: wait !important;
+  }
+}

@@ -720,6 +720,7 @@
   >
     <div class="flex gap-4">
       <sc-button
+        labelClass="sc-button__label--fit"
         label="Clear"
         icon="circle-x"
         iconPosition="start"
@@ -729,6 +730,7 @@
         (click)="clearCompare()"
       ></sc-button>
       <sc-button
+        labelClass="sc-button__label--fit"
         [label]="'Compare (' + compareCount() + ')'"
         icon="scale"
         iconPosition="start"
@@ -849,14 +851,14 @@
           <sc-button
             label="All"
             variant="outline"
-            buttonClass="dropdown_group_button"
+            buttonClass="sc-button--chip"
             (click)="selectBenchmarkCategory('All')"
           ></sc-button>
           @for (category of benchmarkCategories; track $index) {
             <sc-button
               [label]="category"
               variant="outline"
-              buttonClass="dropdown_group_button"
+              buttonClass="sc-button--chip"
               (click)="selectBenchmarkCategory(category)"
             ></sc-button>
           }
