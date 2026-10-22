@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .content_section {
   @apply bg-primary;
   @apply text-white;

@@ -1,8 +1,8 @@
 <div
-  class="flex flex-col w-full max-w-xs md:max-w-[17.75rem] h-full bg-white border border-emerald-400 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-emerald-400 dark:shadow-neutral-700/70"
+  class="flex flex-col w-full max-w-xs md:max-w-71 h-full bg-white border border-emerald-400 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-emerald-400 dark:shadow-neutral-700/70"
 >
   <div
-    class="w-full h-32 rounded-t-xl flex items-center justify-center bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-neutral-100 via-neutral-500 to-stone-900"
+    class="w-full h-32 rounded-t-xl flex items-center justify-center bg-[conic-gradient(at_bottom,var(--tw-gradient-stops))] from-neutral-100 via-neutral-500 to-stone-900"
   >
     <div class="relative max-h-20 max-w-[80%] h-20 w-full">
       @if (folderName && fileNames.length) {
@@ -39,7 +39,7 @@
       @if (isOpen) {
         <div
           [id]="downloadsDropdownId"
-          class="absolute left-0 right-0 top-full z-20 mt-2 w-full bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+          class="absolute left-0 right-0 top-full z-20 mt-2 w-full bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
           [attr.aria-labelledby]="downloadsToggleId"
         >
           <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200">
@@ -49,7 +49,7 @@
             ) {
               <li>
                 <a
-                  class="flex w-full items-center rounded-sm border-0 bg-transparent px-2 py-1 text-left text-sm text-white no-underline hover:bg-emerald-500"
+                  class="flex w-full items-center rounded-xs border-0 bg-transparent px-2 py-1 text-left text-sm text-white no-underline hover:bg-emerald-500"
                   [href]="downloadItem.href"
                   [attr.download]="downloadItem.downloadName"
                   (click)="onDownloadClick($event, downloadItem)"

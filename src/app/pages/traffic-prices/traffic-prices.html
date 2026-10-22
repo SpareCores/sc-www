@@ -147,7 +147,7 @@
                         </td>
                       }
                       @if (column.type === "region") {
-                        <td class="min-w-225">
+                        <td class="min-w-[225px]">
                           <div class="text-sm text-white">
                             {{ price.region.display_name }}
                           </div>
@@ -241,7 +241,7 @@
 <ng-template #pageSizePanel>
   <div
     id="pagesize_options"
-    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+    class="bg-secondary rounded-lg shadow-sm w-44 border border-emerald-400 border-solid"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700"
@@ -249,7 +249,7 @@
     >
       @for (pageLimit of pageLimits; track $index) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
           (click)="selectPageSize(pageLimit)"
           tabindex="0"
         >
@@ -263,7 +263,7 @@
 <ng-template #columnPanel>
   <div
     id="column_options"
-    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+    class="bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
   >
     <ul
       class="py-2 px-3 text-sm text-gray-700"
@@ -275,7 +275,7 @@
             type="checkbox"
             [(ngModel)]="column.show"
             (ngModelChange)="refreshColumns()"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
           />
           <div class="text-white text-sm">{{ column.name }}</div>
         </li>
@@ -287,7 +287,7 @@
 <ng-template #currencyPanel>
   <div
     id="currency_options"
-    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+    class="bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -296,7 +296,7 @@
       @for (currency of availableCurrencies; track currency.name) {
         <li
           tabindex="0"
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
           (click)="selectCurrency(currency)"
         >
           <div class="text-white text-sm">

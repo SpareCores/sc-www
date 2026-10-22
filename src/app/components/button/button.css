@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 :host {
   display: inline-flex;
   vertical-align: middle;
@@ -17,7 +19,7 @@
 }
 
 .sc-button {
-  @apply relative inline-flex w-full box-border items-center justify-center gap-x-2 whitespace-nowrap rounded-lg text-sm font-medium focus:outline-none;
+  @apply relative inline-flex w-full box-border items-center justify-center gap-x-2 whitespace-nowrap rounded-lg text-sm font-medium focus:outline-hidden;
 }
 
 .sc-button--icon-only,
@@ -130,7 +132,7 @@
 }
 
 .sc-button--white {
-  @apply border border-gray-200 bg-white shadow-sm hover:bg-gray-50 focus:bg-gray-50;
+  @apply border border-gray-200 bg-white shadow-xs hover:bg-gray-50 focus:bg-gray-50;
 }
 
 :is(

@@ -78,7 +78,7 @@
               <div class="toc_family_items mb-3 flex flex-col gap-0.5">
                 @for (bm of family.benchmarks; track bm.benchmark_id) {
                   <button
-                    class="toc_item w-full text-left px-2 py-1.5 rounded text-xs transition-colors"
+                    class="toc_item w-full text-left px-2 py-1.5 rounded-sm text-xs transition-colors"
                     [class.active]="activeBenchmarkId() === bm.benchmark_id"
                     (click)="scrollTo(bm.benchmark_id)"
                   >

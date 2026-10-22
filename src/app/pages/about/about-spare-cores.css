@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 p {
   @apply text-white text-xl pr-16 mb-4 pb-4;
 }

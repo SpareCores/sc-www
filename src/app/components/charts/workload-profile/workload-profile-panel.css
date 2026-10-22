@@ -1,3 +1,5 @@
+@reference "../../../../styles/tailwind.css";
+
 :host {
   display: contents;
 }
@@ -182,7 +184,7 @@
     }
 
     tr {
-      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
+      @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
 
       td {
         @apply px-3 py-2 text-left text-sm align-middle;
