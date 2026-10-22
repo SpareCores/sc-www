@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .items_table {
   @apply w-full text-white;
 
@@ -17,7 +19,7 @@
     }
 
     tr {
-      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
+      @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
       td {
         @apply text-left text-sm pl-3 pr-2 py-3;
       }
@@ -37,7 +39,7 @@
 .no-hover-table {
   tbody {
     tr {
-      @apply hover:outline-none;
+      @apply hover:outline-hidden;
     }
   }
 }

@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .search_bar_content {
   .custom-scrollbar {
     scrollbar-width: thin;
@@ -40,7 +42,7 @@
   }
 
   .top_search_input {
-    @apply w-full h-full border border-emerald-400 rounded-lg text-sm bg-gray-200 text-sky-950 px-4 outline-none focus:ring-2 focus:ring-emerald-400;
+    @apply w-full h-full border border-emerald-400 rounded-lg text-sm bg-gray-200 text-sky-950 px-4 outline-hidden focus:ring-2 focus:ring-emerald-400;
 
     padding-right: 2.5rem;
     height: 40px;
@@ -99,11 +101,11 @@
   }
 
   .checkbox {
-    @apply focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400  disabled:text-gray-400 disabled:bg-gray-400;
+    @apply focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden disabled:accent-gray-400  disabled:text-gray-400 disabled:bg-gray-400;
   }
 
   .tooltip-trigger {
-    @apply inline-flex items-center justify-center rounded-sm text-gray-200 outline-none transition-colors duration-150 hover:text-white focus-visible:ring-2 focus-visible:ring-emerald-400;
+    @apply inline-flex items-center justify-center rounded-xs text-gray-200 outline-hidden transition-colors duration-150 hover:text-white focus-visible:ring-2 focus-visible:ring-emerald-400;
     vertical-align: middle;
     line-height: 0;
     padding: 0;
@@ -161,7 +163,7 @@
   }
 
   .custom-autocomplete__input {
-    @apply w-full rounded-lg border border-emerald-400 bg-gray-200 px-4 py-2 text-sm text-sky-950 outline-none focus:ring-2 focus:ring-emerald-400 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-600;
+    @apply w-full rounded-lg border border-emerald-400 bg-gray-200 px-4 py-2 text-sm text-sky-950 outline-hidden focus:ring-2 focus:ring-emerald-400 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-600;
 
     padding-right: 2.5rem;
   }
@@ -330,7 +332,7 @@
   }
 
   .custom-stepper__input {
-    @apply bg-transparent px-0 py-0 text-center text-sm font-semibold text-sky-950 outline-none;
+    @apply bg-transparent px-0 py-0 text-center text-sm font-semibold text-sky-950 outline-hidden;
 
     min-width: 1.5ch;
     max-width: 100%;

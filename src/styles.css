@@ -1,7 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer theme, base, third-party, components, utilities;
+
+@import "./styles/tailwind.css";
+@import "ngx-lightbox/lightbox.css" layer(third-party);
+@import "survey-core/defaultV2.min.css" layer(third-party);
+@import "prismjs/themes/prism-tomorrow.min.css" layer(third-party);
+@import "prismjs/plugins/line-highlight/prism-line-highlight.min.css"
+  layer(third-party);
+@import "prismjs/plugins/line-numbers/prism-line-numbers.min.css"
+  layer(third-party);
+@import "prismjs/plugins/command-line/prism-command-line.min.css"
+  layer(third-party);
+@import "prismjs/plugins/toolbar/prism-toolbar.min.css" layer(third-party);
+@import "./assets/prism-js-override.css" layer(third-party);
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 @layer base {
   [type="text"],
@@ -296,93 +323,6 @@
   }
 }
 
-@layer components {
-  .partners-content a:not(.header-anchor) {
-    @apply underline decoration-dotted;
-  }
-
-  .partners-content a:not(.header-anchor):hover,
-  .partners-content a:not(.header-anchor):focus-visible {
-    @apply text-gray-500;
-  }
-
-  .tooltip-panel {
-    @apply inline-block max-w-xl whitespace-normal break-words rounded-lg border border-solid border-emerald-400 bg-secondary px-3 py-2 text-left text-sm font-medium text-white transition-opacity duration-300;
-  }
-
-  .tooltip-panel--wide {
-    max-width: min(72rem, calc(100vw - 2rem));
-  }
-
-  .tooltip-panel--warning {
-    @apply border-yellow-500 whitespace-pre-line;
-  }
-
-  .tooltip-panel--warning-wide {
-    max-width: min(54rem, calc(100vw - 2rem));
-  }
-
-  .benchmark-note-icon {
-    @apply h-4 w-auto shrink-0 cursor-help text-[#EAB308];
-  }
-
-  .btn-primary {
-    @apply bg-emerald-400 text-white rounded-lg font-bold hover:bg-emerald-500 focus:outline-none focus:ring focus:ring-emerald-400 focus:ring-opacity-75;
-    transition-duration: 0.15s;
-    transition-property: background-color, border-color, box-shadow, color;
-    transition-timing-function: ease-in;
-  }
-
-  .vendor-logo {
-    box-sizing: border-box;
-    padding: 11.111%;
-    overflow: hidden;
-
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-  }
-
-  .dropdown_button {
-    @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
-    transition-duration: 0.15s;
-    transition-property: background-color, border-color, box-shadow, color;
-    transition-timing-function: ease-in;
-  }
-
-  .chart-selector-button {
-    @apply min-w-0 justify-between overflow-hidden;
-  }
-
-  .chart-selector-button__label {
-    @apply min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left;
-  }
-
-  .chart-selector-button__icon {
-    @apply flex h-full w-12 shrink-0 items-center justify-center rounded-r-lg bg-primary px-3 py-2;
-  }
-
-  .bg-primary {
-    @apply bg-sky-950;
-  }
-
-  .bg-secondary {
-    @apply bg-[#06263a];
-  }
-
-  .content {
-    max-width: 1400px;
-    margin: auto;
-  }
-
-  .content_gutter {
-    @apply px-2 xl:px-0;
-  }
-}
-
 .cdk-overlay-container {
   z-index: 60;
 }
@@ -492,7 +432,7 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 
-@keyframes bounce {
+@keyframes sc-bounce {
   0%,
   20%,
   50%,
@@ -516,18 +456,6 @@ input[type="number"]::-webkit-outer-spin-button {
   20% {
     transform: translateY(6px);
   }
-}
-
-@keyframes ping {
-  75%,
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-.animate-ping {
-  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 .design-gradient-fill-with-brand-colors {

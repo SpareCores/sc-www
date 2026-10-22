@@ -38,7 +38,7 @@ away, with the hope of being selected and getting funded in 2024.
 <div class="flex justify-center items-center mt-8 mb-6">
   <a href="https://www.ngisearch.eu/view/Events/OC3Searchers"
      target="_blank" rel="noopener"
-     class="w-72 max-w-[80%] !no-underline">
+     class="w-72 max-w-[80%] no-underline!">
     <img
       title="NGI Search Open Call 3"
       src="/assets/images/blog/ngi-search-oc3-outcome.png"/>
@@ -59,7 +59,7 @@ Search projects (across 5 open calls).
 <div class="flex justify-center items-center mt-8 mb-6">
   <a href="https://www.ngisearch.eu/download/Main/NGI_Searchers_booklet/NGI%20Searchers%20booklet.pdf?rev=1.2"
      target="_blank" rel="noopener"
-     class="w-96 max-w-[80%] !no-underline">
+     class="w-96 max-w-[80%] no-underline!">
     <img
       title="NGI Search booklet"
       src="/assets/images/blog/ngi-search-booklet-sc.png"/>
