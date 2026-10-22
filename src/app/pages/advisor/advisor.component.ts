@@ -445,6 +445,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private recommendationRequests = new Subject<RecommendationRequest | null>();
   private recommendationRequestVersion = 0;
   private activeRecommendationRequestKey: string | null = null;
+  private isRecommendationRequestInFlight = false;
   private baselineServersLoadId = 0;
   private benchmarkConfigsLoadId = 0;
   private regionMetadataLoadId = 0;
@@ -1529,11 +1530,13 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!recommendationQuery) {
         this.recommendationRequestVersion += 1;
         this.activeRecommendationRequestKey = null;
+        this.isRecommendationRequestInFlight = false;
         this.resetRecommendationState();
         this.recommendationRequests.next(null);
         return;
       }
 
+      this.isLoadingRecommendations.set(true);
       this.recommendationRequests.next({
         key: stableStringify(recommendationQuery),
         query: recommendationQuery,
@@ -2793,7 +2796,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     recommendationQuery: SearchServersServersGetParams,
   ): Promise<void> {
     if (
-      this.isLoadingRecommendations() &&
+      this.isRecommendationRequestInFlight &&
       this.activeRecommendationRequestKey === requestKey
     ) {
       return;
@@ -2801,6 +2804,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const requestVersion = ++this.recommendationRequestVersion;
     this.activeRecommendationRequestKey = requestKey;
+    this.isRecommendationRequestInFlight = true;
     this.isLoadingRecommendations.set(true);
     this.toastService.removeToast(QUERY_ERROR_ADVISOR_TOAST_ID);
 
@@ -2853,6 +2857,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
     } finally {
+      if (requestVersion === this.recommendationRequestVersion) {
+        this.isRecommendationRequestInFlight = false;
+      }
+
       if (
         !this.destroyRef.destroyed &&
         requestVersion === this.recommendationRequestVersion &&
