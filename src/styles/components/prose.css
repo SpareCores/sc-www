@@ -62,3 +62,20 @@
 .sc-prose table tbody tr td a:hover {
   opacity: 0.5;
 }
+
+a.sc-header-anchor {
+  opacity: 0;
+  margin-left: 0.5rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+a.sc-header-anchor:hover {
+  @apply text-emerald-400;
+}
+
+@layer components {
+  .sc-link {
+    @apply underline decoration-dotted hover:text-gray-500;
+  }
+}
