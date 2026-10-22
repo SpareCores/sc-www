@@ -82,9 +82,9 @@
             @for (compare of databaseCompares; track compare.title) {
               <div
                 class="flex flex-col py-6 gap-2 text-white"
-                [ngClass]="{
-                  'bg-secondary rounded-lg px-6': compare.type === 'card',
-                }"
+                [class]="
+                  compare.type === 'card' ? 'bg-secondary rounded-lg px-6' : ''
+                "
               >
                 @if (compare.type === "section") {
                   <div
@@ -119,9 +119,9 @@
                 ) {
                   <div
                     class="description_inner_html"
-                    [ngClass]="{
-                      'text-lg space-y-4': compare.type === 'section',
-                    }"
+                    [class]="
+                      compare.type === 'section' ? 'text-lg space-y-4' : ''
+                    "
                     [innerHTML]="compare.description"
                   ></div>
                 }
@@ -657,7 +657,7 @@
               <div
                 #scrollbarMirrorBottomRef
                 class="scrollbar_mirror_outer"
-                [ngStyle]="
+                [style]="
                   scrollbarMirrorController.toStyle(mirror.bottomPosition)
                 "
                 (scroll)="onMirrorScroll($event)"

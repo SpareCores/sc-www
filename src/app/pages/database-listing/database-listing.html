@@ -35,9 +35,7 @@
     <div class="flex gap-8 mx-2 xl:mx-0">
       <div
         class="sc-filter-sidebar bg-primary"
-        [ngClass]="{
-          'sc-filter-sidebar--collapsed': isCollapsed,
-        }"
+        [class.sc-filter-sidebar--collapsed]="isCollapsed"
       >
         <div
           class="sc-filter-sidebar__collapser bg-secondary"
@@ -59,10 +57,8 @@
       </div>
       <div
         class="list_holder flex flex-col gap-4"
-        [ngClass]="{
-          'sc-listing-results--narrow': !isCollapsed,
-          'w-full': isCollapsed,
-        }"
+        [class.sc-listing-results--narrow]="!isCollapsed"
+        [class.w-full]="isCollapsed"
       >
         <div
           class="sc-listing-toolbar w-[calc(100%-60px)] flex justify-end gap-4 items-center ml-auto"
@@ -136,9 +132,7 @@
                   <th class="favorite_column"></th>
                   @for (column of tableColumns; track column.name) {
                     <th
-                      [ngClass]="{
-                        'cursor-pointer': column.orderField,
-                      }"
+                      [class.cursor-pointer]="column.orderField"
                       (click)="toggleOrdering(column)"
                     >
                       <div class="flex gap-1 whitespace-nowrap">
