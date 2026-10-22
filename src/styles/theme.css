@@ -6,6 +6,16 @@
 
   --color-primary: var(--color-sky-950);
   --color-secondary: var(--color-sky-975);
+
+  --color-slot-face: oklch(60.3% 0.242 19.7);
+  --color-slot-face-border: oklch(51.6% 0.208 21.9);
+  --color-slot-face-hover: oklch(45.8% 0.187 26.5);
+  --color-slot-face-hover-border: oklch(37.7% 0.155 29.2);
+  --color-slot-face-disabled: oklch(37.2% 0.149 16.4);
+  --color-slot-face-disabled-border: oklch(27.1% 0.111 29.2);
+  --color-slot-label-disabled: oklch(42.7% 0.094 17.3);
+  --color-slot-base: oklch(32.2% 0.13 22.7);
+  --color-slot-base-disabled: oklch(24.3% 0.1 29.2);
 }
 
 @custom-variant dark (&:where(.dark, .dark *));

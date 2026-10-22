@@ -18,7 +18,7 @@
   height: 2rem;
   border: 0;
   background: transparent;
-  color: rgb(156 163 175 / 0.7);
+  color: color-mix(in oklab, var(--color-gray-400) 70%, transparent);
   cursor: pointer;
   position: relative;
   transition:
@@ -27,7 +27,7 @@
 }
 
 .page-header__icon-btn:hover:not(:disabled) {
-  background: rgb(255 255 255 / 0.08);
+  background: color-mix(in oklab, var(--color-white) 8%, transparent);
 }
 
 .page-header__bookmark:hover:not(:disabled) {
@@ -39,7 +39,7 @@
 }
 
 .page-header__edit:hover:not(:disabled) {
-  color: #34d399;
+  color: var(--color-emerald-400);
 }
 
 .page-header__icon-btn:disabled {
@@ -88,7 +88,7 @@
 }
 
 .page-header__bookmark--active {
-  color: #34d399;
+  color: var(--color-emerald-400);
 }
 
 .page-header__bookmark--active .page-header__bookmark-icon--default {
@@ -96,7 +96,7 @@
 }
 
 .page-header__bookmark--can-add:hover:not(:disabled) {
-  color: #34d399;
+  color: var(--color-emerald-400);
 }
 
 .page-header__bookmark--can-add:hover:not(:disabled)
@@ -111,7 +111,7 @@
 }
 
 .page-header__bookmark--can-remove:hover:not(:disabled) {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .page-header__bookmark--can-remove:hover:not(:disabled)

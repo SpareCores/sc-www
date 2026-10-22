@@ -30,7 +30,8 @@
   flex-direction: column;
   flex: 0 0 9rem;
   gap: 0.5rem;
-  border-inline-end: 1px solid rgb(255 255 255 / 0.12);
+  border-inline-end: 1px solid
+    color-mix(in oklab, var(--color-white) 12%, transparent);
 }
 
 .profile-modal__tab {
@@ -41,7 +42,7 @@
   height: 2.5rem;
   padding: 0 1rem 0 0;
   background: transparent;
-  color: #9ca3af;
+  color: var(--color-gray-400);
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 600;
@@ -58,12 +59,12 @@
 
 .profile-modal__tab:hover,
 .profile-modal__tab:focus-visible {
-  color: #34d399;
+  color: var(--color-emerald-400);
   outline: none;
 }
 
 .profile-modal__tab--active {
-  color: #34d399;
+  color: var(--color-emerald-400);
 }
 
 .profile-modal__content {
@@ -81,7 +82,8 @@
   flex-direction: column;
   gap: 0.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgb(255 255 255 / 0.12);
+  border-bottom: 1px solid
+    color-mix(in oklab, var(--color-white) 12%, transparent);
 }
 
 .profile-modal__section:last-child {
@@ -94,13 +96,13 @@
   align-items: center;
   min-height: 2.5rem;
   margin: 0;
-  color: #ffffff;
+  color: var(--color-white);
   font-size: 0.9375rem;
   font-weight: 700;
 }
 
 .profile-modal__section--danger .profile-modal__section-title {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .profile-modal__list {
@@ -132,7 +134,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   min-width: 0;
-  color: #9ca3af;
+  color: var(--color-gray-400);
 }
 
 .profile-modal__identity svg {
@@ -149,13 +151,13 @@
 }
 
 .profile-modal__value {
-  color: #ffffff;
+  color: var(--color-white);
   font-size: 0.875rem;
   overflow-wrap: anywhere;
 }
 
 .profile-modal__meta {
-  color: #9ca3af;
+  color: var(--color-gray-400);
   font-size: 0.8125rem;
   line-height: 1.4;
 }
@@ -169,10 +171,10 @@
 .profile-modal__badge {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #34d399;
+  border: 1px solid var(--color-emerald-400);
   border-radius: 9999px;
   padding: 0 0.5rem;
-  color: #34d399;
+  color: var(--color-emerald-400);
   font-size: 0.6875rem;
   font-weight: 600;
   line-height: 1.25rem;
@@ -180,8 +182,8 @@
 }
 
 .profile-modal__badge--warning {
-  border-color: #eab308;
-  color: #eab308;
+  border-color: var(--color-yellow-500);
+  color: var(--color-yellow-500);
 }
 
 .profile-modal__avatar {
@@ -217,15 +219,15 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  border: 1px solid rgb(255 255 255 / 0.12);
+  border: 1px solid color-mix(in oklab, var(--color-white) 12%, transparent);
   border-radius: 0.5rem;
   padding: 1rem;
-  background: #06263a;
+  background: var(--color-secondary);
 }
 
 .profile-modal__confirm p {
   margin: 0;
-  color: #9ca3af;
+  color: var(--color-gray-400);
   font-size: 0.8125rem;
   line-height: 1.4;
 }
@@ -249,11 +251,11 @@
 }
 
 .profile-modal__danger-link {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .profile-modal__danger-link:hover {
-  color: #f87171;
+  color: var(--color-red-400);
 }
 
 .auth-modal__footer-link:disabled {
@@ -283,7 +285,8 @@
     flex-direction: row;
     gap: 1rem;
     border-inline-end: 0;
-    border-bottom: 1px solid rgb(255 255 255 / 0.12);
+    border-bottom: 1px solid
+      color-mix(in oklab, var(--color-white) 12%, transparent);
   }
 
   .profile-modal__tab {
