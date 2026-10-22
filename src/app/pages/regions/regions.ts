@@ -27,6 +27,8 @@ import {
 import { Button } from "../../components/button/button";
 import { Router, RouterModule } from "@angular/router";
 
+import { chartColors } from "../../components/charts/shared/chart-colors.constants";
+
 declare let Datamap: any;
 
 const SCRIPT_PATH = "assets/datamaps/d3.min.js";
@@ -34,18 +36,18 @@ const SCRIPT_PATH2 = "assets/datamaps/topojson.js";
 const SCRIPT_PATH3 = "assets/datamaps/datamaps.world.min.js";
 
 const colors = [
-  "#3B82F6",
-  "#F87171",
-  "#FBBF24",
-  "#F472B6",
-  "#34D399",
-  "#E5E7EB",
-  "#38BDF8",
-  "#FACC15",
-  "#F87171",
-  "#A3E635",
-  "#818CF8",
-  "#94A3B8",
+  chartColors["blue-500"],
+  chartColors["red-400"],
+  chartColors["amber-400"],
+  chartColors["pink-400"],
+  chartColors["emerald-400"],
+  chartColors["gray-200"],
+  chartColors["sky-400"],
+  chartColors["yellow-400"],
+  chartColors["red-400"],
+  chartColors["lime-400"],
+  chartColors["indigo-400"],
+  chartColors["slate-400"],
 ];
 
 @Component({
@@ -131,7 +133,7 @@ export class Regions implements OnInit {
               let element = this.document.getElementById("datamapdiv");
 
               let fills: any = {
-                defaultFill: "#06263a",
+                defaultFill: chartColors["sky-975"],
               };
 
               this.vendors.forEach((vendor, index) => {
@@ -147,7 +149,7 @@ export class Regions implements OnInit {
                 bubblesConfig: {
                   fillOpacity: 1,
                   borderOpacity: 0,
-                  highlightFillColor: "#34d399",
+                  highlightFillColor: chartColors["emerald-400"],
                   highlightBorderOpacity: 0,
                 },
                 fills: fills,
