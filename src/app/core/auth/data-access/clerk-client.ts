@@ -197,15 +197,16 @@ export class ClerkClient {
     }
 
     const { Clerk: ClerkSdk } = await this.importClerk();
-    this.clerk = new ClerkSdk(publishableKey);
+    const clerk = new ClerkSdk(publishableKey);
     const urls = authUrls();
-    await this.clerk.load({
+    await clerk.load({
       signInUrl: urls.origin,
       signUpUrl: urls.origin,
       routerPush: (url: string) => this.navigateRouter(url),
       routerReplace: (url: string) => this.navigateRouter(url, true),
       telemetry: false,
     });
+    this.clerk = clerk;
     if (isDevMode() || "Cypress" in window) {
       (window as Window & { Clerk: Clerk }).Clerk = this.clerk;
     }

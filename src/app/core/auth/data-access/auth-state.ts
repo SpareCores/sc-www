@@ -124,14 +124,12 @@ export class AuthState {
   }
 
   signIn(): void {
-    if (!this.clerk.isLoaded()) {
-      this.toastAuthUnavailable();
-      return;
-    }
-    this.setCurrentReturnUrl();
-    this.githubConsent.set(false);
-    this.signUpModalOpen.set(false);
-    this.signInModalOpen.set(true);
+    this.whenClerkLoaded(() => {
+      this.setCurrentReturnUrl();
+      this.githubConsent.set(false);
+      this.signUpModalOpen.set(false);
+      this.signInModalOpen.set(true);
+    });
   }
 
   closeSignIn(): void {
@@ -140,27 +138,25 @@ export class AuthState {
   }
 
   signUp(options?: { subtitle?: string }): void {
-    if (!this.clerk.isLoaded()) {
-      this.toastAuthUnavailable();
-      return;
-    }
-    this.setCurrentReturnUrl();
-    this.signUpSubtitle.set(
-      options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
-    );
-    this.signInModalOpen.set(false);
+    this.whenClerkLoaded(() => {
+      this.setCurrentReturnUrl();
+      this.signUpSubtitle.set(
+        options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
+      );
+      this.signInModalOpen.set(false);
 
-    if (this.shouldResumeGitHubConsent()) {
-      this.openGitHubConsent();
-      return;
-    }
+      if (this.shouldResumeGitHubConsent()) {
+        this.openGitHubConsent();
+        return;
+      }
 
-    if (this.github.needsConsent() || this.flow.githubIntent() === "signUp") {
-      this.github.resetSignUpState();
-    }
-    this.githubConsent.set(false);
-    this.flow.setGitHubIntent(null);
-    this.signUpModalOpen.set(true);
+      if (this.github.needsConsent() || this.flow.githubIntent() === "signUp") {
+        this.github.resetSignUpState();
+      }
+      this.githubConsent.set(false);
+      this.flow.setGitHubIntent(null);
+      this.signUpModalOpen.set(true);
+    });
   }
 
   closeSignUp(): void {
@@ -1074,6 +1070,18 @@ export class AuthState {
 
   private authNotReady(): { status: "error"; message: string } {
     return { status: "error", message: AUTH_MESSAGES.authNotReady };
+  }
+
+  private whenClerkLoaded(action: () => void): void {
+    if (this.clerk.isLoaded()) {
+      action();
+      return;
+    }
+
+    this.clerk.init().then(
+      () => (this.clerk.isLoaded() ? action() : this.toastAuthUnavailable()),
+      () => this.toastAuthUnavailable(),
+    );
   }
 
   private toastAuthUnavailable(): void {
