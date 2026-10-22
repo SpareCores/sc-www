@@ -445,6 +445,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private recommendationRequests = new Subject<RecommendationRequest | null>();
   private recommendationRequestVersion = 0;
   private activeRecommendationRequestKey: string | null = null;
+  private isRecommendationRequestInFlight = false;
   private baselineServersLoadId = 0;
   private benchmarkConfigsLoadId = 0;
   private regionMetadataLoadId = 0;
@@ -484,6 +485,11 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly benchmarkConfigInput = signal("");
   readonly selectedBenchmarkConfig =
     signal<SearchBarBenchmarkConfigOption | null>(null);
+  readonly selectedBenchmarkUnit = computed(() => {
+    return this.advisorUi.formatBenchmarkUnit(
+      this.selectedBenchmarkConfig()?.benchmarkTemplate?.unit,
+    );
+  });
   readonly benchmarkConfigOptions = signal<SearchBarBenchmarkConfigOption[]>(
     [],
   );
@@ -712,7 +718,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       return null;
     }
 
-    return Number(((benchmarkScore.score * cpuUtilization) / 100).toFixed(2));
+    return Math.floor(benchmarkScore.score * cpuUtilization) / 100;
   });
 
   readonly averageCpuUtilizationSummary = computed(() => {
@@ -720,6 +726,32 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.matchedBaselineBenchmarkScore()?.score,
       this.benchmarkScoreMinimum(),
     );
+  });
+
+  readonly baselinePriceVendorRegions = computed<string[]>(() => {
+    const vendorRegions = normalizeAdvisorQueryStringArray(
+      this.query().vendor_regions,
+    );
+
+    if (vendorRegions.length) {
+      const vendorId = this.selectedBaselineServer()?.vendor_id;
+
+      return vendorRegions.filter((vendorRegion) => {
+        return !!vendorId && vendorRegion.split("~")[0] === vendorId;
+      });
+    }
+
+    const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
+
+    return this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
+      ? [selectedBaselineVendorRegion]
+      : [];
+  });
+
+  readonly baselinePriceRegionIds = computed<string[]>(() => {
+    return this.baselinePriceVendorRegions()
+      .map((vendorRegion) => vendorRegion.split("~")[1] || "")
+      .filter((regionId) => regionId !== "");
   });
 
   readonly baselinePriceAggregate = computed<AdvisorBaselinePriceAggregate>(
@@ -735,7 +767,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         };
       }
 
-      const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
       const baselinePriceAggregate = this.advisorUi.buildBaselinePriceAggregate(
         this.baselineServerPrices(),
         {
@@ -743,10 +774,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
             ? this.bestPriceAllocation().slug
             : "ANY",
           currency: this.selectedCurrency().slug,
-          regionId:
-            this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
-              ? selectedBaselineVendorRegion.split("~")[1] || null
-              : null,
+          regionIds: this.baselinePriceRegionIds(),
         },
       );
 
@@ -1502,11 +1530,13 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!recommendationQuery) {
         this.recommendationRequestVersion += 1;
         this.activeRecommendationRequestKey = null;
+        this.isRecommendationRequestInFlight = false;
         this.resetRecommendationState();
         this.recommendationRequests.next(null);
         return;
       }
 
+      this.isLoadingRecommendations.set(true);
       this.recommendationRequests.next({
         key: stableStringify(recommendationQuery),
         query: recommendationQuery,
@@ -2615,11 +2645,11 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       query.best_price_allocation = this.bestPriceAllocation().slug;
     }
 
-    const baselineRegion = this.selectedBaselineVendorRegion();
+    const baselineVendorRegions = this.baselinePriceVendorRegions();
 
-    if (this.isBaselineRegionEnabled() && baselineRegion) {
+    if (baselineVendorRegions.length) {
       query.vendor_regions =
-        baselineRegion as SearchServersServersGetParams["vendor_regions"];
+        baselineVendorRegions as unknown as SearchServersServersGetParams["vendor_regions"];
     }
 
     try {
@@ -2746,16 +2776,14 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getBaselineMonthlyPriceFallback(): number | null {
-    const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
-    const scopedRegionId =
-      this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
-        ? selectedBaselineVendorRegion.split("~")[1] || null
-        : null;
+    const scopedRegionIds = this.baselinePriceRegionIds();
 
     return (
       this.baselinePriceComparisonRows()
         .filter((price) => {
-          return !scopedRegionId || price.region_id === scopedRegionId;
+          return (
+            !scopedRegionIds.length || scopedRegionIds.includes(price.region_id)
+          );
         })
         .map((price) => this.advisorUi.getOndemandMonthlyPrice(price))
         .filter((price): price is number => price !== null)
@@ -2768,7 +2796,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     recommendationQuery: SearchServersServersGetParams,
   ): Promise<void> {
     if (
-      this.isLoadingRecommendations() &&
+      this.isRecommendationRequestInFlight &&
       this.activeRecommendationRequestKey === requestKey
     ) {
       return;
@@ -2776,6 +2804,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const requestVersion = ++this.recommendationRequestVersion;
     this.activeRecommendationRequestKey = requestKey;
+    this.isRecommendationRequestInFlight = true;
     this.isLoadingRecommendations.set(true);
     this.toastService.removeToast(QUERY_ERROR_ADVISOR_TOAST_ID);
 
@@ -2828,6 +2857,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
     } finally {
+      if (requestVersion === this.recommendationRequestVersion) {
+        this.isRecommendationRequestInFlight = false;
+      }
+
       if (
         !this.destroyRef.destroyed &&
         requestVersion === this.recommendationRequestVersion &&

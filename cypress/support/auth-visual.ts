@@ -392,10 +392,15 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
 
     it("compares save-assessment modal", () => {
       loadAdvisorExample();
+      cy.get(
+        "#advisor_results_table tbody tr:not(.advisor-empty-state-row)",
+      ).should("have.length.greaterThan", 0);
       openPageHeaderSaveModal("advisor-save-modal");
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideBaselineServerCaretForScreenshot();
+      E2EEvent.hideListingTableResultsForScreenshot("advisor_results_table");
+      cy.get(".advisor-summary-alert").invoke("css", "visibility", "hidden");
       snapViewport("auth-save-assessment-modal", prefix);
     });
 

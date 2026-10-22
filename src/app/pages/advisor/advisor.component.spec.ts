@@ -2338,6 +2338,46 @@ describe("AdvisorComponent", () => {
     expect(component.recommendations()[0]?.api_reference).toBe("newer");
   }));
 
+  it("shows loading instead of the empty state while a request is debounced", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(100);
+
+    expect(searchServers).not.toHaveBeenCalled();
+    expect(component.isLoadingRecommendations()).toBeTrue();
+    expect(
+      fixture.nativeElement.querySelector(".advisor-empty-state-row"),
+    ).toBeNull();
+
+    tick(250);
+    flushMicrotasks();
+
+    expect(searchServers).toHaveBeenCalledTimes(1);
+    expect(component.isLoadingRecommendations()).toBeFalse();
+  }));
+
+  it("clears loading when an unchanged query is requested again", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    component.averageCpuUtilization.set(60);
+    fixture.detectChanges();
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(component.isLoadingRecommendations()).toBeFalse();
+  }));
+
   it("ignores stale baseline benchmark responses", fakeAsync(() => {
     let resolveSlow: ((value: unknown) => void) | undefined;
     let resolveFast: ((value: unknown) => void) | undefined;

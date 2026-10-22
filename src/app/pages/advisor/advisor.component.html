@@ -647,12 +647,15 @@
                               }
                             }
                           </div>
-                          @if (
-                            selectedBenchmarkConfig()?.benchmarkTemplate?.unit;
-                            as benchmarkUnit
-                          ) {
+                          @if (selectedBenchmarkUnit(); as benchmarkUnit) {
                             <div class="text-xs text-white flex gap-1">
-                              <span class="whitespace-nowrap">
+                              <span
+                                class="whitespace-nowrap"
+                                [title]="
+                                  selectedBenchmarkConfig()?.benchmarkTemplate
+                                    ?.unit
+                                "
+                              >
                                 {{ benchmarkUnit }}
                               </span>
                             </div>

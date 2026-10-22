@@ -18,6 +18,7 @@ import {
 import { matchesAdvisorBaselineServer } from "./advisor.utils";
 
 const ADVISOR_EMPTY_VALUE = "-";
+const ADVISOR_LONG_UNIT_MAX_LENGTH = 25;
 const ADVISOR_MONTHLY_HOURS = 730;
 
 type AdvisorMonthlyPriceSource = Pick<
@@ -50,13 +51,13 @@ export class AdvisorUiService {
     options?: {
       bestPriceAllocation?: BestPriceAllocationType["slug"];
       currency?: string | null;
-      regionId?: string | null;
+      regionIds?: string[] | null;
     },
   ): AdvisorBaselinePriceAggregate {
     const scopedPrices = prices.filter((price) => {
       return this.matchesBaselinePriceScope(
         price,
-        options?.regionId || null,
+        options?.regionIds || null,
         options?.currency || null,
       );
     });
@@ -260,6 +261,16 @@ export class AdvisorUiService {
     return this.formatGiBValue(item.memory_amount);
   }
 
+  formatBenchmarkUnit(unit: string | null | undefined): string {
+    const trimmedUnit = unit?.trim() ?? "";
+
+    if (trimmedUnit.length < ADVISOR_LONG_UNIT_MAX_LENGTH) {
+      return trimmedUnit.replace(/\s*\([^)]*\)\s*$/, "") || trimmedUnit;
+    }
+
+    return trimmedUnit.match(/\(([^)]*)\)\s*$/)?.at(1) || trimmedUnit;
+  }
+
   formatScore(value: number | null | undefined): string {
     if (value === null || value === undefined) {
       return ADVISOR_EMPTY_VALUE;
@@ -343,10 +354,10 @@ export class AdvisorUiService {
 
   private matchesBaselinePriceScope(
     price: ServerPrice,
-    regionId: string | null,
+    regionIds: string[] | null,
     currency: string | null,
   ): boolean {
-    if (regionId && price.region_id !== regionId) {
+    if (regionIds?.length && !regionIds.includes(price.region_id)) {
       return false;
     }
 

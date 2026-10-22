@@ -41,6 +41,7 @@ function customErrorHandler(error: any) {
 }
 
 const SCROLL_DISABLED_PATHS = [
+  "/advisor",
   "/navigator/benchmark-coverage",
   "/servers",
   "/databases",
