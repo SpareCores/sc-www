@@ -15,6 +15,7 @@
 @import "./styles/components/tables.css" layer(components);
 @import "./styles/components/chart-block.css" layer(components);
 @import "./styles/components/listing.css" layer(components);
+@import "./styles/components/dropdown.css" layer(components);
 
 @layer base {
   *,

@@ -56,17 +56,17 @@
           <ng-template #profilePanel>
             <div
               [id]="profileOptionsId"
-              class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
+              class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
             >
               <ul
-                class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                class="sc-dropdown__list"
                 [attr.aria-labelledby]="profileButtonId"
               >
                 @for (item of profileDropdownItems(); track item.id) {
                   <li>
                     <button
                       type="button"
-                      class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                      class="sc-dropdown__option"
                       (click)="selectProfile(item.id)"
                     >
                       <div class="text-white text-sm">{{ item.title }}</div>
