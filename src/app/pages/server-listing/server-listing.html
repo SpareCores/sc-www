@@ -42,55 +42,37 @@
       (confirmed)="confirmSaveSearch($event)"
     ></sc-collection-save-modal>
 
-    <div
-      #introductionModal
-      id="server-listing-introduction-modal"
-      tabindex="-1"
-      class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
-    >
-      <div class="relative w-full max-w-4xl mx-auto my-auto">
-        <div
-          class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
-        >
-          <div
-            class="flex items-center justify-between p-4 border-b border-gray-600"
-          >
-            <h2 class="text-xl font-medium text-white">
-              Cloud Servers Navigator introduction
-            </h2>
-            <sc-button
-              variant="close"
-              icon="x"
-              ariaLabel="Close modal"
-              (buttonClick)="closeIntroductionModal()"
-            ></sc-button>
-          </div>
-          <div class="p-4">
-            @if (showIntroductionVideo) {
-              <iframe
-                width="100%"
-                height="auto"
-                src="https://www.youtube.com/embed/hO0KQoxk1SM"
-                title="Spare Cores server navigator introduction"
-                frameborder="0"
-                allow="
-                  accelerometer;
-                  autoplay;
-                  clipboard-write;
-                  encrypted-media;
-                  gyroscope;
-                  picture-in-picture;
-                  web-share;
-                "
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-                class="server-listing-video-frame"
-              ></iframe>
-            }
-          </div>
+    <ng-template #introductionModalTemplate>
+      <sc-modal
+        id="server-listing-introduction-modal"
+        title="Cloud Servers Navigator introduction"
+        size="4xl"
+      >
+        <div class="p-4">
+          @if (showIntroductionVideo) {
+            <iframe
+              width="100%"
+              height="auto"
+              src="https://www.youtube.com/embed/hO0KQoxk1SM"
+              title="Spare Cores server navigator introduction"
+              frameborder="0"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+                web-share;
+              "
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              class="server-listing-video-frame"
+            ></iframe>
+          }
         </div>
-      </div>
-    </div>
+      </sc-modal>
+    </ng-template>
 
     <div class="flex gap-8 mx-2 xl:mx-0">
       <div
@@ -874,86 +856,72 @@
 </div>
 
 <!-- Large Modal -->
-<div
-  id="benchmark-type-modal"
-  tabindex="-1"
-  class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-fit min-h-full flex items-center"
->
-  <div class="relative w-full max-w-xl">
-    <div
-      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400 flex flex-col max-h-[calc(100vh-2rem)]"
-    >
-      <div
-        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t"
-      >
-        <h3 class="text-xl font-medium text-white dark:text-white">
-          {{ modalText }}
-        </h3>
-        <sc-button
-          variant="close"
-          icon="x"
-          ariaLabel="Close modal"
-          data-ph-capture-attribute-sc-event="server listing search prompt close"
-          data-ph-capture-attribute-server-listing-search-prompt-action="close"
-          (buttonClick)="closeModal()"
-        ></sc-button>
-      </div>
-      <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
-        @if (!tempSelectedBenchmarkCategory) {
-          <div class="flex gap-2 flex-wrap justify-center">
+<ng-template #benchmarkModalTemplate>
+  <sc-modal
+    id="benchmark-type-modal"
+    class="benchmark-type-modal"
+    [title]="modalText"
+    size="xl"
+    closeCaptureEvent="server listing search prompt close"
+    closeCaptureAction="close"
+  >
+    <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
+      @if (!tempSelectedBenchmarkCategory) {
+        <div class="flex gap-2 flex-wrap justify-center">
+          <sc-button
+            label="All"
+            variant="outline"
+            buttonClass="dropdown_group_button"
+            (click)="selectBenchmarkCategory('All')"
+          ></sc-button>
+          @for (category of benchmarkCategories; track $index) {
             <sc-button
-              label="All"
+              [label]="category"
               variant="outline"
               buttonClass="dropdown_group_button"
-              (click)="selectBenchmarkCategory('All')"
+              (click)="selectBenchmarkCategory(category)"
             ></sc-button>
-            @for (category of benchmarkCategories; track $index) {
-              <sc-button
-                [label]="category"
-                variant="outline"
-                buttonClass="dropdown_group_button"
-                (click)="selectBenchmarkCategory(category)"
-              ></sc-button>
+          }
+        </div>
+      }
+      @if (tempSelectedBenchmarkCategory) {
+        <div class="flex flex-col gap-2 flex-1 min-h-0">
+          <div class="relative mx-2">
+            <div
+              class="border border-emerald-400 absolute inset-x-0 start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full"
+            >
+              <svg lucideSearch class="text-emerald-400 w-5 h-5"></svg>
+            </div>
+            <input
+              placeholder="Filter"
+              type="text"
+              class="dropdown_input"
+              [(ngModel)]="modalFilterTerm"
+              (ngModelChange)="updateFilterTerm()"
+            />
+          </div>
+          <div
+            class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder flex-1"
+          >
+            @for (
+              benchmarkConfig of tempfilteredBenchmarkConfigs;
+              track benchmarkConfig.benchmark_id + $index
+            ) {
+              <button
+                type="button"
+                class="button_list_item"
+                [class.active]="benchmarkConfig === selectedBenchmarkConfig"
+                (click)="selectBenchmarkConfig(benchmarkConfig)"
+              >
+                <div>{{ benchmarkConfig.benchmarkTemplate.name }}</div>
+                <div class="text-xs">{{ benchmarkConfig.config }}</div>
+              </button>
             }
           </div>
-        }
-        @if (tempSelectedBenchmarkCategory) {
-          <div class="flex flex-col gap-2 flex-1 min-h-0">
-            <div class="relative mx-2">
-              <div
-                class="border border-emerald-400 absolute inset-x-0 start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full"
-              >
-                <svg lucideSearch class="text-emerald-400 w-5 h-5"></svg>
-              </div>
-              <input
-                placeholder="Filter"
-                type="text"
-                class="dropdown_input"
-                [(ngModel)]="modalFilterTerm"
-                (ngModelChange)="updateFilterTerm()"
-              />
-            </div>
-            <div
-              class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder flex-1"
-            >
-              @for (
-                benchmarkConfig of tempfilteredBenchmarkConfigs;
-                track benchmarkConfig.benchmark_id + $index
-              ) {
-                <button
-                  type="button"
-                  class="button_list_item"
-                  [class.active]="benchmarkConfig === selectedBenchmarkConfig"
-                  (click)="selectBenchmarkConfig(benchmarkConfig)"
-                >
-                  <div>{{ benchmarkConfig.benchmarkTemplate.name }}</div>
-                  <div class="text-xs">{{ benchmarkConfig.config }}</div>
-                </button>
-              }
-            </div>
-          </div>
-        }
-      </div>
+        </div>
+      }
+    </div>
+    <div modalFooter>
       @if (tempSelectedBenchmarkCategory) {
         <div
           class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b"
@@ -968,5 +936,5 @@
         </div>
       }
     </div>
-  </div>
-</div>
+  </sc-modal>
+</ng-template>

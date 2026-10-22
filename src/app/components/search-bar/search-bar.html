@@ -171,77 +171,61 @@
   </div>
 </div>
 
-<div
-  id="search-prompt-modal"
-  tabindex="-1"
-  class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
->
-  <div class="relative w-full max-w-xl max-h-full">
-    <div
-      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
-    >
-      <div
-        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t"
-      >
-        <h3 class="text-xl font-medium text-white dark:text-white">
-          Search Prompt
-        </h3>
-        <sc-button
-          variant="close"
-          icon="x"
-          ariaLabel="Close modal"
-          data-ph-capture-attribute-sc-event="server listing search prompt close"
-          data-ph-capture-attribute-server-listing-search-prompt-action="close"
-          (buttonClick)="closeModal(false)"
-        ></sc-button>
-      </div>
-      <div class="p-4 md:p-5 space-y-4 flex flex-col">
-        <p class="text-base leading-relaxed text-gray-200">
-          Please type your server needs in free text and push submit.
-        </p>
-        <textarea
-          rows="4"
-          class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm focus:ring-emerald-400 focus:border-emerald-400"
-          [(ngModel)]="freetextSearchInput"
-        ></textarea>
-        <sc-button
-          class="w-full"
-          label="Submit"
-          icon="send"
-          iconPosition="start"
-          data-ph-capture-attribute-sc-event="server listing search prompt process"
-          data-ph-capture-attribute-server-listing-search-prompt-action="process"
-          [disabled]="modalSubmitted"
-          (buttonClick)="submitFreetextSearch()"
-        ></sc-button>
-        @if (modalResponse) {
-          <div>
-            <div class="text-white">Suggested filter parameters</div>
-            <div class="text-white font-medium text-sm flex flex-col pl-2">
-              @for (response of modalResponseStr; track $index) {
-                <div>{{ response }}</div>
-              }
-            </div>
+<ng-template #searchPromptModalTemplate>
+  <sc-modal
+    id="search-prompt-modal"
+    title="Search Prompt"
+    size="xl"
+    closeCaptureEvent="server listing search prompt close"
+    closeCaptureAction="close"
+  >
+    <div class="p-4 md:p-5 space-y-4 flex flex-col">
+      <p class="text-base leading-relaxed text-gray-200">
+        Please type your server needs in free text and push submit.
+      </p>
+      <textarea
+        rows="4"
+        class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm focus:ring-emerald-400 focus:border-emerald-400"
+        [(ngModel)]="freetextSearchInput"
+      ></textarea>
+      <sc-button
+        class="w-full"
+        label="Submit"
+        icon="send"
+        iconPosition="start"
+        data-ph-capture-attribute-sc-event="server listing search prompt process"
+        data-ph-capture-attribute-server-listing-search-prompt-action="process"
+        [disabled]="modalSubmitted"
+        (buttonClick)="submitFreetextSearch()"
+      ></sc-button>
+      @if (modalResponse) {
+        <div>
+          <div class="text-white">Suggested filter parameters</div>
+          <div class="text-white font-medium text-sm flex flex-col pl-2">
+            @for (response of modalResponseStr; track $index) {
+              <div>{{ response }}</div>
+            }
           </div>
-        }
-      </div>
-      <div
-        class="flex flex-col p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600"
-      >
-        <sc-button
-          class="w-full"
-          label="Confirm"
-          icon="circle-check"
-          iconPosition="start"
-          data-ph-capture-attribute-sc-event="server listing search prompt confirm"
-          data-ph-capture-attribute-server-listing-search-prompt-action="confirm"
-          [disabled]="!modalResponse"
-          (buttonClick)="closeModal(true)"
-        ></sc-button>
-      </div>
+        </div>
+      }
     </div>
-  </div>
-</div>
+    <div
+      modalFooter
+      class="flex flex-col p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600"
+    >
+      <sc-button
+        class="w-full"
+        label="Confirm"
+        icon="circle-check"
+        iconPosition="start"
+        data-ph-capture-attribute-sc-event="server listing search prompt confirm"
+        data-ph-capture-attribute-server-listing-search-prompt-action="confirm"
+        [disabled]="!modalResponse"
+        (buttonClick)="closeModal(true)"
+      ></sc-button>
+    </div>
+  </sc-modal>
+</ng-template>
 
 <div
   id="tooltipDefault"
