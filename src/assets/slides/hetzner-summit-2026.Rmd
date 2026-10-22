@@ -5,6 +5,7 @@ date: "2026-09-17"
 conference: "Hetzner Summit"
 conference_url: "https://www.hetzner.com/hetzner-summit"
 conference_talk_slides: "/assets/slides/hetzner-summit-2026.html#/coverslide"
+conference_talk_video: "https://www.hetzner.com/de/hetzner-summit/"
 location: "Falkenstein, Germany"
 format:
   revealjs:
