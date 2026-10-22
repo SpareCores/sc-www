@@ -9,6 +9,7 @@
     [class.bookmark-button--can-add]="canAdd()"
     [class.bookmark-button--can-remove]="canRemove()"
     [class.bookmark-button--locked]="!isAuthenticated()"
+    [class.bookmark-button--large]="size() === 'large'"
     [disabled]="isAuthenticated() && (disabled() || isLoading())"
     [attr.aria-disabled]="!isAuthenticated() || disabled() || isLoading()"
     [attr.aria-label]="ariaLabel()"

@@ -395,3 +395,36 @@
 .sc-button__badge-ping {
   @apply absolute inset-0 bg-red-500 opacity-75;
 }
+
+.sc-button.sc-button--pagination {
+  @apply size-11 shrink-0 justify-center border-0 p-0;
+}
+
+.sc-button.sc-button--pagination:hover,
+.sc-button.sc-button--pagination:focus {
+  @apply border-0 bg-emerald-400 text-white;
+}
+
+.sc-button.sc-button--pagination-nav {
+  @apply size-11 p-0;
+}
+
+.sc-button.sc-button--outline.sc-button--chip {
+  @apply mx-2 w-auto rounded-md border border-emerald-400 bg-transparent px-2 py-2 text-sm text-nowrap text-emerald-400 shadow-xs focus:outline-hidden;
+  text-wrap: auto;
+}
+
+.sc-button.sc-button--outline.sc-button--chip:hover,
+.sc-button.sc-button--outline.sc-button--chip:focus {
+  @apply border-emerald-400 bg-emerald-400 text-white focus:border-emerald-400;
+}
+
+.sc-button.sc-button--round {
+  @apply rounded-full;
+}
+
+.sc-button__label.sc-button__label--fit {
+  overflow: visible;
+  text-overflow: clip;
+  min-width: max-content;
+}
