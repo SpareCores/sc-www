@@ -173,14 +173,14 @@ describe("AdvisorUiService", () => {
       service.buildBaselinePriceAggregate(prices, {
         bestPriceAllocation: "ONDEMAND_ONLY",
         currency: "USD",
-        regionId: "us-east-1",
+        regionIds: ["us-east-1"],
       }).min_price,
     ).toBe(0.12);
     expect(
       service.buildBaselinePriceAggregate(prices, {
         bestPriceAllocation: "MONTHLY",
         currency: "USD",
-        regionId: "us-east-1",
+        regionIds: ["us-east-1"],
       }).min_price,
     ).toBe(60);
   });

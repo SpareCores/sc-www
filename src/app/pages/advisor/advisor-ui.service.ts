@@ -50,13 +50,13 @@ export class AdvisorUiService {
     options?: {
       bestPriceAllocation?: BestPriceAllocationType["slug"];
       currency?: string | null;
-      regionId?: string | null;
+      regionIds?: string[] | null;
     },
   ): AdvisorBaselinePriceAggregate {
     const scopedPrices = prices.filter((price) => {
       return this.matchesBaselinePriceScope(
         price,
-        options?.regionId || null,
+        options?.regionIds || null,
         options?.currency || null,
       );
     });
@@ -343,10 +343,10 @@ export class AdvisorUiService {
 
   private matchesBaselinePriceScope(
     price: ServerPrice,
-    regionId: string | null,
+    regionIds: string[] | null,
     currency: string | null,
   ): boolean {
-    if (regionId && price.region_id !== regionId) {
+    if (regionIds?.length && !regionIds.includes(price.region_id)) {
       return false;
     }
 

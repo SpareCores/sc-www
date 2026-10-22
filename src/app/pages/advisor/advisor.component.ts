@@ -720,6 +720,32 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   });
 
+  readonly baselinePriceVendorRegions = computed<string[]>(() => {
+    const vendorRegions = normalizeAdvisorQueryStringArray(
+      this.query().vendor_regions,
+    );
+
+    if (vendorRegions.length) {
+      const vendorId = this.selectedBaselineServer()?.vendor_id;
+
+      return vendorRegions.filter((vendorRegion) => {
+        return !!vendorId && vendorRegion.split("~")[0] === vendorId;
+      });
+    }
+
+    const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
+
+    return this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
+      ? [selectedBaselineVendorRegion]
+      : [];
+  });
+
+  readonly baselinePriceRegionIds = computed<string[]>(() => {
+    return this.baselinePriceVendorRegions()
+      .map((vendorRegion) => vendorRegion.split("~")[1] || "")
+      .filter((regionId) => regionId !== "");
+  });
+
   readonly baselinePriceAggregate = computed<AdvisorBaselinePriceAggregate>(
     () => {
       const addonRow = this.baselineAddonPricingRow();
@@ -733,7 +759,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         };
       }
 
-      const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
       const baselinePriceAggregate = this.advisorUi.buildBaselinePriceAggregate(
         this.baselineServerPrices(),
         {
@@ -741,10 +766,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
             ? this.bestPriceAllocation().slug
             : "ANY",
           currency: this.selectedCurrency().slug,
-          regionId:
-            this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
-              ? selectedBaselineVendorRegion.split("~")[1] || null
-              : null,
+          regionIds: this.baselinePriceRegionIds(),
         },
       );
 
@@ -2613,11 +2635,11 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       query.best_price_allocation = this.bestPriceAllocation().slug;
     }
 
-    const baselineRegion = this.selectedBaselineVendorRegion();
+    const baselineVendorRegions = this.baselinePriceVendorRegions();
 
-    if (this.isBaselineRegionEnabled() && baselineRegion) {
+    if (baselineVendorRegions.length) {
       query.vendor_regions =
-        baselineRegion as SearchServersServersGetParams["vendor_regions"];
+        baselineVendorRegions as unknown as SearchServersServersGetParams["vendor_regions"];
     }
 
     try {
@@ -2744,16 +2766,14 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getBaselineMonthlyPriceFallback(): number | null {
-    const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
-    const scopedRegionId =
-      this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
-        ? selectedBaselineVendorRegion.split("~")[1] || null
-        : null;
+    const scopedRegionIds = this.baselinePriceRegionIds();
 
     return (
       this.baselinePriceComparisonRows()
         .filter((price) => {
-          return !scopedRegionId || price.region_id === scopedRegionId;
+          return (
+            !scopedRegionIds.length || scopedRegionIds.includes(price.region_id)
+          );
         })
         .map((price) => this.advisorUi.getOndemandMonthlyPrice(price))
         .filter((price): price is number => price !== null)
