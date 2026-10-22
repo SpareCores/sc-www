@@ -55,33 +55,6 @@
   width: calc(100% - 20rem);
 }
 
-.items_table {
-  @apply w-full text-white;
-
-  thead {
-    @apply border-b border-gray-200 border-solid bg-secondary;
-    th {
-      @apply text-left pl-3 pr-2 py-3 font-normal text-xs;
-    }
-  }
-
-  tbody {
-    tr:nth-child(2n + 1) {
-      @apply bg-primary;
-    }
-    tr:nth-child(2n) {
-      @apply bg-secondary;
-    }
-
-    tr {
-      @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
-      td {
-        @apply pl-3 pr-2 py-3 text-left text-sm;
-      }
-    }
-  }
-}
-
 .overflow-x-auto {
   scrollbar-width: thin;
   scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
@@ -117,8 +90,4 @@
 
 .fixed_buttons.fixed_buttons--collapsed {
   left: 50%;
-}
-
-.checkbox_column {
-  width: 2rem;
 }

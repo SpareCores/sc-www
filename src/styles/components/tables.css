@@ -1,0 +1,42 @@
+.sc-table {
+  @apply text-white;
+}
+
+.sc-table thead {
+  @apply border-b border-solid border-gray-200 bg-secondary;
+}
+
+.sc-table thead th {
+  @apply px-5 py-3 text-left text-xs font-normal;
+}
+
+.sc-table tbody tr:nth-child(odd) {
+  @apply bg-primary;
+}
+
+.sc-table tbody tr:nth-child(even) {
+  @apply bg-secondary;
+}
+
+.sc-table tbody td {
+  @apply px-5 py-3 text-left text-sm;
+}
+
+.sc-table--compact thead th,
+.sc-table--compact tbody td {
+  @apply pr-2 pl-3;
+}
+
+.sc-table--interactive tbody tr {
+  @apply cursor-pointer hover:outline-1 hover:-outline-offset-1 hover:outline-solid hover:outline-emerald-400;
+}
+
+.sc-table--links tbody td a {
+  @apply underline decoration-dotted;
+}
+
+.sc-table__checkbox {
+  width: 2rem !important;
+  padding-right: 0.5rem !important;
+  padding-left: 0.75rem !important;
+}

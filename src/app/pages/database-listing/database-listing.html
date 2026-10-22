@@ -126,10 +126,13 @@
                 </div>
               </div>
             }
-            <table class="items_table" id="databases_table">
+            <table
+              class="sc-table sc-table--compact sc-table--interactive w-full"
+              id="databases_table"
+            >
               <thead>
                 <tr>
-                  <th class="checkbox_column"></th>
+                  <th class="sc-table__checkbox"></th>
                   <th class="favorite_column"></th>
                   @for (column of tableColumns; track column.name) {
                     <th
@@ -182,7 +185,7 @@
                   >
                     <td
                       (click)="toggleCompare2($event, item)"
-                      class="checkbox_column"
+                      class="sc-table__checkbox"
                     >
                       <div class="flex items-center">
                         <input
@@ -426,7 +429,7 @@
                   <tr>
                     <td
                       [attr.colspan]="tableColumns.length + 2"
-                      class="px-5 py-6 text-center text-gray-400 text-sm"
+                      class="text-gray-400"
                     >
                       No databases match the selected filters.
                     </td>
