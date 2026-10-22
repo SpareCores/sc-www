@@ -139,7 +139,7 @@
         ></sc-server-property-card>
 
         <div
-          class="block_half"
+          class="chart-block--half"
           id="availability"
           #availabilityCard
           [class.open]="expandedCards.availability"
@@ -269,7 +269,7 @@
           <sc-benchmark-line-chart
             benchmarkKey="pgbench"
             [title]="pgbenchTitle"
-            blockClass="block_full"
+            blockClass="chart-block--full"
             elementId="pgbench_chart"
             canvasId="pgbench_canvas"
             chartType="line"
@@ -294,7 +294,7 @@
           <sc-benchmark-line-chart
             benchmarkKey="pgbench"
             [title]="pgbenchTitle"
-            blockClass="block_full"
+            blockClass="chart-block--full"
             elementId="underlying_server_pgbench_chart"
             canvasId="underlying_server_pgbench_canvas"
             chartType="line"
