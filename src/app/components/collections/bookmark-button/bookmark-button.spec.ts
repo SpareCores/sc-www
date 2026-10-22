@@ -1,9 +1,9 @@
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
-import { CollectionsUiService } from "../../../collections/collections-ui.service";
+import { CollectionsUi } from "../../../collections/collections-ui";
 import { FEATURE_REGISTER_HINT } from "../../../collections/collections.utils";
-import { UiTooltipService } from "../../../services/ui-tooltip.service";
+import { UiTooltip } from "../../../services/ui-tooltip";
 import { BookmarkButton } from "./bookmark-button";
 
 describe("BookmarkButton", () => {
@@ -21,7 +21,7 @@ describe("BookmarkButton", () => {
       imports: [BookmarkButton],
       providers: [
         {
-          provide: CollectionsUiService,
+          provide: CollectionsUi,
           useValue: {
             isAuthenticated: () => isAuthenticated(),
             isFavorite: () => false,
@@ -31,7 +31,7 @@ describe("BookmarkButton", () => {
           },
         },
         {
-          provide: UiTooltipService,
+          provide: UiTooltip,
           useValue: {
             show: jasmine.createSpy("show"),
             hide: jasmine.createSpy("hide"),

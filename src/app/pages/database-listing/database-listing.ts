@@ -33,43 +33,43 @@ import {
 import openApiSpec from "../../../../sdk/openapi.json";
 import {
   BreadcrumbSegment,
-  BreadcrumbsComponent,
-} from "../../components/breadcrumbs/breadcrumbs.component";
+  Breadcrumbs,
+} from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
-import { PaginationComponent } from "../../components/pagination/pagination.component";
-import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
+import { Pagination } from "../../components/pagination/pagination";
+import { SearchBar } from "../../components/search-bar/search-bar";
 import type {
   SearchBarParameter,
   SearchBarQuery,
 } from "../../components/search-bar/types/search-bar.types";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { StoragePipe } from "../../pipes/storage.pipe";
-import { AnalyticsService } from "../../services/analytics.service";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ServerCompareService } from "../../services/server-compare.service";
-import { ToastService } from "../../services/toast.service";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
+import { StoragePipe } from "../../pipes/storage-pipe";
+import { Analytics } from "../../services/analytics";
+import { KeeperAPI } from "../../services/keeper-api";
+import { SeoHandler } from "../../services/seo-handler";
+import { CompareSelection } from "../../services/compare-selection";
+import { Toast } from "../../services/toast";
 import { QUERY_ERROR_DATABASES_TOAST_ID } from "../../services/toast-ids";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import {
   areSearchParamsEqual,
   toSearchParams,
 } from "../../tools/listing-search-params";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { InstanceFavoriteContextMenuComponent } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu.component";
-import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
-import { CollectionsUiService } from "../../collections/collections-ui.service";
+import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";
+import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionsUi } from "../../collections/collections-ui";
 import {
   isDefaultListingQuery,
   SAVED_ITEM_FALLBACK_NOTE,
   normalizeSearchQuery,
 } from "../../collections/collections.utils";
 import type { SavedSearchItem } from "../../collections/collections.types";
-import { AuthStateService } from "../../core/auth";
+import { AuthState } from "../../core/auth";
 import {
   BestDatabasePriceAllocationType,
   CurrencyOption,
@@ -110,7 +110,7 @@ type DatabaseListingQuery = Params &
   imports: [
     CommonModule,
     FormsModule,
-    BreadcrumbsComponent,
+    Breadcrumbs,
     LucideDynamicIcon,
     LucideCheck,
     LucideChevronLeft,
@@ -120,37 +120,36 @@ type DatabaseListingQuery = Params &
     RouterModule,
     Button,
     PageHeader,
-    SearchBarComponent,
-    PaginationComponent,
-    LoadingSpinnerComponent,
+    SearchBar,
+    Pagination,
+    LoadingSpinner,
     StoragePipe,
-    FlowbiteDropdownDirective,
+    FlowbiteDropdown,
     BenchmarkIconPipe,
     BookmarkButton,
-    InstanceFavoriteContextMenuComponent,
-    CollectionSaveModalComponent,
+    InstanceFavoriteContextMenu,
+    CollectionSaveModal,
   ],
   templateUrl: "./database-listing.html",
   styleUrl: "./database-listing.scss",
 })
 export class DatabaseListing implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
-  private keeperAPI = inject(KeeperAPIService);
+  private keeperAPI = inject(KeeperAPI);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private SEOHandler = inject(SeoHandlerService);
-  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
-  allocationDropdown =
-    viewChild<FlowbiteDropdownDirective>("allocationDropdown");
-  pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
-  private analytics = inject(AnalyticsService);
-  private toastService = inject(ToastService);
+  private SEOHandler = inject(SeoHandler);
+  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
+  allocationDropdown = viewChild<FlowbiteDropdown>("allocationDropdown");
+  pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
+  private analytics = inject(Analytics);
+  private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
-  private uiTooltip = inject(UiTooltipService);
-  private collectionsUi = inject(CollectionsUiService);
-  private auth = inject(AuthStateService);
-  saveSearchModal = viewChild(CollectionSaveModalComponent);
-  private serverCompare = inject(ServerCompareService);
+  private uiTooltip = inject(UiTooltip);
+  private collectionsUi = inject(CollectionsUi);
+  private auth = inject(AuthState);
+  saveSearchModal = viewChild(CollectionSaveModal);
+  private serverCompare = inject(CompareSelection);
 
   isCollapsed = false;
 

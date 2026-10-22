@@ -1,0 +1,153 @@
+import { isPlatformBrowser } from "@angular/common";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  PLATFORM_ID,
+  computed,
+  inject,
+  input,
+  output,
+  viewChild,
+} from "@angular/core";
+import { BaseChartDirective } from "ng2-charts";
+import { ActiveElement, ChartEvent } from "chart.js";
+import {
+  injectCompareLegendVisibility,
+  syncCompareLegendData,
+  syncCompareLegendOptions,
+} from "../shared/compare-chart-legend.bind";
+import { WorkloadProfileRadarChartBuilder } from "./workload-profile-radar-chart-builder";
+import {
+  WorkloadProfileBenchmarkMeta,
+  WorkloadProfileCompareServer,
+  WorkloadProfileDetailsServer,
+  WorkloadProfileRadarChartData,
+  WorkloadProfileRadarChartOptions,
+} from "./workload-profile-radar-chart.types";
+
+@Component({
+  selector: "sc-workload-profile-radar-chart",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [BaseChartDirective],
+  templateUrl: "./workload-profile-radar-chart.html",
+  styleUrls: ["./workload-profile-radar-chart.scss"],
+})
+export class WorkloadProfileRadarChart {
+  private platformId = inject(PLATFORM_ID);
+  private destroyRef = inject(DestroyRef);
+  private builder = inject(WorkloadProfileRadarChartBuilder);
+  private legendVisibility = injectCompareLegendVisibility();
+
+  chartDirective = viewChild(BaseChartDirective);
+
+  layout = input<"details" | "compare">("compare");
+  chartType = input<"radar">("radar");
+  benchmarkMeta = input<WorkloadProfileBenchmarkMeta[]>([]);
+  servers = input<WorkloadProfileCompareServer[]>([]);
+  serverDetails = input<WorkloadProfileDetailsServer | undefined>(undefined);
+  chartData = input<WorkloadProfileRadarChartData | undefined>(undefined);
+  chartOptions = input<WorkloadProfileRadarChartOptions>(undefined);
+
+  readonly profileSelected = output<string>();
+
+  readonly isBrowser = isPlatformBrowser(this.platformId);
+
+  readonly detailsCharts = computed(() => {
+    if (this.layout() !== "details") {
+      return undefined;
+    }
+
+    const serverDetails = this.serverDetails();
+
+    if (!serverDetails) {
+      return undefined;
+    }
+
+    return this.builder.buildDetailsCharts({
+      serverDetails,
+      benchmarkMeta: this.benchmarkMeta(),
+    });
+  });
+
+  readonly compareCharts = computed(() => {
+    if (this.layout() !== "compare") {
+      return undefined;
+    }
+
+    return this.builder.buildCompareCharts({
+      servers: this.servers(),
+      benchmarkMeta: this.benchmarkMeta(),
+    });
+  });
+
+  readonly resolvedChartData = computed(() => {
+    const data =
+      this.chartData() ??
+      (this.layout() === "details"
+        ? this.detailsCharts()?.chartData
+        : this.compareCharts()?.chartData);
+
+    if (!data || this.layout() !== "compare") {
+      return data;
+    }
+
+    return syncCompareLegendData(data, this.legendVisibility);
+  });
+
+  readonly resolvedChartOptions = computed(() => {
+    const options =
+      this.chartOptions() ??
+      (this.layout() === "details"
+        ? this.detailsCharts()?.options
+        : this.compareCharts()?.options);
+
+    if (!options) {
+      return options;
+    }
+
+    if (this.layout() === "compare") {
+      return syncCompareLegendOptions(options, this.legendVisibility);
+    }
+
+    if (this.layout() !== "details") {
+      return options;
+    }
+
+    const baseOnHover = options.onHover;
+    const baseOnClick = options.onClick;
+
+    return {
+      ...options,
+      onHover: (event: ChartEvent, elements: ActiveElement[], chart) => {
+        baseOnHover?.(event, elements, chart);
+        chart.canvas.style.cursor = elements.length > 0 ? "pointer" : "default";
+      },
+      onClick: (event: ChartEvent, elements: ActiveElement[], chart) => {
+        baseOnClick?.(event, elements, chart);
+
+        const index = elements[0]?.index;
+
+        if (index == null) {
+          return;
+        }
+
+        const benchmarkId = this.detailsCharts()?.benchmarkIds[index];
+
+        if (benchmarkId) {
+          this.profileSelected.emit(benchmarkId);
+        }
+      },
+    };
+  });
+
+  readonly hasChart = computed(() => !!this.resolvedChartData());
+
+  constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.destroyRef.onDestroy(() => {
+        this.chartDirective()?.chart?.destroy();
+      });
+    }
+  }
+}

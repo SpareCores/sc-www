@@ -1,0 +1,1784 @@
+import { Location, formatDate, isPlatformBrowser } from "@angular/common";
+import {
+  Component,
+  DestroyRef,
+  DOCUMENT,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+  Renderer2,
+  ViewChild,
+  inject,
+  signal,
+  viewChild,
+} from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { ActivatedRoute, RouterModule } from "@angular/router";
+import { LucideCheck, LucideTriangleAlert } from "@lucide/angular";
+import { Chart, ChartConfiguration, ChartData } from "chart.js";
+import { Modal, ModalOptions } from "flowbite";
+import { BaseChartDirective } from "ng2-charts";
+import { Subscription } from "rxjs";
+import {
+  Benchmark,
+  BenchmarkScore,
+  GetSimilarServersServerVendorServerSimilarServersByNumGetData,
+  ServerDescription,
+  ServerPKs,
+  ServerPrice,
+  Status,
+} from "../../../../sdk/data-contracts";
+import type { RequestParams } from "../../../../sdk/http-client";
+import { Accordion, AccordionItem } from "../../components/accordion/accordion";
+import {
+  BreadcrumbSegment,
+  Breadcrumbs,
+} from "../../components/breadcrumbs/breadcrumbs";
+import { Button } from "../../components/button/button";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
+import {
+  formatBooleanIconHtml,
+  formatNumberWithCommas,
+} from "../../components/charts/shared/server-compare-table.utils";
+import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { ServerCharts } from "../../components/server-charts/server-charts";
+import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
+import {
+  ServerPropertyCard,
+  ServerPropertyRow,
+  ServerPropertySection,
+  ServerPropertyTooltip,
+} from "../../components/server-property-card/server-property-card";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
+import { formatStorageSize } from "../../pipes/pipe-utils";
+import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name-pipe";
+import { Analytics } from "../../services/analytics";
+import { KeeperAPI } from "../../services/keeper-api";
+import { SeoHandler } from "../../services/seo-handler";
+import { CompareSelection } from "../../services/compare-selection";
+import { Toast } from "../../services/toast";
+import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
+import { UiTooltip } from "../../services/ui-tooltip";
+import { initGiscus } from "../../tools/initGiscus";
+import { ServerEmbedDialog } from "../../components/embed-dialog/server-embed-dialog";
+import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
+import { hasWorkloadProfileChartData } from "../../components/charts/workload-profile/workload-profile.utils";
+import { isStressNgStressor } from "../../components/charts/stress-ng-full/stress-ng-full.utils";
+import { MemoryChartBuilder } from "../../components/charts/memory/memory-chart-builder";
+import { BenchmarkMultiBarChartBuilder } from "../../components/charts/multi-bar/benchmark-multi-bar-chart-builder";
+import { MultiBarBenchmarkGroup } from "../../components/charts/multi-bar/benchmark-multi-bar-chart.types";
+import {
+  ChartFromBenchmarkTemplate,
+  redisChartTemplate,
+  staticWebChartTemplate,
+} from "./chartFromBenchmarks";
+import { barChartDataEmpty, barChartOptions } from "./chartOptions";
+import { buildServerFaqs } from "./server-details-faqs";
+import {
+  BURSTABLE_INSTANCE_WARNING_BODY,
+  BURSTABLE_INSTANCE_WARNING_TITLE,
+  HIDDEN_SERVER_PROPERTY_IDS,
+} from "./server-details.constants";
+
+const optionsModal: ModalOptions = {
+  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
+  closable: true,
+};
+
+const summarizeModalOptions: ModalOptions = {
+  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
+  closable: true,
+};
+
+const SIMILAR_SERVER_CATEGORIES: Partial<
+  Record<string, "score" | "score_per_price" | "specs">
+> = {
+  byScore: "score",
+  byPerformancePerPrice: "score_per_price",
+  bySpecs: "specs",
+};
+
+const DEFAULT_EMBEDDABLE_CHARTS = [
+  { id: "workload_profile", name: "Workload Profiles" },
+  { id: "bw_mem", name: "Memory Bandwidth" },
+  { id: "compress", name: "Compression" },
+  { id: "geek_single", name: "Geekbench Single-core" },
+  { id: "geek_multi", name: "Geekbench Multi-core" },
+  { id: "ssl", name: "OpenSSL" },
+  { id: "static_web", name: "Static Web Server" },
+  { id: "redis", name: "Redis" },
+];
+
+const DEFAULT_SERVER_DETAILS_ERROR_MESSAGE =
+  "Failed to load server details. Please try again later.";
+
+function createEmptyBarChartData(): ChartData<"bar"> {
+  return JSON.parse(JSON.stringify(barChartDataEmpty));
+}
+
+export interface ExtendedServerPrice extends ServerPrice {
+  region: any;
+  zone: any;
+}
+
+export interface ExtendedServerDetails extends ServerPKs {
+  benchmark_scores: BenchmarkScore[];
+  prices: ExtendedServerPrice[];
+  bestOndemandPrice?: ExtendedServerPrice;
+  bestSpotPrice?: ExtendedServerPrice;
+  additionalOndemandPrices?: ExtendedServerPrice[];
+  additionalSpotPrices?: ExtendedServerPrice[];
+  vendor_name?: string;
+}
+
+interface PropertyCategoryDefinition {
+  name: string;
+  category: string;
+}
+
+@Component({
+  selector: "sc-server-details",
+  imports: [
+    Button,
+    Breadcrumbs,
+    LucideCheck,
+    LucideTriangleAlert,
+    Accordion,
+    FormsModule,
+    RouterModule,
+    BaseChartDirective,
+    ReduceUnitNamePipe,
+    AcceleratorCountPipe,
+    ServerCharts,
+    ServerLstopo,
+    ServerPropertyCard,
+    ServerEmbedDialog,
+    LoadingSpinner,
+    FlowbiteDropdown,
+    BookmarkButton,
+  ],
+  templateUrl: "./server-details.html",
+  styleUrl: "./server-details.scss",
+})
+export class ServerDetails implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private document = inject<Document>(DOCUMENT);
+  private route = inject(ActivatedRoute);
+  private analytics = inject(Analytics);
+  private keeperAPI = inject(KeeperAPI);
+  private SEOHandler = inject(SeoHandler);
+  private toastService = inject(Toast);
+  private serverCompare = inject(CompareSelection);
+  private renderer = inject(Renderer2);
+  private location = inject(Location);
+  private destroyRef = inject(DestroyRef);
+  private uiTooltip = inject(UiTooltip);
+  private memoryChartBuilder = inject(MemoryChartBuilder);
+  private multiBarChartBuilder = inject(BenchmarkMultiBarChartBuilder);
+  private serverLoadId = 0;
+  private loadAbortController: AbortController | null = null;
+  private similarAbortController: AbortController | null = null;
+  similarDropdown = viewChild<FlowbiteDropdown>("similarDropdown");
+
+  readonly burstableInstanceWarningTitle = BURSTABLE_INSTANCE_WARNING_TITLE;
+  readonly burstableInstanceWarningBody = BURSTABLE_INSTANCE_WARNING_BODY;
+
+  serverDetails!: ExtendedServerDetails;
+  lstopoSvgExists: boolean | null = null;
+  lstopoSvgWidth: number = 0;
+  isSmallScreen = false;
+  serverZones: string[] = [];
+  serverRegions: string[] = [];
+
+  breadcrumbs: BreadcrumbSegment[] = [
+    { name: "Home", url: "/" },
+    { name: "Servers", url: "/servers" },
+  ];
+
+  features: any[] = [];
+
+  description = "";
+  cardPriceDescription = "";
+  hasInactivePrices = false;
+  title = "";
+  seoKeywords = "";
+
+  serverDescription: ServerDescription | null = null;
+  descriptionsAvailable = false;
+  isSummarizeModalOpen = false;
+
+  faqs: AccordionItem[] = [];
+
+  availabilityRegions: any[] = [];
+  availabilityZones: any[] = [];
+
+  regionFilters: any[] = [];
+
+  similarByFamily: GetSimilarServersServerVendorServerSimilarServersByNumGetData =
+    [];
+  similarBySpecs: GetSimilarServersServerVendorServerSimilarServersByNumGetData =
+    [];
+  similarServers: GetSimilarServersServerVendorServerSimilarServersByNumGetData =
+    [];
+
+  similarOptions: any[] = [
+    { name: "By accelerator, CPU and memory specs", key: "bySpecs" },
+    { name: "By CPU performance", key: "byScore" },
+    { name: "By CPU performance per price", key: "byPerformancePerPrice" },
+  ];
+  selectedSimilarOption: any = this.similarOptions[0];
+
+  propertyCategoryDefinitions: PropertyCategoryDefinition[] = [
+    { name: "General", category: "meta" },
+    { name: "CPU", category: "cpu" },
+    { name: "Memory", category: "memory" },
+    { name: "Accelerators", category: "gpu" },
+    { name: "Storage", category: "storage" },
+    { name: "Network", category: "network" },
+  ];
+
+  metadataSections: ServerPropertySection[] = [];
+  processorSections: ServerPropertySection[] = [];
+  resourceSections: ServerPropertySection[] = [];
+  expandedCards: Record<string, boolean> = {
+    details: false,
+    processor: false,
+    system_resources: false,
+    availability: false,
+  };
+
+  barChartOptions: ChartConfiguration<"bar">["options"] = barChartOptions;
+  barChartType = "bar" as const;
+  barChartData: ChartData<"bar"> = createEmptyBarChartData();
+  barChartData2: ChartData<"bar"> = createEmptyBarChartData();
+  barChartData3: ChartData<"bar"> = createEmptyBarChartData();
+
+  benchmarksByCategory: any[] = [];
+
+  instanceProperties: any[] = [];
+  benchmarkMeta!: Benchmark[];
+
+  geekScoreSingle: string = "0";
+  geekScoreMulti: string = "0";
+
+  keeperResponseErrorMsg: string = DEFAULT_SERVER_DETAILS_ERROR_MESSAGE;
+
+  activeFAQ: number = -1;
+
+  modalEmbed: any;
+  private summarizeModal: Modal | null = null;
+  summarizeModalRef = viewChild<ElementRef<HTMLElement>>("summarizeModal");
+  warningTooltipRef = viewChild<ElementRef<HTMLElement>>("warningTooltip");
+  warningTooltipContent = signal("");
+
+  embeddableCharts: EmbedChartOption[] = [];
+
+  @ViewChild("giscusParent") giscusParent!: ElementRef;
+
+  isLoading = false;
+  isModalOpen = false;
+
+  private subscription = new Subscription();
+  private giscusInterval: ReturnType<typeof setInterval> | null = null;
+  private visibilityChangeHandler: (() => void) | null = null;
+
+  @HostListener("window:resize")
+  onResize() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isSmallScreen = window.innerWidth <= 1178;
+    }
+  }
+
+  ngOnInit() {
+    this.onResize();
+    const countryIdtoNamePipe = new CountryIdtoNamePipe();
+    this.subscription.add(
+      this.route.params.subscribe((params) => {
+        this.loadAbortController?.abort();
+        const loadAbortController = new AbortController();
+        this.loadAbortController = loadAbortController;
+        const vendor = params["vendor"];
+        const id = params["id"];
+        const loadId = ++this.serverLoadId;
+        this.resetServerState();
+        this.isLoading = true;
+        this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
+
+        Promise.all([
+          this.keeperAPI.getServerMeta({ signal: loadAbortController.signal }),
+          this.keeperAPI.getServerBenchmarkMeta({
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerSimilarServers(vendor, id, "family", 7, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerSimilarServers(vendor, id, "specs", 7, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerPrices(vendor, id, undefined, false, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerBenchmark(vendor, id, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerV2(vendor, id, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getVendors({ signal: loadAbortController.signal }),
+          this.keeperAPI.getRegions({ signal: loadAbortController.signal }),
+          this.keeperAPI.getZones({ signal: loadAbortController.signal }),
+        ])
+          .then((dataAll) => {
+            if (this.destroyRef.destroyed || loadId !== this.serverLoadId) {
+              return;
+            }
+
+            this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
+
+            const promisAllResponses = dataAll.map((d) => d.body);
+            const [
+              serverMeta,
+              benchmarkMeta,
+              similarByFamily,
+              similarBySpecs,
+              prices,
+              benchmarks,
+              serverDetails,
+              vendors,
+              regions,
+              zones,
+            ] = promisAllResponses;
+
+            this.instanceProperties = serverMeta?.fields || [];
+
+            this.benchmarkMeta = benchmarkMeta || [];
+
+            this.similarByFamily = similarByFamily;
+            this.similarBySpecs = similarBySpecs;
+
+            if (serverDetails) {
+              this.serverDetails = JSON.parse(
+                JSON.stringify(serverDetails),
+              ) as any;
+
+              this.serverDetails.benchmark_scores = benchmarks;
+              this.serverDetails.vendor = vendors.find(
+                (v: any) => v.vendor_id === this.serverDetails.vendor_id,
+              );
+              this.serverDetails.score =
+                this.serverDetails.benchmark_scores?.find(
+                  (b) => b.benchmark_id === "stress_ng:bestn",
+                )?.score;
+
+              const isOrderable =
+                this.serverDetails.status === Status.Active ||
+                this.serverDetails.status === Status.PlannedForRetirement;
+              this.hasInactivePrices = false;
+
+              if (prices) {
+                this.serverDetails.prices = (
+                  JSON.parse(JSON.stringify(prices)) as ExtendedServerPrice[]
+                )
+                  .filter(
+                    (price) => !isOrderable || price.status === Status.Active,
+                  )
+                  .sort((a, b) => a.price - b.price);
+                this.hasInactivePrices = this.serverDetails.prices.some(
+                  (price) => price.status !== Status.Active,
+                );
+
+                if (this.serverDetails.prices?.length > 0) {
+                  this.serverDetails.min_price = this.serverDetails.prices
+                    ? this.serverDetails.prices[0].price
+                    : 0;
+                  this.serverDetails.prices.forEach((price: any) => {
+                    price.region = regions.find(
+                      (r: any) =>
+                        r.vendor_id === price.vendor_id &&
+                        r.region_id === price.region_id,
+                    );
+                    price.zone = zones.find(
+                      (z: any) =>
+                        z.vendor_id === price.vendor_id &&
+                        z.region_id === price.region_id &&
+                        z.zone_id === price.zone_id,
+                    );
+                  });
+                }
+              }
+
+              this.serverDetails.score_per_price =
+                this.serverDetails.min_price && this.serverDetails.score
+                  ? this.serverDetails.score / this.serverDetails.min_price
+                  : this.serverDetails.score || 0;
+
+              // list all regions where the server is available
+              this.serverDetails.prices?.forEach(
+                (price: ExtendedServerPrice) => {
+                  if (!price.zone || !price.region) {
+                    return;
+                  }
+
+                  this.serverZones.push(price.zone.display_name);
+                  if (!this.serverRegions.includes(price.region.display_name)) {
+                    this.serverRegions.push(price.region.display_name);
+                  }
+                },
+              );
+
+              this.breadcrumbs = [
+                { name: "Home", url: "/" },
+                { name: "Servers", url: "/servers" },
+                {
+                  name: this.serverDetails.vendor.name,
+                  url: "/vendors/" + this.serverDetails.vendor.vendor_id,
+                },
+                {
+                  name: this.serverDetails.display_name,
+                  url:
+                    "/server/" +
+                    this.serverDetails.vendor.vendor_id +
+                    "/" +
+                    this.serverDetails.api_reference,
+                },
+              ];
+
+              const url =
+                this.SEOHandler.getBaseURL() +
+                "/server/" +
+                this.serverDetails.vendor.vendor_id +
+                "/" +
+                this.serverDetails.api_reference;
+              this.SEOHandler.updateCanonical(this.document, url);
+
+              this.features = [];
+              if (this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
+                this.features.push({
+                  name: "vCPU",
+                  value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}`,
+                });
+              }
+              if (this.serverDetails.memory_amount) {
+                this.features.push({ name: "Memory", value: this.getMemory() });
+              }
+              if (this.serverDetails.storage_size) {
+                this.features.push({
+                  name: "Storage",
+                  value: formatStorageSize(
+                    this.serverDetails.storage_size ?? 0,
+                  ),
+                });
+              }
+              if (this.serverDetails.accelerator_count) {
+                this.features.push({
+                  name: this.serverDetails.accelerator_type ?? "Accelerator",
+                  value: this.serverDetails.accelerator_count,
+                });
+              }
+
+              this.buildPropertyCardSections();
+
+              this.benchmarksByCategory = [];
+              this.serverDetails.benchmark_scores?.forEach((b: any) => {
+                let group_id = b.benchmark_id;
+                if (group_id.includes("passmark:")) {
+                  if (group_id.includes("passmark:cpu_")) {
+                    group_id = "passmark:cpu";
+                  } else {
+                    group_id = "passmark:other";
+                  }
+                }
+                const group = this.benchmarksByCategory.find(
+                  (g) => g.benchmark_id === group_id,
+                );
+                if (!group) {
+                  this.benchmarksByCategory.push({
+                    benchmark_id: group_id,
+                    benchmarks: [b],
+                  });
+                } else {
+                  group.benchmarks.push(b);
+                }
+              });
+
+              this.regionFilters = [];
+
+              this.serverDetails.prices?.sort((a, b) => a.price - b.price);
+              this.serverDetails.prices?.forEach(
+                (price: ExtendedServerPrice) => {
+                  if (!price.region) {
+                    return;
+                  }
+
+                  const region = this.regionFilters.find(
+                    (z) =>
+                      z.vendor_id === price.vendor_id &&
+                      z.region_id === price.region_id,
+                  );
+                  if (!region) {
+                    this.regionFilters.push({
+                      name: price.region.display_name,
+                      vendor_id: price.vendor_id,
+                      region_id: price.region_id,
+                      selected: false,
+                    });
+                  }
+                },
+              );
+
+              if (this.regionFilters[0]) {
+                this.regionFilters[0].selected = true;
+              }
+
+              if (
+                this.serverDetails.prices?.length > 0 &&
+                (this.barChartOptions?.scales as any)?.y?.title?.text
+              ) {
+                (this.barChartOptions!.scales as any).y.title.text =
+                  `${this.serverDetails.prices[0].currency}/h`;
+              }
+
+              // This also initializes important underlying data has to be called here
+              this.refreshPricesGraphs();
+
+              this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
+              this.description = `${this.serverDetails.display_name} is a ${this.serverDetails.description} server offered by ${this.serverDetails.vendor.name} with`;
+              if (this.serverDetails.vcpus) {
+                this.description += ` ${this.serverDetails.vcpus} vCPUs`;
+              } else if (this.serverDetails.cpu_cores) {
+                this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
+              }
+              this.description += `, ${this.getMemory()} of memory and ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of storage.`;
+
+              this.cardPriceDescription = "";
+              if (this.serverDetails.prices[0]) {
+                const roundedPrice =
+                  Math.round(this.serverDetails.prices[0].price * 1000000) /
+                  1000000;
+                this.cardPriceDescription = this.hasInactivePrices
+                  ? ` The last known price was ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`
+                  : ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
+              }
+
+              const fullDescription =
+                this.description + this.cardPriceDescription;
+
+              this.faqs = buildServerFaqs({
+                serverDetails: this.serverDetails,
+                description: fullDescription,
+                formattedMemory: this.getMemory(),
+                countryName: countryIdtoNamePipe.transform(
+                  this.serverDetails.vendor.country_id,
+                ) as string,
+                serverRegions: this.serverRegions,
+                serverZoneCount: this.serverZones.length,
+                similarByFamily: this.similarByFamily,
+                similarBySpecs: this.similarBySpecs,
+              });
+              const keywords =
+                this.title +
+                ", " +
+                this.serverDetails.server_id +
+                ", " +
+                this.serverDetails.vendor.vendor_id;
+              this.seoKeywords = keywords;
+
+              this.SEOHandler.updateTitleAndMetaTags(
+                this.title,
+                fullDescription,
+                keywords,
+              );
+              this.SEOHandler.updateThumbnail(
+                `https://og.sparecores.com/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`,
+              );
+
+              this.generateSchemaJSON();
+
+              const benchmarkIds: string[] = this.benchmarksByCategory.map(
+                (c) => c.benchmark_id,
+              );
+              const hasBenchmarkPrefix = (prefix: string) =>
+                benchmarkIds.some((id) => id.startsWith(prefix));
+              const hasMultiBarChart = (
+                chartTemplate: ChartFromBenchmarkTemplate,
+              ) =>
+                !!this.multiBarChartBuilder.buildDetailsChart(
+                  JSON.parse(JSON.stringify(chartTemplate)),
+                  this.benchmarksByCategory as MultiBarBenchmarkGroup[],
+                );
+              const isMultiCore =
+                !!this.serverDetails.vcpus && this.serverDetails.vcpus > 1;
+              this.embeddableCharts = [
+                {
+                  id: "workload_profile",
+                  name: "Workload Profiles",
+                  show: hasWorkloadProfileChartData({
+                    benchmarkMeta: this.benchmarkMeta,
+                    benchmarkScores: this.serverDetails.benchmark_scores,
+                  }),
+                },
+                {
+                  id: "nvbandwidth",
+                  name: "GPU Bandwidth and Latency",
+                  show: benchmarkIds.some((id) =>
+                    id.startsWith("nvbandwidth:"),
+                  ),
+                },
+                {
+                  id: "bw_mem",
+                  name: "Memory Bandwidth",
+                  show:
+                    this.memoryChartBuilder.getAvailableDetailsOptions(
+                      this.benchmarksByCategory,
+                    ).length > 0,
+                },
+                {
+                  id: "compress",
+                  name: "Compression",
+                  show: hasBenchmarkPrefix("compression_text:"),
+                },
+                {
+                  id: "ssl",
+                  name: "OpenSSL",
+                  show: benchmarkIds.includes("openssl"),
+                },
+                {
+                  id: "geek_single",
+                  name: "Geekbench Single-core",
+                  show: hasBenchmarkPrefix("geekbench:"),
+                },
+                {
+                  id: "geek_multi",
+                  name: "Geekbench Multi-core",
+                  show: hasBenchmarkPrefix("geekbench:"),
+                },
+                {
+                  id: "passmark_cpu",
+                  name: "PassMark CPU",
+                  show: benchmarkIds.includes("passmark:cpu"),
+                },
+                {
+                  id: "passmark_other",
+                  name: "PassMark Memory",
+                  show: benchmarkIds.includes("passmark:other"),
+                },
+                {
+                  id: "stress_ng_full",
+                  name: "Stress-ng stressors",
+                  show: (this.benchmarkMeta ?? []).some(
+                    (benchmark) =>
+                      isStressNgStressor(benchmark) &&
+                      benchmarkIds.includes(benchmark.benchmark_id),
+                  ),
+                },
+                {
+                  id: "stress_ng_div16",
+                  name: "Stress-ng div16",
+                  show: isMultiCore,
+                },
+                {
+                  id: "stress_ng_relative",
+                  name: "Stress-ng relative",
+                  show: isMultiCore,
+                },
+                {
+                  id: "llm_prompt",
+                  name: "LLM Prompt Processing",
+                  show: benchmarkIds.includes("llm_speed:prompt_processing"),
+                },
+                {
+                  id: "llm_generation",
+                  name: "LLM Text Generation",
+                  show: benchmarkIds.includes("llm_speed:text_generation"),
+                },
+                {
+                  id: "static_web",
+                  name: "Static Web Server",
+                  show: hasMultiBarChart(staticWebChartTemplate),
+                },
+                {
+                  id: "redis",
+                  name: "Redis",
+                  show: hasMultiBarChart(redisChartTemplate),
+                },
+                {
+                  id: "pgbench",
+                  name: "pgbench Heavy Read-Only",
+                  show: benchmarkIds.includes("pgbench:heavy_read_only"),
+                },
+              ]
+                .filter((chart) => chart.show)
+                .map(({ id, name }) => ({ id, name }));
+
+              if (isPlatformBrowser(this.platformId)) {
+                setTimeout(() => {
+                  const showDetails =
+                    this.route.snapshot.queryParams["showDetails"];
+                  const activeFAQ = this.route.snapshot.queryParams["openFAQ"];
+                  const similarCategory =
+                    this.route.snapshot.queryParams["similarCategory"];
+
+                  if (activeFAQ) {
+                    this.activeFAQ = parseInt(activeFAQ);
+                  }
+
+                  if (showDetails) {
+                    this.setCardState("details", true, false);
+                  }
+
+                  if (similarCategory) {
+                    this.selectedSimilarOption = this.similarOptions.find(
+                      (o) => o.key === similarCategory,
+                    );
+                  }
+                }, 100);
+
+                const targetElModal =
+                  document.getElementById("embed-charts-modal");
+
+                this.modalEmbed = new Modal(targetElModal, optionsModal, {
+                  id: "embed-charts-modal",
+                  override: true,
+                });
+
+                // https://github.com/chartjs/Chart.js/issues/5387
+                // TODO: check and remove later
+                this.visibilityChangeHandler = () => {
+                  if (document.visibilityState === "visible") {
+                    // keep a instance for the chart
+                    const allCharts = Object.values(Chart.instances);
+                    allCharts?.forEach((chart: any) => {
+                      chart.update();
+                    });
+                  }
+                };
+                document.addEventListener(
+                  "visibilitychange",
+                  this.visibilityChangeHandler,
+                );
+
+                this.giscusInterval = setInterval(() => {
+                  if (this.giscusParent?.nativeElement) {
+                    const baseUrl = this.SEOHandler.getBaseURL();
+                    initGiscus(
+                      this.renderer,
+                      this.giscusParent,
+                      baseUrl,
+                      "Servers",
+                      "DIC_kwDOLesFQM4CgznN",
+                      "pathname",
+                    );
+                    if (this.giscusInterval) {
+                      clearInterval(this.giscusInterval);
+                      this.giscusInterval = null;
+                    }
+                  }
+                }, 250);
+
+                this.selectSimilarServerOption(
+                  this.selectedSimilarOption,
+                  false,
+                );
+              }
+
+              this.loadServerDescriptions(
+                vendor,
+                id,
+                () =>
+                  !this.destroyRef.destroyed && loadId === this.serverLoadId,
+                { signal: loadAbortController.signal },
+              );
+            }
+          })
+          .catch((error) => {
+            if (
+              this.destroyRef.destroyed ||
+              loadId !== this.serverLoadId ||
+              loadAbortController.signal.aborted
+            ) {
+              return;
+            }
+
+            console.error(error);
+            if (error?.status === 404) {
+              this.keeperResponseErrorMsg =
+                "The requested server was not found.";
+            } else if (error?.status === 500) {
+              this.analytics.SentryException(error, {
+                tags: {
+                  location: this.constructor.name,
+                  function: "getServers",
+                },
+              });
+              this.keeperResponseErrorMsg =
+                "Internal server error. Please try again later.";
+            } else {
+              this.analytics.SentryException(error, {
+                tags: {
+                  location: this.constructor.name,
+                  function: "getServers",
+                },
+              });
+              this.keeperResponseErrorMsg =
+                "Failed to load server details. Please try again later.";
+            }
+            this.toastService.showHttpError(error, {
+              id: SERVER_DETAILS_ERROR_TOAST_ID,
+              title: "Failed to load server details.",
+            });
+          })
+          .finally(() => {
+            if (!this.destroyRef.destroyed && loadId === this.serverLoadId) {
+              if (this.loadAbortController === loadAbortController) {
+                this.loadAbortController = null;
+              }
+              this.isLoading = false;
+            }
+          });
+      }),
+    );
+  }
+
+  private cleanupBrowserArtifacts() {
+    if (this.visibilityChangeHandler) {
+      document.removeEventListener(
+        "visibilitychange",
+        this.visibilityChangeHandler,
+      );
+      this.visibilityChangeHandler = null;
+    }
+
+    if (this.giscusInterval) {
+      clearInterval(this.giscusInterval);
+      this.giscusInterval = null;
+    }
+  }
+
+  private resetServerState() {
+    this.summarizeModal?.hide();
+    this.modalEmbed?.hide();
+    this.isModalOpen = false;
+    this.similarAbortController?.abort();
+    this.cleanupBrowserArtifacts();
+    this.SEOHandler.cleanupStructuredData(this.document);
+    this.serverDetails = undefined as never;
+    this.lstopoSvgExists = null;
+    this.lstopoSvgWidth = 0;
+    this.serverZones = [];
+    this.serverRegions = [];
+    this.breadcrumbs = [
+      { name: "Home", url: "/" },
+      { name: "Servers", url: "/servers" },
+    ];
+    this.features = [];
+    this.title = "";
+    this.description = "";
+    this.cardPriceDescription = "";
+    this.seoKeywords = "";
+    this.serverDescription = null;
+    this.descriptionsAvailable = false;
+    this.isSummarizeModalOpen = false;
+    this.faqs = [];
+    this.availabilityRegions = [];
+    this.availabilityZones = [];
+    this.regionFilters = [];
+    this.similarByFamily = [];
+    this.similarBySpecs = [];
+    this.similarServers = [];
+    this.selectedSimilarOption = this.similarOptions[0];
+    this.metadataSections = [];
+    this.processorSections = [];
+    this.resourceSections = [];
+    this.expandedCards = {
+      details: false,
+      processor: false,
+      system_resources: false,
+      availability: false,
+    };
+    this.barChartData = createEmptyBarChartData();
+    this.barChartData2 = createEmptyBarChartData();
+    this.barChartData3 = createEmptyBarChartData();
+    this.benchmarksByCategory = [];
+    this.instanceProperties = [];
+    this.benchmarkMeta = [];
+    this.geekScoreSingle = "0";
+    this.geekScoreMulti = "0";
+    this.keeperResponseErrorMsg = DEFAULT_SERVER_DETAILS_ERROR_MESSAGE;
+    this.activeFAQ = -1;
+    this.embeddableCharts = [...DEFAULT_EMBEDDABLE_CHARTS];
+  }
+
+  ngOnDestroy() {
+    this.loadAbortController?.abort();
+    this.similarAbortController?.abort();
+    this.cleanupBrowserArtifacts();
+
+    this.summarizeModal?.hide();
+    this.summarizeModal = null;
+
+    this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
+    this.SEOHandler.cleanupStructuredData(this.document);
+    this.subscription.unsubscribe();
+  }
+
+  isBrowser() {
+    return isPlatformBrowser(this.platformId);
+  }
+
+  getMemory(memory: number | undefined = undefined) {
+    const memoryAmount = memory || this.serverDetails.memory_amount || 0;
+    return (memoryAmount / 1024).toFixed(memoryAmount >= 1024 ? 0 : 1) + " GiB";
+  }
+
+  toggleCard(cardId: string, updateURL: boolean = true) {
+    this.setCardState(cardId, !this.expandedCards[cardId], updateURL);
+  }
+
+  setCardState(cardId: string, open: boolean, updateURL: boolean = true) {
+    this.expandedCards[cardId] = open;
+
+    if (updateURL && cardId === "details") {
+      if (this.expandedCards[cardId]) {
+        this.location.go(
+          `server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`,
+          "showDetails=true",
+        );
+      } else {
+        this.location.go(
+          `server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`,
+        );
+      }
+    }
+  }
+
+  showWarningTooltip(event: MouseEvent | FocusEvent, content: string) {
+    this.uiTooltip.showIfPresent({
+      tooltipElement: this.warningTooltipRef()?.nativeElement,
+      event,
+      content,
+      variant: "warning",
+      onShow: (tooltipContent) => {
+        this.warningTooltipContent.set(tooltipContent);
+      },
+    });
+  }
+
+  getInactivePriceNote(observedAt: string | undefined): string {
+    if (!observedAt) {
+      return "Last known price, not currently orderable.";
+    }
+
+    const timestamp = /(Z|[+-]\d{2}:?\d{2})$/.test(observedAt)
+      ? observedAt
+      : `${observedAt}Z`;
+
+    return `Last known price (at ${formatDate(timestamp, "yyyy-MM-dd HH:mm", "en-US", "UTC")} UTC), not currently orderable.`;
+  }
+
+  hideWarningTooltip() {
+    this.uiTooltip.hide(this.warningTooltipRef()?.nativeElement);
+  }
+
+  refreshPricesGraphs() {
+    this.updateChart1();
+    this.updateChart2();
+    this.updateChart3();
+  }
+
+  updateChart1() {
+    this.availabilityRegions = [];
+    if (this.serverDetails.prices.length > 0) {
+      this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
+        const region = this.availabilityRegions.find(
+          (r) =>
+            r.vendor_id === price.vendor_id && r.region_id === price.region_id,
+        );
+        const allocation = price.allocation || "spot";
+        const inactiveObservedAt =
+          price.status !== Status.Active ? price.observed_at : undefined;
+        if (!region) {
+          const data: any = {
+            vendor_id: price.vendor_id,
+            region_id: price.region_id,
+            display_name: price.region.display_name,
+            api_reference: price.region.api_reference,
+            inactive: price.status !== Status.Active,
+            inactiveObservedAt,
+            spot: {
+              price: 0,
+              unit: price.unit,
+              count: 0,
+              currency: price.currency,
+            },
+            ondemand: {
+              price: 0,
+              unit: price.unit,
+              count: 0,
+              currency: price.currency,
+            },
+          };
+          data[allocation].price += price.price;
+          data[allocation].count++;
+          this.availabilityRegions.push(data);
+        } else {
+          region[allocation].price += price.price;
+          region[allocation].count++;
+          region.inactive ||= price.status !== Status.Active;
+          if (
+            inactiveObservedAt &&
+            (!region.inactiveObservedAt ||
+              inactiveObservedAt > region.inactiveObservedAt)
+          ) {
+            region.inactiveObservedAt = inactiveObservedAt;
+          }
+        }
+      });
+
+      this.availabilityRegions.forEach((region: any) => {
+        if (region.spot.count)
+          region.spot.price =
+            Math.round((region.spot.price / region.spot.count) * 1000000) /
+            1000000;
+        if (region.ondemand.count)
+          region.ondemand.price =
+            Math.round(
+              (region.ondemand.price / region.ondemand.count) * 1000000,
+            ) / 1000000;
+      });
+
+      this.availabilityRegions.sort(
+        (a, b) => a["ondemand"].price - b["ondemand"].price,
+      );
+
+      const series: ChartData<"bar"> = {
+        labels: [],
+        datasets: [
+          {
+            data: [],
+            label: "Spot",
+            backgroundColor: "#34D399",
+          },
+          {
+            data: [],
+            label: "Ondemand",
+            backgroundColor: "#E5E7EB",
+          },
+        ],
+      };
+
+      const spotIdx = series.datasets.findIndex((s: any) => s.label === "Spot");
+      const ondemandIdx = series.datasets.findIndex(
+        (s: any) => s.label === "Ondemand",
+      );
+
+      this.availabilityRegions.forEach((region: any) => {
+        series.labels!.push(region.display_name);
+        if (spotIdx > -1) {
+          series.datasets[spotIdx].data.push(region.spot?.price || 0);
+        }
+        if (ondemandIdx > -1) {
+          series.datasets[ondemandIdx].data.push(region.ondemand?.price || 0);
+        }
+      });
+
+      this.barChartData = series;
+    }
+  }
+
+  updateChart2() {
+    this.availabilityZones = [];
+    if (this.serverDetails.prices.length > 0) {
+      this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
+        const zone = this.availabilityZones.find(
+          (z) =>
+            z.vendor_id === price.vendor_id &&
+            z.region_id === price.region_id &&
+            z.zone_id === price.zone_id,
+        );
+        if (!zone) {
+          const data: any = {
+            vendor_id: price.vendor_id,
+            region_id: price.region_id,
+            zone_id: price.zone_id,
+            display_name: price.zone.display_name,
+            spot: {
+              price: 0,
+              unit: price.unit,
+              count: 0,
+            },
+            ondemand: {
+              price: 0,
+              unit: price.unit,
+              count: 0,
+            },
+          };
+          data[price.allocation || "spot"].price += price.price;
+          data[price.allocation || "spot"].count++;
+          this.availabilityZones.push(data);
+        } else {
+          zone[price.allocation || "spot"].price += price.price;
+          zone[price.allocation || "spot"].count++;
+        }
+      });
+
+      this.availabilityZones.forEach((zone: any) => {
+        if (zone.spot.count)
+          zone.spot.price =
+            Math.round((zone.spot.price / zone.spot.count) * 1000000) / 1000000;
+        if (zone.ondemand.count)
+          zone.ondemand.price =
+            Math.round((zone.ondemand.price / zone.ondemand.count) * 1000000) /
+            1000000;
+      });
+
+      this.availabilityZones.sort(
+        (a, b) => a["ondemand"].price - b["ondemand"].price,
+      );
+
+      const series: ChartData<"bar"> = {
+        labels: [],
+        datasets: [
+          {
+            data: [],
+            label: "Spot",
+            backgroundColor: "#34D399",
+          },
+          {
+            data: [],
+            label: "Ondemand",
+            backgroundColor: "#E5E7EB",
+          },
+        ],
+      };
+
+      const spotIdx = series.datasets.findIndex((s: any) => s.label === "Spot");
+      const ondemandIdx = series.datasets.findIndex(
+        (s: any) => s.label === "Ondemand",
+      );
+
+      this.availabilityZones.forEach((zone: any) => {
+        if (
+          this.regionFilters.find(
+            (z) =>
+              z.vendor_id === zone.vendor_id && z.region_id === zone.region_id,
+          )?.selected
+        ) {
+          series.labels!.push(zone.display_name);
+          if (spotIdx > -1) {
+            series.datasets[spotIdx].data.push(zone.spot?.price || 0);
+          }
+          if (ondemandIdx > -1) {
+            series.datasets[ondemandIdx].data.push(zone.ondemand?.price || 0);
+          }
+        }
+      });
+
+      this.barChartData2 = series;
+    }
+  }
+
+  updateChart3() {
+    const pricesPerZone: any[] = [];
+    if (this.serverDetails.prices.length > 0) {
+      for (let i = 0; i < this.serverDetails.prices.length && i < 10; i++) {
+        const price = this.serverDetails.prices[i];
+        const zone = pricesPerZone.find(
+          (z) =>
+            z.vendor_id === price.vendor_id &&
+            z.region_id === price.region_id &&
+            z.zone_id === price.zone_id,
+        );
+        if (!zone) {
+          const data: any = {
+            vendor_id: price.vendor_id,
+            region_id: price.region_id,
+            zone_id: price.zone_id,
+            display_name: price.zone.display_name,
+            spot: {
+              price: 0,
+              unit: price.unit,
+              count: 0,
+            },
+            ondemand: {
+              price: 0,
+              unit: price.unit,
+              count: 0,
+            },
+          };
+          data[price.allocation || "spot"].price += price.price;
+          data[price.allocation || "spot"].count++;
+
+          pricesPerZone.push(data);
+        } else {
+          zone[price.allocation || "spot"].price += price.price;
+          zone[price.allocation || "spot"].count++;
+        }
+      }
+
+      pricesPerZone.forEach((zone: any) => {
+        if (zone.spot.count)
+          zone.spot.price =
+            Math.round((zone.spot.price / zone.spot.count) * 1000000) / 1000000;
+        if (zone.ondemand.count)
+          zone.ondemand.price =
+            Math.round((zone.ondemand.price / zone.ondemand.count) * 1000000) /
+            1000000;
+      });
+
+      const series: ChartData<"bar"> = {
+        labels: [],
+        datasets: [],
+      };
+
+      series.datasets.push({
+        data: [],
+        label: "Spot",
+        backgroundColor: "#34D399",
+      });
+
+      series.datasets.push({
+        data: [],
+        label: "Ondemand",
+        backgroundColor: "#E5E7EB",
+      });
+
+      pricesPerZone.forEach((zone: any) => {
+        series.labels!.push(zone.display_name);
+        series.datasets[0].data.push(zone.spot?.price || 0);
+        series.datasets[1].data.push(zone.ondemand?.price || 0);
+      });
+
+      this.barChartData3 = series;
+    }
+  }
+
+  getProperty(column: any) {
+    const name = column.id;
+    const prop = (this.serverDetails as any)[name];
+
+    if (name === "hw_virt") {
+      if (prop === true) {
+        return formatBooleanIconHtml(true);
+      }
+
+      if (prop === false) {
+        return formatBooleanIconHtml(false);
+      }
+
+      if (prop === undefined || prop === null) {
+        return "-";
+      }
+
+      if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
+        return "-";
+      }
+    }
+
+    if (prop === undefined || prop === null || typeof prop === "boolean") {
+      return undefined;
+    }
+
+    if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
+      return undefined;
+    }
+
+    if (name === "storages") {
+      let html = "<ul>";
+      (prop as any[]).forEach((s: any) => {
+        html += `<li>${s.size} GB ${s.storage_type ? s.storage_type : ""}${s.description ? " (" + s.description + ")" : ""}</li>`;
+      });
+      html += "</ul>";
+      return html;
+    }
+
+    if (name === "accelerators") {
+      let html = "<ul>";
+      (prop as any[]).forEach((s: any) => {
+        html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
+        const fields = [
+          "memory",
+          "firmware_version",
+          "bios_version",
+          "graphics_clock",
+        ];
+        const field_names = [
+          "Memory amount",
+          "Firmware version",
+          "BIOS version",
+          "Clock rate",
+        ];
+        let extraData = "";
+        for (let i = 0; i < fields.length; i++) {
+          if (s[fields[i]]) {
+            if (extraData.length > 0) {
+              extraData += ", ";
+            } else {
+              extraData += "(";
+            }
+            extraData += `${field_names[i]}: ${s[fields[i]]}`;
+          }
+        }
+        if (extraData.length > 0) {
+          html += extraData + ")";
+        }
+
+        html += "</li>";
+      });
+      html += "</ul>";
+      return html;
+    }
+
+    if (typeof prop === "number") {
+      return this.roundBytes(prop, column.unit);
+    }
+    if (typeof prop === "string") {
+      return prop;
+    }
+    if (Array.isArray(prop)) {
+      return prop.join(", ");
+    }
+
+    return "-";
+  }
+
+  roundBytes(bytes: number, unit: string) {
+    const sizes = ["byte", "KiB", "MiB", "GiB", "TB"];
+
+    let idx = sizes.indexOf(unit);
+
+    if (idx < 0 || bytes === 0) {
+      return `${bytes} ${unit || ""}`;
+    }
+
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, i)).toFixed(0) + " " + sizes[i + idx];
+  }
+
+  getBenchmark(isMulti: boolean) {
+    const score = this.serverDetails.benchmark_scores?.find(
+      (b: any) =>
+        b.benchmark_id === (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
+    )?.score;
+    if (score == null) {
+      return "-";
+    }
+    return formatNumberWithCommas(Math.round(score));
+  }
+
+  formatScore(value: number | undefined | null) {
+    if (value == null) {
+      return "0";
+    }
+    return formatNumberWithCommas(Math.round(value));
+  }
+
+  addToCompare() {
+    this.serverCompare.toggleCompare(
+      !this.serverCompare.isSelected(this.serverDetails),
+      {
+        server: this.serverDetails.api_reference,
+        vendor: this.serverDetails.vendor_id,
+        display_name: this.serverDetails.display_name,
+      },
+    );
+  }
+
+  compareText() {
+    return this.serverCompare.isSelected(this.serverDetails)
+      ? "Don't Compare"
+      : "Compare";
+  }
+
+  private buildPropertyCardSections() {
+    const categorizedSections = this.propertyCategoryDefinitions.map(
+      (definition) => ({
+        name: definition.name,
+        category: definition.category,
+        properties: [] as ServerPropertyRow[],
+      }),
+    );
+
+    this.instanceProperties.forEach((property: any) => {
+      const group = categorizedSections.find(
+        (category) => category.category === property.category,
+      );
+      const value = this.getProperty(property);
+      if (!group || !value || HIDDEN_SERVER_PROPERTY_IDS.has(property.id)) {
+        return;
+      }
+
+      group.properties.push({
+        id: property.id,
+        name: property.name,
+        value,
+        tooltips: property.description
+          ? [
+              {
+                key: property.id,
+                content: property.description,
+              },
+            ]
+          : [],
+      });
+    });
+
+    const metadataProperties =
+      categorizedSections.find((category) => category.category === "meta")
+        ?.properties || [];
+    const cpuProperties =
+      categorizedSections.find((category) => category.category === "cpu")
+        ?.properties || [];
+
+    this.metadataSections = [
+      {
+        name: "Server Metadata",
+        properties: this.dedupeMetadataProperties(metadataProperties),
+      },
+    ];
+    this.processorSections = [
+      {
+        name: "CPU",
+        properties: cpuProperties,
+      },
+    ];
+    this.resourceSections = categorizedSections
+      .filter((category) =>
+        ["memory", "gpu", "storage", "network"].includes(category.category),
+      )
+      .map((category) => ({
+        name: category.name,
+        properties: category.properties,
+      }))
+      .filter((category) => category.properties.length > 0);
+  }
+
+  private dedupeMetadataProperties(
+    properties: ServerPropertyRow[],
+  ): ServerPropertyRow[] {
+    const nameProperty = properties.find((property) => property.id === "name");
+    if (!nameProperty) {
+      return properties;
+    }
+
+    const hiddenMetadataIds = new Set([
+      "server_id",
+      "api_reference",
+      "display_name",
+    ]);
+    const identityPropertyIds = [
+      "server_id",
+      "name",
+      "api_reference",
+      "display_name",
+    ];
+    const matchingIdentityProperties = properties.filter(
+      (property) =>
+        property.id !== "name" &&
+        identityPropertyIds.includes(property.id) &&
+        this.normalizeComparableValue(property.value) ===
+          this.normalizeComparableValue(nameProperty.value),
+    );
+    const shouldAggregateIdentityTooltips =
+      matchingIdentityProperties.length > 0;
+    const nameTooltips = shouldAggregateIdentityTooltips
+      ? this.uniqueTooltips(
+          [nameProperty, ...matchingIdentityProperties].flatMap(
+            (property) => property.tooltips || [],
+          ),
+        )
+      : nameProperty.tooltips || [];
+
+    const filteredProperties = properties.filter((property) => {
+      if (!hiddenMetadataIds.has(property.id)) {
+        return true;
+      }
+
+      if (
+        this.normalizeComparableValue(property.value) !==
+        this.normalizeComparableValue(nameProperty.value)
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+
+    return filteredProperties.map((property) => {
+      if (property.id !== "name") {
+        return property;
+      }
+
+      return {
+        ...property,
+        tooltips: nameTooltips,
+      };
+    });
+  }
+
+  private uniqueTooltips(tooltips: ServerPropertyTooltip[]) {
+    const seen = new Set<string>();
+
+    return tooltips.filter((tooltip) => {
+      if (seen.has(tooltip.key)) {
+        return false;
+      }
+
+      seen.add(tooltip.key);
+      return true;
+    });
+  }
+
+  private normalizeComparableValue(value: string) {
+    return value
+      .replace(/<[^>]*>/g, "")
+      .trim()
+      .toLowerCase();
+  }
+
+  generateSchemaJSON() {
+    // we need 'offers' to be filled to avoid Google critical error
+    if (
+      !this.serverDetails ||
+      !this.serverDetails.prices ||
+      !this.serverDetails.prices.length ||
+      this.hasInactivePrices
+    ) {
+      return;
+    }
+
+    const json: any = {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      name: this.serverDetails.display_name,
+      description: this.serverDescription?.description ?? this.description,
+      category: `Servers > Cloud servers > ${this.serverDetails.vendor.name}`,
+      brand: {
+        "@type": "Organization",
+        name: this.serverDetails.vendor.name,
+        logo: this.serverDetails.vendor.logo,
+        url: this.serverDetails.vendor.homepage,
+      },
+      offers: {
+        "@type": "AggregateOffer",
+        offerCount: this.serverDetails.prices.length,
+        lowPrice: this.serverDetails.prices[0].price,
+        highPrice:
+          this.serverDetails.prices[this.serverDetails.prices.length - 1].price,
+        priceCurrency: this.serverDetails.prices[0].currency,
+      },
+      hasMeasurement: [
+        {
+          "@type": "QuantitativeValue",
+          name: "Logical cores",
+          unitText: "VCPU(s)",
+          value: this.serverDetails.vcpus,
+        },
+        {
+          "@type": "QuantitativeValue",
+          name: "Memory",
+          unitText: "GiB",
+          value: this.serverDetails.memory_amount,
+        },
+        {
+          "@type": "QuantitativeValue",
+          name: "Storage",
+          unitText: "GB",
+          value: this.serverDetails.storage_size,
+        },
+        {
+          "@type": "QuantitativeValue",
+          name: "Accelerators",
+          unitText: "accelerator(s)",
+          value: this.serverDetails.accelerator_count,
+        },
+      ],
+    };
+
+    if (this.similarByFamily.length) {
+      json["isSimilarTo"] = this.similarByFamily.map((s: any) => {
+        return {
+          "@type": "Product",
+          name: `${s.display_name} (${s.vendor_id})`,
+          url: `https://www.sparecores.com/server/${s.vendor_id}/${s.api_reference}`,
+        };
+      });
+    }
+
+    this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
+  }
+
+  diffBy(s: ServerPKs, field: keyof ServerPKs) {
+    return Math.abs(Number(this.serverDetails[field]) - Number(s[field]));
+  }
+
+  diffSpec(s: ServerPKs) {
+    return (
+      Math.abs(
+        Number(this.serverDetails.accelerator_count) -
+          Number(s.accelerator_count),
+      ) *
+        10e6 +
+      Math.abs(Number(this.serverDetails.vcpus) - Number(s.vcpus)) * 10e3 +
+      Math.abs(
+        Number(this.serverDetails.memory_amount) - Number(s.memory_amount),
+      ) /
+        1e3
+    );
+  }
+
+  selectSimilarServerOption(event: any, updateURL: boolean = true) {
+    this.selectedSimilarOption = event;
+    const category = SIMILAR_SERVER_CATEGORIES[this.selectedSimilarOption.key];
+    if (category) {
+      this.similarAbortController?.abort();
+      this.similarAbortController = new AbortController();
+      const { signal } = this.similarAbortController;
+
+      this.keeperAPI
+        .getServerSimilarServers(
+          this.serverDetails.vendor_id,
+          this.serverDetails.api_reference,
+          category,
+          7,
+          { signal },
+        )
+        .then((servers: any) => {
+          if (!signal.aborted) {
+            this.similarServers = servers?.body;
+          }
+        })
+        .catch((error) => {
+          if (!signal.aborted) {
+            console.error(error);
+          }
+        });
+    }
+
+    if (updateURL) {
+      if (this.selectedSimilarOption.key !== this.similarOptions[0].key) {
+        this.location.go(
+          `server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`,
+          `similarCategory=${this.selectedSimilarOption.key}`,
+        );
+      } else {
+        this.location.go(
+          `server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`,
+        );
+      }
+    }
+
+    this.similarDropdown()?.hide();
+  }
+
+  activeFAQChanged(event: any) {
+    this.activeFAQ = event;
+    if (this.activeFAQ > -1) {
+      this.location.go(
+        `server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`,
+        `openFAQ=${event}`,
+      );
+    } else {
+      this.location.go(
+        `server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`,
+      );
+    }
+  }
+
+  openModal() {
+    this.isModalOpen = true;
+    this.modalEmbed?.show();
+  }
+
+  closeModal() {
+    this.modalEmbed?.hide();
+    setTimeout(() => {
+      this.isModalOpen = false;
+    }, 300);
+  }
+
+  loadServerDescriptions(
+    vendor: string,
+    id: string,
+    isCurrent: () => boolean = () => true,
+    params: RequestParams = {},
+  ) {
+    this.keeperAPI
+      .getServerDescriptions(vendor, id, params)
+      .then((response) => {
+        if (!isCurrent()) {
+          return;
+        }
+        if (response?.body) {
+          this.serverDescription = response.body as ServerDescription;
+          this.descriptionsAvailable = true;
+          this.applyServerDescriptionSeo();
+          this.generateSchemaJSON();
+        } else {
+          this.descriptionsAvailable = false;
+        }
+      })
+      .catch(() => {
+        if (!isCurrent()) {
+          return;
+        }
+        this.descriptionsAvailable = false;
+      });
+  }
+
+  applyServerDescriptionSeo() {
+    if (!this.serverDescription || !this.seoKeywords) {
+      return;
+    }
+
+    this.SEOHandler.updateTitleAndMetaTags(
+      this.title,
+      this.serverDescription.meta_description,
+      this.seoKeywords,
+    );
+    this.SEOHandler.updateDescriptions(
+      this.serverDescription.meta_description,
+      this.serverDescription.og_description,
+    );
+  }
+
+  descriptionCardIsFullWidth(): boolean {
+    return (
+      this.lstopoSvgExists === false ||
+      this.isSmallScreen ||
+      this.lstopoSvgWidth > 600
+    );
+  }
+
+  openSummarizeModal(): void {
+    if (!this.descriptionsAvailable || !this.serverDescription) {
+      return;
+    }
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.isSummarizeModalOpen = true;
+
+    if (!this.summarizeModal) {
+      const modalElement = this.summarizeModalRef()?.nativeElement;
+
+      if (modalElement) {
+        this.summarizeModal = new Modal(modalElement, summarizeModalOptions);
+      }
+    }
+
+    this.summarizeModal?.show();
+  }
+
+  closeSummarizeModal(): void {
+    this.summarizeModal?.hide();
+    setTimeout(() => {
+      this.isSummarizeModalOpen = false;
+    }, 300);
+  }
+}

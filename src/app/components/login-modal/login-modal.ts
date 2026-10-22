@@ -1,21 +1,21 @@
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
-import { AUTH_MESSAGES, AuthStateService } from "../../core/auth";
+import { AUTH_MESSAGES, AuthState } from "../../core/auth";
 import { Button } from "../button/button";
-import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
+import { LoadingSpinner } from "../loading-spinner/loading-spinner";
 
 type LoginBusy = "submit" | "github" | "reset" | "resend" | "verify";
 type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
 
 @Component({
   selector: "sc-login-modal",
-  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinnerComponent],
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner],
   templateUrl: "./login-modal.html",
   styleUrl: "../auth-modal.scss",
 })
 export class LoginModal {
-  protected readonly auth = inject(AuthStateService);
+  protected readonly auth = inject(AuthState);
 
   protected step: LoginStep = "login";
   protected emailAddress = "";

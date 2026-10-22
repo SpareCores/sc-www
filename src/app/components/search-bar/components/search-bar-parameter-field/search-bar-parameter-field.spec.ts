@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
-import { NumbersOnlyDirective } from "../../../../directives/numbers-only.directive";
+import { NumbersOnly } from "../../../../directives/numbers-only";
 import { SearchBarParameterField } from "./search-bar-parameter-field";
 import type { SearchBarParameter } from "../../types/search-bar.types";
 
@@ -96,9 +96,7 @@ describe("SearchBarParameterField", () => {
     fixture.componentRef.setInput("filterCategoryId", "price");
     fixture.detectChanges();
 
-    const input = fixture.debugElement.query(
-      By.directive(NumbersOnlyDirective),
-    );
+    const input = fixture.debugElement.query(By.directive(NumbersOnly));
 
     expect(input).not.toBeNull();
     expect(input.nativeElement.id).toBe("filter_price_price_max");

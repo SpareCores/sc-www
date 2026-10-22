@@ -1,0 +1,1222 @@
+import { DOCUMENT, isPlatformBrowser } from "@angular/common";
+import {
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  output,
+  PLATFORM_ID,
+  signal,
+  ViewChild,
+  viewChild,
+} from "@angular/core";
+import { RouterModule } from "@angular/router";
+import {
+  LucideCircleArrowDown,
+  LucideCircleArrowUp,
+  LucideDynamicIcon,
+  LucideInfo,
+  LucideTriangleAlert,
+} from "@lucide/angular";
+import { Allocation } from "../../../../sdk/data-contracts";
+import { AdvisorUi } from "../../pages/advisor/advisor-ui";
+import * as compareTableLayout from "../../pages/shared/compare-table/compare-table-layout.utils";
+import {
+  SERVER_COMPARE_TABLE_HOLDER_ID,
+  SERVER_COMPARE_TABLE_ID,
+} from "../../pages/server-compare/server-compare.constants";
+import {
+  redisChartTemplate,
+  staticWebChartCompareTemplate,
+} from "../../pages/server-details/chartFromBenchmarks";
+import { ExtendedServerDetails } from "../../pages/server-details/server-details";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
+import { CompactNumberPipe } from "../../pipes/compact-number-pipe";
+import { Toast } from "../../services/toast";
+import { Button } from "../button/button";
+import { CompressionChartBuilder } from "../charts/compression/compression-chart-builder";
+import { CompressionChart } from "../charts/compression/compression-chart";
+import {
+  CompressionBenchmarkMeta,
+  CompressionServer,
+} from "../charts/compression/compression-chart.types";
+import { GeekbenchRadarChartBuilder } from "../charts/geekbench/geekbench-radar-chart-builder";
+import { GeekbenchRadarChart } from "../charts/geekbench/geekbench-radar-chart";
+import {
+  GeekbenchBenchmarkMeta,
+  GeekbenchCompareServer,
+} from "../charts/geekbench/geekbench-radar-chart.types";
+import { BenchmarkLineChartBuilder } from "../charts/line/benchmark-line-chart-builder";
+import { BenchmarkLineChart } from "../charts/line/benchmark-line-chart";
+import {
+  LineBenchmarkMeta,
+  LineChartServer,
+  PGBENCH_HEAVY_READ_ONLY_ID,
+} from "../charts/line/benchmark-line-chart.types";
+import { LlmInferenceChartBuilder } from "../charts/llm/llm-inference-chart-builder";
+import { LlmInferenceChart } from "../charts/llm/llm-inference-chart";
+import { LlmChartServer } from "../charts/llm/llm-inference-chart.types";
+import { MemoryChartBuilder } from "../charts/memory/memory-chart-builder";
+import {
+  MemoryBenchmarkMeta,
+  MemoryChartServer,
+} from "../charts/memory/memory-chart.types";
+import { ServerCompareMemoryChart } from "../charts/memory/server-compare-memory-chart";
+import { BenchmarkMultiBarChartBuilder } from "../charts/multi-bar/benchmark-multi-bar-chart-builder";
+import { BenchmarkMultiBarChart } from "../charts/multi-bar/benchmark-multi-bar-chart";
+import {
+  NVBANDWIDTH_TITLE,
+  NvbandwidthCompareBenchmark,
+  NvbandwidthEnvironmentRow,
+  NvbandwidthSection,
+  buildNvbandwidthEnvironmentRows,
+  buildNvbandwidthSections,
+  formatNvbandwidthScore,
+  isNvbandwidthBenchmark,
+} from "../charts/nvbandwidth/nvbandwidth.utils";
+import {
+  BenchmarkMultiBarChartItem,
+  MultiBarBenchmarkMeta,
+  MultiBarServer,
+} from "../charts/multi-bar/benchmark-multi-bar-chart.types";
+import { ChartTooltip } from "../charts/shared/chart-tooltip";
+import {
+  getBenchmarkMetaNote,
+  getBenchmarkMetaNotes,
+} from "../charts/shared/chart-tooltip.utils";
+import { CompareChartLegendVisibility } from "../charts/shared/compare-chart-legend-visibility";
+import {
+  formatCompareDeltaLabel,
+  formatCompareSignedPercentageDeltaLabel,
+  formatNumberWithCommas,
+  getBestBenchmarkCellStyle,
+  getBestPropertyCellStyle,
+  getCompareRawNumericPropertyValue,
+  getServerPropertyValue,
+  invertCompareDeltaTone,
+  isCompareBaselineServer,
+  isCompareLowerIsBetterProperty,
+  isCompareMetadataPropertyHidden,
+  isComparePropertyDeltaEligible,
+  toCompareDeltaView,
+  type CompareDeltaView,
+} from "../charts/shared/server-compare-table.utils";
+import {
+  STRESS_NG_METRIC_OPTIONS,
+  STRESS_NG_TITLE,
+  StressNgCompareBenchmark,
+  StressNgMetric,
+  buildStressNgCompareSections,
+} from "../charts/stress-ng-full/stress-ng-full.utils";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { WorkloadProfilePanel } from "../charts/workload-profile/workload-profile-panel";
+import {
+  WorkloadProfileBenchmarkMeta,
+  WorkloadProfileCompareBenchmark,
+  WorkloadProfileCompareServer,
+} from "../charts/workload-profile/workload-profile-radar-chart.types";
+import {
+  filterWorkloadProfileBenchmarks,
+  formatWorkloadProfileLabel,
+  hasWorkloadProfileChartData,
+  isWorkloadProfileBenchmark,
+  WORKLOAD_PROFILE_INFO_TOOLTIP,
+} from "../charts/workload-profile/workload-profile.utils";
+
+@Component({
+  selector: "sc-server-compare-charts",
+  imports: [
+    LucideDynamicIcon,
+    LucideCircleArrowDown,
+    LucideCircleArrowUp,
+    LucideInfo,
+    LucideTriangleAlert,
+    RouterModule,
+    CompactNumberPipe,
+    BenchmarkIconPipe,
+    BenchmarkLineChart,
+    CompressionChart,
+    GeekbenchRadarChart,
+    LlmInferenceChart,
+    ServerCompareMemoryChart,
+    BenchmarkMultiBarChart,
+    WorkloadProfilePanel,
+    Button,
+    FlowbiteDropdown,
+  ],
+  providers: [CompareChartLegendVisibility],
+  templateUrl: "./server-compare-charts.html",
+  styleUrl: "./server-compare-charts.scss",
+})
+export class ServerCompareCharts implements OnChanges, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private document = inject(DOCUMENT);
+  private toastService = inject(Toast);
+  private tooltipService = inject(ChartTooltip);
+  private geekbenchBuilder = inject(GeekbenchRadarChartBuilder);
+  private multiBarBuilder = inject(BenchmarkMultiBarChartBuilder);
+  private memoryBuilder = inject(MemoryChartBuilder);
+  private compressionBuilder = inject(CompressionChartBuilder);
+  private lineBuilder = inject(BenchmarkLineChartBuilder);
+  private llmBuilder = inject(LlmInferenceChartBuilder);
+  private advisorUi = inject(AdvisorUi);
+  private legendVisibility = inject(CompareChartLegendVisibility);
+
+  @Input() servers: ExtendedServerDetails[] = [];
+  @Input() baselineServer: ExtendedServerDetails | null = null;
+  @Input() instanceProperties: any[] = [];
+  @Input() benchmarkMeta: any;
+  @Input() benchmarkCategories: any[] = [];
+  @Input() instancePropertyCategories: any[] = [];
+  @Input() isEmbedded = false;
+  @Input() showChart = "all";
+  @Input() showZone = false;
+
+  readonly layoutChanged = output<void>();
+  readonly isCompareMetadataPropertyHidden = isCompareMetadataPropertyHidden;
+  readonly isBaselineServer = isCompareBaselineServer;
+  readonly nvbandwidthTitle = NVBANDWIDTH_TITLE;
+  readonly formatNvbandwidthScore = formatNvbandwidthScore;
+
+  @ViewChild("tooltipcompareDefault") tooltip!: ElementRef<HTMLElement>;
+
+  tooltipContent = "";
+  tooltipHtml = "";
+  comparePinnedRowLayout =
+    compareTableLayout.resolveCompareUnpinnedRowLayout(0);
+  private pinnedRowLayoutFrameId: number | null = null;
+
+  bestCellStyle = "font-weight: 600; color: #34D399";
+  SSCoreTooltip =
+    "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour -- when otherwise not noted, using the best (usually spot) price of all zones.";
+
+  multiBarCharts: BenchmarkMultiBarChartItem[] = [
+    {
+      chart: JSON.parse(JSON.stringify(staticWebChartCompareTemplate)),
+      data: [],
+      show_more: false,
+      hidden: false,
+    },
+    {
+      chart: JSON.parse(JSON.stringify(redisChartTemplate)),
+      data: [],
+      show_more: false,
+      hidden: false,
+    },
+  ];
+
+  clipboardIcon = "clipboard";
+  workloadProfileShowMore = false;
+  nvbandwidthSections: NvbandwidthSection<
+    number | string,
+    NvbandwidthCompareBenchmark
+  >[] = [];
+  nvbandwidthEnvironmentRows: NvbandwidthEnvironmentRow[] = [];
+
+  readonly stressNgTitle = STRESS_NG_TITLE;
+  readonly stressNgMetricOptions = STRESS_NG_METRIC_OPTIONS;
+  stressNgMetricDropdown = viewChild<FlowbiteDropdown>(
+    "stressNgMetricDropdown",
+  );
+  stressNgSubcategoryDropdown = viewChild<FlowbiteDropdown>(
+    "stressNgSubcategoryDropdown",
+  );
+  private stressNgBenchmarks = signal<StressNgCompareBenchmark[]>([]);
+  stressNgMetric = signal<StressNgMetric>("multi");
+  private stressNgSelectedSubcategory = signal<string | null>(null);
+  stressNgSections = computed(() =>
+    buildStressNgCompareSections(
+      this.stressNgBenchmarks(),
+      this.stressNgMetric(),
+    ),
+  );
+  stressNgSection = computed(() => {
+    const sections = this.stressNgSections();
+    return (
+      sections.find(
+        (section) => section.name === this.stressNgSelectedSubcategory(),
+      ) ?? sections[0]
+    );
+  });
+  stressNgMetricName = computed(
+    () =>
+      this.stressNgMetricOptions.find(
+        (option) => option.id === this.stressNgMetric(),
+      )?.name ?? "",
+  );
+
+  ngOnChanges() {
+    this.comparePinnedRowLayout =
+      compareTableLayout.resolveCompareUnpinnedRowLayout(this.servers.length);
+    this.setup();
+    if (isPlatformBrowser(this.platformId)) {
+      const table = this.document.getElementById(SERVER_COMPARE_TABLE_ID);
+      table?.style.removeProperty("min-width");
+      compareTableLayout.resetCompareTableHolderScroll(
+        this.document,
+        SERVER_COMPARE_TABLE_HOLDER_ID,
+      );
+      this.schedulePinnedRowLayoutUpdate();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.pinnedRowLayoutFrameId !== null) {
+      cancelAnimationFrame(this.pinnedRowLayoutFrameId);
+      this.pinnedRowLayoutFrameId = null;
+    }
+  }
+
+  setup() {
+    this.legendVisibility.clear();
+
+    if (
+      this.servers.length === 0 ||
+      !this.benchmarkMeta ||
+      !this.instanceProperties ||
+      !this.benchmarkCategories
+    ) {
+      return;
+    }
+
+    this.multiBarCharts.forEach((chartTemplate) => {
+      this.multiBarBuilder.initializeCompareTemplate(
+        chartTemplate.chart,
+        this.benchmarkMeta as MultiBarBenchmarkMeta[],
+      );
+
+      const benchmarks = chartTemplate.chart.options.map((o) => o.benchmark_id);
+      chartTemplate.data = (
+        this.benchmarkMeta as MultiBarBenchmarkMeta[]
+      ).filter((b) => benchmarks.includes(b.benchmark_id));
+
+      chartTemplate.hidden = !(
+        chartTemplate.chart.id === this.showChart || this.showChart === "all"
+      );
+    });
+
+    this.nvbandwidthSections = buildNvbandwidthSections(
+      this.benchmarkMeta as NvbandwidthCompareBenchmark[],
+      (benchmark) => {
+        const values = benchmark.configs?.[0]?.values;
+        return values?.some((value) => typeof value === "number")
+          ? values
+          : null;
+      },
+    );
+    this.nvbandwidthEnvironmentRows = buildNvbandwidthEnvironmentRows(
+      this.benchmarkMeta,
+      this.servers.map((server) => server.benchmark_scores),
+    );
+    this.stressNgBenchmarks.set([
+      ...((this.benchmarkMeta ?? []) as StressNgCompareBenchmark[]),
+    ]);
+  }
+
+  isChartShown(id: string): boolean {
+    if (!this.showChart || this.showChart === "all") {
+      return true;
+    }
+    return this.showChart === id;
+  }
+
+  toUpper(text: string) {
+    return text?.toUpperCase();
+  }
+
+  isBrowser() {
+    return isPlatformBrowser(this.platformId);
+  }
+
+  getServerColumnWidth(server: ExtendedServerDetails) {
+    const displayNameLength = server.display_name?.length ?? 0;
+    return `max(10.5rem, ${displayNameLength + 3}ch)`;
+  }
+
+  private schedulePinnedRowLayoutUpdate(): void {
+    if (this.pinnedRowLayoutFrameId !== null) {
+      cancelAnimationFrame(this.pinnedRowLayoutFrameId);
+    }
+
+    this.pinnedRowLayoutFrameId = requestAnimationFrame(() => {
+      this.pinnedRowLayoutFrameId = null;
+      compareTableLayout.applyCompareFirstColumnWidth(
+        this.document,
+        SERVER_COMPARE_TABLE_ID,
+      );
+      this.comparePinnedRowLayout =
+        compareTableLayout.resolveComparePinnedRowLayout({
+          document: this.document,
+          holderId: SERVER_COMPARE_TABLE_HOLDER_ID,
+          tableId: SERVER_COMPARE_TABLE_ID,
+          itemCount: this.servers.length,
+          isBrowser: this.isBrowser(),
+          isEmbedded: this.isEmbedded,
+        });
+      this.layoutChanged.emit();
+    });
+  }
+
+  getCompareHeaderSpacerColSpan() {
+    return compareTableLayout.getCompareHeaderSpacerColSpan(
+      this.servers.length,
+    );
+  }
+
+  getBenchmark(server: ExtendedServerDetails, isMulti: boolean) {
+    return (
+      server.benchmark_scores
+        ?.find(
+          (b) =>
+            b.benchmark_id ===
+            (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
+        )
+        ?.score?.toFixed(0) || "-"
+    );
+  }
+
+  getSScore(server: ExtendedServerDetails) {
+    if (!server.score_per_price) {
+      return "-";
+    }
+    return this.numberWithCommas(Math.round(server.score_per_price)) + "/USD";
+  }
+
+  getSScoreCustom(server: ExtendedServerDetails, price: number | undefined) {
+    let baseline =
+      server.benchmark_scores?.find((b) => b.benchmark_id === "stress_ng:bestn")
+        ?.score || 0;
+    if (!baseline || !price) {
+      return "-";
+    }
+    return this.numberWithCommas(Math.round(baseline / price)) + "/USD";
+  }
+
+  getBestPrice(
+    server: ExtendedServerDetails,
+    allocation: Allocation | string = Allocation.Ondemand,
+  ) {
+    let priceData = null;
+
+    switch (allocation) {
+      case Allocation.Ondemand:
+        priceData = server.bestOndemandPrice;
+        break;
+      case Allocation.Spot:
+        priceData = server.bestSpotPrice;
+        break;
+    }
+
+    if (priceData) {
+      return `${priceData.price} ${priceData.currency}`;
+    } else {
+      return "-";
+    }
+  }
+
+  getBestZone(
+    server: ExtendedServerDetails,
+    allocation: Allocation | string = Allocation.Ondemand,
+  ) {
+    let priceData = null;
+
+    switch (allocation) {
+      case Allocation.Ondemand:
+        priceData = server.bestOndemandPrice;
+        break;
+      case Allocation.Spot:
+        priceData = server.bestSpotPrice;
+        break;
+    }
+
+    if (priceData) {
+      return `${priceData.zone.display_name}`;
+    } else {
+      return "-";
+    }
+  }
+
+  isBestPrice(
+    server: ExtendedServerDetails,
+    allocation: Allocation | string = Allocation.Ondemand,
+  ): boolean {
+    const prices = server.prices
+      .filter((x) => x.allocation === allocation)
+      .sort((a, b) => a.price - b.price);
+
+    if (!prices || prices.length === 0) {
+      return false;
+    }
+
+    const prop = server.prices
+      .filter((x) => x.allocation === allocation)
+      .sort((a, b) => a.price - b.price)[0]?.price;
+
+    if (prop === undefined || prop === null || prop === 0) {
+      return false;
+    }
+
+    let isBest = true;
+    this.servers?.forEach((s: ExtendedServerDetails) => {
+      const temp = s.prices
+        .filter((x) => x.allocation === allocation)
+        .sort((a, b) => a.price - b.price)[0]?.price;
+      if (temp < prop) {
+        isBest = false;
+      }
+    });
+    return isBest;
+  }
+
+  getBestPriceStyle(
+    server: ExtendedServerDetails,
+    allocation: Allocation | string = Allocation.Ondemand,
+  ) {
+    return this.isBestPrice(server, allocation) ? this.bestCellStyle : "";
+  }
+
+  isBestSSCore(server: ExtendedServerDetails): boolean {
+    const prop = server.score_per_price;
+
+    if (prop === undefined || prop === null || prop === 0) {
+      return false;
+    }
+
+    let isBest = true;
+    this.servers?.forEach((s: ExtendedServerDetails) => {
+      const temp = s.score_per_price || -1;
+      if (temp > prop) {
+        isBest = false;
+      }
+    });
+    return isBest;
+  }
+
+  getSScoreStyle(server: ExtendedServerDetails) {
+    return this.isBestSSCore(server) ? this.bestCellStyle : "";
+  }
+
+  getBecnchmarkStyle(server: ExtendedServerDetails, isMulti: boolean) {
+    const prop = server.benchmark_scores?.find(
+      (b) =>
+        b.benchmark_id === (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
+    )?.score;
+
+    if (prop === undefined || prop === null || prop === 0) {
+      return "";
+    }
+
+    let isBest = true;
+    this.servers?.forEach((s: ExtendedServerDetails) => {
+      const temp =
+        s.benchmark_scores?.find(
+          (b) =>
+            b.benchmark_id ===
+            (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
+        )?.score || 0;
+      if (temp > prop) {
+        isBest = false;
+      }
+    });
+    return isBest ? this.bestCellStyle : "";
+  }
+
+  isBestStyle(
+    value: number | string | null | undefined,
+    values: Array<number | string | null | undefined>,
+    benchmark: { higher_is_better?: boolean | null } | null | undefined,
+  ) {
+    return getBestBenchmarkCellStyle(
+      value,
+      values,
+      benchmark,
+      this.bestCellStyle,
+    );
+  }
+
+  getBestCellStyle(name: string, server: ExtendedServerDetails) {
+    return getBestPropertyCellStyle(
+      name,
+      server,
+      this.servers,
+      this.bestCellStyle,
+    );
+  }
+
+  toggleBenchmark(benchmark: any) {
+    benchmark.collapsed = !benchmark.collapsed;
+    this.layoutChanged.emit();
+  }
+
+  benchmarkIcon(benchmark: any) {
+    return benchmark.collapsed ? "chevron-down" : "chevron-up";
+  }
+
+  public numberWithCommas(x: number) {
+    return formatNumberWithCommas(x);
+  }
+
+  readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
+  readonly formatWorkloadProfileLabel = formatWorkloadProfileLabel;
+
+  showTooltip(el: MouseEvent, content?: string, autoHide = false) {
+    this.tooltipHtml = "";
+    const didShow = this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
+
+    if (didShow && autoHide) {
+      setTimeout(() => {
+        this.hideTooltip();
+      }, 3000);
+    }
+  }
+
+  showWarningTooltip(el: MouseEvent, content?: string) {
+    this.tooltipHtml = "";
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      variant: "warning",
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
+  }
+
+  showWarningSectionTooltip(el: MouseEvent, content?: string) {
+    this.tooltipHtml = "";
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
+  }
+
+  showTooltipChart(el: MouseEvent, type: string) {
+    this.tooltipHtml = "";
+    const content = this.benchmarkMeta.find(
+      (b: any) => b.benchmark_id === type,
+    )?.description;
+
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
+  }
+
+  showGeekbenchInfoTooltip(el: MouseEvent): void {
+    const geekbenchMeta = this.geekbenchBenchmarkMeta.filter((b) =>
+      b.benchmark_id?.includes("geekbench"),
+    );
+    const html = this.geekbenchBuilder.buildInfoTooltipHtml(geekbenchMeta);
+    if (!html || !this.tooltip?.nativeElement) {
+      return;
+    }
+    this.tooltipContent = "";
+    this.tooltipHtml = html;
+    this.tooltipService.show(this.tooltip.nativeElement, el);
+  }
+
+  hideTooltip() {
+    this.tooltipService.hide(this.tooltip?.nativeElement);
+    this.tooltipHtml = "";
+  }
+
+  getBenchmarkNote(benchmarkId: string, includeBenchmarkName = true): string {
+    return (
+      getBenchmarkMetaNote(this.benchmarkMeta, benchmarkId, {
+        includeBenchmarkName,
+      }) || ""
+    );
+  }
+
+  getBenchmarkRowNote(benchmarkId: string): string {
+    return this.getBenchmarkNote(benchmarkId, false);
+  }
+
+  getGeekbenchMetaNote(): string {
+    return getBenchmarkMetaNotes(
+      this.benchmarkMeta,
+      (this.benchmarkMeta ?? [])
+        .filter((benchmark: { benchmark_id?: string }) =>
+          benchmark.benchmark_id?.includes("geekbench"),
+        )
+        .map((benchmark: { benchmark_id?: string }) => benchmark.benchmark_id),
+    );
+  }
+
+  getLlmMetaNote(): string {
+    return getBenchmarkMetaNotes(this.benchmarkMeta, [
+      "llm_speed:prompt_processing",
+      "llm_speed:text_generation",
+    ]);
+  }
+
+  getWorkloadProfileMetaNote(): string {
+    return getBenchmarkMetaNotes(
+      this.benchmarkMeta,
+      this.getWorkloadProfileBenchmarks().map(
+        (benchmark) => benchmark.benchmark_key ?? benchmark.benchmark_id,
+      ),
+    );
+  }
+
+  getProperty(
+    column: { id: string; unit?: string | null },
+    server: ExtendedServerDetails,
+  ) {
+    return getServerPropertyValue(column, server);
+  }
+
+  getPropertyDelta(
+    propertyId: string,
+    server: ExtendedServerDetails,
+  ): CompareDeltaView | null {
+    if (
+      !this.baselineServer ||
+      isCompareBaselineServer(server, this.baselineServer) ||
+      !isComparePropertyDeltaEligible(propertyId, server)
+    ) {
+      return null;
+    }
+
+    const delta = this.advisorUi.buildComparableResourceDelta(
+      getCompareRawNumericPropertyValue(server, propertyId),
+      getCompareRawNumericPropertyValue(this.baselineServer, propertyId),
+    );
+    const lowerIsBetter = isCompareLowerIsBetterProperty(propertyId);
+
+    return toCompareDeltaView(
+      lowerIsBetter
+        ? { ...delta, tone: invertCompareDeltaTone(delta.tone) }
+        : delta,
+      lowerIsBetter
+        ? formatCompareSignedPercentageDeltaLabel
+        : formatCompareDeltaLabel,
+    );
+  }
+
+  getBestPriceDelta(
+    server: ExtendedServerDetails,
+    allocation: Allocation | string = Allocation.Ondemand,
+  ): CompareDeltaView | null {
+    if (
+      !this.baselineServer ||
+      isCompareBaselineServer(server, this.baselineServer)
+    ) {
+      return null;
+    }
+
+    const candidatePrice =
+      allocation === Allocation.Spot
+        ? server.bestSpotPrice?.price
+        : server.bestOndemandPrice?.price;
+    const baselinePrice =
+      allocation === Allocation.Spot
+        ? this.baselineServer.bestSpotPrice?.price
+        : this.baselineServer.bestOndemandPrice?.price;
+
+    return toCompareDeltaView(
+      this.advisorUi.buildPriceDelta(candidatePrice, baselinePrice),
+      formatCompareSignedPercentageDeltaLabel,
+    );
+  }
+
+  getBenchmarkValueDelta(
+    value: number | string | null | undefined,
+    values: Array<number | string | null | undefined>,
+    serverIndex: number,
+    benchmark: { higher_is_better?: boolean | null } | null | undefined,
+  ): CompareDeltaView | null {
+    if (!this.baselineServer || !this.servers.length) {
+      return null;
+    }
+
+    const baselineIndex = this.servers.findIndex((server) =>
+      isCompareBaselineServer(server, this.baselineServer),
+    );
+
+    if (baselineIndex < 0 || serverIndex === baselineIndex) {
+      return null;
+    }
+
+    const candidateValue = this.toNumericBenchmarkValue(value);
+    const baselineValue = this.toNumericBenchmarkValue(values[baselineIndex]);
+
+    if (candidateValue === null || baselineValue === null) {
+      return null;
+    }
+
+    const delta = this.advisorUi.buildComparableResourceDelta(
+      candidateValue,
+      baselineValue,
+    );
+    const lowerIsBetter = benchmark?.higher_is_better === false;
+
+    return toCompareDeltaView(
+      lowerIsBetter
+        ? { ...delta, tone: invertCompareDeltaTone(delta.tone) }
+        : delta,
+      lowerIsBetter
+        ? formatCompareSignedPercentageDeltaLabel
+        : formatCompareDeltaLabel,
+    );
+  }
+
+  private toNumericBenchmarkValue(
+    value: number | string | null | undefined,
+  ): number | null {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+
+    if (typeof value === "string" && value !== "-" && value.trim() !== "") {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    return null;
+  }
+
+  shouldShowPropertyDeltaRow(propertyId: string): boolean {
+    if (!this.baselineServer) {
+      return false;
+    }
+
+    return this.servers.some(
+      (server) =>
+        !isCompareBaselineServer(server, this.baselineServer) &&
+        isComparePropertyDeltaEligible(propertyId, server),
+    );
+  }
+
+  syncMultiBarHeaderOption(
+    chartItem: BenchmarkMultiBarChartItem,
+    optionIndex: number,
+  ): void {
+    if (!chartItem.chart.options[optionIndex]) {
+      return;
+    }
+
+    chartItem.chart.selectedOption = optionIndex;
+  }
+
+  syncMultiBarHeaderSecondaryOption(
+    chartItem: BenchmarkMultiBarChartItem,
+    optionIndex: number,
+  ): void {
+    if (!chartItem.chart.secondaryOptions?.[optionIndex]) {
+      return;
+    }
+
+    chartItem.chart.selectedSecondaryOption = optionIndex;
+  }
+
+  hasMultipleChartData(chartItem: BenchmarkMultiBarChartItem): boolean {
+    return (chartItem.data?.length ?? 0) > 1;
+  }
+
+  isPassmarkBenchmarkCategory(categoryId: string): boolean {
+    return categoryId === "passmark_cpu" || categoryId === "passmark_other";
+  }
+
+  selectStressNgMetric(metric: StressNgMetric): void {
+    this.stressNgMetric.set(metric);
+    this.stressNgMetricDropdown()?.hide();
+  }
+
+  selectStressNgSubcategory(name: string): void {
+    this.stressNgSelectedSubcategory.set(name);
+    this.stressNgSubcategoryDropdown()?.hide();
+  }
+
+  formatStressNgScalingValue(value: number | string): string {
+    return typeof value === "number" ? `${value.toFixed(2)}×` : "-";
+  }
+
+  stressNgExactValue(value: number | string): string | undefined {
+    return typeof value === "number" ? value.toString() : undefined;
+  }
+
+  isBrowserEnvironment(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
+  isTableOnlyChartShown(): boolean {
+    return (
+      this.showChart === "nvbandwidth" ||
+      this.showChart === "stress_ng_full" ||
+      this.isPassmarkBenchmarkCategory(this.showChart)
+    );
+  }
+
+  hasCompareChart(categoryId: string): boolean {
+    switch (categoryId) {
+      case "bw_mem":
+        return (
+          this.memoryBuilder.getAvailableCompareOptions(
+            this.memoryCompareServers,
+          ).length > 0
+        );
+      case "openssl":
+        return !!this.lineBenchmarkMeta?.find(
+          (benchmark) => benchmark.benchmark_id === "openssl",
+        )?.configs?.length;
+      case "stress_ng":
+      case "stress_ng_pct": {
+        const dataSet = this.lineBenchmarkMeta?.find(
+          (benchmark) => benchmark.benchmark_id === "stress_ng:div16",
+        );
+        if (!dataSet?.configs?.length) {
+          return false;
+        }
+        const cores = new Set<number>();
+        for (const config of dataSet.configs) {
+          const value = config.config?.cores;
+          if (typeof value === "number") {
+            cores.add(value);
+          }
+        }
+        return cores.size > 1;
+      }
+      case "compress": {
+        const option = this.compressionBuilder.getCompareOptions(
+          this.compressionBenchmarkMeta,
+        )[0];
+        if (!option) {
+          return false;
+        }
+        return !!this.compressionBuilder.buildCompareCharts({
+          servers: this.compressionServers,
+          selectedOption: option,
+          compressOptionsBase: {},
+          decompressOptionsBase: {},
+        });
+      }
+      case "geekbench":
+      case "geekbench_single":
+      case "geekbench_multi":
+        return !!this.geekbenchBuilder.buildCompareCharts({
+          servers: this.geekbenchCompareServers,
+          benchmarkMeta: this.geekbenchBenchmarkMeta ?? [],
+        });
+      case "llm_inference": {
+        const models = new Set(
+          this.llmBuilder
+            .getAvailableModels(this.benchmarkMeta)
+            .map((model) => model.value),
+        );
+        if (!models.size) {
+          return false;
+        }
+        return this.llmCompareServers.some((server) =>
+          (server.benchmark_scores ?? []).some(
+            (score) =>
+              models.has(String(score.config?.model)) &&
+              (score.benchmark_id === "llm_speed:prompt_processing" ||
+                score.benchmark_id === "llm_speed:text_generation") &&
+              typeof score.config?.tokens === "number" &&
+              score.score != null,
+          ),
+        );
+      }
+      default:
+        return false;
+    }
+  }
+
+  hasEmbeddableChart(chartId: string): boolean {
+    switch (chartId) {
+      case "generic":
+        return true;
+      case "workload_profile":
+        return this.hasVisibleWorkloadProfileChart();
+      case "nvbandwidth":
+        return this.nvbandwidthSections.length > 0;
+      case "stress_ng_full":
+        return this.stressNgSections().length > 0;
+      case "pgbench":
+        return this.hasPgbenchCompareChart();
+    }
+
+    const multiBarChart = this.multiBarCharts.find(
+      (chartItem) => chartItem.chart.id === chartId,
+    );
+    if (multiBarChart) {
+      return this.hasMultiBarCompareChart(multiBarChart);
+    }
+
+    const categoryId =
+      chartId === "geekbench_single" || chartId === "geekbench_multi"
+        ? "geekbench"
+        : chartId;
+    const category = this.benchmarkCategories.find(
+      (benchmarkCategory) => benchmarkCategory.id === categoryId,
+    );
+    if (!category?.data?.length) {
+      return false;
+    }
+
+    return (
+      this.isPassmarkBenchmarkCategory(chartId) || this.hasCompareChart(chartId)
+    );
+  }
+
+  hasMultiBarCompareChart(chartItem: BenchmarkMultiBarChartItem): boolean {
+    return !!this.multiBarBuilder.buildCompareChart(
+      chartItem.chart,
+      this.benchmarkMeta as MultiBarBenchmarkMeta[],
+      this.multiBarCompareServers,
+    );
+  }
+
+  hasPgbenchCompareChart(): boolean {
+    if (!this.isChartShown("pgbench")) {
+      return false;
+    }
+    return !!this.lineBuilder.buildComparePgbenchChart({
+      servers: this.lineCompareServers,
+      scoreUnit: this.pgbenchMeta?.unit,
+      optionsBase: {},
+    });
+  }
+
+  private get pgbenchMeta() {
+    return this.benchmarkMeta?.find(
+      (benchmark: { benchmark_id?: string }) =>
+        benchmark.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID,
+    );
+  }
+
+  get pgbenchTitle(): string {
+    return this.pgbenchMeta?.name || "PostgreSQL heavy read-only throughput";
+  }
+
+  get pgbenchInfoTooltip(): string {
+    return this.pgbenchMeta?.description || "";
+  }
+
+  get pgbenchNoteTooltip(): string {
+    return this.getBenchmarkNote(PGBENCH_HEAVY_READ_ONLY_ID, false);
+  }
+
+  get compressionServers(): CompressionServer[] {
+    return this.servers as unknown as CompressionServer[];
+  }
+
+  get multiBarCompareServers(): MultiBarServer[] {
+    return this.servers as unknown as MultiBarServer[];
+  }
+
+  get compressionBenchmarkMeta(): CompressionBenchmarkMeta[] {
+    return this.benchmarkMeta as CompressionBenchmarkMeta[];
+  }
+
+  get memoryCompareServers(): MemoryChartServer[] {
+    return this.servers as unknown as MemoryChartServer[];
+  }
+
+  get memoryBenchmarkMeta(): MemoryBenchmarkMeta[] {
+    return this.benchmarkMeta as unknown as MemoryBenchmarkMeta[];
+  }
+
+  get geekbenchCompareServers(): GeekbenchCompareServer[] {
+    return this.servers as unknown as GeekbenchCompareServer[];
+  }
+
+  get lineCompareServers(): LineChartServer[] {
+    return this.servers as unknown as LineChartServer[];
+  }
+
+  get lineBenchmarkMeta(): LineBenchmarkMeta[] {
+    return this.benchmarkMeta as unknown as LineBenchmarkMeta[];
+  }
+
+  get geekbenchBenchmarkMeta(): GeekbenchBenchmarkMeta[] {
+    return this.benchmarkMeta as unknown as GeekbenchBenchmarkMeta[];
+  }
+
+  get llmCompareServers(): LlmChartServer[] {
+    return this.servers as unknown as LlmChartServer[];
+  }
+
+  getWorkloadProfileBenchmarks(): WorkloadProfileCompareBenchmark[] {
+    return filterWorkloadProfileBenchmarks(
+      (this.benchmarkMeta ?? []) as WorkloadProfileCompareBenchmark[],
+    );
+  }
+
+  hasVisibleWorkloadProfileChart(): boolean {
+    return hasWorkloadProfileChartData({
+      benchmarkMeta: this.benchmarkMeta ?? [],
+      servers: this.workloadProfileCompareServers,
+    });
+  }
+
+  getVisibleInstanceProperties(propertyCategory: {
+    category: string;
+    properties: Array<{
+      id: string;
+      name: string;
+      description?: string;
+    }>;
+  }) {
+    return propertyCategory.properties.filter(
+      (property) =>
+        !isCompareMetadataPropertyHidden(
+          propertyCategory.category,
+          property.id,
+        ),
+    );
+  }
+
+  get workloadProfileCompareServers(): WorkloadProfileCompareServer[] {
+    return this.servers as unknown as WorkloadProfileCompareServer[];
+  }
+
+  get workloadProfileBenchmarkMeta(): WorkloadProfileBenchmarkMeta[] {
+    return this.benchmarkMeta as unknown as WorkloadProfileBenchmarkMeta[];
+  }
+
+  toggleWorkloadProfileDetails(): void {
+    this.workloadProfileShowMore = !this.workloadProfileShowMore;
+    this.layoutChanged.emit();
+  }
+
+  getUncategorizedBenchmarksCategories() {
+    return this.benchmarkMeta?.filter((b: any) =>
+      this.isUncagorizedBenchmark(b),
+    );
+  }
+
+  isUncagorizedBenchmark(benchmark: any) {
+    let found = false;
+    this.multiBarCharts.forEach((chartTemplate) => {
+      const benchmarks = chartTemplate.chart.options.map(
+        (o: any) => o.benchmark_id,
+      );
+      found = found || benchmarks.includes(benchmark.benchmark_id);
+    });
+    return (
+      !isWorkloadProfileBenchmark(benchmark) &&
+      !found &&
+      !String(benchmark.benchmark_id ?? "").startsWith("stress_ng:") &&
+      !String(benchmark.benchmark_id ?? "").startsWith("pgbench:") &&
+      !isNvbandwidthBenchmark(benchmark.benchmark_id) &&
+      !this.benchmarkCategories.some((c: any) =>
+        c.benchmarks.includes(benchmark.benchmark_id),
+      )
+    );
+  }
+
+  toggleBenchmarkCategory(category: BenchmarkMultiBarChartItem): void {
+    category.show_more = !category.show_more;
+
+    // single item lists are auto toggled
+    if (category.data?.length === 1) {
+      category.data[0].collapsed = !category.show_more;
+    }
+
+    this.layoutChanged.emit();
+  }
+
+  clipboardURL(event: any, fragment?: string) {
+    let url = window.location.href;
+
+    if (fragment) {
+      // replace url fragment
+      url = url.replace(/#.*$/, "") + "#" + fragment;
+    }
+
+    navigator.clipboard.writeText(url);
+    this.clipboardIcon = "check";
+
+    this.toastService.show({
+      title: "Link copied to clipboard!",
+      type: "success",
+      duration: 2000,
+    });
+
+    setTimeout(() => {
+      this.clipboardIcon = "clipboard";
+    }, 3000);
+  }
+
+  serializeConfig(config: any) {
+    let result = "<ul>";
+    Object.keys(config).forEach((key) => {
+      result += `<li>${key.replace("_", " ")}: ${config[key]} </li>`;
+    });
+
+    result += "</ul>";
+
+    return result;
+  }
+
+  viewServer(server: ExtendedServerDetails) {
+    window.open(
+      `/server/${server.vendor_id}/${server.api_reference}`,
+      "_blank",
+    );
+  }
+
+  sortLLMConfigs(configs: any[]): any[] {
+    if (!configs) return [];
+
+    const modelOrder = [
+      "SmolLM-135M.Q4_K_M.gguf",
+      "qwen1_5-0_5b-chat-q4_k_m.gguf",
+      "gemma-2b.Q4_K_M.gguf",
+      "llama-7b.Q4_K_M.gguf",
+      "phi-4-q4.gguf",
+      "Llama-3.3-70B-Instruct-Q4_K_M.gguf",
+    ];
+
+    return configs.sort((a, b) => {
+      const modelA = a.config?.model;
+      const modelB = b.config?.model;
+      const tokensA = a.config?.tokens;
+      const tokensB = b.config?.tokens;
+
+      // model might be missing?
+      if (!modelA || !modelB) return 0;
+
+      const indexA = modelOrder.indexOf(modelA);
+      const indexB = modelOrder.indexOf(modelB);
+
+      if (indexA !== -1 && indexB !== -1) {
+        if (indexA !== indexB) return indexA - indexB;
+      } else if (indexA !== -1) {
+        return -1;
+      } else if (indexB !== -1) {
+        return 1;
+      } else {
+        const modelCompare = modelA.localeCompare(modelB);
+        if (modelCompare !== 0) return modelCompare;
+      }
+
+      if (tokensA !== undefined && tokensB !== undefined) {
+        return tokensA - tokensB;
+      }
+      return 0;
+    });
+  }
+}
