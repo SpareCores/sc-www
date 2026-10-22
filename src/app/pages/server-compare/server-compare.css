@@ -61,10 +61,6 @@
   vertical-align: baseline;
 }
 
-.compare-dropdown-menu {
-  z-index: 50;
-}
-
 .compare-table-header-cell {
   position: relative;
   vertical-align: top;

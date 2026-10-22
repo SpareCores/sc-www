@@ -103,12 +103,9 @@
 <ng-template #primaryPanel>
   <div
     [id]="optionsId"
-    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      [attr.aria-labelledby]="buttonId"
-    >
+    <ul class="sc-dropdown__list" [attr.aria-labelledby]="buttonId">
       @for (
         chartTemplate of chart().options;
         track chartTemplate.benchmark_id;
@@ -117,7 +114,7 @@
         <li>
           <button
             type="button"
-            class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-400/80"
+            class="sc-dropdown__option"
             (click)="selectOption(i)"
           >
             <div class="text-white text-sm">{{ chartTemplate.name }}</div>
@@ -131,12 +128,9 @@
 <ng-template #secondaryPanel>
   <div
     [id]="secondaryOptionsId"
-    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      [attr.aria-labelledby]="secondaryButtonId"
-    >
+    <ul class="sc-dropdown__list" [attr.aria-labelledby]="secondaryButtonId">
       @for (
         option of chart().secondaryOptions;
         track option.name;
@@ -145,7 +139,7 @@
         <li>
           <button
             type="button"
-            class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-400/80"
+            class="sc-dropdown__option"
             (click)="selectSecondaryOption(i)"
           >
             <div class="text-white text-sm">{{ option.name }}</div>

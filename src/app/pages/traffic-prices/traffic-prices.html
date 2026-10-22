@@ -240,17 +240,11 @@
 </div>
 
 <ng-template #pageSizePanel>
-  <div
-    id="pagesize_options"
-    class="bg-secondary rounded-lg shadow-sm w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="pagesize_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (pageLimit of pageLimits; track $index) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
+          class="sc-dropdown__option"
           (click)="selectPageSize(pageLimit)"
           tabindex="0"
         >
@@ -262,14 +256,8 @@
 </ng-template>
 
 <ng-template #columnPanel>
-  <div
-    id="column_options"
-    class="bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-3 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="column_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list px-3" aria-labelledby="dropdownDefaultButton">
       @for (column of possibleColumns; track column.name) {
         <li class="flex py-1 gap-2 items-center">
           <input
@@ -286,18 +274,12 @@
 </ng-template>
 
 <ng-template #currencyPanel>
-  <div
-    id="currency_options"
-    class="bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="currency_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (currency of availableCurrencies; track currency.name) {
         <li
           tabindex="0"
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
+          class="sc-dropdown__option"
           (click)="selectCurrency(currency)"
         >
           <div class="text-white text-sm">
