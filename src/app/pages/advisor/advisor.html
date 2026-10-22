@@ -226,7 +226,7 @@
                   </th>
                   @for (column of tableColumns(); track column.name) {
                     <th
-                      [ngClass]="{ 'cursor-pointer': column.orderField }"
+                      [class.cursor-pointer]="column.orderField"
                       (click)="toggleOrdering(column)"
                     >
                       <div class="flex gap-1 whitespace-nowrap">
