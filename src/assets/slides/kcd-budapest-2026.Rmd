@@ -77,7 +77,13 @@ format:
 </p>
 
 ::: {.notes}
-TODO speaker notes
+TODO Gergo speaker notes
+Gergo: welcome ... last year lightning talk .. lucky you, we are happy to have Attila this year as well
+and we decided we will do this in a different way
+
+...
+
+courtain!
 :::
 
 # {#teaser data-curtain="open"}
@@ -86,7 +92,7 @@ TODO speaker notes
 <img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;" />
 :::
 
-<!-- TODO add "once upon a time, in a not too far pub ...." -->
+<!-- TODO Gergo add "once upon a time, in a not too far pub ...." -->
 
 # {#recap .center}
 
@@ -99,13 +105,14 @@ TODO speaker notes
     <span class="agent-title">hermes — gergely@big-mac-4</span>
   </div>
   <div class="agent-body">
+    <!-- TODO Gergo speed this up .. too slow for a fun moment --> 
     <div class="agent-banner">hermes agent · local model · 🎙 phone mic: recording (1h 47m)</div>
     <div class="agent-step agent-prompt"><span class="agent-ps">❯</span> <span data-type="recap what I just discussed with Attila in the pub"></span><span class="agent-cursor"></span></div>
     <div class="agent-step" data-wait="1200"><span class="agent-running"><span class="agent-spinner"></span> thinking…</span><span class="agent-done"><span class="agent-ok">✓</span> need the pub conversation <span class="agent-meta">→ using the live recording</span></span></div>
     <div class="agent-step" data-wait="2000"><span class="agent-running"><span class="agent-spinner"></span> stopping audio recording on phone…</span><span class="agent-done"><span class="agent-ok">✓</span> recording stopped <span class="agent-meta">(1h 47m 12s, 192 MB, pub-chat.wav)</span></span></div>
     <div class="agent-step" data-wait="5000"><span class="agent-running"><span class="agent-spinner"></span> transcribing locally with whisper…</span><span class="agent-done"><span class="agent-ok">✓</span> transcribed <span class="agent-meta">(2 speakers, 11,382 words, 487 words beeped, 5 beers)</span></span></div>
     <div class="agent-step" data-wait="3000"><span class="agent-running"><span class="agent-spinner"></span> summarizing transcript…</span><span class="agent-done"><span class="agent-ok">✓</span> summarized <span class="agent-meta">(5 key points, 43 off-topic rants skipped)</span></span></div>
-    <!-- TODO review timings, e.g. "oh, thank you, it's super nice saying so from an agent" -->
+    <!-- TODO Gergo review timings, e.g. "oh, thank you, it's super nice saying so from an agent" -->
     <div class="agent-step agent-answer" data-wait="1000">Here's what you discussed with Attila:</div>
     <div class="agent-step agent-bullet" data-wait="1000">You bumped into Attila at the pub</div>
     <div class="agent-step agent-bullet" data-wait="1000">His team's Python app scales embarrassingly badly, and they need it to be faster</div>
@@ -116,6 +123,10 @@ TODO speaker notes
   </div>
 </div>
 ```
+
+::: {.notes}
+TODO Gergo speaker notes
+:::
 
 # {#introduction}
 
@@ -210,7 +221,7 @@ indeed just focusing on the single-core performance -- like doing as many intege
   </p>
 </div>
 
-<!-- TODO add poll link: https://surveys.free/a/NsTo-Rh4FfSZuvPtiKKkzg/responses/ -->
+<!-- TODO Gego add poll link: https://surveys.free/a/NsTo-Rh4FfSZuvPtiKKkzg/responses/ -->
 
 ## {#vcpu-diff-0 .center}
 
@@ -335,7 +346,7 @@ logarithmic scale
 
 note that this is a syntethic tets
 
-TODO speaker notes
+TODO Gergo speaker notes
 :::
 
 ## {#vcpu-diff-2 .center}
@@ -351,7 +362,7 @@ so left hand side is single core, right hand side is multi core performance ... 
 BUT Server B looking better: jumping from around 35 hundreds to 6000,
 and in some workloads the diff between Server A and Server B are even larger.
 
-TODO speaker notes
+TODO Gergo speaker notes
 :::
 
 ## {#vcpu-diff-3 .center}
@@ -366,7 +377,7 @@ using various cipher and hash functions .. and Server A is hardly visible on thi
 
 
 
-TODO speaker notes
+TODO Gergo speaker notes
 :::
 
 ## {#vcpu-diff-4 .center}
@@ -376,7 +387,7 @@ TODO speaker notes
 <div class="slide-text-overlay fragment"><span>10-100x</span></div>
 
 ::: {.notes}
-TODO speaker notes
+TODO Gergo speaker notes
 :::
 
 ## {#vcpu-difference transition="slide-in slide-out"}  
@@ -503,7 +514,7 @@ Click the chart to zoom out and reveal the answer.
   })();
 </script>
 
-<!-- TODO add a breakdown of 2 vCPU servers per vendor (AWS: 146) -->
+<!-- TODO Gergo add a breakdown of 2 vCPU servers per vendor (AWS: 146) -->
 
 # $ whois sparecores.com {#whois transition="convex-in convex-out"}
 
@@ -593,25 +604,18 @@ The easiest way to query this data is through our web component, as you can see 
 This is not only a list of servers, but you can filter, order, and search for specific instances.
 We already show some performance metrics by default, along with the cost efficiency based on the spot or on-demand pricing.
 
-TODO ask Attila for what filters he actually needs
+TODO Attila ideate on what filters are actually needed, eg
+- min vcpu=8
+- max memory=16
+- vendor=aws
+- region=us-west-2
+- Monthly inbound or outbound traffic ???
 
--- fine tuned to Attila's use case + live www demo
+
+Example URL:
 https://sparecores.com/servers?benchmark=eyJpZCI6InN0cmVzc19uZzpiZXN0biIsImNvbmZpZyI6Int9In0%3D&best_price_allocation=ONDEMAND_ONLY&memory_max=16&order_by=selected_benchmark_score_per_price&order_dir=desc&vcpus_min=8&vendor=aws&vendor_regions=aws~us-west-2
 
-+ single core instead of multi core -> efficiency gain c8a -> c6a
-
-Repro: TODO add final URL
-
-TODO write up actual filters
-TODO use traffic amount required to include in pricing
-
-- architecture=x86_64
-- memory_min=32
-- benchmark: llm / text generation / gemma / 512 tokens
-- benchmark_score_min: 10
-- price_allocation: MONTHLY
-- compliance_framework: hipaa
-- countries: GB
+Gergo: change to single core instead of multi core -> efficiency gain c8a -> c6a
 :::
 
 ## $ curl sparecores.com/server/gcp/g2-standard-16
@@ -749,8 +753,7 @@ or plots as well for human inspection
 # $ curl sparecores.com/advisor
 
 
-<!--
-TODO add advisor image
+<!-- TODO Gergo add advisor image and demo scenario for live walkthought
 
 https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
 
@@ -759,7 +762,7 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 
 # $ curl docs.sparecores.com/api
 
-<!-- TODO replace image with docs site -->
+<!-- TODO Gergo replace image with docs site -->
 
 ::: {.centered}
 <img style="width:95%;" src="images/sc-keeper-preview.png" />
@@ -851,7 +854,7 @@ Server(
 :::
 
 ::: {.notes}
-TODO add speaker notes
+TODO Attila add speaker notes
 :::
 
 ## {#gilty-and-friends}
@@ -861,23 +864,29 @@ TODO add speaker notes
 :::
 
 ::: {.notes}
-TODO add speaker notes
+TODO Attila speaker notes
 :::
 
 # $ strace -e environment gilty.py
 
-<!-- TODO Attila -->
+<!-- TODO Attila describe the environment you run gilty.py -->
 
 - EKS
 - Karpenter
 - EKS Auto mode
 
+::: {.notes}
+TODO Attila speaker notes
+:::
+
 # $ claude --plan "fix problem"
 
-<!-- TODO Attila -->
+<!-- TODO Attila describe the controller spec draft -->
 
-TODO controller spec draft
 
+::: {.notes}
+TODO Attila speaker notes
+:::
 
 # {#demo}
 
@@ -909,46 +918,74 @@ TODO controller spec draft
 </script>
 ```
 
-# {#spare-cores-infra}
+::: {.notes}
+TODO Attila speaker notes
+:::
 
-<!-- TODO add mermaid diagram from docs.sparecores.com/overview -->
+# $ strace -e environment sparecores.com
+
+<!-- TODO Gergo find better title for this slide -->
+<!-- TODO Gergo add mermaid diagram from docs.sparecores.com/overview -->
 
 ::: {.notes}
-TODO add speaker notes
+TODO Gergo add speaker notes
 
 Gergo: this is cool .. we could definitely use something like this at spare cores
 GH/Pulumit etc fajdalom .. schedule/stop/tasks.
 how to use your kubernetes controller for this?
 :::
 
-# {#limitations}
+# ENTRYPOINT ["sc-karpenter-nodepool"]
 
-<!-- TODO Attila -->
+<!-- TODO Attila describe the limitations -->
 
 - single cloud only
+
+. . .
+
 - defined region
+
+. . .
+
 - needs karpenter installed
+
+. . .
+
 - needs EKS, GKE, AKS, etc.
 
 ::: {.notes}
-TODO add speaker notes
+TODO Attila speaker notes
 :::
 
-# {#ideal-stack}
+# $ cat sc-karpenter-nodepool/ROADMAP.md
 
-<!-- TODO -->
+<!-- TODO Attila describe the ideal stack -->
 
 1. onprem kubernetes cluster
+
+. . .
+
 2. be akarunk huzni gcp-t, hetznert etc AKARMIT EKS, GKE, AKS nelkul
+
+. . .
+
 3. controller? operator? -> vendor API create vpc/storage/node + network + join cluster
 
+::: {.notes}
+TODO Attila speaker notes
+:::
 
 # {#feedback}
 
-<!-- TODO one question to the community of the would find something like this useful before we jump the rabbit hole to prepare for next year's KCD Budapest --> 
+<!-- TODO Gergo one question to the community of the would find something like this useful before we jump the rabbit hole to prepare for next year's KCD Budapest --> 
+
+::: {.notes}
+TODO Gergo speaker notes
+:::
 
 # Bye
 
+<!-- TODO Gergo add thanks slide -->
 
 <!--toggle visibility of items in live mode-->
 <script>
