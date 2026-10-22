@@ -173,7 +173,7 @@
 }
 
 .advisor-table-wrap {
-  @apply overflow-x-auto;
+  @apply overflow-x-auto scrollbar-thin;
   overflow-y: visible;
   padding-left: 1px;
 }

@@ -199,6 +199,7 @@
 }
 
 .table_scroll_wrapper {
+  @apply scrollbar-thin;
   overflow: visible;
 }
 
