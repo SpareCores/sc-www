@@ -369,39 +369,22 @@
   </div>
 </ng-template>
 
-<div
-  id="embed-compare-modal"
-  tabindex="-1"
-  class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
->
-  <div class="relative w-full max-h-full">
-    <div
-      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
-    >
-      <div
-        class="flex items-center justify-between p-2 md:p-5 border-b rounded-t"
-      >
-        <h3 class="text-xl font-medium text-white dark:text-white">
-          Embed Chart
-        </h3>
-        <sc-button
-          variant="close"
-          icon="x"
-          ariaLabel="Close modal"
-          data-ph-capture-attribute-sc-event="embed chart modal close"
-          data-ph-capture-attribute-server-listing-search-prompt-action="close"
-          (buttonClick)="closeModal()"
-        ></sc-button>
+<ng-template #embedModalTemplate>
+  <sc-modal
+    id="embed-compare-modal"
+    title="Embed Chart"
+    size="full"
+    closeCaptureEvent="embed chart modal close"
+    closeCaptureAction="close"
+  >
+    @if (instancesRaw) {
+      <div class="space-y-4 flex flex-col">
+        <sc-compare-embed-dialog
+          [instances]="instancesRaw"
+          [charts]="embeddableCharts"
+        >
+        </sc-compare-embed-dialog>
       </div>
-      @if (instancesRaw) {
-        <div class="space-y-4 flex flex-col">
-          <sc-compare-embed-dialog
-            [instances]="instancesRaw"
-            [charts]="embeddableCharts"
-          >
-          </sc-compare-embed-dialog>
-        </div>
-      }
-    </div>
-  </div>
-</div>
+    }
+  </sc-modal>
+</ng-template>
