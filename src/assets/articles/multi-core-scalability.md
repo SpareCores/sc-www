@@ -289,20 +289,20 @@ rather than a large one. This way, if we end up with neighbors who don't consume
 we can use it ourselves. In the worst-case scenario, we'll still extract as much (minus some VM overhead) as if we
 rented a single large machine, so ultimately, if we’re lucky, we get extra performance for free.
 
-### AMD vs. ARM vs. Intel?
+### AMD vs. Arm vs. Intel?
 
 Let's see how each CPU performs in a 96 physical core configuration:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    alt="Graph showing the scalability of different CPU manufacturers (AMD, ARM, Intel)"
-    title="Comparison of the scalability of different CPU manufacturers (AMD, ARM, Intel)"
+    alt="Graph showing the scalability of different CPU manufacturers (AMD, Arm, Intel)"
+    title="Comparison of the scalability of different CPU manufacturers (AMD, Arm, Intel)"
     src="/assets/images/blog/multi-core-scalability-amd-arm-intel-scalability.webp"/>
-  <p>Scalability of different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
+  <p>Scalability of different CPU manufacturers (AMD, Arm, Intel)<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 As shown on their [comparison page](/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzdpLm1ldGFsLTQ4eGwifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3YS4yNHhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzhnLm1ldGFsLTI0eGwifV0%3D), with AMD (<a href="/server/aws/c7a.24xlarge">`c7a.24xlarge`</a>), we only get physical cores, without HyperThreading, and the same is true for the
-ARM-based machine (<a href="/server/aws/c8g.metal-24xl">`c8g.metal-24xl`</a>). In contrast, Intel (<a href="/server/aws/c7i.metal-48xl">`c7i.metal-48xl`</a>) shows 192 cores to the OS due to HTT, but
+Arm-based machine (<a href="/server/aws/c8g.metal-24xl">`c8g.metal-24xl`</a>). In contrast, Intel (<a href="/server/aws/c7i.metal-48xl">`c7i.metal-48xl`</a>) shows 192 cores to the OS due to HTT, but
 it still has 96 physical cores.
 
 As we saw earlier, the shape of the Intel curve is influenced by Turbo. AMD also supports this technology, but its
@@ -313,13 +313,13 @@ For reference, here are the actual scores achieved:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    alt="Graph showing stress-ng scores for different CPU manufacturers (AMD, ARM, Intel)"
-    title="stress-ng scores for different CPU manufacturers (AMD, ARM, Intel)"
+    alt="Graph showing stress-ng scores for different CPU manufacturers (AMD, Arm, Intel)"
+    title="stress-ng scores for different CPU manufacturers (AMD, Arm, Intel)"
     src="/assets/images/blog/multi-core-scalability-amd-arm-intel-scores.webp"/>
-  <p><code>stress-ng</code> scores for different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
+  <p><code>stress-ng</code> scores for different CPU manufacturers (AMD, Arm, Intel)<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
-The ARM and Intel are practically neck and neck, with Intel's advantage coming solely from Turbo Boost, which it
+Arm and Intel are practically neck and neck, with Intel's advantage coming solely from Turbo Boost, which it
 completely loses under full load. Meanwhile, AMD is leading by a wide margin in this test.
 
 ### What about other providers?
