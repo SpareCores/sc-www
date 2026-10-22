@@ -182,4 +182,66 @@ describe("ClerkClient", () => {
 
     expect(setActive).toHaveBeenCalledOnceWith({ session: null });
   });
+  describe("lazy SDK loading", () => {
+    type ClerkModule = typeof import("@clerk/clerk-js");
+    type LoaderInternals = {
+      importClerk: () => Promise<ClerkModule>;
+      loadClerk: (publishableKey?: string) => Promise<void>;
+    };
+
+    afterEach(() => {
+      delete (window as Window & { Clerk?: unknown }).Clerk;
+    });
+
+    function loader(service: ClerkClient): LoaderInternals {
+      return service as unknown as LoaderInternals;
+    }
+
+    it("imports, constructs and loads the SDK", async () => {
+      const service = createService();
+      const load = jasmine.createSpy("load").and.resolveTo(undefined);
+      const constructed: string[] = [];
+      class FakeClerk {
+        load = load;
+        constructor(key: string) {
+          constructed.push(key);
+        }
+      }
+      const importClerk = spyOn(loader(service), "importClerk").and.resolveTo({
+        Clerk: FakeClerk,
+      } as unknown as ClerkModule);
+
+      await loader(service).loadClerk("pk_test");
+
+      expect(importClerk).toHaveBeenCalledTimes(1);
+      expect(constructed).toEqual(["pk_test"]);
+      expect(load).toHaveBeenCalledOnceWith(
+        jasmine.objectContaining({ telemetry: false }),
+      );
+      expect(service.isLoaded()).toBeTrue();
+    });
+
+    it("skips the import when the publishable key is missing", async () => {
+      const service = createService();
+      const importClerk = spyOn(loader(service), "importClerk");
+      spyOn(console, "error");
+
+      await loader(service).loadClerk("");
+
+      expect(importClerk).not.toHaveBeenCalled();
+      expect(service.isLoaded()).toBeFalse();
+    });
+
+    it("stays unloaded when the SDK chunk fails to load", async () => {
+      const service = createService();
+      spyOn(loader(service), "importClerk").and.rejectWith(
+        new Error("chunk failed"),
+      );
+
+      await expectAsync(loader(service).loadClerk("pk_test")).toBeRejected();
+
+      expect(service.isLoaded()).toBeFalse();
+      expect(service.instance).toBeNull();
+    });
+  });
 });

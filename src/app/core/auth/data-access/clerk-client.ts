@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject, isDevMode } from "@angular/core";
 import { Router } from "@angular/router";
-import { Clerk } from "@clerk/clerk-js";
+import type { Clerk } from "@clerk/clerk-js";
 import { isClerkRuntimeError, isNetworkError } from "@clerk/shared/error";
 import type {
   SignInResource,
@@ -188,13 +188,16 @@ export class ClerkClient {
     return url;
   }
 
-  private async loadClerk(): Promise<void> {
-    if (!CLERK_PUBLISHABLE_KEY) {
+  private async loadClerk(
+    publishableKey = CLERK_PUBLISHABLE_KEY,
+  ): Promise<void> {
+    if (!publishableKey) {
       console.error("NG_APP_CLERK_PUBLISHABLE_KEY is not set");
       return;
     }
 
-    this.clerk = new Clerk(CLERK_PUBLISHABLE_KEY);
+    const { Clerk: ClerkSdk } = await this.importClerk();
+    this.clerk = new ClerkSdk(publishableKey);
     const urls = authUrls();
     await this.clerk.load({
       signInUrl: urls.origin,
@@ -206,5 +209,9 @@ export class ClerkClient {
     if (isDevMode() || "Cypress" in window) {
       (window as Window & { Clerk: Clerk }).Clerk = this.clerk;
     }
+  }
+
+  private importClerk(): Promise<typeof import("@clerk/clerk-js")> {
+    return import("@clerk/clerk-js");
   }
 }
