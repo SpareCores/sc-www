@@ -453,9 +453,7 @@
             <span class="text-white hidden md:inline">items per page</span>
 
             @if (showPageSizeOptions()) {
-              <div
-                class="z-10 bg-secondary rounded-lg shadow-sm w-44 border border-emerald-400 border-solid absolute top-12 left-0"
-              >
+              <div class="z-10 sc-dropdown w-44 absolute top-12 left-0">
                 <ul class="py-2 px-1 text-sm text-gray-700" role="listbox">
                   @for (pageLimit of pageLimits; track pageLimit) {
                     <li
