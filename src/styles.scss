@@ -96,6 +96,14 @@ $content-max-width: 1400px;
   }
 }
 
+.cdk-overlay-container {
+  z-index: 60;
+}
+
+.cdk-overlay-container.sc-page-overlay-container {
+  z-index: 40;
+}
+
 .sc-auth-pending-overlay {
   position: fixed;
   inset: 0;
