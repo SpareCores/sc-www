@@ -119,8 +119,7 @@
 <div
   [attr.id]="cardId() + '_tooltip'"
   #tooltip
-  style="opacity: 0; display: none"
-  class="tooltip-panel max-w-[225px] fixed z-100 pointer-events-none"
+  class="tooltip-panel max-w-[225px] fixed z-100 pointer-events-none opacity-0 hidden"
 >
   {{ tooltipContent() }}
 </div>
