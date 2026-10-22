@@ -1,9 +1,5 @@
 @reference "../../../styles/tailwind.css";
 
-.content {
-  min-height: 100%;
-}
-
 a:hover {
   @apply hover:text-gray-500;
 }
