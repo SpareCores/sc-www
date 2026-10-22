@@ -608,14 +608,8 @@
 
 <!-- Dropdown menu -->
 <ng-template #regionPanel>
-  <div
-    id="region_options"
-    class="bg-secondary rounded-lg shadow-sm w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="region_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (filter of regionFilters; track filter.name; let i = $index) {
         <li class="flex py-1 gap-2 items-center">
           <input
@@ -635,12 +629,9 @@
 <ng-template #similarPanel>
   <div
     id="similar_server_options"
-    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="similar_type_button"
-    >
+    <ul class="sc-dropdown__list" aria-labelledby="similar_type_button">
       @for (option of similarOptions; track option.key) {
         <li>
           <button

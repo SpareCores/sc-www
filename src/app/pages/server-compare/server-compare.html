@@ -315,28 +315,16 @@
 </div>
 
 <ng-template #baselinePanel>
-  <div
-    id="baseline_server_options"
-    class="compare-dropdown-menu bg-secondary rounded-lg shadow-sm w-64 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="baseline_server_button"
-    >
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
-        (click)="selectBaselineServer(null)"
-      >
+  <div id="baseline_server_options" class="sc-dropdown w-64">
+    <ul class="sc-dropdown__list" aria-labelledby="baseline_server_button">
+      <li class="sc-dropdown__option" (click)="selectBaselineServer(null)">
         <div class="text-white text-sm">No baseline</div>
       </li>
       @for (
         server of servers;
         track server.vendor_id + "_" + server.server_id
       ) {
-        <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
-          (click)="selectBaselineServer(server)"
-        >
+        <li class="sc-dropdown__option" (click)="selectBaselineServer(server)">
           <div class="text-white text-sm">
             {{ server.display_name }} ({{ server.vendor_id }})
           </div>
@@ -347,19 +335,10 @@
 </ng-template>
 
 <ng-template #currencyPanel>
-  <div
-    id="currency_options"
-    class="compare-dropdown-menu bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="currency_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (currency of availableCurrencies; track currency.name) {
-        <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
-          (click)="selectCurrency(currency)"
-        >
+        <li class="sc-dropdown__option" (click)="selectCurrency(currency)">
           <div class="text-white text-sm">
             {{ currency.name }} ({{ currency.symbol }})
           </div>

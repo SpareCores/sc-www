@@ -1360,14 +1360,11 @@
 </div>
 
 <ng-template #pageSizePanel>
-  <div id="advisor_pagesize_options" class="advisor-dropdown-menu w-44">
-    <ul
-      class="advisor-dropdown-menu-list px-1"
-      aria-labelledby="advisor_pagesize_button"
-    >
+  <div id="advisor_pagesize_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" aria-labelledby="advisor_pagesize_button">
       @for (pageLimit of pageLimits; track $index) {
         <li
-          class="advisor-dropdown-menu-option"
+          class="sc-dropdown__option"
           (click)="selectPageSize(pageLimit)"
           (keydown.enter)="selectPageSize(pageLimit)"
           (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
@@ -1375,7 +1372,7 @@
           [attr.aria-selected]="pageLimit === limit()"
           tabindex="0"
         >
-          <div class="advisor-dropdown-menu-label">{{ pageLimit }}</div>
+          <div class="text-sm text-white">{{ pageLimit }}</div>
         </li>
       }
     </ul>
@@ -1383,14 +1380,11 @@
 </ng-template>
 
 <ng-template #currencyPanel>
-  <div id="advisor_currency_options" class="advisor-dropdown-menu w-52">
-    <ul
-      class="advisor-dropdown-menu-list px-1"
-      aria-labelledby="advisor_currency_button"
-    >
+  <div id="advisor_currency_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list" aria-labelledby="advisor_currency_button">
       @for (currency of availableCurrencies; track currency.name) {
         <li
-          class="advisor-dropdown-menu-option"
+          class="sc-dropdown__option"
           (click)="selectCurrency(currency)"
           (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
           (keydown.space)="selectCurrency(currency); $event.preventDefault()"
@@ -1398,7 +1392,7 @@
           [attr.aria-selected]="currency === selectedCurrency()"
           tabindex="0"
         >
-          <div class="advisor-dropdown-menu-label">
+          <div class="text-sm text-white">
             {{ currency.name }} ({{ currency.symbol }})
           </div>
         </li>
@@ -1408,13 +1402,10 @@
 </ng-template>
 
 <ng-template #columnPanel>
-  <div id="advisor_column_options" class="advisor-dropdown-menu w-56">
-    <ul
-      class="advisor-dropdown-menu-list px-3"
-      aria-labelledby="advisor_column_button"
-    >
+  <div id="advisor_column_options" class="sc-dropdown w-56">
+    <ul class="sc-dropdown__list px-3" aria-labelledby="advisor_column_button">
       @for (column of possibleColumns(); track column.name) {
-        <li class="advisor-dropdown-menu-option px-0 hover:bg-transparent">
+        <li class="sc-dropdown__option">
           <input
             type="checkbox"
             [checked]="column.show"
@@ -1423,7 +1414,7 @@
             "
             class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
           />
-          <div class="advisor-dropdown-menu-label">{{ column.name }}</div>
+          <div class="text-sm text-white">{{ column.name }}</div>
         </li>
       }
     </ul>
