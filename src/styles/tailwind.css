@@ -1,0 +1,88 @@
+@import "tailwindcss" source(none);
+@import "./theme.css";
+
+@source "../app";
+@source "../index.html";
+@source "../assets/articles";
+
+@utility partners-content {
+  & a:not(.header-anchor) {
+    @apply underline decoration-dotted;
+  }
+
+  & a:not(.header-anchor):hover {
+    @apply text-gray-500;
+  }
+
+  & a:not(.header-anchor):focus-visible {
+    @apply text-gray-500;
+  }
+}
+
+@utility tooltip-panel {
+  @apply inline-block max-w-xl whitespace-normal wrap-break-word rounded-lg border border-solid border-emerald-400 bg-secondary px-3 py-2 text-left text-sm font-medium text-white transition-opacity duration-300;
+}
+
+@utility tooltip-panel--wide {
+  max-width: min(72rem, calc(100vw - 2rem));
+}
+
+@utility tooltip-panel--warning {
+  @apply border-yellow-500 whitespace-pre-line;
+}
+
+@utility tooltip-panel--warning-wide {
+  max-width: min(54rem, calc(100vw - 2rem));
+}
+
+@utility benchmark-note-icon {
+  @apply h-4 w-auto shrink-0 cursor-help text-[#EAB308];
+}
+
+@utility btn-primary {
+  @apply bg-emerald-400 text-white rounded-lg font-bold hover:bg-emerald-500 focus:outline-hidden focus:ring-3 focus:ring-emerald-400/75;
+  transition-duration: 0.15s;
+  transition-property: background-color, border-color, box-shadow, color;
+  transition-timing-function: ease-in;
+}
+
+@utility vendor-logo {
+  box-sizing: border-box;
+  padding: 11.111%;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+@utility dropdown_button {
+  @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-hidden font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
+  transition-duration: 0.15s;
+  transition-property: background-color, border-color, box-shadow, color;
+  transition-timing-function: ease-in;
+}
+
+@utility chart-selector-button {
+  @apply min-w-0 justify-between overflow-hidden;
+}
+
+@utility chart-selector-button__label {
+  @apply min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left;
+}
+
+@utility chart-selector-button__icon {
+  @apply flex h-full w-12 shrink-0 items-center justify-center rounded-r-lg bg-primary px-3 py-2;
+}
+
+@utility content {
+  max-width: 1400px;
+  margin: auto;
+}
+
+@utility content_gutter {
+  @apply px-2 xl:px-0;
+}

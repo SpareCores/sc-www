@@ -173,7 +173,9 @@
             [label]="baselineCompareButtonLabel()"
             icon="scale"
             iconPosition="start"
-            [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
+            [variant]="
+              isBaselineSelectedForCompare() ? 'solid' : 'outline'
+            "
             [disabled]="!selectedBaselineServer()"
             (click)="toggleBaselineCompare()"
           ></sc-button>
@@ -1424,7 +1426,7 @@
             (change)="
               setColumnVisibility(column.name, $any($event.target).checked)
             "
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
           />
           <div class="advisor-dropdown-menu-label">{{ column.name }}</div>
         </li>

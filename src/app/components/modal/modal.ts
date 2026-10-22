@@ -9,7 +9,7 @@ const SIZE_CLASSES: Record<ModalSize, string> = {
   xl: "max-w-xl",
   "3xl": "max-w-3xl",
   "4xl": "max-w-4xl",
-  wide: "max-w-[87.5rem]",
+  wide: "max-w-350",
   full: "max-w-full",
 };
 
