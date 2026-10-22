@@ -18,6 +18,7 @@
 @import "./styles/components/listing.css" layer(components);
 @import "./styles/components/dropdown.css" layer(components);
 @import "./styles/components/card.css" layer(components);
+@import "./styles/components/prose.css";
 
 @layer base {
   *,
