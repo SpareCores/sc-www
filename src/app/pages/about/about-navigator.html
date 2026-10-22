@@ -76,8 +76,7 @@
               "
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
-              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0"
-              style="aspect-ratio: 16 / 9"
+              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0 aspect-video"
             ></iframe>
           </div>
         </div>
@@ -119,7 +118,7 @@
         />
       </div>
       <div class="flex flex-col justify-center">
-        <div style="width: 450px; margin: auto">
+        <div class="w-[450px] m-auto">
           <div>
             <div class="flex gap-2 text-2xl items-center text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
@@ -414,9 +413,9 @@
                     [attr.aria-label]="githubComponent.pypi + ' on PyPI'"
                   >
                     <img
+                      class="w-[24px] align-middle"
                       src="assets/images/icons/python.svg"
                       alt="Python logo"
-                      style="width: 24px; vertical-align: middle"
                     />
                   </a>
                 }
@@ -446,9 +445,9 @@
                     "
                   >
                     <img
+                      class="w-[24px] align-middle"
                       src="assets/images/icons/www.svg"
                       alt="WWW logo"
-                      style="width: 24px; vertical-align: middle"
                     />
                   </a>
                 }
@@ -463,9 +462,9 @@
                     "
                   >
                     <img
+                      class="w-[24px] align-middle"
                       src="assets/images/icons/api.svg"
                       alt="API logo"
-                      style="width: 24px; vertical-align: middle"
                     />
                   </a>
                 }
@@ -629,9 +628,9 @@
   #tooltipVendors
   class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
 >
-  <ul style="list-style-type: disc; list-style-position: inside">
+  <ul class="list-disc list-inside">
     @for (vendor of vendors; track vendor) {
-      <li style="margin-bottom: 0.25rem">
+      <li class="mb-1">
         {{ vendor }}
       </li>
     }

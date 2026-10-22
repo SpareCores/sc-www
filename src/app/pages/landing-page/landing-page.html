@@ -46,8 +46,7 @@
           </div>
         </div>
         <div
-          class="w-full lg:w-1/2 justify-center flex"
-          style="min-height: 600px"
+          class="w-full lg:w-1/2 justify-center flex min-h-[600px]"
           id="slot-machine"
         >
           <div class="animated_slot_machine">
@@ -192,8 +191,7 @@
                           [routerLink]="getServerRouteCommands(spinnerItem)"
                         >
                           <div
-                            class="text-center font-bold overflow-hidden"
-                            style="text-overflow: ellipsis"
+                            class="text-center font-bold overflow-hidden text-ellipsis"
                             [class.text-xl]="spinnerItem.name.length < 13"
                             [class.text-md]="spinnerItem.name.length >= 13"
                           >
@@ -209,8 +207,7 @@
                           [class.slot_inner--active]="isSlotLinkActive(i)"
                         >
                           <div
-                            class="text-center font-bold overflow-hidden"
-                            style="text-overflow: ellipsis"
+                            class="text-center font-bold overflow-hidden text-ellipsis"
                             [class.text-xl]="spinnerItem.name.length < 13"
                             [class.text-md]="spinnerItem.name.length >= 13"
                           >
@@ -251,8 +248,7 @@
                           [queryParams]="getRegionQueryParams(spinnerItem)"
                         >
                           <div
-                            class="text-center font-bold overflow-hidden"
-                            style="text-overflow: ellipsis"
+                            class="text-center font-bold overflow-hidden text-ellipsis"
                             [class.text-xl]="spinnerItem.name.length < 13"
                             [class.text-md]="spinnerItem.name.length >= 13"
                           >
@@ -266,8 +262,7 @@
                           [class.slot_inner--active]="isSlotLinkActive(i)"
                         >
                           <div
-                            class="text-center font-bold overflow-hidden"
-                            style="text-overflow: ellipsis"
+                            class="text-center font-bold overflow-hidden text-ellipsis"
                             [class.text-xl]="spinnerItem.name.length < 13"
                             [class.text-md]="spinnerItem.name.length >= 13"
                           >
@@ -580,8 +575,7 @@
               "
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
-              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0"
-              style="aspect-ratio: 16 / 9"
+              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0 aspect-video"
             ></iframe>
           </div>
         </div>
