@@ -81,7 +81,6 @@ export class BenchmarkMultiBarChart {
   servers = input<MultiBarServer[]>([]);
   layout = input<"details" | "compare">("details");
   serverCount = input(0);
-  isEmbedded = input(false);
 
   optionSelected = output<number>();
   secondaryOptionSelected = output<number>();

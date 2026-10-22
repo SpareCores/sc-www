@@ -1,36 +1,5 @@
 @reference "../../../styles/tailwind.css";
 
-.items_table {
-  @apply text-white;
-
-  thead {
-    @apply border-b border-gray-200 border-solid bg-secondary;
-    th {
-      @apply text-left px-5 py-3 font-normal text-xs;
-
-      &:last-child {
-        text-align: right;
-      }
-    }
-  }
-
-  tbody {
-    tr:nth-child(2n + 1) {
-      @apply bg-primary;
-    }
-    tr:nth-child(2n) {
-      @apply bg-secondary;
-    }
-
-    tr {
-      @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
-      td {
-        @apply px-5 py-3 text-left text-sm;
-      }
-    }
-  }
-}
-
 .datamaps_div {
   position: relative;
   width: 100%;
@@ -47,4 +16,8 @@
     width: calc(100% - 1rem);
     margin: 0.5rem;
   }
+}
+
+.sc-table thead th:last-child {
+  text-align: right;
 }

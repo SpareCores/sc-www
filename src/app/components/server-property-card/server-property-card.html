@@ -1,11 +1,16 @@
-<div class="block_half" [class.open]="isOpen()" [attr.id]="cardId()" #cardRoot>
+<div
+  class="chart-block--half"
+  [class.chart-block--open]="isOpen()"
+  [attr.id]="cardId()"
+  #cardRoot
+>
   <h3 class="text-2xl">{{ cardTitle() }}</h3>
   <div class="card_sections">
     @for (section of visibleSections(); track section.name; let i = $index) {
       @if (showSectionHeaders() && i > 0) {
         <div class="items_table_spacer_row" aria-hidden="true"></div>
       }
-      <table class="items_table">
+      <table class="sc-kv-table sc-kv-table--fixed-rows w-full">
         @if (showSectionHeaders()) {
           <thead>
             <tr>
@@ -23,7 +28,7 @@
         <tbody>
           @for (property of section.properties; track property.id) {
             <tr>
-              <td class="fixed_width">
+              <td class="sc-kv-table__label">
                 <div class="flex gap-2 items-center">
                   <b>{{ property.name }}</b>
                   @for (tooltip of property.tooltips || []; track tooltip.key) {
@@ -50,10 +55,7 @@
                   </div>
                 } @else if (property.routerLink) {
                   <div class="property_value">
-                    <a
-                      class="underline decoration-dotted hover:text-gray-500"
-                      [routerLink]="property.routerLink"
-                    >
+                    <a class="sc-link" [routerLink]="property.routerLink">
                       {{ property.value }}
                     </a>
                   </div>
@@ -114,8 +116,7 @@
 <div
   [attr.id]="cardId() + '_tooltip'"
   #tooltip
-  style="opacity: 0; display: none"
-  class="tooltip-panel max-w-[225px] fixed z-100 pointer-events-none"
+  class="tooltip-panel max-w-[225px] fixed z-100 pointer-events-none opacity-0 hidden"
 >
   {{ tooltipContent() }}
 </div>

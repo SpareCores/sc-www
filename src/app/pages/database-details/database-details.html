@@ -18,7 +18,7 @@
     @if (databaseDetails) {
       <div
         id="database_base_info_box"
-        class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+        class="mx-2 xl:mx-0 flex flex-wrap justify-between sc-card gap-8 px-6 py-6 mt-12"
       >
         <div class="flex gap-6 grow lg:w-1/2 w-full">
           <div class="flex gap-4 flex-col shrink-0">
@@ -39,6 +39,7 @@
             <h1 class="text-2xl flex items-center gap-x-2 flex-wrap">
               <sc-bookmark-button
                 kind="database"
+                size="large"
                 [vendorId]="databaseDetails.vendor_id"
                 [entityId]="databaseDetails.api_reference"
                 data-ph-capture-attribute-sc-event="database details favorite"
@@ -52,7 +53,7 @@
                 by
                 <a
                   [routerLink]="['/vendors', databaseDetails.vendor_id]"
-                  class="underline decoration-dotted hover:text-gray-500"
+                  class="sc-link"
                 >
                   {{
                     databaseDetails.vendor?.name || databaseDetails.vendor_id
@@ -124,7 +125,9 @@
         </div>
       </div>
 
-      <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
+      <div
+        class="chart-context--full-below-wide mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8"
+      >
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Specifications</h2>
         </div>
@@ -139,13 +142,13 @@
         ></sc-server-property-card>
 
         <div
-          class="block_half"
+          class="chart-block--half"
           id="availability"
           #availabilityCard
           [class.open]="expandedCards.availability"
         >
           <h3 class="text-2xl">Availability & Pricing</h3>
-          <table class="items_table">
+          <table class="sc-kv-table w-full">
             <thead>
               <tr>
                 <th>REGION / ID</th>
@@ -186,7 +189,7 @@
               }
               @if (!availabilityRows.length) {
                 <tr>
-                  <td colspan="4" class="px-5 py-6 text-center text-gray-400">
+                  <td colspan="4" class="text-gray-400">
                     No prices available for this database.
                   </td>
                 </tr>
@@ -269,7 +272,7 @@
           <sc-benchmark-line-chart
             benchmarkKey="pgbench"
             [title]="pgbenchTitle"
-            blockClass="block_full"
+            blockClass="chart-block--full"
             elementId="pgbench_chart"
             canvasId="pgbench_canvas"
             chartType="line"
@@ -294,7 +297,7 @@
           <sc-benchmark-line-chart
             benchmarkKey="pgbench"
             [title]="pgbenchTitle"
-            blockClass="block_full"
+            blockClass="chart-block--full"
             elementId="underlying_server_pgbench_chart"
             canvasId="underlying_server_pgbench_canvas"
             chartType="line"

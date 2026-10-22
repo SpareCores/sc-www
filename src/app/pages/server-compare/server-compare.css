@@ -1,60 +1,11 @@
 @reference "../../../styles/tailwind.css";
 
-.items_table {
-  @apply w-full text-white;
+.sc-compare-table thead .compact-number-header-cell {
+  text-align: right !important;
+}
 
-  position: relative;
-  border-collapse: collapse;
-
-  thead {
-    @apply border-b border-gray-200 border-solid bg-secondary;
-    th {
-      @apply text-left px-5 py-3 font-normal text-xs;
-    }
-
-    .compact-number-header-cell {
-      text-align: right !important;
-    }
-
-    tr {
-      th:nth-of-type(1) {
-        position: sticky;
-        left: 0;
-        z-index: 21;
-        @apply bg-secondary;
-      }
-    }
-  }
-
-  tbody {
-    tr.section_header {
-      @apply bg-secondary text-white;
-      td:nth-of-type(1) {
-        @apply bg-secondary;
-      }
-      scroll-margin-top: 10rem;
-    }
-
-    tr {
-      @apply bg-primary;
-
-      td:nth-of-type(1) {
-        @apply bg-primary;
-      }
-    }
-
-    tr {
-      td {
-        @apply px-5 py-3 text-left text-sm;
-      }
-
-      td:nth-of-type(1) {
-        position: sticky;
-        left: 0;
-        z-index: 20;
-      }
-    }
-  }
+.sc-compare-table tbody tr.section_header {
+  scroll-margin-top: 10rem;
 }
 
 .section_heading {
@@ -67,18 +18,7 @@
   visibility: hidden;
 }
 
-.header-anchor {
-  opacity: 0;
-  margin-left: 0.5rem;
-  text-decoration: none;
-  transition: opacity 0.2s;
-
-  &:hover {
-    @apply text-emerald-400;
-  }
-}
-
-.section_heading:hover .header-anchor {
+.section_heading:hover .sc-header-anchor {
   opacity: 1;
 }
 
@@ -141,88 +81,9 @@
   background-color: var(--color-gray-400);
   border-radius: 20px; /* roundness of the scroll thumb */
 }
-:host ::ng-deep .block_full_inline {
-  @apply px-6 py-6 bg-transparent flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 460px;
-  height: 460px;
-}
-
-:host ::ng-deep .block_full_inline .chart_div {
-  height: 100% !important;
-  min-height: 0;
-}
-
-:host ::ng-deep .block_full_inline.memory-compare-chart--cache-markers {
-  min-height: 508px;
-  height: 508px;
-}
-:host ::ng-deep .block_full_short_inline {
-  @apply px-6 py-4 bg-transparent flex flex-col gap-4 relative overflow-visible;
-  width: calc(100%);
-  min-height: 460px;
-  height: 460px;
-}
-
-:host ::ng-deep .block_full_short_inline .charts_div {
-  @apply flex gap-4;
-}
-
-:host ::ng-deep .block_full_short_inline .charts_div .chart_div {
-  @apply w-1/2;
-  height: 380px;
-}
-
-:host ::ng-deep .block_full_short_geekbench {
-  @apply px-4 py-4 bg-transparent flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 460px;
-  height: 500px;
-}
-
-:host ::ng-deep .block_full_short_geekbench .charts_div {
-  @apply flex gap-4;
-}
-
-:host ::ng-deep .block_full_short_geekbench .charts_div .chart_div {
-  @apply w-1/2;
-  height: 460px;
-}
-
-@media (width < theme(--breakpoint-lg)) {
-  :host ::ng-deep .block_full_short_inline {
-    min-height: 860px;
-    height: 860px;
-  }
-
-  :host ::ng-deep .block_full_short_inline .charts_div {
-    flex-direction: column;
-  }
-
-  :host ::ng-deep .block_full_short_inline .charts_div .chart_div {
-    width: 100%;
-  }
-
-  :host ::ng-deep .block_full_short_geekbench {
-    min-height: 940px;
-    height: 940px;
-  }
-
-  :host ::ng-deep .block_full_short_geekbench .charts_div {
-    flex-direction: column;
-  }
-
-  :host ::ng-deep .block_full_short_geekbench .charts_div .chart_div {
-    width: 100%;
-  }
-}
 
 .align-baseline {
   vertical-align: baseline;
-}
-
-.compare-dropdown-menu {
-  z-index: 50;
 }
 
 .compare-table-header-cell {

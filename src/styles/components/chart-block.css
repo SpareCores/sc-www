@@ -1,0 +1,196 @@
+.chart-block--half,
+.chart-block--full {
+  @apply relative flex flex-col gap-4 overflow-hidden rounded-lg border border-solid border-emerald-400 bg-secondary px-6 py-6;
+  min-height: 460px;
+  height: 460px;
+}
+
+.chart-block--half {
+  width: calc(50% - 1rem);
+}
+
+.chart-block--full {
+  width: 100%;
+}
+
+.chart-block--half .chart_div {
+  max-height: 350px !important;
+  height: 350px !important;
+  max-width: 100% !important;
+}
+
+.chart-block--full .chart_div {
+  max-height: 350px;
+  height: 350px !important;
+  max-width: 100% !important;
+}
+
+.chart-block--taller {
+  @apply relative flex flex-col overflow-hidden rounded-lg border border-solid border-emerald-400 bg-secondary px-6 py-6;
+  width: calc(50% - 1rem);
+  min-height: 530px;
+  margin: auto;
+}
+
+.chart-block--taller .chart_div {
+  max-height: 530px;
+  max-width: 100% !important;
+  display: flex;
+  justify-content: center;
+}
+
+.chart-block--half.chart-block--open {
+  height: unset !important;
+}
+
+@media (width < theme(--breakpoint-md)) {
+  .chart-block--half,
+  .chart-block--taller {
+    width: 100%;
+    margin: auto;
+  }
+}
+
+@media (width < theme(--breakpoint-wide)) {
+  .chart-context--full-below-wide .chart-block--half {
+    width: 100%;
+  }
+}
+
+.chart-block--inline {
+  @apply relative flex flex-col gap-4 overflow-hidden bg-transparent px-6 py-6;
+  width: 100%;
+  min-height: 460px;
+  height: 460px;
+}
+
+.chart-block--inline .chart_div {
+  height: 100% !important;
+  min-height: 0;
+}
+
+.chart-block--inline.memory-compare-chart--cache-markers {
+  min-height: 508px;
+  height: 508px;
+}
+
+.chart-block--split {
+  @apply relative flex flex-col gap-4 overflow-visible bg-transparent px-6 py-4;
+  width: 100%;
+  min-height: 460px;
+  height: 460px;
+}
+
+.chart-block--split-tall {
+  @apply relative flex flex-col gap-4 overflow-hidden bg-transparent px-4 py-4;
+  width: 100%;
+  min-height: 460px;
+  height: 500px;
+}
+
+.chart-block--split .charts_div,
+.chart-block--split-tall .charts_div {
+  @apply flex gap-4;
+}
+
+.chart-block--split .charts_div .chart_div {
+  @apply w-1/2;
+  height: 380px;
+}
+
+.chart-block--split-tall .charts_div .chart_div {
+  @apply w-1/2;
+  height: 460px;
+}
+
+@media (width < theme(--breakpoint-lg)) {
+  .chart-block--split {
+    min-height: 860px;
+    height: 860px;
+  }
+
+  .chart-block--split-tall {
+    min-height: 940px;
+    height: 940px;
+  }
+
+  .chart-block--split .charts_div,
+  .chart-block--split-tall .charts_div {
+    flex-direction: column;
+  }
+
+  .chart-block--split .charts_div .chart_div,
+  .chart-block--split-tall .charts_div .chart_div {
+    width: 100%;
+  }
+}
+
+.chart-block--card {
+  @apply flex w-full flex-col gap-4 rounded-lg border border-solid border-emerald-400 bg-secondary px-6 py-6;
+}
+
+.chart-context--embedded .chart-block--half,
+.chart-context--embedded .chart-block--taller,
+.chart-context--embedded .chart-block--full {
+  width: 100%;
+  min-height: auto;
+  max-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  border-width: 0;
+  border-radius: 0;
+}
+
+.chart-context--embedded .chart-block--card {
+  @apply relative overflow-hidden;
+  max-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  border-width: 0;
+  border-radius: 0;
+}
+
+.chart-context--embedded .chart-block--half .chart_div,
+.chart-context--embedded .chart-block--full .chart_div {
+  max-height: none !important;
+  max-width: none !important;
+  height: 100% !important;
+}
+
+.chart-context--embedded .chart-block--taller .chart_div {
+  max-height: none;
+  max-width: none !important;
+  height: 100%;
+}
+
+.chart-context--embedded .chart-block--inline,
+.chart-context--embedded .chart-block--split,
+.chart-context--embedded .chart-block--split-tall {
+  min-height: auto;
+  max-height: calc(100vh - 140px);
+  height: calc(100vh - 140px);
+}
+
+.chart-context--embedded .chart-block--inline .chart_div {
+  height: 100%;
+  min-height: auto;
+}
+
+.chart-context--embedded .chart-block--split {
+  @apply overflow-hidden px-4;
+}
+
+.chart-context--embedded .chart-block--split .charts_div,
+.chart-context--embedded .chart-block--split-tall .charts_div,
+.chart-context--embedded .chart-block--split .charts_div .chart_div,
+.chart-context--embedded .chart-block--split-tall .charts_div .chart_div {
+  height: 100%;
+}
+
+@media (width < theme(--breakpoint-lg)) {
+  .chart-context--embedded .chart-block--split-tall {
+    overflow-y: auto;
+  }
+
+  .chart-context--embedded .chart-block--split-tall .charts_div {
+    height: unset;
+  }
+}

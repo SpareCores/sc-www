@@ -120,12 +120,9 @@
 <ng-template #selectorPanel>
   <div
     [id]="optionsId"
-    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      [attr.aria-labelledby]="buttonId"
-    >
+    <ul class="sc-dropdown__list" [attr.aria-labelledby]="buttonId">
       @for (
         option of resolvedSelectorOptions();
         track option.name;
@@ -134,7 +131,7 @@
         <li>
           <button
             type="button"
-            class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs border-0 bg-transparent text-left"
+            class="sc-dropdown__option"
             (click)="selectOption(i)"
           >
             <div class="text-white text-sm">{{ option.name }}</div>
@@ -147,8 +144,7 @@
 
 <div
   #tooltipDefault
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none"
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
 >
   {{ tooltipContent() }}
 </div>

@@ -4,7 +4,7 @@
 
     <div class="content_gutter">
       @if (articleMeta && articleBody) {
-        <div class="py-12 px-12 mx-auto" style="max-width: 750px">
+        <div class="py-12 px-12 mx-auto max-w-[750px]">
           <h1 class="text-emerald-400 text-3xl font-bold mb-2">
             {{ articleMeta.title }}
           </h1>
@@ -39,7 +39,7 @@
           <div
             #articleDiv
             id="article"
-            class="text-white html_content"
+            class="text-white sc-prose sc-prose--article"
             [innerHTML]="articleBody"
           ></div>
           <div class="giscus"></div>

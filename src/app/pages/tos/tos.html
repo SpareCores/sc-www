@@ -6,7 +6,7 @@
 
     <div class="content_gutter">
       @if (isLoading) {
-        <div class="py-12 px-12 mx-auto text-white" style="max-width: 750px">
+        <div class="py-12 px-12 mx-auto text-white max-w-[750px]">
           <div class="flex justify-center items-center">
             <sc-loading-spinner
               size="lg"
@@ -16,17 +16,20 @@
           </div>
         </div>
       } @else if (article; as article) {
-        <div class="py-12 px-12 mx-auto" style="max-width: 750px">
+        <div class="py-12 px-12 mx-auto max-w-[750px]">
           <h1 class="text-emerald-400 text-3xl font-bold mb-2">
             {{ article.meta.title }}
           </h1>
-          <div class="text-white html_content" [innerHTML]="article.body"></div>
+          <div
+            class="text-white sc-prose sc-prose--tos"
+            [innerHTML]="article.body"
+          ></div>
           <div class="w-full text-right mt-4 text-white">
             Last updated: {{ article.meta.date | timeToShortDate }}
           </div>
         </div>
       } @else if (articleNotFound) {
-        <div class="py-12 px-12 mx-auto text-white" style="max-width: 750px">
+        <div class="py-12 px-12 mx-auto text-white max-w-[750px]">
           <h1 class="text-emerald-400 text-3xl font-bold mb-4">
             Legal Document Not Found
           </h1>
@@ -42,7 +45,7 @@
           </a>
         </div>
       } @else if (articleError) {
-        <div class="py-12 px-12 mx-auto text-white" style="max-width: 750px">
+        <div class="py-12 px-12 mx-auto text-white max-w-[750px]">
           <h1 class="text-emerald-400 text-3xl font-bold mb-4">
             Unable to Load Legal Document
           </h1>

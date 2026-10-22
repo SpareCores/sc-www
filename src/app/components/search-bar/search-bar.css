@@ -351,3 +351,7 @@
     transform: none;
   }
 }
+
+.search-bar--borderless .search_bar_content .filters {
+  border-right: 0;
+}

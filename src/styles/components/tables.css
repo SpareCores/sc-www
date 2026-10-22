@@ -1,0 +1,161 @@
+.sc-table {
+  @apply text-white;
+}
+
+.sc-table thead {
+  @apply border-b border-solid border-gray-200 bg-secondary;
+}
+
+.sc-table thead th {
+  @apply px-5 py-3 text-left text-xs font-normal;
+}
+
+.sc-table tbody tr:nth-child(odd) {
+  @apply bg-primary;
+}
+
+.sc-table tbody tr:nth-child(even) {
+  @apply bg-secondary;
+}
+
+.sc-table tbody td {
+  @apply px-5 py-3 text-left text-sm;
+}
+
+.sc-table--compact thead th,
+.sc-table--compact tbody td {
+  @apply pr-2 pl-3;
+}
+
+.sc-table--interactive tbody tr {
+  @apply cursor-pointer hover:outline-1 hover:-outline-offset-1 hover:outline-solid hover:outline-emerald-400;
+}
+
+.sc-table--links tbody td a {
+  @apply underline decoration-dotted;
+}
+
+.sc-table__checkbox {
+  width: 2rem !important;
+  padding-right: 0.5rem !important;
+  padding-left: 0.75rem !important;
+}
+
+.sc-kv-table {
+  @apply text-white;
+}
+
+.sc-kv-table thead {
+  height: 45px;
+}
+
+.sc-kv-table thead th {
+  @apply border-b border-solid border-gray-200 bg-secondary px-5 py-3 text-left leading-5 font-normal;
+}
+
+.sc-kv-table tbody tr {
+  @apply border-b border-solid border-gray-200 bg-secondary;
+}
+
+.sc-kv-table tbody td {
+  @apply px-5 py-3 text-left text-sm;
+}
+
+.sc-kv-table__label {
+  width: 250px;
+}
+
+.sc-kv-table--fixed-rows {
+  table-layout: fixed;
+}
+
+.sc-kv-table--fixed-rows thead th,
+.sc-kv-table--fixed-rows tbody td {
+  height: 45px;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+.sc-compare-table {
+  @apply relative w-full border-collapse text-white;
+}
+
+.sc-compare-table thead {
+  @apply border-b border-solid border-gray-200 bg-secondary;
+}
+
+.sc-compare-table thead th {
+  @apply px-5 py-3 text-left text-xs font-normal;
+}
+
+.sc-compare-table thead tr th:nth-of-type(1) {
+  @apply sticky left-0 z-21 bg-secondary;
+}
+
+.sc-compare-table tbody tr {
+  @apply bg-primary;
+}
+
+.sc-compare-table tbody tr td {
+  @apply px-5 py-3 text-left text-sm;
+}
+
+.sc-compare-table tbody tr td:nth-of-type(1) {
+  @apply sticky left-0 z-20 bg-primary;
+}
+
+.sc-compare-table tbody tr.section_header {
+  @apply bg-secondary text-white;
+}
+
+.sc-compare-table tbody tr.section_header td:nth-of-type(1) {
+  @apply bg-secondary;
+}
+
+.sc-compare-table--fixed {
+  --compare-first-column-width: clamp(8rem, 12vw, 12rem);
+  min-width: 100%;
+  table-layout: fixed;
+}
+
+.sc-compare-table--fixed col.compare-first-column-col {
+  width: var(--compare-first-column-width);
+}
+
+.sc-compare-table--fixed thead tr th:nth-of-type(1),
+.sc-compare-table--fixed tbody tr td:nth-of-type(1) {
+  width: var(--compare-first-column-width);
+  min-width: var(--compare-first-column-width);
+  max-width: var(--compare-first-column-width);
+  white-space: nowrap;
+}
+
+.sc-compare-table--fixed tbody tr td:not(:nth-of-type(1)) {
+  text-align: right;
+}
+
+.sc-compare-table--fixed tbody tr.section_header td {
+  vertical-align: middle;
+}
+
+.sc-compare-table--fixed tbody tr.compare-instance-section-gap {
+  height: 1.5rem;
+}
+
+.sc-compare-table--fixed tbody tr.compare-instance-section-gap td {
+  @apply bg-primary;
+  height: 1.5rem;
+  padding: 0;
+  line-height: 0;
+  border: none;
+}
+
+.sc-compare-table--fixed tbody tr.compare-instance-section-first-row td {
+  padding-top: 0;
+}
+
+.sc-compare-table--fixed tbody tr.compare-instance-section-last-row td {
+  padding-bottom: 0;
+}

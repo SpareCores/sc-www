@@ -1,5 +1,9 @@
 <div class="w-full">
-  <table id="main-table" #mainTable class="items_table">
+  <table
+    id="main-table"
+    #mainTable
+    class="sc-compare-table sc-compare-table--fixed"
+  >
     <colgroup>
       <col class="compare-first-column-col" />
       @for (
@@ -24,10 +28,7 @@
                 'main-table-th-' + server.vendor_id + '_' + server.server_id
               "
             >
-              <div
-                class="flex flex-col gap-1 justify-center ml-auto"
-                style="width: fit-content"
-              >
+              <div class="flex flex-col gap-1 justify-center ml-auto w-fit">
                 <a
                   class="underline decoration-dotted whitespace-nowrap"
                   href="/server/{{ server.vendor_id }}/{{
@@ -978,17 +979,17 @@
               <ng-template #stressNgSubcategoryPanel>
                 <div
                   id="stress_ng_full_subcategory_options"
-                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
+                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
                 >
                   <ul
-                    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                    class="sc-dropdown__list"
                     aria-labelledby="stress_ng_full_subcategory_button"
                   >
                     @for (section of stressNgSections(); track section.name) {
                       <li>
                         <button
                           type="button"
-                          class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                          class="sc-dropdown__option"
                           data-ph-capture-attribute-sc-event="stress_ng_full select subcategory"
                           [attr.data-ph-capture-attribute-stress-ng-subcategory]="
                             section.name
@@ -1007,17 +1008,17 @@
               <ng-template #stressNgMetricPanel>
                 <div
                   id="stress_ng_full_metric_options"
-                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
+                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
                 >
                   <ul
-                    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                    class="sc-dropdown__list"
                     aria-labelledby="stress_ng_full_metric_button"
                   >
                     @for (option of stressNgMetricOptions; track option.id) {
                       <li>
                         <button
                           type="button"
-                          class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                          class="sc-dropdown__option"
                           data-ph-capture-attribute-sc-event="stress_ng_full select metric"
                           [attr.data-ph-capture-attribute-stress-ng-metric]="
                             option.id
@@ -1423,7 +1424,7 @@
                     <div>
                       <sc-benchmark-line-chart
                         layout="compare"
-                        blockClass="block_full_inline"
+                        blockClass="chart-block--inline"
                         chartSource="compare-ssl"
                         chartType="bar"
                         [servers]="lineCompareServers"
@@ -1435,7 +1436,7 @@
                     <div>
                       <sc-benchmark-line-chart
                         layout="compare"
-                        blockClass="block_full_inline"
+                        blockClass="chart-block--inline"
                         chartSource="compare-stress-raw"
                         chartType="line"
                         [servers]="lineCompareServers"
@@ -1447,7 +1448,7 @@
                     <div>
                       <sc-benchmark-line-chart
                         layout="compare"
-                        blockClass="block_full_inline"
+                        blockClass="chart-block--inline"
                         chartSource="compare-stress-percent"
                         chartType="line"
                         [servers]="lineCompareServers"
@@ -1913,7 +1914,6 @@
                   [servers]="multiBarCompareServers"
                   layout="compare"
                   [serverCount]="servers.length"
-                  [isEmbedded]="isEmbedded"
                   (optionSelected)="syncMultiBarHeaderOption(chartItem, $event)"
                   (secondaryOptionSelected)="
                     syncMultiBarHeaderSecondaryOption(chartItem, $event)
@@ -2142,7 +2142,7 @@
                 chartType="line"
                 elementId="server_compare_pgbench_chart"
                 canvasId="server_compare_pgbench_canvas"
-                blockClass="block_full_inline"
+                blockClass="chart-block--inline"
                 [servers]="lineCompareServers"
                 [benchmarkMeta]="lineBenchmarkMeta"
                 [infoTooltip]="pgbenchInfoTooltip"
@@ -2323,8 +2323,7 @@
 <div
   id="tooltipcompareDefault"
   #tooltipcompareDefault
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none"
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
   [class.tooltip-panel--wide]="!!tooltipHtml"
 >
   @if (tooltipHtml) {

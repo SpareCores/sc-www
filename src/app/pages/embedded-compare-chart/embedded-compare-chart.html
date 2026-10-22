@@ -1,5 +1,6 @@
-<div class="content_embed">
+<div class="content_embed chart-context--embedded">
   <sc-server-compare-charts
+    class="h-[calc(100%-64px)]"
     [servers]="servers"
     [instanceProperties]="instanceProperties"
     [benchmarkMeta]="benchmarkMeta"
@@ -7,7 +8,6 @@
     [instancePropertyCategories]="instancePropertyCategories"
     [isEmbedded]="true"
     [showChart]="showChart"
-    style="height: calc(100% - 64px)"
   >
   </sc-server-compare-charts>
   @if (instancesRaw) {

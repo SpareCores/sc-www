@@ -96,10 +96,6 @@
   @apply px-2 py-2 text-sm rounded-md border border-emerald-400 bg-transparent text-emerald-400;
 }
 
-.filter_chip_active {
-  @apply bg-emerald-400 text-white;
-}
-
 .dropdown_group_button:hover {
   @apply bg-emerald-400 text-white;
 }
@@ -115,19 +111,6 @@
 .pagination_nav {
   @apply flex items-center gap-2;
 }
-:host ::ng-deep .pagination-button.sc-button {
-  @apply size-11 shrink-0 justify-center border-0 p-0;
-}
-
-:host ::ng-deep .pagination-button.sc-button:hover,
-:host ::ng-deep .pagination-button.sc-button:focus {
-  @apply border-0 bg-emerald-400 text-white;
-}
-
-:host ::ng-deep .pagination-button--nav.sc-button {
-  @apply size-11 p-0;
-}
-
 .debug_servers_table {
   tbody {
     td.left-bordered-cell {
@@ -197,22 +180,8 @@
 }
 
 .table_scroll_wrapper {
+  @apply scrollbar-thin;
   overflow: visible;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
-}
-
-.table_scroll_wrapper::-webkit-scrollbar {
-  height: 2px;
-}
-
-.table_scroll_wrapper::-webkit-scrollbar-track {
-  background: var(--color-gray-700);
-}
-
-.table_scroll_wrapper::-webkit-scrollbar-thumb {
-  background-color: var(--color-emerald-400);
-  border-radius: 3px;
 }
 
 @media (width < theme(--breakpoint-wide)) {

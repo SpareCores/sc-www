@@ -224,7 +224,7 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
     E2EEvent.prepareHeaderForScreenshot();
 
     // We check that the table body contains at least one row before snapping.
-    cy.get("table.items_table tbody tr").should("have.length.at.least", 1);
+    cy.get("table.sc-table tbody tr").should("have.length.at.least", 1);
 
     // Capture the visual snapshot
     cy.compareSnapshot({
