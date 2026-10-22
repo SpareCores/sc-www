@@ -1,9 +1,5 @@
 @reference "../../../styles/tailwind.css";
 
-.design-button {
-  @apply py-2 px-4 inline-flex justify-center items-center text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none;
-}
-
 .design-gradient-fill-with-brand-colors {
   @apply text-white font-semibold text-4xl;
   background: radial-gradient(
