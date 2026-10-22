@@ -1427,7 +1427,7 @@
                     <div>
                       <sc-benchmark-line-chart
                         layout="compare"
-                        blockClass="block_full_inline"
+                        blockClass="chart-block--inline"
                         chartSource="compare-ssl"
                         chartType="bar"
                         [servers]="lineCompareServers"
@@ -1439,7 +1439,7 @@
                     <div>
                       <sc-benchmark-line-chart
                         layout="compare"
-                        blockClass="block_full_inline"
+                        blockClass="chart-block--inline"
                         chartSource="compare-stress-raw"
                         chartType="line"
                         [servers]="lineCompareServers"
@@ -1451,7 +1451,7 @@
                     <div>
                       <sc-benchmark-line-chart
                         layout="compare"
-                        blockClass="block_full_inline"
+                        blockClass="chart-block--inline"
                         chartSource="compare-stress-percent"
                         chartType="line"
                         [servers]="lineCompareServers"
@@ -2146,7 +2146,7 @@
                 chartType="line"
                 elementId="server_compare_pgbench_chart"
                 canvasId="server_compare_pgbench_canvas"
-                blockClass="block_full_inline"
+                blockClass="chart-block--inline"
                 [servers]="lineCompareServers"
                 [benchmarkMeta]="lineBenchmarkMeta"
                 [infoTooltip]="pgbenchInfoTooltip"

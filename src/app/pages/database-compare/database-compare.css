@@ -148,17 +148,6 @@
   margin: 0;
   padding: 0;
 }
-:host ::ng-deep .block_full_inline {
-  @apply px-6 py-6 bg-transparent flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 460px;
-  height: 460px;
-}
-
-:host ::ng-deep .block_full_inline .chart_div {
-  height: 100% !important;
-  min-height: 0;
-}
 
 .compact-number-header-cell {
   text-align: right !important;
