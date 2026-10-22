@@ -710,7 +710,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       return null;
     }
 
-    return Number(((benchmarkScore.score * cpuUtilization) / 100).toFixed(2));
+    return Math.floor(benchmarkScore.score * cpuUtilization) / 100;
   });
 
   readonly averageCpuUtilizationSummary = computed(() => {
