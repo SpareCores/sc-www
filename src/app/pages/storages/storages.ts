@@ -27,7 +27,7 @@ import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { Pagination } from "../../components/pagination/pagination";
 import { SearchBar } from "../../components/search-bar/search-bar";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
@@ -54,7 +54,7 @@ import {
     SearchBar,
     Pagination,
     LoadingSpinner,
-    FlowbiteDropdown,
+    Dropdown,
     StoragePipe,
   ],
   templateUrl: "./storages.html",
@@ -68,8 +68,8 @@ export class Storages implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
-  pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
+  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
+  pageDropdown = viewChild<Dropdown>("pageDropdown");
 
   private subscription = new Subscription();
   private searchRequestId = 0;

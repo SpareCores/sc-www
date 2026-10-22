@@ -18,9 +18,10 @@
         <div class="hidden xl:flex">
           <sc-button
             id="about_button"
-            [scFlowbiteDropdown]="'about_options'"
+            [scDropdown]="aboutPanel"
             [dropdownPlacement]="'bottom'"
-            #aboutDropdown="scFlowbiteDropdown"
+            (dropdownOpened)="initMeetingButtons()"
+            #aboutDropdown="scDropdown"
             label="About"
             icon="info"
             iconPosition="start"
@@ -31,9 +32,9 @@
         <div class="hidden xl:flex">
           <sc-button
             id="navigator_button"
-            [scFlowbiteDropdown]="'navigator_options'"
+            [scDropdown]="navigatorPanel"
             [dropdownPlacement]="'bottom'"
-            #navigatorDropdown="scFlowbiteDropdown"
+            #navigatorDropdown="scDropdown"
             label="Navigator"
             icon="ship-wheel"
             iconPosition="start"
@@ -99,9 +100,9 @@
             <div class="hidden sm:block">
               <sc-button
                 id="auth_button"
-                [scFlowbiteDropdown]="'auth_options'"
+                [scDropdown]="authPanel"
                 [dropdownPlacement]="'bottom-end'"
-                #authDropdown="scFlowbiteDropdown"
+                #authDropdown="scDropdown"
                 size="small"
                 variant="outline"
                 color="brand"
@@ -119,10 +120,10 @@
           @if (showCompareMenu()) {
             <sc-button
               id="compare_button"
-              [scFlowbiteDropdown]="'compare_options'"
+              [scDropdown]="comparePanel"
               [dropdownPlacement]="'bottom-end'"
               [dropdownFlip]="true"
-              #compareDropdown="scFlowbiteDropdown"
+              #compareDropdown="scDropdown"
               icon="scale"
               size="small"
               ariaLabel="Open compare menu"
@@ -132,398 +133,152 @@
           }
         </div>
         <div class="xl:hidden">
-          <span
+          <button
+            type="button"
             id="menu_button"
-            [scFlowbiteDropdown]="'menu_options'"
+            [scDropdown]="menuPanel"
             [dropdownPlacement]="'bottom-end'"
             [dropdownFlip]="true"
-            #menuDropdown="scFlowbiteDropdown"
-            class="navbar_link cursor-pointer"
+            (dropdownOpened)="initMeetingButtons()"
+            #menuDropdown="scDropdown"
+            class="navbar_link"
+            aria-label="Open menu"
           >
             <span class="navbar_icon">
               <svg lucideMenu class="h-8 w-8"></svg>
             </span>
-          </span>
+          </button>
         </div>
       </div>
     </div>
   </div>
 </nav>
 
-<div
-  id="menu_options"
-  class="mobile_menu_panel z-10 hidden bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
->
-  <ul
-    class="mobile_menu_panel__list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="dropdownDefaultButton"
-    (click)="closeMenu()"
+<ng-template #menuPanel>
+  <div
+    id="menu_options"
+    class="mobile_menu_panel bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
   >
-    <li class="px-2 py-2" [class.hidden]="auth.isAuthenticated()">
-      <div class="flex flex-col gap-2">
-        <sc-button
-          label="Log in"
-          size="small"
-          icon="key-square"
-          iconPosition="start"
-          variant="outline"
-          color="brand"
-          class="w-full"
-          (buttonClick)="signIn()"
-        ></sc-button>
-        <sc-button
-          label="Register"
-          size="small"
-          icon="user-plus"
-          iconPosition="start"
-          class="w-full"
-          (buttonClick)="signUp()"
-        ></sc-button>
-      </div>
-    </li>
-    <li
-      class="mx-3 my-1 border-b border-emerald-400/30"
-      [class.hidden]="auth.isAuthenticated()"
-    ></li>
-    <li class="py-2">
-      <span class="navbar_link hover:!text-white">
-        <span class="navbar_icon">
-          <svg lucideInfo class="h-4 w-4"></svg>
+    <ul
+      class="mobile_menu_panel__list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="dropdownDefaultButton"
+      (click)="closeMenu()"
+    >
+      <li class="px-2 py-2" [class.hidden]="auth.isAuthenticated()">
+        <div class="flex flex-col gap-2">
+          <sc-button
+            label="Log in"
+            size="small"
+            icon="key-square"
+            iconPosition="start"
+            variant="outline"
+            color="brand"
+            class="w-full"
+            (buttonClick)="signIn()"
+          ></sc-button>
+          <sc-button
+            label="Register"
+            size="small"
+            icon="user-plus"
+            iconPosition="start"
+            class="w-full"
+            (buttonClick)="signUp()"
+          ></sc-button>
+        </div>
+      </li>
+      <li
+        class="mx-3 my-1 border-b border-emerald-400/30"
+        [class.hidden]="auth.isAuthenticated()"
+      ></li>
+      <li class="py-2">
+        <span class="navbar_link hover:!text-white">
+          <span class="navbar_icon">
+            <svg lucideInfo class="h-4 w-4"></svg>
+          </span>
+          About
         </span>
-        About
-      </span>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/about/spare-cores">
-        <span class="navbar_icon">
-          <svg lucideHeartHandshake class="h-4 w-4"></svg>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/about/spare-cores">
+          <span class="navbar_icon">
+            <svg lucideHeartHandshake class="h-4 w-4"></svg>
+          </span>
+          Our Mission
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/about/partners">
+          <span class="navbar_icon">
+            <svg lucideHandshake class="h-4 w-4"></svg>
+          </span>
+          Partners
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/articles">
+          <span class="navbar_icon">
+            <svg lucideNotebookText class="h-4 w-4"></svg>
+          </span>
+          Blog
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/talks">
+          <span class="navbar_icon">
+            <svg lucideProjector class="h-4 w-4"></svg>
+          </span>
+          Talks & Slides
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/design">
+          <span class="navbar_icon">
+            <svg lucidePalette class="h-4 w-4"></svg>
+          </span>
+          Design
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <button type="button" id="meeting-header-menu" class="navbar_link">
+          <span class="navbar_icon">
+            <svg lucideCalendarDays class="h-4 w-4"></svg>
+          </span>
+          Book a Call
+        </button>
+      </li>
+      <li class="py-2">
+        <span class="navbar_link hover:!text-white">
+          <span class="navbar_icon">
+            <svg lucideShipWheel class="h-4 w-4"></svg>
+          </span>
+          Navigator
         </span>
-        Our Mission
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/about/partners">
-        <span class="navbar_icon">
-          <svg lucideHandshake class="h-4 w-4"></svg>
-        </span>
-        Partners
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/articles">
-        <span class="navbar_icon">
-          <svg lucideNotebookText class="h-4 w-4"></svg>
-        </span>
-        Blog
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/talks">
-        <span class="navbar_icon">
-          <svg lucideProjector class="h-4 w-4"></svg>
-        </span>
-        Talks & Slides
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/design">
-        <span class="navbar_icon">
-          <svg lucidePalette class="h-4 w-4"></svg>
-        </span>
-        Design
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <button type="button" id="meeting-header-menu" class="navbar_link">
-        <span class="navbar_icon">
-          <svg lucideCalendarDays class="h-4 w-4"></svg>
-        </span>
-        Book a Call
-      </button>
-    </li>
-    <li class="py-2">
-      <span class="navbar_link hover:!text-white">
-        <span class="navbar_icon">
-          <svg lucideShipWheel class="h-4 w-4"></svg>
-        </span>
-        Navigator
-      </span>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/about/navigator">
-        <span class="navbar_icon">
-          <svg lucideBookText class="h-4 w-4"></svg>
-        </span>
-        Product Info
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/vendors">
-        <span class="navbar_icon">
-          <svg lucideHouse class="h-4 w-4"></svg>
-        </span>
-        Vendors
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/servers">
-        <span class="navbar_icon">
-          <svg lucidePcCase class="h-4 w-4"></svg>
-        </span>
-        Servers
-      </a>
-    </li>
-    <li class="py-2 ml-12">
-      <a class="navbar_link" routerLink="/servers/compare">
-        <span class="navbar_icon">
-          <svg lucideScale class="h-4 w-4"></svg>
-        </span>
-        Compare
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/server_prices">
-        <span class="navbar_icon">
-          <svg lucideDollarSign class="h-4 w-4"></svg>
-        </span>
-        Server Prices
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/storages">
-        <span class="navbar_icon">
-          <svg lucideDatabase class="h-4 w-4"></svg>
-        </span>
-        Storage Prices
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/traffic-prices">
-        <span class="navbar_icon">
-          <svg lucideArrowUpDown class="h-4 w-4"></svg>
-        </span>
-        Traffic Prices
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/regions">
-        <span class="navbar_icon">
-          <svg lucideHotel class="h-4 w-4"></svg>
-        </span>
-        Regions
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/databases">
-        <span class="navbar_icon">
-          <svg lucideDatabase class="h-4 w-4"></svg>
-        </span>
-        Databases
-      </a>
-    </li>
-    <li class="py-2 ml-12">
-      <a class="navbar_link" routerLink="/databases/compare">
-        <span class="navbar_icon">
-          <svg lucideScale class="h-4 w-4"></svg>
-        </span>
-        Compare
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/navigator/benchmark-workloads">
-        <span class="navbar_icon">
-          <svg lucideNotebookText class="h-4 w-4"></svg>
-        </span>
-        Workloads
-      </a>
-    </li>
-    <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/navigator/benchmark-coverage">
-        <span class="navbar_icon">
-          <svg lucideActivity class="h-4 w-4"></svg>
-        </span>
-        Coverage
-      </a>
-    </li>
-    <li class="py-2">
-      <a class="navbar_link" routerLink="/advisor">
-        <span class="navbar_icon">
-          <svg lucideBot class="h-4 w-4"></svg>
-        </span>
-        Advisor
-      </a>
-    </li>
-    <li class="py-2">
-      <a
-        href="https://sparecores.github.io/resource-tracker/"
-        target="_blank"
-        rel="noopener"
-        class="navbar_link"
-      >
-        <span class="navbar_icon">
-          <svg lucideGauge class="h-4 w-4"></svg>
-        </span>
-        Resource Tracker
-      </a>
-    </li>
-    <li class="py-2">
-      <a
-        href="https://sentinel.sparecores.com/"
-        target="_blank"
-        rel="noopener"
-        class="navbar_link"
-      >
-        <span class="navbar_icon">
-          <svg lucideShieldCog class="h-4 w-4"></svg>
-        </span>
-        Sentinel
-      </a>
-    </li>
-  </ul>
-</div>
-
-<div
-  id="auth_options"
-  [attr.inert]="authDropdown()?.dropdown?._visible ? null : ''"
-  class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
->
-  <ul
-    class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="auth_button"
-    (click)="closeAuth()"
-  >
-    <li>
-      <a class="navbar_link" routerLink="/bookmarks" (click)="closeAuth()">
-        <span class="navbar_icon">
-          <svg lucideFolderBookmark class="h-4 w-4"></svg>
-        </span>
-        Bookmarks
-      </a>
-    </li>
-    <li>
-      <button type="button" class="navbar_link" (click)="openProfile()">
-        <span class="navbar_icon">
-          <svg lucideUser class="h-4 w-4"></svg>
-        </span>
-        Edit Profile
-      </button>
-    </li>
-    <hr />
-    <li>
-      <button
-        type="button"
-        class="navbar_link !text-[#EF4444] hover:!text-red-400"
-        (click)="signOut()"
-      >
-        <span class="navbar_icon">
-          <svg lucideLogOut class="h-4 w-4"></svg>
-        </span>
-        Sign Out
-      </button>
-    </li>
-  </ul>
-</div>
-
-<div
-  id="about_options"
-  [attr.inert]="aboutDropdown?.dropdown?._visible ? null : ''"
-  class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
->
-  <ul
-    class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="dropdownDefaultButton"
-    (click)="closeAbout()"
-  >
-    <li class="py-2">
-      <a class="navbar_link" routerLink="/about/spare-cores">
-        <span class="navbar_icon">
-          <svg lucideHeartHandshake class="h-4 w-4"></svg>
-        </span>
-        Our Mission
-      </a>
-    </li>
-    <li class="py-2">
-      <a class="navbar_link" routerLink="/about/partners">
-        <span class="navbar_icon">
-          <svg lucideHandshake class="h-4 w-4"></svg>
-        </span>
-        Partners
-      </a>
-    </li>
-    <li class="py-2">
-      <a class="navbar_link" routerLink="/articles">
-        <span class="navbar_icon">
-          <svg lucideNotebookText class="h-4 w-4"></svg>
-        </span>
-        Blog
-      </a>
-    </li>
-    <li class="py-2">
-      <a class="navbar_link" routerLink="/talks">
-        <span class="navbar_icon">
-          <svg lucideProjector class="h-4 w-4"></svg>
-        </span>
-        Talks & Slides
-      </a>
-    </li>
-    <li class="py-2">
-      <a class="navbar_link" routerLink="/design">
-        <span class="navbar_icon">
-          <svg lucidePalette class="h-4 w-4"></svg>
-        </span>
-        Design
-      </a>
-    </li>
-    <hr />
-    <li class="py-2">
-      <button type="button" id="meeting-header-demo" class="navbar_link">
-        <span class="navbar_icon">
-          <svg lucideCalendarDays class="h-4 w-4"></svg>
-        </span>
-        Book a Call
-      </button>
-    </li>
-  </ul>
-</div>
-
-<div
-  id="navigator_options"
-  [attr.inert]="navigatorDropdown?.dropdown?._visible ? null : ''"
-  class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
->
-  <ul
-    class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="dropdownDefaultButton"
-    (click)="closeNavigator()"
-  >
-    <li>
-      <a class="navbar_link" routerLink="/about/navigator">
-        <span class="navbar_icon">
-          <svg lucideBookText class="h-4 w-4"></svg>
-        </span>
-        Product Info
-      </a>
-    </li>
-    <hr />
-    <li>
-      <a class="navbar_link" routerLink="/vendors">
-        <span class="navbar_icon">
-          <svg lucideHouse class="h-4 w-4"></svg>
-        </span>
-        Vendors
-      </a>
-    </li>
-    <hr />
-    <li>
-      <a class="navbar_link" routerLink="/servers">
-        <span class="navbar_icon">
-          <svg lucidePcCase class="h-4 w-4"></svg>
-        </span>
-        Servers
-      </a>
-    </li>
-    <ul>
-      <li class="ml-6">
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/about/navigator">
+          <span class="navbar_icon">
+            <svg lucideBookText class="h-4 w-4"></svg>
+          </span>
+          Product Info
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/vendors">
+          <span class="navbar_icon">
+            <svg lucideHouse class="h-4 w-4"></svg>
+          </span>
+          Vendors
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/servers">
+          <span class="navbar_icon">
+            <svg lucidePcCase class="h-4 w-4"></svg>
+          </span>
+          Servers
+        </a>
+      </li>
+      <li class="py-2 ml-12">
         <a class="navbar_link" routerLink="/servers/compare">
           <span class="navbar_icon">
             <svg lucideScale class="h-4 w-4"></svg>
@@ -531,61 +286,47 @@
           Compare
         </a>
       </li>
-    </ul>
-    <hr />
-    <li>
-      <a class="navbar_link" routerLink="/server_prices">
-        <span class="navbar_icon">
-          <svg lucideDollarSign class="h-4 w-4"></svg>
-        </span>
-        Server Prices
-      </a>
-    </li>
-    <ul>
-      <li class="ml-6">
-        <a class="navbar_link" routerLink="/vendors">
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/server_prices">
           <span class="navbar_icon">
-            <svg lucideHouse class="h-4 w-4"></svg>
+            <svg lucideDollarSign class="h-4 w-4"></svg>
           </span>
-          By Vendor
+          Server Prices
         </a>
       </li>
-      <li class="ml-6">
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/storages">
+          <span class="navbar_icon">
+            <svg lucideDatabase class="h-4 w-4"></svg>
+          </span>
+          Storage Prices
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/traffic-prices">
+          <span class="navbar_icon">
+            <svg lucideArrowUpDown class="h-4 w-4"></svg>
+          </span>
+          Traffic Prices
+        </a>
+      </li>
+      <li class="py-2 ml-6">
         <a class="navbar_link" routerLink="/regions">
           <span class="navbar_icon">
             <svg lucideHotel class="h-4 w-4"></svg>
           </span>
-          By Region
+          Regions
         </a>
       </li>
-    </ul>
-    <li>
-      <a class="navbar_link" routerLink="/storages">
-        <span class="navbar_icon">
-          <svg lucideDatabase class="h-4 w-4"></svg>
-        </span>
-        Storage Prices
-      </a>
-    </li>
-    <li>
-      <a class="navbar_link" routerLink="/traffic-prices">
-        <span class="navbar_icon">
-          <svg lucideArrowUpDown class="h-4 w-4"></svg>
-        </span>
-        Traffic Prices
-      </a>
-    </li>
-    <hr />
-    <li>
-      <a class="navbar_link" routerLink="/databases">
-        <span class="navbar_icon">
-          <svg lucideDatabase class="h-4 w-4"></svg>
-        </span>
-        Databases
-      </a>
-    </li>
-    <ul>
-      <li class="ml-6">
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/databases">
+          <span class="navbar_icon">
+            <svg lucideDatabase class="h-4 w-4"></svg>
+          </span>
+          Databases
+        </a>
+      </li>
+      <li class="py-2 ml-12">
         <a class="navbar_link" routerLink="/databases/compare">
           <span class="navbar_icon">
             <svg lucideScale class="h-4 w-4"></svg>
@@ -593,193 +334,465 @@
           Compare
         </a>
       </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/navigator/benchmark-workloads">
+          <span class="navbar_icon">
+            <svg lucideNotebookText class="h-4 w-4"></svg>
+          </span>
+          Workloads
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/navigator/benchmark-coverage">
+          <span class="navbar_icon">
+            <svg lucideActivity class="h-4 w-4"></svg>
+          </span>
+          Coverage
+        </a>
+      </li>
+      <li class="py-2">
+        <a class="navbar_link" routerLink="/advisor">
+          <span class="navbar_icon">
+            <svg lucideBot class="h-4 w-4"></svg>
+          </span>
+          Advisor
+        </a>
+      </li>
+      <li class="py-2">
+        <a
+          href="https://sparecores.github.io/resource-tracker/"
+          target="_blank"
+          rel="noopener"
+          class="navbar_link"
+        >
+          <span class="navbar_icon">
+            <svg lucideGauge class="h-4 w-4"></svg>
+          </span>
+          Resource Tracker
+        </a>
+      </li>
+      <li class="py-2">
+        <a
+          href="https://sentinel.sparecores.com/"
+          target="_blank"
+          rel="noopener"
+          class="navbar_link"
+        >
+          <span class="navbar_icon">
+            <svg lucideShieldCog class="h-4 w-4"></svg>
+          </span>
+          Sentinel
+        </a>
+      </li>
     </ul>
-    <hr />
-    <li>
-      <a class="navbar_link" routerLink="/navigator/benchmark-workloads">
-        <span class="navbar_icon">
-          <svg lucideNotebookText class="h-4 w-4"></svg>
-        </span>
-        Workloads
-      </a>
-    </li>
-    <li>
-      <a class="navbar_link" routerLink="/navigator/benchmark-coverage">
-        <span class="navbar_icon">
-          <svg lucideActivity class="h-4 w-4"></svg>
-        </span>
-        Coverage
-      </a>
-    </li>
-  </ul>
-</div>
-
-<div
-  id="compare_options"
-  class="compare_dropdown_panel z-10 hidden bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
->
-  <div class="compare_dropdown_content">
-    @if (serverCompareCount() > 0) {
-      <div class="compare_dropdown_section_title">
-        <span class="navbar_icon">
-          <svg lucidePcCase class="h-4 w-4"></svg>
-        </span>
-        Servers
-      </div>
-      <ul
-        aria-label="Selected servers"
-        cdkDropList
-        (cdkDropListDropped)="dropComparedServer($event)"
-      >
-        @for (
-          server of getServersForCompare();
-          track server.server + "_" + server.vendor
-        ) {
-          <li
-            class="compare_dropdown_row"
-            cdkDrag
-            (cdkDragStarted)="setCompareDragCursor(true)"
-            (cdkDragEnded)="setCompareDragCursor(false)"
-          >
-            <button
-              type="button"
-              class="compare_dropdown_handle"
-              cdkDragHandle
-              aria-label="Reorder"
-              (click)="$event.stopPropagation()"
-            >
-              <span class="navbar_icon">
-                <svg lucideArrowUpDown class="h-4 w-4"></svg>
-              </span>
-            </button>
-            <button
-              type="button"
-              class="compare_dropdown_baseline"
-              [class.text-gray-400]="!isBaselineServer(server)"
-              [class.text-emerald-400]="isBaselineServer(server)"
-              aria-label="Toggle baseline server"
-              [attr.aria-pressed]="isBaselineServer(server) ? 'true' : 'false'"
-              (click)="toggleBaselineServer(server); $event.stopPropagation()"
-            >
-              <span class="navbar_icon">
-                <svg lucideTarget class="h-4 w-4"></svg>
-              </span>
-            </button>
-            <a
-              class="navbar_link min-w-0 flex-1 truncate"
-              routerLink="/server/{{ server.vendor }}/{{ server.server }}"
-              (click)="closeCompare()"
-            >
-              {{ server.vendor }}: {{ server.display_name }}
-            </a>
-            <button
-              type="button"
-              class="compare_dropdown_delete"
-              aria-label="Remove from compare"
-              (click)="removeFromCompare(server); $event.stopPropagation()"
-            >
-              <span class="navbar_icon">
-                <svg lucideTrash class="h-4 w-4"></svg>
-              </span>
-            </button>
-          </li>
-        }
-      </ul>
-      @if (!isOnComparePage() && serverCompareCount() >= 2) {
-        <div class="compare_dropdown_action">
-          <sc-button
-            class="w-full"
-            label="Compare servers"
-            size="small"
-            (click)="compareServers(); closeCompare()"
-          ></sc-button>
-        </div>
-      }
-    }
-    @if (databaseCompareCount() > 0) {
-      <div class="compare_dropdown_section_title">
-        <span class="navbar_icon">
-          <svg lucideDatabase class="h-4 w-4"></svg>
-        </span>
-        Databases
-      </div>
-      <ul
-        aria-label="Selected databases"
-        cdkDropList
-        (cdkDropListDropped)="dropComparedDatabase($event)"
-      >
-        @for (
-          database of getDatabasesForCompare();
-          track database.database + "_" + database.vendor
-        ) {
-          <li
-            class="compare_dropdown_row"
-            cdkDrag
-            (cdkDragStarted)="setCompareDragCursor(true)"
-            (cdkDragEnded)="setCompareDragCursor(false)"
-          >
-            <button
-              type="button"
-              class="compare_dropdown_handle"
-              cdkDragHandle
-              aria-label="Reorder"
-              (click)="$event.stopPropagation()"
-            >
-              <span class="navbar_icon">
-                <svg lucideArrowUpDown class="h-4 w-4"></svg>
-              </span>
-            </button>
-            <button
-              type="button"
-              class="compare_dropdown_baseline"
-              [class.text-gray-400]="!isBaselineDatabase(database)"
-              [class.text-emerald-400]="isBaselineDatabase(database)"
-              aria-label="Toggle baseline database"
-              [attr.aria-pressed]="
-                isBaselineDatabase(database) ? 'true' : 'false'
-              "
-              (click)="
-                toggleBaselineDatabase(database); $event.stopPropagation()
-              "
-            >
-              <span class="navbar_icon">
-                <svg lucideTarget class="h-4 w-4"></svg>
-              </span>
-            </button>
-            <a
-              class="navbar_link min-w-0 flex-1 truncate"
-              routerLink="/database/{{ database.vendor }}/{{
-                database.database
-              }}"
-              (click)="closeCompare()"
-            >
-              {{ database.vendor }}: {{ database.display_name }}
-            </a>
-            <button
-              type="button"
-              class="compare_dropdown_delete"
-              aria-label="Remove from compare"
-              (click)="
-                removeDatabaseFromCompare(database); $event.stopPropagation()
-              "
-            >
-              <span class="navbar_icon">
-                <svg lucideTrash class="h-4 w-4"></svg>
-              </span>
-            </button>
-          </li>
-        }
-      </ul>
-      @if (!isOnDatabaseComparePage() && databaseCompareCount() >= 2) {
-        <div class="compare_dropdown_action">
-          <sc-button
-            class="w-full"
-            label="Compare databases"
-            size="small"
-            (click)="compareDatabases(); closeCompare()"
-          ></sc-button>
-        </div>
-      }
-    }
   </div>
-</div>
+</ng-template>
+
+<ng-template #authPanel>
+  <div
+    id="auth_options"
+    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="auth_button"
+      (click)="closeAuth()"
+    >
+      <li>
+        <a class="navbar_link" routerLink="/bookmarks" (click)="closeAuth()">
+          <span class="navbar_icon">
+            <svg lucideFolderBookmark class="h-4 w-4"></svg>
+          </span>
+          Bookmarks
+        </a>
+      </li>
+      <li>
+        <button type="button" class="navbar_link" (click)="openProfile()">
+          <span class="navbar_icon">
+            <svg lucideUser class="h-4 w-4"></svg>
+          </span>
+          Edit Profile
+        </button>
+      </li>
+      <hr />
+      <li>
+        <button
+          type="button"
+          class="navbar_link !text-[#EF4444] hover:!text-red-400"
+          (click)="signOut()"
+        >
+          <span class="navbar_icon">
+            <svg lucideLogOut class="h-4 w-4"></svg>
+          </span>
+          Sign Out
+        </button>
+      </li>
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #aboutPanel>
+  <div
+    id="about_options"
+    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="dropdownDefaultButton"
+      (click)="closeAbout()"
+    >
+      <li class="py-2">
+        <a class="navbar_link" routerLink="/about/spare-cores">
+          <span class="navbar_icon">
+            <svg lucideHeartHandshake class="h-4 w-4"></svg>
+          </span>
+          Our Mission
+        </a>
+      </li>
+      <li class="py-2">
+        <a class="navbar_link" routerLink="/about/partners">
+          <span class="navbar_icon">
+            <svg lucideHandshake class="h-4 w-4"></svg>
+          </span>
+          Partners
+        </a>
+      </li>
+      <li class="py-2">
+        <a class="navbar_link" routerLink="/articles">
+          <span class="navbar_icon">
+            <svg lucideNotebookText class="h-4 w-4"></svg>
+          </span>
+          Blog
+        </a>
+      </li>
+      <li class="py-2">
+        <a class="navbar_link" routerLink="/talks">
+          <span class="navbar_icon">
+            <svg lucideProjector class="h-4 w-4"></svg>
+          </span>
+          Talks & Slides
+        </a>
+      </li>
+      <li class="py-2">
+        <a class="navbar_link" routerLink="/design">
+          <span class="navbar_icon">
+            <svg lucidePalette class="h-4 w-4"></svg>
+          </span>
+          Design
+        </a>
+      </li>
+      <hr />
+      <li class="py-2">
+        <button type="button" id="meeting-header-demo" class="navbar_link">
+          <span class="navbar_icon">
+            <svg lucideCalendarDays class="h-4 w-4"></svg>
+          </span>
+          Book a Call
+        </button>
+      </li>
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #navigatorPanel>
+  <div
+    id="navigator_options"
+    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="dropdownDefaultButton"
+      (click)="closeNavigator()"
+    >
+      <li>
+        <a class="navbar_link" routerLink="/about/navigator">
+          <span class="navbar_icon">
+            <svg lucideBookText class="h-4 w-4"></svg>
+          </span>
+          Product Info
+        </a>
+      </li>
+      <hr />
+      <li>
+        <a class="navbar_link" routerLink="/vendors">
+          <span class="navbar_icon">
+            <svg lucideHouse class="h-4 w-4"></svg>
+          </span>
+          Vendors
+        </a>
+      </li>
+      <hr />
+      <li>
+        <a class="navbar_link" routerLink="/servers">
+          <span class="navbar_icon">
+            <svg lucidePcCase class="h-4 w-4"></svg>
+          </span>
+          Servers
+        </a>
+      </li>
+      <ul>
+        <li class="ml-6">
+          <a class="navbar_link" routerLink="/servers/compare">
+            <span class="navbar_icon">
+              <svg lucideScale class="h-4 w-4"></svg>
+            </span>
+            Compare
+          </a>
+        </li>
+      </ul>
+      <hr />
+      <li>
+        <a class="navbar_link" routerLink="/server_prices">
+          <span class="navbar_icon">
+            <svg lucideDollarSign class="h-4 w-4"></svg>
+          </span>
+          Server Prices
+        </a>
+      </li>
+      <ul>
+        <li class="ml-6">
+          <a class="navbar_link" routerLink="/vendors">
+            <span class="navbar_icon">
+              <svg lucideHouse class="h-4 w-4"></svg>
+            </span>
+            By Vendor
+          </a>
+        </li>
+        <li class="ml-6">
+          <a class="navbar_link" routerLink="/regions">
+            <span class="navbar_icon">
+              <svg lucideHotel class="h-4 w-4"></svg>
+            </span>
+            By Region
+          </a>
+        </li>
+      </ul>
+      <li>
+        <a class="navbar_link" routerLink="/storages">
+          <span class="navbar_icon">
+            <svg lucideDatabase class="h-4 w-4"></svg>
+          </span>
+          Storage Prices
+        </a>
+      </li>
+      <li>
+        <a class="navbar_link" routerLink="/traffic-prices">
+          <span class="navbar_icon">
+            <svg lucideArrowUpDown class="h-4 w-4"></svg>
+          </span>
+          Traffic Prices
+        </a>
+      </li>
+      <hr />
+      <li>
+        <a class="navbar_link" routerLink="/databases">
+          <span class="navbar_icon">
+            <svg lucideDatabase class="h-4 w-4"></svg>
+          </span>
+          Databases
+        </a>
+      </li>
+      <ul>
+        <li class="ml-6">
+          <a class="navbar_link" routerLink="/databases/compare">
+            <span class="navbar_icon">
+              <svg lucideScale class="h-4 w-4"></svg>
+            </span>
+            Compare
+          </a>
+        </li>
+      </ul>
+      <hr />
+      <li>
+        <a class="navbar_link" routerLink="/navigator/benchmark-workloads">
+          <span class="navbar_icon">
+            <svg lucideNotebookText class="h-4 w-4"></svg>
+          </span>
+          Workloads
+        </a>
+      </li>
+      <li>
+        <a class="navbar_link" routerLink="/navigator/benchmark-coverage">
+          <span class="navbar_icon">
+            <svg lucideActivity class="h-4 w-4"></svg>
+          </span>
+          Coverage
+        </a>
+      </li>
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #comparePanel>
+  <div
+    id="compare_options"
+    class="compare_dropdown_panel bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
+  >
+    <div class="compare_dropdown_content">
+      @if (serverCompareCount() > 0) {
+        <div class="compare_dropdown_section_title">
+          <span class="navbar_icon">
+            <svg lucidePcCase class="h-4 w-4"></svg>
+          </span>
+          Servers
+        </div>
+        <ul
+          aria-label="Selected servers"
+          cdkDropList
+          (cdkDropListDropped)="dropComparedServer($event)"
+        >
+          @for (
+            server of getServersForCompare();
+            track server.server + "_" + server.vendor
+          ) {
+            <li
+              class="compare_dropdown_row"
+              cdkDrag
+              (cdkDragStarted)="setCompareDragCursor(true)"
+              (cdkDragEnded)="setCompareDragCursor(false)"
+            >
+              <button
+                type="button"
+                class="compare_dropdown_handle"
+                cdkDragHandle
+                aria-label="Reorder"
+                (click)="$event.stopPropagation()"
+              >
+                <span class="navbar_icon">
+                  <svg lucideArrowUpDown class="h-4 w-4"></svg>
+                </span>
+              </button>
+              <button
+                type="button"
+                class="compare_dropdown_baseline"
+                [class.text-gray-400]="!isBaselineServer(server)"
+                [class.text-emerald-400]="isBaselineServer(server)"
+                aria-label="Toggle baseline server"
+                [attr.aria-pressed]="
+                  isBaselineServer(server) ? 'true' : 'false'
+                "
+                (click)="toggleBaselineServer(server); $event.stopPropagation()"
+              >
+                <span class="navbar_icon">
+                  <svg lucideTarget class="h-4 w-4"></svg>
+                </span>
+              </button>
+              <a
+                class="navbar_link min-w-0 flex-1 truncate"
+                routerLink="/server/{{ server.vendor }}/{{ server.server }}"
+                (click)="closeCompare()"
+              >
+                {{ server.vendor }}: {{ server.display_name }}
+              </a>
+              <button
+                type="button"
+                class="compare_dropdown_delete"
+                aria-label="Remove from compare"
+                (click)="removeFromCompare(server); $event.stopPropagation()"
+              >
+                <span class="navbar_icon">
+                  <svg lucideTrash class="h-4 w-4"></svg>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+        @if (!isOnComparePage() && serverCompareCount() >= 2) {
+          <div class="compare_dropdown_action">
+            <sc-button
+              class="w-full"
+              label="Compare servers"
+              size="small"
+              (click)="compareServers(); closeCompare()"
+            ></sc-button>
+          </div>
+        }
+      }
+      @if (databaseCompareCount() > 0) {
+        <div class="compare_dropdown_section_title">
+          <span class="navbar_icon">
+            <svg lucideDatabase class="h-4 w-4"></svg>
+          </span>
+          Databases
+        </div>
+        <ul
+          aria-label="Selected databases"
+          cdkDropList
+          (cdkDropListDropped)="dropComparedDatabase($event)"
+        >
+          @for (
+            database of getDatabasesForCompare();
+            track database.database + "_" + database.vendor
+          ) {
+            <li
+              class="compare_dropdown_row"
+              cdkDrag
+              (cdkDragStarted)="setCompareDragCursor(true)"
+              (cdkDragEnded)="setCompareDragCursor(false)"
+            >
+              <button
+                type="button"
+                class="compare_dropdown_handle"
+                cdkDragHandle
+                aria-label="Reorder"
+                (click)="$event.stopPropagation()"
+              >
+                <span class="navbar_icon">
+                  <svg lucideArrowUpDown class="h-4 w-4"></svg>
+                </span>
+              </button>
+              <button
+                type="button"
+                class="compare_dropdown_baseline"
+                [class.text-gray-400]="!isBaselineDatabase(database)"
+                [class.text-emerald-400]="isBaselineDatabase(database)"
+                aria-label="Toggle baseline database"
+                [attr.aria-pressed]="
+                  isBaselineDatabase(database) ? 'true' : 'false'
+                "
+                (click)="
+                  toggleBaselineDatabase(database); $event.stopPropagation()
+                "
+              >
+                <span class="navbar_icon">
+                  <svg lucideTarget class="h-4 w-4"></svg>
+                </span>
+              </button>
+              <a
+                class="navbar_link min-w-0 flex-1 truncate"
+                routerLink="/database/{{ database.vendor }}/{{
+                  database.database
+                }}"
+                (click)="closeCompare()"
+              >
+                {{ database.vendor }}: {{ database.display_name }}
+              </a>
+              <button
+                type="button"
+                class="compare_dropdown_delete"
+                aria-label="Remove from compare"
+                (click)="
+                  removeDatabaseFromCompare(database); $event.stopPropagation()
+                "
+              >
+                <span class="navbar_icon">
+                  <svg lucideTrash class="h-4 w-4"></svg>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+        @if (!isOnDatabaseComparePage() && databaseCompareCount() >= 2) {
+          <div class="compare_dropdown_action">
+            <sc-button
+              class="w-full"
+              label="Compare databases"
+              size="small"
+              (click)="compareDatabases(); closeCompare()"
+            ></sc-button>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</ng-template>

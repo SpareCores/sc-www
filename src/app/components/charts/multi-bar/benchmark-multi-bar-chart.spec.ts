@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkMultiBarChart } from "./benchmark-multi-bar-chart";
-import { DropdownManager } from "../../../services/dropdown-manager";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 import {
   BenchmarkMultiBarChartItem,
@@ -17,15 +16,7 @@ describe("BenchmarkMultiBarChart", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [BenchmarkMultiBarChart],
-      providers: [
-        ...sharedTestingProviders,
-        {
-          provide: DropdownManager,
-          useValue: {
-            initDropdown: () => Promise.resolve(undefined),
-          },
-        },
-      ],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BenchmarkMultiBarChart);
