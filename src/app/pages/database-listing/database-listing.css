@@ -1,11 +1,5 @@
 @reference "../../../styles/tailwind.css";
 
-:host ::ng-deep .sc-floating-actions .sc-button__label {
-  overflow: visible;
-  text-overflow: clip;
-  min-width: max-content;
-}
-
 .sc-filter-sidebar {
   min-width: 20rem;
   flex: 0 0 20rem;

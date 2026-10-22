@@ -484,7 +484,7 @@
                 ariaLabel="Previous page"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button pagination-button--nav"
+                buttonClass="sc-button--pagination sc-button--pagination-nav"
                 (click)="goToPage(page() - 1)"
               ></sc-button>
             }
@@ -493,7 +493,7 @@
                 label="1"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(1)"
               ></sc-button>
               @if (page() > 3) {
@@ -509,7 +509,7 @@
                 [label]="'' + pageNumber"
                 [variant]="pageNumber === page() ? 'solid' : 'ghost'"
                 [color]="pageNumber === page() ? 'brand' : 'inverse'"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(pageNumber)"
               ></sc-button>
             }
@@ -523,7 +523,7 @@
                 [label]="'' + totalPages()"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(totalPages())"
               ></sc-button>
             } @else if (totalPages() === page() + 2) {
@@ -531,7 +531,7 @@
                 [label]="'' + totalPages()"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(totalPages())"
               ></sc-button>
             }
@@ -541,7 +541,7 @@
                 ariaLabel="Next page"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button pagination-button--nav"
+                buttonClass="sc-button--pagination sc-button--pagination-nav"
                 (click)="goToPage(page() + 1)"
               ></sc-button>
             }

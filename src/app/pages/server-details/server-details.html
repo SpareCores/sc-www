@@ -39,6 +39,7 @@
             <h1 class="text-2xl flex items-center gap-x-2 flex-wrap">
               <sc-bookmark-button
                 kind="server"
+                size="large"
                 [vendorId]="serverDetails.vendor_id"
                 [entityId]="serverDetails.api_reference"
                 data-ph-capture-attribute-sc-event="server details favorite"
@@ -671,6 +672,7 @@
 @if (serverDetails && !isLoading) {
   <sc-button
     class="summarize-fab summarize-fab-to-hide-for-test"
+    buttonClass="sc-button--round"
     icon="sparkles"
     ariaLabel="Summarize server"
     [disabled]="!descriptionsAvailable"
