@@ -24,49 +24,6 @@
     animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
-:host ::ng-deep .block_half {
-  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
-  width: calc(50% - 1rem);
-  min-height: 460px;
-  height: 460px;
-}
-
-:host ::ng-deep .block_half .chart_div {
-  max-height: 350px;
-  height: 350px;
-  max-width: 100%;
-}
-
-:host ::ng-deep .block_half_taller {
-  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col relative overflow-hidden;
-  width: calc(50% - 1rem);
-  min-height: 530px;
-  margin: auto;
-}
-
-:host ::ng-deep .block_half_taller .chart_div {
-  max-height: 530px;
-  max-width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-:host ::ng-deep .block_full {
-  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 460px;
-  height: 460px;
-}
-
-:host ::ng-deep .block_full .chart_div {
-  max-height: 350px;
-  height: 350px;
-  max-width: 100%;
-}
-
-:host ::ng-deep .block_half.open {
-  height: unset;
-}
 
 :host #lstopo {
   height: auto;
@@ -169,16 +126,4 @@ div.giscus {
 
 ::ng-deep .property_value ul li {
   margin-bottom: 0.25rem;
-}
-
-@media (width <= theme(--breakpoint-tablet)) {
-  :host ::ng-deep .block_half {
-    width: calc(100%);
-    margin: auto;
-  }
-
-  :host ::ng-deep .block_half_taller {
-    width: calc(100%);
-    margin: auto;
-  }
 }

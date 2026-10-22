@@ -7,8 +7,8 @@
         layout() === 'compare' && !isEmbedded(),
       'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]':
         layout() === 'details' && !isEmbedded(),
-      block_full_inline: layout() === 'compare' && isEmbedded(),
-      block_full: layout() === 'details' && isEmbedded(),
+      'chart-block--inline': layout() === 'compare' && isEmbedded(),
+      'chart-block--full': layout() === 'details' && isEmbedded(),
     }"
   >
     @if (showHeader()) {

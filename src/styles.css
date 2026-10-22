@@ -13,6 +13,7 @@
 @import "prismjs/plugins/toolbar/prism-toolbar.min.css" layer(third-party);
 @import "./assets/prism-js-override.css" layer(third-party);
 @import "./styles/components/tables.css" layer(components);
+@import "./styles/components/chart-block.css" layer(components);
 
 @layer base {
   *,
