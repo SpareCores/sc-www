@@ -155,7 +155,7 @@
   <ng-template #modelPanel>
     <div
       [id]="optionsId"
-      class="bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
+      class="bg-secondary rounded-lg shadow-sm w-64 border border-emerald-400 border-solid"
     >
       <ul
         class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200 max-h-60 overflow-y-auto"
@@ -169,7 +169,7 @@
           <li>
             <button
               type="button"
-              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs border-0 bg-transparent text-left"
               (click)="selectModel(i)"
               [title]="llmModel.name"
             >
