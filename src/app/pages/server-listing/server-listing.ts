@@ -34,7 +34,7 @@ import {
   toSearchParams,
 } from "../../tools/listing-search-params";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import {
@@ -105,7 +105,6 @@ import {
 @Component({
   selector: "sc-server-listing",
   imports: [
-    CommonModule,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,

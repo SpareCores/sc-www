@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   Component,
   DestroyRef,
@@ -41,7 +40,6 @@ import {
 @Component({
   selector: "sc-traffic-prices",
   imports: [
-    CommonModule,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,

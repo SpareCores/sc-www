@@ -17,7 +17,7 @@ import { Button } from "../../components/button/button";
 import { KeeperAPI } from "../../services/keeper-api";
 import { OrderDir, ServerPriceWithPKs } from "../../../../sdk/data-contracts";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import {
@@ -96,7 +96,6 @@ export type RegionVendorMetadata = {
 @Component({
   selector: "sc-server-prices",
   imports: [
-    CommonModule,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,

@@ -2,14 +2,7 @@
   <div
     class="w-full h-auto overflow-visible relative flex flex-col gap-4 workload-profile-charts-to-hide-for-test"
     [attr.id]="isEmbedded() ? 'workload_profile' : null"
-    [ngClass]="{
-      'px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]':
-        layout() === 'compare' && !isEmbedded(),
-      'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]':
-        layout() === 'details' && !isEmbedded(),
-      'chart-block--inline': layout() === 'compare' && isEmbedded(),
-      'chart-block--full': layout() === 'details' && isEmbedded(),
-    }"
+    [class]="panelClass()"
   >
     @if (showHeader()) {
       <div class="flex justify-between items-center mb-4 gap-4">
@@ -323,7 +316,7 @@
                     </td>
                     <td
                       class="compact-number workload-profile-breakdown-table__impact-value"
-                      [ngClass]="getImpactColorClass(row.impact)"
+                      [class]="getImpactColorClass(row.impact)"
                     >
                       {{ formatImpactPercent(row.impact) }}
                     </td>

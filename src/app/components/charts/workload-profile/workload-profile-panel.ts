@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -159,7 +159,6 @@ function buildScoreGaugeChart(score: number | null | undefined): {
   selector: "sc-workload-profile-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     Button,
     LucideDynamicIcon,
     LucideCircleArrowUp,
@@ -200,6 +199,17 @@ export class WorkloadProfilePanel {
   readonly activeAccordionIndex = signal(-1);
   readonly selectedProfileId = signal<string | undefined>(undefined);
   readonly isBrowser = isPlatformBrowser(this.platformId);
+
+  readonly panelClass = computed(() => {
+    if (this.isEmbedded()) {
+      return this.layout() === "compare"
+        ? "chart-block--inline"
+        : "chart-block--full";
+    }
+    return this.layout() === "compare"
+      ? "px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]"
+      : "px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]";
+  });
 
   readonly workloadProfileBenchmarks = computed(() =>
     resolveWorkloadProfileBenchmarksWithData({
