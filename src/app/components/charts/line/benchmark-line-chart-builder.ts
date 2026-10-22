@@ -9,7 +9,10 @@ import {
   TooltipItem,
   TooltipModel,
 } from "chart.js";
-import { radarDatasetColors } from "../shared/chart-colors.constants";
+import {
+  radarDatasetColors,
+  chartColors,
+} from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import { datasetHasComparableData } from "../shared/chart-legend.utils";
 import {
@@ -43,7 +46,7 @@ import {
 } from "../../../pages/server-details/chartOptions";
 
 const PGBENCH_SCORE_COLOR = radarDatasetColors[0].borderColor;
-const PGBENCH_LATENCY_COLOR = "#EAB308";
+const PGBENCH_LATENCY_COLOR = chartColors["yellow-500"];
 
 type StressNgServerDetails = {
   display_name: string;
@@ -596,14 +599,14 @@ export class BenchmarkLineChartBuilder {
     const annotationLine: AnnotationLine = {
       type: "line",
       borderWidth: 3,
-      borderColor: "#EF4444",
+      borderColor: chartColors["red-500"],
       xMin: idx,
       xMax: idx,
       label: {
         rotation: "auto",
         position: "start",
         content: "CPU cores",
-        backgroundColor: "#EF4444",
+        backgroundColor: chartColors["red-500"],
         display: true,
       },
     };
@@ -770,7 +773,7 @@ export class BenchmarkLineChartBuilder {
         ...options.scales?.y,
         ticks: {
           ...options.scales?.y?.ticks,
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
           ...options.scales?.y?.grid,
@@ -779,7 +782,7 @@ export class BenchmarkLineChartBuilder {
         title: {
           ...options.scales?.y?.title,
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           ...(unit ? { text: unit } : {}),
         },
       },
@@ -869,7 +872,7 @@ export class BenchmarkLineChartBuilder {
     const annotationLine: AnnotationLine = {
       type: "line",
       borderWidth: 3,
-      borderColor: "#EF4444",
+      borderColor: chartColors["red-500"],
       drawTime: "beforeDatasetsDraw",
       xMin: vcpus,
       xMax: vcpus,
@@ -877,7 +880,7 @@ export class BenchmarkLineChartBuilder {
         rotation: "auto",
         position: "center",
         content: "vCPUs",
-        backgroundColor: "#EF4444",
+        backgroundColor: chartColors["red-500"],
         display: true,
         drawTime: "beforeDatasetsDraw",
       },

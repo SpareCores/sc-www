@@ -272,7 +272,7 @@ export class LandingPage implements OnInit {
       return "";
     }
 
-    return "background: rgba(255,255,255,1) !important; color: #000 !important;";
+    return "background: var(--color-white) !important; color: var(--color-black) !important;";
   }
 
   isSlotLinkActive(index: number) {

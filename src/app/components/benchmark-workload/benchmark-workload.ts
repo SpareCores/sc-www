@@ -23,6 +23,11 @@ import {
   BenchmarkWorkloadItem,
 } from "../../pages/benchmark-workloads/benchmark-workloads.models";
 
+import {
+  chartColors,
+  chartColor,
+} from "../charts/shared/chart-colors.constants";
+
 export interface BenchmarkConfigEntry {
   key: string;
   description: string;
@@ -105,8 +110,8 @@ export class BenchmarkWorkload {
         {
           data: bins.map((b) => b.count),
           label: "Measurements",
-          backgroundColor: "#34d399",
-          hoverBackgroundColor: "#6ee7b7",
+          backgroundColor: chartColors["emerald-400"],
+          hoverBackgroundColor: chartColors["emerald-300"],
           borderWidth: 0,
           barPercentage: 1.0,
           categoryPercentage: 1.0,
@@ -139,25 +144,25 @@ export class BenchmarkWorkload {
         scales: {
           x: {
             ticks: {
-              color: "#FFF",
+              color: chartColors.white,
               maxRotation: 45,
               font: { size: 10 },
             },
-            grid: { color: "rgba(75,85,99,0.4)" },
+            grid: { color: chartColor("gray-600", 0.4) },
             title: {
               display: true,
               text: xLabel,
-              color: "#FFF",
+              color: chartColors.white,
               font: { size: 11 },
             },
           },
           y: {
-            ticks: { color: "#FFF" },
-            grid: { color: "rgba(75,85,99,0.4)" },
+            ticks: { color: chartColors.white },
+            grid: { color: chartColor("gray-600", 0.4) },
             title: {
               display: true,
               text: yLabel,
-              color: "#FFF",
+              color: chartColors.white,
               font: { size: 11 },
             },
           },

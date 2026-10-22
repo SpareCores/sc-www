@@ -7,23 +7,28 @@ import {
 import { chartLegendLabels } from "../../components/charts/shared/chart-legend.utils";
 import { formatStaticWebFileSizeTooltipContext } from "../../components/charts/shared/chart-tooltip.utils";
 
+import {
+  chartColors,
+  chartColor,
+} from "../../components/charts/shared/chart-colors.constants";
+
 export const barChartOptions: ChartConfiguration<"bar">["options"] = {
   scales: {
     x: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
     },
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "USD/h",
       },
     },
@@ -42,14 +47,14 @@ export const barChartOptionsSSL: ChartConfiguration<"bar">["options"] = {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "byte/s",
       },
     },
@@ -59,7 +64,7 @@ export const barChartOptionsSSL: ChartConfiguration<"bar">["options"] = {
     title: {
       display: true,
       text: "Block size (byte)",
-      color: "#FFF",
+      color: chartColors.white,
     },
   },
 };
@@ -69,27 +74,27 @@ export const barChartOptionsStaticWeb: ChartConfiguration<"bar">["options"] = {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Request per second",
       },
     },
     x: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Connections per vCPU(s)",
       },
     },
@@ -99,7 +104,7 @@ export const barChartOptionsStaticWeb: ChartConfiguration<"bar">["options"] = {
     title: {
       display: true,
       text: "File size (KiB)",
-      color: "#FFF",
+      color: chartColors.white,
     },
     tooltip: {
       callbacks: {
@@ -130,27 +135,27 @@ export const barChartOptionsTemplate: ChartConfiguration<"bar">["options"] = {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Benchmark Score",
       },
     },
     x: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "scaleField values",
       },
     },
@@ -160,7 +165,7 @@ export const barChartOptionsTemplate: ChartConfiguration<"bar">["options"] = {
     title: {
       display: true,
       text: "labelsField description",
-      color: "#FFF",
+      color: chartColors.white,
     },
     // NOTE: Add customized tooltip callbacks
     tooltip: {
@@ -191,27 +196,27 @@ export const barChartOptionsRedis: ChartConfiguration<"bar">["options"] = {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Request per second",
       },
     },
     x: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Number of concurrent pipelined requests",
       },
     },
@@ -221,7 +226,7 @@ export const barChartOptionsRedis: ChartConfiguration<"bar">["options"] = {
     title: {
       display: true,
       text: "Operation",
-      color: "#FFF",
+      color: chartColors.white,
     },
     tooltip: {
       callbacks: {
@@ -252,27 +257,27 @@ export const barChartOptionsSSLCompare: ChartConfiguration<"bar">["options"] = {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "byte/s",
       },
     },
     x: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Block Size (byte)",
       },
     },
@@ -304,27 +309,27 @@ export const barChartOptionsStaticWebCompare: ChartConfiguration<"bar">["options
       ...barChartOptions.scales,
       y: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
-          color: "#4B5563",
+          color: chartColors["gray-600"],
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "Request per second",
         },
       },
       x: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
-          color: "#4B5563",
+          color: chartColors["gray-600"],
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "File Size",
         },
       },
@@ -360,27 +365,27 @@ export const barChartOptionsRedisCompare: ChartConfiguration<"bar">["options"] =
       ...barChartOptions.scales,
       y: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
-          color: "#4B5563",
+          color: chartColors["gray-600"],
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "Request per second",
         },
       },
       x: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
-          color: "#4B5563",
+          color: chartColors["gray-600"],
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "Number of concurrent pipelined requests",
         },
       },
@@ -413,8 +418,8 @@ export const barChartOptionsRedisCompare: ChartConfiguration<"bar">["options"] =
 export const barChartDataEmpty: ChartData<"bar"> = {
   labels: [],
   datasets: [
-    { data: [], label: "Spot", backgroundColor: "#34D399" },
-    { data: [], label: "Ondemand", backgroundColor: "#E5E7EB" },
+    { data: [], label: "Spot", backgroundColor: chartColors["emerald-400"] },
+    { data: [], label: "Ondemand", backgroundColor: chartColors["gray-200"] },
   ],
 };
 
@@ -422,17 +427,17 @@ export const radarChartOptions: ChartConfiguration<"radar">["options"] = {
   scales: {
     r: {
       ticks: {
-        color: "#4B5563",
-        backdropColor: "#06263a",
+        color: chartColors["gray-600"],
+        backdropColor: chartColors["sky-975"],
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       pointLabels: {
-        color: "#E5E7EB",
+        color: chartColors["gray-200"],
       },
       angleLines: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
         display: true,
       },
       min: 0,
@@ -464,17 +469,41 @@ export const radarChartOptions: ChartConfiguration<"radar">["options"] = {
 };
 
 export const radarDatasetColors = [
-  { borderColor: "#34D399", backgroundColor: "#34D39933" },
-  { borderColor: "#E5E7EB", backgroundColor: "#E5E7EB33" },
-  { borderColor: "#38BDF8", backgroundColor: "#38BDF833" },
-  { borderColor: "#FACC15", backgroundColor: "#FACC1533" },
-  { borderColor: "#F87171", backgroundColor: "#F8717133" },
-  { borderColor: "#A3E635", backgroundColor: "#A3E63533" },
-  { borderColor: "#818CF8", backgroundColor: "#818CF833" },
-  { borderColor: "#94A3B8", backgroundColor: "#94A3B833" },
+  {
+    borderColor: chartColors["emerald-400"],
+    backgroundColor: chartColor("emerald-400", 0.2),
+  },
+  {
+    borderColor: chartColors["gray-200"],
+    backgroundColor: chartColor("gray-200", 0.2),
+  },
+  {
+    borderColor: chartColors["sky-400"],
+    backgroundColor: chartColor("sky-400", 0.2),
+  },
+  {
+    borderColor: chartColors["yellow-400"],
+    backgroundColor: chartColor("yellow-400", 0.2),
+  },
+  {
+    borderColor: chartColors["red-400"],
+    backgroundColor: chartColor("red-400", 0.2),
+  },
+  {
+    borderColor: chartColors["lime-400"],
+    backgroundColor: chartColor("lime-400", 0.2),
+  },
+  {
+    borderColor: chartColors["indigo-400"],
+    backgroundColor: chartColor("indigo-400", 0.2),
+  },
+  {
+    borderColor: chartColors["slate-400"],
+    backgroundColor: chartColor("slate-400", 0.2),
+  },
 ];
 
-export const chartAxisGridColor = "#4B5563";
+export const chartAxisGridColor = chartColors["gray-600"];
 
 export const lineChartLegendLabels = chartLegendLabels;
 
@@ -483,7 +512,7 @@ export const lineChartOptionsBWM: ChartConfiguration<"line">["options"] = {
   scales: {
     x: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
         autoSkip: false,
         major: {
           enabled: true,
@@ -491,11 +520,11 @@ export const lineChartOptionsBWM: ChartConfiguration<"line">["options"] = {
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "MB",
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       type: "logarithmic",
       min: 0,
@@ -512,15 +541,15 @@ export const lineChartOptionsBWM: ChartConfiguration<"line">["options"] = {
     },
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
-        color: "#4B5563",
+        color: chartColors["gray-600"],
       },
       type: "logarithmic",
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "MB/sec",
       },
     },
@@ -555,11 +584,11 @@ export const lineChartOptionsComp: ChartConfiguration<"line">["options"] = {
   scales: {
     x: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Compression Level",
       },
       grid: {
@@ -568,7 +597,7 @@ export const lineChartOptionsComp: ChartConfiguration<"line">["options"] = {
     },
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
         color: chartAxisGridColor,
@@ -576,7 +605,7 @@ export const lineChartOptionsComp: ChartConfiguration<"line">["options"] = {
       type: "logarithmic",
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "byte/s",
       },
     },
@@ -613,11 +642,11 @@ export const lineChartOptionsCompRatio: ChartConfiguration<"line">["options"] =
     scales: {
       x: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "Compression Level",
         },
         grid: {
@@ -626,7 +655,7 @@ export const lineChartOptionsCompRatio: ChartConfiguration<"line">["options"] =
       },
       y: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
           color: chartAxisGridColor,
@@ -634,7 +663,7 @@ export const lineChartOptionsCompRatio: ChartConfiguration<"line">["options"] =
         type: "linear",
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "Compression Ratio",
         },
         min: 0,
@@ -654,28 +683,28 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<"line">["option
     scales: {
       x: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
-          color: "#4B5563",
+          color: chartColors["gray-600"],
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "Compression Level",
         },
       },
       y: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
-          color: "#4B5563",
+          color: chartColors["gray-600"],
         },
         type: "logarithmic",
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "byte/s",
         },
       },
@@ -710,7 +739,7 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<"line">["option
       title: {
         display: true,
         text: "Compression Speed",
-        color: "#FFF",
+        color: chartColors.white,
       },
     },
     parsing: {
@@ -725,28 +754,28 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<"line">["opti
     scales: {
       x: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
-          color: "#4B5563",
+          color: chartColors["gray-600"],
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "Compression Level",
         },
       },
       y: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
-          color: "#4B5563",
+          color: chartColors["gray-600"],
         },
         type: "logarithmic",
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "byte/s",
         },
       },
@@ -781,7 +810,7 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<"line">["opti
       title: {
         display: true,
         text: "Decompression Speed",
-        color: "#FFF",
+        color: chartColors.white,
       },
     },
     parsing: {
@@ -795,11 +824,11 @@ export const lineChartOptionsStressNG: ChartConfiguration<"line">["options"] = {
   scales: {
     x: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "vCPUs",
       },
       grid: {
@@ -808,14 +837,14 @@ export const lineChartOptionsStressNG: ChartConfiguration<"line">["options"] = {
     },
     y: {
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       grid: {
         color: chartAxisGridColor,
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Score",
       },
     },
@@ -828,7 +857,7 @@ export const lineChartOptionsStressNG: ChartConfiguration<"line">["options"] = {
     title: {
       display: true,
       text: "stress-ng div16 raw scores per vCPU",
-      color: "#FFF",
+      color: chartColors.white,
     },
   },
   parsing: {
@@ -843,11 +872,11 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<"line">["option
     scales: {
       x: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "vCPUs",
         },
         grid: {
@@ -856,14 +885,14 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<"line">["option
       },
       y: {
         ticks: {
-          color: "#FFF",
+          color: chartColors.white,
         },
         grid: {
           color: chartAxisGridColor,
         },
         title: {
           display: true,
-          color: "#FFF",
+          color: chartColors.white,
           text: "Relative performance (%)",
         },
       },
@@ -876,7 +905,7 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<"line">["option
       title: {
         display: true,
         text: "stress-ng relative multicore performance per vCPU",
-        color: "#FFF",
+        color: chartColors.white,
       },
     },
     parsing: {
@@ -895,11 +924,11 @@ export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
     x: {
       type: "linear",
       ticks: {
-        color: "#FFF",
+        color: chartColors.white,
       },
       title: {
         display: true,
-        color: "#FFF",
+        color: chartColors.white,
         text: "Concurrency",
       },
       grid: {
@@ -911,14 +940,14 @@ export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
       display: true,
       position: "left",
       ticks: {
-        color: "#34D399",
+        color: chartColors["emerald-400"],
       },
       grid: {
         color: chartAxisGridColor,
       },
       title: {
         display: true,
-        color: "#34D399",
+        color: chartColors["emerald-400"],
         text: "Score",
       },
     },
@@ -927,14 +956,14 @@ export const lineChartOptionsPgbench: ChartConfiguration<"line">["options"] = {
       display: true,
       position: "right",
       ticks: {
-        color: "#EAB308",
+        color: chartColors["yellow-500"],
       },
       grid: {
         drawOnChartArea: false,
       },
       title: {
         display: true,
-        color: "#EAB308",
+        color: chartColors["yellow-500"],
         text: "Avg latency (ms)",
       },
     },
