@@ -103,10 +103,7 @@
 
 .toc_nav {
   max-height: calc(100vh - 10.5rem);
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  @apply scrollbar-hidden;
 }
 
 .toc_nav_mini {

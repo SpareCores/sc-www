@@ -86,3 +86,29 @@
 @utility content_gutter {
   @apply px-2 xl:px-0;
 }
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
+
+  &::-webkit-scrollbar {
+    height: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-gray-700);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-emerald-400);
+    border-radius: 3px;
+  }
+}
+
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

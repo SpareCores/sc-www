@@ -63,18 +63,3 @@
     @apply border-emerald-400;
   }
 }
-
-.overflow-x-auto {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
-}
-.overflow-x-auto::-webkit-scrollbar {
-  height: 2px;
-}
-.overflow-x-auto::-webkit-scrollbar-track {
-  background: var(--color-gray-700);
-}
-.overflow-x-auto::-webkit-scrollbar-thumb {
-  background-color: var(--color-emerald-400);
-  border-radius: 3px;
-}
