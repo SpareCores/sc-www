@@ -98,10 +98,13 @@
                 <sc-loading-spinner size="lg"></sc-loading-spinner>
               </div>
             }
-            <table class="items_table" id="server_prices_table">
+            <table
+              class="sc-table sc-table--compact sc-table--interactive w-full"
+              id="server_prices_table"
+            >
               <thead>
                 <tr>
-                  <th class="checkbox_column">
+                  <th class="sc-table__checkbox">
                     <div class="text-white">
                       <svg lucideScale class="h-4 w-4"></svg>
                     </div>
@@ -174,7 +177,7 @@
                   >
                     <td
                       (click)="toggleCompare2($event, server)"
-                      class="checkbox_column"
+                      class="sc-table__checkbox"
                     >
                       <div class="flex items-center">
                         <input
