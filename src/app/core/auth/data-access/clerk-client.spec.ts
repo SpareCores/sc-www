@@ -221,6 +221,30 @@ describe("ClerkClient", () => {
       expect(service.isLoaded()).toBeTrue();
     });
 
+    it("reports not loaded until the SDK has finished loading", async () => {
+      const service = createService();
+      let finishLoading: () => void = () => undefined;
+      class FakeClerk {
+        load = () =>
+          new Promise<void>((resolve) => {
+            finishLoading = resolve;
+          });
+      }
+      spyOn(loader(service), "importClerk").and.resolveTo({
+        Clerk: FakeClerk,
+      } as unknown as ClerkModule);
+
+      const loading = loader(service).loadClerk("pk_test");
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(service.isLoaded()).toBeFalse();
+
+      finishLoading();
+      await loading;
+
+      expect(service.isLoaded()).toBeTrue();
+    });
+
     it("skips the import when the publishable key is missing", async () => {
       const service = createService();
       const importClerk = spyOn(loader(service), "importClerk");

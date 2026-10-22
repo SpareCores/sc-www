@@ -101,7 +101,7 @@ export const appConfig: ApplicationConfig = {
       inject(Sentry.TraceService);
     }),
     provideAppInitializer(() => {
-      return inject(AuthState)
+      inject(AuthState)
         .init()
         .catch((error) => {
           console.error("Clerk initialization failed:", error);
