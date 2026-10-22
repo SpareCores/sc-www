@@ -1,13 +1,18 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Injectable, NgZone, PLATFORM_ID, inject } from "@angular/core";
 import * as Sentry from "@sentry/angular";
-import posthog from "posthog-js";
+import type { PostHog } from "posthog-js";
 
 const SENTRY_DSN = import.meta.env.NG_APP_SENTRY_DSN;
 
 type PendingIdentify = {
   distinctId: string;
   properties?: Record<string, unknown>;
+};
+
+type PendingEvent = {
+  eventName: string;
+  properties: Record<string, unknown>;
 };
 
 @Injectable({
@@ -18,35 +23,35 @@ export class Analytics {
   private ngZone = inject(NgZone);
   private pendingIdentify: PendingIdentify | null = null;
   private pendingReset = false;
+  private pendingEvents: PendingEvent[] = [];
+  private posthog: PostHog | null = null;
+  private trackingPromise: Promise<void> | null = null;
 
-  trackingInitialized = false;
-
-  public initializeTracking() {
+  public initializeTracking(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
-      return;
+      return Promise.resolve();
     }
 
     const POSTHOG_KEY = import.meta.env.NG_APP_POSTHOG_KEY;
     const POSTHOG_HOST = import.meta.env.NG_APP_POSTHOG_HOST;
 
     if (
-      !this.trackingInitialized &&
-      POSTHOG_KEY &&
-      POSTHOG_HOST &&
-      typeof window !== "undefined" &&
-      typeof document !== "undefined"
+      !POSTHOG_KEY ||
+      !POSTHOG_HOST ||
+      typeof window === "undefined" ||
+      typeof document === "undefined"
     ) {
-      // PostHog installs timers and global listeners that should not block hydration.
-      this.ngZone.runOutsideAngular(() => {
-        posthog.init(POSTHOG_KEY, {
-          api_host: POSTHOG_HOST,
-          persistence: "sessionStorage",
-        });
-      });
-      this.trackingInitialized = true;
-      this.flushPendingReset();
-      this.flushPendingIdentify();
+      return Promise.resolve();
     }
+
+    // PostHog installs timers and global listeners that should not block hydration.
+    this.trackingPromise ??= this.ngZone.runOutsideAngular(() =>
+      this.loadPostHog(POSTHOG_KEY, POSTHOG_HOST).catch((error) => {
+        this.pendingEvents = [];
+        console.error("PostHog initialization failed:", error);
+      }),
+    );
+    return this.trackingPromise;
   }
 
   public identify(
@@ -57,7 +62,8 @@ export class Analytics {
       return;
     }
 
-    if (!this.trackingInitialized) {
+    const posthog = this.posthog;
+    if (!posthog) {
       this.pendingIdentify = { distinctId, properties };
       return;
     }
@@ -74,7 +80,8 @@ export class Analytics {
 
     this.pendingIdentify = null;
 
-    if (!this.trackingInitialized) {
+    const posthog = this.posthog;
+    if (!posthog) {
       this.pendingReset = true;
       return;
     }
@@ -90,15 +97,22 @@ export class Analytics {
     eventName: string,
     properties: Record<string, unknown>,
   ): void {
-    if (this.trackingInitialized) {
-      this.ngZone.runOutsideAngular(() => {
-        posthog.capture(eventName, properties);
-      });
+    const posthog = this.posthog;
+    if (!posthog) {
+      if (this.trackingPromise) {
+        this.pendingEvents.push({ eventName, properties });
+      }
+      return;
     }
+
+    this.ngZone.runOutsideAngular(() => {
+      posthog.capture(eventName, properties);
+    });
   }
 
   public getId(): string {
-    if (!this.trackingInitialized) {
+    const posthog = this.posthog;
+    if (!posthog) {
       return "";
     }
 
@@ -123,6 +137,22 @@ export class Analytics {
     }
   }
 
+  private async loadPostHog(key: string, host: string): Promise<void> {
+    const { default: posthog } = await this.importPostHog();
+    posthog.init(key, {
+      api_host: host,
+      persistence: "sessionStorage",
+    });
+    this.posthog = posthog;
+    this.flushPendingReset();
+    this.flushPendingIdentify();
+    this.flushPendingEvents();
+  }
+
+  private importPostHog(): Promise<typeof import("posthog-js")> {
+    return import("posthog-js");
+  }
+
   private flushPendingIdentify(): void {
     const pending = this.pendingIdentify;
     if (!pending) {
@@ -139,8 +169,14 @@ export class Analytics {
     }
 
     this.pendingReset = false;
-    this.ngZone.runOutsideAngular(() => {
-      posthog.reset();
-    });
+    this.posthog?.reset();
+  }
+
+  private flushPendingEvents(): void {
+    const pending = this.pendingEvents;
+    this.pendingEvents = [];
+    for (const { eventName, properties } of pending) {
+      this.trackEvent(eventName, properties);
+    }
   }
 }
