@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { OverlayContainer } from "@angular/cdk/overlay";
 
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
 import { Header } from "./header";
 import { CompareSelection } from "../../services/compare-selection";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
@@ -22,12 +23,21 @@ describe("Header", () => {
     fixture.detectChanges();
   });
 
+  function openDropdown(triggerSelector: string): HTMLElement {
+    fixture.debugElement
+      .query(By.css(triggerSelector))
+      .injector.get(Dropdown)
+      .open();
+    fixture.detectChanges();
+    return TestBed.inject(OverlayContainer).getContainerElement();
+  }
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
   it("shows Advisor before Resource Tracker in the mobile menu", () => {
-    const menuLinks = (fixture.nativeElement as HTMLElement).querySelectorAll(
+    const menuLinks = openDropdown("#menu_button").querySelectorAll(
       "#menu_options .navbar_link",
     );
     const menuOptions = Array.from(menuLinks).map(
@@ -42,7 +52,8 @@ describe("Header", () => {
   });
 
   it("shows Partners in the about navigation", () => {
-    const hostElement = fixture.nativeElement as HTMLElement;
+    openDropdown("#about_button");
+    const hostElement = openDropdown("#menu_button");
     const aboutPartnersLink = hostElement.querySelector(
       '#about_options a[routerLink="/about/partners"]',
     );
@@ -57,7 +68,7 @@ describe("Header", () => {
   it("configures the mobile menu dropdown to stay within the viewport", () => {
     const menuDropdown = fixture.debugElement
       .query(By.css("#menu_button"))
-      .injector.get(FlowbiteDropdown);
+      .injector.get(Dropdown);
 
     expect(menuDropdown.dropdownPlacement()).toBe("bottom-end");
     expect(menuDropdown.dropdownFlip()).toBeTrue();
@@ -84,7 +95,7 @@ describe("Header", () => {
 
     const compareDropdown = fixture.debugElement
       .query(By.css("#compare_button"))
-      .injector.get(FlowbiteDropdown);
+      .injector.get(Dropdown);
 
     expect(compareDropdown.dropdownPlacement()).toBe("bottom-end");
     expect(compareDropdown.dropdownFlip()).toBeTrue();
@@ -142,7 +153,7 @@ describe("Header", () => {
     });
     fixture.detectChanges();
 
-    const rows = (fixture.nativeElement as HTMLElement).querySelectorAll(
+    const rows = openDropdown("#compare_button").querySelectorAll(
       "#compare_options .compare_dropdown_row",
     );
     expect(rows.length).toBe(2);
@@ -171,10 +182,16 @@ describe("Header", () => {
         server: "m7a.4xlarge",
         zonesRegions: [],
       },
+      {
+        display_name: "t2d-standard-16",
+        vendor: "gcp",
+        server: "t2d-standard-16",
+        zonesRegions: [],
+      },
     ];
     fixture.detectChanges();
 
-    const baselineButton = (fixture.nativeElement as HTMLElement).querySelector(
+    const baselineButton = openDropdown("#compare_button").querySelector(
       '#compare_options [aria-label="Toggle baseline server"][aria-pressed="false"]',
     ) as HTMLButtonElement;
     baselineButton.click();
@@ -209,7 +226,7 @@ describe("Header", () => {
     spyOn(component, "isOnComparePage").and.returnValue(false);
     fixture.detectChanges();
 
-    const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
+    const compareButton = openDropdown("#compare_button").querySelector(
       "#compare_options sc-button[label='Compare servers'] button",
     );
 
@@ -235,7 +252,7 @@ describe("Header", () => {
     spyOn(component, "isOnComparePage").and.returnValue(true);
     fixture.detectChanges();
 
-    const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
+    const compareButton = openDropdown("#compare_button").querySelector(
       "#compare_options sc-button[label='Compare servers'] button",
     );
 
@@ -266,7 +283,7 @@ describe("Header", () => {
     spyOn(component, "isOnDatabaseComparePage").and.returnValue(false);
     fixture.detectChanges();
 
-    const panel = (fixture.nativeElement as HTMLElement).querySelector(
+    const panel = openDropdown("#compare_button").querySelector(
       "#compare_options",
     ) as HTMLElement;
     const titles = Array.from(
@@ -279,5 +296,23 @@ describe("Header", () => {
         .querySelector("sc-button[label='Compare databases'] button")
         ?.textContent?.trim(),
     ).toBe("Compare databases");
+  });
+
+  it("opens header dropdowns in the top overlay layer", () => {
+    const container = openDropdown("#about_button");
+
+    expect(container.querySelector("#about_options")).not.toBeNull();
+    expect(container.classList).not.toContain("sc-page-overlay-container");
+  });
+
+  it("exposes the mobile menu trigger as an expandable button", () => {
+    const trigger = fixture.debugElement.query(By.css("#menu_button"))
+      .nativeElement as HTMLButtonElement;
+
+    openDropdown("#menu_button");
+
+    expect(trigger.tagName).toBe("BUTTON");
+    expect(trigger.getAttribute("aria-haspopup")).toBe("true");
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
   });
 });

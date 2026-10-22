@@ -55,7 +55,7 @@ import {
   ComparedServer,
   CompareSelection,
 } from "../../services/compare-selection";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
 import { Analytics } from "../../services/analytics";
 import { Modal, ModalOptions } from "flowbite";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
@@ -137,7 +137,7 @@ const serverListingIntroductionModalOptions: ModalOptions = {
     StoragePipe,
     AcceleratorMemoryPipe,
     Ipv4CountPipe,
-    FlowbiteDropdown,
+    Dropdown,
     BookmarkButton,
     InstanceFavoriteContextMenu,
     CollectionSaveModal,
@@ -151,9 +151,9 @@ export class ServerListing implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
-  allocationDropdown = viewChild<FlowbiteDropdown>("allocationDropdown");
-  pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
+  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
+  allocationDropdown = viewChild<Dropdown>("allocationDropdown");
+  pageDropdown = viewChild<Dropdown>("pageDropdown");
   private analytics = inject(Analytics);
   private serverCompare = inject(CompareSelection);
   private toastService = inject(Toast);

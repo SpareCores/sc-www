@@ -397,9 +397,8 @@
               <sc-button
                 id="region_button"
                 data-ph-capture-attribute-sc-event="server details regions select"
-                [scFlowbiteDropdown]="'region_options'"
-                #regionDropdown="scFlowbiteDropdown"
-                [dropdownEnabled]="true"
+                [scDropdown]="regionPanel"
+                #regionDropdown="scDropdown"
                 label="Regions"
                 icon="chevron-down"
                 variant="dropdown"
@@ -520,9 +519,8 @@
               <sc-button
                 id="similar_type_button"
                 data-ph-capture-attribute-sc-event="server similar options select"
-                [scFlowbiteDropdown]="'similar_server_options'"
-                #similarDropdown="scFlowbiteDropdown"
-                [dropdownEnabled]="true"
+                [scDropdown]="similarPanel"
+                #similarDropdown="scDropdown"
                 [label]="selectedSimilarOption.name"
                 icon="chevron-down"
                 variant="dropdown"
@@ -609,50 +607,54 @@
 </div>
 
 <!-- Dropdown menu -->
-<div
-  id="region_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
+<ng-template #regionPanel>
+  <div
+    id="region_options"
+    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
   >
-    @for (filter of regionFilters; track filter.name; let i = $index) {
-      <li class="flex py-1 gap-2 items-center">
-        <input
-          type="checkbox"
-          id="filter_region"
-          [(ngModel)]="filter.selected"
-          (ngModelChange)="refreshPricesGraphs()"
-          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-        />
-        <div class="text-white text-sm">{{ filter.name }}</div>
-      </li>
-    }
-  </ul>
-</div>
+    <ul
+      class="py-2 px-1 text-sm text-gray-700"
+      aria-labelledby="dropdownDefaultButton"
+    >
+      @for (filter of regionFilters; track filter.name; let i = $index) {
+        <li class="flex py-1 gap-2 items-center">
+          <input
+            type="checkbox"
+            id="filter_region"
+            [(ngModel)]="filter.selected"
+            (ngModelChange)="refreshPricesGraphs()"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+          />
+          <div class="text-white text-sm">{{ filter.name }}</div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
-<div
-  id="similar_server_options"
-  class="z-10 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="similar_type_button"
+<ng-template #similarPanel>
+  <div
+    id="similar_server_options"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
   >
-    @for (option of similarOptions; track option.key) {
-      <li>
-        <button
-          type="button"
-          class="flex w-full items-center rounded-sm border-0 bg-transparent px-2 py-1 text-left text-sm text-white hover:bg-emerald-500"
-          (click)="selectSimilarServerOption(option)"
-        >
-          {{ option.name }}
-        </button>
-      </li>
-    }
-  </ul>
-</div>
+    <ul
+      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="similar_type_button"
+    >
+      @for (option of similarOptions; track option.key) {
+        <li>
+          <button
+            type="button"
+            class="flex w-full items-center rounded-sm border-0 bg-transparent px-2 py-1 text-left text-sm text-white hover:bg-emerald-500"
+            (click)="selectSimilarServerOption(option)"
+          >
+            {{ option.name }}
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
 <div
   id="embed-charts-modal"

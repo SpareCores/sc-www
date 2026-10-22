@@ -44,16 +44,38 @@
         </h3>
         @if (layout() === "details" && profileDropdownItems().length) {
           <sc-button
-            #profileDropdown="scFlowbiteDropdown"
+            #profileDropdown="scDropdown"
             [id]="profileButtonId"
-            [scFlowbiteDropdown]="profileOptionsId"
-            [dropdownEnabled]="isBrowser"
+            [scDropdown]="profilePanel"
             [label]="selectedProfileItem()?.title || ''"
             [title]="selectedProfileItem()?.title || null"
             icon="chevron-down"
             variant="dropdown"
             size="small"
           ></sc-button>
+          <ng-template #profilePanel>
+            <div
+              [id]="profileOptionsId"
+              class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+            >
+              <ul
+                class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                [attr.aria-labelledby]="profileButtonId"
+              >
+                @for (item of profileDropdownItems(); track item.id) {
+                  <li>
+                    <button
+                      type="button"
+                      class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                      (click)="selectProfile(item.id)"
+                    >
+                      <div class="text-white text-sm">{{ item.title }}</div>
+                    </button>
+                  </li>
+                }
+              </ul>
+            </div>
+          </ng-template>
         }
       </div>
     }
@@ -315,29 +337,6 @@
           </div>
         }
       </div>
-      @if (profileDropdownItems().length) {
-        <div
-          [id]="profileOptionsId"
-          class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
-        >
-          <ul
-            class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-            [attr.aria-labelledby]="profileButtonId"
-          >
-            @for (item of profileDropdownItems(); track item.id) {
-              <li>
-                <button
-                  type="button"
-                  class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
-                  (click)="selectProfile(item.id)"
-                >
-                  <div class="text-white text-sm">{{ item.title }}</div>
-                </button>
-              </li>
-            }
-          </ul>
-        </div>
-      }
     } @else if (layout() === "compare") {
       <div
         class="workload-profile-panel-grid grid min-w-0 grid-cols-1 gap-8 items-start lg:grid-cols-2"
