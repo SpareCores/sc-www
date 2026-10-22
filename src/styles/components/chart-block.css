@@ -119,11 +119,23 @@
   }
 }
 
+.chart-block--card {
+  @apply flex w-full flex-col gap-4 rounded-lg border border-solid border-emerald-400 bg-secondary px-6 py-6;
+}
+
 .chart-context--embedded .chart-block--half,
 .chart-context--embedded .chart-block--taller,
 .chart-context--embedded .chart-block--full {
   width: 100%;
   min-height: auto;
+  max-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  border-width: 0;
+  border-radius: 0;
+}
+
+.chart-context--embedded .chart-block--card {
+  @apply relative overflow-hidden;
   max-height: calc(100vh - 64px);
   height: calc(100vh - 64px);
   border-width: 0;
