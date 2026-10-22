@@ -23,9 +23,9 @@
         [attr.itemscope]="useFaqSchema() ? '' : null"
         [attr.itemprop]="useFaqSchema() ? 'mainEntity' : null"
         [attr.itemtype]="useFaqSchema() ? 'https://schema.org/Question' : null"
-        [ngClass]="{
-          'border-b border-solid border-gray-200': i < items().length - 1,
-        }"
+        [class]="
+          i < items().length - 1 ? 'border-b border-solid border-gray-200' : ''
+        "
       >
         <button
           type="button"
@@ -51,10 +51,8 @@
           [attr.itemscope]="useFaqSchema() ? '' : null"
           [attr.itemprop]="useFaqSchema() ? 'acceptedAnswer' : null"
           [attr.itemtype]="useFaqSchema() ? 'https://schema.org/Answer' : null"
-          [ngClass]="{
-            block: activeIndex() === i,
-            hidden: activeIndex() !== i,
-          }"
+          [class.block]="activeIndex() === i"
+          [class.hidden]="activeIndex() !== i"
         >
           @if (!item.html) {
             <span [attr.itemprop]="useFaqSchema() ? 'text' : null">{{

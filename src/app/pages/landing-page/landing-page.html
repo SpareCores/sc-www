@@ -76,10 +76,8 @@
               [(ngModel)]="priceValue"
               aria-label="Price of highlighted instance"
               class="input_border price_input bg-primary text-center text-4xl font-bold"
-              [ngClass]="{
-                'text-gray-400': isSpinning,
-                'text-gray-200': !isSpinning,
-              }"
+              [class.text-gray-400]="isSpinning"
+              [class.text-gray-200]="!isSpinning"
               readonly
               disabled
             />
@@ -193,10 +191,8 @@
                           <div
                             class="text-center font-bold overflow-hidden"
                             style="text-overflow: ellipsis"
-                            [ngClass]="{
-                              'text-xl': spinnerItem.name.length < 13,
-                              'text-md': spinnerItem.name.length >= 13,
-                            }"
+                            [class.text-xl]="spinnerItem.name.length < 13"
+                            [class.text-md]="spinnerItem.name.length >= 13"
                           >
                             {{ spinnerItem.name }}
                           </div>
@@ -209,10 +205,8 @@
                           <div
                             class="text-center font-bold overflow-hidden"
                             style="text-overflow: ellipsis"
-                            [ngClass]="{
-                              'text-xl': spinnerItem.name.length < 13,
-                              'text-md': spinnerItem.name.length >= 13,
-                            }"
+                            [class.text-xl]="spinnerItem.name.length < 13"
+                            [class.text-md]="spinnerItem.name.length >= 13"
                           >
                             {{ spinnerItem.name }}
                           </div>
@@ -253,10 +247,8 @@
                           <div
                             class="text-center font-bold overflow-hidden"
                             style="text-overflow: ellipsis"
-                            [ngClass]="{
-                              'text-xl': spinnerItem.name.length < 13,
-                              'text-md': spinnerItem.name.length >= 13,
-                            }"
+                            [class.text-xl]="spinnerItem.name.length < 13"
+                            [class.text-md]="spinnerItem.name.length >= 13"
                           >
                             {{ spinnerItem.name }}
                           </div>
@@ -267,10 +259,8 @@
                           <div
                             class="text-center font-bold overflow-hidden"
                             style="text-overflow: ellipsis"
-                            [ngClass]="{
-                              'text-xl': spinnerItem.name.length < 13,
-                              'text-md': spinnerItem.name.length >= 13,
-                            }"
+                            [class.text-xl]="spinnerItem.name.length < 13"
+                            [class.text-md]="spinnerItem.name.length >= 13"
                           >
                             {{ spinnerItem.name }}
                           </div>

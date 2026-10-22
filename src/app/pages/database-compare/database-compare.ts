@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
@@ -167,7 +167,6 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
 @Component({
   selector: "sc-database-compare",
   imports: [
-    CommonModule,
     RouterModule,
     Breadcrumbs,
     Button,

@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   Component,
   DestroyRef,
@@ -42,7 +41,6 @@ import {
 @Component({
   selector: "sc-storages",
   imports: [
-    CommonModule,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,
