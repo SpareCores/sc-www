@@ -112,7 +112,7 @@
                 [avatarAlt]="auth.userName()"
                 icon="chevron-down"
                 iconPosition="end"
-                buttonClass="!text-white max-xl:gap-0 max-xl:px-1 [&_.sc-button__icon]:max-xl:hidden"
+                buttonClass="text-white! max-xl:gap-0 max-xl:px-1 max-xl:[&_.sc-button__icon]:hidden"
                 ariaLabel="Account menu"
               ></sc-button>
             </div>
@@ -157,7 +157,7 @@
 <ng-template #menuPanel>
   <div
     id="menu_options"
-    class="mobile_menu_panel bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
+    class="mobile_menu_panel bg-secondary rounded-lg shadow-sm border border-emerald-400 border-solid"
   >
     <ul
       class="mobile_menu_panel__list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -191,7 +191,7 @@
         [class.hidden]="auth.isAuthenticated()"
       ></li>
       <li class="py-2">
-        <span class="navbar_link hover:!text-white">
+        <span class="navbar_link hover:text-white!">
           <span class="navbar_icon">
             <svg lucideInfo class="h-4 w-4"></svg>
           </span>
@@ -247,7 +247,7 @@
         </button>
       </li>
       <li class="py-2">
-        <span class="navbar_link hover:!text-white">
+        <span class="navbar_link hover:text-white!">
           <span class="navbar_icon">
             <svg lucideShipWheel class="h-4 w-4"></svg>
           </span>
@@ -391,7 +391,7 @@
 <ng-template #authPanel>
   <div
     id="auth_options"
-    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+    class="bg-secondary rounded-lg shadow-sm w-68 border border-emerald-400 border-solid"
   >
     <ul
       class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -418,7 +418,7 @@
       <li>
         <button
           type="button"
-          class="navbar_link !text-[#EF4444] hover:!text-red-400"
+          class="navbar_link text-[#EF4444]! hover:text-red-400!"
           (click)="signOut()"
         >
           <span class="navbar_icon">
@@ -434,7 +434,7 @@
 <ng-template #aboutPanel>
   <div
     id="about_options"
-    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+    class="bg-secondary rounded-lg shadow-sm w-68 border border-emerald-400 border-solid"
   >
     <ul
       class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -497,7 +497,7 @@
 <ng-template #navigatorPanel>
   <div
     id="navigator_options"
-    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+    class="bg-secondary rounded-lg shadow-sm w-68 border border-emerald-400 border-solid"
   >
     <ul
       class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -626,7 +626,7 @@
 <ng-template #comparePanel>
   <div
     id="compare_options"
-    class="compare_dropdown_panel bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
+    class="compare_dropdown_panel bg-secondary rounded-lg shadow-sm border border-emerald-400 border-solid"
   >
     <div class="compare_dropdown_content">
       @if (serverCompareCount() > 0) {

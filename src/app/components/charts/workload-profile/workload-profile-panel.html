@@ -56,7 +56,7 @@
           <ng-template #profilePanel>
             <div
               [id]="profileOptionsId"
-              class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+              class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
             >
               <ul
                 class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -66,7 +66,7 @@
                   <li>
                     <button
                       type="button"
-                      class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                      class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
                       (click)="selectProfile(item.id)"
                     >
                       <div class="text-white text-sm">{{ item.title }}</div>
@@ -135,7 +135,7 @@
                 }
               </div>
               <div class="workload-profile-details-panel__description min-w-0">
-                <div class="min-w-0 text-wrap break-words font-light">
+                <div class="min-w-0 text-wrap wrap-break-word font-light">
                   <span>{{ selectedItem.content }}</span>
                   @if (selectedItem.note) {
                     <span class="block mt-2 text-[#EAB308]">{{
@@ -353,7 +353,7 @@
         </div>
         @if (accordionItems().length) {
           <div
-            class="w-full min-w-0 text-base pr-4 lg:min-h-[460px] lg:pt-[4.5rem] lg:col-start-2 lg:row-start-1"
+            class="w-full min-w-0 text-base pr-4 lg:min-h-[460px] lg:pt-18 lg:col-start-2 lg:row-start-1"
           >
             <sc-accordion
               class="workload-profile-accordion"

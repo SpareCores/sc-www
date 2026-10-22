@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .advisor-page--loading-baseline-workloads,
 :host ::ng-deep .advisor-page--loading-baseline-workloads * {
   cursor: wait !important;
@@ -224,7 +226,7 @@
     }
 
     tr {
-      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
+      @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
 
       &.advisor-table-row-baseline {
         box-shadow: inset 0.3rem 0 0 #34d399;
@@ -251,7 +253,7 @@
 }
 
 .advisor-dropdown-menu {
-  @apply z-10 rounded-lg border border-solid border-emerald-400 bg-secondary shadow;
+  @apply z-10 rounded-lg border border-solid border-emerald-400 bg-secondary shadow-sm;
 }
 
 .advisor-dropdown-menu-list {
@@ -259,7 +261,7 @@
 }
 
 .advisor-dropdown-menu-option {
-  @apply flex items-center gap-2 rounded-sm px-2 py-1 cursor-pointer hover:bg-emerald-500;
+  @apply flex items-center gap-2 rounded-xs px-2 py-1 cursor-pointer hover:bg-emerald-500;
 }
 
 .advisor-dropdown-menu-label {
@@ -304,7 +306,7 @@
 }
 
 .advisor-compare-checkbox {
-  @apply cursor-pointer accent-emerald-400 text-emerald-400 outline-none focus:ring-emerald-400;
+  @apply cursor-pointer accent-emerald-400 text-emerald-400 outline-hidden focus:ring-emerald-400;
 }
 
 .advisor-compare-bar {
