@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .items_table {
   @apply text-white;
 
@@ -21,7 +23,7 @@
     }
 
     tr {
-      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
+      @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
       td {
         @apply px-5 py-3 text-left text-sm;
       }

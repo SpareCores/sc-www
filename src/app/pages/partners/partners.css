@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .partners-paragraph {
   @apply my-10 text-lg text-white;
 

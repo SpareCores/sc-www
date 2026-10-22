@@ -138,7 +138,7 @@
                 }
                 @if (compare.query) {
                   <details
-                    class="flex flex-col gap-2 [&_svg]:open:-rotate-90"
+                    class="flex flex-col gap-2 open:[&_svg]:-rotate-90"
                     [ngClass]="{ 'mt-4': compare.type === 'section' }"
                   >
                     <summary class="text-sm list-none cursor-pointer">
@@ -317,14 +317,14 @@
 <ng-template #baselinePanel>
   <div
     id="baseline_server_options"
-    class="compare-dropdown-menu bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
+    class="compare-dropdown-menu bg-secondary rounded-lg shadow-sm w-64 border border-emerald-400 border-solid"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
       aria-labelledby="baseline_server_button"
     >
       <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
         (click)="selectBaselineServer(null)"
       >
         <div class="text-white text-sm">No baseline</div>
@@ -334,7 +334,7 @@
         track server.vendor_id + "_" + server.server_id
       ) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
           (click)="selectBaselineServer(server)"
         >
           <div class="text-white text-sm">
@@ -349,7 +349,7 @@
 <ng-template #currencyPanel>
   <div
     id="currency_options"
-    class="compare-dropdown-menu bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+    class="compare-dropdown-menu bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -357,7 +357,7 @@
     >
       @for (currency of availableCurrencies; track currency.name) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
           (click)="selectCurrency(currency)"
         >
           <div class="text-white text-sm">

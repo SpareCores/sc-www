@@ -1,3 +1,5 @@
+@reference "../../../../../styles/tailwind.css";
+
 :host {
   display: block;
 }
@@ -7,7 +9,7 @@
 }
 
 .search-bar-multi-select__control {
-  @apply flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-emerald-400 bg-gray-200 px-2 py-1.5 outline-none focus-within:ring-2 focus-within:ring-emerald-400;
+  @apply flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-emerald-400 bg-gray-200 px-2 py-1.5 outline-hidden focus-within:ring-2 focus-within:ring-emerald-400;
   cursor: text;
 }
 
@@ -20,11 +22,11 @@
 }
 
 .search-bar-multi-select__badge-remove {
-  @apply inline-flex size-4 shrink-0 items-center justify-center rounded-full text-emerald-900 hover:bg-emerald-500/30 focus:outline-none focus:bg-emerald-500/30 disabled:pointer-events-none disabled:opacity-50;
+  @apply inline-flex size-4 shrink-0 items-center justify-center rounded-full text-emerald-900 hover:bg-emerald-500/30 focus:outline-hidden focus:bg-emerald-500/30 disabled:pointer-events-none disabled:opacity-50;
 }
 
 .search-bar-multi-select__input {
-  @apply min-w-[6rem] flex-1 border-0 bg-transparent p-0 text-sm text-sky-950 outline-none placeholder:text-sky-800/70 disabled:cursor-not-allowed disabled:text-gray-600;
+  @apply min-w-[6rem] flex-1 border-0 bg-transparent p-0 text-sm text-sky-950 outline-hidden placeholder:text-sky-800/70 disabled:cursor-not-allowed disabled:text-gray-600;
 }
 
 .search-bar-multi-select__panel {

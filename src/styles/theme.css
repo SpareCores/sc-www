@@ -1,0 +1,11 @@
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "Roboto Mono", monospace, sans-serif;
+
+  --color-sky-975: oklch(25.7% 0.052 240.8);
+
+  --color-primary: var(--color-sky-950);
+  --color-secondary: var(--color-sky-975);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));

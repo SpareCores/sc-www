@@ -680,14 +680,14 @@
 <ng-template #baselinePanel>
   <div
     id="baseline_database_options"
-    class="bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
+    class="bg-secondary rounded-lg shadow-sm w-64 border border-emerald-400 border-solid"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700"
       aria-labelledby="baseline_database_button"
     >
       <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
         (click)="selectBaselineDatabase(null)"
       >
         <div class="text-white text-sm">No baseline</div>
@@ -697,7 +697,7 @@
         track database.vendor_id + "_" + database.database_id
       ) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
           (click)="selectBaselineDatabase(database)"
         >
           <div class="text-white text-sm">
@@ -712,7 +712,7 @@
 <ng-template #currencyPanel>
   <div
     id="currency_options"
-    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+    class="bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700"
@@ -720,7 +720,7 @@
     >
       @for (currency of availableCurrencies; track currency.name) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
           (click)="selectCurrency(currency)"
         >
           <div class="text-white text-sm">
