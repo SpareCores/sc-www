@@ -181,10 +181,13 @@
                 </div>
               </div>
             }
-            <table class="items_table" id="servers_table">
+            <table
+              class="sc-table sc-table--compact sc-table--interactive w-full"
+              id="servers_table"
+            >
               <thead>
                 <tr>
-                  <th class="checkbox_column">
+                  <th class="sc-table__checkbox">
                     <div class="text-white">
                       <svg lucideScale class="h-4 w-4"></svg>
                     </div>
@@ -241,7 +244,7 @@
                   >
                     <td
                       (click)="toggleCompare2($event, item)"
-                      class="checkbox_column"
+                      class="sc-table__checkbox"
                     >
                       <div class="flex items-center">
                         <input
@@ -668,7 +671,7 @@
                   <tr>
                     <td
                       [attr.colspan]="tableColumns.length + 2"
-                      class="px-5 py-6 text-center text-gray-400 text-sm"
+                      class="text-gray-400"
                     >
                       No servers match the selected filters.
                     </td>
