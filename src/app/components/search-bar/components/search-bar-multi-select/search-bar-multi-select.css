@@ -32,7 +32,7 @@
 .search-bar-multi-select__panel {
   @apply absolute left-0 right-0 z-20 mt-1 max-h-64 overflow-y-auto rounded-lg border border-solid border-emerald-400 bg-primary;
   scrollbar-width: thin;
-  scrollbar-color: #34d399 #374151;
+  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
 }
 
 .search-bar-multi-select__panel::-webkit-scrollbar {
@@ -41,11 +41,11 @@
 }
 
 .search-bar-multi-select__panel::-webkit-scrollbar-track {
-  background: #374151;
+  background: var(--color-gray-700);
 }
 
 .search-bar-multi-select__panel::-webkit-scrollbar-thumb {
-  background-color: #34d399;
+  background-color: var(--color-emerald-400);
   border-radius: 20px;
 }
 

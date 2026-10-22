@@ -117,7 +117,7 @@
   right: 0;
   bottom: 0;
   height: 0.3rem;
-  background-color: #34d399;
+  background-color: var(--color-emerald-400);
 }
 
 .compare-table-metric-cell {
@@ -139,11 +139,11 @@
 }
 
 .compare-table-delta--positive {
-  color: #34d399;
+  color: var(--color-emerald-400);
 }
 
 .compare-table-delta--negative {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .compare-table-delta--neutral {
@@ -219,22 +219,22 @@
 }
 
 .scrollbar_mirror_outer {
-  background: #374151;
+  background: var(--color-gray-700);
   overflow-y: hidden;
   scrollbar-width: thin;
-  scrollbar-color: #34d399 #374151;
+  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
 
   &::-webkit-scrollbar {
     height: 11px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #374151;
+    background: var(--color-gray-700);
   }
 
   &::-webkit-scrollbar-thumb {
     height: 11px;
-    background-color: #34d399;
+    background-color: var(--color-emerald-400);
     border-radius: 3px;
     border: 0;
   }
