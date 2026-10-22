@@ -38,7 +38,6 @@ format:
     theme: neutral
 ---
 
-
 # {#cover-slide data-curtain="close"}
 
 <script>
@@ -78,7 +77,7 @@ format:
 </p>
 
 ::: {.notes}
-TODO
+TODO speaker notes
 :::
 
 # {#teaser data-curtain="open"}
@@ -86,6 +85,8 @@ TODO
 ::: {.centered}
 <img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;" />
 :::
+
+<!-- TODO add "once upon a time, in a not too far pub ...." -->
 
 # {#recap .center}
 
@@ -133,7 +134,42 @@ some even works, such as:
 We focus on:
 :::
 
-# {#vcpu transition="fade-in slide-out"}  
+# {#no-cloud transition="convex-in slide-out" .center}
+
+::: {.centered}
+  <img src="images/no-cloud-just-another-comp.png" style="max-width: 75%; max-height: 50%;" />
+:::
+
+::: {.notes}
+While pretty much everyone understands that cloud is still just another computer,
+at a remote location, that I can spin up quickly and throw away as needed,
+BUT we often don't really know what kind of computer that is.
+:::
+
+## {#old-vs-new transition="slide-in fade-out"}
+
+::: {.notes}
+Before the cloud, you could simply walk to the server, and
+it was not too difficult to say that the computer running your program
+
+- is a potato
+- or a commodity PC with a case that has started turning yellow over the years
+- or it's a bleeding edge, high-end server
+- or not so new and it still has a turbo button
+
+You could even open up the case when the system administrator was not watching ...
+
+BUT nowadays
+:::
+
+::: {.centered}
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+  <img src="images/small-big-computer.jpg" style="display: block; width: 100%;">
+</div>
+:::
+
+
+## {#vcpu transition="fade-in slide-out"}  
 
 ::: {.notes}
 Like what on earth is even a virtual CPU?! Right?
@@ -157,7 +193,7 @@ Which means that your applications could run much much faster!
 </div>
 :::
 
-# {#vcpu-guess .center}
+## {#vcpu-guess .center}
 
 ::: {.notes}
 Now, I'd like to host a quick guessing game if you don't mind.
@@ -174,8 +210,674 @@ indeed just focusing on the single-core performance -- like doing as many intege
   </p>
 </div>
 
+<!-- TODO add poll link: https://surveys.free/a/NsTo-Rh4FfSZuvPtiKKkzg/responses/ -->
 
-## More introduction
+## {#vcpu-diff-0 .center}
+
+::: {.notes}
+Both the slowest and the fastest servers are from a hyperscaler .. not because I picked so,
+it just happened to be the case.
+
+Now I'm not going to give away the identity of the actual server types,
+and shame them publicly ... especially in the era of awakening AGI (TODO autonomous general intelligence?).
+
+But you can easily find out on your own if you are interested,
+and I'm happy to show how.
+
+But we do know both comes with 2 vCPUs.
+
+[...]
+
+How do I know all this stuff?
+:::
+
+<table style="font-size: 2rem; margin-left: auto; margin-right: auto;">
+  <thead>
+    <tr style="background-color: #06263A;">
+      <th></th>
+      <th class="centered">SERVER A</th>
+      <th class="centered">SERVER B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Vendor</td>
+      <td class="centered">Hyperscaler</td>
+      <td class="centered">Hyperscaler</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Server SKU</td>
+      <td class="centered">👻</td>
+      <td class="centered">👻</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">vCPUs</td>
+      <td class="centered">2</td>
+      <td class="centered">2</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Architecture</td>
+      <td class="centered">x86_64</td>
+      <td class="centered">x86_64</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Physical cores</td>
+      <td class="centered">1</td>
+      <td class="centered">2</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">CPU allocation</td>
+      <td class="centered">Shared</td>
+      <td class="centered">Dedicated</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">CPU (turbo) frequency</td>
+      <td class="centered">2.2 GHz</td>
+      <td class="centered">5.0 GHz</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">CPU L1D cache</td>
+      <td class="centered">32 KiB</td>
+      <td class="centered">96 KiB</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A; color: #aaa;">Memory</td>
+      <td class="centered" style="color: #aaa;">1 GiB</td>
+      <td class="centered" style="color: #aaa;">8 GiB</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Single-core SCore</td>
+      <td class="centered">133</td>
+      <td class="centered">4,645</td>
+    </tr>
+    <tr class="fragment">
+      <td style="background-color: #06263A;">Performance ratio</td>
+      <td class="centered" colspan="2" style="font-weight: bold;">x34.92481</td>
+    </tr>
+  </tbody>
+</table>
+
+## {#vcpu-benchmarking transition="slide-in slide-out"}
+
+::: {.notes}
+Well, we measured! Not only these 2 servers, but actually close to 4,000 (3,800)!
+
+So we solve this visibility problem of the cloud by burning hundreds of thousands of dollars to
+start servers, measure performance, and calculate cost-efficiency,
+then publish these results and related tooling with open licenses,
+so that you can save money by optimizing your cloud spend.
+
+DATA DRIVEN way
+:::
+
+::: {.centered}
+<video autoplay muted loop playsinline data-autoplay
+       src="images/launching-benchmarks.webm"
+       style="width: 90%; margin-top: 45px;">
+</video>
+<p style="font-size: 0.8em; text-align: center; margin-top: 10px;">
+  Credit: <a href="https://thecodinglove.com/when-i-launch-a-benchmark" target="_blank">the_coding_love / When I launch a benchmark</a>
+</p>
+:::
+
+## {#vcpu-diff-1 .center}
+
+<!-- 
+https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4ubGFyZ2UiLCJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJtOGF6bi5sYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiZTItbWljcm8iLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJlMi1taWNybyIsInpvbmVzUmVnaW9ucyI6W119XQ%3D%3D
+-->
+
+![](images/vcpu-diff-1.png){.r-stretch fig-align="center"}
+
+<div class="slide-text-overlay fragment"><span>30-50x</span></div>
+
+::: {.notes}
+logarithmic scale
+
+note that this is a syntethic tets
+
+TODO speaker notes
+:::
+
+## {#vcpu-diff-2 .center}
+
+![](images/vcpu-diff-2.png){.r-stretch fig-align="center"}
+
+<div class="slide-text-overlay fragment"><span>10-20x</span></div>
+
+::: {.notes}
+see Server A in the middle with scores around 500 across all dimensions?
+so left hand side is single core, right hand side is multi core performance ... pretty much the same for Server A.
+
+BUT Server B looking better: jumping from around 35 hundreds to 6000,
+and in some workloads the diff between Server A and Server B are even larger.
+
+TODO speaker notes
+:::
+
+## {#vcpu-diff-3 .center}
+
+![](images/vcpu-diff-3.png){.r-stretch fig-align="center"}
+
+<div class="slide-text-overlay fragment"><span>100x</span></div>
+
+::: {.notes}
+now this is not single-core anymore .. we run OpenSSL speed tests,
+using various cipher and hash functions .. and Server A is hardly visible on this screen ..
+
+
+
+TODO speaker notes
+:::
+
+## {#vcpu-diff-4 .center}
+
+![](images/vcpu-diff-4.png){.r-stretch fig-align="center"}
+
+<div class="slide-text-overlay fragment"><span>10-100x</span></div>
+
+::: {.notes}
+TODO speaker notes
+:::
+
+## {#vcpu-difference transition="slide-in slide-out"}  
+
+::: {.notes}
+Back to Vincent from Pulp Fiction .. who now looks even more confused.
+
+Because it's possible that you get a 32 vCPU server, and your app that perfectly scales to multiple cores,
+runs slower than on a single core of another cloud server type.
+:::
+
+::: {.centered}
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+  <img src="images/smalls-big-computer.jpeg" style="display: block; width: 100%;">
+  <video autoplay muted loop playsinline data-autoplay
+         src="images/vincent-confused.webm"
+         style="position: absolute; left: 45%; bottom: 1.5%;
+                transform: translateX(-50%); width: 50%;
+                background: transparent; pointer-events: none;">
+  </video>
+</div>
+:::
+
+## {#vcpus-2-count .center}
+
+::: {.notes}
+And there's quite a spectrum even when just looking at the 2 vCPU options ...
+Any guesses how many?
+
+[...]
+
+611 instance types with 2 vCPUs ... we monitor 8 vendors (logos on prior slide).
+
+Click the chart to zoom out and reveal the answer.
+:::
+
+::: {.r-stretch}
+<div class="vcpu-count-slide-content">
+<div class="vcpu-count-wrapper">
+  <object type="image/svg+xml"
+          data="images/vcpu-2-count-chart.svg"
+          class="r-stretch vcpu-count-chart"
+          aria-label="Guess the number of 2 vCPU servers at the supported vendors. Click to reveal 611.">
+  </object>
+</div>
+
+```{=html}
+<div class="vendor-logos" aria-label="Supported cloud vendors (alphabetical)" style="margin-top: 60px;">
+  <div class="vendor-logos-row">
+    <img src="https://sparecores.com/assets/images/vendors/alicloud.svg" alt="Alibaba Cloud" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/aws.svg" alt="Amazon Web Services" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/gcp.svg" alt="Google Cloud Platform" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/hcloud.svg" alt="Hetzner Cloud" width="72" height="72">
+  </div>
+  <div class="vendor-logos-row">
+    <img src="https://sparecores.com/assets/images/vendors/azure.svg" alt="Microsoft Azure" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/ovh.svg" alt="OVHcloud" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/upcloud.svg" alt="UpCloud" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/vultr.svg" alt="Vultr" width="72" height="72">
+  </div>
+</div>
+```
+
+</div>
+:::
+
+<span class="fragment vcpu-count-zoom" data-fragment-index="1"></span>
+
+<script>
+  (function () {
+    function initVcpuCountSlide() {
+      var reveal = window.Reveal;
+      var slide = document.getElementById('vcpus-2-count');
+      if (!reveal || !slide) return false;
+      if (slide.dataset.vcpuCountBound) return true;
+
+      slide.dataset.vcpuCountBound = '1';
+
+      function getChartSvg() {
+        var obj = slide.querySelector('object.vcpu-count-chart');
+        if (!obj || !obj.contentDocument) return null;
+        return obj.contentDocument.getElementById('vcpu-count-chart');
+      }
+
+      function syncZoom() {
+        var chart = getChartSvg();
+        var fragment = slide.querySelector('.vcpu-count-zoom');
+        if (!chart || !fragment) return;
+        chart.classList.toggle('zoomed', fragment.classList.contains('visible'));
+      }
+
+      var obj = slide.querySelector('object.vcpu-count-chart');
+      if (obj) {
+        obj.addEventListener('load', syncZoom);
+        if (obj.contentDocument) syncZoom();
+      }
+
+      reveal.on('fragmentshown', function (event) {
+        if (event.fragment && event.fragment.classList.contains('vcpu-count-zoom')) syncZoom();
+      });
+      reveal.on('fragmenthidden', function (event) {
+        if (event.fragment && event.fragment.classList.contains('vcpu-count-zoom')) syncZoom();
+      });
+      reveal.on('slidechanged', function (event) {
+        if (event.currentSlide && event.currentSlide.id === 'vcpus-2-count') syncZoom();
+      });
+
+      window.addEventListener('message', function (event) {
+        if (event.data && event.data.type !== 'vcpu-count-click') return;
+        if (!slide.classList.contains('present')) return;
+        var fragment = slide.querySelector('.vcpu-count-zoom');
+        if (fragment && !fragment.classList.contains('visible')) reveal.nextFragment();
+      });
+
+      return true;
+    }
+
+    if (!initVcpuCountSlide()) {
+      var tries = 0;
+      var timer = setInterval(function () {
+        if (initVcpuCountSlide() || ++tries > 50) clearInterval(timer);
+      }, 100);
+    }
+  })();
+</script>
+
+<!-- TODO add a breakdown of 2 vCPU servers per vendor (AWS: 146) -->
+
+# $ whois sparecores.com {#whois transition="convex-in convex-out"}
+
+<ul style="font-size: 0.9em;">
+  <li class="fragment" data-fragment-index=1>Funded by NGI Search (EU consortium) in 2024</li>
+  <ul>
+    <li class="fragment" data-fragment-index=1>Vendor independent, open-source project</li>
+  </ul>
+  <li class="fragment" data-fragment-index=2>Seal of Excellence from the European Commission in 2026</li>
+  <li class="fragment" data-fragment-index=3>Accepted into NVIDIA Inception, AWS Open Source Credits</li>
+  <li class="fragment" data-fragment-index=4>Beneficiary of cloud credits from 8 vendors (overall ~$100k)</li>
+  <li class="fragment" data-fragment-index=5>20+ talks in 9 countries (e.g. Berlin Buzzwords, PyData, KCD)</li>
+  <li class="fragment" data-fragment-index=6>Featured by The Pragmatic Engineer in Oct 2024</li>
+  <li class="fragment" data-fragment-index=7>Jeff Barr (Chief Evangelist at AWS) on our Reddit post:</li>
+</ul>
+
+<blockquote class="fragment" data-fragment-index=7 style="margin-left: 40px;">
+  This was awesome, thanks for sharing.
+</blockquote>
+
+::: {.notes}
+first of all, just to build some credibility for the project:
+we are committed to be vendor-agnostic, open-source, and transparent about our data
+:::
+
+# $ apropos sparecores.com {#apropos transition="convex-in convex-out"}
+
+<ul style="font-size: 0.9em;">
+  <li class="fragment">Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance.</li>
+  <li class="fragment">Managed infrastructure, databases, APIs, SDKs, and web applications to make this data publicly accessible.</li>
+  <li class="fragment">Open-source helpers to select, start and manage instances in your own environment.</li>
+  <li class="fragment">Open-source Python/R packages and workflow orchestration extensions (e.g. Metaflow) to track resource usage and cost of DS/ML/AI jobs. Open-source tooling to right-size instances.</li>
+  <li class="fragment">Add-on services to scale data science workflows, even without direct vendor engagement.</li>
+</ul>
+
+::: {.notes}
+- so Spare Cores is an open-source ecosystem, including software, database schemas, guides,
+- and actual databases if you don't want to run the ETL tooling yourself .. also providing APIs, SDKs etc to make it easier to query data
+- unified CLI to start machines
+- and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it's cheapest.
+:::
+
+## $ curl -I github.com/sparecores
+
+::: {.centered}
+<img style="margin-top:-20px; width:80%;" src="images/gha-actions-2025q1.png" />
+:::
+
+<aside class="notes">
+FTR this dataset was generated, collected, standardized, and published in public GHA if ou are interested in the details.
+running around 100k jobs over 10k hours...
+</aside>
+
+## $ ls -1 sparecores {#components transition="convex-in convex-out"}
+
+<img style="margin-top:30px; width: 100%;" src="images/sc-components-2026-q3.png" />
+
+::: {.notes}
+As mentioned previously, this is made available via multiple components that
+you can find on GitHub. We don't have time to go through all of them, but
+I'd be happy to answer any related questions on Slack, or ping me on LinkedIn :)
+
+WE will focus on the inspector now!
+:::
+
+# $ curl -I sparecores.com/navigator {transition="convex-in slide-out"}
+
+<img style="width:100%; margin-top: 30px;" src="images/homepage-stats-2026q3.png" />
+
+<p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
+
+::: {.notes}
+high level numbers about the data we collect and make available
+:::
+
+# $ curl sparecores.com/servers
+
+::: {.centered}
+<a href="https://sparecores.com/servers" target="_blank">
+  <img style="width:95%;" src="images/sc-www-listing-top-2026q2.png" />
+</a>
+:::
+
+::: {.notes}
+The easiest way to query this data is through our web component, as you can see on the screen ...
+
+This is not only a list of servers, but you can filter, order, and search for specific instances.
+We already show some performance metrics by default, along with the cost efficiency based on the spot or on-demand pricing.
+
+TODO ask Attila for what filters he actually needs
+
+-- fine tuned to Attila's use case + live www demo
+https://sparecores.com/servers?benchmark=eyJpZCI6InN0cmVzc19uZzpiZXN0biIsImNvbmZpZyI6Int9In0%3D&best_price_allocation=ONDEMAND_ONLY&memory_max=16&order_by=selected_benchmark_score_per_price&order_dir=desc&vcpus_min=8&vendor=aws&vendor_regions=aws~us-west-2
+
++ single core instead of multi core -> efficiency gain c8a -> c6a
+
+Repro: TODO add final URL
+
+TODO write up actual filters
+TODO use traffic amount required to include in pricing
+
+- architecture=x86_64
+- memory_min=32
+- benchmark: llm / text generation / gemma / 512 tokens
+- benchmark_score_min: 10
+- price_allocation: MONTHLY
+- compliance_framework: hipaa
+- countries: GB
+:::
+
+## $ curl sparecores.com/server/gcp/g2-standard-16
+
+::: {.centered}
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img style="width: 90%;" src="images/sc-www-server-details-top-g2-standard-16-2026q2.png" />
+</a>
+:::
+
+::: {.notes}
+Clicking on a server shows you the technical details of the instance -- much more than what's provided publicly by the vendor, even more than what ChatGPT knows ... as we actually start each machine and inspect the hardware.
+:::
+
+## $ curl sparecores.com/server/gcp/g2-standard-16
+
+::: {.centered}
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img style="width: 80%;" src="images/sc-www-server-details-top-g2-standard-16-1.5-2026q2.png" />
+  <img class="fragment" style="width: 40%; margin-top: -10px;" src="images/sc-www-server-details-top-g2-standard-16-lstopo.png" />
+</a>
+:::
+
+## $ curl sparecores.com/server/gcp/g2-standard-16
+
+::: {.centered}
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img style="width: 80%;" src="images/sc-www-server-details-prices-g2-standard-16.png" />
+</a>
+:::
+
+::: {.notes}
+Live and historical pricing
+:::
+
+## $ curl sparecores.com/server/gcp/g2-standard-16
+
+<!--
+<iframe
+ src="https://sparecores.com/embed/server/gcp/g2-standard-16/bw_mem"
+ style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
+</iframe>
+-->
+
+::: {.centered}
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img style="width: 80%;" src="images/sc-www-server-details-benchmarks-1-g2-standard-16.png" />
+</a>
+:::
+
+::: {.notes}
+and we also run benchmark scenarios on the servers, e.g.:
+
+- memory bandwidth of read, write and mixed operations using various block sizes and also including the related L1/L2/L3 cache amounts
+- or benchmarking compression algos - having the compression ratio on the x axis, and the bandwidth on the y axis, it's clear that `zpaq` is a beast when it comes to compressing text, but might be slow on this machine
+- OpenSSL hash functions and block ciphers
+:::
+
+## $ curl sparecores.com/server/gcp/g2-standard-16
+
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img src="images/sc-www-server-details-benchmarks-2-g2-standard-16.png" />
+</a>
+
+::: {.notes}
+also running test suites like PassMark or ...
+:::
+
+## $ curl sparecores.com/server/gcp/g2-standard-16
+
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img src="images/sc-www-server-details-benchmarks-3-g2-standard-16.png" />
+</a>
+
+::: {.notes}
+Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc
+:::
+
+## $ curl sparecores.com/server/gcp/g2-standard-16
+
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img src="images/sc-www-server-details-benchmarks-4-g2-standard-16.png" />
+</a>
+
+::: {.notes}
+visualizations on how well the machine can scale tasks to multiple CPU cores -- e.g. showing the diminishing return on this Intel Xeon due to hyperthreading
+:::
+
+## $ curl sparecores.com/server/gcp/g2-standard-16
+
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img src="images/sc-www-server-details-benchmarks-5-g2-standard-16.png" />
+</a>
+
+::: {.notes}
+Or looking at LLM Inference Speed both for prompt processing and text generation,
+using smaller models with 135M parameters up to 70B larger models.
+:::
+
+## >>> from navigator.www import server
+
+<a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank">
+  <img src="images/sc-www-server-details-benchmarks-6-g2-standard-16.png" />
+</a>
+
+::: {.notes}
+and other application-specific benchmarks, like serving a static website or running a key-value store database
+:::
+
+## $ curl sparecores.com/servers/compare
+
+::: {.centered}
+<a href="https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D" target="_blank">
+  <img style="width: 80%;" src="images/sc-www-server-compare-2025-q4.png" />
+</a>
+:::
+
+::: {.notes}
+and making all these data available in comparison tables,
+e.g. you can see "Best performance servers for Redis below ¢50/hour" here
+:::
+
+## $ curl sparecores.com/servers/compare
+
+::: {.centered}
+<a href="https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D" target="_blank">
+  <img style="width: 75%;" src="images/sc-www-server-compare-charts.png" />
+</a>
+:::
+
+::: {.notes}
+or plots as well for human inspection
+:::
+
+# $ curl sparecores.com/advisor
+
+
+<!--
+TODO add advisor image
+
+https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
+
+https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
+-->
+
+# $ curl docs.sparecores.com/api
+
+<!-- TODO replace image with docs site -->
+
+::: {.centered}
+<img style="width:95%;" src="images/sc-keeper-preview.png" />
+:::
+
+::: {.notes}
+for computers, we provide APIs ...
+:::
+
+## $ pip install sparecores-data
+
+```py {code-line-numbers="2|3|4-6|7|10-11|16|21-29|30-34|36-39|41-60|53-54|62-69" style="margin-top: 20px !important; height: 640px;"}
+>>> from rich import print as pp
+>>> from sc_crawler.tables import Server
+>>> from sc_data import db
+>>> from sqlmodel import create_engine, Session, select
+>>> engine = create_engine(f"sqlite:///{db.path}")
+>>> session = Session(engine)
+>>> server = session.exec(select(Server).where(Server.server_id == 'g4dn.xlarge')).one()
+>>> pp(server)
+Server(
+    server_id='g4dn.xlarge',
+    vendor_id='aws',
+    display_name='g4dn.xlarge',
+    api_reference='g4dn.xlarge',
+    name='g4dn.xlarge',
+    family='g4dn',
+    description='Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge',
+
+    status=<Status.ACTIVE: 'active'>,
+    observed_at=datetime.datetime(2024, 6, 6, 10, 18, 4, 127254),
+
+    hypervisor='nitro',
+    vcpus=4,
+    cpu_cores=2,
+    cpu_allocation=<CpuAllocation.DEDICATED: 'Dedicated'>,
+    cpu_manufacturer='Intel',
+    cpu_family='Xeon',
+    cpu_model='8259CL',
+    cpu_architecture=<CpuArchitecture.X86_64: 'x86_64'>,
+    cpu_speed=3.5,
+    cpu_l1i_cache=64,
+    cpu_l1d_cache=32,
+    cpu_l2_cache=2048,
+    cpu_l3_cache=36608,
+    cpu_flags=["fpu", "vme", "avx512", ...],
+
+    memory_amount=16384,
+    memory_generation=<DdrGeneration.DDR4: 'DDR4'>,
+    memory_speed=3200,
+    memory_ecc=None,
+
+    gpu_count=1,
+    gpu_memory_min=16384,
+    gpu_memory_total=16384,
+    gpu_manufacturer='Nvidia',
+    gpu_family='Turing',
+    gpu_model='Tesla T4',
+    gpus=[
+        {
+            'manufacturer': 'Nvidia',
+            'family': 'Turing',
+            'model': 'Tesla T4',
+            'memory': 15360,
+            'firmware_version': '535.171.04',
+            'bios_version': '90.04.96.00.A0',
+            'graphics_clock': 1590,
+            'sm_clock': 1590,
+            'mem_clock': 5001,
+            'video_clock': 1470
+        }
+    ],
+
+    storage_size=125,
+    storage_type=<StorageType.NVME_SSD: 'nvme ssd'>,
+    storages=[{'size': 125, 'storage_type': 'nvme ssd'}],
+
+    network_speed=5.0,
+    inbound_traffic=0.0,
+    outbound_traffic=0.0,
+    ipv4=0,
+)
+```
+
+# {#gilty}
+
+::: {.centered}
+<img style="width:60%; margin-top: -50px;" src="images/gilty-coffee.png" />
+:::
+
+::: {.notes}
+TODO add speaker notes
+:::
+
+## {#gilty-and-friends}
+
+::: {.centered}
+<img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;" />
+:::
+
+::: {.notes}
+TODO add speaker notes
+:::
+
+# $ strace -e environment gilty.py
+
+<!-- TODO Attila -->
+
+- EKS
+- Karpenter
+- EKS Auto mode
+
+# $ claude --plan "fix problem"
+
+<!-- TODO Attila -->
+
+TODO controller spec draft
+
 
 # {#demo}
 
@@ -207,13 +909,45 @@ indeed just focusing on the single-core performance -- like doing as many intege
 </script>
 ```
 
-# Next slide 
+# {#spare-cores-infra}
 
-yooo
+<!-- TODO add mermaid diagram from docs.sparecores.com/overview -->
+
+::: {.notes}
+TODO add speaker notes
+
+Gergo: this is cool .. we could definitely use something like this at spare cores
+GH/Pulumit etc fajdalom .. schedule/stop/tasks.
+how to use your kubernetes controller for this?
+:::
+
+# {#limitations}
+
+<!-- TODO Attila -->
+
+- single cloud only
+- defined region
+- needs karpenter installed
+- needs EKS, GKE, AKS, etc.
+
+::: {.notes}
+TODO add speaker notes
+:::
+
+# {#ideal-stack}
+
+<!-- TODO -->
+
+1. onprem kubernetes cluster
+2. be akarunk huzni gcp-t, hetznert etc AKARMIT EKS, GKE, AKS nelkul
+3. controller? operator? -> vendor API create vpc/storage/node + network + join cluster
+
+
+# {#feedback}
+
+<!-- TODO one question to the community of the would find something like this useful before we jump the rabbit hole to prepare for next year's KCD Budapest --> 
 
 # Bye
-
-
 
 
 <!--toggle visibility of items in live mode-->

@@ -29,6 +29,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
   </style>
   <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/theme/quarto-0ba2550f576cf5de89bd8e81d5f93b5d.css">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -177,7 +243,7 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p>TODO</p>
+<p>TODO speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -196,6 +262,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <div class="centered">
 <p><img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
+<!-- TODO add "once upon a time, in a not too far pub ...." -->
 </section>
 
 <section id="recap" class="title-slide slide level1 center">
@@ -252,8 +319,57 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
       }</style></aside>
 </section>
 
-<section id="vcpu" class="title-slide slide level1" data-transition="fade-in slide-out">
+<section>
+<section id="no-cloud" class="title-slide slide level1 center" data-transition="convex-in slide-out">
 <h1></h1>
+<div class="centered">
+<p><img src="images/no-cloud-just-another-comp.png" style="max-width: 75%; max-height: 50%;"></p>
+</div>
+<aside class="notes">
+<p>While pretty much everyone understands that cloud is still just another computer, at a remote location, that I can spin up quickly and throw away as needed, BUT we often don’t really know what kind of computer that is.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="old-vs-new" class="slide level2" data-transition="slide-in fade-out">
+<h2></h2>
+<aside class="notes">
+<p>Before the cloud, you could simply walk to the server, and it was not too difficult to say that the computer running your program</p>
+<ul>
+<li>is a potato</li>
+<li>or a commodity PC with a case that has started turning yellow over the years</li>
+<li>or it’s a bleeding edge, high-end server</li>
+<li>or not so new and it still has a turbo button</li>
+</ul>
+<p>You could even open up the case when the system administrator was not watching …</p>
+<p>BUT nowadays</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="centered">
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+<p><img src="images/small-big-computer.jpg" style="display: block; width: 100%;"></p>
+</div>
+</div>
+</section>
+<section id="vcpu" class="slide level2" data-transition="fade-in slide-out">
+<h2></h2>
 <aside class="notes">
 <p>Like what on earth is even a virtual CPU?! Right?</p>
 <p>There’s a conceptual uncertainty and massive visibility problem here, as a vCPU could range from an overprovisioned, poor-performing thread with saturated bandwidth to memory, versus a dedicated CPU core of a state-of-the-art server – with massive CPU cache and high memory bandwidth.</p>
@@ -277,10 +393,8 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 </div>
 </div>
 </section>
-
-<section>
-<section id="vcpu-guess" class="title-slide slide level1 center">
-<h1></h1>
+<section id="vcpu-guess" class="slide level2 center">
+<h2></h2>
 <aside class="notes">
 <p>Now, I’d like to host a quick guessing game if you don’t mind.</p>
 <p>Any ideas how much faster is the best performing vCPU compared to the slowest? I don’t mean a comparing cloud servers with hundreds of cores with a potato, indeed just focusing on the single-core performance – like doing as many integer divisions in a second as possible.</p>
@@ -303,10 +417,938 @@ Guess the Number!
 How much better is the highest performing 2-vCPU cloud server’s single-core performance compared to the lowest?
 </p>
 </div>
+<!-- TODO add poll link: https://surveys.free/a/NsTo-Rh4FfSZuvPtiKKkzg/responses/ -->
 </section>
-<section id="more-introduction" class="slide level2">
-<h2>More introduction</h2>
+<section id="vcpu-diff-0" class="slide level2 center">
+<h2></h2>
+<aside class="notes">
+<p>Both the slowest and the fastest servers are from a hyperscaler .. not because I picked so, it just happened to be the case.</p>
+<p>Now I’m not going to give away the identity of the actual server types, and shame them publicly … especially in the era of awakening AGI (TODO autonomous general intelligence?).</p>
+<p>But you can easily find out on your own if you are interested, and I’m happy to show how.</p>
+<p>But we do know both comes with 2 vCPUs.</p>
+<p>[…]</p>
+<p>How do I know all this stuff?</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<table style="font-size: 2rem; margin-left: auto; margin-right: auto;">
+<thead>
+<tr style="background-color: #06263A;">
+<th>
+</th>
+<th class="centered">
+SERVER A
+</th>
+<th class="centered">
+SERVER B
+</th>
+</tr>
+</thead>
+<tbody>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+Vendor
+</td>
+<td class="centered">
+Hyperscaler
+</td>
+<td class="centered">
+Hyperscaler
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+Server SKU
+</td>
+<td class="centered">
+👻
+</td>
+<td class="centered">
+👻
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+vCPUs
+</td>
+<td class="centered">
+2
+</td>
+<td class="centered">
+2
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+Architecture
+</td>
+<td class="centered">
+x86_64
+</td>
+<td class="centered">
+x86_64
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+Physical cores
+</td>
+<td class="centered">
+1
+</td>
+<td class="centered">
+2
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+CPU allocation
+</td>
+<td class="centered">
+Shared
+</td>
+<td class="centered">
+Dedicated
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+CPU (turbo) frequency
+</td>
+<td class="centered">
+2.2 GHz
+</td>
+<td class="centered">
+5.0 GHz
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+CPU L1D cache
+</td>
+<td class="centered">
+32 KiB
+</td>
+<td class="centered">
+96 KiB
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A; color: #aaa;">
+Memory
+</td>
+<td class="centered" style="color: #aaa;">
+1 GiB
+</td>
+<td class="centered" style="color: #aaa;">
+8 GiB
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+Single-core SCore
+</td>
+<td class="centered">
+133
+</td>
+<td class="centered">
+4,645
+</td>
+</tr>
+<tr class="fragment">
+<td style="background-color: #06263A;">
+Performance ratio
+</td>
+<td class="centered" colspan="2" style="font-weight: bold;">
+x34.92481
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="vcpu-benchmarking" class="slide level2" data-transition="slide-in slide-out">
+<h2></h2>
+<aside class="notes">
+<p>Well, we measured! Not only these 2 servers, but actually close to 4,000 (3,800)!</p>
+<p>So we solve this visibility problem of the cloud by burning hundreds of thousands of dollars to start servers, measure performance, and calculate cost-efficiency, then publish these results and related tooling with open licenses, so that you can save money by optimizing your cloud spend.</p>
+<p>DATA DRIVEN way</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="centered">
+<video autoplay="" muted="" loop="" playsinline="" data-autoplay="" src="images/launching-benchmarks.webm" style="width: 90%; margin-top: 45px;">
+</video>
+<p style="font-size: 0.8em; text-align: center; margin-top: 10px;">
+Credit: <a href="https://thecodinglove.com/when-i-launch-a-benchmark" target="_blank">the_coding_love / When I launch a benchmark</a>
+</p>
+</div>
+</section>
+<section id="vcpu-diff-1" class="slide level2 center">
+<h2></h2>
+<!-- 
+https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4ubGFyZ2UiLCJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJtOGF6bi5sYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiZTItbWljcm8iLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJlMi1taWNybyIsInpvbmVzUmVnaW9ucyI6W119XQ%3D%3D
+-->
+
+<img data-src="images/vcpu-diff-1.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
+<span>30-50x</span>
+</div>
+<aside class="notes">
+<p>logarithmic scale</p>
+<p>note that this is a syntethic tets</p>
+<p>TODO speaker notes</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="vcpu-diff-2" class="slide level2 center">
+<h2></h2>
+
+<img data-src="images/vcpu-diff-2.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
+<span>10-20x</span>
+</div>
+<aside class="notes">
+<p>see Server A in the middle with scores around 500 across all dimensions? so left hand side is single core, right hand side is multi core performance … pretty much the same for Server A.</p>
+<p>BUT Server B looking better: jumping from around 35 hundreds to 6000, and in some workloads the diff between Server A and Server B are even larger.</p>
+<p>TODO speaker notes</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="vcpu-diff-3" class="slide level2 center">
+<h2></h2>
+
+<img data-src="images/vcpu-diff-3.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
+<span>100x</span>
+</div>
+<aside class="notes">
+<p>now this is not single-core anymore .. we run OpenSSL speed tests, using various cipher and hash functions .. and Server A is hardly visible on this screen ..</p>
+<p>TODO speaker notes</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="vcpu-diff-4" class="slide level2 center">
+<h2></h2>
+
+<img data-src="images/vcpu-diff-4.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
+<span>10-100x</span>
+</div>
+<aside class="notes">
+<p>TODO speaker notes</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="vcpu-difference" class="slide level2" data-transition="slide-in slide-out">
+<h2></h2>
+<aside class="notes">
+<p>Back to Vincent from Pulp Fiction .. who now looks even more confused.</p>
+<p>Because it’s possible that you get a 32 vCPU server, and your app that perfectly scales to multiple cores, runs slower than on a single core of another cloud server type.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="centered">
+<div style="position: relative; display: inline-block; margin-top: -45px;">
+<p><img src="images/smalls-big-computer.jpeg" style="display: block; width: 100%;"> <video autoplay="" muted="" loop="" playsinline="" data-autoplay="" src="images/vincent-confused.webm" style="position: absolute; left: 45%; bottom: 1.5%;
+                transform: translateX(-50%); width: 50%;
+                background: transparent; pointer-events: none;"> </video></p>
+</div>
+</div>
+</section>
+<section id="vcpus-2-count" class="slide level2 center">
+<h2></h2>
+<aside class="notes">
+<p>And there’s quite a spectrum even when just looking at the 2 vCPU options … Any guesses how many?</p>
+<p>[…]</p>
+<p>611 instance types with 2 vCPUs … we monitor 8 vendors (logos on prior slide).</p>
+<p>Click the chart to zoom out and reveal the answer.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="r-stretch">
+<div class="vcpu-count-slide-content">
+<div class="vcpu-count-wrapper">
+<p><object type="image/svg+xml" data="images/vcpu-2-count-chart.svg" class="r-stretch vcpu-count-chart" aria-label="Guess the number of 2 vCPU servers at the supported vendors. Click to reveal 611."> </object></p>
+</div>
+<div class="vendor-logos" aria-label="Supported cloud vendors (alphabetical)" style="margin-top: 60px;">
+  <div class="vendor-logos-row">
+    <img src="https://sparecores.com/assets/images/vendors/alicloud.svg" alt="Alibaba Cloud" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/aws.svg" alt="Amazon Web Services" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/gcp.svg" alt="Google Cloud Platform" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/hcloud.svg" alt="Hetzner Cloud" width="72" height="72">
+  </div>
+  <div class="vendor-logos-row">
+    <img src="https://sparecores.com/assets/images/vendors/azure.svg" alt="Microsoft Azure" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/ovh.svg" alt="OVHcloud" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/upcloud.svg" alt="UpCloud" width="72" height="72">
+    <img src="https://sparecores.com/assets/images/vendors/vultr.svg" alt="Vultr" width="72" height="72">
+  </div>
+</div>
+</div>
+</div>
+<p><span class="fragment vcpu-count-zoom" data-fragment-index="1"></span></p>
+<script>
+  (function () {
+    function initVcpuCountSlide() {
+      var reveal = window.Reveal;
+      var slide = document.getElementById('vcpus-2-count');
+      if (!reveal || !slide) return false;
+      if (slide.dataset.vcpuCountBound) return true;
+
+      slide.dataset.vcpuCountBound = '1';
+
+      function getChartSvg() {
+        var obj = slide.querySelector('object.vcpu-count-chart');
+        if (!obj || !obj.contentDocument) return null;
+        return obj.contentDocument.getElementById('vcpu-count-chart');
+      }
+
+      function syncZoom() {
+        var chart = getChartSvg();
+        var fragment = slide.querySelector('.vcpu-count-zoom');
+        if (!chart || !fragment) return;
+        chart.classList.toggle('zoomed', fragment.classList.contains('visible'));
+      }
+
+      var obj = slide.querySelector('object.vcpu-count-chart');
+      if (obj) {
+        obj.addEventListener('load', syncZoom);
+        if (obj.contentDocument) syncZoom();
+      }
+
+      reveal.on('fragmentshown', function (event) {
+        if (event.fragment && event.fragment.classList.contains('vcpu-count-zoom')) syncZoom();
+      });
+      reveal.on('fragmenthidden', function (event) {
+        if (event.fragment && event.fragment.classList.contains('vcpu-count-zoom')) syncZoom();
+      });
+      reveal.on('slidechanged', function (event) {
+        if (event.currentSlide && event.currentSlide.id === 'vcpus-2-count') syncZoom();
+      });
+
+      window.addEventListener('message', function (event) {
+        if (event.data && event.data.type !== 'vcpu-count-click') return;
+        if (!slide.classList.contains('present')) return;
+        var fragment = slide.querySelector('.vcpu-count-zoom');
+        if (fragment && !fragment.classList.contains('visible')) reveal.nextFragment();
+      });
+
+      return true;
+    }
+
+    if (!initVcpuCountSlide()) {
+      var tries = 0;
+      var timer = setInterval(function () {
+        if (initVcpuCountSlide() || ++tries > 50) clearInterval(timer);
+      }, 100);
+    }
+  })();
+</script>
+<!-- TODO add a breakdown of 2 vCPU servers per vendor (AWS: 146) -->
 </section></section>
+<section id="whois" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>$ whois sparecores.com</h1>
+<ul style="font-size: 0.9em;">
+<li class="fragment" data-fragment-index="1">
+Funded by NGI Search (EU consortium) in 2024
+</li>
+<ul>
+<li class="fragment" data-fragment-index="1">
+Vendor independent, open-source project
+</li>
+</ul>
+<li class="fragment" data-fragment-index="2">
+Seal of Excellence from the European Commission in 2026
+</li>
+<li class="fragment" data-fragment-index="3">
+Accepted into NVIDIA Inception, AWS Open Source Credits
+</li>
+<li class="fragment" data-fragment-index="4">
+Beneficiary of cloud credits from 8 vendors (overall ~$100k)
+</li>
+<li class="fragment" data-fragment-index="5">
+20+ talks in 9 countries (e.g.&nbsp;Berlin Buzzwords, PyData, KCD)
+</li>
+<li class="fragment" data-fragment-index="6">
+Featured by The Pragmatic Engineer in Oct 2024
+</li>
+<li class="fragment" data-fragment-index="7">
+Jeff Barr (Chief Evangelist at AWS) on our Reddit post:
+</li>
+</ul>
+<blockquote class="fragment" data-fragment-index="7" style="margin-left: 40px;">
+This was awesome, thanks for sharing.
+</blockquote>
+<aside class="notes">
+<p>first of all, just to build some credibility for the project: we are committed to be vendor-agnostic, open-source, and transparent about our data</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section>
+<section id="apropos" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>$ apropos sparecores.com</h1>
+<ul style="font-size: 0.9em;">
+<li class="fragment">
+Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance.
+</li>
+<li class="fragment">
+Managed infrastructure, databases, APIs, SDKs, and web applications to make this data publicly accessible.
+</li>
+<li class="fragment">
+Open-source helpers to select, start and manage instances in your own environment.
+</li>
+<li class="fragment">
+Open-source Python/R packages and workflow orchestration extensions (e.g.&nbsp;Metaflow) to track resource usage and cost of DS/ML/AI jobs. Open-source tooling to right-size instances.
+</li>
+<li class="fragment">
+Add-on services to scale data science workflows, even without direct vendor engagement.
+</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>so Spare Cores is an open-source ecosystem, including software, database schemas, guides,</li>
+<li>and actual databases if you don’t want to run the ETL tooling yourself .. also providing APIs, SDKs etc to make it easier to query data</li>
+<li>unified CLI to start machines</li>
+<li>and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it’s cheapest.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl--i-github.comsparecores" class="slide level2">
+<h2>$ curl -I github.com/sparecores</h2>
+<div class="centered">
+<p><img style="margin-top:-20px; width:80%;" src="images/gha-actions-2025q1.png"></p>
+</div>
+<aside class="notes">
+FTR this dataset was generated, collected, standardized, and published in public GHA if ou are interested in the details. running around 100k jobs over 10k hours…
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="components" class="slide level2" data-transition="convex-in convex-out">
+<h2>$ ls -1 sparecores</h2>
+
+<img style="margin-top:30px; width: 100%;" src="images/sc-components-2026-q3.png" class="r-stretch"><aside class="notes">
+<p>As mentioned previously, this is made available via multiple components that you can find on GitHub. We don’t have time to go through all of them, but I’d be happy to answer any related questions on Slack, or ping me on LinkedIn :)</p>
+<p>WE will focus on the inspector now!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section id="curl--i-sparecores.comnavigator" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>$ curl -I sparecores.com/navigator</h1>
+
+<img style="width:100%; margin-top: 30px;" src="images/homepage-stats-2026q3.png" class="r-stretch"><p class="centered" style="margin-top: -10px;">
+Source: <a href="https://sparecores.com">sparecores.com</a>
+</p>
+<aside class="notes">
+<p>high level numbers about the data we collect and make available</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section>
+<section id="curl-sparecores.comservers" class="title-slide slide level1">
+<h1>$ curl sparecores.com/servers</h1>
+<div class="centered">
+<p><a href="https://sparecores.com/servers" target="_blank"> <img style="width:95%;" src="images/sc-www-listing-top-2026q2.png"> </a></p>
+</div>
+<aside class="notes">
+<p>The easiest way to query this data is through our web component, as you can see on the screen …</p>
+<p>This is not only a list of servers, but you can filter, order, and search for specific instances. We already show some performance metrics by default, along with the cost efficiency based on the spot or on-demand pricing.</p>
+<p>TODO ask Attila for what filters he actually needs</p>
+<p>– fine tuned to Attila’s use case + live www demo https://sparecores.com/servers?benchmark=eyJpZCI6InN0cmVzc19uZzpiZXN0biIsImNvbmZpZyI6Int9In0%3D&amp;best_price_allocation=ONDEMAND_ONLY&amp;memory_max=16&amp;order_by=selected_benchmark_score_per_price&amp;order_dir=desc&amp;vcpus_min=8&amp;vendor=aws&amp;vendor_regions=aws~us-west-2</p>
+<ul>
+<li>single core instead of multi core -&gt; efficiency gain c8a -&gt; c6a</li>
+</ul>
+<p>Repro: TODO add final URL</p>
+<p>TODO write up actual filters TODO use traffic amount required to include in pricing</p>
+<ul>
+<li>architecture=x86_64</li>
+<li>memory_min=32</li>
+<li>benchmark: llm / text generation / gemma / 512 tokens</li>
+<li>benchmark_score_min: 10</li>
+<li>price_allocation: MONTHLY</li>
+<li>compliance_framework: hipaa</li>
+<li>countries: GB</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comservergcpg2-standard-16" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 90%;" src="images/sc-www-server-details-top-g2-standard-16-2026q2.png"> </a></p>
+</div>
+<aside class="notes">
+<p>Clicking on a server shows you the technical details of the instance – much more than what’s provided publicly by the vendor, even more than what ChatGPT knows … as we actually start each machine and inspect the hardware.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comservergcpg2-standard-16-1" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-details-top-g2-standard-16-1.5-2026q2.png"> <img class="fragment" style="width: 40%; margin-top: -10px;" src="images/sc-www-server-details-top-g2-standard-16-lstopo.png"> </a></p>
+</div>
+</section>
+<section id="curl-sparecores.comservergcpg2-standard-16-2" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-details-prices-g2-standard-16.png"> </a></p>
+</div>
+<aside class="notes">
+<p>Live and historical pricing</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comservergcpg2-standard-16-3" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
+<!--
+<iframe
+ src="https://sparecores.com/embed/server/gcp/g2-standard-16/bw_mem"
+ style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
+</iframe>
+-->
+<div class="centered">
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-details-benchmarks-1-g2-standard-16.png"> </a></p>
+</div>
+<aside class="notes">
+<p>and we also run benchmark scenarios on the servers, e.g.:</p>
+<ul>
+<li>memory bandwidth of read, write and mixed operations using various block sizes and also including the related L1/L2/L3 cache amounts</li>
+<li>or benchmarking compression algos - having the compression ratio on the x axis, and the bandwidth on the y axis, it’s clear that <code>zpaq</code> is a beast when it comes to compressing text, but might be slow on this machine</li>
+<li>OpenSSL hash functions and block ciphers</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comservergcpg2-standard-16-4" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-2-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>also running test suites like PassMark or …</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comservergcpg2-standard-16-5" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-3-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comservergcpg2-standard-16-6" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-4-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>visualizations on how well the machine can scale tasks to multiple CPU cores – e.g.&nbsp;showing the diminishing return on this Intel Xeon due to hyperthreading</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comservergcpg2-standard-16-7" class="slide level2">
+<h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-5-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>Or looking at LLM Inference Speed both for prompt processing and text generation, using smaller models with 135M parameters up to 70B larger models.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-6-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>and other application-specific benchmarks, like serving a static website or running a key-value store database</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comserverscompare" class="slide level2">
+<h2>$ curl sparecores.com/servers/compare</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-compare-2025-q4.png"> </a></p>
+</div>
+<aside class="notes">
+<p>and making all these data available in comparison tables, e.g.&nbsp;you can see “Best performance servers for Redis below ¢50/hour” here</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl-sparecores.comserverscompare-1" class="slide level2">
+<h2>$ curl sparecores.com/servers/compare</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D" target="_blank"> <img style="width: 75%;" src="images/sc-www-server-compare-charts.png"> </a></p>
+</div>
+<aside class="notes">
+<p>or plots as well for human inspection</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section id="curl-sparecores.comadvisor" class="title-slide slide level1">
+<h1>$ curl sparecores.com/advisor</h1>
+<!--
+TODO add advisor image
+
+https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
+
+https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
+-->
+</section>
+
+<section>
+<section id="curl-docs.sparecores.comapi" class="title-slide slide level1">
+<h1>$ curl docs.sparecores.com/api</h1>
+<!-- TODO replace image with docs site -->
+<div class="centered">
+<p><img style="width:95%;" src="images/sc-keeper-preview.png"></p>
+</div>
+<aside class="notes">
+<p>for computers, we provide APIs …</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="pip-install-sparecores-data" class="slide level2">
+<h2>$ pip install sparecores-data</h2>
+<div class="sourceCode" id="cb1" style="margin-top: 20px !important; height: 640px;" data-code-line-numbers="2|3|4-6|7|10-11|16|21-29|30-34|36-39|41-60|53-54|62-69"><pre class="sourceCode numberSource py number-lines"><code class="sourceCode python"><span id="cb1-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span> <span class="im">as</span> pp</span>
+<span id="cb1-2"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sc_crawler.tables <span class="im">import</span> Server</span>
+<span id="cb1-3"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sc_data <span class="im">import</span> db</span>
+<span id="cb1-4"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sqlmodel <span class="im">import</span> create_engine, Session, select</span>
+<span id="cb1-5"><a href=""></a><span class="op">&gt;&gt;&gt;</span> engine <span class="op">=</span> create_engine(<span class="ss">f"sqlite:///</span><span class="sc">{</span>db<span class="sc">.</span>path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-6"><a href=""></a><span class="op">&gt;&gt;&gt;</span> session <span class="op">=</span> Session(engine)</span>
+<span id="cb1-7"><a href=""></a><span class="op">&gt;&gt;&gt;</span> server <span class="op">=</span> session.<span class="bu">exec</span>(select(Server).where(Server.server_id <span class="op">==</span> <span class="st">'g4dn.xlarge'</span>)).one()</span>
+<span id="cb1-8"><a href=""></a><span class="op">&gt;&gt;&gt;</span> pp(server)</span>
+<span id="cb1-9"><a href=""></a>Server(</span>
+<span id="cb1-10"><a href=""></a>    server_id<span class="op">=</span><span class="st">'g4dn.xlarge'</span>,</span>
+<span id="cb1-11"><a href=""></a>    vendor_id<span class="op">=</span><span class="st">'aws'</span>,</span>
+<span id="cb1-12"><a href=""></a>    display_name<span class="op">=</span><span class="st">'g4dn.xlarge'</span>,</span>
+<span id="cb1-13"><a href=""></a>    api_reference<span class="op">=</span><span class="st">'g4dn.xlarge'</span>,</span>
+<span id="cb1-14"><a href=""></a>    name<span class="op">=</span><span class="st">'g4dn.xlarge'</span>,</span>
+<span id="cb1-15"><a href=""></a>    family<span class="op">=</span><span class="st">'g4dn'</span>,</span>
+<span id="cb1-16"><a href=""></a>    description<span class="op">=</span><span class="st">'Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge'</span>,</span>
+<span id="cb1-17"><a href=""></a></span>
+<span id="cb1-18"><a href=""></a>    status<span class="op">=&lt;</span>Status.ACTIVE: <span class="st">'active'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-19"><a href=""></a>    observed_at<span class="op">=</span>datetime.datetime(<span class="dv">2024</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">18</span>, <span class="dv">4</span>, <span class="dv">127254</span>),</span>
+<span id="cb1-20"><a href=""></a></span>
+<span id="cb1-21"><a href=""></a>    hypervisor<span class="op">=</span><span class="st">'nitro'</span>,</span>
+<span id="cb1-22"><a href=""></a>    vcpus<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb1-23"><a href=""></a>    cpu_cores<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb1-24"><a href=""></a>    cpu_allocation<span class="op">=&lt;</span>CpuAllocation.DEDICATED: <span class="st">'Dedicated'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-25"><a href=""></a>    cpu_manufacturer<span class="op">=</span><span class="st">'Intel'</span>,</span>
+<span id="cb1-26"><a href=""></a>    cpu_family<span class="op">=</span><span class="st">'Xeon'</span>,</span>
+<span id="cb1-27"><a href=""></a>    cpu_model<span class="op">=</span><span class="st">'8259CL'</span>,</span>
+<span id="cb1-28"><a href=""></a>    cpu_architecture<span class="op">=&lt;</span>CpuArchitecture.X86_64: <span class="st">'x86_64'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-29"><a href=""></a>    cpu_speed<span class="op">=</span><span class="fl">3.5</span>,</span>
+<span id="cb1-30"><a href=""></a>    cpu_l1i_cache<span class="op">=</span><span class="dv">64</span>,</span>
+<span id="cb1-31"><a href=""></a>    cpu_l1d_cache<span class="op">=</span><span class="dv">32</span>,</span>
+<span id="cb1-32"><a href=""></a>    cpu_l2_cache<span class="op">=</span><span class="dv">2048</span>,</span>
+<span id="cb1-33"><a href=""></a>    cpu_l3_cache<span class="op">=</span><span class="dv">36608</span>,</span>
+<span id="cb1-34"><a href=""></a>    cpu_flags<span class="op">=</span>[<span class="st">"fpu"</span>, <span class="st">"vme"</span>, <span class="st">"avx512"</span>, ...],</span>
+<span id="cb1-35"><a href=""></a></span>
+<span id="cb1-36"><a href=""></a>    memory_amount<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-37"><a href=""></a>    memory_generation<span class="op">=&lt;</span>DdrGeneration.DDR4: <span class="st">'DDR4'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-38"><a href=""></a>    memory_speed<span class="op">=</span><span class="dv">3200</span>,</span>
+<span id="cb1-39"><a href=""></a>    memory_ecc<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-40"><a href=""></a></span>
+<span id="cb1-41"><a href=""></a>    gpu_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-42"><a href=""></a>    gpu_memory_min<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-43"><a href=""></a>    gpu_memory_total<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-44"><a href=""></a>    gpu_manufacturer<span class="op">=</span><span class="st">'Nvidia'</span>,</span>
+<span id="cb1-45"><a href=""></a>    gpu_family<span class="op">=</span><span class="st">'Turing'</span>,</span>
+<span id="cb1-46"><a href=""></a>    gpu_model<span class="op">=</span><span class="st">'Tesla T4'</span>,</span>
+<span id="cb1-47"><a href=""></a>    gpus<span class="op">=</span>[</span>
+<span id="cb1-48"><a href=""></a>        {</span>
+<span id="cb1-49"><a href=""></a>            <span class="st">'manufacturer'</span>: <span class="st">'Nvidia'</span>,</span>
+<span id="cb1-50"><a href=""></a>            <span class="st">'family'</span>: <span class="st">'Turing'</span>,</span>
+<span id="cb1-51"><a href=""></a>            <span class="st">'model'</span>: <span class="st">'Tesla T4'</span>,</span>
+<span id="cb1-52"><a href=""></a>            <span class="st">'memory'</span>: <span class="dv">15360</span>,</span>
+<span id="cb1-53"><a href=""></a>            <span class="st">'firmware_version'</span>: <span class="st">'535.171.04'</span>,</span>
+<span id="cb1-54"><a href=""></a>            <span class="st">'bios_version'</span>: <span class="st">'90.04.96.00.A0'</span>,</span>
+<span id="cb1-55"><a href=""></a>            <span class="st">'graphics_clock'</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-56"><a href=""></a>            <span class="st">'sm_clock'</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-57"><a href=""></a>            <span class="st">'mem_clock'</span>: <span class="dv">5001</span>,</span>
+<span id="cb1-58"><a href=""></a>            <span class="st">'video_clock'</span>: <span class="dv">1470</span></span>
+<span id="cb1-59"><a href=""></a>        }</span>
+<span id="cb1-60"><a href=""></a>    ],</span>
+<span id="cb1-61"><a href=""></a></span>
+<span id="cb1-62"><a href=""></a>    storage_size<span class="op">=</span><span class="dv">125</span>,</span>
+<span id="cb1-63"><a href=""></a>    storage_type<span class="op">=&lt;</span>StorageType.NVME_SSD: <span class="st">'nvme ssd'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-64"><a href=""></a>    storages<span class="op">=</span>[{<span class="st">'size'</span>: <span class="dv">125</span>, <span class="st">'storage_type'</span>: <span class="st">'nvme ssd'</span>}],</span>
+<span id="cb1-65"><a href=""></a></span>
+<span id="cb1-66"><a href=""></a>    network_speed<span class="op">=</span><span class="fl">5.0</span>,</span>
+<span id="cb1-67"><a href=""></a>    inbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-68"><a href=""></a>    outbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-69"><a href=""></a>    ipv4<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb1-70"><a href=""></a>)</span></code></pre></div>
+</section></section>
+<section>
+<section id="gilty" class="title-slide slide level1">
+<h1></h1>
+<div class="centered">
+<p><img style="width:60%; margin-top: -50px;" src="images/gilty-coffee.png"></p>
+</div>
+<aside class="notes">
+<p>TODO add speaker notes</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="gilty-and-friends" class="slide level2">
+<h2></h2>
+<div class="centered">
+<p><img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
+</div>
+<aside class="notes">
+<p>TODO add speaker notes</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section id="strace--e-environment-gilty.py" class="title-slide slide level1">
+<h1>$ strace -e environment gilty.py</h1>
+<!-- TODO Attila -->
+<ul>
+<li>EKS</li>
+<li>Karpenter</li>
+<li>EKS Auto mode</li>
+</ul>
+</section>
+
+<section id="claude-plan-fix-problem" class="title-slide slide level1">
+<h1>$ claude –plan “fix problem”</h1>
+<!-- TODO Attila -->
+<p>TODO controller spec draft</p>
+</section>
+
 <section id="demo" class="title-slide slide level1">
 <h1></h1>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css">
@@ -334,6 +1376,64 @@ How much better is the highest performing 2-vCPU cloud server’s single-core pe
     });
   })();
 </script>
+</section>
+
+<section id="spare-cores-infra" class="title-slide slide level1">
+<h1></h1>
+<!-- TODO add mermaid diagram from docs.sparecores.com/overview -->
+<aside class="notes">
+<p>TODO add speaker notes</p>
+<p>Gergo: this is cool .. we could definitely use something like this at spare cores GH/Pulumit etc fajdalom .. schedule/stop/tasks. how to use your kubernetes controller for this?</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section id="limitations" class="title-slide slide level1">
+<h1></h1>
+<!-- TODO Attila -->
+<ul>
+<li>single cloud only</li>
+<li>defined region</li>
+<li>needs karpenter installed</li>
+<li>needs EKS, GKE, AKS, etc.</li>
+</ul>
+<aside class="notes">
+<p>TODO add speaker notes</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section id="ideal-stack" class="title-slide slide level1">
+<h1></h1>
+<!-- TODO -->
+<ol type="1">
+<li>onprem kubernetes cluster</li>
+<li>be akarunk huzni gcp-t, hetznert etc AKARMIT EKS, GKE, AKS nelkul</li>
+<li>controller? operator? -&gt; vendor API create vpc/storage/node + network + join cluster</li>
+</ol>
+</section>
+
+<section id="feedback" class="title-slide slide level1">
+<h1></h1>
+<!-- TODO one question to the community of the would find something like this useful before we jump the rabbit hole to prepare for next year's KCD Budapest -->
 </section>
 
 <section id="next-slide" class="title-slide slide level1">
