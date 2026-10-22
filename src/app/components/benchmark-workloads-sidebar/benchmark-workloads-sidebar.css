@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 :host {
   z-index: 1;
   position: sticky;
@@ -34,8 +36,8 @@
   justify-content: space-between;
   display: flex;
   padding: 0.5rem 1.1rem 0.5rem 0.5rem;
-  border-top: 1px solid #34d399;
-  border-right: 1px solid #34d399;
+  border-top: 1px solid var(--color-emerald-400);
+  border-right: 1px solid var(--color-emerald-400);
   border-top-right-radius: 0.25rem;
 }
 
@@ -45,7 +47,7 @@
   flex: 1;
   height: 100%;
   padding: 0 1rem;
-  color: #d1d5db;
+  color: var(--color-gray-300);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.8rem;
@@ -80,14 +82,22 @@
     border-color 0.15s ease-in-out;
 
   &:hover {
-    background-color: rgba(52, 211, 153, 0.08);
-    border-color: rgba(52, 211, 153, 0.18);
+    background-color: color-mix(
+      in oklab,
+      var(--color-emerald-400) 8%,
+      transparent
+    );
+    border-color: color-mix(
+      in oklab,
+      var(--color-emerald-400) 18%,
+      transparent
+    );
   }
 }
 
 .toc_panel_body {
   flex: 1;
-  border-right: 1px solid #34d399;
+  border-right: 1px solid var(--color-emerald-400);
   padding-bottom: 1rem;
 }
 
@@ -120,10 +130,10 @@
   width: 100%;
   cursor: pointer;
   min-height: 1.25rem;
-  color: #ffffff;
+  color: var(--color-white);
 
   &.active {
-    color: #34d399;
+    color: var(--color-emerald-400);
   }
 }
 
@@ -187,22 +197,26 @@
 
 .toc_item {
   display: block;
-  color: #9ca3af;
+  color: var(--color-gray-400);
   font-size: 0.875rem;
   line-height: 1.25rem;
 
   &:hover {
-    color: #fff;
-    background-color: rgba(52, 211, 153, 0.06);
+    color: var(--color-white);
+    background-color: color-mix(
+      in oklab,
+      var(--color-emerald-400) 6%,
+      transparent
+    );
   }
 
   &.active {
-    color: #34d399;
+    color: var(--color-emerald-400);
     font-weight: 600;
   }
 }
 
-@media (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .filter_bar {
     width: min(18rem, calc(100vw - 1.25rem));
     min-width: min(18rem, calc(100vw - 1.25rem));

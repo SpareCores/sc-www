@@ -256,7 +256,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
   readonly stickyMainTableStyle = signal("");
   readonly stickyFirstColStyle = signal<{ width?: string }>({});
   readonly stickyColumnStyles = signal<string[]>([]);
-  readonly bestCellStyle = "font-weight: 600; color: #34D399";
+  readonly bestCellStyle = "font-weight: 600; color: var(--color-emerald-400)";
 
   private subscription = new Subscription();
   private compareLoadId = 0;

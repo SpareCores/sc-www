@@ -189,7 +189,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     compareTableLayout.resolveCompareUnpinnedRowLayout(0);
   private pinnedRowLayoutFrameId: number | null = null;
 
-  bestCellStyle = "font-weight: 600; color: #34D399";
+  bestCellStyle = "font-weight: 600; color: var(--color-emerald-400)";
   SSCoreTooltip =
     "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour -- when otherwise not noted, using the best (usually spot) price of all zones.";
 

@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 /* Page layout — mirrors benchmark-coverage for consistency */
 
 .page_layout {
@@ -28,7 +30,7 @@
   width: calc(100% - 3.5rem);
 }
 
-@media (min-width: 1280px) {
+@media (width >= theme(--breakpoint-xl)) {
   .page_layout_spacing {
     margin-left: 0;
     margin-right: 0;
@@ -37,7 +39,7 @@
 
 /* Responsive */
 
-@media (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .page_layout {
     gap: 0.75rem;
   }
