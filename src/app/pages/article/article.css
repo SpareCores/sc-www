@@ -76,22 +76,11 @@ div.giscus {
   background: var(--color-emerald-400);
 }
 
-::ng-deep .sc-prose .header-anchor {
-  opacity: 0;
-  text-decoration: none;
-  margin-left: 0.5rem;
-  transition: opacity 0.2s;
-}
-
-::ng-deep .sc-prose .header-anchor:hover {
-  @apply text-emerald-400;
-}
-
-::ng-deep .sc-prose h1:hover .header-anchor,
-::ng-deep .sc-prose h2:hover .header-anchor,
-::ng-deep .sc-prose h3:hover .header-anchor,
-::ng-deep .sc-prose h4:hover .header-anchor,
-::ng-deep .sc-prose h5:hover .header-anchor,
-::ng-deep .sc-prose h6:hover .header-anchor {
+::ng-deep .sc-prose h1:hover .sc-header-anchor,
+::ng-deep .sc-prose h2:hover .sc-header-anchor,
+::ng-deep .sc-prose h3:hover .sc-header-anchor,
+::ng-deep .sc-prose h4:hover .sc-header-anchor,
+::ng-deep .sc-prose h5:hover .sc-header-anchor,
+::ng-deep .sc-prose h6:hover .sc-header-anchor {
   opacity: 1;
 }

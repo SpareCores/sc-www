@@ -18,18 +18,7 @@
   visibility: hidden;
 }
 
-.header-anchor {
-  opacity: 0;
-  margin-left: 0.5rem;
-  text-decoration: none;
-  transition: opacity 0.2s;
-
-  &:hover {
-    @apply text-emerald-400;
-  }
-}
-
-.section_heading:hover .header-anchor {
+.section_heading:hover .sc-header-anchor {
   opacity: 1;
 }
 

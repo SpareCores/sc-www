@@ -21,7 +21,7 @@
           <h2 class="partners-heading partners-heading--section">
             {{ category.heading }}
             <a
-              class="header-anchor"
+              class="sc-header-anchor"
               [href]="'/about/partners#' + category.id"
               [attr.aria-label]="'Permalink to ' + category.heading"
               >#</a
@@ -38,7 +38,7 @@
               <h3 class="partners-heading partners-heading--subsection">
                 {{ section.heading }}
                 <a
-                  class="header-anchor"
+                  class="sc-header-anchor"
                   [href]="'/about/partners#' + section.id"
                   [attr.aria-label]="
                     'Permalink to ' + (section.heading || section.id)
@@ -112,7 +112,7 @@
         <h2 class="partners-heading partners-heading--section">
           {{ interestSection().heading }}
           <a
-            class="header-anchor"
+            class="sc-header-anchor"
             [href]="'/about/partners#' + interestSection().id"
             [attr.aria-label]="'Permalink to ' + interestSection().heading"
             >#</a
