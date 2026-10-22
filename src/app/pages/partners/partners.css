@@ -28,7 +28,12 @@
   @apply my-8 flex flex-wrap items-center justify-center gap-8 overflow-x-auto pb-2;
 
   scrollbar-width: thin;
-  scrollbar-color: #34d39933 transparent;
+  scrollbar-color: color-mix(
+      in oklab,
+      var(--color-emerald-400) 20%,
+      transparent
+    )
+    transparent;
 }
 
 @media (max-width: 767px) {
@@ -99,16 +104,16 @@
 .partners-divider {
   @apply my-10 border-0 border-t;
 
-  border-color: rgb(52 211 153 / 0.4);
+  border-color: color-mix(in oklab, var(--color-emerald-400) 40%, transparent);
 }
 
 .partner-logos::-webkit-scrollbar {
   height: 4px;
-  background: rgb(52 211 153 / 0.12);
+  background: color-mix(in oklab, var(--color-emerald-400) 12%, transparent);
 }
 
 .partner-logos::-webkit-scrollbar-thumb {
-  background: rgb(52 211 153 / 0.65);
+  background: color-mix(in oklab, var(--color-emerald-400) 65%, transparent);
 }
 
 .partners-anchor-target {
