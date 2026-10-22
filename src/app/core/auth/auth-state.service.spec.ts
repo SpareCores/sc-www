@@ -1,5 +1,5 @@
 import { PLATFORM_ID } from "@angular/core";
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, flushMicrotasks, TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import {
@@ -1556,4 +1556,448 @@ describe("AuthStateService", () => {
     expect(resetSpy).toHaveBeenCalled();
     expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
   });
+
+  function setVisibilityState(state: DocumentVisibilityState): void {
+    Object.defineProperty(document, "visibilityState", {
+      configurable: true,
+      get: () => state,
+    });
+  }
+
+  function createClerkWithListener(initial?: {
+    user?: unknown;
+    session?: unknown;
+    client?: {
+      lastActiveSessionId?: string | null;
+      sessions?: { id: string; status?: string }[];
+    };
+  }): {
+    clerk: {
+      addListener: jasmine.Spy;
+      user: unknown;
+      session: unknown;
+      client?: {
+        lastActiveSessionId?: string | null;
+        sessions?: { id: string; status?: string }[];
+      };
+      signOut?: jasmine.Spy;
+    };
+    fireListener: () => void;
+  } {
+    let listener: (() => void) | undefined;
+    const clerk = {
+      addListener: jasmine
+        .createSpy("addListener")
+        .and.callFake((cb: () => void) => {
+          listener = cb;
+          return () => undefined;
+        }),
+      user: initial?.user ?? null,
+      session: initial?.session ?? null,
+      client: initial?.client,
+    };
+    return {
+      clerk,
+      fireListener: () => listener?.(),
+    };
+  }
+
+  it("reloads Clerk on visible and updates auth state via listener", fakeAsync(() => {
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    const auth = createAuth();
+    const { clerk, fireListener } = createClerkWithListener();
+    setClerkInstance(clerk);
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.callFake(
+      async () => {
+        clerk.user = signedInUser;
+        clerk.session = { id: "sess_1" };
+        fireListener();
+        return true;
+      },
+    );
+
+    auth.init();
+    flushMicrotasks();
+
+    expect(auth.isAuthenticated()).toBeFalse();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+    expect(auth.isAuthenticated()).toBeTrue();
+    expect(auth.userName()).toBe("Jane Doe");
+  }));
+
+  it("activates lastActiveSession after reload when local session is missing", fakeAsync(() => {
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    const auth = createAuth();
+    const { clerk, fireListener } = createClerkWithListener({
+      client: {
+        lastActiveSessionId: "sess_1",
+        sessions: [{ id: "sess_1", status: "active" }],
+      },
+    });
+    setClerkInstance(clerk);
+    spyOn(clerkService(), "syncClerkState").and.resolveTo(true);
+    const setActiveSpy = spyOn(clerkService(), "setActive").and.callFake(
+      async () => {
+        clerk.user = signedInUser;
+        clerk.session = { id: "sess_1" };
+        fireListener();
+      },
+    );
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    expect(setActiveSpy).toHaveBeenCalledOnceWith("sess_1");
+    expect(auth.isAuthenticated()).toBeTrue();
+    expect(auth.userName()).toBe("Jane Doe");
+  }));
+
+  it("does not activate a non-active lastActiveSession after reload", fakeAsync(() => {
+    const auth = createAuth();
+    setClerkInstance(
+      createClerkWithListener({
+        client: {
+          lastActiveSessionId: "sess_1",
+          sessions: [{ id: "sess_1", status: "expired" }],
+        },
+      }).clerk,
+    );
+    spyOn(clerkService(), "syncClerkState").and.resolveTo(true);
+    const setActiveSpy = spyOn(clerkService(), "setActive");
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    expect(setActiveSpy).not.toHaveBeenCalled();
+    expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  it("reloads Clerk on focus and signs out via listener", fakeAsync(() => {
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    const auth = createAuth();
+    const { clerk, fireListener } = createClerkWithListener({
+      user: signedInUser,
+      session: { id: "sess_1" },
+    });
+    setClerkInstance(clerk);
+    setUser(auth, signedInUser);
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.callFake(
+      async () => {
+        clerk.user = null;
+        clerk.session = null;
+        fireListener();
+        return true;
+      },
+    );
+
+    auth.init();
+    flushMicrotasks();
+
+    expect(auth.isAuthenticated()).toBeTrue();
+
+    setVisibilityState("visible");
+    window.dispatchEvent(new Event("focus"));
+    flushMicrotasks();
+
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+    expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  it("does not reload Clerk on hidden visibility", fakeAsync(() => {
+    const auth = createAuth();
+    setClerkInstance(createClerkWithListener().clerk);
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.resolveTo(true);
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("hidden");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    expect(syncSpy).not.toHaveBeenCalled();
+  }));
+
+  it("coalesces rapid visibility and focus events to one reload", fakeAsync(() => {
+    const auth = createAuth();
+    setClerkInstance(createClerkWithListener().clerk);
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.resolveTo(true);
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    window.dispatchEvent(new Event("focus"));
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+  }));
+
+  it("preserves auth state when reload fails", fakeAsync(() => {
+    const auth = createAuth();
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    setClerkInstance(
+      createClerkWithListener({
+        user: signedInUser,
+        session: { id: "sess_1" },
+      }).clerk,
+    );
+    setUser(auth, signedInUser);
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.resolveTo(
+      false,
+    );
+    const setActiveSpy = spyOn(clerkService(), "setActive");
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+    expect(setActiveSpy).not.toHaveBeenCalled();
+    expect(auth.isAuthenticated()).toBeTrue();
+    expect(auth.userName()).toBe("Jane Doe");
+  }));
+
+  it("skips revalidation while auth flow is in progress", fakeAsync(() => {
+    const auth = createAuth();
+    setClerkInstance(createClerkWithListener().clerk);
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.resolveTo(true);
+
+    auth.init();
+    flushMicrotasks();
+    auth.startAuthPending();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    expect(syncSpy).not.toHaveBeenCalled();
+  }));
+
+  it("keeps same-tab sign-out behavior after auth revalidation is bound", fakeAsync(() => {
+    const auth = createAuth();
+    const { clerk } = createClerkWithListener({
+      user: {
+        id: "user_1",
+        firstName: "Jane",
+        lastName: "Doe",
+        username: "jane",
+        imageUrl: "",
+      },
+      session: { id: "sess_1" },
+    });
+    clerk.signOut = jasmine.createSpy("signOut").and.resolveTo(undefined);
+    setClerkInstance(clerk);
+    setUser(
+      auth,
+      clerk.user as {
+        id: string;
+        firstName: string;
+        lastName: string;
+        username: string;
+        imageUrl: string;
+      },
+    );
+
+    auth.init();
+    flushMicrotasks();
+
+    auth.signOut();
+    flushMicrotasks();
+
+    expect(clerk.signOut).toHaveBeenCalled();
+    expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  it("does not reactivate a session when a reload resolves during sign-out", fakeAsync(() => {
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    const auth = createAuth();
+    const { clerk, fireListener } = createClerkWithListener({
+      user: signedInUser,
+      session: { id: "sess_1" },
+      client: {
+        lastActiveSessionId: "sess_1",
+        sessions: [{ id: "sess_1", status: "active" }],
+      },
+    });
+    let resolveSignOut: () => void = () => undefined;
+    clerk.signOut = jasmine.createSpy("signOut").and.callFake(() => {
+      clerk.user = null;
+      clerk.session = null;
+      fireListener();
+      return new Promise<void>((resolve) => (resolveSignOut = resolve));
+    });
+    setClerkInstance(clerk);
+    setUser(auth, signedInUser);
+    let resolveSync: (synced: boolean) => void = () => undefined;
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.returnValue(
+      new Promise<boolean>((resolve) => (resolveSync = resolve)),
+    );
+    const setActiveSpy = spyOn(clerkService(), "setActive");
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+
+    auth.signOut();
+    flushMicrotasks();
+    expect(clerk.signOut).toHaveBeenCalled();
+
+    resolveSync(true);
+    flushMicrotasks();
+
+    expect(setActiveSpy).not.toHaveBeenCalled();
+
+    resolveSignOut();
+    flushMicrotasks();
+
+    expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  it("does not reactivate a session when a reload starts during sign-out", fakeAsync(() => {
+    const signedInUser = {
+      id: "user_1",
+      firstName: "Jane",
+      lastName: "Doe",
+      username: "jane",
+      imageUrl: "",
+    };
+    const auth = createAuth();
+    const { clerk, fireListener } = createClerkWithListener({
+      user: signedInUser,
+      session: { id: "sess_1" },
+      client: {
+        lastActiveSessionId: "sess_1",
+        sessions: [{ id: "sess_1", status: "active" }],
+      },
+    });
+    let resolveSignOut: () => void = () => undefined;
+    clerk.signOut = jasmine.createSpy("signOut").and.returnValue(
+      new Promise<void>((resolve) => (resolveSignOut = resolve)).then(() => {
+        clerk.user = null;
+        clerk.session = null;
+        fireListener();
+      }),
+    );
+    setClerkInstance(clerk);
+    setUser(auth, signedInUser);
+    let resolveSync: (synced: boolean) => void = () => undefined;
+    const syncSpy = spyOn(clerkService(), "syncClerkState").and.returnValue(
+      new Promise<boolean>((resolve) => (resolveSync = resolve)),
+    );
+    const setActiveSpy = spyOn(clerkService(), "setActive");
+
+    auth.init();
+    flushMicrotasks();
+
+    auth.signOut();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+    expect(syncSpy).toHaveBeenCalledTimes(1);
+
+    resolveSignOut();
+    flushMicrotasks();
+    resolveSync(true);
+    flushMicrotasks();
+
+    expect(setActiveSpy).not.toHaveBeenCalled();
+    expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  function revalidateWithSetActiveError(error: Error): jasmine.Spy {
+    const auth = createAuth();
+    setClerkInstance(
+      createClerkWithListener({
+        client: {
+          lastActiveSessionId: "sess_1",
+          sessions: [{ id: "sess_1", status: "active" }],
+        },
+      }).clerk,
+    );
+    spyOn(clerkService(), "syncClerkState").and.resolveTo(true);
+    spyOn(clerkService(), "setActive").and.rejectWith(error);
+    spyOn(console, "error");
+    const sentrySpy = spyOn(analyticsService(), "SentryException");
+
+    auth.init();
+    flushMicrotasks();
+
+    setVisibilityState("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    flushMicrotasks();
+
+    return sentrySpy;
+  }
+
+  it("does not report transient network errors when reactivating after reload", fakeAsync(() => {
+    const sentrySpy = revalidateWithSetActiveError(
+      new TypeError("Failed to fetch"),
+    );
+
+    expect(sentrySpy).not.toHaveBeenCalled();
+  }));
+
+  it("reports non-network errors when reactivating after reload", fakeAsync(() => {
+    const error = new Error("boom");
+    const sentrySpy = revalidateWithSetActiveError(error);
+
+    expect(sentrySpy).toHaveBeenCalledOnceWith(error, {
+      tags: { feature: "clerk-sync" },
+    });
+  }));
 });

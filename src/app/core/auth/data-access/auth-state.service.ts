@@ -1,5 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
+  DestroyRef,
   Injectable,
   NgZone,
   PLATFORM_ID,
@@ -52,6 +53,7 @@ import { GitHubService, type GitHubSignUpOutcome } from "./github.service";
 export class AuthStateService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly ngZone = inject(NgZone);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
@@ -63,6 +65,9 @@ export class AuthStateService {
   private finalizePromise: Promise<void> | null = null;
   private gitHubCallbackPromise: Promise<GitHubCallbackResult> | null = null;
   private boundListener = false;
+  private boundAuthRevalidation = false;
+  private authSyncInFlight = false;
+  private authEpoch = 0;
   private accountDeleted = false;
   private signedOutIdentityCleared = false;
 
@@ -101,7 +106,9 @@ export class AuthStateService {
     await this.clerk.init();
     this.syncUserFromClerk();
     this.bindClerkListener();
+    this.bindAuthRevalidation();
     this.resumeProfileFromQuery();
+    this.bindAuthRevalidation();
     this.setAuthOverlayVisible(this.authInProgress());
     if (this.finalizePromise || this.isAuthCallbackRoute()) {
       return;
@@ -633,6 +640,7 @@ export class AuthStateService {
   }
 
   async signOut(): Promise<void> {
+    this.authEpoch++;
     this.closeSignIn();
     this.closeSignUp();
     try {
@@ -643,6 +651,7 @@ export class AuthStateService {
       this.activating = false;
       this.finalizePromise = null;
       this.gitHubCallbackPromise = null;
+      this.authEpoch++;
       this.setUser(null);
     }
   }
@@ -875,6 +884,94 @@ export class AuthStateService {
       this.ngZone.run(() => this.syncUserFromClerk());
     });
     this.boundListener = true;
+  }
+
+  private bindAuthRevalidation(): void {
+    if (!isPlatformBrowser(this.platformId) || this.boundAuthRevalidation) {
+      return;
+    }
+
+    const win = this.document.defaultView;
+    if (!win) {
+      return;
+    }
+
+    this.boundAuthRevalidation = true;
+
+    const revalidate = () => void this.revalidateClerkState();
+    this.ngZone.runOutsideAngular(() => {
+      this.document.addEventListener("visibilitychange", revalidate);
+      win.addEventListener("focus", revalidate);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.document.removeEventListener("visibilitychange", revalidate);
+      win.removeEventListener("focus", revalidate);
+      this.boundAuthRevalidation = false;
+    });
+  }
+
+  private isAuthTransitionActive(): boolean {
+    return (
+      this.activating ||
+      this.authInProgress() ||
+      !!this.finalizePromise ||
+      !!this.gitHubCallbackPromise
+    );
+  }
+
+  private async revalidateClerkState(): Promise<void> {
+    if (
+      this.document.visibilityState !== "visible" ||
+      this.authSyncInFlight ||
+      this.isAuthTransitionActive()
+    ) {
+      return;
+    }
+
+    const epoch = this.authEpoch;
+    this.authSyncInFlight = true;
+    try {
+      const synced = await this.clerk.syncClerkState();
+      if (!synced || epoch !== this.authEpoch) {
+        return;
+      }
+      await this.activateReloadedSessionIfNeeded();
+    } finally {
+      this.authSyncInFlight = false;
+    }
+  }
+
+  private async activateReloadedSessionIfNeeded(): Promise<void> {
+    if (
+      this.clerk.user ||
+      this.clerk.session ||
+      this.isAuthTransitionActive()
+    ) {
+      return;
+    }
+
+    const client = this.clerk.instance?.client;
+    const sessionId = client?.lastActiveSessionId;
+    if (
+      !sessionId ||
+      !client.sessions?.some(
+        (session) => session.id === sessionId && session.status === "active",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await this.clerk.setActive(sessionId);
+    } catch (error) {
+      console.error("Failed to activate Clerk session after reload", error);
+      if (!this.clerk.isTransientNetworkError(error)) {
+        this.analytics.SentryException(error, {
+          tags: { feature: "clerk-sync" },
+        });
+      }
+    }
   }
 
   private async prepareEmailSecondFactor(

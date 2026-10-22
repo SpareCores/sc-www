@@ -2,11 +2,13 @@ import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject, isDevMode } from "@angular/core";
 import { Router } from "@angular/router";
 import { Clerk } from "@clerk/clerk-js";
+import { isClerkRuntimeError, isNetworkError } from "@clerk/shared/error";
 import type {
   SignInResource,
   SignUpResource,
   UserResource,
 } from "@clerk/shared/types";
+import { AnalyticsService } from "../../../services/analytics.service";
 import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
 import { authUrls } from "../auth.utils";
 
@@ -14,6 +16,7 @@ import { authUrls } from "../auth.utils";
 export class ClerkService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
+  private readonly analytics = inject(AnalyticsService);
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
 
@@ -116,11 +119,18 @@ export class ClerkService {
     );
   }
 
-  async syncClerkState(): Promise<void> {
+  async syncClerkState(): Promise<boolean> {
     try {
       await this.clerk?.client?.reload();
+      return true;
     } catch (error) {
       console.error("Failed to synchronize Clerk client state:", error);
+      if (!this.isTransientNetworkError(error)) {
+        this.analytics.SentryException(error, {
+          tags: { feature: "clerk-sync" },
+        });
+      }
+      return false;
     }
   }
 
@@ -140,6 +150,23 @@ export class ClerkService {
 
   addListener(listener: () => void): (() => void) | undefined {
     return this.clerk?.addListener(listener) as (() => void) | undefined;
+  }
+
+  isTransientNetworkError(error: unknown): boolean {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      return true;
+    }
+    if (isClerkRuntimeError(error) && error.code === "network_error") {
+      return true;
+    }
+    if (!(error instanceof Error)) {
+      return false;
+    }
+    return (
+      isNetworkError(error) ||
+      (error instanceof TypeError &&
+        /failed to fetch|load failed|network/i.test(error.message))
+    );
   }
 
   private navigateRouter(url: string, replace = false): Promise<boolean> {
