@@ -252,22 +252,6 @@
   }
 }
 
-.advisor-dropdown-menu {
-  @apply z-10 rounded-lg border border-solid border-emerald-400 bg-secondary shadow-sm;
-}
-
-.advisor-dropdown-menu-list {
-  @apply py-2 text-sm text-gray-700;
-}
-
-.advisor-dropdown-menu-option {
-  @apply flex items-center gap-2 rounded-xs px-2 py-1 cursor-pointer hover:bg-emerald-400/80;
-}
-
-.advisor-dropdown-menu-label {
-  @apply text-sm text-white;
-}
-
 .advisor-table-vendor-logo {
   @apply flex h-9 w-9 items-center justify-center rounded-lg bg-white p-1;
 }

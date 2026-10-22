@@ -153,12 +153,9 @@
   </div>
 
   <ng-template #modelPanel>
-    <div
-      [id]="optionsId"
-      class="bg-secondary rounded-lg shadow-sm w-64 border border-emerald-400 border-solid"
-    >
+    <div [id]="optionsId" class="sc-dropdown w-64">
       <ul
-        class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200 max-h-60 overflow-y-auto"
+        class="sc-dropdown__list max-h-60 overflow-y-auto"
         [attr.aria-labelledby]="buttonId"
       >
         @for (
@@ -169,7 +166,7 @@
           <li>
             <button
               type="button"
-              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs border-0 bg-transparent text-left"
+              class="sc-dropdown__option"
               (click)="selectModel(i)"
               [title]="llmModel.name"
             >

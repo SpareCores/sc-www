@@ -684,18 +684,9 @@
 </div>
 
 <ng-template #baselinePanel>
-  <div
-    id="baseline_database_options"
-    class="bg-secondary rounded-lg shadow-sm w-64 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="baseline_database_button"
-    >
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
-        (click)="selectBaselineDatabase(null)"
-      >
+  <div id="baseline_database_options" class="sc-dropdown w-64">
+    <ul class="sc-dropdown__list" aria-labelledby="baseline_database_button">
+      <li class="sc-dropdown__option" (click)="selectBaselineDatabase(null)">
         <div class="text-white text-sm">No baseline</div>
       </li>
       @for (
@@ -703,7 +694,7 @@
         track database.vendor_id + "_" + database.database_id
       ) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
+          class="sc-dropdown__option"
           (click)="selectBaselineDatabase(database)"
         >
           <div class="text-white text-sm">
@@ -716,19 +707,10 @@
 </ng-template>
 
 <ng-template #currencyPanel>
-  <div
-    id="currency_options"
-    class="bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="currency_button"
-    >
+  <div id="currency_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list" aria-labelledby="currency_button">
       @for (currency of availableCurrencies; track currency.name) {
-        <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
-          (click)="selectCurrency(currency)"
-        >
+        <li class="sc-dropdown__option" (click)="selectCurrency(currency)">
           <div class="text-white text-sm">
             {{ currency.name }} ({{ currency.symbol }})
           </div>

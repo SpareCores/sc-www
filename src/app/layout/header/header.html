@@ -185,12 +185,9 @@
 </nav>
 
 <ng-template #menuPanel>
-  <div
-    id="menu_options"
-    class="mobile_menu_panel bg-secondary rounded-lg shadow-sm border border-emerald-400 border-solid"
-  >
+  <div id="menu_options" class="mobile_menu_panel sc-dropdown">
     <ul
-      class="mobile_menu_panel__list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      class="mobile_menu_panel__list sc-dropdown__list"
       aria-labelledby="dropdownDefaultButton"
       (click)="closeMenu()"
     >
@@ -458,12 +455,9 @@
 </ng-template>
 
 <ng-template #authPanel>
-  <div
-    id="auth_options"
-    class="bg-secondary rounded-lg shadow-sm border border-emerald-400 border-solid"
-  >
+  <div id="auth_options" class="sc-dropdown">
     <ul
-      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      class="navbar_menu_list sc-dropdown__list"
       aria-labelledby="auth_button"
       (click)="closeAuth()"
     >
@@ -501,12 +495,9 @@
 </ng-template>
 
 <ng-template #aboutPanel>
-  <div
-    id="about_options"
-    class="bg-secondary rounded-lg shadow-sm border border-emerald-400 border-solid"
-  >
+  <div id="about_options" class="sc-dropdown">
     <ul
-      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      class="navbar_menu_list sc-dropdown__list"
       aria-labelledby="dropdownDefaultButton"
       (click)="closeAbout()"
     >
@@ -564,12 +555,9 @@
 </ng-template>
 
 <ng-template #navigatorPanel>
-  <div
-    id="navigator_options"
-    class="bg-secondary rounded-lg shadow-sm border border-emerald-400 border-solid"
-  >
+  <div id="navigator_options" class="sc-dropdown">
     <ul
-      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      class="navbar_menu_list sc-dropdown__list"
       aria-labelledby="dropdownDefaultButton"
       (click)="closeNavigator()"
     >
@@ -693,10 +681,7 @@
 </ng-template>
 
 <ng-template #comparePanel>
-  <div
-    id="compare_options"
-    class="compare_dropdown_panel bg-secondary rounded-lg shadow-sm border border-emerald-400 border-solid"
-  >
+  <div id="compare_options" class="compare_dropdown_panel sc-dropdown">
     <div class="compare_dropdown_content">
       @if (serverCompareCount() > 0) {
         <div class="compare_dropdown_section_title">

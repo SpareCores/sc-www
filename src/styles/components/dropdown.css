@@ -1,0 +1,15 @@
+.sc-dropdown {
+  @apply rounded-lg border border-solid border-emerald-400 bg-secondary shadow-sm;
+}
+
+.sc-dropdown__list {
+  @apply px-1 py-2 text-sm text-gray-700;
+}
+
+.sc-dropdown__option {
+  @apply flex cursor-pointer items-center gap-2 rounded-xs px-2 py-1 hover:bg-emerald-400/80;
+}
+
+button.sc-dropdown__option {
+  @apply w-full border-0 bg-transparent text-left;
+}
