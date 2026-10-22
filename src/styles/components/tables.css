@@ -77,3 +77,85 @@
   vertical-align: middle;
   box-sizing: border-box;
 }
+
+.sc-compare-table {
+  @apply relative w-full border-collapse text-white;
+}
+
+.sc-compare-table thead {
+  @apply border-b border-solid border-gray-200 bg-secondary;
+}
+
+.sc-compare-table thead th {
+  @apply px-5 py-3 text-left text-xs font-normal;
+}
+
+.sc-compare-table thead tr th:nth-of-type(1) {
+  @apply sticky left-0 z-21 bg-secondary;
+}
+
+.sc-compare-table tbody tr {
+  @apply bg-primary;
+}
+
+.sc-compare-table tbody tr td {
+  @apply px-5 py-3 text-left text-sm;
+}
+
+.sc-compare-table tbody tr td:nth-of-type(1) {
+  @apply sticky left-0 z-20 bg-primary;
+}
+
+.sc-compare-table tbody tr.section_header {
+  @apply bg-secondary text-white;
+}
+
+.sc-compare-table tbody tr.section_header td:nth-of-type(1) {
+  @apply bg-secondary;
+}
+
+.sc-compare-table--fixed {
+  --compare-first-column-width: clamp(8rem, 12vw, 12rem);
+  min-width: 100%;
+  table-layout: fixed;
+}
+
+.sc-compare-table--fixed col.compare-first-column-col {
+  width: var(--compare-first-column-width);
+}
+
+.sc-compare-table--fixed thead tr th:nth-of-type(1),
+.sc-compare-table--fixed tbody tr td:nth-of-type(1) {
+  width: var(--compare-first-column-width);
+  min-width: var(--compare-first-column-width);
+  max-width: var(--compare-first-column-width);
+  white-space: nowrap;
+}
+
+.sc-compare-table--fixed tbody tr td:not(:nth-of-type(1)) {
+  text-align: right;
+}
+
+.sc-compare-table--fixed tbody tr.section_header td {
+  vertical-align: middle;
+}
+
+.sc-compare-table--fixed tbody tr.compare-instance-section-gap {
+  height: 1.5rem;
+}
+
+.sc-compare-table--fixed tbody tr.compare-instance-section-gap td {
+  @apply bg-primary;
+  height: 1.5rem;
+  padding: 0;
+  line-height: 0;
+  border: none;
+}
+
+.sc-compare-table--fixed tbody tr.compare-instance-section-first-row td {
+  padding-top: 0;
+}
+
+.sc-compare-table--fixed tbody tr.compare-instance-section-last-row td {
+  padding-bottom: 0;
+}
