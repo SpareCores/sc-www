@@ -55,10 +55,7 @@
                   </div>
                 } @else if (property.routerLink) {
                   <div class="property_value">
-                    <a
-                      class="underline decoration-dotted hover:text-gray-500"
-                      [routerLink]="property.routerLink"
-                    >
+                    <a class="sc-link" [routerLink]="property.routerLink">
                       {{ property.value }}
                     </a>
                   </div>
