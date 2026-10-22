@@ -4,35 +4,6 @@
   min-height: 100%;
 }
 
-.items_table {
-  @apply w-full text-white;
-
-  thead {
-    @apply border-b border-gray-200 border-solid bg-secondary;
-    th {
-      @apply text-left px-5 py-3 font-normal text-xs;
-    }
-  }
-
-  tbody {
-    tr:nth-child(2n + 1) {
-      @apply bg-primary;
-    }
-    tr:nth-child(2n) {
-      @apply bg-secondary;
-    }
-
-    tr {
-      td {
-        @apply px-5 py-3 text-left text-sm;
-        a {
-          @apply underline decoration-dotted;
-        }
-      }
-    }
-  }
-}
-
 a:hover {
   @apply hover:text-gray-500;
 }
@@ -54,7 +25,7 @@ a:hover {
   }
 }
 
-.items_table
+.sc-table
   tbody
   tr:nth-child(odd)
   .speaker-avatars
@@ -63,7 +34,7 @@ a:hover {
   box-shadow: 0 0 0 2px var(--color-primary);
 }
 
-.items_table
+.sc-table
   tbody
   tr:nth-child(even)
   .speaker-avatars
