@@ -133,7 +133,7 @@ section > .curtain-trigger {
   .curtain-stage {
     --curtain-duration: 0.4s;
   }
-  .curtain-stage.is-swinging .curtain-panel {
+  .curtain-stage.is-closed.is-swinging .curtain-panel {
     animation: none;
   }
 }
