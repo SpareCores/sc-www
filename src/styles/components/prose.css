@@ -1,0 +1,64 @@
+.sc-prose h1,
+.sc-prose h2,
+.sc-prose h3,
+.sc-prose h4,
+.sc-prose h5,
+.sc-prose h6 {
+  @apply font-bold text-emerald-400 my-4;
+}
+
+.sc-prose h1 {
+  @apply text-4xl;
+}
+
+.sc-prose h2 {
+  @apply text-2xl;
+  @apply my-10;
+}
+
+.sc-prose a {
+  @apply underline decoration-dotted;
+}
+
+.sc-prose a:hover {
+  @apply text-gray-500;
+}
+
+.sc-prose p {
+  @apply my-10;
+  @apply text-lg;
+}
+
+.sc-prose blockquote {
+  border-left: 1px solid var(--color-emerald-400);
+  padding: 0px 10px 0px 10px;
+  margin: 10px;
+}
+
+.sc-prose ul {
+  @apply mb-2;
+}
+
+.sc-prose img.zoomin {
+  cursor: zoom-in;
+}
+
+.sc-prose table thead {
+  @apply border-b border-emerald-400 border-solid;
+}
+
+.sc-prose table thead th {
+  @apply px-5 py-3 font-normal text-xs;
+}
+
+.sc-prose table tbody tr:nth-child(2n + 1) {
+  @apply bg-primary;
+}
+
+.sc-prose table tbody tr:nth-child(2n) {
+  @apply bg-secondary;
+}
+
+.sc-prose table tbody tr td a:hover {
+  opacity: 0.5;
+}
