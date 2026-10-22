@@ -111,8 +111,7 @@
             id="message"
             formControlName="message"
             rows="5"
-            class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-500 transition-colors resize-y min-h-[120px] bg-transparent text-white disabled:cursor-not-allowed"
-            style="field-sizing: content"
+            class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-500 transition-colors resize-y min-h-[120px] bg-transparent text-white disabled:cursor-not-allowed field-sizing-content"
             [class.border-red-500]="
               contactForm.get('message')?.invalid &&
               contactForm.get('message')?.touched
