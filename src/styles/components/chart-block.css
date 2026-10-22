@@ -51,6 +51,12 @@
   }
 }
 
+@media (width < theme(--breakpoint-wide)) {
+  .chart-context--full-below-wide .chart-block--half {
+    width: 100%;
+  }
+}
+
 .chart-block--inline {
   @apply relative flex flex-col gap-4 overflow-hidden bg-transparent px-6 py-6;
   width: 100%;
