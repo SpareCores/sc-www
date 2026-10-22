@@ -29,6 +29,7 @@ if (SENTRY_DSN && SENTRY_DSN !== "") {
     tracePropagationTargets,
     tracesSampleRate: Number(SENTRY_TRACE_SAMPLE_RATE),
     profilesSampleRate: Number(SENTRY_PROFILE_SAMPLE_RATE),
+    dataCollection: { userInfo: true },
   });
 }
 
