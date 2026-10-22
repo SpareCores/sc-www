@@ -53,7 +53,6 @@ export class NvbandwidthCard {
 
   benchmarkMeta = input<Benchmark[] | null>([]);
   benchmarkScores = input<BenchmarkScore[] | null>([]);
-  isEmbedded = input(false);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
   tooltipContent = signal("");
