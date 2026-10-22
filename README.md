@@ -13,6 +13,11 @@ To compile the project, you need to set up the below environment variables at bu
   endpoint to be used on the server-side
 - NG_APP_CLERK_PUBLISHABLE_KEY: [Clerk](https://clerk.com/) publishable key for authentication
 
+For Cypress (`@clerk/testing`), also set:
+
+- CLERK_SECRET_KEY: Clerk secret key for `clerkSetup()` and test-user cleanup
+  (CI/Node only; never expose to the browser)
+
 This can also be done via defining an `.env` file based on the provided `.env.example` template file.
 
 You also need to provide your own Terms of Service and Privacy Policy
@@ -42,6 +47,13 @@ Note that NG_APP_SENTRY_DSN must be defined (though it can be left empty to disa
 - NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")
 - NG_APP_SENTRY_RELEASE
+
+The articles get tooltips for the terms of the docs' glossary from a script
+built by the docs site (sc-docusaurus), loaded from
+https://docs.sparecores.com/glossary.js by default; the
+NG_APP_GLOSSARY_SCRIPT_URL environment variable overrides it, e.g. with
+http://localhost:3000/glossary.js for the docs running locally (`npm start`
+or `npm run serve`).
 
 The server-side (runtime) environment variables for sending emails (e.g. on the contact form) are:
 
@@ -98,6 +110,15 @@ The explicit Karma setup for browsers, reporters, and coverage output lives in `
 ## Running end-to-end tests
 
 End-to-end tests are implemented using Cypress.
+
+Auth-related Cypress specs use `@clerk/testing`. Provide
+`NG_APP_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` when running those specs.
+Guest-limit specs do not sign in, but the Cypress runner still initializes
+Clerk via `clerkSetup()`.
+
+Deterministic registration uses Clerk `+clerk_test` emails and verification
+code `424242` (no real verification email is sent). Do not use real Clerk
+verification emails in E2E — the instance quota is reserved for real users.
 
 ## License
 

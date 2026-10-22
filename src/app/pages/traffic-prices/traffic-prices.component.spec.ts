@@ -156,4 +156,40 @@ describe("TrafficPricesComponent", () => {
       QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID,
     );
   }));
+
+  it("aborts the previous traffic-price search when a newer one starts", () => {
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const signals: AbortSignal[] = [];
+
+    spyOn(keeperAPI, "getTrafficPrices").and.callFake(
+      (_query: any, params: any = {}) => {
+        signals.push(params.signal);
+        return new Promise(() => {});
+      },
+    );
+
+    (component as any)._searchTrafficPrices();
+    (component as any)._searchTrafficPrices();
+
+    expect(signals.length).toBe(2);
+    expect(signals[0].aborted).toBeTrue();
+    expect(signals[1].aborted).toBeFalse();
+  });
+
+  it("aborts the active traffic-price search on destroy", () => {
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    let activeSignal: AbortSignal | undefined;
+
+    spyOn(keeperAPI, "getTrafficPrices").and.callFake(
+      (_query: any, params: any = {}) => {
+        activeSignal = params.signal;
+        return new Promise(() => {});
+      },
+    );
+
+    (component as any)._searchTrafficPrices();
+    component.ngOnDestroy();
+
+    expect(activeSignal?.aborted).toBeTrue();
+  });
 });

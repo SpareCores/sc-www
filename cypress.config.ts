@@ -1,12 +1,14 @@
+import { clerkSetup } from "@clerk/testing/cypress";
 import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
+import { deleteClerkUserByEmail } from "./cypress/support/clerk-users";
 
 const customizeChromeHeadless = (
   browser: Cypress.Browser,
   launchOptions: Cypress.BeforeBrowserLaunchOptions,
 ) => {
   if (browser.family === "chromium" && browser.isHeadless) {
-    launchOptions.args.push("--window-size=1440,1080");
+    launchOptions.args.push("--window-size=1600,1200");
     launchOptions.args.push("--force-device-scale-factor=1");
     launchOptions.args.push("--hide-scrollbars");
   }
@@ -29,10 +31,25 @@ export default defineConfig({
           console.log(message);
           return null;
         },
+        deleteClerkUserByEmail(email: string) {
+          return deleteClerkUserByEmail(email);
+        },
       });
+      getCompareSnapshotPlugin(on, config);
       on("before:browser:launch", customizeChromeHeadless);
 
-      return getCompareSnapshotPlugin(on, config);
+      const publishableKey = process.env["NG_APP_CLERK_PUBLISHABLE_KEY"];
+      const secretKey = process.env["CLERK_SECRET_KEY"];
+      const clerkAvailable = !!publishableKey && !!secretKey;
+      config.expose = { ...config.expose, CLERK_AVAILABLE: clerkAvailable };
+      if (!clerkAvailable) {
+        return config;
+      }
+
+      return clerkSetup({
+        config,
+        options: { publishableKey, secretKey },
+      });
     },
   },
   numTestsKeptInMemory: 1,

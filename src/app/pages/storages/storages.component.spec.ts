@@ -77,4 +77,40 @@ describe("StoragesComponent", () => {
     expect(component.orderDir).toBeUndefined();
     expect(searchOptionsChangedSpy).toHaveBeenCalledTimes(3);
   });
+
+  it("aborts the previous storage-price search when a newer one starts", () => {
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    const signals: AbortSignal[] = [];
+
+    spyOn(keeperAPI, "getStoragePrices").and.callFake(
+      (_query: any, params: any = {}) => {
+        signals.push(params.signal);
+        return new Promise(() => {});
+      },
+    );
+
+    (component as any)._searchStorages();
+    (component as any)._searchStorages();
+
+    expect(signals.length).toBe(2);
+    expect(signals[0].aborted).toBeTrue();
+    expect(signals[1].aborted).toBeFalse();
+  });
+
+  it("aborts the active storage-price search on destroy", () => {
+    const keeperAPI = TestBed.inject(KeeperAPIService);
+    let activeSignal: AbortSignal | undefined;
+
+    spyOn(keeperAPI, "getStoragePrices").and.callFake(
+      (_query: any, params: any = {}) => {
+        activeSignal = params.signal;
+        return new Promise(() => {});
+      },
+    );
+
+    (component as any)._searchStorages();
+    component.ngOnDestroy();
+
+    expect(activeSignal?.aborted).toBeTrue();
+  });
 });

@@ -192,6 +192,7 @@ export class WorkloadProfilePanelComponent {
   servers = input<WorkloadProfileCompareServer[]>([]);
   serverDetails = input<WorkloadProfileDetailsServer | undefined>(undefined);
   showHeader = input(true);
+  isEmbedded = input(false);
 
   readonly layoutChanged = output<void>();
   readonly activeAccordionIndex = signal(-1);
@@ -306,7 +307,7 @@ export class WorkloadProfilePanelComponent {
   readonly getImpactColorClass = getImpactColorClass;
   readonly scoreGaugePlugins = [scoreGaugeTickPlugin];
 
-  tooltipContent = "";
+  readonly tooltipContent = signal("");
 
   constructor() {
     effect(() => {
@@ -339,9 +340,7 @@ export class WorkloadProfilePanelComponent {
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
-      onShow: (text) => {
-        this.tooltipContent = text;
-      },
+      onShow: (text) => this.tooltipContent.set(text),
     });
   }
 
@@ -351,15 +350,13 @@ export class WorkloadProfilePanelComponent {
       event: el,
       content,
       variant: "warning-wide",
-      onShow: (text) => {
-        this.tooltipContent = text;
-      },
+      onShow: (text) => this.tooltipContent.set(text),
     });
   }
 
   hideTooltip(): void {
     this.tooltipService.hide(this.tooltip()?.nativeElement);
-    this.tooltipContent = "";
+    this.tooltipContent.set("");
   }
 
   onAccordionChanged(index: number): void {

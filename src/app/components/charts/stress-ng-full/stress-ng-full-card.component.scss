@@ -1,0 +1,54 @@
+:host {
+  display: contents;
+}
+
+.stress_ng_collapsed {
+  max-height: calc(100vh - 6rem);
+  max-height: calc(100dvh - 6rem);
+  overflow: hidden;
+}
+
+.stress_ng_table {
+  @apply w-full text-white self-start;
+  table-layout: fixed;
+
+  .stress_ng_col_name {
+    width: 40%;
+  }
+
+  .stress_ng_col_single {
+    width: 21%;
+  }
+
+  .stress_ng_col_multi {
+    width: 23%;
+  }
+
+  .stress_ng_col_scaling {
+    width: 16%;
+  }
+
+  thead {
+    th {
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-3 py-2 leading-5 font-normal uppercase;
+    }
+
+    th.stress_ng_value {
+      @apply text-right text-sm;
+    }
+  }
+
+  tbody {
+    tr {
+      @apply bg-secondary border-b border-gray-200 border-solid;
+    }
+
+    td {
+      @apply px-3 py-1.5 text-left text-sm;
+    }
+
+    td.stress_ng_value {
+      @apply text-right whitespace-nowrap tabular-nums;
+    }
+  }
+}

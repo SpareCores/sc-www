@@ -1,5 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
+  DestroyRef,
   Injectable,
   NgZone,
   PLATFORM_ID,
@@ -19,6 +20,8 @@ import {
   AUTH_MESSAGES,
   AUTH_OVERLAY_CLASS,
   AUTH_OVERLAY_ID,
+  PROFILE_RETURN_PARAM,
+  PROFILE_RETURN_VALUE,
 } from "../auth.constants";
 import type {
   AuthKind,
@@ -50,6 +53,7 @@ import { GitHubService, type GitHubSignUpOutcome } from "./github.service";
 export class AuthStateService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly ngZone = inject(NgZone);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
@@ -61,14 +65,20 @@ export class AuthStateService {
   private finalizePromise: Promise<void> | null = null;
   private gitHubCallbackPromise: Promise<GitHubCallbackResult> | null = null;
   private boundListener = false;
+  private boundAuthRevalidation = false;
+  private authSyncInFlight = false;
+  private authEpoch = 0;
   private accountDeleted = false;
   private signedOutIdentityCleared = false;
 
-  private readonly _user = signal<UserResource | null>(null);
+  private readonly _user = signal<UserResource | null>(null, {
+    equal: () => false,
+  });
   readonly user = this._user.asReadonly();
 
   readonly signInModalOpen = signal(false);
   readonly signUpModalOpen = signal(false);
+  readonly profileModalOpen = signal(false);
   readonly signUpSubtitle = signal<string>(AUTH_MESSAGES.defaultSignUpSubtitle);
   private readonly githubConsent = signal(false);
   readonly githubConsentActive = computed(() => this.githubConsent());
@@ -96,6 +106,9 @@ export class AuthStateService {
     await this.clerk.init();
     this.syncUserFromClerk();
     this.bindClerkListener();
+    this.bindAuthRevalidation();
+    this.resumeProfileFromQuery();
+    this.bindAuthRevalidation();
     this.setAuthOverlayVisible(this.authInProgress());
     if (this.finalizePromise || this.isAuthCallbackRoute()) {
       return;
@@ -627,6 +640,7 @@ export class AuthStateService {
   }
 
   async signOut(): Promise<void> {
+    this.authEpoch++;
     this.closeSignIn();
     this.closeSignUp();
     try {
@@ -637,12 +651,28 @@ export class AuthStateService {
       this.activating = false;
       this.finalizePromise = null;
       this.gitHubCallbackPromise = null;
+      this.authEpoch++;
       this.setUser(null);
     }
   }
 
   openUserProfile(): void {
-    this.clerk.openUserProfileModal();
+    if (!this.isAuthenticated()) {
+      return;
+    }
+    this.profileModalOpen.set(true);
+  }
+
+  closeUserProfile(): void {
+    this.profileModalOpen.set(false);
+  }
+
+  refreshUser(): void {
+    this.syncUserFromClerk();
+  }
+
+  markAccountDeleted(deleted: boolean): void {
+    this.accountDeleted = deleted;
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -654,10 +684,11 @@ export class AuthStateService {
     this._user.set(user);
 
     if (user) {
-      this.watchAccountDeletion(user);
       this.identifyAnalyticsUser(user);
       return;
     }
+
+    this.profileModalOpen.set(false);
 
     const accountDeleted = this.accountDeleted;
     this.accountDeleted = false;
@@ -813,6 +844,22 @@ export class AuthStateService {
     return this.flow.githubIntent();
   }
 
+  private resumeProfileFromQuery(): void {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get(PROFILE_RETURN_PARAM) !== PROFILE_RETURN_VALUE) {
+      return;
+    }
+
+    params.delete(PROFILE_RETURN_PARAM);
+    const query = params.toString();
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
+    );
+    this.openUserProfile();
+  }
+
   private isAuthCallbackRoute(): boolean {
     return (
       isPlatformBrowser(this.platformId) &&
@@ -837,6 +884,94 @@ export class AuthStateService {
       this.ngZone.run(() => this.syncUserFromClerk());
     });
     this.boundListener = true;
+  }
+
+  private bindAuthRevalidation(): void {
+    if (!isPlatformBrowser(this.platformId) || this.boundAuthRevalidation) {
+      return;
+    }
+
+    const win = this.document.defaultView;
+    if (!win) {
+      return;
+    }
+
+    this.boundAuthRevalidation = true;
+
+    const revalidate = () => void this.revalidateClerkState();
+    this.ngZone.runOutsideAngular(() => {
+      this.document.addEventListener("visibilitychange", revalidate);
+      win.addEventListener("focus", revalidate);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.document.removeEventListener("visibilitychange", revalidate);
+      win.removeEventListener("focus", revalidate);
+      this.boundAuthRevalidation = false;
+    });
+  }
+
+  private isAuthTransitionActive(): boolean {
+    return (
+      this.activating ||
+      this.authInProgress() ||
+      !!this.finalizePromise ||
+      !!this.gitHubCallbackPromise
+    );
+  }
+
+  private async revalidateClerkState(): Promise<void> {
+    if (
+      this.document.visibilityState !== "visible" ||
+      this.authSyncInFlight ||
+      this.isAuthTransitionActive()
+    ) {
+      return;
+    }
+
+    const epoch = this.authEpoch;
+    this.authSyncInFlight = true;
+    try {
+      const synced = await this.clerk.syncClerkState();
+      if (!synced || epoch !== this.authEpoch) {
+        return;
+      }
+      await this.activateReloadedSessionIfNeeded();
+    } finally {
+      this.authSyncInFlight = false;
+    }
+  }
+
+  private async activateReloadedSessionIfNeeded(): Promise<void> {
+    if (
+      this.clerk.user ||
+      this.clerk.session ||
+      this.isAuthTransitionActive()
+    ) {
+      return;
+    }
+
+    const client = this.clerk.instance?.client;
+    const sessionId = client?.lastActiveSessionId;
+    if (
+      !sessionId ||
+      !client.sessions?.some(
+        (session) => session.id === sessionId && session.status === "active",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await this.clerk.setActive(sessionId);
+    } catch (error) {
+      console.error("Failed to activate Clerk session after reload", error);
+      if (!this.clerk.isTransientNetworkError(error)) {
+        this.analytics.SentryException(error, {
+          tags: { feature: "clerk-sync" },
+        });
+      }
+    }
   }
 
   private async prepareEmailSecondFactor(
@@ -871,25 +1006,6 @@ export class AuthStateService {
         ),
       };
     }
-  }
-
-  private watchAccountDeletion(user: UserResource): void {
-    const target = user as UserResource & { __scDeleteWrapped?: boolean };
-    if (target.__scDeleteWrapped || typeof user.delete !== "function") {
-      return;
-    }
-
-    const originalDelete = user.delete.bind(user);
-    user.delete = async () => {
-      this.accountDeleted = true;
-      try {
-        await originalDelete();
-      } catch (error) {
-        this.accountDeleted = false;
-        throw error;
-      }
-    };
-    target.__scDeleteWrapped = true;
   }
 
   private redirectFromBookmarks(): void {

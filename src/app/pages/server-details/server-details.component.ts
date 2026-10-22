@@ -30,6 +30,7 @@ import {
   ServerPrice,
   Status,
 } from "../../../../sdk/data-contracts";
+import type { RequestParams } from "../../../../sdk/http-client";
 import {
   AccordionComponent,
   AccordionItem,
@@ -66,12 +67,24 @@ import { ToastService } from "../../services/toast.service";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { initGiscus } from "../../tools/initGiscus";
-import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
+import { ServerEmbedDialogComponent } from "../../components/embed-dialog/server-embed-dialog.component";
+import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
+import { hasWorkloadProfileChartData } from "../../components/charts/workload-profile/workload-profile.utils";
+import { isStressNgStressor } from "../../components/charts/stress-ng-full/stress-ng-full.utils";
+import { MemoryChartBuilderService } from "../../components/charts/memory/memory-chart-builder.service";
+import { BenchmarkMultiBarChartBuilderService } from "../../components/charts/multi-bar/benchmark-multi-bar-chart-builder.service";
+import { MultiBarBenchmarkGroup } from "../../components/charts/multi-bar/benchmark-multi-bar-chart.types";
+import {
+  ChartFromBenchmarkTemplate,
+  redisChartTemplate,
+  staticWebChartTemplate,
+} from "./chartFromBenchmarks";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
 import { buildServerFaqs } from "./server-details-faqs";
 import {
   BURSTABLE_INSTANCE_WARNING_BODY,
   BURSTABLE_INSTANCE_WARNING_TITLE,
+  HIDDEN_SERVER_PROPERTY_IDS,
 } from "./server-details.constants";
 
 const optionsModal: ModalOptions = {
@@ -83,6 +96,32 @@ const summarizeModalOptions: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
 };
+
+const SIMILAR_SERVER_CATEGORIES: Partial<
+  Record<string, "score" | "score_per_price" | "specs">
+> = {
+  byScore: "score",
+  byPerformancePerPrice: "score_per_price",
+  bySpecs: "specs",
+};
+
+const DEFAULT_EMBEDDABLE_CHARTS = [
+  { id: "workload_profile", name: "Workload Profiles" },
+  { id: "bw_mem", name: "Memory Bandwidth" },
+  { id: "compress", name: "Compression" },
+  { id: "geek_single", name: "Geekbench Single-core" },
+  { id: "geek_multi", name: "Geekbench Multi-core" },
+  { id: "ssl", name: "OpenSSL" },
+  { id: "static_web", name: "Static Web Server" },
+  { id: "redis", name: "Redis" },
+];
+
+const DEFAULT_SERVER_DETAILS_ERROR_MESSAGE =
+  "Failed to load server details. Please try again later.";
+
+function createEmptyBarChartData(): ChartData<"bar"> {
+  return JSON.parse(JSON.stringify(barChartDataEmpty));
+}
 
 export interface ExtendedServerPrice extends ServerPrice {
   region: any;
@@ -120,7 +159,7 @@ interface PropertyCategoryDefinition {
     ServerChartsComponent,
     ServerLstopoComponent,
     ServerPropertyCardComponent,
-    EmbedDebugComponent,
+    ServerEmbedDialogComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
     BookmarkButton,
@@ -141,7 +180,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
   private uiTooltip = inject(UiTooltipService);
+  private memoryChartBuilder = inject(MemoryChartBuilderService);
+  private multiBarChartBuilder = inject(BenchmarkMultiBarChartBuilderService);
   private serverLoadId = 0;
+  private loadAbortController: AbortController | null = null;
+  private similarAbortController: AbortController | null = null;
   similarDropdown = viewChild<FlowbiteDropdownDirective>("similarDropdown");
 
   readonly burstableInstanceWarningTitle = BURSTABLE_INSTANCE_WARNING_TITLE;
@@ -213,15 +256,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   barChartOptions: ChartConfiguration<"bar">["options"] = barChartOptions;
   barChartType = "bar" as const;
-  barChartData: ChartData<"bar"> = JSON.parse(
-    JSON.stringify(barChartDataEmpty),
-  );
-  barChartData2: ChartData<"bar"> = JSON.parse(
-    JSON.stringify(barChartDataEmpty),
-  );
-  barChartData3: ChartData<"bar"> = JSON.parse(
-    JSON.stringify(barChartDataEmpty),
-  );
+  barChartData: ChartData<"bar"> = createEmptyBarChartData();
+  barChartData2: ChartData<"bar"> = createEmptyBarChartData();
+  barChartData3: ChartData<"bar"> = createEmptyBarChartData();
 
   benchmarksByCategory: any[] = [];
 
@@ -231,8 +268,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   geekScoreSingle: string = "0";
   geekScoreMulti: string = "0";
 
-  keeperResponseErrorMsg: string =
-    "Failed to load server details. Please try again later.";
+  keeperResponseErrorMsg: string = DEFAULT_SERVER_DETAILS_ERROR_MESSAGE;
 
   activeFAQ: number = -1;
 
@@ -242,16 +278,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   warningTooltipRef = viewChild<ElementRef<HTMLElement>>("warningTooltip");
   warningTooltipContent = signal("");
 
-  embeddableCharts = [
-    { id: "workload_profile", name: "Workload Profiles" },
-    { id: "bw_mem", name: "Memory Bandwidth" },
-    { id: "compress", name: "Compression" },
-    { id: "geek_single", name: "Geekbench Single-core" },
-    { id: "geek_multi", name: "Geekbench Multi-core" },
-    { id: "ssl", name: "OpenSSL" },
-    { id: "static_web", name: "Static Web Server" },
-    { id: "redis", name: "Redis" },
-  ];
+  embeddableCharts: EmbedChartOption[] = [];
 
   @ViewChild("giscusParent") giscusParent!: ElementRef;
 
@@ -270,28 +297,43 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true;
     this.onResize();
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.subscription.add(
       this.route.params.subscribe((params) => {
+        this.loadAbortController?.abort();
+        const loadAbortController = new AbortController();
+        this.loadAbortController = loadAbortController;
         const vendor = params["vendor"];
         const id = params["id"];
         const loadId = ++this.serverLoadId;
+        this.resetServerState();
         this.isLoading = true;
         this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
 
         Promise.all([
-          this.keeperAPI.getServerMeta(),
-          this.keeperAPI.getServerBenchmarkMeta(),
-          this.keeperAPI.getServerSimilarServers(vendor, id, "family", 7),
-          this.keeperAPI.getServerSimilarServers(vendor, id, "specs", 7),
-          this.keeperAPI.getServerPrices(vendor, id, undefined, false),
-          this.keeperAPI.getServerBenchmark(vendor, id),
-          this.keeperAPI.getServerV2(vendor, id),
-          this.keeperAPI.getVendors(),
-          this.keeperAPI.getRegions(),
-          this.keeperAPI.getZones(),
+          this.keeperAPI.getServerMeta({ signal: loadAbortController.signal }),
+          this.keeperAPI.getServerBenchmarkMeta({
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerSimilarServers(vendor, id, "family", 7, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerSimilarServers(vendor, id, "specs", 7, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerPrices(vendor, id, undefined, false, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerBenchmark(vendor, id, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getServerV2(vendor, id, {
+            signal: loadAbortController.signal,
+          }),
+          this.keeperAPI.getVendors({ signal: loadAbortController.signal }),
+          this.keeperAPI.getRegions({ signal: loadAbortController.signal }),
+          this.keeperAPI.getZones({ signal: loadAbortController.signal }),
         ])
           .then((dataAll) => {
             if (this.destroyRef.destroyed || loadId !== this.serverLoadId) {
@@ -559,49 +601,121 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
               this.generateSchemaJSON();
 
-              if (this.serverDetails.vcpus && this.serverDetails.vcpus > 1) {
-                this.embeddableCharts.push({
+              const benchmarkIds: string[] = this.benchmarksByCategory.map(
+                (c) => c.benchmark_id,
+              );
+              const hasBenchmarkPrefix = (prefix: string) =>
+                benchmarkIds.some((id) => id.startsWith(prefix));
+              const hasMultiBarChart = (
+                chartTemplate: ChartFromBenchmarkTemplate,
+              ) =>
+                !!this.multiBarChartBuilder.buildDetailsChart(
+                  JSON.parse(JSON.stringify(chartTemplate)),
+                  this.benchmarksByCategory as MultiBarBenchmarkGroup[],
+                );
+              const isMultiCore =
+                !!this.serverDetails.vcpus && this.serverDetails.vcpus > 1;
+              this.embeddableCharts = [
+                {
+                  id: "workload_profile",
+                  name: "Workload Profiles",
+                  show: hasWorkloadProfileChartData({
+                    benchmarkMeta: this.benchmarkMeta,
+                    benchmarkScores: this.serverDetails.benchmark_scores,
+                  }),
+                },
+                {
+                  id: "nvbandwidth",
+                  name: "GPU Bandwidth and Latency",
+                  show: benchmarkIds.some((id) =>
+                    id.startsWith("nvbandwidth:"),
+                  ),
+                },
+                {
+                  id: "bw_mem",
+                  name: "Memory Bandwidth",
+                  show:
+                    this.memoryChartBuilder.getAvailableDetailsOptions(
+                      this.benchmarksByCategory,
+                    ).length > 0,
+                },
+                {
+                  id: "compress",
+                  name: "Compression",
+                  show: hasBenchmarkPrefix("compression_text:"),
+                },
+                {
+                  id: "ssl",
+                  name: "OpenSSL",
+                  show: benchmarkIds.includes("openssl"),
+                },
+                {
+                  id: "geek_single",
+                  name: "Geekbench Single-core",
+                  show: hasBenchmarkPrefix("geekbench:"),
+                },
+                {
+                  id: "geek_multi",
+                  name: "Geekbench Multi-core",
+                  show: hasBenchmarkPrefix("geekbench:"),
+                },
+                {
+                  id: "passmark_cpu",
+                  name: "PassMark CPU",
+                  show: benchmarkIds.includes("passmark:cpu"),
+                },
+                {
+                  id: "passmark_other",
+                  name: "PassMark Memory",
+                  show: benchmarkIds.includes("passmark:other"),
+                },
+                {
+                  id: "stress_ng_full",
+                  name: "Stress-ng stressors",
+                  show: (this.benchmarkMeta ?? []).some(
+                    (benchmark) =>
+                      isStressNgStressor(benchmark) &&
+                      benchmarkIds.includes(benchmark.benchmark_id),
+                  ),
+                },
+                {
                   id: "stress_ng_div16",
                   name: "Stress-ng div16",
-                });
-                this.embeddableCharts.push({
+                  show: isMultiCore,
+                },
+                {
                   id: "stress_ng_relative",
                   name: "Stress-ng relative",
-                });
-              }
-
-              // Add LLM charts if benchmark data is available
-              const hasLLMPromptData = this.benchmarksByCategory.some(
-                (c) => c.benchmark_id === "llm_speed:prompt_processing",
-              );
-              const hasLLMGenerationData = this.benchmarksByCategory.some(
-                (c) => c.benchmark_id === "llm_speed:text_generation",
-              );
-
-              if (hasLLMPromptData) {
-                this.embeddableCharts.push({
+                  show: isMultiCore,
+                },
+                {
                   id: "llm_prompt",
                   name: "LLM Prompt Processing",
-                });
-              }
-
-              if (hasLLMGenerationData) {
-                this.embeddableCharts.push({
+                  show: benchmarkIds.includes("llm_speed:prompt_processing"),
+                },
+                {
                   id: "llm_generation",
                   name: "LLM Text Generation",
-                });
-              }
-
-              if (
-                this.benchmarksByCategory.some(
-                  (c) => c.benchmark_id === "pgbench:heavy_read_only",
-                )
-              ) {
-                this.embeddableCharts.push({
+                  show: benchmarkIds.includes("llm_speed:text_generation"),
+                },
+                {
+                  id: "static_web",
+                  name: "Static Web Server",
+                  show: hasMultiBarChart(staticWebChartTemplate),
+                },
+                {
+                  id: "redis",
+                  name: "Redis",
+                  show: hasMultiBarChart(redisChartTemplate),
+                },
+                {
                   id: "pgbench",
                   name: "pgbench Heavy Read-Only",
-                });
-              }
+                  show: benchmarkIds.includes("pgbench:heavy_read_only"),
+                },
+              ]
+                .filter((chart) => chart.show)
+                .map(({ id, name }) => ({ id, name }));
 
               if (isPlatformBrowser(this.platformId)) {
                 setTimeout(() => {
@@ -679,11 +793,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 id,
                 () =>
                   !this.destroyRef.destroyed && loadId === this.serverLoadId,
+                { signal: loadAbortController.signal },
               );
             }
           })
           .catch((error) => {
-            if (this.destroyRef.destroyed || loadId !== this.serverLoadId) {
+            if (
+              this.destroyRef.destroyed ||
+              loadId !== this.serverLoadId ||
+              loadAbortController.signal.aborted
+            ) {
               return;
             }
 
@@ -717,6 +836,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           })
           .finally(() => {
             if (!this.destroyRef.destroyed && loadId === this.serverLoadId) {
+              if (this.loadAbortController === loadAbortController) {
+                this.loadAbortController = null;
+              }
               this.isLoading = false;
             }
           });
@@ -724,7 +846,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
+  private cleanupBrowserArtifacts() {
     if (this.visibilityChangeHandler) {
       document.removeEventListener(
         "visibilitychange",
@@ -737,6 +859,66 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       clearInterval(this.giscusInterval);
       this.giscusInterval = null;
     }
+  }
+
+  private resetServerState() {
+    this.summarizeModal?.hide();
+    this.modalEmbed?.hide();
+    this.isModalOpen = false;
+    this.similarAbortController?.abort();
+    this.cleanupBrowserArtifacts();
+    this.SEOHandler.cleanupStructuredData(this.document);
+    this.serverDetails = undefined as never;
+    this.lstopoSvgExists = null;
+    this.lstopoSvgWidth = 0;
+    this.serverZones = [];
+    this.serverRegions = [];
+    this.breadcrumbs = [
+      { name: "Home", url: "/" },
+      { name: "Servers", url: "/servers" },
+    ];
+    this.features = [];
+    this.title = "";
+    this.description = "";
+    this.cardPriceDescription = "";
+    this.seoKeywords = "";
+    this.serverDescription = null;
+    this.descriptionsAvailable = false;
+    this.isSummarizeModalOpen = false;
+    this.faqs = [];
+    this.availabilityRegions = [];
+    this.availabilityZones = [];
+    this.regionFilters = [];
+    this.similarByFamily = [];
+    this.similarBySpecs = [];
+    this.similarServers = [];
+    this.selectedSimilarOption = this.similarOptions[0];
+    this.metadataSections = [];
+    this.processorSections = [];
+    this.resourceSections = [];
+    this.expandedCards = {
+      details: false,
+      processor: false,
+      system_resources: false,
+      availability: false,
+    };
+    this.barChartData = createEmptyBarChartData();
+    this.barChartData2 = createEmptyBarChartData();
+    this.barChartData3 = createEmptyBarChartData();
+    this.benchmarksByCategory = [];
+    this.instanceProperties = [];
+    this.benchmarkMeta = [];
+    this.geekScoreSingle = "0";
+    this.geekScoreMulti = "0";
+    this.keeperResponseErrorMsg = DEFAULT_SERVER_DETAILS_ERROR_MESSAGE;
+    this.activeFAQ = -1;
+    this.embeddableCharts = [...DEFAULT_EMBEDDABLE_CHARTS];
+  }
+
+  ngOnDestroy() {
+    this.loadAbortController?.abort();
+    this.similarAbortController?.abort();
+    this.cleanupBrowserArtifacts();
 
     this.summarizeModal?.hide();
     this.summarizeModal = null;
@@ -1228,7 +1410,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         (category) => category.category === property.category,
       );
       const value = this.getProperty(property);
-      if (!group || !value) {
+      if (!group || !value || HIDDEN_SERVER_PROPERTY_IDS.has(property.id)) {
         return;
       }
 
@@ -1453,43 +1635,30 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   selectSimilarServerOption(event: any, updateURL: boolean = true) {
     this.selectedSimilarOption = event;
-    switch (this.selectedSimilarOption.key) {
-      case "byScore":
-        this.keeperAPI
-          .getServerSimilarServers(
-            this.serverDetails.vendor_id,
-            this.serverDetails.api_reference,
-            "score",
-            7,
-          )
-          .then((servers: any) => {
+    const category = SIMILAR_SERVER_CATEGORIES[this.selectedSimilarOption.key];
+    if (category) {
+      this.similarAbortController?.abort();
+      this.similarAbortController = new AbortController();
+      const { signal } = this.similarAbortController;
+
+      this.keeperAPI
+        .getServerSimilarServers(
+          this.serverDetails.vendor_id,
+          this.serverDetails.api_reference,
+          category,
+          7,
+          { signal },
+        )
+        .then((servers: any) => {
+          if (!signal.aborted) {
             this.similarServers = servers?.body;
-          });
-        break;
-      case "byPerformancePerPrice":
-        this.keeperAPI
-          .getServerSimilarServers(
-            this.serverDetails.vendor_id,
-            this.serverDetails.api_reference,
-            "score_per_price",
-            7,
-          )
-          .then((servers: any) => {
-            this.similarServers = servers?.body;
-          });
-        break;
-      case "bySpecs":
-        this.keeperAPI
-          .getServerSimilarServers(
-            this.serverDetails.vendor_id,
-            this.serverDetails.api_reference,
-            "specs",
-            7,
-          )
-          .then((servers: any) => {
-            this.similarServers = servers?.body;
-          });
-        break;
+          }
+        })
+        .catch((error) => {
+          if (!signal.aborted) {
+            console.error(error);
+          }
+        });
     }
 
     if (updateURL) {
@@ -1538,9 +1707,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     vendor: string,
     id: string,
     isCurrent: () => boolean = () => true,
+    params: RequestParams = {},
   ) {
     this.keeperAPI
-      .getServerDescriptions(vendor, id)
+      .getServerDescriptions(vendor, id, params)
       .then((response) => {
         if (!isCurrent()) {
           return;

@@ -139,6 +139,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
   private searchRequestId = 0;
+  private searchAbortController: AbortController | null = null;
   private previousSearchParams: Record<string, unknown> | null = null;
 
   isCollapsed = false;
@@ -350,6 +351,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.searchAbortController?.abort();
     this.subscription.unsubscribe();
     this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
   }
@@ -436,6 +438,9 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   private _searchServers(updateTotalCount = true) {
     const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const searchAbortController = new AbortController();
+    this.searchAbortController = searchAbortController;
     this.isLoading = true;
     this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
 
@@ -457,7 +462,9 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     }
 
     this.keeperAPI
-      .searchServerPrices(query)
+      .searchServerPrices(query, {
+        signal: searchAbortController.signal,
+      })
       .then((servers) => {
         if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
           return;
@@ -509,6 +516,9 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
       })
       .finally(() => {
         if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
+          if (this.searchAbortController === searchAbortController) {
+            this.searchAbortController = null;
+          }
           this.isLoading = false;
         }
       });

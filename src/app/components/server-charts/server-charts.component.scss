@@ -7,12 +7,16 @@
     th {
       @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 font-normal;
     }
+
+    th.passmark-score-col {
+      text-align: right;
+    }
   }
 
   .passmark-score-col {
     text-align: right;
     white-space: nowrap;
-    width: 5rem;
+    width: 8rem;
   }
 
   tbody {
@@ -27,6 +31,10 @@
 
       td:first-child {
         white-space: nowrap;
+      }
+
+      td.passmark-score-col {
+        text-align: right;
       }
 
       td.fixed_width {

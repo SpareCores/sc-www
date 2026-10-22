@@ -1,21 +1,22 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject, isDevMode } from "@angular/core";
 import { Router } from "@angular/router";
 import { Clerk } from "@clerk/clerk-js";
+import { isClerkRuntimeError, isNetworkError } from "@clerk/shared/error";
 import type {
   SignInResource,
   SignUpResource,
   UserResource,
 } from "@clerk/shared/types";
-import { ui } from "@clerk/ui/no-rhc";
+import { AnalyticsService } from "../../../services/analytics.service";
 import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
 import { authUrls } from "../auth.utils";
-import { CLERK_APPEARANCE, CLERK_TEXTS } from "../clerk-configuration";
 
 @Injectable({ providedIn: "root" })
 export class ClerkService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
+  private readonly analytics = inject(AnalyticsService);
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
 
@@ -66,22 +67,8 @@ export class ClerkService {
     await this.clerk?.signOut(() => undefined);
   }
 
-  openUserProfileModal(): void {
-    const user = this.clerk?.user;
-    const hidePasswordSection =
-      !!user &&
-      !user.passwordEnabled &&
-      !!user.externalAccounts?.some((account) => account.provider === "github");
-
-    const elements: Record<string, { display: string }> = {};
-    if (hidePasswordSection) {
-      elements["profileSection__password"] = { display: "none" };
-    }
-
-    this.clerk?.openUserProfile({
-      apiKeysProps: { hide: true },
-      appearance: Object.keys(elements).length ? { elements } : undefined,
-    });
+  async clearActiveSession(): Promise<void> {
+    await this.clerk?.setActive({ session: null });
   }
 
   async getToken(template?: string): Promise<string | null> {
@@ -89,14 +76,14 @@ export class ClerkService {
       return null;
     }
 
-    await this.init();
-
-    const session = this.clerk?.session;
-    if (!session) {
-      return null;
-    }
-
     try {
+      await this.init();
+
+      const session = this.clerk?.session;
+      if (!session) {
+        return null;
+      }
+
       return (
         (await session.getToken(template ? { template } : undefined)) ?? null
       );
@@ -132,11 +119,18 @@ export class ClerkService {
     );
   }
 
-  async syncClerkState(): Promise<void> {
+  async syncClerkState(): Promise<boolean> {
     try {
       await this.clerk?.client?.reload();
+      return true;
     } catch (error) {
       console.error("Failed to synchronize Clerk client state:", error);
+      if (!this.isTransientNetworkError(error)) {
+        this.analytics.SentryException(error, {
+          tags: { feature: "clerk-sync" },
+        });
+      }
+      return false;
     }
   }
 
@@ -156,6 +150,23 @@ export class ClerkService {
 
   addListener(listener: () => void): (() => void) | undefined {
     return this.clerk?.addListener(listener) as (() => void) | undefined;
+  }
+
+  isTransientNetworkError(error: unknown): boolean {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      return true;
+    }
+    if (isClerkRuntimeError(error) && error.code === "network_error") {
+      return true;
+    }
+    if (!(error instanceof Error)) {
+      return false;
+    }
+    return (
+      isNetworkError(error) ||
+      (error instanceof TypeError &&
+        /failed to fetch|load failed|network/i.test(error.message))
+    );
   }
 
   private navigateRouter(url: string, replace = false): Promise<boolean> {
@@ -186,14 +197,14 @@ export class ClerkService {
     this.clerk = new Clerk(CLERK_PUBLISHABLE_KEY);
     const urls = authUrls();
     await this.clerk.load({
-      ui,
-      appearance: CLERK_APPEARANCE,
-      localization: CLERK_TEXTS,
       signInUrl: urls.origin,
       signUpUrl: urls.origin,
       routerPush: (url: string) => this.navigateRouter(url),
       routerReplace: (url: string) => this.navigateRouter(url, true),
       telemetry: false,
     });
+    if (isDevMode() || "Cypress" in window) {
+      (window as Window & { Clerk: Clerk }).Clerk = this.clerk;
+    }
   }
 }

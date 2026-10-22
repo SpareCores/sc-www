@@ -42,9 +42,11 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
-import { EmbedComparePreviewComponent } from "../embed-compare-preview/embed-compare-preview.component";
+import { CompareEmbedDialogComponent } from "../../components/embed-dialog/compare-embed-dialog.component";
+import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
 import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
+import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { ToastService } from "../../services/toast.service";
 import {
   BAD_SERVER_COMPARE_URL_TOAST_ID,
@@ -87,7 +89,27 @@ const optionsModal: ModalOptions = {
   closable: true,
 };
 
-const INVALID_URL_TOAST_TITLE = "Invalid URL";
+const EMBEDDABLE_CHARTS: EmbedChartOption[] = [
+  { id: "generic", name: "Server Specs and Prices" },
+  { id: "workload_profile", name: "Workload Profiles" },
+  { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
+  { id: "bw_mem", name: "Memory Bandwidth" },
+  { id: "compress", name: "Compression" },
+  { id: "openssl", name: "OpenSSL" },
+  { id: "geekbench", name: "Geekbench Single- and Multi-core" },
+  { id: "geekbench_single", name: "Geekbench Single-core" },
+  { id: "geekbench_multi", name: "Geekbench Multi-core" },
+  { id: "passmark_cpu", name: "PassMark CPU" },
+  { id: "passmark_other", name: "PassMark Memory" },
+  { id: "stress_ng_full", name: "Stress-ng Stressors" },
+  { id: "stress_ng", name: "Stress-ng div16" },
+  { id: "stress_ng_pct", name: "Stress-ng Relative" },
+  { id: "llm_inference", name: "LLM Inference" },
+  { id: "static_web", name: "Static Web Server" },
+  { id: "redis", name: "Redis" },
+  { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
+];
+
 const INVALID_COMPARE_URL_TOAST_BODY = "Select servers to compare.";
 const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Server Navigator page";
 const SERVER_COMPARE_GUIDE_TITLE = "Server Compare Guide";
@@ -133,7 +155,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     FormsModule,
     RouterModule,
     ServerCompareChartsComponent,
-    EmbedComparePreviewComponent,
+    CompareEmbedDialogComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
     CollectionSaveModalComponent,
@@ -162,6 +184,7 @@ export class ServerCompareComponent
   private auth = inject(AuthStateService);
   private collectionsUi = inject(CollectionsUiService);
   saveComparisonModal = viewChild(CollectionSaveModalComponent);
+  compareCharts = viewChild(ServerCompareChartsComponent);
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
@@ -372,20 +395,7 @@ export class ServerCompareComponent
   instances: any[] = [];
   instancesRaw!: string;
 
-  embeddableCharts = [
-    { id: "bw_mem", name: "Memory Bandwidth" },
-    { id: "compress", name: "Compression" },
-    { id: "geekbench", name: "Geekbench Single- and Multi-core" },
-    { id: "geekbench_single", name: "Geekbench Single-core" },
-    { id: "geekbench_multi", name: "Geekbench Multi-core" },
-    { id: "openssl", name: "OpenSSL" },
-    { id: "stress_ng", name: "Stress-ng div16" },
-    { id: "stress_ng_pct", name: "Stress-ng Relative" },
-    { id: "llm_inference", name: "LLM Inference" },
-    { id: "static_web", name: "Static Web Server" },
-    { id: "redis", name: "Redis" },
-    { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
-  ];
+  embeddableCharts: EmbedChartOption[] = EMBEDDABLE_CHARTS;
 
   modalEmbed: any;
 
@@ -501,6 +511,7 @@ export class ServerCompareComponent
 
     this.stickyLayout.destroy();
     this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
+    this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
   }
 
   setup() {
@@ -533,8 +544,15 @@ export class ServerCompareComponent
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
       } else {
-        this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
         this.applyGuideChrome();
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/servers"]),
+          },
+        });
         this.isLoading = false;
       }
     } else if (param) {
@@ -546,29 +564,24 @@ export class ServerCompareComponent
       if (!decodedInstances.value) {
         console.warn("Invalid instances data in URL:", decodedInstances.error);
         this.applyGuideChrome();
-        if (isPlatformBrowser(this.platformId)) {
-          this.toastService.show({
-            title: INVALID_URL_TOAST_TITLE,
-            body: INVALID_COMPARE_URL_TOAST_BODY,
-            type: "error",
-            id: BAD_SERVER_COMPARE_URL_TOAST_ID,
-            action: {
-              label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
-              onClick: () => this.router.navigate(["/servers"]),
-            },
-          });
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_SERVER_COMPARE_URL_TOAST_ID,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          action: {
+            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            onClick: () => this.router.navigate(["/servers"]),
+          },
+        });
+        this.isLoading = false;
+      } else {
+        this.instances = decodedInstances.value;
+        this.instancesRaw = this.instances.length > 0 ? param : "";
+        this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
+
+        if (!this.instances?.length) {
+          this.applyGuideChrome();
+          this.isLoading = false;
         }
-        this.isLoading = false;
-        return;
-      }
-
-      this.instances = decodedInstances.value;
-      this.instancesRaw = this.instances.length > 0 ? param : "";
-      this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
-
-      if (!this.instances?.length) {
-        this.applyGuideChrome();
-        this.isLoading = false;
       }
     } else {
       this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
@@ -1670,6 +1683,12 @@ export class ServerCompareComponent
   }
 
   openModal() {
+    const compareCharts = this.compareCharts();
+    this.embeddableCharts = compareCharts
+      ? EMBEDDABLE_CHARTS.filter((chart) =>
+          compareCharts.hasEmbeddableChart(chart.id),
+        )
+      : EMBEDDABLE_CHARTS;
     this.modalEmbed?.show();
   }
 

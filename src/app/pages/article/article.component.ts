@@ -25,6 +25,7 @@ import * as yaml from "js-yaml";
 import { initGiscus } from "../../tools/initGiscus";
 import { ToastService } from "../../services/toast.service";
 import { PrismService } from "../../services/prism.service";
+import { GlossaryService } from "../../services/glossary.service";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -51,6 +52,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   private renderer = inject(Renderer2);
   private toastService = inject(ToastService);
   private prismService = inject(PrismService);
+  private glossaryService = inject(GlossaryService);
 
   @ViewChild("articleDiv") articleDiv!: ElementRef;
   private subscription = new Subscription();
@@ -111,6 +113,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
             if (isPlatformBrowser(this.platformId)) {
               // Wait for the articleDiv to be rendered
+              clearInterval(this.checkExistInterval);
               this.checkExistInterval = setInterval(() => {
                 if (this.articleDiv) {
                   // attach zoom images on click
@@ -137,6 +140,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
                   );
                   // highlight code blocks
                   this.prismService.highlightAll();
+                  this.glossaryService.apply(this.articleDiv.nativeElement);
                   // estimate reading time
                   const text =
                     this.articleDiv.nativeElement.textContent ||
