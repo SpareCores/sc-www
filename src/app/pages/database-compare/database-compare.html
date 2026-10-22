@@ -191,7 +191,10 @@
         >
           @if (isBrowser() && isTableOutsideViewport()) {
             <div class="fixed_thead" [style]="stickyFixedDivStyle()">
-              <table class="items_table" [style]="stickyMainTableStyle()">
+              <table
+                class="sc-compare-table sc-compare-table--fixed"
+                [style]="stickyMainTableStyle()"
+              >
                 <thead>
                   <tr>
                     <th [style]="stickyFirstColStyle()"></th>
@@ -234,7 +237,10 @@
               </table>
             </div>
           }
-          <table class="items_table" id="database-compare-table">
+          <table
+            class="sc-compare-table sc-compare-table--fixed"
+            id="database-compare-table"
+          >
             <colgroup>
               <col class="compare-first-column-col" />
               @for (
