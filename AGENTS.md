@@ -96,5 +96,5 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 ## Styling (`*.html`, `*.css`)
 
-- Prefer Tailwind CSS v3 utilities. Mirror nearby design patterns (margins, padding, components) from currently opened or referenced files.
+- Prefer Tailwind CSS v4 utilities. Mirror nearby design patterns (margins, padding, components) from currently opened or referenced files.
 - When extending a component that already has its own stylesheet (e.g. the auth modals' `auth-modal.css`), follow that stylesheet's conventions instead.
