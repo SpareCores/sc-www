@@ -19,44 +19,6 @@
   height: unset !important;
 }
 
-.items_table {
-  @apply w-full text-white;
-
-  table-layout: fixed;
-
-  thead {
-    th {
-      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 leading-5 font-normal;
-
-      height: 45px;
-      padding-top: 0;
-      padding-bottom: 0;
-      vertical-align: middle;
-      box-sizing: border-box;
-    }
-  }
-
-  tbody {
-    tr {
-      @apply bg-secondary border-b border-gray-200 border-solid;
-    }
-
-    td {
-      @apply px-5 text-left text-sm;
-
-      height: 45px;
-      padding-top: 0;
-      padding-bottom: 0;
-      vertical-align: middle;
-      box-sizing: border-box;
-    }
-
-    td.fixed_width {
-      width: 250px;
-    }
-  }
-}
-
 .items_table_spacer_row {
   @apply w-full bg-secondary;
 
