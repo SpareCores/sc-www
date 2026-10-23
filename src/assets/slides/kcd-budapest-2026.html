@@ -1371,7 +1371,7 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <section id="just-5ghz" class="slide level2">
 <h2>Just set the filter to 5 GHz?</h2>
 <div style="font-size: 0.75em;">
-<p>Audience idea: <code>instance-cpu-sustained-clock-speed-mhz &gt;= 5000</code></p>
+<p>Simple idea: <code>instance-cpu-sustained-clock-speed-mhz &gt;= 5000</code></p>
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -1439,13 +1439,44 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </section></section>
 <section id="claude-plan-fix-problem" class="title-slide slide level1">
 <h1>$ claude –plan “fix problem”</h1>
-<p>Pub talk with Gergő → <strong>Spare Cores</strong> data → <strong>sc-karpenter-nodepool</strong></p>
+<div style="font-size: 0.72em;">
+<p>Pub talk → need <strong>benchmark</strong>-ranked types in <strong>Karpenter</strong> (incl.&nbsp;<strong>EKS Auto</strong>)</p>
+<p><strong>Plan</strong> (<code>sc-karpenter-nodepool</code> ADRs + sequenced v1 plans):</p>
+<ol type="1">
+<li><strong>Own NodePools only</strong> — never patch user pools / no <code>NodeOverlay</code><br>
+→ <strong>managed</strong> Karpenter <strong>+ GitOps</strong> (Argo CD, …) — no fights over a shared object</li>
+<li><strong><code>SCNodePool</code> → one NodePool</strong> — template verbatim + selected <code>instance-type</code> list</li>
+<li>Emit <strong>universal keys only</strong> (<code>instance-type</code> · arch · capacity)<br>
+→ avoid <strong>RequirementsDrifted</strong> loops</li>
+<li><strong>Selectors + ranking</strong> from <strong>Keeper</strong> (e.g.&nbsp;PassMark ST · family band)</li>
+<li><strong>Churn control</strong> — 24h refresh · hysteresis · never empty list</li>
+<li><strong>Go / kubebuilder</strong> — reuse Karpenter validation + provider test fakes</li>
+</ol>
+</div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> so what did we do?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> how we designed it (with Claude)</p>
 <ul>
-<li>Gergő / <strong>SC data</strong> → rank by <strong>benchmark</strong> (e.g.&nbsp;PassMark single-threaded)<br>
+<li>problem: Karpenter has <strong>shape + price</strong>, not <strong>measured single-core</strong><br>
 </li>
-<li>built <strong>sc-karpenter-nodepool</strong> — writes a Karpenter <code>NodePool</code> with the right <code>instance-type</code> list</li>
+<li>constraint: <strong>EKS Auto Mode</strong> → can’t fork Karpenter / patch their pools<br>
+</li>
+<li>also: <strong>GitOps</strong> (Argo CD, …) — don’t mutate a pool the user owns → sync wars<br>
+</li>
+<li><strong>ADR-001:</strong> create <strong>our own</strong> NodePools only<br>
+</li>
+<li><strong>ADR-003:</strong> one <strong><code>SCNodePool</code></strong> → one NodePool<br>
+</li>
+<li><strong>ADR-004:</strong> only stamp keys every provider accepts — else <strong>drift loop</strong><br>
+</li>
+<li><strong>ADR-002:</strong> read <strong>Keeper API</strong>, filter/rank client-side<br>
+</li>
+<li><strong>ADR-006:</strong> <strong>churn</strong> — don’t replace nodes every time the ranking wiggles<br>
+</li>
+<li><strong>ADR-007:</strong> <strong>Go</strong> so we import Karpenter’s own validators<br>
+</li>
+<li>plans 01→08: scaffold → selection → adapters → controller → tests → Helm<br>
+</li>
+<li>next: <strong>demo</strong> the result</li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1526,26 +1557,33 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 
 <section id="entrypoint-sc-karpenter-nodepool" class="title-slide slide level1">
 <h1>ENTRYPOINT [“sc-karpenter-nodepool”]</h1>
-<!-- TODO Attila describe the limitations -->
+<div style="font-size: 0.65em;">
+<p>Great for <strong>picking</strong> types · <strong>not</strong> for inspector-style <strong>multi-cloud JIT</strong></p>
+<p><strong>Limitations</strong> (vs “pod annotation → any cloud / region / AZ / SKU”):</p>
 <ul>
-<li>single cloud only</li>
-</ul>
-<div class="fragment">
-<ul>
-<li>defined region</li>
+<li class="fragment"><strong>not a provisioner</strong> — only writes a Karpenter <code>NodePool</code> (<code>instance-type</code> list)</li>
+<li class="fragment"><strong>one cloud · one cluster</strong> — regions from NodeClass / node labels, not per-pod</li>
+<li class="fragment"><strong>no cross-cloud / cross-region hop</strong> in one request (AWS≠GCP≠Hetzner from one Pod)</li>
+<li class="fragment"><strong>needs Karpenter + cloud provider</strong> already there (<strong>EKS / Auto · AKS NAP · GKE · …</strong>)</li>
+<li class="fragment"><strong>no</strong> VPC / image import / Flatcar join / mesh — that’s <strong>not</strong> this controller</li>
+<li class="fragment">Pod <strong>can</strong> pin a type (<code>node.kubernetes.io/instance-type</code>) — but only if it’s <strong>already in the pool</strong><br>
+· no “<strong>any</strong> vendor · <strong>any</strong> region · <strong>this</strong> SKU” from one annotation (≠ <code>start.yml</code>)</li>
 </ul>
 </div>
-<div class="fragment">
-<ul>
-<li>needs karpenter installed</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>needs EKS, GKE, AKS, etc.</li>
-</ul>
 <aside class="notes">
-<p>TODO Attila speaker notes</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> can we run <strong>sc-inspector</strong> on this?</p>
+<ul>
+<li>today <strong><code>start.yml</code></strong>: GH Actions + Pulumi · pick <strong>vendor + instance</strong> · start VM<br>
+</li>
+<li>dream: Pod asks for <strong>exact</strong> type (and cloud/region) → node appears → isolate → tear down<br>
+</li>
+<li><strong>yes</strong>, Pod can use <strong>nodeSelector / affinity</strong> on <code>instance-type</code> — Karpenter will prefer/launch that<br>
+· <strong>if</strong> that type is in the generated <strong>NodePool</strong> (SC selection / ranking)<br>
+</li>
+<li><strong>no</strong>: one Pod cannot jump to <strong>another cloud/region</strong> — pool is still <strong>this</strong> cluster’s provider<br>
+</li>
+<li>still need <strong>multi-vendor provider + join</strong> → next slide (<strong>scarpenter</strong> / ROADMAP)</li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1557,26 +1595,41 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</div>
 </section>
 
 <section id="cat-sc-karpenter-nodepoolroadmap.md" class="title-slide slide level1">
 <h1>$ cat sc-karpenter-nodepool/ROADMAP.md</h1>
-<!-- TODO Attila describe the ideal stack -->
-<ol type="1">
-<li>onprem kubernetes cluster</li>
-</ol>
-<div class="fragment">
-<ol start="2" type="1">
-<li>be akarunk huzni gcp-t, hetznert etc AKARMIT EKS, GKE, AKS nelkul</li>
-</ol>
+<div style="font-size: 0.72em;">
+<p>Ideal stack for <strong>sc-inspector</strong> (replace GH Actions + Pulumi <code>start.yml</code>):</p>
+<ul>
+<li class="fragment"><strong>Control plane:</strong> on-prem / cheap VMs — <strong>k3s</strong> (3 servers) · <strong>not</strong> EKS/GKE/AKS</li>
+<li class="fragment"><strong>Mesh:</strong> <strong>Headscale</strong> tailnet — workers need <strong>outbound only</strong> (any cloud/region)</li>
+<li class="fragment"><strong>Orchestration:</strong> <strong>Hatchet</strong> — plan runs · create inspector Pods · retries / timeouts</li>
+<li class="fragment"><strong>Provisioner:</strong> <strong>scarpenter</strong> — multi-vendor <strong>Karpenter</strong> provider + <strong>sc-keeper</strong> catalog</li>
+<li class="fragment"><strong>Nodes:</strong> <strong>Flatcar</strong> + Ignition · TLS bootstrap join · <strong>single-tenant</strong> · die when empty</li>
+<li class="fragment"><strong>Flow:</strong> Pod <code>nodeSelector</code> (vendor/type) → pending → cheapest offering → boot → inspect → <strong>tear down</strong></li>
+<li class="fragment">(+ later: <strong>sc-karpenter-nodepool</strong> on top — pick types by <strong>benchmark</strong>, not just price)</li>
+</ul>
 </div>
-<div class="fragment">
-<ol start="3" type="1">
-<li>controller? operator? -&gt; vendor API create vpc/storage/node + network + join cluster</li>
-</ol>
 <aside class="notes">
-<p>TODO Attila speaker notes</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> what we’d build for Spare Cores inspector</p>
+<ul>
+<li>today: <strong><code>start.yml</code></strong> every 15m · Pulumi stacks · idle VMs · git as state<br>
+</li>
+<li>want: <strong>Pod-driven JIT</strong> · any of <strong>8 clouds</strong> · join <strong>our</strong> cluster · kill node when done<br>
+</li>
+<li><strong>k3s + Headscale</strong> — CP anywhere · nodes behind NAT OK<br>
+</li>
+<li><strong>Hatchet</strong> replaces the GH schedule / retry spaghetti<br>
+</li>
+<li><strong>scarpenter</strong> = the missing piece (multi-cloud Karpenter) — <strong>not</strong> sc-karpenter-nodepool alone<br>
+</li>
+<li>Flatcar everywhere · generic kubelet join · consolidateAfter ≈ <strong>0</strong><br>
+</li>
+<li>sc-karpenter-nodepool stays useful: <strong>which</strong> types · <strong>PassMark</strong> / price band<br>
+</li>
+<li>design: <code>sc-docs/k8s-inspector</code> · ask the room if they’d use this → next slide</li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1588,7 +1641,6 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</div>
 </section>
 
 <section id="feedback" class="title-slide slide level1">
