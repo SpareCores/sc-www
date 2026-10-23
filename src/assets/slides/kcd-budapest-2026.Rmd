@@ -83,7 +83,7 @@ and we decided we will do this in a different way
 
 ...
 
-courtain!
+curtain!
 :::
 
 # {#teaser data-curtain="open"}
@@ -98,20 +98,15 @@ courtain!
 ::: {.notes}
 more interactive .. so 
 
-I met Attila a few weeks ago and he mentioned that he is struggling with a problem, and
-this was the conversation we had:
-
-G: Hey Attila, ... how are you doing, you look a bit concerned..
-A: TODO Attila speaker notes on nehezen skalazhato python app 
-
-- single-core performance,
-- we need to pick the optimal server,
-- we are fed up with it ...
-- we even came up with a mascot for it ...
-
-G: Ah, interesting. I think what we do at Spare Cores might be relevant for you.
-A: Really? Could you pls show me what it does and how it can help us?
-G: Sure.
+<span style="color:#ef4444;font-weight:bold">G:</span>  I met Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:
+<span style="color:#ef4444;font-weight:bold">G:</span> Hey Attila, ... how are you doing, you look a bit concerned..  
+<span style="color:#34d399;font-weight:bold">A:</span> As an engineer, concerned is my default state ·
+   frustrated **Python app** · needs **low latency** · **won't scale** · **GIL** -> **single-core** performance ·
+   hunting right **instance type** · fed up with it -> **memes** [show image] ·
+   we call it **GILty**. Any ideas what to do with it?  
+<span style="color:#ef4444;font-weight:bold">G:</span> Ah, interesting. I think what we do at Spare Cores might be relevant for you.  
+<span style="color:#34d399;font-weight:bold">A:</span> Sounds great, tell me more!  
+<span style="color:#ef4444;font-weight:bold">G:</span> Sure.
 :::
 
 
@@ -611,7 +606,7 @@ high level numbers about the data we collect and make available
 :::
 
 ::: {.notes}
-A: wait, do I need to write SQL to query this data?
+<span style="color:#34d399;font-weight:bold">A:</span> wait, do I need to write SQL to query this data?
 :::
 
 # $ curl sparecores.com/servers
@@ -623,27 +618,26 @@ A: wait, do I need to write SQL to query this data?
 :::
 
 ::: {.notes}
-The easiest way to query this data is through our web component, as you can see on the screen ...
-
-G: What kind of server are we looking for?
-A: min 2 vCPU, 16 GB RAM, AWS, Oregon
-G: Any special network requirements? We track outbound traffic prices ...
-A: No.
-G: Anything else?
-A: Single core performance is important for usage.
-G: We support a bunch of benchmarks, e.g. PassMark CPU Single Threaded Test?
-G: Let's order by performance then.
-A: That metal server looks promising
-G: Let's see the details ...
+<span style="color:#ef4444;font-weight:bold">G:</span> The easiest way to query this data is through our web component, as you can see on the screen ...  
+<span style="color:#ef4444;font-weight:bold">G:</span> What kind of server are we looking for?  
+<span style="color:#34d399;font-weight:bold">A:</span> min 2 vCPU, 16 GB RAM, AWS, Oregon  
+<span style="color:#ef4444;font-weight:bold">G:</span> Any special network requirements? We track outbound traffic prices ...  
+<span style="color:#34d399;font-weight:bold">A:</span> No.  
+<span style="color:#ef4444;font-weight:bold">G:</span> Anything else?  
+<span style="color:#34d399;font-weight:bold">A:</span> Single core performance is the most important  
+<span style="color:#ef4444;font-weight:bold">G:</span> We support a bunch of benchmarks, e.g. PassMark CPU Single Threaded Test?  
+<span style="color:#ef4444;font-weight:bold">G:</span> Let's order by performance then.  
+<span style="color:#34d399;font-weight:bold">A:</span> That metal server looks promising  
+<span style="color:#ef4444;font-weight:bold">G:</span> Let's see the details ...
 
 Check server details page. Scoll over the benchmarks.
 - server metadata
 - benchmarks 
 - price diffs -> oops .. spot vs ondemand
 
-G: Actually, it's $5 ondemand.
-A: That's too much. The devops team picked r5a.large .. can we find something better around the same price?
-G: ADVISOR!!
+<span style="color:#ef4444;font-weight:bold">G:</span> Actually, it's $5 ondemand.  
+<span style="color:#34d399;font-weight:bold">A:</span> That's too much. The devops team picked r5a.large .. can we find something better around the same price?  
+<span style="color:#ef4444;font-weight:bold">G:</span> ADVISOR!!
 :::
 
 <!-- TODO Gergo get lstopo on m8azn.metal-12xl -->
@@ -799,8 +793,8 @@ TODO Gergo Marci ticket ne ugraljon az advisor a tetejere gombnyomasra
 TODO Gergo Marci ticket bad best price https://sparecores.com/advisor?vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&workload_id=passmark:cpu_single_threaded_test&workload_config=%7B%7D&avg_cpu_utilization=100&minimum_memory=16&price_allocation_enabled=true&best_price_allocation=ONDEMAND_ONLY (wrong region?)
 
 
-A: Can we query this in a programmatic way?
-G: yes ...
+<span style="color:#34d399;font-weight:bold">A:</span> Can we query this in a programmatic way?  
+<span style="color:#ef4444;font-weight:bold">G:</span> yes ...
 :::
 
 # $ curl docs.sparecores.com/api
@@ -812,9 +806,8 @@ G: yes ...
 :::
 
 ::: {.notes}
-for computers, we provide APIs ...
-
-is it something you could use?
+<span style="color:#ef4444;font-weight:bold">G:</span> for computers, we provide APIs ... is it something you could use?  
+<span style="color:#34d399;font-weight:bold">A:</span> Definitely! Let me show you what I came up with!
 :::
 
 # {#gilty}
@@ -824,10 +817,14 @@ is it something you could use?
 :::
 
 ::: {.notes}
-TODO Attila add speaker notes
 
-- single core performance, GIL
-- I've looked at the database and compared the performance of GILty with a few benchmarks to see which matches the best
+<span style="color:#34d399;font-weight:bold">A:</span> Back to **GILty** — **pure Python** app
+
+- **latency** + **throughput** → **single-core** (and cache) speed must be high
+  - more CPUs -> more throughput, but no **help for latency**
+- ran **GILty** on a few **AWS** instance types → measured **speed**
+- SC DB: which **benchmarks** **correlate** with those results?
+  - proxy: **PassMark CPU Single Threaded** — rank machines without re-running GILty everywhere
 :::
 
 ## {#gilty-and-friends}
@@ -837,33 +834,129 @@ TODO Attila add speaker notes
 :::
 
 ::: {.notes}
-TODO Attila speaker notes
-
-- GIL megkerulhetetlen
-- we need to provide infra to make it faster
-- using Spare Cores data in Karpenter?
-- we called it "Core Alone"
+<span style="color:#34d399;font-weight:bold">A:</span> **GIL** history — for folks who **don't know the GIL** yet  
+- image: **G(H)uido** v(F)an Rossum + **Larry** Hastings (Gilectomy)  
+- **GIL** since early 90s · serializes Python bytecode · **more cores ≠ faster** for pure Python  
+- **Greg Stein** 1996 patch · parts landed, GIL stayed  
+- **Gilectomy** (**Larry Hastings**, ~2016): real PoC, fine-grained locks — **overhead** killed it (Guido: no single-thread regression)  
+- **Sam Gross** nogil → **PEP 703** (2023): optional **free-threaded** build  
+- **3.13** experimental · **3.14** officially supported, **not default** · **3.15** Stable ABI `abi3t`  
+- for **GILty**-class apps: promising **if** you redesign for threads + deps support · else still need **fast single core**  
+- working name for this project: **"Core Alone"** — fits, right?
 :::
 
 # $ strace -e environment gilty.py
 
-<!-- TODO Attila describe the environment you run gilty.py -->
+**Before:** **AWS** · **EKS** · **Cluster Autoscaler** + **fixed node groups**  
+→ capacity, not **single-core** / **latency**
 
-- EKS
-- Karpenter
-- EKS Auto mode
+Then: **Karpenter** → **EKS Auto mode**  
+→ dynamic EC2 pick under load — easy
+
+But Karpenter AWS filters: family · cpu count · gen · …  
+plus `instance-cpu-sustained-clock-speed-mhz` — **vendor clock**, not a **benchmark**  
+→ **how do we pick the fastest core for GILty?**
 
 ::: {.notes}
-TODO Attila speaker notes
+<span style="color:#34d399;font-weight:bold">A:</span> path to the gap
+
+- **before:** CAS + fixed node groups — bad fit for **GILty**  
+- moved to **Karpenter**, then **EKS Auto mode** — flexible instance lists  
+- closest to “speed”: `karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz` (EC2 `SustainedClockSpeedInGhz` → MHz)  
+- that’s **catalog GHz**, not measured single-thread · cache/IPC matter · GILty ≠ GHz ranking  
+- still missing: **PassMark / Geekbench**-style pick
+:::
+
+## PassMark ST vs catalog GHz {#passmark-vs-ghz}
+
+::: {.centered}
+<img src="images/aws-passmark-vs-ghz.png" style="width: 92%; margin-top: -30px;" />
+:::
+
+::: {.notes}
+<span style="color:#34d399;font-weight:bold">A:</span> glance at the chart
+
+- ~**a thousand** AWS types · GHz vs PassMark single-thread  
+- trends up, but look at the **vertical stacks** — same clock, very different scores  
+- so Karpenter’s MHz filter ≠ **fastest core** for **GILty**
+:::
+
+## Same GHz, how wide is PassMark? {#passmark-ghz-spread}
+
+::: {.centered}
+<img src="images/aws-passmark-ghz-spread.png" style="max-height: 520px; width: auto; margin-top: -40px;" />
+:::
+
+<p style="font-size: 0.85em; text-align: center; margin-top: 0;">
+Within one clock band: up to about **+200%** PassMark ST spread
+</p>
+
+::: {.notes}
+<span style="color:#34d399;font-weight:bold">A:</span> same GHz → max PassMark gap
+
+- each bar = one catalog GHz · **(max − min) / min**  
+- some bands **double+** (~**+100%**…**+200%**)  
+- red ≈ bad · GHz alone won’t pick the **fast core**
+:::
+
+## Just set the filter to 5 GHz? {#just-5ghz}
+
+::: {style="font-size: 0.75em;"}
+Simple idea: `instance-cpu-sustained-clock-speed-mhz >= 5000`
+
+| | **r5a.large** | **c8a.large** | **m8azn.large** (5 GHz) |
+|---|---:|---:|---:|
+| PassMark ST | ~1400 | ~3800 | ~4300 |
+| on-demand | ~\$0.11 | ~\$0.11 | ~\$0.21 |
+| regions | ~16 | ~7 | **~6** |
+
+- only **~16** types · **2** families · ~**1%** of AWS catalog  
+- **~2×** the money for ~**+10%** PassMark vs **c8a**  
+- tiny fallback pool → **capacity / spot** pain
+:::
+
+::: {.notes}
+<span style="color:#34d399;font-weight:bold">A:</span> “then just require 5 GHz?”
+
+- **tiny menu** — handful of SKUs, mostly **m8azn** / **x8aedz**  
+- **few regions** · new / niche  
+- **m8azn.large** ≈ **twice** **c8a.large** price · only a bit faster  
+- **x8aedz** = huge RAM tax  
+- Karpenter wants **diversity** — 5 GHz pin = brittle  
+- need **benchmark ranking**, not a GHz floor
 :::
 
 # $ claude --plan "fix problem"
 
-<!-- TODO Attila describe the controller spec draft -->
+::: {style="font-size: 0.72em;"}
+Pub talk → need **benchmark**-ranked types in **Karpenter** (incl. **EKS Auto**)
 
+**Plan** (`sc-karpenter-nodepool` ADRs + sequenced v1 plans):
+
+1. **Own NodePools only** — never patch user pools / no `NodeOverlay`  
+   → **managed** Karpenter **+ GitOps** (Argo CD, …) — no fights over a shared object
+2. **`SCNodePool` → one NodePool** — template verbatim + selected `instance-type` list
+3. Emit **universal keys only** (`instance-type` · arch · capacity)  
+   → avoid **RequirementsDrifted** loops
+4. **Selectors + ranking** from **Keeper** (e.g. PassMark ST · family band)
+5. **Churn control** — 24h refresh · hysteresis · never empty list
+6. **Go / kubebuilder** — reuse Karpenter validation + provider test fakes
+:::
 
 ::: {.notes}
-TODO Attila speaker notes
+<span style="color:#34d399;font-weight:bold">A:</span> how we designed it (with Claude)
+
+- problem: Karpenter has **shape + price**, not **measured single-core**  
+- constraint: **EKS Auto Mode** → can't fork Karpenter / patch their pools  
+- also: **GitOps** (Argo CD, …) — don't mutate a pool the user owns → sync wars  
+- **ADR-001:** create **our own** NodePools only  
+- **ADR-003:** one **`SCNodePool`** → one NodePool  
+- **ADR-004:** only stamp keys every provider accepts — else **drift loop**  
+- **ADR-002:** read **Keeper API**, filter/rank client-side  
+- **ADR-006:** **churn** — don't replace nodes every time the ranking wiggles  
+- **ADR-007:** **Go** so we import Karpenter's own validators  
+- plans 01→08: scaffold → selection → adapters → controller → tests → Helm  
+- next: **demo** the result
 :::
 
 # {#demo}
@@ -918,42 +1011,60 @@ how to use your kubernetes controller for this?
 
 # ENTRYPOINT ["sc-karpenter-nodepool"]
 
-<!-- TODO Attila describe the limitations -->
+::: {style="font-size: 0.65em;"}
+Great for **picking** types · **not** for inspector-style **multi-cloud JIT**
 
-- single cloud only
+**Limitations** (vs “pod annotation → any cloud / region / AZ / SKU”):
 
-. . .
-
-- defined region
-
-. . .
-
-- needs karpenter installed
-
-. . .
-
-- needs EKS, GKE, AKS, etc.
+::: {.incremental}
+- **not a provisioner** — only writes a Karpenter `NodePool` (`instance-type` list)
+- **one cloud · one cluster** — regions from NodeClass / node labels, not per-pod
+- **no cross-cloud / cross-region hop** in one request (AWS≠GCP≠Hetzner from one Pod)
+- **needs Karpenter + cloud provider** already there (**EKS / Auto · AKS NAP · GKE · …**)
+- **no** VPC / image import / Flatcar join / mesh — that's **not** this controller
+- Pod **can** pin a type (`node.kubernetes.io/instance-type`) — but only if it's **already in the pool**  
+  · no “**any** vendor · **any** region · **this** SKU” from one annotation (≠ `start.yml`)
+:::
+:::
 
 ::: {.notes}
-TODO Attila speaker notes
+<span style="color:#34d399;font-weight:bold">A:</span> can we run **sc-inspector** on this?
+
+- today **`start.yml`**: GH Actions + Pulumi · pick **vendor + instance** · start VM  
+- dream: Pod asks for **exact** type (and cloud/region) → node appears → isolate → tear down  
+- **yes**, Pod can use **nodeSelector / affinity** on `instance-type` — Karpenter will prefer/launch that  
+  · **if** that type is in the generated **NodePool** (SC selection / ranking)  
+- **no**: one Pod cannot jump to **another cloud/region** — pool is still **this** cluster’s provider  
+- still need **multi-vendor provider + join** → next slide (**scarpenter** / ROADMAP)
 :::
 
 # $ cat sc-karpenter-nodepool/ROADMAP.md
 
-<!-- TODO Attila describe the ideal stack -->
+::: {style="font-size: 0.72em;"}
+Ideal stack for **sc-inspector** (replace GH Actions + Pulumi `start.yml`):
 
-1. onprem kubernetes cluster
+::: {.incremental}
+- **Control plane:** on-prem / cheap VMs — **k3s** (3 servers) · **not** EKS/GKE/AKS
+- **Mesh:** **Headscale** tailnet — workers need **outbound only** (any cloud/region)
+- **Orchestration:** **Hatchet** — plan runs · create inspector Pods · retries / timeouts
+- **Provisioner:** **scarpenter** — multi-vendor **Karpenter** provider + **sc-keeper** catalog
+- **Nodes:** **Flatcar** + Ignition · TLS bootstrap join · **single-tenant** · die when empty
+- **Flow:** Pod `nodeSelector` (vendor/type) → pending → cheapest offering → boot → inspect → **tear down**
 
-. . .
-
-2. be akarunk huzni gcp-t, hetznert etc AKARMIT EKS, GKE, AKS nelkul
-
-. . .
-
-3. controller? operator? -> vendor API create vpc/storage/node + network + join cluster
+:::
+:::
 
 ::: {.notes}
-TODO Attila speaker notes
+<span style="color:#34d399;font-weight:bold">A:</span> what we’d build for Spare Cores inspector
+
+- today: **`start.yml`** every 15m · Pulumi stacks · idle VMs · git as state  
+- want: **Pod-driven JIT** · any of **8 clouds** · join **our** cluster · kill node when done  
+- **k3s + Headscale** — CP anywhere · nodes behind NAT OK  
+- **Hatchet** replaces the GH schedule / retry spaghetti  
+- **scarpenter** = the missing piece (multi-cloud Karpenter) — **not** sc-karpenter-nodepool alone  
+- Flatcar everywhere · generic kubelet join · consolidateAfter ≈ **0**  
+- sc-karpenter-nodepool stays useful: **which** types · **PassMark** / price band  
+- design: `sc-docs/k8s-inspector` · ask the room if they’d use this → next slide
 :::
 
 # {#feedback}
