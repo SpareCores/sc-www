@@ -82,6 +82,7 @@ export const appConfig: ApplicationConfig = {
       withHttpTransferCacheOptions({
         includeHeaders: ["x-total-count", "x-request-id"],
         filter: httpFilter,
+        includeRequestsWithAuthHeaders: true,
       }),
       withEventReplay(),
     ),
