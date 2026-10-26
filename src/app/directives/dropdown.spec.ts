@@ -1,7 +1,7 @@
 import { OverlayContainer } from "@angular/cdk/overlay";
 import { Component, signal, viewChild } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { PageOverlayContainer } from "../services/overlay/page-overlay-container";
+import { DROPDOWN_LAYER } from "../services/overlay/dropdown-layer";
 import { Dropdown } from "./dropdown";
 
 @Component({
@@ -29,10 +29,19 @@ class HostComponent {
   dropdown = viewChild.required<Dropdown>("dropdown");
 }
 
+@Component({
+  template: `
+    <button id="top_trigger" [scDropdown]="panel">Open dropdown</button>
+    <ng-template #panel><div id="top_panel">Panel</div></ng-template>
+  `,
+  imports: [Dropdown],
+  providers: [{ provide: DROPDOWN_LAYER, useValue: "top" }],
+})
+class TopLayerHostComponent {}
+
 describe("Dropdown", () => {
   let fixture: ComponentFixture<HostComponent>;
   let trigger: HTMLButtonElement;
-  let pageContainer: HTMLElement;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -42,26 +51,46 @@ describe("Dropdown", () => {
     fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
     trigger = fixture.nativeElement.querySelector("#trigger");
-    pageContainer = TestBed.inject(PageOverlayContainer).getContainerElement();
   });
 
   function panel(): HTMLElement | null {
-    return pageContainer.querySelector("#panel");
+    return document.querySelector("#panel");
   }
 
-  it("opens the panel in the page overlay container on click", () => {
+  it("opens the panel in a page-level panel host on click", () => {
     trigger.click();
     fixture.detectChanges();
 
-    expect(panel()).not.toBeNull();
-    expect(pageContainer.classList).toContain("sc-page-overlay-container");
+    expect(panel()?.parentElement?.classList).toContain("sc-dropdown-panel");
+    expect(panel()?.closest(".cdk-overlay-container")).toBeNull();
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    expect(trigger.getAttribute("aria-haspopup")).toBe("true");
+  });
+
+  it("positions the panel below the trigger in page coordinates", () => {
+    fixture.componentInstance.dropdown().open();
+
+    const host = panel()!.parentElement!;
+    const triggerRect = trigger.getBoundingClientRect();
+
+    expect(parseFloat(host.style.top)).toBeCloseTo(
+      triggerRect.bottom + 10 + window.scrollY,
+      0,
+    );
+  });
+
+  it("keeps the top layer on the CDK overlay", () => {
+    const topFixture = TestBed.createComponent(TopLayerHostComponent);
+    topFixture.detectChanges();
+
+    topFixture.nativeElement.querySelector("#top_trigger").click();
+    topFixture.detectChanges();
+
     expect(
       TestBed.inject(OverlayContainer)
         .getContainerElement()
-        .querySelector("#panel"),
-    ).toBeNull();
-    expect(trigger.getAttribute("aria-expanded")).toBe("true");
-    expect(trigger.getAttribute("aria-haspopup")).toBe("true");
+        .querySelector("#top_panel"),
+    ).not.toBeNull();
   });
 
   it("closes on a second trigger click", () => {

@@ -100,8 +100,11 @@ $content-max-width: 1400px;
   z-index: 60;
 }
 
-.cdk-overlay-container.sc-page-overlay-container {
-  z-index: 40;
+.sc-dropdown-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 35;
 }
 
 .sc-auth-pending-overlay {

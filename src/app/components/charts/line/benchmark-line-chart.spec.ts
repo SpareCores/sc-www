@@ -3,7 +3,6 @@ import { By } from "@angular/platform-browser";
 
 import { BenchmarkLineChart } from "./benchmark-line-chart";
 import { Dropdown } from "../../../directives/dropdown";
-import { PageOverlayContainer } from "../../../services/overlay/page-overlay-container";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 import {
   BenchmarkLineChartData,
@@ -136,11 +135,7 @@ describe("BenchmarkLineChart", () => {
       .open();
     fixture.detectChanges();
 
-    const overlayElement =
-      TestBed.inject(PageOverlayContainer).getContainerElement();
-    const optionsPanel = overlayElement.querySelector(
-      `#${component.optionsId}`,
-    );
+    const optionsPanel = document.querySelector(`#${component.optionsId}`);
     const firstOptionButton = optionsPanel?.querySelector("button");
     const firstOptionLabel = firstOptionButton?.querySelector("div");
 

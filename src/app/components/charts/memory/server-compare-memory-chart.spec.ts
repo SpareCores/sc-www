@@ -3,7 +3,6 @@ import { By } from "@angular/platform-browser";
 
 import { ServerCompareMemoryChart } from "./server-compare-memory-chart";
 import { Dropdown } from "../../../directives/dropdown";
-import { PageOverlayContainer } from "../../../services/overlay/page-overlay-container";
 import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 
@@ -68,11 +67,7 @@ describe("ServerCompareMemoryChart", () => {
       .open();
     fixture.detectChanges();
 
-    const overlayElement =
-      TestBed.inject(PageOverlayContainer).getContainerElement();
-    const optionsPanel = overlayElement.querySelector(
-      `#${component.optionsId}`,
-    );
+    const optionsPanel = document.querySelector(`#${component.optionsId}`);
     const firstOptionButton = optionsPanel?.querySelector("button");
     const firstOptionLabel = firstOptionButton?.querySelector("div");
 

@@ -57,9 +57,27 @@ describe("Dropdowns", () => {
 
     cy.get("#currency_button").click();
     cy.get("#currency_options")
-      .closest(".cdk-overlay-container")
-      .should("have.class", "sc-page-overlay-container")
-      .and("have.css", "z-index", "40");
+      .closest(".sc-dropdown-panel")
+      .should("have.css", "position", "absolute")
+      .and("have.css", "z-index", "35");
+  });
+
+  it("keeps a page dropdown attached to its trigger while scrolling", () => {
+    E2EEvent.visitURL("/servers");
+
+    cy.get("#currency_button").click();
+    cy.get("#currency_options").should("be.visible");
+    cy.window().then((win) => win.scrollBy(0, 200));
+
+    cy.get("#currency_button").then(($trigger) => {
+      const triggerBottom = $trigger[0].getBoundingClientRect().bottom;
+      cy.get("#currency_options").should(($panel) => {
+        expect($panel[0].getBoundingClientRect().top).to.be.closeTo(
+          triggerBottom + 10,
+          2,
+        );
+      });
+    });
   });
 
   it("flips the page-size dropdown above its trigger near the viewport bottom", () => {
