@@ -1,9 +1,9 @@
-import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs.component";
+import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs";
 import {
   SearchBarCustomSelectOption,
   SearchBarFilterCategory,
   SearchBarParameterPlacement,
-} from "../../components/search-bar/search-bar.component";
+} from "../../components/search-bar/search-bar";
 import { buildAdvisorColumns, TableColumn } from "../../tools/table-columns";
 import { AdvisorOptimizationGoal, AdvisorSeoMetadata } from "./advisor.types";
 

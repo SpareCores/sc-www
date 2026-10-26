@@ -1,0 +1,1491 @@
+import {
+  Component,
+  DestroyRef,
+  PLATFORM_ID,
+  OnInit,
+  ViewChild,
+  viewChild,
+  ElementRef,
+  OnDestroy,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from "@angular/core";
+import {
+  BreadcrumbSegment,
+  Breadcrumbs,
+} from "../../components/breadcrumbs/breadcrumbs";
+import { KeeperAPI } from "../../services/keeper-api";
+import {
+  OrderDir,
+  ServerPKs,
+  ServerPriceWithPKs,
+} from "../../../../sdk/data-contracts";
+import {
+  decodeBase64JsonUrlState,
+  isBenchmarkUrlState,
+} from "../../tools/encoded-url-state";
+import { navigateListingQuery } from "../../tools/listing-query-navigate";
+import {
+  areSearchParamsEqual,
+  toSearchParams,
+} from "../../tools/listing-search-params";
+import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { SeoHandler } from "../../services/seo-handler";
+import { FormsModule } from "@angular/forms";
+import {
+  LucideDynamicIcon,
+  LucideCheck,
+  LucideChevronLeft,
+  LucideChevronRight,
+  LucideInfo,
+  LucideScale,
+  LucideSearch,
+  LucideX,
+} from "@lucide/angular";
+import { Button } from "../../components/button/button";
+import { PageHeader } from "../../components/page-header/page-header";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
+import { SearchBar } from "../../components/search-bar/search-bar";
+import type { SearchBarParameter } from "../../components/search-bar/types/search-bar.types";
+import { Pagination } from "../../components/pagination/pagination";
+import {
+  ComparedServer,
+  CompareSelection,
+} from "../../services/compare-selection";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Analytics } from "../../services/analytics";
+import { Modal, ModalOptions } from "flowbite";
+import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
+import { Toast } from "../../services/toast";
+import {
+  BAD_BENCHMARK_URL_TOAST_ID,
+  QUERY_ERROR_SERVERS_TOAST_ID,
+  SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
+} from "../../services/toast-ids";
+import { INVALID_BENCHMARK_URL_TOAST_BODY } from "../../services/url-toast-content";
+import { UiTooltip } from "../../services/ui-tooltip";
+import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { Subscription } from "rxjs";
+import openApiSpec from "../../../../sdk/openapi.json";
+import specialServerListsData from "./special-lists.js";
+import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
+import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size-pipe";
+import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic-pipe";
+import { StoragePipe } from "../../pipes/storage-pipe";
+import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
+import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
+import { formatNumberInputValue } from "../../pipes/pipe-utils";
+import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
+import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";
+import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionsUi } from "../../collections/collections-ui";
+import {
+  isDefaultListingQuery,
+  SAVED_ITEM_FALLBACK_NOTE,
+  normalizeSearchQuery,
+} from "../../collections/collections.utils";
+import type { SavedSearchItem } from "../../collections/collections.types";
+import { AuthState } from "../../core/auth";
+import {
+  BestPriceAllocationType,
+  bestPriceAllocationTypes,
+  CurrencyOption,
+  availableCurrencies,
+} from "../../tools/shared_data";
+import {
+  buildServerListingColumns,
+  TableColumn,
+} from "../../tools/table-columns";
+
+const optionsModal: ModalOptions = {
+  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
+  closable: true,
+};
+
+const serverListingIntroductionModalOptions: ModalOptions = {
+  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
+  closable: true,
+};
+
+@Component({
+  selector: "sc-server-listing",
+  imports: [
+    CommonModule,
+    FormsModule,
+    Breadcrumbs,
+    LucideDynamicIcon,
+    LucideCheck,
+    LucideChevronLeft,
+    LucideChevronRight,
+    LucideInfo,
+    LucideScale,
+    LucideSearch,
+    LucideX,
+    RouterModule,
+    Button,
+    PageHeader,
+    BenchmarkIconPipe,
+    SearchBar,
+    Pagination,
+    LoadingSpinner,
+    AcceleratorCountPipe,
+    CpuCacheSizePipe,
+    MonthlyTrafficPipe,
+    StoragePipe,
+    AcceleratorMemoryPipe,
+    Ipv4CountPipe,
+    FlowbiteDropdown,
+    BookmarkButton,
+    InstanceFavoriteContextMenu,
+    CollectionSaveModal,
+  ],
+  templateUrl: "./server-listing.html",
+  styleUrl: "./server-listing.scss",
+})
+export class ServerListing implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private keeperAPI = inject(KeeperAPI);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private SEOHandler = inject(SeoHandler);
+  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
+  allocationDropdown = viewChild<FlowbiteDropdown>("allocationDropdown");
+  pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
+  private analytics = inject(Analytics);
+  private serverCompare = inject(CompareSelection);
+  private toastService = inject(Toast);
+  private destroyRef = inject(DestroyRef);
+  private uiTooltip = inject(UiTooltip);
+  private collectionsUi = inject(CollectionsUi);
+  private auth = inject(AuthState);
+  saveSearchModal = viewChild(CollectionSaveModal);
+
+  isCollapsed = false;
+
+  filterCategories = [
+    { category_id: "basic", name: "Basics", icon: "server", collapsed: true },
+    {
+      category_id: "performance",
+      name: "Performance",
+      icon: "gauge",
+      collapsed: true,
+    },
+    {
+      category_id: "processor",
+      name: "Processor",
+      icon: "microchip",
+      collapsed: false,
+    },
+    {
+      category_id: "cpu_cache",
+      name: "CPU Cache",
+      icon: "layers",
+      collapsed: true,
+    },
+    {
+      category_id: "accelerator",
+      name: "Accelerator",
+      icon: "cpu",
+      collapsed: true,
+    },
+    { category_id: "gpu", name: "GPU", icon: "gpu", collapsed: true },
+    { category_id: "asic", name: "ASIC", icon: "cpu-ai", collapsed: true },
+    {
+      category_id: "memory",
+      name: "Memory",
+      icon: "memory-stick",
+      collapsed: true,
+    },
+    {
+      category_id: "storage",
+      name: "Storage",
+      icon: "database",
+      collapsed: true,
+    },
+    {
+      category_id: "traffic",
+      name: "Network",
+      icon: "arrow-up-down",
+      collapsed: true,
+    },
+    { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+    { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
+  ];
+
+  breadcrumbs: BreadcrumbSegment[] = [
+    { name: "Home", url: "/" },
+    { name: "Servers", url: "/servers" },
+  ];
+
+  tableColumns: TableColumn[] = [];
+
+  possibleColumns: TableColumn[] = buildServerListingColumns();
+
+  hasCustomColumns = false;
+
+  availableCurrencies: CurrencyOption[] = availableCurrencies;
+  selectedCurrency = this.availableCurrencies[0];
+  displayedCurrency = this.availableCurrencies[0];
+
+  bestPriceAllocationTypes: BestPriceAllocationType[] =
+    bestPriceAllocationTypes;
+  bestPriceAllocation = this.bestPriceAllocationTypes[0];
+
+  pageLimits = [10, 25, 50, 100, 250];
+
+  limit = 25;
+  page = 1;
+  totalPages = 0;
+
+  orderBy: string | undefined = undefined;
+  orderDir: OrderDir | undefined = undefined;
+
+  private readonly priceOrderFields = [
+    "min_price",
+    "min_price_ondemand",
+    "min_price_ondemand_monthly",
+    "min_price_spot",
+    "score_per_price",
+    "selected_benchmark_score_per_price",
+  ];
+  private readonly priceOrderWarnings: Record<string, string> = {
+    only_orderable:
+      "Servers without active pricing are automatically excluded when sorting by price or cost efficiency, making this filter redundant. Sort by other metrics to view servers that are not available to order.",
+  };
+  private readonly noParameterWarnings: Record<string, string> = {};
+
+  get parameterWarnings(): Record<string, string> {
+    return this.orderBy && this.priceOrderFields.includes(this.orderBy)
+      ? this.priceOrderWarnings
+      : this.noParameterWarnings;
+  }
+
+  servers: ServerPriceWithPKs[] | any[] = [];
+
+  openApiJson: any = openApiSpec;
+  searchParameters: SearchBarParameter[] = [];
+  query: any = {};
+
+  isLoading = true;
+
+  freetextSearchInput: string | null = null;
+  modalSubmitted = false;
+  modalResponse: any;
+  modalResponseStr: string[] = [];
+
+  vendorMetadata: any[] = [];
+  benchmarkMetadata: any[] = [];
+  benchmarksConfigs: any[] = [];
+  benchmarkCategories: any[] = [];
+
+  // getter/setter instead of direct property for setting up a hook on change
+  private _selectedBenchmarkConfig: any = null;
+  get selectedBenchmarkConfig(): any {
+    return this._selectedBenchmarkConfig;
+  }
+  set selectedBenchmarkConfig(value: any) {
+    this._selectedBenchmarkConfig = value;
+    this.onBenchmarkConfigChanged();
+  }
+
+  modalBenchmarkSelect: any;
+
+  //modal
+  modalText: string = "Select Benchmark Category";
+  tempfilteredBenchmarkConfigs: any[] = [];
+  tempSelectedBenchmarkCategory: string | null = null;
+  tempSelectedBenchmarkConfig: any = null;
+  modalFilterTerm: string | null = null;
+
+  @ViewChild("tooltipDefault") tooltip!: ElementRef;
+  introductionModalRef =
+    viewChild<ElementRef<HTMLElement>>("introductionModal");
+  private introductionModal: Modal | null = null;
+  showIntroductionVideo = false;
+  clipboardIcon = "clipboard";
+  tooltipContent = "";
+
+  sub: any;
+
+  specialServerLists: any[] = specialServerListsData;
+  specialList: any = null;
+  specialParameters: any = {};
+  title: string = "Cloud Servers Navigator";
+  description: string =
+    'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
+
+  private readonly defaultTitle = "Cloud Servers Navigator";
+  private readonly defaultDescription = this.description;
+  private readonly pendingSaveSearchClose = signal(false);
+  private readonly editingSearchId = signal<string | null>(null);
+  private bookmarkSource: SavedSearchItem | null = null;
+
+  private subscription = new Subscription();
+  private searchRequestId = 0;
+  private benchmarksLoaded = false;
+  private benchmarkLoadAbortController: AbortController | null = null;
+  private searchAbortController: AbortController | null = null;
+  private previousSearchParams: Record<string, unknown> | null = null;
+
+  constructor() {
+    effect(() => {
+      this.collectionsUi.store.savedSearches();
+      this.syncSavedSearchChrome();
+    });
+
+    effect(() => {
+      if (!this.isAuthenticated()) {
+        return;
+      }
+      const modal = this.saveSearchModal();
+      if (!modal) {
+        return;
+      }
+      if (!this.collectionsUi.takePendingOpenSave("search-servers")) {
+        return;
+      }
+      untracked(() => this.openSaveSearchModal());
+    });
+
+    effect(() => {
+      if (!this.pendingSaveSearchClose()) {
+        return;
+      }
+
+      this.collectionsUi.store.savedSearches();
+      const editingId = this.editingSearchId();
+      const query = this.getQueryObjectBase();
+      const saved = this.collectionsUi.activeSavedSearch("servers", query);
+      const saving = this.collectionsUi.isSavingSearch("servers", query);
+      const updating = editingId
+        ? this.collectionsUi.isUpdatingSearch(editingId)
+        : saved
+          ? this.collectionsUi.isUpdatingSearch(saved.id)
+          : false;
+
+      if (saving || updating) {
+        return;
+      }
+
+      this.pendingSaveSearchClose.set(false);
+      this.editingSearchId.set(null);
+      this.saveSearchModal()?.close();
+    });
+  }
+
+  ngOnInit() {
+    this.SEOHandler.updateTitleAndMetaTags(
+      "Cloud Servers Navigator - Spare Cores",
+      "Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.",
+      "cloud, server, instance, price, comparison, spot, sparecores",
+    );
+
+    this.SEOHandler.updateThumbnail(
+      "https://sparecores.com/assets/images/og/server_list_image.png",
+    );
+
+    const parameters = this.openApiJson.paths["/servers"].get.parameters || [];
+
+    this.searchParameters = parameters
+      .filter((p: any) => p.name !== "regions")
+      .map((parameter: any): SearchBarParameter => {
+        const schema = { ...(parameter.schema ?? {}) };
+        if (
+          parameter.name === "hw_virt" ||
+          parameter.name === "cpu_hyperthreading"
+        ) {
+          schema.filter_mode = "tri_state_boolean";
+        }
+        return {
+          name: parameter.name,
+          modelValue: null,
+          schema,
+        };
+      });
+
+    let limit = this.searchParameters.find(
+      (param: any) => param.name === "limit",
+    );
+    if (limit?.schema?.default) {
+      this.limit = limit.schema.default as number;
+    }
+
+    let order = this.searchParameters.find(
+      (param: any) => param.name === "order_by",
+    );
+    if (order?.schema?.default) {
+      this.orderBy = order.schema.default as string;
+    }
+
+    this.route.params.subscribe(() => {
+      this.setSpecialList();
+      this.syncSavedSearchChrome();
+    });
+
+    // initial load is special as we need to decode the benchmark URL param
+    let isInitialLoad = true;
+    let shouldSearchAfterBenchmarks = false;
+    let benchmarkDataEncoded: string | null = null;
+
+    this.subscription.add(
+      this.route.queryParams.subscribe((params: Params) => {
+        const query: any = normalizeSearchQuery(
+          JSON.parse(JSON.stringify(params || {})),
+        );
+        this.query = query;
+
+        if (query.page) {
+          this.page = parseInt(query.page);
+        }
+
+        if (query.limit) {
+          this.limit = parseInt(query.limit);
+        }
+
+        this.setSpecialList();
+
+        const tableColumns: string = this.specialList?.columns || query.columns;
+        if (tableColumns && parseInt(tableColumns)) {
+          const tableColumnsArray: number[] = Number(tableColumns)
+            .toString(2)
+            .split("")
+            .map(Number);
+          if (tableColumnsArray.length === this.possibleColumns.length) {
+            this.hasCustomColumns = query.columns !== undefined;
+            this.possibleColumns.forEach((column, index) => {
+              column.show = tableColumnsArray[index] === 1;
+            });
+          }
+        }
+
+        if (this.specialList?.order_by && this.specialList?.order_dir) {
+          this.orderBy = this.specialList.order_by;
+          this.orderDir = this.specialList.order_dir;
+        }
+
+        if (query.order_by && query.order_dir) {
+          this.orderBy = query.order_by;
+          this.orderDir = query.order_dir;
+        }
+
+        if (
+          this.orderBy &&
+          this.possibleColumns.find(
+            (column) => column.orderField === this.orderBy,
+          )
+        ) {
+          this.possibleColumns.find(
+            (column) => column.orderField === this.orderBy,
+          )!.show = true;
+        }
+
+        if (query.currency) {
+          this.selectedCurrency =
+            this.availableCurrencies.find(
+              (currency) => currency.slug === query.currency,
+            ) || this.availableCurrencies[0];
+        } else {
+          this.selectedCurrency = this.availableCurrencies[0];
+        }
+
+        if (query.best_price_allocation) {
+          this.bestPriceAllocation =
+            this.bestPriceAllocationTypes.find(
+              (allocation) => allocation.slug === query.best_price_allocation,
+            ) || this.bestPriceAllocationTypes[0];
+        } else {
+          this.bestPriceAllocation = this.bestPriceAllocationTypes[0];
+        }
+
+        this.refreshColumns(false);
+
+        // will process later
+        benchmarkDataEncoded = query.benchmark || null;
+
+        // we don't want to search yet on initial load
+        // as we need to decode the benchmark URL param first,
+        // and will do the search after getBenchmarkConfigs is called
+        if (!isInitialLoad) {
+          if (this.benchmarksLoaded) {
+            this.syncSelectedBenchmarkConfig(benchmarkDataEncoded);
+          }
+          if (
+            this.previousSearchParams === null ||
+            !areSearchParamsEqual(this.previousSearchParams, query)
+          ) {
+            this.previousSearchParams = toSearchParams(query);
+            this._searchServers(true);
+          }
+          this.syncSavedSearchChrome();
+          return;
+        }
+
+        if (!query.benchmark) {
+          shouldSearchAfterBenchmarks = true;
+        }
+
+        this.syncSavedSearchChrome();
+      }),
+    );
+
+    this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
+    this.benchmarkLoadAbortController?.abort();
+    this.benchmarksLoaded = false;
+    const benchmarkLoadAbortController = new AbortController();
+    this.benchmarkLoadAbortController = benchmarkLoadAbortController;
+
+    Promise.all([
+      this.keeperAPI.getServerBenchmarkMeta({
+        signal: benchmarkLoadAbortController.signal,
+      }),
+      this.keeperAPI.getBenchmarkConfigs({
+        signal: benchmarkLoadAbortController.signal,
+      }),
+    ])
+      .then((data) => {
+        if (
+          this.destroyRef.destroyed ||
+          this.benchmarkLoadAbortController !== benchmarkLoadAbortController
+        ) {
+          return;
+        }
+
+        this.benchmarksLoaded = true;
+        this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
+        this.benchmarkMetadata = data[0]?.body;
+
+        this.benchmarksConfigs = data[1]?.body.map((config: any) => {
+          let template = this.benchmarkMetadata.find(
+            (benchmark: any) => benchmark.benchmark_id === config.benchmark_id,
+          );
+          return {
+            ...config,
+            config_title: config.config.replaceAll(/[{}"]/g, ""),
+            benchmarkTemplate: template,
+            group: JSON.stringify({
+              group: { title: config.category, name: config.category },
+            }),
+          };
+        });
+
+        this.benchmarkCategories = [];
+        this.benchmarksConfigs.forEach((config: any) => {
+          if (
+            !this.benchmarkCategories.find(
+              (category: any) => category === config.category,
+            )
+          ) {
+            this.benchmarkCategories.push(config.category);
+          }
+        });
+
+        this.syncSelectedBenchmarkConfig(benchmarkDataEncoded);
+
+        if (
+          shouldSearchAfterBenchmarks ||
+          this.route.snapshot.queryParams.benchmark
+        ) {
+          this.query = {
+            ...this.query,
+            ...this.route.snapshot.queryParams,
+          };
+          this.previousSearchParams = toSearchParams(this.query);
+          this._searchServers(true);
+        }
+
+        if (isPlatformBrowser(this.platformId)) {
+          this.initDropdown();
+        }
+      })
+      .catch((err) => {
+        if (
+          this.destroyRef.destroyed ||
+          benchmarkLoadAbortController.signal.aborted ||
+          this.benchmarkLoadAbortController !== benchmarkLoadAbortController
+        ) {
+          return;
+        }
+
+        this.analytics.SentryException(err, {
+          tags: {
+            location: this.constructor.name,
+            function: "loadBenchmarks",
+          },
+        });
+        console.error(err);
+        this.toastService.showHttpError(err, {
+          id: SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
+          title: "Failed to load server filters.",
+        });
+
+        this.previousSearchParams = toSearchParams(this.query);
+        this._searchServers(true);
+      })
+      .finally(() => {
+        if (
+          !this.destroyRef.destroyed &&
+          this.benchmarkLoadAbortController === benchmarkLoadAbortController
+        ) {
+          this.benchmarkLoadAbortController = null;
+          isInitialLoad = false;
+        }
+      });
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.subscription.add(
+        this.serverCompare.selectionChanged.subscribe(
+          (selectedServers: ComparedServer[]) => {
+            this.servers?.forEach((server: any) => {
+              server.selected =
+                selectedServers.findIndex(
+                  (item: ComparedServer) =>
+                    item.vendor === server.vendor_id &&
+                    item.server === server.api_reference,
+                ) !== -1;
+            });
+          },
+        ),
+      );
+
+      const targetElModal = document.getElementById("benchmark-type-modal");
+
+      this.modalBenchmarkSelect = new Modal(targetElModal, optionsModal, {
+        id: "benchmark-type-modal",
+        override: true,
+      });
+    }
+  }
+
+  private async initDropdown() {
+    try {
+      const prelineModule = await import("@preline/combobox");
+      // try to initialize using the default export, which works in dev
+      if (
+        prelineModule.default &&
+        typeof prelineModule.default.autoInit === "function"
+      ) {
+        prelineModule.default.autoInit();
+      } else {
+        // need to fall back to manual initialization in prod :shrug:
+        document.querySelectorAll("[data-hs-combobox]").forEach((el) => {
+          if (
+            prelineModule.default &&
+            typeof prelineModule.default === "function"
+          ) {
+            try {
+              // @ts-expect-error - Attempting to initialize even if types don't match
+              new prelineModule.default(el);
+            } catch (e) {
+              console.error("Failed to initialize combobox:", e);
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error initializing dropdown:", error);
+      // fall back to trying to load globally if it exists
+      if (
+        window.HSComboBox &&
+        typeof window.HSComboBox.autoInit === "function"
+      ) {
+        window.HSComboBox.autoInit();
+      }
+    }
+  }
+
+  ngOnDestroy() {
+    this.benchmarkLoadAbortController?.abort();
+    this.searchAbortController?.abort();
+    this.sub?.unsubscribe();
+    this.subscription.unsubscribe();
+    this.introductionModal?.hide();
+    this.introductionModal = null;
+    this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+    this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
+    this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
+  }
+
+  private findBenchmarkConfig(
+    benchmarkId: string,
+    configValue: string,
+  ): any | null {
+    return (
+      this.benchmarksConfigs.find(
+        (config: any) =>
+          config.benchmark_id === benchmarkId && config.config === configValue,
+      ) || null
+    );
+  }
+
+  private syncSelectedBenchmarkConfig(
+    benchmarkDataEncoded?: string | null,
+  ): void {
+    let nextBenchmarkConfig =
+      this.specialList?.benchmark_id && this.specialList?.benchmark_config
+        ? this.findBenchmarkConfig(
+            this.specialList.benchmark_id,
+            this.specialList.benchmark_config,
+          )
+        : null;
+
+    if (benchmarkDataEncoded) {
+      const benchmarkData = decodeBase64JsonUrlState(
+        benchmarkDataEncoded,
+        isBenchmarkUrlState,
+      );
+
+      if (benchmarkData.value) {
+        const benchmarkConfig = this.findBenchmarkConfig(
+          benchmarkData.value.id,
+          benchmarkData.value.config,
+        );
+
+        if (benchmarkConfig) {
+          nextBenchmarkConfig = benchmarkConfig;
+          this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
+        } else {
+          showInvalidUrlParamToast(this.toastService, this.platformId, {
+            id: BAD_BENCHMARK_URL_TOAST_ID,
+            body: INVALID_BENCHMARK_URL_TOAST_BODY,
+          });
+        }
+      } else {
+        console.warn("Invalid benchmark data in URL:", benchmarkData.error);
+        showInvalidUrlParamToast(this.toastService, this.platformId, {
+          id: BAD_BENCHMARK_URL_TOAST_ID,
+          body: INVALID_BENCHMARK_URL_TOAST_BODY,
+        });
+      }
+    } else {
+      this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
+
+      if (!nextBenchmarkConfig && this.benchmarksConfigs.length > 0) {
+        nextBenchmarkConfig = this.findBenchmarkConfig("stress_ng:bestn", "{}");
+      }
+    }
+
+    if (nextBenchmarkConfig !== this._selectedBenchmarkConfig) {
+      this.selectedBenchmarkConfig = nextBenchmarkConfig;
+    }
+  }
+
+  setSpecialList() {
+    const id = this.route.snapshot.paramMap.get("id");
+
+    if (id) {
+      this.specialList = this.specialServerLists.find((list) => list.id === id);
+    } else {
+      this.specialList = null;
+    }
+
+    this.specialParameters = this.specialList?.parameters || {};
+  }
+
+  private baseServerListingBreadcrumbs(): BreadcrumbSegment[] {
+    const breadcrumbs: BreadcrumbSegment[] = [
+      { name: "Home", url: "/" },
+      { name: "Servers", url: "/servers" },
+    ];
+
+    if (this.specialList) {
+      breadcrumbs.push({
+        name: this.specialList.title,
+        url: `/servers/${this.specialList.id}`,
+      });
+    }
+
+    return breadcrumbs;
+  }
+
+  private syncSavedSearchChrome(): void {
+    const exact = this.activeSavedSearch();
+    if (exact) {
+      this.bookmarkSource = exact;
+    } else if (isDefaultListingQuery(this.getQueryObjectBase())) {
+      this.bookmarkSource = null;
+    }
+
+    if (exact) {
+      this.title = exact.name;
+      this.description = exact.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
+      this.breadcrumbs = [
+        ...this.baseServerListingBreadcrumbs(),
+        { name: exact.name, url: this.router.url },
+      ];
+      this.SEOHandler.updateTitleAndMetaTags(
+        `${exact.name} - Spare Cores`,
+        this.description,
+        "cloud, server, instance, price, comparison, spot, sparecores",
+      );
+      return;
+    }
+
+    this.title = this.specialList?.title || this.defaultTitle;
+    this.description = this.specialList?.description || this.defaultDescription;
+    this.breadcrumbs = this.baseServerListingBreadcrumbs();
+    this.SEOHandler.updateTitleAndMetaTags(
+      `${this.title} - Spare Cores`,
+      this.description,
+      "cloud, server, instance, price, comparison, spot, sparecores",
+    );
+  }
+
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+  }
+
+  getMemory(item: ServerPKs) {
+    return item.memory_amount === null || item.memory_amount === undefined
+      ? "-"
+      : `${(item.memory_amount / 1024).toFixed(1)} GiB`;
+  }
+
+  getScore(value: number | null): string {
+    if (value === null || value === undefined) return "-";
+    // make sure to show small numbers
+    if (value < 1) {
+      return value.toPrecision(1);
+    }
+    // but suppress decimals for larger numbers, without rounding
+    if (value < 100) {
+      return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+    }
+    return Number.isInteger(value) ? value.toString() : value.toFixed(0);
+  }
+
+  openServerDetails(server: ServerPKs) {
+    this.router.navigateByUrl(
+      `/server/${server.vendor.vendor_id}/${server.api_reference}`,
+    );
+  }
+
+  toggleCategory(category: any) {
+    category.collapsed = !category.collapsed;
+  }
+
+  getParametersByCategory(category: string) {
+    if (!this.searchParameters) return [];
+
+    return this.searchParameters?.filter(
+      (param: any) => param.schema?.category_id === category,
+    );
+  }
+
+  searchBarChanged(event: any) {
+    this.page = 1;
+    this.searchOptionsChanged(event);
+  }
+
+  searchOptionsChanged(event: any) {
+    let queryParams: any = { ...event };
+
+    if (this.page > 1) {
+      queryParams.page = this.page;
+    } else {
+      delete queryParams.page;
+    }
+
+    if (this.orderBy && this.orderDir) {
+      queryParams.order_by = this.orderBy;
+      queryParams.order_dir = this.orderDir;
+    } else {
+      delete queryParams.order_by;
+      delete queryParams.order_dir;
+    }
+
+    if (this.selectedCurrency.slug !== "USD") {
+      queryParams.currency = this.selectedCurrency.slug;
+    } else {
+      delete queryParams.currency;
+    }
+
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      queryParams.best_price_allocation = this.bestPriceAllocation.slug;
+    } else {
+      delete queryParams.best_price_allocation;
+    }
+
+    if (this.limit !== 25) {
+      queryParams.limit = this.limit;
+    } else {
+      delete queryParams.limit;
+    }
+
+    if (this.hasCustomColumns) {
+      let columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+      queryParams.columns = columns;
+    }
+
+    if (this.selectedBenchmarkConfig) {
+      const benchmarkData = {
+        id: this.selectedBenchmarkConfig.benchmark_id,
+        config: this.selectedBenchmarkConfig.config,
+      };
+      queryParams.benchmark = btoa(JSON.stringify(benchmarkData));
+    }
+
+    navigateListingQuery(this.router, this.route, queryParams, {
+      params: "replace",
+      history: "push",
+    });
+  }
+
+  private _searchServers(updateTotalCount = true) {
+    const requestId = ++this.searchRequestId;
+    this.searchAbortController?.abort();
+    const searchAbortController = new AbortController();
+    this.searchAbortController = searchAbortController;
+    this.isLoading = true;
+    this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+
+    let query = JSON.parse(JSON.stringify(this.query));
+
+    // drop the encoded benchmark URL parameter since we use the decoded benchmark_id and benchmark_config
+    delete query.benchmark;
+
+    if (query.columns) {
+      delete query.columns;
+    }
+
+    if (this.specialParameters) {
+      query = { ...query, ...this.specialParameters };
+    }
+
+    if (updateTotalCount) {
+      query.add_total_count_header = true;
+    }
+
+    if (this.page > 1) {
+      query.page = this.page;
+    }
+
+    query.limit = this.limit;
+
+    if (this.orderBy && this.orderDir) {
+      query.order_by = this.orderBy;
+      query.order_dir = this.orderDir;
+    }
+
+    if (this.selectedCurrency.slug !== "USD") {
+      query.currency = this.selectedCurrency.slug;
+    } else {
+      delete query.currency;
+    }
+
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      query.best_price_allocation = this.bestPriceAllocation.slug;
+    } else {
+      delete query.best_price_allocation;
+    }
+
+    if (this.selectedBenchmarkConfig) {
+      query.benchmark_config = this.selectedBenchmarkConfig.config;
+      query.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
+    }
+
+    this.keeperAPI
+      .searchServers(query, {
+        signal: searchAbortController.signal,
+      })
+      .then((servers) => {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+          return;
+        }
+
+        this.servers = servers?.body;
+        this.displayedCurrency = this.selectedCurrency;
+
+        // set stored selected state
+        this.servers?.forEach((server: any) => {
+          server.selected =
+            this.serverCompare.selectedForCompare.findIndex(
+              (item) =>
+                item.vendor === server.vendor_id &&
+                item.server === server.api_reference,
+            ) !== -1;
+        });
+
+        if (updateTotalCount) {
+          this.totalPages = Math.ceil(
+            parseInt(servers?.headers?.get("x-total-count") || "0") /
+              this.limit,
+          );
+        }
+        this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
+      })
+      .catch((err) => {
+        if (this.destroyRef.destroyed || requestId !== this.searchRequestId) {
+          return;
+        }
+
+        this.analytics.SentryException(err, {
+          tags: { location: this.constructor.name, function: "_searchServers" },
+        });
+        console.error(err);
+        this.toastService.showHttpError(err, {
+          id: QUERY_ERROR_SERVERS_TOAST_ID,
+          title: "Servers query error!",
+        });
+      })
+      .finally(() => {
+        if (!this.destroyRef.destroyed && requestId === this.searchRequestId) {
+          if (this.searchAbortController === searchAbortController) {
+            this.searchAbortController = null;
+          }
+          this.isLoading = false;
+        }
+      });
+  }
+
+  toggleOrdering(column: TableColumn) {
+    if (!column.orderField) return;
+
+    if (this.orderBy === column.orderField) {
+      if (this.orderDir === OrderDir.Desc) {
+        this.orderDir = OrderDir.Asc;
+      } else {
+        this.orderDir = undefined;
+        this.orderBy = undefined;
+      }
+    } else {
+      this.orderBy = column.orderField;
+      this.orderDir = OrderDir.Desc;
+    }
+
+    this.searchOptionsChanged(this.query);
+  }
+
+  getOrderingIcon(column: TableColumn) {
+    if (!column.orderField) return null;
+
+    if (this.orderBy === column.orderField) {
+      return this.orderDir === OrderDir.Desc
+        ? "arrow-down-wide-narrow"
+        : "arrow-down-narrow-wide";
+    }
+    return null;
+  }
+
+  getQueryObjectBase() {
+    const paramObject = JSON.parse(JSON.stringify(this.query));
+
+    if (this.orderBy && this.orderDir) {
+      paramObject.order_by = this.orderBy;
+      paramObject.order_dir = this.orderDir;
+    }
+
+    if (this.selectedCurrency.slug !== "USD") {
+      paramObject.currency = this.selectedCurrency.slug;
+    } else {
+      delete paramObject.currency;
+    }
+
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      paramObject.best_price_allocation = this.bestPriceAllocation.slug;
+    } else {
+      delete paramObject.best_price_allocation;
+    }
+    if (this.limit !== 25) {
+      paramObject.limit = this.limit;
+    } else {
+      delete paramObject.limit;
+    }
+
+    if (this.hasCustomColumns) {
+      let columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+      paramObject.columns = columns;
+    }
+
+    if (this.selectedBenchmarkConfig) {
+      const benchmarkData = {
+        id: this.selectedBenchmarkConfig.benchmark_id,
+        config: this.selectedBenchmarkConfig.config,
+      };
+      paramObject.benchmark = btoa(JSON.stringify(benchmarkData));
+    }
+
+    return paramObject;
+  }
+
+  updateQueryParams(object: Params) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    navigateListingQuery(this.router, this.route, object, {
+      params: "merge",
+      history: "replace",
+    });
+  }
+
+  refreshColumns(save = true) {
+    this.tableColumns = this.possibleColumns.filter((column) => column.show);
+    if (isPlatformBrowser(this.platformId) && save) {
+      this.hasCustomColumns = true;
+      const columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+      this.updateQueryParams({ columns });
+    }
+  }
+
+  selectCurrency(currency: CurrencyOption) {
+    this.selectedCurrency = currency;
+    this.page = 1;
+    this.searchOptionsChanged(this.query);
+    this.currencyDropdown()?.hide();
+  }
+
+  selectAllocation(allocation: BestPriceAllocationType) {
+    this.bestPriceAllocation = allocation;
+    this.page = 1;
+    this.searchOptionsChanged(this.query);
+    this.allocationDropdown()?.hide();
+  }
+
+  selectPageSize(limit: number) {
+    this.limit = limit;
+    this.page = 1;
+    this.searchOptionsChanged(this.query);
+
+    this.pageDropdown()?.hide();
+    // scroll to top
+    window.scrollTo(0, 0);
+  }
+
+  formatGbps(value: number | null | undefined) {
+    if (value === null || value === undefined) return "-";
+
+    if (value === 0) return "0 Gbps";
+
+    return `${formatNumberInputValue(value)} Gbps`;
+  }
+
+  getField(item: ServerPriceWithPKs, field: string): unknown {
+    return field
+      .split(".")
+      .reduce(
+        (obj, key) =>
+          obj !== null && obj !== undefined ? (obj as any)[key] : undefined,
+        item,
+      );
+  }
+
+  toggleCompare2(event: any, server: ServerPKs | any) {
+    event.stopPropagation();
+    if (this.isCompareCheckboxDisabled(!!server.selected, server)) {
+      return;
+    }
+    server.selected = !server.selected;
+    this.toggleCompare(server.selected, server);
+  }
+
+  toggleCompare(event: boolean, server: ServerPKs | any) {
+    const added = this.serverCompare.toggleCompare(event, {
+      server: server.api_reference,
+      vendor: server.vendor_id,
+      display_name: server.display_name,
+    });
+    if (!added) {
+      server.selected = false;
+    }
+  }
+
+  isCompareCheckboxDisabled(
+    selected: boolean,
+    server?: { vendor_id: string; api_reference: string },
+  ): boolean {
+    return this.serverCompare.isServerCompareCheckboxDisabled(
+      selected,
+      server
+        ? { vendor: server.vendor_id, server: server.api_reference }
+        : undefined,
+    );
+  }
+
+  isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  activeSavedSearch() {
+    return this.collectionsUi.activeSavedSearch(
+      "servers",
+      this.getQueryObjectBase(),
+    );
+  }
+
+  canSaveSearch(): boolean {
+    return this.collectionsUi.canSaveSearch(this.getQueryObjectBase());
+  }
+
+  openSaveSearchModal(): void {
+    if (!this.isAuthenticated()) {
+      this.collectionsUi.promptRegisterForFeature({
+        type: "open-save",
+        target: "search-servers",
+      });
+      return;
+    }
+
+    const exact = this.activeSavedSearch();
+    const draft = exact ?? this.bookmarkSource;
+    this.editingSearchId.set(exact?.id ?? null);
+    this.saveSearchModal()?.open(draft?.name ?? "", draft?.note ?? "");
+  }
+
+  isSaveSearchPending(): boolean {
+    const editingId = this.editingSearchId();
+    if (editingId) {
+      return this.collectionsUi.isUpdatingSearch(editingId);
+    }
+
+    const saved = this.activeSavedSearch();
+    if (saved) {
+      return this.collectionsUi.isUpdatingSearch(saved.id);
+    }
+
+    return this.collectionsUi.isSavingSearch(
+      "servers",
+      this.getQueryObjectBase(),
+    );
+  }
+
+  confirmSaveSearch(payload: { name: string; note?: string }): void {
+    const editingId = this.editingSearchId();
+    const saved = this.activeSavedSearch();
+    this.pendingSaveSearchClose.set(true);
+    const query = this.getQueryObjectBase();
+
+    if (editingId || saved) {
+      this.collectionsUi.updateSearch(
+        editingId ?? saved!.id,
+        "servers",
+        query,
+        payload.name,
+        payload.note,
+      );
+      return;
+    }
+
+    this.collectionsUi.saveSearch("servers", query, payload.name, payload.note);
+  }
+
+  deleteSavedSearch(): void {
+    const saved = this.activeSavedSearch();
+    if (saved) {
+      this.collectionsUi.deleteSearch(saved.id);
+      this.bookmarkSource = null;
+    }
+  }
+
+  toggleSavedSearch(): void {
+    if (this.activeSavedSearch()) {
+      this.deleteSavedSearch();
+      return;
+    }
+
+    this.openSaveSearchModal();
+  }
+
+  isDeleteSearchPending(): boolean {
+    const saved = this.activeSavedSearch();
+    return !!saved && this.collectionsUi.isDeletingSearch(saved.id);
+  }
+
+  isFavoriteServer(vendorId: string, serverId: string): boolean {
+    return this.collectionsUi.store.isFavoriteServer(vendorId, serverId);
+  }
+
+  compareCount() {
+    return this.serverCompare.serverCompareCount();
+  }
+
+  clearCompare() {
+    this.serverCompare.clearCompare();
+    this.servers?.forEach((server: any) => {
+      server.selected = false;
+    });
+  }
+
+  openCompare() {
+    this.serverCompare.openCompare();
+  }
+
+  clipboardURL() {
+    let url = window.location.href;
+    navigator.clipboard.writeText(url);
+
+    this.clipboardIcon = "check";
+
+    this.toastService.show({
+      title: "Link copied to clipboard!",
+      type: "success",
+      duration: 2000,
+    });
+
+    setTimeout(() => {
+      this.clipboardIcon = "clipboard";
+    }, 3000);
+  }
+
+  openIntroductionModal(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    if (!this.introductionModal) {
+      const modalElement = this.introductionModalRef()?.nativeElement;
+
+      if (modalElement) {
+        this.introductionModal = new Modal(modalElement, {
+          ...serverListingIntroductionModalOptions,
+          onHide: () => {
+            this.showIntroductionVideo = false;
+          },
+        });
+      }
+    }
+
+    this.showIntroductionVideo = true;
+    this.introductionModal?.show();
+  }
+
+  closeIntroductionModal(): void {
+    this.introductionModal?.hide();
+  }
+
+  showTooltip(el: any, content: string, autoHide = false) {
+    this.tooltipContent = content;
+    const tooltip = this.tooltip.nativeElement;
+    this.uiTooltip.show(tooltip, el, {
+      left: "anchor-right",
+      top: "anchor-above",
+    });
+
+    if (autoHide) {
+      setTimeout(() => {
+        this.hideTooltip();
+      }, 3000);
+    }
+  }
+
+  hideTooltip() {
+    this.uiTooltip.hide(this.tooltip.nativeElement);
+  }
+
+  showAPIReference(item: ServerPKs) {
+    return (
+      item.display_name !== item.api_reference &&
+      item.display_name !== item.api_reference.replace("Standard_", "")
+    );
+  }
+
+  openModal() {
+    this.modalText = "Select Benchmark Category";
+    this.modalBenchmarkSelect.show();
+  }
+
+  closeModal() {
+    this.modalBenchmarkSelect?.hide();
+  }
+
+  selectBenchmarkCategory(category: any, searchTerm: string | null = null) {
+    this.tempSelectedBenchmarkCategory = category;
+
+    if (category) {
+      this.tempfilteredBenchmarkConfigs = this.benchmarksConfigs.filter(
+        (config: any) =>
+          (category === "All" || config.category === category) &&
+          (!searchTerm ||
+            config.benchmarkTemplate.name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()) ||
+            config.config.toLowerCase().includes(searchTerm.toLowerCase())),
+      );
+      this.modalText = `Select ${this.tempSelectedBenchmarkCategory} Configuration`;
+    } else {
+      this.modalFilterTerm = null;
+      this.modalText = "Select Benchmark Category";
+    }
+  }
+
+  selectBenchmarkConfig(config: any) {
+    this.tempSelectedBenchmarkCategory = null;
+    const benchmarkColumn = this.possibleColumns.find(
+      (column) => column.type === "benchmark",
+    );
+    const enableBenchmarkColumn = !!benchmarkColumn && !benchmarkColumn.show;
+    this.selectedBenchmarkConfig = config;
+
+    this.modalBenchmarkSelect?.hide();
+    this.modalFilterTerm = null;
+    const query: Params = {
+      benchmark: btoa(
+        JSON.stringify({
+          id: config.benchmark_id,
+          config: config.config,
+        }),
+      ),
+    };
+    if (enableBenchmarkColumn && this.hasCustomColumns) {
+      query.columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
+    }
+    this.updateQueryParams(query);
+  }
+
+  updateFilterTerm() {
+    this.selectBenchmarkCategory(
+      this.tempSelectedBenchmarkCategory,
+      this.modalFilterTerm,
+    );
+  }
+
+  private onBenchmarkConfigChanged(): void {
+    if (this._selectedBenchmarkConfig) {
+      // make sure benchmark column is shown when a benchmark is selected
+      // NOTE this is not in active use now, as we use a default benchmark automatically selected, but keeping it here for future use
+      const benchmarkColumn = this.possibleColumns.find(
+        (col) => col.type === "benchmark",
+      );
+      if (benchmarkColumn) benchmarkColumn.show = true;
+      this.refreshColumns(false);
+
+      // extract unit of selected benchmark config in short form
+      const benchmarkTemplate = this._selectedBenchmarkConfig.benchmarkTemplate;
+      if (benchmarkTemplate && typeof benchmarkTemplate.unit === "string") {
+        const unit = benchmarkTemplate.unit;
+        // remove short form (at the end of the string, in parentheses)
+        this._selectedBenchmarkConfig.unit = unit.replace(
+          /\s*\([^)]*\)\s*$/,
+          "",
+        );
+        // keep short form (in parentheses)
+        this._selectedBenchmarkConfig.unit_abbreviation =
+          unit.match(/\(([^)]*)\)/)?.at(1) || unit;
+        if (unit.length < 25) {
+          this._selectedBenchmarkConfig.short_unit =
+            this._selectedBenchmarkConfig.unit;
+        } else {
+          this._selectedBenchmarkConfig.short_unit =
+            this._selectedBenchmarkConfig.unit_abbreviation;
+        }
+      } else {
+        this._selectedBenchmarkConfig.unit = "";
+        this._selectedBenchmarkConfig.unit_abbreviation = "";
+        this._selectedBenchmarkConfig.short_unit = "";
+      }
+
+      // remove error toast if it exists
+      this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
+    }
+  }
+}

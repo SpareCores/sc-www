@@ -1,9 +1,9 @@
 import { showInvalidUrlParamToast } from "./page-toast.helpers";
-import type { ToastService } from "./toast.service";
+import type { Toast } from "./toast";
 
 describe("page toast helpers", () => {
   it("showInvalidUrlParamToast shows the standard Invalid URL toast in the browser", () => {
-    const toastService = jasmine.createSpyObj<Pick<ToastService, "show">>(
+    const toastService = jasmine.createSpyObj<Pick<Toast, "show">>(
       "toastService",
       ["show"],
     );
@@ -23,7 +23,7 @@ describe("page toast helpers", () => {
   });
 
   it("showInvalidUrlParamToast does nothing outside the browser", () => {
-    const toastService = jasmine.createSpyObj<Pick<ToastService, "show">>(
+    const toastService = jasmine.createSpyObj<Pick<Toast, "show">>(
       "toastService",
       ["show"],
     );

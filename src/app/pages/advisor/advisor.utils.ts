@@ -6,7 +6,7 @@ import {
 import {
   SearchBarBenchmarkConfigOption,
   SearchBarCustomSelectOption,
-} from "../../components/search-bar/search-bar.component";
+} from "../../components/search-bar/search-bar";
 import { buildAdvisorColumns, TableColumn } from "../../tools/table-columns";
 import {
   ADVISOR_DEFAULT_WORKLOAD_CONFIG,

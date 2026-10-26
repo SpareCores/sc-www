@@ -3,7 +3,7 @@ import type {
   BenchmarkConfig,
   Server,
 } from "../../../../../sdk/data-contracts";
-import type { TooltipVariant } from "../../../services/ui-tooltip.service";
+import type { TooltipVariant } from "../../../services/ui-tooltip";
 
 export type SearchBarParameter = {
   name: string;

@@ -13,11 +13,11 @@ import {
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
-import { NumbersOnlyDirective } from "../../../../directives/numbers-only.directive";
-import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
-import { ToastService } from "../../../../services/toast.service";
+import { NumbersOnly } from "../../../../directives/numbers-only";
+import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon-pipe";
+import { Toast } from "../../../../services/toast";
 import { CPU_CACHE_INPUT_ERROR_TOAST_ID } from "../../../../services/toast-ids";
-import type { TooltipVariant } from "../../../../services/ui-tooltip.service";
+import type { TooltipVariant } from "../../../../services/ui-tooltip";
 import type {
   BenchmarkFilterOption,
   ComplianceFrameworkMetadata,
@@ -65,13 +65,13 @@ type CpuCacheRangeFocusLossSkip = {
     LucideInfo,
     LucideTriangleAlert,
     BenchmarkIconPipe,
-    NumbersOnlyDirective,
+    NumbersOnly,
     SearchBarMultiSelect,
   ],
   templateUrl: "./search-bar-parameter-field.html",
 })
 export class SearchBarParameterField implements DoCheck, OnDestroy {
-  private toastService = inject(ToastService);
+  private toastService = inject(Toast);
   private parameterDraftValue: string | undefined;
   private cpuCacheRangeDraftValue: string | undefined;
   private lastModelValue: unknown = Symbol("initial-model-value");

@@ -1,0 +1,126 @@
+import { isPlatformBrowser } from "@angular/common";
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  PLATFORM_ID,
+  effect,
+  inject,
+  input,
+  signal,
+} from "@angular/core";
+import { Dropdown } from "flowbite";
+import {
+  DropdownBehaviorOptions,
+  DropdownManager,
+} from "../services/dropdown-manager";
+
+@Directive({
+  selector: "[scFlowbiteDropdown]",
+  standalone: true,
+  exportAs: "scFlowbiteDropdown",
+})
+export class FlowbiteDropdown implements AfterViewInit {
+  private platformId = inject(PLATFORM_ID);
+  private elementRef = inject(ElementRef<HTMLElement>);
+  private dropdownManager = inject(DropdownManager);
+  private viewReady = signal(false);
+
+  scFlowbiteDropdown = input.required<string>();
+  dropdownEnabled = input(true);
+  dropdownFlip = input(false);
+  dropdownPlacement = input<DropdownBehaviorOptions["placement"]>();
+  dropdownTriggerType = input<DropdownBehaviorOptions["triggerType"]>("click");
+
+  dropdown: Dropdown | undefined;
+  private initializedKey = "";
+  private pendingKey = "";
+
+  constructor() {
+    effect(() => {
+      if (!this.viewReady()) {
+        return;
+      }
+
+      if (!this.dropdownEnabled()) {
+        this.dropdown?.hide();
+        return;
+      }
+
+      const triggerId = this.elementRef.nativeElement.id;
+      const targetId = this.scFlowbiteDropdown();
+      const key = `${triggerId}:${targetId}`;
+      if (this.initializedKey === key) {
+        return;
+      }
+
+      if (this.pendingKey === key) {
+        return;
+      }
+
+      this.initializeDropdown();
+    });
+  }
+
+  ngAfterViewInit() {
+    this.viewReady.set(true);
+  }
+
+  hide() {
+    this.dropdown?.hide();
+  }
+
+  toggle() {
+    this.dropdown?.toggle();
+  }
+
+  private getBehaviorOptions(): DropdownBehaviorOptions {
+    const behaviorOptions: DropdownBehaviorOptions = {
+      flip: this.dropdownFlip(),
+      triggerType: this.dropdownTriggerType(),
+    };
+    const placement = this.dropdownPlacement();
+    if (placement) {
+      behaviorOptions.placement = placement;
+    }
+    return behaviorOptions;
+  }
+
+  private initializeDropdown() {
+    if (!isPlatformBrowser(this.platformId) || !this.dropdownEnabled()) {
+      return;
+    }
+
+    const triggerId = this.elementRef.nativeElement.id;
+    const targetId = this.scFlowbiteDropdown();
+    if (!triggerId || !targetId) {
+      return;
+    }
+
+    const key = `${triggerId}:${targetId}`;
+    if (this.initializedKey === key || this.pendingKey === key) {
+      return;
+    }
+
+    const pendingKey = key;
+    this.pendingKey = pendingKey;
+    this.dropdownManager
+      .initDropdown(triggerId, targetId, this.getBehaviorOptions())
+      .then((dropdown) => {
+        if (this.pendingKey !== pendingKey) {
+          return;
+        }
+
+        this.pendingKey = "";
+        this.initializedKey = pendingKey;
+        this.dropdown = dropdown;
+      })
+      .catch((error) => {
+        if (this.pendingKey === pendingKey) {
+          this.pendingKey = "";
+        }
+
+        console.error("Failed to initialize Flowbite dropdown:", error);
+      });
+  }
+}

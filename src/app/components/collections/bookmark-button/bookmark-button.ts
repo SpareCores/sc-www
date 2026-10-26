@@ -13,11 +13,11 @@ import {
   LucideBookmarkPlus,
 } from "@lucide/angular";
 import {
-  CollectionsUiService,
+  CollectionsUi,
   type BookmarkEntityKind,
-} from "../../../collections/collections-ui.service";
+} from "../../../collections/collections-ui";
 import { FEATURE_REGISTER_HINT } from "../../../collections/collections.utils";
-import { UiTooltipService } from "../../../services/ui-tooltip.service";
+import { UiTooltip } from "../../../services/ui-tooltip";
 
 @Component({
   selector: "sc-bookmark-button",
@@ -27,8 +27,8 @@ import { UiTooltipService } from "../../../services/ui-tooltip.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookmarkButton {
-  private collectionsUi = inject(CollectionsUiService);
-  private uiTooltip = inject(UiTooltipService);
+  private collectionsUi = inject(CollectionsUi);
+  private uiTooltip = inject(UiTooltip);
   private tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
 
   kind = input.required<BookmarkEntityKind>();

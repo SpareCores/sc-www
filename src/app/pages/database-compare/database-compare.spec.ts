@@ -1,0 +1,241 @@
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ActivatedRoute, convertToParamMap } from "@angular/router";
+import { of } from "rxjs";
+
+import { DatabaseCompare } from "./database-compare";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
+import { BAD_DATABASE_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
+
+describe("DatabaseCompare", () => {
+  let component: DatabaseCompare;
+  let fixture: ComponentFixture<DatabaseCompare>;
+  let toastService: Toast;
+
+  const getDatabase = jasmine.createSpy("getDatabase");
+  const getDatabasePrices = jasmine.createSpy("getDatabasePrices");
+  const getDatabaseBenchmarks = jasmine.createSpy("getDatabaseBenchmarks");
+  const getServerBenchmarkMeta = jasmine.createSpy("getServerBenchmarkMeta");
+  const getServerV2 = jasmine.createSpy("getServerV2");
+  const getVendors = jasmine.createSpy("getVendors");
+  const getRegions = jasmine.createSpy("getRegions");
+
+  beforeEach(async () => {
+    getDatabase.calls.reset();
+    getDatabasePrices.calls.reset();
+    getDatabaseBenchmarks.calls.reset();
+    getServerBenchmarkMeta.calls.reset();
+    getServerV2.calls.reset();
+    getVendors.calls.reset();
+    getRegions.calls.reset();
+
+    getServerBenchmarkMeta.and.resolveTo({ body: [] });
+    getServerV2.and.resolveTo({ body: null });
+    getVendors.and.resolveTo({ body: [] });
+    getRegions.and.resolveTo({ body: [] });
+
+    await TestBed.configureTestingModule({
+      imports: [DatabaseCompare],
+      providers: [
+        ...sharedTestingProviders,
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            queryParams: of({}),
+            params: of({}),
+            paramMap: of(convertToParamMap({})),
+            queryParamMap: of(convertToParamMap({})),
+            snapshot: {
+              queryParams: {},
+              paramMap: convertToParamMap({}),
+            },
+          },
+        },
+        {
+          provide: KeeperAPI,
+          useValue: {
+            getDatabase,
+            getDatabasePrices,
+            getDatabaseBenchmarks,
+            getServerBenchmarkMeta,
+            getServerV2,
+            getVendors,
+            getRegions,
+          },
+        },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DatabaseCompare);
+    component = fixture.componentInstance;
+    toastService = TestBed.inject(Toast);
+    fixture.detectChanges();
+  });
+
+  it("should create", () => {
+    expect(component).toBeTruthy();
+  });
+
+  it("shows an invalid URL toast for bad instances", async () => {
+    const show = spyOn(toastService, "show");
+    const removeToast = spyOn(toastService, "removeToast").and.callThrough();
+    const route = TestBed.inject(ActivatedRoute) as any;
+    route.snapshot.queryParams = { instances: "not-valid-base64" };
+    route.snapshot.paramMap = convertToParamMap({});
+    route.queryParams = of({ instances: "not-valid-base64" });
+    route.queryParamMap = of(
+      convertToParamMap({ instances: "not-valid-base64" }),
+    );
+    route.paramMap = of(convertToParamMap({}));
+
+    fixture = TestBed.createComponent(DatabaseCompare);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Invalid URL",
+        body: "Select databases to compare.",
+        id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Database Navigator page",
+        }),
+      }),
+    );
+    expect(component.databases.length).toBe(0);
+
+    removeToast.calls.reset();
+    component.ngOnDestroy();
+
+    expect(removeToast).toHaveBeenCalledWith(BAD_DATABASE_COMPARE_URL_TOAST_ID);
+  });
+
+  it("shows an invalid URL toast for an unknown special compare id", async () => {
+    const show = spyOn(toastService, "show");
+    const route = TestBed.inject(ActivatedRoute) as any;
+    route.snapshot.queryParams = {};
+    route.snapshot.paramMap = convertToParamMap({ id: "aws-16vcpu-dsfsdfsd" });
+    route.queryParams = of({});
+    route.queryParamMap = of(convertToParamMap({}));
+    route.paramMap = of(convertToParamMap({ id: "aws-16vcpu-dsfsdfsd" }));
+
+    fixture = TestBed.createComponent(DatabaseCompare);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(show).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        title: "Invalid URL",
+        body: "Select databases to compare.",
+        id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
+        action: jasmine.objectContaining({
+          label: "Database Navigator page",
+        }),
+      }),
+    );
+    expect(component.databases.length).toBe(0);
+  });
+
+  it("loads databases and builds property rows", async () => {
+    const instances = btoa(
+      JSON.stringify([
+        { display_name: "db-a", vendor: "aws", database: "db-a" },
+        { display_name: "db-b", vendor: "gcp", database: "db-b" },
+      ]),
+    );
+
+    getDatabase.and.callFake((_vendor: string, database: string) =>
+      Promise.resolve({
+        body: {
+          vendor_id: database === "db-a" ? "aws" : "gcp",
+          database_id: database,
+          api_reference: database,
+          display_name: database,
+          name: database,
+          engine: "postgres",
+          vcpus: 2,
+          memory_amount: 4096,
+        },
+      }),
+    );
+    getDatabasePrices.and.resolveTo({
+      body: [{ price: 0.1, currency: "USD", unit: "hour" }],
+    });
+    getDatabaseBenchmarks.and.resolveTo({
+      body: [
+        {
+          benchmark_id: "pgbench:heavy_read_only",
+          score: 100,
+          config: { concurrency: 2 },
+        },
+      ],
+    });
+    getVendors.and.resolveTo({
+      body: [
+        { vendor_id: "aws", name: "AWS" },
+        { vendor_id: "gcp", name: "GCP" },
+      ],
+    });
+
+    const route = TestBed.inject(ActivatedRoute) as any;
+    route.snapshot.queryParams = { instances };
+    route.snapshot.paramMap = convertToParamMap({});
+    route.queryParams = of({ instances });
+    route.queryParamMap = of(convertToParamMap({ instances }));
+    route.paramMap = of(convertToParamMap({}));
+
+    fixture = TestBed.createComponent(DatabaseCompare);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.databases.length).toBe(2);
+    expect(component.propertySections.length).toBeGreaterThan(0);
+    expect(component.priceRows.length).toBeGreaterThan(0);
+  });
+
+  it("omits the chart servers when there are no pgbench scores", async () => {
+    const instances = btoa(
+      JSON.stringify([
+        { display_name: "db-a", vendor: "aws", database: "db-a" },
+        { display_name: "db-b", vendor: "gcp", database: "db-b" },
+      ]),
+    );
+
+    getDatabase.and.callFake((_vendor: string, database: string) =>
+      Promise.resolve({
+        body: {
+          vendor_id: database === "db-a" ? "aws" : "gcp",
+          database_id: database,
+          api_reference: database,
+          display_name: database,
+          name: database,
+          engine: "postgres",
+        },
+      }),
+    );
+    getDatabasePrices.and.resolveTo({ body: [] });
+    getDatabaseBenchmarks.and.resolveTo({ body: [] });
+
+    const route = TestBed.inject(ActivatedRoute) as any;
+    route.snapshot.queryParams = { instances };
+    route.snapshot.paramMap = convertToParamMap({});
+    route.queryParams = of({ instances });
+    route.queryParamMap = of(convertToParamMap({ instances }));
+    route.paramMap = of(convertToParamMap({}));
+
+    fixture = TestBed.createComponent(DatabaseCompare);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(
+      component.lineCompareServers.every(
+        (server) => !server.benchmark_scores.length,
+      ),
+    ).toBeTrue();
+  });
+});

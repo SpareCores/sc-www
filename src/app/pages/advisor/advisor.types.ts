@@ -1,5 +1,5 @@
 import { Server } from "../../../../sdk/data-contracts";
-import { SearchBarServerOption } from "../../components/search-bar/search-bar.component";
+import { SearchBarServerOption } from "../../components/search-bar/search-bar";
 
 export type AdvisorBaselineServer = SearchBarServerOption &
   Partial<

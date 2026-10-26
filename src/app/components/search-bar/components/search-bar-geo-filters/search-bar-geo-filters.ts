@@ -1,5 +1,5 @@
 import { Component, inject, input, output } from "@angular/core";
-import { AuthStateService } from "../../../../core/auth";
+import { AuthState } from "../../../../core/auth";
 import { FormsModule } from "@angular/forms";
 import {
   LucideChevronDown,
@@ -7,14 +7,14 @@ import {
   LucideInfo,
   LucideLeaf,
 } from "@lucide/angular";
-import { CountryIdtoNamePipe } from "../../../../pipes/country-idto-name.pipe";
-import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon.pipe";
-import { ToastService } from "../../../../services/toast.service";
+import { CountryIdtoNamePipe } from "../../../../pipes/country-idto-name-pipe";
+import { BenchmarkIconPipe } from "../../../../pipes/benchmark-icon-pipe";
+import { Toast } from "../../../../services/toast";
 import {
   GUEST_COUNTRY_LIMIT_TOAST_ID,
   GUEST_REGION_LIMIT_TOAST_ID,
 } from "../../../../services/toast-ids";
-import { CollectionsUiService } from "../../../../collections/collections-ui.service";
+import { CollectionsUi } from "../../../../collections/collections-ui";
 import type {
   ContinentMetadata,
   CountryMetadata,
@@ -40,9 +40,9 @@ import { getParameterType } from "../../utils/search-bar.utils";
   templateUrl: "./search-bar-geo-filters.html",
 })
 export class SearchBarGeoFilters {
-  protected readonly auth = inject(AuthStateService);
-  private readonly toastService = inject(ToastService);
-  private readonly collectionsUi = inject(CollectionsUiService);
+  protected readonly auth = inject(AuthState);
+  private readonly toastService = inject(Toast);
+  private readonly collectionsUi = inject(CollectionsUi);
 
   parameter = input.required<SearchBarParameter>();
   filterCategoryId = input.required<string>();

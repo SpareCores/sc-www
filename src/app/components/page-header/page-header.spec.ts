@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import { FEATURE_REGISTER_HINT } from "../../collections/collections.utils";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { PageHeader } from "./page-header";
 
 describe("PageHeader", () => {
@@ -14,7 +14,7 @@ describe("PageHeader", () => {
       providers: [
         ...sharedTestingProviders,
         {
-          provide: UiTooltipService,
+          provide: UiTooltip,
           useValue: {
             show: jasmine.createSpy("show"),
             hide: jasmine.createSpy("hide"),

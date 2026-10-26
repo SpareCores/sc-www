@@ -1,0 +1,97 @@
+import { isPlatformBrowser } from "@angular/common";
+import { HttpClient } from "@angular/common/http";
+import { Component, OnInit, PLATFORM_ID, inject } from "@angular/core";
+import { firstValueFrom } from "rxjs";
+import { Button } from "../../components/button/button";
+import { ThemeText } from "../../components/theme-text/theme-text";
+import { DesignPageCard } from "../../components/design-page-card/design-page-card";
+import { DownloadableLogoCollection } from "../../components/downloadable-logo-collection/downloadable-logo-collection";
+import { Toast } from "../../services/toast";
+import { DESIGN_COLOR_COPY_TOAST_ID } from "../../services/toast-ids";
+
+type LogoDownloadItems = {
+  folderName: string;
+  fileNames: string[];
+};
+
+type LogoDownloadManifestItem = {
+  folder: string;
+  files: string[];
+};
+
+type LogoDownloadManifest = {
+  basePath: string;
+  generatedAt: string;
+  items: LogoDownloadManifestItem[];
+};
+
+@Component({
+  selector: "sc-design",
+  imports: [Button, ThemeText, DesignPageCard, DownloadableLogoCollection],
+  templateUrl: "./design.html",
+  styleUrls: ["./design.scss"],
+})
+export class Design implements OnInit {
+  private http = inject(HttpClient);
+  private toastService = inject(Toast);
+  private readonly platformId = inject(PLATFORM_ID);
+
+  logoDownloadsBasePath: string = "assets/images/logos/download";
+  logoDownloadItems: LogoDownloadItems[] = [];
+  logoDownloadManifestPath: string =
+    "assets/images/logos/download/download-manifest.json";
+
+  async ngOnInit(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    try {
+      const manifest = await firstValueFrom(
+        this.http.get<LogoDownloadManifest>(this.logoDownloadManifestPath),
+      );
+      this.logoDownloadsBasePath = manifest.basePath;
+      this.logoDownloadItems = (manifest.items ?? []).map((item) => ({
+        folderName: item.folder,
+        fileNames: item.files,
+      }));
+    } catch (error) {
+      console.warn("Failed to load logo download manifest.", error);
+    }
+  }
+
+  trackByFolder(_index: number, item: LogoDownloadItems): string {
+    return item.folderName;
+  }
+
+  copyColor(color: string): void {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard
+        .writeText(color)
+        .then(() => {
+          this.toastService.show({
+            title: "Copied",
+            body: `${color} copied to clipboard.`,
+            type: "success",
+            duration: 2000,
+            id: DESIGN_COLOR_COPY_TOAST_ID,
+          });
+        })
+        .catch(() => {
+          this.toastService.show({
+            title: "Copy failed",
+            body: "Unable to copy the color code.",
+            type: "error",
+            duration: 2500,
+            id: DESIGN_COLOR_COPY_TOAST_ID,
+          });
+        });
+    } else {
+      this.toastService.show({
+        title: "Copy unavailable",
+        body: "Clipboard access is not available in this browser.",
+        type: "error",
+        duration: 2500,
+        id: DESIGN_COLOR_COPY_TOAST_ID,
+      });
+    }
+  }
+}
