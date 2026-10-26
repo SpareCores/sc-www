@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,12 +24,7 @@ import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 @Component({
   selector: "sc-server-compare-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    Button,
-    BaseChartDirective,
-    FlowbiteDropdownDirective,
-  ],
+  imports: [Button, BaseChartDirective, FlowbiteDropdownDirective],
   templateUrl: "./server-compare-memory-chart.component.html",
   styles: [
     `

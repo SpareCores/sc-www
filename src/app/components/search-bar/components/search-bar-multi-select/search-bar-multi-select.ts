@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   Component,
   ElementRef,
@@ -15,7 +14,7 @@ import { LucideX } from "@lucide/angular";
 
 @Component({
   selector: "sc-search-bar-multi-select",
-  imports: [CommonModule, FormsModule, LucideX],
+  imports: [FormsModule, LucideX],
   templateUrl: "./search-bar-multi-select.html",
   styleUrl: "./search-bar-multi-select.scss",
 })
