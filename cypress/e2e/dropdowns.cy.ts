@@ -63,13 +63,19 @@ describe("Dropdowns", () => {
   });
 
   it("flips the page-size dropdown above its trigger near the viewport bottom", () => {
+    cy.viewport(1440, 600);
     E2EEvent.visitURL("/servers", 4000);
 
-    cy.get("#pagesize_button").scrollIntoView({
-      offset: { top: -1000, left: 0 },
-    });
-    cy.get("#pagesize_button").click();
+    cy.get("#pagesize_button").click({ scrollBehavior: "bottom" });
 
+    cy.window().then((win) => {
+      cy.get("#pagesize_button").should(($trigger) => {
+        expect($trigger[0].getBoundingClientRect().bottom).to.be.closeTo(
+          win.innerHeight,
+          50,
+        );
+      });
+    });
     cy.get("#pagesize_options").should("be.visible");
     cy.get("#pagesize_button").then(($trigger) => {
       const triggerTop = $trigger[0].getBoundingClientRect().top;
