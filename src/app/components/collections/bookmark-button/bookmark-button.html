@@ -31,12 +31,12 @@
     ></svg>
   </button>
   @if (!isAuthenticated()) {
-  <div
-    #tooltip
-    style="opacity: 0; display: none"
-    class="tooltip-panel fixed z-100 pointer-events-none"
-  >
-    {{ registerHint }}
-  </div>
+    <div
+      #tooltip
+      style="opacity: 0; display: none"
+      class="tooltip-panel fixed z-100 pointer-events-none"
+    >
+      {{ registerHint }}
+    </div>
   }
 </div>

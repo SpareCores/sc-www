@@ -1,0 +1,42 @@
+import { isPlatformBrowser } from "@angular/common";
+import { inject, PLATFORM_ID } from "@angular/core";
+import { CanActivateFn, Router } from "@angular/router";
+import { AuthState } from "../data-access/auth-state";
+
+export const authGuard: CanActivateFn = async () => {
+  const auth = inject(AuthState);
+  const router = inject(Router);
+  const platformId = inject(PLATFORM_ID);
+
+  if (!isPlatformBrowser(platformId)) {
+    return true;
+  }
+
+  await auth.init();
+
+  if (auth.isAuthenticated()) {
+    return true;
+  }
+
+  return router.createUrlTree(["/"]);
+};
+
+export const blockLandingDuringAuthGuard: CanActivateFn = () => {
+  const auth = inject(AuthState);
+  const platformId = inject(PLATFORM_ID);
+
+  if (!isPlatformBrowser(platformId)) {
+    return true;
+  }
+
+  if (auth.githubConsentActive()) {
+    return true;
+  }
+
+  if (!auth.authInProgress()) {
+    return true;
+  }
+
+  auth.startAuthPending();
+  return true;
+};

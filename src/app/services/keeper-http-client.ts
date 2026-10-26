@@ -7,7 +7,7 @@ import {
   HttpResponse,
 } from "../../../sdk/http-client";
 import { Observable, firstValueFrom, fromEvent, map, race } from "rxjs";
-import { AuthStateService } from "../core/auth";
+import { AuthState } from "../core/auth";
 
 export const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000];
 export const RETRY_INTERVALS_SSR = [100, 200];
@@ -180,7 +180,7 @@ export class KeeperHttpClient extends HttpClientSDK {
   constructor(
     private angularHttp: HttpClient,
     @Inject(PLATFORM_ID) private platformId: object,
-    private auth: AuthStateService,
+    private auth: AuthState,
   ) {
     super();
   }

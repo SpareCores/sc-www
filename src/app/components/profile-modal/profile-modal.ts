@@ -12,14 +12,14 @@ import {
 } from "@lucide/angular";
 import {
   AUTH_MESSAGES,
-  AuthStateService,
+  AuthState,
   PROFILE_DELETE_CONFIRMATION,
-  ProfileService,
+  Profile,
   type ProfileResult,
   type ProfileSession,
 } from "../../core/auth";
 import { Button } from "../button/button";
-import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
+import { LoadingSpinner } from "../loading-spinner/loading-spinner";
 
 type ProfileTab = "account" | "security";
 type ProfileSection =
@@ -69,15 +69,15 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     LucidePlus,
     LucideShield,
     LucideSmartphone,
-    LoadingSpinnerComponent,
+    LoadingSpinner,
   ],
   templateUrl: "./profile-modal.html",
   styleUrls: ["../auth-modal.scss", "./profile-modal.scss"],
   host: { "(document:keydown.escape)": "close()" },
 })
 export class ProfileModal {
-  protected readonly auth = inject(AuthStateService);
-  private readonly profileService = inject(ProfileService);
+  protected readonly auth = inject(AuthState);
+  private readonly profileService = inject(Profile);
 
   protected readonly profile = this.profileService.profile;
   protected readonly deleteConfirmationText = PROFILE_DELETE_CONFIRMATION;

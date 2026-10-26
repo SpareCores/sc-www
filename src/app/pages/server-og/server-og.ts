@@ -1,0 +1,147 @@
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { KeeperAPI } from "../../services/keeper-api";
+import { SeoHandler } from "../../services/seo-handler";
+import { Analytics } from "../../services/analytics";
+import { formatStorageSize } from "../../pipes/pipe-utils";
+import { ServerDescription } from "../../../../sdk/data-contracts";
+import { Subscription } from "rxjs";
+
+@Component({
+  selector: "sc-server-og",
+  imports: [],
+  templateUrl: "./server-og.html",
+  styleUrl: "./server-og.scss",
+})
+export class ServerOG implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private keeperAPI = inject(KeeperAPI);
+  private analytics = inject(Analytics);
+  private SEOHandler = inject(SeoHandler);
+
+  serverDetails!: any;
+
+  features: any[] = [];
+
+  description = "";
+  title = "";
+
+  instanceProperties: any[] = [];
+  benchmarkMeta: any;
+
+  private subscription = new Subscription();
+
+  ngOnInit() {
+    this.subscription.add(
+      this.route.params.subscribe((params) => {
+        const vendor = params["vendor"];
+        const id = params["id"];
+
+        Promise.all([
+          this.keeperAPI.getServerMeta(),
+          this.keeperAPI.getServerBenchmarkMeta(),
+          this.keeperAPI.getServerV2(vendor, id),
+          this.keeperAPI.getServerPrices(vendor, id),
+          this.keeperAPI.getServerBenchmark(vendor, id),
+          this.keeperAPI.getVendors(),
+        ])
+          .then((dataAll) => {
+            this.instanceProperties = dataAll[0].body?.fields || [];
+
+            this.benchmarkMeta = dataAll[1].body || {};
+
+            const benchmarks = dataAll[4].body as any;
+            const prices = dataAll[3].body as any;
+            const vendors = dataAll[5].body as any;
+
+            if (dataAll[2].body) {
+              this.serverDetails = dataAll[2].body as any;
+
+              this.serverDetails.benchmark_scores = benchmarks;
+              this.serverDetails.vendor = vendors.find(
+                (v: any) => v.vendor_id === this.serverDetails.vendor_id,
+              );
+
+              if (prices) {
+                this.serverDetails.prices = JSON.parse(
+                  JSON.stringify(prices),
+                )?.sort((a: any, b: any) => a.price - b.price);
+              }
+
+              this.features = [];
+              if (this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
+                this.features.push({
+                  name: "vCPU",
+                  value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}`,
+                });
+              }
+              if (this.serverDetails.memory_amount) {
+                this.features.push({ name: "Memory", value: this.getMemory() });
+              }
+              if (this.serverDetails.storage_size) {
+                this.features.push({
+                  name: "Storage",
+                  value: formatStorageSize(
+                    this.serverDetails.storage_size ?? 0,
+                  ),
+                });
+              }
+              if (this.serverDetails.accelerator_count) {
+                this.features.push({
+                  name: "Accelerator",
+                  value: this.serverDetails.accelerator_count,
+                });
+              }
+
+              this.description = `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.accelerator_count! > 0 ? this.serverDetails.accelerator_count : "no"} ${this.serverDetails.accelerator_manufacturer || ""} ${this.serverDetails.accelerator_family || ""} ${this.serverDetails.accelerator_model || ""} accelerator${this.serverDetails.accelerator_count! > 1 ? "s" : ""}.`;
+              if (this.serverDetails.prices[0]) {
+                this.description += ` The pricing starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour.`;
+              }
+
+              this.SEOHandler.setNoFollow();
+              this.loadServerDescriptions(vendor, id);
+            }
+          })
+          .catch((error) => {
+            this.analytics.SentryException(error, {
+              tags: { location: this.constructor.name, function: "ogInit" },
+            });
+            console.error("Failed to load server data:", error);
+          });
+      }),
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  getMemory(memory: number | undefined = undefined) {
+    const memoryAmount = memory || this.serverDetails.memory_amount || 0;
+    return (memoryAmount / 1024).toFixed(memoryAmount >= 1024 ? 0 : 1) + " GiB";
+  }
+
+  getBenchmark(isMulti: boolean) {
+    return (
+      this.serverDetails.benchmark_scores
+        ?.find(
+          (b: any) =>
+            b.benchmark_id ===
+            (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
+        )
+        ?.score?.toFixed(0) || "-"
+    );
+  }
+
+  loadServerDescriptions(vendor: string, id: string) {
+    this.keeperAPI
+      .getServerDescriptions(vendor, id)
+      .then((response) => {
+        if (response?.body) {
+          const serverDescription = response.body as ServerDescription;
+          this.description = serverDescription.og_description;
+        }
+      })
+      .catch(() => {});
+  }
+}

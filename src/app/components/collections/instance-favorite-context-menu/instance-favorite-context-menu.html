@@ -42,9 +42,9 @@
       (click)="toggleFavorite()"
     >
       @if (isBookmarked()) {
-      <svg lucideBookmarkOff class="h-4 w-4"></svg>
+        <svg lucideBookmarkOff class="h-4 w-4"></svg>
       } @else {
-      <svg lucideBookmarkPlus class="h-4 w-4"></svg>
+        <svg lucideBookmarkPlus class="h-4 w-4"></svg>
       }
       <span>{{ menuLabel() }}</span>
     </button>

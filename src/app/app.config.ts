@@ -25,11 +25,7 @@ import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
 import * as Sentry from "@sentry/angular";
 import { provideAppCharts } from "./components/charts/shared/chart-providers";
-import {
-  AuthStateService,
-  authInterceptor,
-  provideAuthFeature,
-} from "./core/auth";
+import { AuthState, authInterceptor, provideAuthFeature } from "./core/auth";
 import { provideCollectionsFeature } from "./collections/collections-feature.providers";
 
 function httpFilter(req: HttpRequest<any>): boolean {
@@ -41,6 +37,7 @@ function customErrorHandler(error: any) {
 }
 
 const SCROLL_DISABLED_PATHS = [
+  "/advisor",
   "/navigator/benchmark-coverage",
   "/servers",
   "/databases",
@@ -101,7 +98,7 @@ export const appConfig: ApplicationConfig = {
       inject(Sentry.TraceService);
     }),
     provideAppInitializer(() => {
-      return inject(AuthStateService)
+      return inject(AuthState)
         .init()
         .catch((error) => {
           console.error("Clerk initialization failed:", error);

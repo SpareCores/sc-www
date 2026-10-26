@@ -27,7 +27,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 - Read and edit only files explicitly referenced by the task or tagged by the user, unless the user approved a plan for a multi-file change; list those files in the plan.
 - Do not perform blind repository-wide scans. Use targeted search or symbol lookup only when a missing import, type interface, or dependency blocks immediate execution.
-- Ignore structural config files unless directly required. You are explicitly allowed to inspect `src/app/services/keeper-api.service.ts` to resolve server endpoints.
+- Ignore structural config files unless directly required. You are explicitly allowed to inspect `src/app/services/keeper-api.ts` to resolve server endpoints.
 
 ### Testing
 
@@ -55,15 +55,15 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 ### Auth (Clerk)
 
 - Clerk runs headless via `@clerk/clerk-js`; never reintroduce `@clerk/ui` or Clerk's prebuilt components.
-- Access Clerk only through the `src/app/core/auth` services (`ClerkService`, `AuthStateService`, `ProfileService`); components never import from `@clerk/*`.
+- Access Clerk only through the `src/app/core/auth` services (`ClerkClient`, `AuthState`, `Profile`); components never import from `@clerk/*`.
 - Keep user-facing auth strings in `AUTH_MESSAGES` (`src/app/core/auth/auth.constants.ts`).
 
 ## TypeScript Files (`*.ts`)
 
-### Angular 20 & TS Architecture Standards
+### Angular 21 & TS Architecture Standards
 
-- Framework: Angular 20 standalone architecture with SSR enabled, using zone-based change detection.
-- Do not append file-level suffixes (like `.component.ts`) to filenames unless already established in the folder.
+- Framework: Angular 21 standalone architecture with SSR enabled, using zone-based change detection.
+- Name components, services and directives without a type suffix, and name each file after its class in kebab-case (`LandingPage` in `landing-page.ts`, with `landing-page.html`, `.scss` and `.spec.ts` alongside). Pipes keep the `Pipe` class suffix; pipe, guard, interceptor and store files use a hyphenated type (`storage-pipe.ts`, `auth-guard.ts`).
 - Never use `any`.
 - DI & Reactivity: Always use the functional `inject()` API instead of constructor injection. Use Signals for local state in new code, and `computed()` for derived state.
 - RxJS Management: Use `takeUntilDestroyed()` within an active injection context when observables are strictly required.
@@ -75,12 +75,12 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 ### SSR Safety Guardrails
 
-- Ensure SSR safety using browser guards (`isPlatformBrowser`) or the Angular 20 `afterNextRender()` / `afterEveryRender()` hooks.
+- Ensure SSR safety using browser guards (`isPlatformBrowser`) or the Angular 21 `afterNextRender()` / `afterEveryRender()` hooks.
 - Never access global browser primitives (`window`, `document`, `localStorage`) directly in the main component lifecycle execution path without an SSR safety guard.
 
 ## HTML Templates (`*.html`)
 
-### Angular 20 Template Standards
+### Angular 21 Template Standards
 
 - Always use modern control flow (`@if`, `@else`, `@for`, `@switch`); never legacy `*ngIf` or `*ngFor` directives.
 - For template local variables, use the `@let` syntax (e.g., `@let user = userSignal()`).

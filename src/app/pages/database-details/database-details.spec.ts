@@ -12,16 +12,16 @@ import {
   Status,
 } from "../../../../sdk/data-contracts";
 import { DatabaseDetails } from "./database-details";
-import { KeeperAPIService } from "../../services/keeper-api.service";
+import { KeeperAPI } from "../../services/keeper-api";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("DatabaseDetails", () => {
   let component: DatabaseDetails;
   let fixture: ComponentFixture<DatabaseDetails>;
-  let keeperAPI: jasmine.SpyObj<KeeperAPIService>;
+  let keeperAPI: jasmine.SpyObj<KeeperAPI>;
 
   beforeEach(async () => {
-    keeperAPI = jasmine.createSpyObj<KeeperAPIService>("KeeperAPIService", [
+    keeperAPI = jasmine.createSpyObj<KeeperAPI>("KeeperAPI", [
       "getDatabase",
       "getDatabasePrices",
       "getVendors",
@@ -84,7 +84,7 @@ describe("DatabaseDetails", () => {
       imports: [DatabaseDetails],
       providers: [
         ...sharedTestingProviders,
-        { provide: KeeperAPIService, useValue: keeperAPI },
+        { provide: KeeperAPI, useValue: keeperAPI },
         {
           provide: ActivatedRoute,
           useValue: {

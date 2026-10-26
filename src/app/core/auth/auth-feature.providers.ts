@@ -4,12 +4,12 @@ import {
   makeEnvironmentProviders,
   provideAppInitializer,
 } from "@angular/core";
-import { NewsletterService } from "../features/newsletter/newsletter.service";
+import { Newsletter } from "../features/newsletter/newsletter";
 
 export function provideAuthFeature(): EnvironmentProviders {
   return makeEnvironmentProviders([
     provideAppInitializer(() => {
-      inject(NewsletterService);
+      inject(Newsletter);
     }),
   ]);
 }

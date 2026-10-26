@@ -1,0 +1,1466 @@
+<div
+  class="advisor-page w-full bg-primary"
+  [class.advisor-page--loading-baseline-workloads]="
+    isLoadingBaselineBenchmarkScores()
+  "
+>
+  <div class="content pt-16 pb-16">
+    <sc-breadcrumbs [segments]="displayBreadcrumbs()"></sc-breadcrumbs>
+
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <sc-page-header
+        icon="bot"
+        [title]="displayTitle()"
+        [showBookmark]="true"
+        [bookmarkGuestLocked]="!isAuthenticated()"
+        [bookmarkActive]="!!exactSavedAssessment()"
+        [bookmarkDisabled]="!exactSavedAssessment() && !canSaveAssessment()"
+        [bookmarkLoading]="isDeleteAssessmentPending()"
+        [showEdit]="!!exactSavedAssessment()"
+        editAriaLabel="Edit assessment"
+        [showShare]="true"
+        [shareIcon]="clipboardIcon()"
+        shareButtonId="advisor_share_button"
+        (shareClick)="clipboardURL()"
+        (bookmarkClick)="toggleSavedAssessment()"
+        (editClick)="openSaveAssessmentModal()"
+      >
+        <sc-button
+          id="advisor_example_button"
+          label="Example"
+          icon="dices"
+          iconPosition="start"
+          variant="outline"
+          [routerLink]="['/advisor']"
+          [queryParams]="advisorExampleQueryParams"
+        ></sc-button>
+        <sc-button
+          id="advisor_introduction_button"
+          label="Introduction"
+          icon="tv-minimal-play"
+          iconPosition="start"
+          variant="outline"
+          (click)="openIntroductionModal()"
+        ></sc-button>
+      </sc-page-header>
+      <div class="text-white text-xl lg:pr-16">
+        {{ displayDescription() }}
+      </div>
+    </div>
+
+    <sc-collection-save-modal
+      modalId="advisor-save-modal"
+      title="Bookmark this assessment"
+      confirmLabel="Confirm"
+      [saving]="isSaveAssessmentPending()"
+      (confirmed)="confirmSaveAssessment($event)"
+    ></sc-collection-save-modal>
+
+    <div
+      #introductionModal
+      id="advisor-introduction-modal"
+      tabindex="-1"
+      class="advisor-video-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    >
+      <div class="relative w-full max-w-4xl mx-auto my-auto">
+        <div
+          class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
+        >
+          <div
+            class="flex items-center justify-between p-4 border-b border-gray-600"
+          >
+            <h2 class="text-xl font-medium text-white">Advisor introduction</h2>
+            <sc-button
+              variant="close"
+              icon="x"
+              ariaLabel="Close modal"
+              (buttonClick)="closeIntroductionModal()"
+            ></sc-button>
+          </div>
+          <div class="p-4">
+            @if (showIntroductionVideo) {
+              <iframe
+                width="100%"
+                height="auto"
+                src="https://www.youtube.com/embed/4QwvxaLTW2k"
+                title="Spare Cores advisor introduction"
+                frameborder="0"
+                allow="
+                  accelerometer;
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  gyroscope;
+                  picture-in-picture;
+                  web-share;
+                "
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                class="advisor-video-frame"
+              ></iframe>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="advisor-page-body mx-2 xl:mx-0">
+      <div
+        class="advisor-filter-bar bg-primary"
+        [class.advisor-filter-bar-collapsed]="isCollapsed()"
+      >
+        <div
+          class="advisor-filter-bar-collapser bg-secondary"
+          (click)="toggleCollapse()"
+          tabindex="0"
+          role="button"
+          [attr.aria-expanded]="!isCollapsed()"
+          (keydown.enter)="toggleCollapse()"
+          (keydown.space)="toggleCollapse(); $event.preventDefault()"
+        >
+          @if (isCollapsed()) {
+            <svg
+              lucideChevronRight
+              class="advisor-filter-bar-collapser-icon h-6 w-6 text-emerald-400"
+            ></svg>
+          } @else {
+            <svg
+              lucideChevronLeft
+              class="advisor-filter-bar-collapser-icon h-6 w-6 text-emerald-400"
+            ></svg>
+          }
+        </div>
+
+        <div class="advisor-filter-bar-filters overflow-hidden bg-secondary">
+          <sc-search-bar
+            [query]="query()"
+            [extraParameters]="advisorSearchBarExtraParameters()"
+            [filterCategories]="advisorFilterCategories"
+            [searchParameters]="searchParameters"
+            [customControls]="customControls()"
+            [parameterPlacements]="advisorParameterPlacements"
+            [showTopSection]="false"
+            (searchChanged)="onSearchChanged($event)"
+            (customControlChanged)="onCustomControlChanged($event)"
+          >
+          </sc-search-bar>
+
+          @if (!isCollapsed()) {
+            <div class="px-4 pb-4 bg-secondary flex flex-col gap-3">
+              <sc-button
+                label="Clear filters"
+                icon="funnel-x"
+                iconPosition="start"
+                size="small"
+                class="w-full"
+                (click)="clearFilters()"
+              ></sc-button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div
+        class="advisor-results flex flex-col gap-4"
+        [class.advisor-results--compare-active]="
+          compareCount() >= 2 && selectedBaselineServer()
+        "
+      >
+        <div class="advisor-toolbar">
+          @if (recommendationSummary(); as summary) {
+            <div
+              class="advisor-summary-alert"
+              [class.advisor-summary-alert--positive]="
+                summary.tone === 'positive'
+              "
+              [class.advisor-summary-alert--neutral]="
+                summary.tone === 'neutral'
+              "
+            >
+              <div class="advisor-summary-alert-title">
+                {{ summary.title }}
+              </div>
+              <div class="advisor-summary-alert-body">{{ summary.body }}</div>
+            </div>
+          }
+
+          <sc-button
+            id="advisor_compare_baseline_button"
+            [label]="baselineCompareButtonLabel()"
+            icon="scale"
+            iconPosition="start"
+            [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
+            [disabled]="!selectedBaselineServer()"
+            (click)="toggleBaselineCompare()"
+          ></sc-button>
+
+          <div class="advisor-top-controls">
+            <div>
+              <sc-button
+                id="advisor_currency_button"
+                [scFlowbiteDropdown]="'advisor_currency_options'"
+                #currencyDropdown="scFlowbiteDropdown"
+                [label]="selectedCurrency().slug"
+                icon="credit-card"
+                variant="dropdown"
+              ></sc-button>
+            </div>
+
+            <div>
+              <sc-button
+                id="advisor_column_button"
+                [scFlowbiteDropdown]="'advisor_column_options'"
+                label="Columns"
+                icon="columns-3-cog"
+                variant="dropdown"
+              ></sc-button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div
+            class="advisor-table-wrap w-full overflow-x-auto relative"
+            [class.min-h-80]="
+              isLoadingRecommendations() && !recommendations().length
+            "
+          >
+            @if (isLoadingRecommendations()) {
+              <div class="advisor-table-loading-overlay">
+                <div class="flex justify-center mt-16 opacity-100">
+                  <sc-loading-spinner size="lg"></sc-loading-spinner>
+                </div>
+              </div>
+            }
+
+            <table class="advisor-results-table" id="advisor_results_table">
+              <thead>
+                <tr>
+                  <th class="advisor-checkbox-column">
+                    <div class="text-white">
+                      <svg lucideScale class="h-4 w-4"></svg>
+                    </div>
+                  </th>
+                  @for (column of tableColumns(); track column.name) {
+                    <th
+                      [ngClass]="{ 'cursor-pointer': column.orderField }"
+                      (click)="toggleOrdering(column)"
+                    >
+                      <div class="flex gap-1 whitespace-nowrap">
+                        {{ column.name }}
+                        @if (column.info) {
+                          <svg
+                            lucideInfo
+                            (mouseenter)="showTooltip($event, column.info)"
+                            (mouseleave)="hideTooltip()"
+                            class="h-4 w-4 text-gray-200"
+                          ></svg>
+                        }
+                        @if (getOrderingIcon(column); as orderingIcon) {
+                          @if (orderingIcon === "arrow-down-wide-narrow") {
+                            <svg
+                              lucideArrowDownWideNarrow
+                              class="h-4 w-4 text-white"
+                            ></svg>
+                          } @else {
+                            <svg
+                              lucideArrowDownNarrowWide
+                              class="h-4 w-4 text-white"
+                            ></svg>
+                          }
+                        }
+                      </div>
+                    </th>
+                  }
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (
+                  recommendation of recommendations();
+                  track recommendation.vendor_id +
+                    "_" +
+                    recommendation.server_id
+                ) {
+                  <tr
+                    (click)="openServerDetails(recommendation)"
+                    [class.advisor-table-row-baseline]="
+                      isSelectedBaselineRecommendation(recommendation)
+                    "
+                  >
+                    <td
+                      (click)="$event.stopPropagation()"
+                      class="advisor-checkbox-column"
+                    >
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          class="advisor-compare-checkbox disabled:cursor-not-allowed disabled:opacity-50"
+                          [checked]="isSelectedForCompare(recommendation)"
+                          [disabled]="
+                            isCompareCheckboxDisabled(
+                              isSelectedForCompare(recommendation),
+                              recommendation
+                            )
+                          "
+                          (click)="
+                            toggleCompareSelection($event, recommendation)
+                          "
+                        />
+                      </div>
+                    </td>
+                    @for (column of tableColumns(); track column.name) {
+                      @if (column.type === "name") {
+                        <td>
+                          <div (click)="$event.stopPropagation()">
+                            <a
+                              [routerLink]="[
+                                '/server',
+                                advisorUi.getVendorLinkId(recommendation),
+                                recommendation.api_reference,
+                              ]"
+                            >
+                              <div class="text-sm text-white flex gap-1">
+                                <span class="whitespace-nowrap">
+                                  {{
+                                    recommendation.display_name ||
+                                      recommendation.api_reference
+                                  }}
+                                </span>
+                                @if (
+                                  advisorUi.showApiReference(recommendation)
+                                ) {
+                                  <span class="text-emerald-400">|</span>
+                                  <span class="whitespace-nowrap">
+                                    {{ recommendation.api_reference }}
+                                  </span>
+                                }
+                              </div>
+                              <div class="text-xs text-white flex gap-1">
+                                <span>{{ recommendation.vendor_id }}</span>
+                              </div>
+                            </a>
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "vendor") {
+                        <td>
+                          @if (
+                            advisorUi.getVendorLogo(recommendation);
+                            as vendorLogo
+                          ) {
+                            <div class="advisor-table-vendor-logo">
+                              <img
+                                [src]="vendorLogo"
+                                [alt]="
+                                  advisorUi.getVendorName(recommendation) +
+                                  ' logo'
+                                "
+                              />
+                            </div>
+                          } @else {
+                            <div class="text-white text-sm">
+                              {{ advisorUi.getVendorName(recommendation) }}
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "score") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ advisorUi.formatScore(recommendation.score) }}
+                            @if (getScoreDelta(recommendation); as scoreDelta) {
+                              @if (
+                                getDeltaLabel(scoreDelta);
+                                as scoreDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    scoreDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    scoreDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    scoreDelta.tone === 'neutral'
+                                  "
+                                >
+                                  ({{ scoreDeltaLabel }})
+                                </span>
+                              }
+                            }
+                          </div>
+                          @if (recommendation.score_per_price) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">
+                                {{
+                                  advisorUi.formatScore(
+                                    recommendation.score_per_price
+                                  )
+                                }}
+                                / USD
+                              </span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "score_per_price") {
+                        <td>
+                          @if (recommendation.score_per_price) {
+                            <div class="text-sm text-white whitespace-nowrap">
+                              {{
+                                advisorUi.formatScore(
+                                  recommendation.score_per_price
+                                )
+                              }}
+                              @if (
+                                getScorePerPriceDelta(recommendation);
+                                as scorePerPriceDelta
+                              ) {
+                                @if (
+                                  getDeltaLabel(scorePerPriceDelta);
+                                  as scorePerPriceDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      scorePerPriceDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      scorePerPriceDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      scorePerPriceDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    ({{ scorePerPriceDeltaLabel }})
+                                  </span>
+                                }
+                              }
+                            </div>
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">/ USD</span>
+                            </div>
+                          } @else {
+                            <span>-</span>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "processor") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ recommendation.vcpus || 0 }} vCPUs
+                            @if (recommendation.cpu_architecture) {
+                              <span
+                                >({{ recommendation.cpu_architecture }})</span
+                              >
+                            }
+                          </div>
+                          <div class="flex gap-1">
+                            @if (
+                              recommendation.cpu_cores &&
+                              recommendation.cpu_speed
+                            ) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span class="whitespace-nowrap">
+                                  {{ recommendation.cpu_cores }} cores &#64;
+                                  {{ recommendation.cpu_speed }} GHz
+                                </span>
+                              </div>
+                            }
+                            @if (
+                              recommendation.cpu_allocation &&
+                              recommendation.cpu_allocation !== "Dedicated"
+                            ) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span
+                                  >({{ recommendation.cpu_allocation }})</span
+                                >
+                              </div>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "cpu_model") {
+                        <td>
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{
+                              advisorUi.getModelDetail(
+                                recommendation,
+                                "cpu_model"
+                              )
+                            }}</span>
+                          </div>
+                          <div class="text-xs text-white">
+                            @if (recommendation.cpu_manufacturer) {
+                              <span
+                                >{{ recommendation.cpu_manufacturer }}
+                              </span>
+                            }
+                            @if (recommendation.cpu_family) {
+                              <span>{{ recommendation.cpu_family }} </span>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "cpu_cache") {
+                        <td>
+                          @if (
+                            recommendation.cpu_l1d_cache ||
+                            recommendation.cpu_l2_cache ||
+                            recommendation.cpu_l3_cache
+                          ) {
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L1:
+                              {{ recommendation.cpu_l1d_cache | cpuCacheSize }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "cpu_l1d_cache"
+                                );
+                                as cpuL1Delta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(cpuL1Delta);
+                                  as cpuL1DeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      cpuL1Delta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      cpuL1Delta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      cpuL1Delta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ cpuL1DeltaLabel }}
+                                  </span>
+                                }
+                              }
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L2:
+                              {{ recommendation.cpu_l2_cache | cpuCacheSize }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "cpu_l2_cache"
+                                );
+                                as cpuL2Delta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(cpuL2Delta);
+                                  as cpuL2DeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      cpuL2Delta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      cpuL2Delta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      cpuL2Delta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ cpuL2DeltaLabel }}
+                                  </span>
+                                }
+                              }
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L3:
+                              {{ recommendation.cpu_l3_cache | cpuCacheSize }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "cpu_l3_cache"
+                                );
+                                as cpuL3Delta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(cpuL3Delta);
+                                  as cpuL3DeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      cpuL3Delta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      cpuL3Delta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      cpuL3Delta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ cpuL3DeltaLabel }}
+                                  </span>
+                                }
+                              }
+                            </div>
+                          } @else {
+                            <div class="text-sm text-white">-</div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "benchmark") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{
+                              advisorUi.formatScore(
+                                getBenchmarkDisplayScore(recommendation)
+                              )
+                            }}
+                            @if (
+                              !isSelectedBaselineRecommendation(
+                                recommendation
+                              ) &&
+                                selectedBenchmarkConfig()?.benchmarkTemplate
+                                  ?.unit &&
+                                getBenchmarkDelta(recommendation);
+                              as benchmarkDelta
+                            ) {
+                              @if (
+                                getDeltaLabel(benchmarkDelta);
+                                as benchmarkDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    benchmarkDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    benchmarkDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    benchmarkDelta.tone === 'neutral'
+                                  "
+                                >
+                                  ({{ benchmarkDeltaLabel }})
+                                </span>
+                              }
+                            }
+                          </div>
+                          @if (selectedBenchmarkUnit(); as benchmarkUnit) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span
+                                class="whitespace-nowrap"
+                                [title]="
+                                  selectedBenchmarkConfig()?.benchmarkTemplate
+                                    ?.unit
+                                "
+                              >
+                                {{ benchmarkUnit }}
+                              </span>
+                            </div>
+                          } @else if (
+                            !isSelectedBaselineRecommendation(recommendation)
+                          ) {
+                            @if (
+                              getBenchmarkDelta(recommendation);
+                              as benchmarkDelta
+                            ) {
+                              @if (
+                                getDeltaLabel(benchmarkDelta);
+                                as benchmarkDeltaLabel
+                              ) {
+                                <div class="text-xs text-white flex gap-1">
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      benchmarkDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      benchmarkDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      benchmarkDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ benchmarkDeltaLabel }}
+                                  </span>
+                                </div>
+                              }
+                            }
+                          }
+                        </td>
+                      }
+                      @if (column.type === "benchmark_score_per_price") {
+                        <td>
+                          @if (
+                            getBenchmarkScorePerPriceDisplayValue(
+                              recommendation
+                            );
+                            as efficiencyValue
+                          ) {
+                            <div class="text-sm text-white whitespace-nowrap">
+                              {{ advisorUi.formatScore(efficiencyValue) }}
+                              @if (
+                                !isSelectedBaselineRecommendation(
+                                  recommendation
+                                ) &&
+                                  getBenchmarkScorePerPriceDelta(
+                                    recommendation
+                                  );
+                                as efficiencyDelta
+                              ) {
+                                @if (
+                                  getDeltaLabel(efficiencyDelta);
+                                  as efficiencyDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      efficiencyDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      efficiencyDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      efficiencyDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    ({{ efficiencyDeltaLabel }})
+                                  </span>
+                                }
+                              }
+                            </div>
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">for $1/hour</span>
+                            </div>
+                          } @else {
+                            <span>-</span>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "memory") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ advisorUi.formatMemory(recommendation) }}
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "memory_amount"
+                              );
+                              as memoryDelta
+                            ) {
+                              @if (
+                                getParenthesizedDeltaLabel(memoryDelta);
+                                as memoryDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    memoryDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    memoryDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    memoryDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ memoryDeltaLabel }}
+                                </span>
+                              }
+                            }
+                          </div>
+                          @if (recommendation.memory_speed) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">
+                                {{ recommendation.memory_speed }} MHz
+                                @if (recommendation.memory_generation) {
+                                  <span
+                                    >({{
+                                      recommendation.memory_generation
+                                    }})</span
+                                  >
+                                }
+                              </span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "accelerator") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{
+                              recommendation.accelerator_count
+                                | acceleratorCount
+                            }}
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "accelerator_count"
+                              );
+                              as acceleratorDelta
+                            ) {
+                              @if (
+                                getParenthesizedDeltaLabel(acceleratorDelta);
+                                as acceleratorDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    acceleratorDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    acceleratorDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    acceleratorDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ acceleratorDeltaLabel }}
+                                </span>
+                              }
+                            }
+                          </div>
+                          @if (recommendation.accelerator_model) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span>{{
+                                recommendation.accelerator_model
+                              }}</span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "accelerator_memory_min") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{
+                              recommendation.accelerator_memory_min
+                                | acceleratorMemory
+                            }}
+                          </div>
+                          @if (
+                            getComparableResourceDelta(
+                              recommendation,
+                              "accelerator_memory_min"
+                            );
+                            as acceleratorMemoryMinDelta
+                          ) {
+                            @if (
+                              getDeltaLabel(acceleratorMemoryMinDelta);
+                              as acceleratorMemoryMinDeltaLabel
+                            ) {
+                              <div class="advisor-table-cell-secondary">
+                                <span
+                                  class="advisor-table-delta"
+                                  [class.advisor-table-delta--positive]="
+                                    acceleratorMemoryMinDelta.tone ===
+                                    'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    acceleratorMemoryMinDelta.tone ===
+                                    'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    acceleratorMemoryMinDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ acceleratorMemoryMinDeltaLabel }}
+                                </span>
+                              </div>
+                            }
+                          }
+                        </td>
+                      }
+                      @if (column.type === "accelerator_memory_total") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{
+                              recommendation.accelerator_memory_total
+                                | acceleratorMemory
+                            }}
+                          </div>
+                          @if (
+                            getComparableResourceDelta(
+                              recommendation,
+                              "accelerator_memory_total"
+                            );
+                            as acceleratorMemoryTotalDelta
+                          ) {
+                            @if (
+                              getDeltaLabel(acceleratorMemoryTotalDelta);
+                              as acceleratorMemoryTotalDeltaLabel
+                            ) {
+                              <div class="advisor-table-cell-secondary">
+                                <span
+                                  class="advisor-table-delta"
+                                  [class.advisor-table-delta--positive]="
+                                    acceleratorMemoryTotalDelta.tone ===
+                                    'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    acceleratorMemoryTotalDelta.tone ===
+                                    'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    acceleratorMemoryTotalDelta.tone ===
+                                    'neutral'
+                                  "
+                                >
+                                  {{ acceleratorMemoryTotalDeltaLabel }}
+                                </span>
+                              </div>
+                            }
+                          }
+                        </td>
+                      }
+                      @if (column.type === "accelerator_model") {
+                        <td>
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{
+                              advisorUi.getModelDetail(
+                                recommendation,
+                                "accelerator_model"
+                              )
+                            }}</span>
+                          </div>
+                          <div class="text-xs text-white">
+                            @if (recommendation.accelerator_manufacturer) {
+                              <span
+                                >{{ recommendation.accelerator_manufacturer }}
+                              </span>
+                            }
+                            @if (recommendation.accelerator_family) {
+                              <span
+                                >{{ recommendation.accelerator_family }}
+                              </span>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "storage") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ recommendation.storage_size | storage }}
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "storage_size"
+                              );
+                              as storageDelta
+                            ) {
+                              @if (
+                                getParenthesizedDeltaLabel(storageDelta);
+                                as storageDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    storageDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    storageDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    storageDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ storageDeltaLabel }}
+                                </span>
+                              }
+                            }
+                          </div>
+                          @if (recommendation.storage_type) {
+                            <div class="text-xs text-white">
+                              <span>{{ recommendation.storage_type }}</span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "price") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{
+                              advisorUi.formatPrice(
+                                recommendation,
+                                displayedCurrency().slug,
+                                column.key
+                              )
+                            }}
+                          </div>
+                          @if (
+                            !isSelectedBaselineRecommendation(recommendation)
+                          ) {
+                            @if (
+                              getPriceDelta(recommendation, column.key);
+                              as priceDelta
+                            ) {
+                              @if (
+                                getPriceDeltaLabel(priceDelta);
+                                as priceDeltaLabel
+                              ) {
+                                <div class="advisor-table-cell-secondary">
+                                  <span
+                                    class="advisor-table-delta"
+                                    [class.advisor-table-delta--positive]="
+                                      priceDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      priceDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      priceDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ priceDeltaLabel }}
+                                  </span>
+                                </div>
+                              }
+                            }
+                          }
+                        </td>
+                      }
+                      @if (
+                        column.type === "network_speed" &&
+                        column.key === "network_speed_baseline"
+                      ) {
+                        <td>
+                          <div class="flex flex-col whitespace-nowrap">
+                            <span>
+                              Base
+                              {{
+                                recommendation.network_speed_baseline
+                                  | networkSpeed
+                              }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "network_speed_baseline"
+                                );
+                                as networkSpeedBaselineDelta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(
+                                    networkSpeedBaselineDelta
+                                  );
+                                  as networkSpeedBaselineDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      networkSpeedBaselineDelta.tone ===
+                                      'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      networkSpeedBaselineDelta.tone ===
+                                      'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      networkSpeedBaselineDelta.tone ===
+                                      'neutral'
+                                    "
+                                  >
+                                    {{ networkSpeedBaselineDeltaLabel }}
+                                  </span>
+                                }
+                              }
+                            </span>
+                            <span class="text-xs">
+                              Max
+                              {{
+                                recommendation.network_speed_max | networkSpeed
+                              }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "network_speed_max"
+                                );
+                                as networkSpeedMaxDelta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(
+                                    networkSpeedMaxDelta
+                                  );
+                                  as networkSpeedMaxDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      networkSpeedMaxDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      networkSpeedMaxDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      networkSpeedMaxDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ networkSpeedMaxDeltaLabel }}
+                                  </span>
+                                }
+                              }
+                            </span>
+                          </div>
+                        </td>
+                      }
+                      @if (
+                        column.type === "network_speed" &&
+                        column.key === "network_storage_speed_baseline"
+                      ) {
+                        <td>
+                          <div class="flex flex-col whitespace-nowrap">
+                            <span>
+                              Base
+                              {{
+                                recommendation.network_storage_speed_baseline
+                                  | networkSpeed
+                              }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "network_storage_speed_baseline"
+                                );
+                                as networkStorageSpeedBaselineDelta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(
+                                    networkStorageSpeedBaselineDelta
+                                  );
+                                  as networkStorageSpeedBaselineDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      networkStorageSpeedBaselineDelta.tone ===
+                                      'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      networkStorageSpeedBaselineDelta.tone ===
+                                      'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      networkStorageSpeedBaselineDelta.tone ===
+                                      'neutral'
+                                    "
+                                  >
+                                    {{ networkStorageSpeedBaselineDeltaLabel }}
+                                  </span>
+                                }
+                              }
+                            </span>
+                            <span class="text-xs">
+                              Max
+                              {{
+                                recommendation.network_storage_speed_max
+                                  | networkSpeed
+                              }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "network_storage_speed_max"
+                                );
+                                as networkStorageSpeedMaxDelta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(
+                                    networkStorageSpeedMaxDelta
+                                  );
+                                  as networkStorageSpeedMaxDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      networkStorageSpeedMaxDelta.tone ===
+                                      'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      networkStorageSpeedMaxDelta.tone ===
+                                      'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      networkStorageSpeedMaxDelta.tone ===
+                                      'neutral'
+                                    "
+                                  >
+                                    {{ networkStorageSpeedMaxDeltaLabel }}
+                                  </span>
+                                }
+                              }
+                            </span>
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "inbound_traffic") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{
+                              recommendation.inbound_traffic | monthlyTraffic
+                            }}
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "inbound_traffic"
+                              );
+                              as inboundTrafficDelta
+                            ) {
+                              @if (
+                                getParenthesizedDeltaLabel(inboundTrafficDelta);
+                                as inboundTrafficDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    inboundTrafficDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    inboundTrafficDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    inboundTrafficDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ inboundTrafficDeltaLabel }}
+                                </span>
+                              }
+                            }
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "outbound_traffic") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{
+                              recommendation.outbound_traffic | monthlyTraffic
+                            }}
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "outbound_traffic"
+                              );
+                              as outboundTrafficDelta
+                            ) {
+                              @if (
+                                getParenthesizedDeltaLabel(
+                                  outboundTrafficDelta
+                                );
+                                as outboundTrafficDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    outboundTrafficDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    outboundTrafficDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    outboundTrafficDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ outboundTrafficDeltaLabel }}
+                                </span>
+                              }
+                            }
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "ipv4") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{ recommendation.ipv4 | ipv4Count }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "text") {
+                        <td>
+                          {{
+                            advisorUi.getTextValue(recommendation, column.key)
+                          }}
+                        </td>
+                      }
+                    }
+                    <td>
+                      <div (click)="$event.stopPropagation()">
+                        <a
+                          class="advisor-table-link advisor-table-link-icon"
+                          [routerLink]="[
+                            '/server',
+                            advisorUi.getVendorLinkId(recommendation),
+                            recommendation.api_reference,
+                          ]"
+                        >
+                          <svg
+                            lucideChevronRight
+                            class="h-6 w-6 text-emerald-400"
+                          ></svg>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                }
+
+                @if (!recommendations().length && !isLoadingRecommendations()) {
+                  <tr class="advisor-empty-state-row">
+                    <td
+                      [attr.colspan]="tableColumns().length + 2"
+                      class="advisor-empty-state-cell"
+                    >
+                      @let missingInputs = missingRequiredInputs();
+
+                      @if (hasEmptyBaselineWorkloadWarning()) {
+                        <strong>{{ emptyBaselineWorkloadMessage }}</strong>
+                        {{ emptyBaselineWorkloadActionMessage }}
+                      } @else if (missingInputs.length) {
+                        Please select
+                        @for (
+                          missingInput of missingInputs;
+                          track missingInput;
+                          let isFirst = $first;
+                          let isLast = $last
+                        ) {
+                          @if (!isFirst) {
+                            @if (isLast) {
+                              <span> and </span>
+                            } @else {
+                              <span>, </span>
+                            }
+                          }
+                          <strong>{{ missingInput }}</strong>
+                        }
+                        to get started.
+                      } @else {
+                        {{ recommendationEmptyStateMessage() }}
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            id="tooltipDefault"
+            #tooltipDefault
+            style="opacity: 0; display: none"
+            class="tooltip-panel fixed z-100 pointer-events-none"
+          >
+            {{ tooltipContent() }}
+          </div>
+
+          <div class="flex justify-between mt-4 flex-wrap gap-4">
+            <div class="flex items-center gap-2">
+              <sc-button
+                id="advisor_pagesize_button"
+                [scFlowbiteDropdown]="'advisor_pagesize_options'"
+                [dropdownFlip]="true"
+                [dropdownPlacement]="'bottom-start'"
+                #pageDropdown="scFlowbiteDropdown"
+                [label]="'' + limit()"
+                icon="chevron-down"
+                variant="dropdown"
+              ></sc-button>
+              <span class="text-white">items per page</span>
+            </div>
+
+            <div>
+              <sc-pagination
+                baseURL="/advisor"
+                [currentPage]="page()"
+                [totalPages]="totalPages()"
+                [baseQueryParams]="getUrlStateQueryParams()"
+              >
+              </sc-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="advisor_pagesize_options" class="advisor-dropdown-menu hidden w-44">
+  <ul
+    class="advisor-dropdown-menu-list px-1"
+    aria-labelledby="advisor_pagesize_button"
+  >
+    @for (pageLimit of pageLimits; track $index) {
+      <li
+        class="advisor-dropdown-menu-option"
+        (click)="selectPageSize(pageLimit)"
+        (keydown.enter)="selectPageSize(pageLimit)"
+        (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
+        role="option"
+        [attr.aria-selected]="pageLimit === limit()"
+        tabindex="0"
+      >
+        <div class="advisor-dropdown-menu-label">{{ pageLimit }}</div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div id="advisor_currency_options" class="advisor-dropdown-menu hidden w-52">
+  <ul
+    class="advisor-dropdown-menu-list px-1"
+    aria-labelledby="advisor_currency_button"
+  >
+    @for (currency of availableCurrencies; track currency.name) {
+      <li
+        class="advisor-dropdown-menu-option"
+        (click)="selectCurrency(currency)"
+        (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
+        (keydown.space)="selectCurrency(currency); $event.preventDefault()"
+        role="option"
+        [attr.aria-selected]="currency === selectedCurrency()"
+        tabindex="0"
+      >
+        <div class="advisor-dropdown-menu-label">
+          {{ currency.name }} ({{ currency.symbol }})
+        </div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div id="advisor_column_options" class="advisor-dropdown-menu hidden w-56">
+  <ul
+    class="advisor-dropdown-menu-list px-3"
+    aria-labelledby="advisor_column_button"
+  >
+    @for (column of possibleColumns(); track column.name) {
+      <li class="advisor-dropdown-menu-option px-0 hover:bg-transparent">
+        <input
+          type="checkbox"
+          [checked]="column.show"
+          (change)="
+            setColumnVisibility(column.name, $any($event.target).checked)
+          "
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="advisor-dropdown-menu-label">{{ column.name }}</div>
+      </li>
+    }
+  </ul>
+</div>
+
+@if (compareCount() >= 2 && selectedBaselineServer()) {
+  <div class="advisor-compare-bar">
+    <div class="advisor-compare-bar-actions">
+      <sc-button
+        label="Clear"
+        icon="circle-x"
+        iconPosition="start"
+        color="danger"
+        class="advisor-compare-bar-button"
+        (click)="clearCompareSelection()"
+      ></sc-button>
+      <sc-button
+        [label]="'Compare (' + compareCount() + ')'"
+        icon="scale"
+        iconPosition="start"
+        class="advisor-compare-bar-button"
+        (click)="openCompare()"
+      ></sc-button>
+    </div>
+  </div>
+}

@@ -1,0 +1,149 @@
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+} from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
+import { Button } from "../button/button";
+import { ChartTooltip } from "../charts/shared/chart-tooltip";
+
+export interface ServerPropertyTooltip {
+  key: string;
+  content: string;
+}
+
+export interface ServerPropertyRow {
+  id: string;
+  name: string;
+  value: string;
+  tooltips?: ServerPropertyTooltip[];
+  routerLink?: string[] | string;
+}
+
+export interface ServerPropertySection {
+  name: string;
+  properties: ServerPropertyRow[];
+}
+
+@Component({
+  selector: "sc-server-property-card",
+  imports: [LucideDynamicIcon, LucideInfo, Button, RouterLink],
+  templateUrl: "./server-property-card.html",
+  styleUrl: "./server-property-card.scss",
+})
+export class ServerPropertyCard {
+  private tooltipService = inject(ChartTooltip);
+
+  cardTitle = input.required<string>();
+  cardId = input.required<string>();
+  sections = input<ServerPropertySection[]>([]);
+  showSectionHeaders = input(true);
+  sectionHeaderVariant = input<"default" | "availability">("default");
+  moreLabel = input("View more details");
+  lessLabel = input("Show less");
+  isOpen = input(false);
+
+  toggleRequested = output<void>();
+
+  cardRoot = viewChild<ElementRef<HTMLDivElement>>("cardRoot");
+  tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
+
+  tooltipContent = signal("");
+  canExpand = signal(false);
+  private overflowCheckTimeout?: ReturnType<typeof setTimeout>;
+  private destroyRef = inject(DestroyRef);
+
+  hasExpandableContent = computed(() => this.canExpand());
+
+  visibleSections = computed(() =>
+    this.sections().filter((section) => section.properties.length > 0),
+  );
+
+  constructor() {
+    effect(() => {
+      this.sections();
+      this.showSectionHeaders();
+      this.sectionHeaderVariant();
+      this.isOpen();
+      this.scheduleOverflowCheck();
+    });
+
+    afterNextRender(() => {
+      this.scheduleOverflowCheck();
+    });
+
+    this.destroyRef.onDestroy(() => {
+      if (this.overflowCheckTimeout) {
+        clearTimeout(this.overflowCheckTimeout);
+      }
+    });
+  }
+
+  @HostListener("window:resize")
+  onResize() {
+    this.scheduleOverflowCheck();
+  }
+
+  sectionHeading(sectionName: string): string {
+    return this.sectionHeaderVariant() === "availability"
+      ? sectionName.toUpperCase()
+      : sectionName;
+  }
+
+  showTooltip(event: MouseEvent, content: string | undefined) {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent.set(tooltipContent);
+      },
+    });
+  }
+
+  hideTooltip() {
+    this.tooltipService.hide(this.tooltip()?.nativeElement);
+  }
+
+  requestToggle() {
+    this.toggleRequested.emit();
+  }
+
+  private scheduleOverflowCheck() {
+    if (this.overflowCheckTimeout) {
+      clearTimeout(this.overflowCheckTimeout);
+    }
+
+    this.overflowCheckTimeout = setTimeout(() => {
+      this.updateOverflowState();
+    }, 0);
+  }
+
+  private updateOverflowState() {
+    const cardElement = this.cardRoot()?.nativeElement;
+    if (!cardElement) {
+      return;
+    }
+
+    const hadOpenClass = cardElement.classList.contains("open");
+    if (hadOpenClass) {
+      cardElement.classList.remove("open");
+    }
+
+    this.canExpand.set(cardElement.scrollHeight > cardElement.clientHeight + 1);
+
+    if (hadOpenClass) {
+      cardElement.classList.add("open");
+    }
+  }
+}

@@ -1,0 +1,26 @@
+.box-anchor {
+  display: inline-block;
+  width: 0;
+  height: 1em;
+  vertical-align: baseline;
+  pointer-events: none;
+}
+
+.box-overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 20;
+  outline: 2px solid #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  box-sizing: border-box;
+}
+
+/* Dummy fragment that delays the overlay by one click after a line step. */
+pre > .box-trigger {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0 !important;
+  pointer-events: none;
+}

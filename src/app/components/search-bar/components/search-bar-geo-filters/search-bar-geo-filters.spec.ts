@@ -1,12 +1,12 @@
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { AuthStateService } from "../../../../core/auth";
-import { CollectionsUiService } from "../../../../collections/collections-ui.service";
+import { AuthState } from "../../../../core/auth";
+import { CollectionsUi } from "../../../../collections/collections-ui";
 import {
   GUEST_COUNTRY_LIMIT_TOAST_ID,
   GUEST_REGION_LIMIT_TOAST_ID,
 } from "../../../../services/toast-ids";
-import { ToastService } from "../../../../services/toast.service";
+import { Toast } from "../../../../services/toast";
 import type {
   CountryMetadata,
   SearchBarParameter,
@@ -29,17 +29,17 @@ describe("SearchBarGeoFilters", () => {
       imports: [SearchBarGeoFilters],
       providers: [
         {
-          provide: AuthStateService,
+          provide: AuthState,
           useValue: {
             isAuthenticated: () => isAuthenticated(),
           },
         },
         {
-          provide: CollectionsUiService,
+          provide: CollectionsUi,
           useValue: { promptRegisterForFeature },
         },
         {
-          provide: ToastService,
+          provide: Toast,
           useValue: { show },
         },
       ],

@@ -5,7 +5,7 @@ import {
   CdkDropList,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -24,13 +24,13 @@ import { LucideDynamicIcon } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
 import {
   BreadcrumbSegment,
-  BreadcrumbsComponent,
-} from "../../components/breadcrumbs/breadcrumbs.component";
+  Breadcrumbs,
+} from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { CollectionSaveModalComponent } from "../../components/collections/collection-save-modal/collection-save-modal.component";
-import { CollectionsStore } from "../../collections/collections.store";
+import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionsStore } from "../../collections/collections-store";
 import type {
   BookmarksCardViewModel,
   BookmarksFilterKey,
@@ -39,12 +39,12 @@ import {
   formatBookmarkedAt,
   formatBookmarkedAtExact,
 } from "../../collections/collections.utils";
-import { AuthStateService } from "../../core/auth";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { AuthState } from "../../core/auth";
+import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
-import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ToastService } from "../../services/toast.service";
-import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { KeeperAPI } from "../../services/keeper-api";
+import { Toast } from "../../services/toast";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { mutationKey } from "../../shared/store/with-mutation-status";
 
 type BookmarksFeature = {
@@ -102,18 +102,17 @@ function normalizeBookmarksNameQuery(value: string): string {
 @Component({
   selector: "sc-bookmarks",
   imports: [
-    CommonModule,
     RouterModule,
-    BreadcrumbsComponent,
+    Breadcrumbs,
     PageHeader,
     Button,
-    LoadingSpinnerComponent,
+    LoadingSpinner,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
     LucideDynamicIcon,
-    CollectionSaveModalComponent,
-    FlowbiteDropdownDirective,
+    CollectionSaveModal,
+    FlowbiteDropdown,
   ],
   templateUrl: "./bookmarks.html",
   styleUrl: "./bookmarks.scss",
@@ -121,17 +120,17 @@ function normalizeBookmarksNameQuery(value: string): string {
 })
 export class Bookmarks implements OnDestroy {
   private collectionsStore = inject(CollectionsStore);
-  private keeperAPI = inject(KeeperAPIService);
+  private keeperAPI = inject(KeeperAPI);
   private router = inject(Router);
-  private toastService = inject(ToastService);
-  private uiTooltip = inject(UiTooltipService);
+  private toastService = inject(Toast);
+  private uiTooltip = inject(UiTooltip);
   private platformId = inject(PLATFORM_ID);
-  private auth = inject(AuthStateService);
+  private auth = inject(AuthState);
 
-  private saveModal = viewChild(CollectionSaveModalComponent);
+  private saveModal = viewChild(CollectionSaveModal);
   private noteModalRef = viewChild<ElementRef<HTMLElement>>("noteModal");
   private tooltipRef = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
-  private sortDropdown = viewChild<FlowbiteDropdownDirective>("sortDropdown");
+  private sortDropdown = viewChild<FlowbiteDropdown>("sortDropdown");
   private noteFlowbiteModal: Modal | null = null;
   private loadingFavoriteFeatures = new Set<string>();
   private vendorsLoaded = false;
