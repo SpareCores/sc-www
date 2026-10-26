@@ -41,6 +41,7 @@ import {
 } from "../../collections/collections.utils";
 import { AuthState } from "../../core/auth";
 import { Dropdown } from "../../directives/dropdown";
+import { isKeyboardActivation } from "../../directives/dropdown-focus";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPI } from "../../services/keeper-api";
 import { Toast } from "../../services/toast";
@@ -346,7 +347,7 @@ export class Bookmarks implements OnDestroy {
   protected toggleSortDropdown(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.sortDropdown()?.toggle();
+    this.sortDropdown()?.toggle(isKeyboardActivation(event));
   }
 
   protected onSortDirClick(event: MouseEvent): void {

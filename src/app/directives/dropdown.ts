@@ -26,12 +26,18 @@ import {
 import { DROPDOWN_LAYER } from "../services/overlay/dropdown-layer";
 import { PageOverlayContainer } from "../services/overlay/page-overlay-container";
 import { DropdownPlacement, toConnectedPositions } from "./dropdown-positions";
+import {
+  focusFirst,
+  focusTarget,
+  focusableItems,
+  isKeyboardActivation,
+} from "./dropdown-focus";
 
 @Directive({
   selector: "[scDropdown]",
   exportAs: "scDropdown",
   host: {
-    "(click)": "onHostClick()",
+    "(click)": "onHostClick($event)",
   },
 })
 export class Dropdown {
@@ -66,7 +72,7 @@ export class Dropdown {
     inject(DestroyRef).onDestroy(() => this.overlayRef?.dispose());
   }
 
-  open() {
+  open(focusPanel = false) {
     if (this.isOpen() || !this.dropdownEnabled()) {
       return;
     }
@@ -83,6 +89,12 @@ export class Dropdown {
     this.isOpen.set(true);
     this.syncAria();
     this.dropdownOpened.emit();
+
+    if (focusPanel) {
+      afterNextRender(() => focusFirst(overlayRef.overlayElement), {
+        injector: this.injector,
+      });
+    }
   }
 
   hide() {
@@ -95,20 +107,20 @@ export class Dropdown {
     this.syncAria();
   }
 
-  toggle() {
+  toggle(focusPanel = false) {
     if (this.isOpen()) {
       this.hide();
     } else {
-      this.open();
+      this.open(focusPanel);
     }
   }
 
-  protected onHostClick() {
+  protected onHostClick(event: MouseEvent) {
     if (this.dropdownTriggerType() !== "click" || !this.dropdownEnabled()) {
       return;
     }
 
-    this.toggle();
+    this.toggle(isKeyboardActivation(event));
   }
 
   private createOverlay(): OverlayRef {
@@ -143,6 +155,8 @@ export class Dropdown {
         event.preventDefault();
         this.hide();
         this.focusTarget().focus();
+      } else if (event.key === "Tab") {
+        this.onTab(event, overlayRef.overlayElement);
       }
     });
 
@@ -150,13 +164,34 @@ export class Dropdown {
     return overlayRef;
   }
 
-  private focusTarget(): HTMLElement {
-    const host = this.host.nativeElement;
-    if (host.matches("button, a[href], [tabindex]")) {
-      return host;
+  private onTab(event: KeyboardEvent, panel: HTMLElement) {
+    const items = focusableItems(panel);
+    const target = event.target as Node | null;
+
+    if (!panel.contains(target)) {
+      const fromTrigger = this.host.nativeElement.contains(target);
+      if (fromTrigger && !event.shiftKey && items.length > 0) {
+        event.preventDefault();
+        items[0].focus();
+      } else {
+        this.hide();
+      }
+      return;
     }
 
-    return host.querySelector<HTMLElement>("button, a[href]") ?? host;
+    if (target !== (event.shiftKey ? items[0] : items[items.length - 1])) {
+      return;
+    }
+
+    if (event.shiftKey) {
+      event.preventDefault();
+    }
+    this.hide();
+    this.focusTarget().focus();
+  }
+
+  private focusTarget(): HTMLElement {
+    return focusTarget(this.host.nativeElement);
   }
 
   private syncAria() {

@@ -16,7 +16,10 @@ import { Dropdown } from "./dropdown";
     </button>
     <button id="outside">Outside</button>
     <ng-template #panel>
-      <div id="panel">Panel</div>
+      <div id="panel">
+        <a id="first" href="/first">First</a>
+        <a id="last" href="/last">Last</a>
+      </div>
     </ng-template>
   `,
   imports: [Dropdown],
@@ -127,6 +130,42 @@ describe("Dropdown", () => {
     fixture.detectChanges();
     expect(dropdown.isOpen()).toBeFalse();
     expect(panel()).toBeNull();
+  });
+
+  it("focuses the first item when opened from the keyboard", async () => {
+    trigger.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(document.activeElement?.id).toBe("first");
+  });
+
+  it("keeps focus on the trigger when opened with the mouse", async () => {
+    trigger.focus();
+    trigger.dispatchEvent(
+      new MouseEvent("click", { bubbles: true, detail: 1 }),
+    );
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(panel()).not.toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("closes and focuses the trigger on Tab from the last item", async () => {
+    trigger.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const last = panel()!.querySelector<HTMLElement>("#last")!;
+    last.focus();
+    last.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Tab", bubbles: true }),
+    );
+    fixture.detectChanges();
+
+    expect(panel()).toBeNull();
+    expect(document.activeElement).toBe(trigger);
   });
 
   it("emits dropdownOpened when the panel opens", () => {
