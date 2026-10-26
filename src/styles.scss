@@ -96,6 +96,17 @@ $content-max-width: 1400px;
   }
 }
 
+.cdk-overlay-container {
+  z-index: 60;
+}
+
+.sc-dropdown-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 35;
+}
+
 .sc-auth-pending-overlay {
   position: fixed;
   inset: 0;

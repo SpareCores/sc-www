@@ -5,6 +5,7 @@ import {
   CdkDropList,
 } from "@angular/cdk/drag-drop";
 
+import { NgTemplateOutlet } from "@angular/common";
 import { Component, inject, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Button } from "../../components/button/button";
@@ -38,7 +39,8 @@ import {
 } from "@lucide/angular";
 import { Analytics } from "../../services/analytics";
 import { CompareSelection } from "../../services/compare-selection";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { InlineDropdown } from "../../directives/inline-dropdown";
+import { NeetoCal } from "../../services/neeto-cal";
 import { AuthState } from "../../core/auth";
 
 @Component({
@@ -72,7 +74,8 @@ import { AuthState } from "../../core/auth";
     LucideTrash,
     LucideUser,
     RouterLink,
-    FlowbiteDropdown,
+    InlineDropdown,
+    NgTemplateOutlet,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
@@ -84,13 +87,14 @@ export class Header {
   private router = inject(Router);
   private serverCompare = inject(CompareSelection);
   private analytics = inject(Analytics);
+  private neetoCal = inject(NeetoCal);
   protected readonly auth = inject(AuthState);
 
-  menuDropdown = viewChild<FlowbiteDropdown>("menuDropdown");
-  aboutDropdown = viewChild<FlowbiteDropdown>("aboutDropdown");
-  authDropdown = viewChild<FlowbiteDropdown>("authDropdown");
-  compareDropdown = viewChild<FlowbiteDropdown>("compareDropdown");
-  navigatorDropdown = viewChild<FlowbiteDropdown>("navigatorDropdown");
+  menuDropdown = viewChild<InlineDropdown>("menuDropdown");
+  aboutDropdown = viewChild<InlineDropdown>("aboutDropdown");
+  authDropdown = viewChild<InlineDropdown>("authDropdown");
+  compareDropdown = viewChild<InlineDropdown>("compareDropdown");
+  navigatorDropdown = viewChild<InlineDropdown>("navigatorDropdown");
 
   closeMenu() {
     this.menuDropdown()?.hide();
@@ -110,6 +114,10 @@ export class Header {
 
   closeAuth() {
     this.authDropdown()?.hide();
+  }
+
+  initMeetingButtons() {
+    this.neetoCal.initialize();
   }
 
   signIn(): void {

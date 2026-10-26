@@ -235,8 +235,10 @@ export abstract class E2EEvent {
     cy.get("#menu_button").should("be.visible").click();
     cy.get("#menu_options").should("be.visible");
     cy.get("#menu_options .navbar_link").each(($item) => {
-      cy.wrap($item).should("be.visible");
+      cy.wrap($item).scrollIntoView().should("be.visible");
     });
+    cy.get("#menu_options .mobile_menu_panel__list").scrollTo("top");
+    cy.scrollTo("top");
   }
 
   public static hideScrollbarsForScreenshot(options?: {

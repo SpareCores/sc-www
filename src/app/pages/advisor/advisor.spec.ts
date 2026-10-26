@@ -34,7 +34,6 @@ import {
   ADVISOR_TABLE_COLUMNS,
   ADVISOR_WORKLOAD_SCORE_TOOLTIP,
 } from "./advisor.constants";
-import { DropdownManager } from "../../services/dropdown-manager";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { CompareSelection } from "../../services/compare-selection";
@@ -71,7 +70,6 @@ describe("Advisor", () => {
   const showToast = jasmine.createSpy("show");
   const showHttpError = jasmine.createSpy("showHttpError");
   const removeToast = jasmine.createSpy("removeToast");
-  const initDropdown = jasmine.createSpy("initDropdown");
   const initializeNeetoCal = jasmine.createSpy("initialize");
   const selectionChanged = new Subject();
   const compareService = {
@@ -112,7 +110,6 @@ describe("Advisor", () => {
     showToast.calls.reset();
     showHttpError.calls.reset();
     removeToast.calls.reset();
-    initDropdown.calls.reset();
     initializeNeetoCal.calls.reset();
     compareService.selectedForCompare = [];
     compareService.toggleCompare.calls.reset();
@@ -301,21 +298,11 @@ describe("Advisor", () => {
         },
       ],
     });
-    initDropdown.and.resolveTo({
-      hide: jasmine.createSpy("hide"),
-      show: jasmine.createSpy("show"),
-    });
 
     await TestBed.configureTestingModule({
       imports: [Advisor],
       providers: [
         ...sharedTestingProviders,
-        {
-          provide: DropdownManager,
-          useValue: {
-            initDropdown,
-          },
-        },
         {
           provide: ActivatedRoute,
           useValue: {

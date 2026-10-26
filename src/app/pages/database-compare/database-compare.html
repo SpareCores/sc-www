@@ -41,16 +41,16 @@
           <div class="flex flex-wrap gap-4 items-center justify-end w-full">
             <sc-button
               id="baseline_database_button"
-              [scFlowbiteDropdown]="'baseline_database_options'"
-              #baselineDropdown="scFlowbiteDropdown"
+              [scDropdown]="baselinePanel"
+              #baselineDropdown="scDropdown"
               [label]="getBaselineDatabaseLabel()"
               icon="target"
               variant="dropdown"
             ></sc-button>
             <sc-button
               id="currency_button"
-              [scFlowbiteDropdown]="'currency_options'"
-              #currencyDropdown="scFlowbiteDropdown"
+              [scDropdown]="currencyPanel"
+              #currencyDropdown="scDropdown"
               [label]="selectedCurrency.slug"
               icon="credit-card"
               variant="dropdown"
@@ -677,50 +677,57 @@
   {{ chartTooltipContent }}
 </div>
 
-<div
-  id="baseline_database_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="baseline_database_button"
+<ng-template #baselinePanel>
+  <div
+    id="baseline_database_options"
+    class="bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
   >
-    <li
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectBaselineDatabase(null)"
+    <ul
+      class="py-2 px-1 text-sm text-gray-700"
+      aria-labelledby="baseline_database_button"
     >
-      <div class="text-white text-sm">No baseline</div>
-    </li>
-    @for (
-      database of databases;
-      track database.vendor_id + "_" + database.database_id
-    ) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectBaselineDatabase(database)"
+        (click)="selectBaselineDatabase(null)"
       >
-        <div class="text-white text-sm">
-          {{ database.display_name }} ({{ database.vendor_id }})
-        </div>
+        <div class="text-white text-sm">No baseline</div>
       </li>
-    }
-  </ul>
-</div>
+      @for (
+        database of databases;
+        track database.vendor_id + "_" + database.database_id
+      ) {
+        <li
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          (click)="selectBaselineDatabase(database)"
+        >
+          <div class="text-white text-sm">
+            {{ database.display_name }} ({{ database.vendor_id }})
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
 
-<div
-  id="currency_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
->
-  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="currency_button">
-    @for (currency of availableCurrencies; track currency.name) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectCurrency(currency)"
-      >
-        <div class="text-white text-sm">
-          {{ currency.name }} ({{ currency.symbol }})
-        </div>
-      </li>
-    }
-  </ul>
-</div>
+<ng-template #currencyPanel>
+  <div
+    id="currency_options"
+    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="py-2 px-1 text-sm text-gray-700"
+      aria-labelledby="currency_button"
+    >
+      @for (currency of availableCurrencies; track currency.name) {
+        <li
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          (click)="selectCurrency(currency)"
+        >
+          <div class="text-white text-sm">
+            {{ currency.name }} ({{ currency.symbol }})
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>

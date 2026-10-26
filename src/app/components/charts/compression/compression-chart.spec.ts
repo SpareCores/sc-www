@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { CompressionChart } from "./compression-chart";
-import { DropdownManager } from "../../../services/dropdown-manager";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 import {
   CompressionBenchmarkGroup,
@@ -30,13 +29,7 @@ describe("CompressionChart", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CompressionChart],
-      providers: [
-        ...sharedTestingProviders,
-        {
-          provide: DropdownManager,
-          useValue: { initDropdown: () => Promise.resolve(undefined) },
-        },
-      ],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CompressionChart);
