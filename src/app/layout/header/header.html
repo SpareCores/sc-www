@@ -220,6 +220,45 @@
         class="mx-3 my-1 border-b border-emerald-400/30"
         [class.hidden]="auth.isAuthenticated()"
       ></li>
+      @if (auth.isAuthenticated()) {
+        <li id="menu_account" class="py-2 sm:hidden">
+          <span class="navbar_link hover:!text-white">
+            <span class="navbar_icon">
+              <svg lucideUser class="h-4 w-4"></svg>
+            </span>
+            <span class="truncate">{{ auth.userName() }}</span>
+          </span>
+        </li>
+        <li class="py-2 ml-6 sm:hidden">
+          <a class="navbar_link" routerLink="/bookmarks">
+            <span class="navbar_icon">
+              <svg lucideFolderBookmark class="h-4 w-4"></svg>
+            </span>
+            Bookmarks
+          </a>
+        </li>
+        <li class="py-2 ml-6 sm:hidden">
+          <button type="button" class="navbar_link" (click)="openProfile()">
+            <span class="navbar_icon">
+              <svg lucideUser class="h-4 w-4"></svg>
+            </span>
+            Edit Profile
+          </button>
+        </li>
+        <li class="py-2 ml-6 sm:hidden">
+          <button
+            type="button"
+            class="navbar_link !text-[#EF4444] hover:!text-red-400"
+            (click)="signOut()"
+          >
+            <span class="navbar_icon">
+              <svg lucideLogOut class="h-4 w-4"></svg>
+            </span>
+            Sign Out
+          </button>
+        </li>
+        <li class="mx-3 my-1 border-b border-emerald-400/30 sm:hidden"></li>
+      }
       <li class="py-2">
         <span class="navbar_link hover:!text-white">
           <span class="navbar_icon">

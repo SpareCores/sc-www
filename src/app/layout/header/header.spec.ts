@@ -6,6 +6,7 @@ import { InlineDropdown } from "../../directives/inline-dropdown";
 import { Header } from "./header";
 import { CompareSelection } from "../../services/compare-selection";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { AuthState } from "../../core/auth";
 
 describe("Header", () => {
   let component: Header;
@@ -48,6 +49,27 @@ describe("Header", () => {
     expect(menuOptions.indexOf("Advisor")).toBeLessThan(
       menuOptions.indexOf("Resource Tracker"),
     );
+  });
+
+  it("shows the account actions in the mobile menu when signed in", () => {
+    const auth = TestBed.inject(AuthState);
+    spyOn(auth, "isAuthenticated").and.returnValue(true);
+    spyOn(auth, "userName").and.returnValue("Jane Doe");
+    fixture.detectChanges();
+
+    const menu = openDropdown("#menu_button").querySelector(
+      "#menu_options",
+    ) as HTMLElement;
+    const labels = Array.from(menu.querySelectorAll(".navbar_link")).map(
+      (element) => element.textContent?.trim(),
+    );
+
+    expect(menu.querySelector("#menu_account")?.textContent).toContain(
+      "Jane Doe",
+    );
+    expect(menu.querySelector('a[routerLink="/bookmarks"]')).not.toBeNull();
+    expect(labels).toContain("Edit Profile");
+    expect(labels).toContain("Sign Out");
   });
 
   it("shows Partners in the about navigation", () => {
