@@ -109,7 +109,9 @@ single-worker result. In an ideal world, it equals the number of physical
 cores.
 
 We picked six AWS servers to cover the most interesting combinations of CPU
-vendor, architecture, SMT, and core count:
+vendor, architecture, SMT, and core count (see them
+<a href="/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoiYzZhLmxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZhLmxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJjNmEuMnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4yeGxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJjNmcueGxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZnLnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoibTdhLnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6Im03YS54bGFyZ2UiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6ImM3YS4zMnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3YS4zMnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzZpLm1ldGFsIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZpLm1ldGFsIiwiem9uZXNSZWdpb25zIjpbXX1d" target="_blank" rel="noopener">side by side</a>
+in Navigator):
 
 | Server | CPU | vCPUs | Physical cores | SMT |
 | --- | --- | ---: | ---: | --- |
