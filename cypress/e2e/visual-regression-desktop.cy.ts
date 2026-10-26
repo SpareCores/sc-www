@@ -251,6 +251,8 @@ describe("Visual regression tests", () => {
       1,
     );
 
+    cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");
+
     cy.compareSnapshot({
       name: visualSnapshotName(
         "embedded-compare-chart-aws-a1-medium-c6gd-medium-generic",
