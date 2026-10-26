@@ -124,7 +124,7 @@
         </sc-search-bar>
       </div>
       <div
-        class="list_holder flex flex-col gap-4"
+        class="list_holder flex flex-col gap-4 min-w-0"
         [ngClass]="{
           'limited-full': !isCollapsed,
           'w-full': isCollapsed,
@@ -699,7 +699,7 @@
             </table>
           </div>
           <div>
-            <div class="flex justify-between mt-4">
+            <div class="flex justify-between mt-4 flex-wrap gap-4">
               <div class="flex items-center gap-2">
                 <sc-button
                   id="pagesize_button"
