@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
-import { OverlayContainer } from "@angular/cdk/overlay";
 
-import { Dropdown } from "../../directives/dropdown";
+import { InlineDropdown } from "../../directives/inline-dropdown";
 import { Header } from "./header";
 import { CompareSelection } from "../../services/compare-selection";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
@@ -26,10 +25,10 @@ describe("Header", () => {
   function openDropdown(triggerSelector: string): HTMLElement {
     fixture.debugElement
       .query(By.css(triggerSelector))
-      .injector.get(Dropdown)
+      .injector.get(InlineDropdown)
       .open();
     fixture.detectChanges();
-    return TestBed.inject(OverlayContainer).getContainerElement();
+    return fixture.nativeElement;
   }
 
   it("should create", () => {
@@ -65,40 +64,17 @@ describe("Header", () => {
     expect(mobilePartnersLink?.textContent).toContain("Partners");
   });
 
-  it("configures the mobile menu dropdown to stay within the viewport", () => {
-    const menuDropdown = fixture.debugElement
-      .query(By.css("#menu_button"))
-      .injector.get(Dropdown);
+  it("renders the navigation links while the panels are closed", () => {
+    const element: HTMLElement = fixture.nativeElement;
+    const navigatorPanel = element.querySelector("#navigator_options");
 
-    expect(menuDropdown.dropdownPlacement()).toBe("bottom-end");
-    expect(menuDropdown.dropdownFlip()).toBeTrue();
-  });
-
-  it("configures the compare dropdown to stay within the viewport", () => {
-    const serverCompare = TestBed.inject(CompareSelection);
-    serverCompare.selectedForCompare = [
-      {
-        display_name: "a",
-        vendor: "aws",
-        server: "a",
-        zonesRegions: [],
-      },
-      {
-        display_name: "b",
-        vendor: "aws",
-        server: "b",
-        zonesRegions: [],
-      },
-    ];
-    serverCompare.selectionChanged.next(serverCompare.selectedForCompare);
-    fixture.detectChanges();
-
-    const compareDropdown = fixture.debugElement
-      .query(By.css("#compare_button"))
-      .injector.get(Dropdown);
-
-    expect(compareDropdown.dropdownPlacement()).toBe("bottom-end");
-    expect(compareDropdown.dropdownFlip()).toBeTrue();
+    expect(navigatorPanel?.closest("[hidden]")).not.toBeNull();
+    expect(
+      navigatorPanel?.querySelector('a[routerLink="/server_prices"]'),
+    ).not.toBeNull();
+    expect(
+      element.querySelector('#menu_options a[routerLink="/vendors"]'),
+    ).not.toBeNull();
   });
 
   it("delegates compare reordering to the compare service", () => {
@@ -298,11 +274,15 @@ describe("Header", () => {
     ).toBe("Compare databases");
   });
 
-  it("opens header dropdowns in the top overlay layer", () => {
-    const container = openDropdown("#about_button");
+  it("shows the panel next to its trigger when opened", () => {
+    const panel = openDropdown("#about_button").querySelector(
+      "#about_options",
+    ) as HTMLElement;
 
-    expect(container.querySelector("#about_options")).not.toBeNull();
-    expect(container.classList).not.toContain("sc-page-overlay-container");
+    expect(panel.closest("[hidden]")).toBeNull();
+    expect(
+      panel.closest(".relative")?.querySelector("#about_button"),
+    ).not.toBeNull();
   });
 
   it("exposes the mobile menu trigger as an expandable button", () => {

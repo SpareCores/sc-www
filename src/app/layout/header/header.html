@@ -15,32 +15,44 @@
       <div
         class="flex font-medium flex-row gap-4 mt-0 items-center justify-end"
       >
-        <div class="hidden xl:flex">
+        <div class="relative hidden xl:flex">
           <sc-button
             id="about_button"
-            [scDropdown]="aboutPanel"
-            [dropdownPlacement]="'bottom'"
+            [scInlineDropdown]="aboutPanelHost"
             (dropdownOpened)="initMeetingButtons()"
-            #aboutDropdown="scDropdown"
+            #aboutDropdown="scInlineDropdown"
             label="About"
             icon="info"
             iconPosition="start"
             variant="link"
             color="inverse"
           ></sc-button>
+          <div
+            #aboutPanelHost
+            class="header_panel header_panel--center"
+            [hidden]="!aboutDropdown.isOpen()"
+          >
+            <ng-container [ngTemplateOutlet]="aboutPanel"></ng-container>
+          </div>
         </div>
-        <div class="hidden xl:flex">
+        <div class="relative hidden xl:flex">
           <sc-button
             id="navigator_button"
-            [scDropdown]="navigatorPanel"
-            [dropdownPlacement]="'bottom'"
-            #navigatorDropdown="scDropdown"
+            [scInlineDropdown]="navigatorPanelHost"
+            #navigatorDropdown="scInlineDropdown"
             label="Navigator"
             icon="ship-wheel"
             iconPosition="start"
             variant="link"
             color="inverse"
           ></sc-button>
+          <div
+            #navigatorPanelHost
+            class="header_panel header_panel--center"
+            [hidden]="!navigatorDropdown.isOpen()"
+          >
+            <ng-container [ngTemplateOutlet]="navigatorPanel"></ng-container>
+          </div>
         </div>
         <div class="hidden xl:flex">
           <sc-button
@@ -97,12 +109,11 @@
               ></sc-button>
             </div>
           } @else {
-            <div class="hidden sm:block">
+            <div class="relative hidden sm:block">
               <sc-button
                 id="auth_button"
-                [scDropdown]="authPanel"
-                [dropdownPlacement]="'bottom-end'"
-                #authDropdown="scDropdown"
+                [scInlineDropdown]="authPanelHost"
+                #authDropdown="scInlineDropdown"
                 size="small"
                 variant="outline"
                 color="brand"
@@ -115,32 +126,44 @@
                 buttonClass="!text-white max-xl:gap-0 max-xl:px-1 [&_.sc-button__icon]:max-xl:hidden"
                 ariaLabel="Account menu"
               ></sc-button>
+              <div
+                #authPanelHost
+                class="header_panel header_panel--end"
+                [hidden]="!authDropdown.isOpen()"
+              >
+                <ng-container [ngTemplateOutlet]="authPanel"></ng-container>
+              </div>
             </div>
           }
           @if (showCompareMenu()) {
-            <sc-button
-              id="compare_button"
-              [scDropdown]="comparePanel"
-              [dropdownPlacement]="'bottom-end'"
-              [dropdownFlip]="true"
-              #compareDropdown="scDropdown"
-              icon="scale"
-              size="small"
-              ariaLabel="Open compare menu"
-              [badge]="compareCount()"
-              [badgePing]="true"
-            ></sc-button>
+            <div class="relative">
+              <sc-button
+                id="compare_button"
+                [scInlineDropdown]="comparePanelHost"
+                #compareDropdown="scInlineDropdown"
+                icon="scale"
+                size="small"
+                ariaLabel="Open compare menu"
+                [badge]="compareCount()"
+                [badgePing]="true"
+              ></sc-button>
+              <div
+                #comparePanelHost
+                class="header_panel header_panel--end"
+                [hidden]="!compareDropdown.isOpen()"
+              >
+                <ng-container [ngTemplateOutlet]="comparePanel"></ng-container>
+              </div>
+            </div>
           }
         </div>
-        <div class="xl:hidden">
+        <div class="relative xl:hidden">
           <button
             type="button"
             id="menu_button"
-            [scDropdown]="menuPanel"
-            [dropdownPlacement]="'bottom-end'"
-            [dropdownFlip]="true"
+            [scInlineDropdown]="menuPanelHost"
             (dropdownOpened)="initMeetingButtons()"
-            #menuDropdown="scDropdown"
+            #menuDropdown="scInlineDropdown"
             class="navbar_link"
             aria-label="Open menu"
           >
@@ -148,6 +171,13 @@
               <svg lucideMenu class="h-8 w-8"></svg>
             </span>
           </button>
+          <div
+            #menuPanelHost
+            class="header_panel header_panel--end"
+            [hidden]="!menuDropdown.isOpen()"
+          >
+            <ng-container [ngTemplateOutlet]="menuPanel"></ng-container>
+          </div>
         </div>
       </div>
     </div>

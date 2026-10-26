@@ -5,6 +5,7 @@ import {
   CdkDropList,
 } from "@angular/cdk/drag-drop";
 
+import { NgTemplateOutlet } from "@angular/common";
 import { Component, inject, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Button } from "../../components/button/button";
@@ -38,8 +39,7 @@ import {
 } from "@lucide/angular";
 import { Analytics } from "../../services/analytics";
 import { CompareSelection } from "../../services/compare-selection";
-import { Dropdown } from "../../directives/dropdown";
-import { DROPDOWN_LAYER } from "../../services/overlay/dropdown-layer";
+import { InlineDropdown } from "../../directives/inline-dropdown";
 import { NeetoCal } from "../../services/neeto-cal";
 import { AuthState } from "../../core/auth";
 
@@ -74,12 +74,12 @@ import { AuthState } from "../../core/auth";
     LucideTrash,
     LucideUser,
     RouterLink,
-    Dropdown,
+    InlineDropdown,
+    NgTemplateOutlet,
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
   ],
-  providers: [{ provide: DROPDOWN_LAYER, useValue: "top" }],
   templateUrl: "./header.html",
   styleUrl: "./header.scss",
 })
@@ -90,11 +90,11 @@ export class Header {
   private neetoCal = inject(NeetoCal);
   protected readonly auth = inject(AuthState);
 
-  menuDropdown = viewChild<Dropdown>("menuDropdown");
-  aboutDropdown = viewChild<Dropdown>("aboutDropdown");
-  authDropdown = viewChild<Dropdown>("authDropdown");
-  compareDropdown = viewChild<Dropdown>("compareDropdown");
-  navigatorDropdown = viewChild<Dropdown>("navigatorDropdown");
+  menuDropdown = viewChild<InlineDropdown>("menuDropdown");
+  aboutDropdown = viewChild<InlineDropdown>("aboutDropdown");
+  authDropdown = viewChild<InlineDropdown>("authDropdown");
+  compareDropdown = viewChild<InlineDropdown>("compareDropdown");
+  navigatorDropdown = viewChild<InlineDropdown>("navigatorDropdown");
 
   closeMenu() {
     this.menuDropdown()?.hide();
