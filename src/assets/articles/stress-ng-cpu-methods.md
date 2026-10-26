@@ -134,6 +134,20 @@ results:
 
 This leaves us with 78 methods per server, including `all`.
 
+All numbers in this post come from these 2024 experiments. Since then, the
+Spare Cores Navigator has started running a wider range of `stress-ng`
+stressors, and the live results for these six servers are
+embedded below. Select "Scaling (multi/single)" in the dropdown to see how
+each stressor scales with the number of workers. Note that these are whole
+stressors, not the methods of the `cpu` stressor compared in this post, and
+both our methodology and the `stress-ng` version have changed since 2024, so
+the live numbers are not directly comparable with ours.
+
+<iframe
+ src="https://sparecores.com/embed/compare/stress_ng_full?instances=W3siZGlzcGxheV9uYW1lIjoiYzZhLmxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZhLmxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJjNmEuMnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4yeGxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJjNmcueGxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZnLnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoibTdhLnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6Im03YS54bGFyZ2UiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6ImM3YS4zMnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3YS4zMnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzZpLm1ldGFsIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZpLm1ldGFsIiwiem9uZXNSZWdpb25zIjpbXX1d"
+ style="height: 710px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 600px">
+</iframe>
+
 ## Results
 
 ### SMT Scaling
