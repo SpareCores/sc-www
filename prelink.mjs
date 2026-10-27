@@ -1,3 +1,28 @@
+/*
+ * Shrinks @lucide/angular before `ng build` to keep the Docker build within
+ * Render's 8GB builder memory limit.
+ *
+ * Why: @lucide/angular ships all ~1,900 icons in a single 10.6MB partially
+ * compiled bundle. Angular's Babel-based linker and advanced optimizations
+ * process the whole file for both the browser and the server bundle, which
+ * pushed the build to 6.5-7.6GB peak memory and caused random OOM failures.
+ *
+ * What it does, in place in node_modules:
+ * 1. Links the bundle once with Angular's own linker (same options as
+ *    `ng build`), so the build does not have to link it again.
+ * 2. Tree-shakes the linked bundle with esbuild down to the exports imported
+ *    from @lucide/angular in src/**\/*.ts (excluding specs), with
+ *    ngDevMode=false as in production builds (14.4MB -> 0.9MB).
+ *
+ * Both steps are idempotent. Tree-shaking is skipped when there is no src
+ * directory or when an `import * as` or re-export from the package is found,
+ * leaving the full linked bundle in place.
+ *
+ * Only the Dockerfile runs this script, so local development and tests use
+ * the untouched package. The output was verified to produce identical
+ * bundles and prerendered pages. It can be removed once @lucide/angular
+ * ships per-icon entry points or the build has enough memory headroom.
+ */
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
