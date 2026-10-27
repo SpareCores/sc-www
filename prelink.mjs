@@ -141,7 +141,10 @@ function collectImportedNames() {
       new RegExp(`import\\s+\\*\\s+as\\s+\\w+\\s+from\\s+${quoted}`).test(
         text,
       ) ||
-      new RegExp(`export\\s+(\\*|\\{[^}]*\\})\\s+from\\s+${quoted}`).test(text)
+      new RegExp(
+        `export\\s+(\\*(\\s+as\\s+\\w+)?|\\{[^}]*\\})\\s+from\\s+${quoted}`,
+      ).test(text) ||
+      new RegExp(`import\\s*\\(\\s*${quoted}\\s*\\)`).test(text)
     ) {
       console.warn(
         `${library}: unsupported import form in ${file}, skipping tree-shaking`,
