@@ -177,8 +177,9 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … last year lightning talk .. lucky you, we are happy to have Attila this year as well and we decided we will do this in a different way</p>
-<p>…</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … great pleasure to be back to KCD Budapest … last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year, who recommended a different approach this time (and we will sing a song)!</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> that’s not what we have discussed …</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> then we will present a drama</p>
 <p>curtain!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -193,16 +194,135 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
       }</style></aside>
 </section>
 
-<section id="teaser" class="title-slide slide level1" data-curtain="open">
+<section>
+<section id="crawl" class="title-slide slide level1" data-curtain="open">
 <h1></h1>
+<style>
+  #crawl {
+    padding: 0 !important;
+  }
+  #crawl .sw-scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    perspective: 350px;
+  }
+  #crawl .sw-crawl {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: max-content;
+    max-width: none;
+    margin: 0;
+    transform-origin: 50% 100%;
+    transform: translateX(-50%) rotateX(55deg) translateY(25vh);
+    opacity: 0;
+    animation: none;
+    color: #4bd5ee;
+    font-family: "News Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 2.4em;
+    line-height: 1.45;
+    text-align: center;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 1px rgba(75, 213, 238, 0.4);
+  }
+  #crawl .sw-crawl.is-running {
+    animation: sw-crawl 90s linear forwards;
+  }
+  #crawl .sw-crawl span {
+    display: block;
+    white-space: nowrap;
+  }
+  @keyframes sw-crawl {
+    0%   { transform: translateX(-50%) rotateX(55deg) translateY(25vh); opacity: 0; }
+    4%   { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateX(-50%) rotateX(55deg) translateY(-160vh); opacity: 0; }
+  }
+</style>
+<div class="sw-scene">
+  <p class="sw-crawl">
+    <span>A couple weeks ago</span>
+    <span>in a pub (or similar place)</span>
+    <span>not too far, far away…</span>
+    <span>Gergely and Attila met</span>
+    <span>and among other topics</span>
+    <span>they discussed how badly</span>
+    <span>their Python app scales…</span>
+  </p>
+</div>
+<script>
+  (function () {
+    function crawlEl() {
+      return document.querySelector("#crawl .sw-crawl");
+    }
+    function startCrawl() {
+      var el = crawlEl();
+      if (!el) return;
+      el.classList.remove("is-running");
+      void el.offsetWidth;
+      el.classList.add("is-running");
+    }
+    function stopCrawl() {
+      var el = crawlEl();
+      if (!el) return;
+      el.classList.remove("is-running");
+    }
+    function bind(reveal) {
+      reveal.on("slidechanged", function (event) {
+        if (event.currentSlide && event.currentSlide.id === "crawl") {
+          startCrawl();
+        } else if (event.previousSlide && event.previousSlide.id === "crawl") {
+          stopCrawl();
+        }
+      });
+      if (reveal.getCurrentSlide && reveal.getCurrentSlide() &&
+          reveal.getCurrentSlide().id === "crawl") {
+        startCrawl();
+      }
+    }
+    function init() {
+      if (!(window.Reveal && Reveal.on)) return false;
+      if (Reveal.isReady && Reveal.isReady()) {
+        bind(Reveal);
+      } else {
+        Reveal.on("ready", function () { bind(Reveal); });
+      }
+      return true;
+    }
+    if (!init()) {
+      var tries = 0;
+      var timer = setInterval(function () {
+        if (init() || ++tries > 100) clearInterval(timer);
+      }, 50);
+    }
+  })();
+</script>
+<aside class="notes">
+<p><span style="color:#ef4444;font-weight:bold">G:</span> The story starts with meeting Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> Hey Attila, … how are you doing, you look a bit concerned..</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> As an engineer, concerned is my default state</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> frustrated <strong>Python app</strong> · needs <strong>low latency</strong> · <strong>won’t scale</strong> · <strong>GIL</strong> -&gt; <strong>single-core</strong> performance · hunting right <strong>instance type</strong> · fed up with it -&gt; <strong>memes</strong> [show image]</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="teaser" class="slide level2">
+<h2></h2>
 <div class="centered">
 <p><img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
-<!-- TODO Gergo add "once upon a time, in a not too far pub ...." -->
 <aside class="notes">
-<p>more interactive .. so</p>
-<p><span style="color:#ef4444;font-weight:bold">G:</span> I met Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had: <span style="color:#ef4444;font-weight:bold">G:</span> Hey Attila, … how are you doing, you look a bit concerned..<br>
-<span style="color:#34d399;font-weight:bold">A:</span> As an engineer, concerned is my default state · frustrated <strong>Python app</strong> · needs <strong>low latency</strong> · <strong>won’t scale</strong> · <strong>GIL</strong> -&gt; <strong>single-core</strong> performance · hunting right <strong>instance type</strong> · fed up with it -&gt; <strong>memes</strong> [show image] · we call it <strong>GILty</strong>. Any ideas what to do with it?<br>
+<p><span style="color:#34d399;font-weight:bold">A:</span> We call it <strong>GILty</strong>. Any ideas what to do with it?<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Ah, interesting. I think what we do at Spare Cores might be relevant for you.<br>
 <span style="color:#34d399;font-weight:bold">A:</span> Sounds great, tell me more!<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Sure.</p>
@@ -217,8 +337,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</section>
-
+</section></section>
 <section id="recap" class="title-slide slide level1 center">
 <h1></h1>
 <div class="agent-terminal">

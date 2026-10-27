@@ -79,37 +79,144 @@ format:
 </p>
 
 ::: {.notes}
-[[G]] welcome ... last year lightning talk .. lucky you, we are happy to have Attila this year as well
-and we decided we will do this in a different way
+[[G]] welcome ... great pleasure to be back to KCD Budapest ... last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year, who recommended a different approach this time (and we will sing a song)! 
 
-...
+[[A]] that's not what we have discussed ...
+
+[[G]] then we will present a drama
 
 curtain!
 :::
 
-# {#teaser data-curtain="open"}
+# {#crawl data-curtain="open"}
+
+```{=html}
+<style>
+  #crawl {
+    padding: 0 !important;
+  }
+  #crawl .sw-scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    perspective: 350px;
+  }
+  #crawl .sw-crawl {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: max-content;
+    max-width: none;
+    margin: 0;
+    transform-origin: 50% 100%;
+    transform: translateX(-50%) rotateX(55deg) translateY(25vh);
+    opacity: 0;
+    animation: none;
+    color: #4bd5ee;
+    font-family: "News Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 2.4em;
+    line-height: 1.45;
+    text-align: center;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 1px rgba(75, 213, 238, 0.4);
+  }
+  #crawl .sw-crawl.is-running {
+    animation: sw-crawl 90s linear forwards;
+  }
+  #crawl .sw-crawl span {
+    display: block;
+    white-space: nowrap;
+  }
+  @keyframes sw-crawl {
+    0%   { transform: translateX(-50%) rotateX(55deg) translateY(25vh); opacity: 0; }
+    4%   { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateX(-50%) rotateX(55deg) translateY(-160vh); opacity: 0; }
+  }
+</style>
+<div class="sw-scene">
+  <p class="sw-crawl">
+    <span>A couple weeks ago</span>
+    <span>in a pub (or similar place)</span>
+    <span>not too far, far away&hellip;</span>
+    <span>Gergely and Attila met</span>
+    <span>and among other topics</span>
+    <span>they discussed how badly</span>
+    <span>their Python app scales&hellip;</span>
+  </p>
+</div>
+<script>
+  (function () {
+    function crawlEl() {
+      return document.querySelector("#crawl .sw-crawl");
+    }
+    function startCrawl() {
+      var el = crawlEl();
+      if (!el) return;
+      el.classList.remove("is-running");
+      void el.offsetWidth;
+      el.classList.add("is-running");
+    }
+    function stopCrawl() {
+      var el = crawlEl();
+      if (!el) return;
+      el.classList.remove("is-running");
+    }
+    function bind(reveal) {
+      reveal.on("slidechanged", function (event) {
+        if (event.currentSlide && event.currentSlide.id === "crawl") {
+          startCrawl();
+        } else if (event.previousSlide && event.previousSlide.id === "crawl") {
+          stopCrawl();
+        }
+      });
+      if (reveal.getCurrentSlide && reveal.getCurrentSlide() &&
+          reveal.getCurrentSlide().id === "crawl") {
+        startCrawl();
+      }
+    }
+    function init() {
+      if (!(window.Reveal && Reveal.on)) return false;
+      if (Reveal.isReady && Reveal.isReady()) {
+        bind(Reveal);
+      } else {
+        Reveal.on("ready", function () { bind(Reveal); });
+      }
+      return true;
+    }
+    if (!init()) {
+      var tries = 0;
+      var timer = setInterval(function () {
+        if (init() || ++tries > 100) clearInterval(timer);
+      }, 50);
+    }
+  })();
+</script>
+```
+
+::: {.notes}
+[[G]] The story starts with meeting Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:
+
+[[G]] Hey Attila, ... how are you doing, you look a bit concerned..  
+
+[[A]] As an engineer, concerned is my default state
+
+[[A]] frustrated **Python app** · needs **low latency** · **won't scale** · **GIL** -> **single-core** performance · hunting right **instance type** · fed up with it -> **memes** [show image]
+:::
+
+## {#teaser}
 
 ::: {.centered}
 <img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;" />
 :::
 
-<!-- TODO Gergo add "once upon a time, in a not too far pub ...." -->
-
-
 ::: {.notes}
-more interactive .. so 
-
-[[G]]  I met Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:
-[[G]] Hey Attila, ... how are you doing, you look a bit concerned..  
-[[A]] As an engineer, concerned is my default state ·
-   frustrated **Python app** · needs **low latency** · **won't scale** · **GIL** -> **single-core** performance ·
-   hunting right **instance type** · fed up with it -> **memes** [show image] ·
-   we call it **GILty**. Any ideas what to do with it?  
+[[A]] We call it **GILty**. Any ideas what to do with it?  
 [[G]] Ah, interesting. I think what we do at Spare Cores might be relevant for you.  
 [[A]] Sounds great, tell me more!  
 [[G]] Sure.
 :::
-
 
 # {#recap .center}
 
