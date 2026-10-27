@@ -5,8 +5,8 @@
 <script src="kcd-budapest-2026_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="kcd-budapest-2026_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="kcd-budapest-2026_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="kcd-budapest-2026_files/libs/quarto-html/quarto-syntax-highlighting-dark-b626d73c4c936ccc3cb08be7d45d1df6.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.10.19">
+<link href="kcd-budapest-2026_files/libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.27">
 
   <meta name="author" content="Gergely Daroczi">
   <meta name="author" content="Attila Nagy">
@@ -18,16 +18,10 @@
   <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/reveal.css">
   <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
+    code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
@@ -36,7 +30,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/theme/quarto-1544793c4831c97fdcd9596a0d755e9e.css">
+  <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/theme/quarto-0ba2550f576cf5de89bd8e81d5f93b5d.css">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -142,12 +136,12 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Gergely Daroczi
+Gergely Daroczi 
 </div>
 </div>
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Attila Nagy
+Attila Nagy 
 </div>
 </div>
 </div>
@@ -183,7 +177,7 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p>TODO Gergo speaker notes Gergo: welcome … last year lightning talk .. lucky you, we are happy to have Attila this year as well and we decided we will do this in a different way</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … last year lightning talk .. lucky you, we are happy to have Attila this year as well and we decided we will do this in a different way</p>
 <p>…</p>
 <p>curtain!</p>
 <style type="text/css">
@@ -1608,7 +1602,6 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <li class="fragment"><strong>Provisioner:</strong> <strong>scarpenter</strong> — multi-vendor <strong>Karpenter</strong> provider + <strong>sc-keeper</strong> catalog</li>
 <li class="fragment"><strong>Nodes:</strong> <strong>Flatcar</strong> + Ignition · TLS bootstrap join · <strong>single-tenant</strong> · die when empty</li>
 <li class="fragment"><strong>Flow:</strong> Pod <code>nodeSelector</code> (vendor/type) → pending → cheapest offering → boot → inspect → <strong>tear down</strong></li>
-<li class="fragment">(+ later: <strong>sc-karpenter-nodepool</strong> on top — pick types by <strong>benchmark</strong>, not just price)</li>
 </ul>
 </div>
 <aside class="notes">
