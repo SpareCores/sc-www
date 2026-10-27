@@ -51,10 +51,10 @@ COPY package*.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
 RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
-  npm run build -- --source-map="${BUILD_SOURCE_MAP}" --deploy-url="${STATIC_ASSET_BASE_URL}"; \
-  else \
-  npm run build -- --source-map="${BUILD_SOURCE_MAP}"; \
-  fi
+      npm run build -- --source-map="${BUILD_SOURCE_MAP}" --deploy-url="${STATIC_ASSET_BASE_URL}"; \
+    else \
+      npm run build -- --source-map="${BUILD_SOURCE_MAP}"; \
+    fi
 
 FROM public.ecr.aws/docker/library/node:lts-krypton
 
