@@ -15,6 +15,7 @@ revealjs-plugins:
   - boxoverlay
   - curtain
   - agentterminal
+  - leanqr
 format:
   revealjs:
     theme: [black, css/custom-4.2.1.css]
@@ -304,14 +305,18 @@ I don't mean a comparing cloud servers with hundreds of cores with a potato,
 indeed just focusing on the single-core performance -- like doing as many integer divisions in a second as possible.
 :::
 
-<div class="centered">
-  <p style="font-size: 78px;">Guess the Number!</p>
-  <p style="font-size: 56px; margin-top: 60px;">
-    How much better is the highest performing 2-vCPU cloud server's single-core performance compared to the lowest?
-  </p>
+```{=html}
+<div class="vcpu-guess-layout centered">
+  <div class="vcpu-guess-copy">
+    <p style="font-size: 62px; margin-top: 0;">Guess the Number!</p>
+    <p style="font-size: 48px; margin-top: 40px;">
+      How much better is the highest performing 2-vCPU cloud
+      server's single-core performance compared to the lowest?
+    </p>
+  </div>
+  <div class="qr-card" data-qr="https://surveys.free/s/fyzDU2L4Sbv65PTjS_nKRQ"></div>
 </div>
-
-<!-- TODO Gego add poll link: https://surveys.free/a/NsTo-Rh4FfSZuvPtiKKkzg/responses/ -->
+```
 
 ## {#vcpu-diff-0 .center}
 

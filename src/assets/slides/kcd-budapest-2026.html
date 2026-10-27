@@ -37,6 +37,7 @@
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-box-overlay/boxoverlay.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-curtain/curtain.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-agent-terminal/agentterminal.css" rel="stylesheet">
+  <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-lean-qr/leanqr.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
     .reveal div.sourceCode {
@@ -454,15 +455,16 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<div class="centered">
-<p style="font-size: 78px;">
-Guess the Number!
-</p>
-<p style="font-size: 56px; margin-top: 60px;">
-How much better is the highest performing 2-vCPU cloud server’s single-core performance compared to the lowest?
-</p>
+<div class="vcpu-guess-layout centered">
+  <div class="vcpu-guess-copy">
+    <p style="font-size: 62px; margin-top: 0;">Guess the Number!</p>
+    <p style="font-size: 48px; margin-top: 40px;">
+      How much better is the highest performing 2-vCPU cloud
+      server's single-core performance compared to the lowest?
+    </p>
+  </div>
+  <div class="qr-card" data-qr="https://surveys.free/s/fyzDU2L4Sbv65PTjS_nKRQ"></div>
 </div>
-<!-- TODO Gego add poll link: https://surveys.free/a/NsTo-Rh4FfSZuvPtiKKkzg/responses/ -->
 </section>
 <section id="vcpu-diff-0" class="slide level2 center">
 <h2></h2>
@@ -1772,6 +1774,8 @@ if (url.match("/?live")) {
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-box-overlay/boxoverlay.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-curtain/curtain.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-agent-terminal/agentterminal.js"></script>
+  <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-lean-qr/lean-qr-nano.js"></script>
+  <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-lean-qr/leanqr.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
@@ -1964,7 +1968,7 @@ if (url.match("/?live")) {
         },
 
         // reveal.js plugins
-        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealBoxOverlay, RevealCurtain, RevealAgentTerminal, QuartoSupport,
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealBoxOverlay, RevealCurtain, RevealAgentTerminal, RevealLeanQR, QuartoSupport,
 
           RevealMath,
           RevealNotes,

@@ -1,0 +1,12 @@
+title: leanqr
+author: Spare Cores
+version: 1.0.0
+quarto-required: ">=1.4.0"
+contributes:
+  revealjs-plugins:
+    - name: RevealLeanQR
+      script:
+        - lean-qr-nano.js
+        - leanqr.js
+      stylesheet:
+        - leanqr.css
