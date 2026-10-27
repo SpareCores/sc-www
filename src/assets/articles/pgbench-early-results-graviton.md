@@ -99,4 +99,25 @@ We’ll be writing more on our database and other high-concurrency benchmarks so
   <p>Database Benchmark Scores for GCP's N2 (with SMT) and T2D (no SMT) at Various Concurrency Levels.</p>
 </div>
 
-Performance tends to peak or plateau when the number of concurrent processes is close to the number of physical cores. For machines without Hyperthreading/Simultaneous Multithreading (SMT) this is around the number of vCPUs (V), whereas for those with Hyperthreading/SMT it's closer to V/2. Interestingly, this is exactly what we see above when we compare GCP's N2 standard series (with Intel cores and Hyperthreading) and the T2D standard series (with AMD and no SMT) on our new high-concurrency database metric: The N2 plateaus around V/2 and the T2D at V. 
+Performance tends to peak or plateau when the number of concurrent processes is close to the number of physical cores. For machines without Hyperthreading/SMT this is around the number of vCPUs (`V`), whereas for those with Hyperthreading/SMT it's closer to `V/2`. Interestingly, this is exactly what we see above when we compare GCP's N2 standard series (with Intel cores and Hyperthreading) and the T2D standard series (with AMD and no SMT) on our new high-concurrency database metric: The N2 plateaus around `V/2` and the T2D at `V`.
+
+Stay tuned for a more detailed analysis, and feel free to dig deeper into the data we currently gather, for example by zooming in on the comparison of the 32-vCPU N2 and T2D machines:
+
+<iframe
+ src="/embed/compare/pgbench?instances=W3siZGlzcGxheV9uYW1lIjoibjItc3RhbmRhcmQtMzIiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJuMi1zdGFuZGFyZC0zMiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoidDJkLXN0YW5kYXJkLTMyIiwidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoidDJkLXN0YW5kYXJkLTMyIiwiem9uZXNSZWdpb25zIjpbXX1d"
+ style="height: 500px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 500px">
+</iframe>
+
+Or explore the raw data, including the measured latencies, for both machines:
+
+<iframe
+ src="/embed/server/gcp/n2-standard-32/pgbench"
+ style="height: 400px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
+</iframe>
+
+<br />
+
+<iframe
+ src="/embed/server/gcp/t2d-standard-32/pgbench"
+ style="height: 400px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
+</iframe>

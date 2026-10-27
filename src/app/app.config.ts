@@ -20,6 +20,7 @@ import {
   withFetch,
   withInterceptors,
 } from "@angular/common/http";
+import { OVERLAY_DEFAULT_CONFIG } from "@angular/cdk/overlay";
 import { provideLucideIcons } from "@lucide/angular";
 import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
@@ -81,6 +82,7 @@ export const appConfig: ApplicationConfig = {
       withHttpTransferCacheOptions({
         includeHeaders: ["x-total-count", "x-request-id"],
         filter: httpFilter,
+        includeRequestsWithAuthHeaders: true,
       }),
       withEventReplay(),
     ),
@@ -88,6 +90,7 @@ export const appConfig: ApplicationConfig = {
     provideAuthFeature(),
     provideCollectionsFeature(),
     provideAppCharts(),
+    { provide: OVERLAY_DEFAULT_CONFIG, useValue: { usePopover: false } },
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),
     {

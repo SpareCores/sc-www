@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { By } from "@angular/platform-browser";
 
 import { ServerCompareMemoryChart } from "./server-compare-memory-chart";
-import { DropdownManager } from "../../../services/dropdown-manager";
+import { Dropdown } from "../../../directives/dropdown";
 import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 
@@ -12,16 +13,7 @@ describe("ServerCompareMemoryChart", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ServerCompareMemoryChart],
-      providers: [
-        ...sharedTestingProviders,
-        {
-          provide: DropdownManager,
-          useValue: {
-            initDropdown: () =>
-              Promise.resolve({ hide: jasmine.createSpy("hide") }),
-          },
-        },
-      ],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ServerCompareMemoryChart);
@@ -69,8 +61,13 @@ describe("ServerCompareMemoryChart", () => {
   });
 
   it("renders a content-sized dropdown with full-width left-aligned options", () => {
-    const hostElement = fixture.nativeElement as HTMLElement;
-    const optionsPanel = hostElement.querySelector(`#${component.optionsId}`);
+    fixture.debugElement
+      .query(By.css(`#${component.buttonId}`))
+      .injector.get(Dropdown)
+      .open();
+    fixture.detectChanges();
+
+    const optionsPanel = document.querySelector(`#${component.optionsId}`);
     const firstOptionButton = optionsPanel?.querySelector("button");
     const firstOptionLabel = firstOptionButton?.querySelector("div");
 

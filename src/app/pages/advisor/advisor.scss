@@ -339,6 +339,10 @@
     flex-basis: auto;
   }
 
+  .advisor-filter-bar.advisor-filter-bar-collapsed + .advisor-results {
+    align-self: stretch;
+  }
+
   .advisor-filter-bar-collapser {
     position: static;
     right: auto;

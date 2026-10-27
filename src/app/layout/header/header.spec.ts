@@ -2,10 +2,11 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { InlineDropdown } from "../../directives/inline-dropdown";
 import { Header } from "./header";
 import { CompareSelection } from "../../services/compare-selection";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { AuthState } from "../../core/auth";
 
 describe("Header", () => {
   let component: Header;
@@ -22,12 +23,21 @@ describe("Header", () => {
     fixture.detectChanges();
   });
 
+  function openDropdown(triggerSelector: string): HTMLElement {
+    fixture.debugElement
+      .query(By.css(triggerSelector))
+      .injector.get(InlineDropdown)
+      .open();
+    fixture.detectChanges();
+    return fixture.nativeElement;
+  }
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
   it("shows Advisor before Resource Tracker in the mobile menu", () => {
-    const menuLinks = (fixture.nativeElement as HTMLElement).querySelectorAll(
+    const menuLinks = openDropdown("#menu_button").querySelectorAll(
       "#menu_options .navbar_link",
     );
     const menuOptions = Array.from(menuLinks).map(
@@ -41,8 +51,30 @@ describe("Header", () => {
     );
   });
 
+  it("shows the account actions in the mobile menu when signed in", () => {
+    const auth = TestBed.inject(AuthState);
+    spyOn(auth, "isAuthenticated").and.returnValue(true);
+    spyOn(auth, "userName").and.returnValue("Jane Doe");
+    fixture.detectChanges();
+
+    const menu = openDropdown("#menu_button").querySelector(
+      "#menu_options",
+    ) as HTMLElement;
+    const labels = Array.from(menu.querySelectorAll(".navbar_link")).map(
+      (element) => element.textContent?.trim(),
+    );
+
+    expect(menu.querySelector("#menu_account")?.textContent).toContain(
+      "Jane Doe",
+    );
+    expect(menu.querySelector('a[routerLink="/bookmarks"]')).not.toBeNull();
+    expect(labels).toContain("Edit Profile");
+    expect(labels).toContain("Sign Out");
+  });
+
   it("shows Partners in the about navigation", () => {
-    const hostElement = fixture.nativeElement as HTMLElement;
+    openDropdown("#about_button");
+    const hostElement = openDropdown("#menu_button");
     const aboutPartnersLink = hostElement.querySelector(
       '#about_options a[routerLink="/about/partners"]',
     );
@@ -54,40 +86,17 @@ describe("Header", () => {
     expect(mobilePartnersLink?.textContent).toContain("Partners");
   });
 
-  it("configures the mobile menu dropdown to stay within the viewport", () => {
-    const menuDropdown = fixture.debugElement
-      .query(By.css("#menu_button"))
-      .injector.get(FlowbiteDropdown);
+  it("renders the navigation links while the panels are closed", () => {
+    const element: HTMLElement = fixture.nativeElement;
+    const navigatorPanel = element.querySelector("#navigator_options");
 
-    expect(menuDropdown.dropdownPlacement()).toBe("bottom-end");
-    expect(menuDropdown.dropdownFlip()).toBeTrue();
-  });
-
-  it("configures the compare dropdown to stay within the viewport", () => {
-    const serverCompare = TestBed.inject(CompareSelection);
-    serverCompare.selectedForCompare = [
-      {
-        display_name: "a",
-        vendor: "aws",
-        server: "a",
-        zonesRegions: [],
-      },
-      {
-        display_name: "b",
-        vendor: "aws",
-        server: "b",
-        zonesRegions: [],
-      },
-    ];
-    serverCompare.selectionChanged.next(serverCompare.selectedForCompare);
-    fixture.detectChanges();
-
-    const compareDropdown = fixture.debugElement
-      .query(By.css("#compare_button"))
-      .injector.get(FlowbiteDropdown);
-
-    expect(compareDropdown.dropdownPlacement()).toBe("bottom-end");
-    expect(compareDropdown.dropdownFlip()).toBeTrue();
+    expect(navigatorPanel?.closest("[hidden]")).not.toBeNull();
+    expect(
+      navigatorPanel?.querySelector('a[routerLink="/server_prices"]'),
+    ).not.toBeNull();
+    expect(
+      element.querySelector('#menu_options a[routerLink="/vendors"]'),
+    ).not.toBeNull();
   });
 
   it("delegates compare reordering to the compare service", () => {
@@ -142,7 +151,7 @@ describe("Header", () => {
     });
     fixture.detectChanges();
 
-    const rows = (fixture.nativeElement as HTMLElement).querySelectorAll(
+    const rows = openDropdown("#compare_button").querySelectorAll(
       "#compare_options .compare_dropdown_row",
     );
     expect(rows.length).toBe(2);
@@ -171,10 +180,16 @@ describe("Header", () => {
         server: "m7a.4xlarge",
         zonesRegions: [],
       },
+      {
+        display_name: "t2d-standard-16",
+        vendor: "gcp",
+        server: "t2d-standard-16",
+        zonesRegions: [],
+      },
     ];
     fixture.detectChanges();
 
-    const baselineButton = (fixture.nativeElement as HTMLElement).querySelector(
+    const baselineButton = openDropdown("#compare_button").querySelector(
       '#compare_options [aria-label="Toggle baseline server"][aria-pressed="false"]',
     ) as HTMLButtonElement;
     baselineButton.click();
@@ -209,7 +224,7 @@ describe("Header", () => {
     spyOn(component, "isOnComparePage").and.returnValue(false);
     fixture.detectChanges();
 
-    const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
+    const compareButton = openDropdown("#compare_button").querySelector(
       "#compare_options sc-button[label='Compare servers'] button",
     );
 
@@ -235,7 +250,7 @@ describe("Header", () => {
     spyOn(component, "isOnComparePage").and.returnValue(true);
     fixture.detectChanges();
 
-    const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
+    const compareButton = openDropdown("#compare_button").querySelector(
       "#compare_options sc-button[label='Compare servers'] button",
     );
 
@@ -266,7 +281,7 @@ describe("Header", () => {
     spyOn(component, "isOnDatabaseComparePage").and.returnValue(false);
     fixture.detectChanges();
 
-    const panel = (fixture.nativeElement as HTMLElement).querySelector(
+    const panel = openDropdown("#compare_button").querySelector(
       "#compare_options",
     ) as HTMLElement;
     const titles = Array.from(
@@ -279,5 +294,27 @@ describe("Header", () => {
         .querySelector("sc-button[label='Compare databases'] button")
         ?.textContent?.trim(),
     ).toBe("Compare databases");
+  });
+
+  it("shows the panel next to its trigger when opened", () => {
+    const panel = openDropdown("#about_button").querySelector(
+      "#about_options",
+    ) as HTMLElement;
+
+    expect(panel.closest("[hidden]")).toBeNull();
+    expect(
+      panel.closest(".relative")?.querySelector("#about_button"),
+    ).not.toBeNull();
+  });
+
+  it("exposes the mobile menu trigger as an expandable button", () => {
+    const trigger = fixture.debugElement.query(By.css("#menu_button"))
+      .nativeElement as HTMLButtonElement;
+
+    openDropdown("#menu_button");
+
+    expect(trigger.tagName).toBe("BUTTON");
+    expect(trigger.getAttribute("aria-haspopup")).toBe("true");
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
   });
 });

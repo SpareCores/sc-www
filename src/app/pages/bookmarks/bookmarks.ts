@@ -40,7 +40,8 @@ import {
   formatBookmarkedAtExact,
 } from "../../collections/collections.utils";
 import { AuthState } from "../../core/auth";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
+import { isKeyboardActivation } from "../../directives/dropdown-focus";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPI } from "../../services/keeper-api";
 import { Toast } from "../../services/toast";
@@ -112,7 +113,7 @@ function normalizeBookmarksNameQuery(value: string): string {
     CdkDragHandle,
     LucideDynamicIcon,
     CollectionSaveModal,
-    FlowbiteDropdown,
+    Dropdown,
   ],
   templateUrl: "./bookmarks.html",
   styleUrl: "./bookmarks.scss",
@@ -130,7 +131,7 @@ export class Bookmarks implements OnDestroy {
   private saveModal = viewChild(CollectionSaveModal);
   private noteModalRef = viewChild<ElementRef<HTMLElement>>("noteModal");
   private tooltipRef = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
-  private sortDropdown = viewChild<FlowbiteDropdown>("sortDropdown");
+  private sortDropdown = viewChild<Dropdown>("sortDropdown");
   private noteFlowbiteModal: Modal | null = null;
   private loadingFavoriteFeatures = new Set<string>();
   private vendorsLoaded = false;
@@ -346,7 +347,7 @@ export class Bookmarks implements OnDestroy {
   protected toggleSortDropdown(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.sortDropdown()?.toggle();
+    this.sortDropdown()?.toggle(isKeyboardActivation(event));
   }
 
   protected onSortDirClick(event: MouseEvent): void {

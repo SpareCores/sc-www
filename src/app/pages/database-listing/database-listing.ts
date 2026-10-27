@@ -44,7 +44,7 @@ import type {
   SearchBarParameter,
   SearchBarQuery,
 } from "../../components/search-bar/types/search-bar.types";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { Analytics } from "../../services/analytics";
@@ -124,7 +124,7 @@ type DatabaseListingQuery = Params &
     Pagination,
     LoadingSpinner,
     StoragePipe,
-    FlowbiteDropdown,
+    Dropdown,
     BenchmarkIconPipe,
     BookmarkButton,
     InstanceFavoriteContextMenu,
@@ -139,9 +139,9 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<FlowbiteDropdown>("currencyDropdown");
-  allocationDropdown = viewChild<FlowbiteDropdown>("allocationDropdown");
-  pageDropdown = viewChild<FlowbiteDropdown>("pageDropdown");
+  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
+  allocationDropdown = viewChild<Dropdown>("allocationDropdown");
+  pageDropdown = viewChild<Dropdown>("pageDropdown");
   private analytics = inject(Analytics);
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);

@@ -51,7 +51,7 @@ import {
   ServerPropertySection,
   ServerPropertyTooltip,
 } from "../../components/server-property-card/server-property-card";
-import { FlowbiteDropdown } from "../../directives/flowbite-dropdown";
+import { Dropdown } from "../../directives/dropdown";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { formatStorageSize } from "../../pipes/pipe-utils";
@@ -158,7 +158,7 @@ interface PropertyCategoryDefinition {
     ServerPropertyCard,
     ServerEmbedDialog,
     LoadingSpinner,
-    FlowbiteDropdown,
+    Dropdown,
     BookmarkButton,
   ],
   templateUrl: "./server-details.html",
@@ -182,7 +182,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   private serverLoadId = 0;
   private loadAbortController: AbortController | null = null;
   private similarAbortController: AbortController | null = null;
-  similarDropdown = viewChild<FlowbiteDropdown>("similarDropdown");
+  similarDropdown = viewChild<Dropdown>("similarDropdown");
 
   readonly burstableInstanceWarningTitle = BURSTABLE_INSTANCE_WARNING_TITLE;
   readonly burstableInstanceWarningBody = BURSTABLE_INSTANCE_WARNING_BODY;

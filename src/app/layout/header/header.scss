@@ -34,6 +34,18 @@ li {
   @apply px-3;
 }
 
+.header_panel {
+  @apply absolute top-full z-10 mt-2.5;
+}
+
+.header_panel--center {
+  @apply left-1/2 -translate-x-1/2;
+}
+
+.header_panel--end {
+  @apply right-0;
+}
+
 .mobile_menu_panel {
   width: min(12rem, calc(100vw - 2rem));
   max-width: calc(100vw - 2rem);
@@ -95,7 +107,8 @@ li {
 }
 
 .mobile_menu_panel__list {
-  max-height: calc(100vh - 4rem);
+  max-height: calc(100vh - 6rem);
+  max-height: calc(100dvh - 6rem);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
