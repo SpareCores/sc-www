@@ -49,14 +49,18 @@ ARG BUILD_SOURCE_MAP=false
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci --no-audit --no-fund
-COPY prelink.mjs ./
-RUN node prelink.mjs
 COPY . .
+RUN node prelink.mjs
 RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
       npm run build -- --source-map="${BUILD_SOURCE_MAP}" --deploy-url="${STATIC_ASSET_BASE_URL}"; \
     else \
       npm run build -- --source-map="${BUILD_SOURCE_MAP}"; \
-    fi
+    fi; \
+    status=$?; \
+    for f in /sys/fs/cgroup/memory.peak /sys/fs/cgroup/memory/memory.max_usage_in_bytes; do \
+      [ -r "$f" ] && awk '{ printf "build step peak memory: %.0f MB\n", $1 / 1048576 }' "$f" && break; \
+    done; \
+    exit $status
 
 FROM public.ecr.aws/docker/library/node:lts-jod
 
