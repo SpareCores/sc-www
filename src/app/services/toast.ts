@@ -241,7 +241,7 @@ export class Toast implements OnDestroy {
         return {
           background: "bg-emerald-400",
           text: "text-white",
-          hover: "hover:bg-emerald-400/80",
+          hover: "hover:bg-white/20",
         };
       case "error":
         return {
@@ -253,7 +253,7 @@ export class Toast implements OnDestroy {
         return {
           background: "bg-yellow-500",
           text: "text-white",
-          hover: "hover:bg-yellow-500/80",
+          hover: "hover:bg-white/20",
         };
       case "info":
       default:
