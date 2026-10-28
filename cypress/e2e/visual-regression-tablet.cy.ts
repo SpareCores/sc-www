@@ -148,8 +148,18 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
 
     // Force isTableOutsideViewport to always set to false
     cy.window().then((win: any) => {
-      cy.get("sc-server-compare").then(($el) => {
-        if (win.ng?.getComponent) {
+      if (!win.ng?.getComponent) {
+        console.warn(
+          "Angular debug API not available; skipping table override",
+        );
+        return;
+      }
+
+      cy.get("sc-server-compare")
+        .should(($el) => {
+          expect(win.ng.getComponent($el[0])).to.be.an("object");
+        })
+        .then(($el) => {
           const component = win.ng.getComponent($el[0]);
           const alwaysFalseSignal = Object.assign(() => false, {
             set: () => {},
@@ -163,12 +173,7 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
           });
 
           win.ng.applyChanges(component);
-        } else {
-          console.warn(
-            "Angular debug API not available; skipping table override",
-          );
-        }
-      });
+        });
     });
 
     // Hide the dynamic table header
