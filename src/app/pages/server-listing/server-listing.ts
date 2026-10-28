@@ -186,6 +186,12 @@ export class ServerListing implements OnInit, OnDestroy {
       collapsed: true,
     },
     {
+      category_id: "memory",
+      name: "Memory",
+      icon: "memory-stick",
+      collapsed: true,
+    },
+    {
       category_id: "accelerator",
       name: "Accelerator",
       icon: "cpu",
@@ -193,12 +199,6 @@ export class ServerListing implements OnInit, OnDestroy {
     },
     { category_id: "gpu", name: "GPU", icon: "gpu", collapsed: true },
     { category_id: "asic", name: "ASIC", icon: "cpu-ai", collapsed: true },
-    {
-      category_id: "memory",
-      name: "Memory",
-      icon: "memory-stick",
-      collapsed: true,
-    },
     {
       category_id: "storage",
       name: "Storage",
