@@ -49,9 +49,8 @@ ARG BUILD_SOURCE_MAP=false
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci --no-audit --no-fund
-COPY prelink.mjs ./
-RUN node prelink.mjs
 COPY . .
+RUN node prelink.mjs
 RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
       npm run build -- --source-map="${BUILD_SOURCE_MAP}" --deploy-url="${STATIC_ASSET_BASE_URL}"; \
     else \
