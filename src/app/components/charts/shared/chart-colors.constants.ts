@@ -4,7 +4,6 @@ export const chartColors = {
   "amber-400": "#fbbf24",
   black: "#000000",
   "blue-500": "#3b82f6",
-  "emerald-300": "#6ee7b7",
   "emerald-400": "#34d399",
   "gray-200": "#e5e7eb",
   "gray-600": "#4b5563",

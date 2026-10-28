@@ -111,7 +111,7 @@ export class BenchmarkWorkload {
           data: bins.map((b) => b.count),
           label: "Measurements",
           backgroundColor: chartColors["emerald-400"],
-          hoverBackgroundColor: chartColors["emerald-300"],
+          hoverBackgroundColor: chartColor("emerald-400", 0.8),
           borderWidth: 0,
           barPercentage: 1.0,
           categoryPercentage: 1.0,
