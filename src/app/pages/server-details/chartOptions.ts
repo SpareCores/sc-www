@@ -482,8 +482,8 @@ export const radarDatasetColors = [
     backgroundColor: chartColor("sky-400", 0.2),
   },
   {
-    borderColor: chartColors["yellow-400"],
-    backgroundColor: chartColor("yellow-400", 0.2),
+    borderColor: chartColors["yellow-500"],
+    backgroundColor: chartColor("yellow-500", 0.2),
   },
   {
     borderColor: chartColors["red-400"],
