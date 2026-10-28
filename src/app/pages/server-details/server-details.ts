@@ -88,6 +88,7 @@ import {
 } from "./server-details.constants";
 
 import { chartColors } from "../../components/charts/shared/chart-colors.constants";
+import { isBelowBreakpoint } from "../../tools/breakpoints";
 
 const SIMILAR_SERVER_CATEGORIES: Partial<
   Record<string, "score" | "score_per_price" | "specs">
@@ -290,7 +291,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   @HostListener("window:resize")
   onResize() {
     if (isPlatformBrowser(this.platformId)) {
-      this.isSmallScreen = window.matchMedia("(width < 75rem)").matches;
+      this.isSmallScreen = isBelowBreakpoint(window, "wide");
     }
   }
 
