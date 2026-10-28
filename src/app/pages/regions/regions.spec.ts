@@ -99,6 +99,20 @@ describe("Regions", () => {
       expect(visibleRows().length).toBe(1);
       expect(visibleRows()[0].textContent).toContain("All vendors are hidden");
     });
+
+    it("should expose each vendor toggle state with aria-pressed", () => {
+      component.vendors[0].selected = false;
+      fixture.detectChanges();
+
+      const toggles: NodeListOf<HTMLButtonElement> =
+        fixture.nativeElement.querySelectorAll(".vendor_labels button");
+
+      expect(
+        Array.from(toggles).map((toggle) =>
+          toggle.getAttribute("aria-pressed"),
+        ),
+      ).toEqual(["false", "true"]);
+    });
   });
 
   it("should keep toggled vendors when the initial vendor request resolves late", async () => {

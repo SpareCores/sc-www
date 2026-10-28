@@ -48,6 +48,7 @@ export class Button {
   ariaLabel = input<string | null>(null);
   ariaExpanded = input<boolean | null>(null);
   ariaControls = input<string | null>(null);
+  ariaPressed = input<boolean | null>(null);
   title = input<string | null>(null);
   buttonClass = input<string>("");
   badge = input<string | number | null>(null);
