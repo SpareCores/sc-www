@@ -36,9 +36,6 @@ format:
     code-copy: false
     code-line-numbers: false
     highlight-style: arrow-dark
-  gfm:
-    mermaid-format: svg
-    theme: neutral
 ---
 
 # {#cover-slide data-curtain="close"}
@@ -307,6 +304,26 @@ indeed just focusing on the single-core performance -- like doing as many intege
 :::
 
 ```{=html}
+<style>
+  .vcpu-guess-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5em;
+    width: 100%;
+    margin-top: -0.5em;
+  }
+
+  .vcpu-guess-layout .vcpu-guess-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .vcpu-guess-layout .qr-card {
+    flex: 0 0 auto;
+  }
+</style>
 <div class="vcpu-guess-layout centered">
   <div class="vcpu-guess-copy">
     <p style="font-size: 62px; margin-top: 0;">Guess the Number!</p>
@@ -790,8 +807,6 @@ Check server details page. Scoll over the benchmarks.
 [[G]] ADVISOR!!
 :::
 
-<!-- TODO Gergo get lstopo on m8azn.metal-12xl DONE at https://keeper.sparecores.net/inspector/server/aws/m8azn.metal-12xl/task_block_reason_codes?tasks=lstopo -->
-
 ## $ curl sparecores.com/server/gcp/g2-standard-16
 
 ::: {.centered}
@@ -1140,8 +1155,9 @@ TODO Attila speaker notes
 
 # $ strace -e environment sparecores.com
 
-<!-- TODO Gergo find better title for this slide -->
-<!-- TODO Gergo add mermaid diagram from docs.sparecores.com/overview -->
+::: {style="text-align: center; overflow-y: scroll; height: 95%; max-width: 800px; margin-left: auto; margin-right: auto;"}
+<img src="images/crawling.png" style="margin: auto;" />
+:::
 
 ::: {.notes}
 TODO Gergo add speaker notes
@@ -1212,17 +1228,114 @@ Ideal stack for **sc-inspector** (replace GH Actions + Pulumi `start.yml`):
 - design: `sc-docs/k8s-inspector` · ask the room if they’d use this → next slide
 :::
 
-# {#feedback}
+# > /review plan {#feedback}
 
-<!-- TODO Gergo one question to the community of the would find something like this useful before we jump the rabbit hole to prepare for next year's KCD Budapest --> 
+```{=html}
+<style>
+  #feedback .feedback-question {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-size: 2.5em;
+    text-align: center;
+    pointer-events: none;
+  }
+  #feedback .feedback-question > * {
+    pointer-events: auto;
+  }
+</style>
+```
+
+::: {.feedback-question .fragment .centered}
+Would you find something like this useful?
+:::
 
 ::: {.notes}
 TODO Gergo speaker notes
 :::
 
-# Bye
+# $ ping sparecores.com {#bye}
 
-<!-- TODO Gergo add thanks slide -->
+```{=html}
+<style>
+  .reveal .bye-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5em;
+    margin-top: 1em;
+  }
+
+  .reveal .bye-layout .bye-contacts {
+    font-size: 0.6em;
+  }
+
+  .reveal .bye-layout .bye-contacts section + section {
+    margin-top: 1.6em;
+  }
+
+  .reveal .bye-layout .bye-contacts h3 {
+    margin: 0 0 0.2em;
+    font-size: 1.15em;
+    text-transform: none;
+  }
+
+  .reveal .bye-layout .bye-contacts p {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    margin: 0.15em 0;
+  }
+
+  .reveal .bye-layout .bye-contacts span {
+    flex: 0 0 6.5em;
+    white-space: nowrap;
+    color: #94a3b8;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .reveal .bye-layout .bye-slides {
+    flex: 0 0 auto;
+    font-size: 0.8em;
+    text-align: center;
+  }
+
+  .reveal .bye-layout .qr-card-canvas {
+    width: 10em;
+    height: 10em;
+  }
+</style>
+<div class="bye-layout">
+  <div class="bye-contacts">
+    <section>
+      <h3>Spare Cores</h3>
+      <p><span>Web</span><a href="https://sparecores.com" target="_blank">sparecores.com</a></p>
+      <p><span>Docs</span><a href="https://docs.sparecores.com" target="_blank">docs.sparecores.com</a></p>
+      <p><span>GitHub</span><a href="https://github.com/SpareCores" target="_blank">github.com/SpareCores</a></p>
+      <p><span>LinkedIn</span><a href="https://linkedin.com/company/SpareCores" target="_blank">linkedin.com/company/SpareCores</a></p>
+      <p><span>Email</span><a href="mailto:hi@sparecores.com">hi@sparecores.com</a></p>
+    </section>
+    <section>
+      <h3>Gergely Daroczi</h3>
+      <p><span>LinkedIn</span><a href="https://www.linkedin.com/in/daroczig/" target="_blank">linkedin.com/in/daroczig</a></p>
+      <p><span>Email</span><a href="mailto:daroczig@sparecores.com">daroczig@sparecores.com</a></p>
+    </section>
+    <section>
+      <h3>Attila Nagy</h3>
+      <p><span>LinkedIn</span><a href="https://www.linkedin.com/in/11bra/" target="_blank">linkedin.com/in/11bra</a></p>
+      <p><span>Email</span><a href="mailto:attila@sparecores.com">attila@sparecores.com</a></p>
+    </section>
+  </div>
+  <div class="bye-slides">
+    <div class="qr-card" data-qr="https://sparecores.com/talks"></div>
+  </div>
+</div>
+```
 
 <!--toggle visibility of items in live mode-->
 <script>

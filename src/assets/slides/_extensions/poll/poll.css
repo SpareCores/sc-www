@@ -43,25 +43,6 @@
   text-align: center;
 }
 
-.vcpu-guess-layout {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5em;
-  width: 100%;
-  margin-top: -0.5em;
-}
-
-.vcpu-guess-layout .vcpu-guess-copy {
-  flex: 1 1 auto;
-  min-width: 0;
-  text-align: left;
-}
-
-.vcpu-guess-layout .qr-card {
-  flex: 0 0 auto;
-}
-
 .poll-chart {
   display: flex;
   align-items: center;
