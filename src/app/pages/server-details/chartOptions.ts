@@ -7,10 +7,7 @@ import {
 import { chartLegendLabels } from "../../components/charts/shared/chart-legend.utils";
 import { formatStaticWebFileSizeTooltipContext } from "../../components/charts/shared/chart-tooltip.utils";
 
-import {
-  chartColors,
-  chartColor,
-} from "../../components/charts/shared/chart-colors.constants";
+import { chartColors } from "../../components/charts/shared/chart-colors.constants";
 
 export const barChartOptions: ChartConfiguration<"bar">["options"] = {
   scales: {
@@ -467,41 +464,6 @@ export const radarChartOptions: ChartConfiguration<"radar">["options"] = {
     },
   },
 };
-
-export const radarDatasetColors = [
-  {
-    borderColor: chartColors["emerald-400"],
-    backgroundColor: chartColor("emerald-400", 0.2),
-  },
-  {
-    borderColor: chartColors["gray-200"],
-    backgroundColor: chartColor("gray-200", 0.2),
-  },
-  {
-    borderColor: chartColors["sky-400"],
-    backgroundColor: chartColor("sky-400", 0.2),
-  },
-  {
-    borderColor: chartColors["yellow-500"],
-    backgroundColor: chartColor("yellow-500", 0.2),
-  },
-  {
-    borderColor: chartColors["red-400"],
-    backgroundColor: chartColor("red-400", 0.2),
-  },
-  {
-    borderColor: chartColors["lime-400"],
-    backgroundColor: chartColor("lime-400", 0.2),
-  },
-  {
-    borderColor: chartColors["indigo-400"],
-    backgroundColor: chartColor("indigo-400", 0.2),
-  },
-  {
-    borderColor: chartColors["slate-400"],
-    backgroundColor: chartColor("slate-400", 0.2),
-  },
-];
 
 export const chartAxisGridColor = chartColors["gray-600"];
 
