@@ -83,7 +83,7 @@
   }
 }
 
-@media (width < theme(--breakpoint-md)) {
+@media (width <= theme(--breakpoint-tablet)) {
   .block_half {
     width: calc(100%);
     margin: auto;

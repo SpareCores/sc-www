@@ -2,6 +2,7 @@
   --font-sans: "Inter", sans-serif;
   --font-mono: "Roboto Mono", monospace, sans-serif;
 
+  --breakpoint-tablet: 50rem;
   --breakpoint-wide: 75rem;
 
   --color-emerald-100: #d1fae5;
