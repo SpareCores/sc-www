@@ -324,7 +324,7 @@
 
 .auth-modal__checkbox a:hover,
 .auth-modal__footer-link:hover {
-  color: var(--color-emerald-300);
+  color: color-mix(in oklab, var(--color-emerald-400) 80%, transparent);
 }
 
 .auth-modal__error {
@@ -336,7 +336,7 @@
 
 .auth-modal__info {
   margin: 0;
-  color: var(--color-emerald-300);
+  color: var(--color-emerald-400);
   font-size: 0.8125rem;
   line-height: 1.4;
 }
