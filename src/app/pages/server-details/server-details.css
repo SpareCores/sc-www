@@ -97,7 +97,7 @@
 }
 
 .server-description-read-more {
-  @apply text-emerald-400 hover:text-emerald-500 font-semibold text-left mt-auto;
+  @apply text-emerald-400 hover:text-emerald-400/80 font-semibold text-left mt-auto;
 }
 .summarize-fab {
   @apply fixed bottom-6 right-6 z-40;

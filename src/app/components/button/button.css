@@ -116,7 +116,7 @@
 }
 
 .sc-button--link.sc-button--brand {
-  @apply text-emerald-400 hover:text-emerald-500 focus:text-emerald-500;
+  @apply text-emerald-400 hover:text-emerald-400/80 focus:text-emerald-400/80;
 }
 
 .sc-button--link.sc-button--neutral {
@@ -140,7 +140,7 @@
   .sc-button--dropdown,
   .sc-button--benchmark
 ).sc-button--brand {
-  @apply border-emerald-400 bg-emerald-400 hover:bg-emerald-500 focus:bg-emerald-500;
+  @apply border-emerald-400 bg-emerald-400 hover:bg-emerald-400/80 focus:bg-emerald-400/80;
 }
 
 :is(
@@ -184,7 +184,7 @@
 }
 
 .sc-button--ghost.sc-button--brand {
-  @apply text-emerald-500 hover:bg-emerald-100 hover:text-emerald-800 focus:bg-emerald-100 focus:text-emerald-800;
+  @apply text-emerald-400 hover:bg-emerald-100 hover:text-emerald-800 focus:bg-emerald-100 focus:text-emerald-800;
 }
 
 .sc-button--ghost.sc-button--neutral {

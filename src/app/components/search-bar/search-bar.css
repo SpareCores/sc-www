@@ -134,7 +134,7 @@
   .cpu-cache-slider-tick {
     width: 1px;
     height: 0.5rem;
-    background: color-mix(in oklab, var(--color-emerald-500) 50%, transparent);
+    background: color-mix(in oklab, var(--color-emerald-400) 50%, transparent);
   }
 
   .cpu-cache-slider-labels {
