@@ -2,89 +2,41 @@
   --font-sans: "Inter", sans-serif;
   --font-mono: "Roboto Mono", monospace, sans-serif;
 
-  --color-emerald-50: #ecfdf5;
   --color-emerald-100: #d1fae5;
   --color-emerald-200: #a7f3d0;
-  --color-emerald-300: #6ee7b7;
   --color-emerald-400: #34d399;
   --color-emerald-500: #10b981;
   --color-emerald-600: #059669;
-  --color-emerald-700: #047857;
   --color-emerald-800: #065f46;
   --color-emerald-900: #064e3b;
-  --color-emerald-950: #022c22;
 
-  --color-teal-50: #f0fdfa;
-  --color-teal-100: #ccfbf1;
-  --color-teal-200: #99f6e4;
-  --color-teal-300: #5eead4;
-  --color-teal-400: #2dd4bf;
   --color-teal-500: #14b8a6;
   --color-teal-600: #0d9488;
-  --color-teal-700: #0f766e;
-  --color-teal-800: #115e59;
-  --color-teal-900: #134e4a;
-  --color-teal-950: #042f2e;
 
-  --color-sky-50: #f0f9ff;
   --color-sky-100: #e0f2fe;
-  --color-sky-200: #bae6fd;
   --color-sky-300: #7dd3fc;
   --color-sky-400: #38bdf8;
   --color-sky-500: #0ea5e9;
-  --color-sky-600: #0284c7;
   --color-sky-700: #0369a1;
   --color-sky-800: #075985;
   --color-sky-900: #0c4a6e;
   --color-sky-950: #082f49;
 
-  --color-red-50: #fef2f2;
   --color-red-100: #fee2e2;
   --color-red-200: #fecaca;
   --color-red-300: #fca5a5;
   --color-red-400: #f87171;
   --color-red-500: #ef4444;
   --color-red-600: #dc2626;
-  --color-red-700: #b91c1c;
   --color-red-800: #991b1b;
-  --color-red-900: #7f1d1d;
-  --color-red-950: #450a0a;
 
-  --color-yellow-50: #fefce8;
   --color-yellow-100: #fef9c3;
-  --color-yellow-200: #fef08a;
-  --color-yellow-300: #fde047;
   --color-yellow-400: #facc15;
   --color-yellow-500: #eab308;
-  --color-yellow-600: #ca8a04;
-  --color-yellow-700: #a16207;
-  --color-yellow-800: #854d0e;
-  --color-yellow-900: #713f12;
-  --color-yellow-950: #422006;
 
-  --color-amber-50: #fffbeb;
-  --color-amber-100: #fef3c7;
-  --color-amber-200: #fde68a;
   --color-amber-300: #fcd34d;
-  --color-amber-400: #fbbf24;
-  --color-amber-500: #f59e0b;
-  --color-amber-600: #d97706;
-  --color-amber-700: #b45309;
-  --color-amber-800: #92400e;
-  --color-amber-900: #78350f;
-  --color-amber-950: #451a03;
 
-  --color-blue-50: #eff6ff;
-  --color-blue-100: #dbeafe;
-  --color-blue-200: #bfdbfe;
-  --color-blue-300: #93c5fd;
-  --color-blue-400: #60a5fa;
-  --color-blue-500: #3b82f6;
   --color-blue-600: #2563eb;
-  --color-blue-700: #1d4ed8;
-  --color-blue-800: #1e40af;
-  --color-blue-900: #1e3a8a;
-  --color-blue-950: #172554;
 
   --color-sky-975: oklch(25.7% 0.052 240.8);
 
