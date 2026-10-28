@@ -111,7 +111,7 @@
 }
 
 .sc-button--ghost.sc-button--brand {
-  @apply text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 focus:bg-emerald-100 focus:text-emerald-800 dark:text-emerald-500 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400 dark:focus:bg-emerald-800/30 dark:focus:text-emerald-400;
+  @apply text-emerald-500 hover:bg-emerald-100 hover:text-emerald-800 focus:bg-emerald-100 focus:text-emerald-800 dark:text-emerald-500 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400 dark:focus:bg-emerald-800/30 dark:focus:text-emerald-400;
 }
 
 .sc-button--ghost.sc-button--neutral {
