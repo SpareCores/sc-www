@@ -70,7 +70,7 @@
 }
 
 .sc-button--ghost:has(.sc-button__swatch) {
-  @apply px-0;
+  @apply px-3;
 }
 
 .sc-button--solid,
@@ -196,7 +196,7 @@
 }
 
 .sc-button--ghost.sc-button--inverse {
-  @apply text-white hover:bg-white/10 focus:bg-white/10;
+  @apply text-white hover:bg-white/10 focus-visible:bg-white/10;
 }
 
 .sc-button--soft.sc-button--brand {

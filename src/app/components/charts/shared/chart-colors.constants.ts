@@ -2,13 +2,11 @@ import { ChartColorPair } from "./benchmark-chart.types";
 
 export const chartColors = {
   black: "#000000",
-  "blue-500": "#3b82f6",
   "emerald-400": "#34d399",
   "gray-200": "#e5e7eb",
   "gray-600": "#4b5563",
   "indigo-400": "#818cf8",
   "lime-400": "#a3e635",
-  "pink-400": "#f472b6",
   "red-400": "#f87171",
   "red-500": "#ef4444",
   "sky-400": "#38bdf8",
@@ -28,7 +26,7 @@ export function chartColor(token: ChartColorToken, alpha: number): string {
   return `${chartColors[token]}${channel}`;
 }
 
-const radarDatasetTokens: ChartColorToken[] = [
+export const chartSeriesTokens: ChartColorToken[] = [
   "emerald-400",
   "gray-200",
   "sky-400",
@@ -39,7 +37,7 @@ const radarDatasetTokens: ChartColorToken[] = [
   "slate-400",
 ];
 
-export const radarDatasetColors: ChartColorPair[] = radarDatasetTokens.map(
+export const radarDatasetColors: ChartColorPair[] = chartSeriesTokens.map(
   (token) => ({
     borderColor: chartColors[token],
     backgroundColor: chartColor(token, 0.2),
