@@ -139,12 +139,13 @@ curtain!
 <div class="sw-scene">
   <p class="sw-crawl">
     <span>A couple weeks ago</span>
-    <span>in a pub (or similar place)</span>
+    <span>at an undisclosed location </span>
     <span>not too far, far away&hellip;</span>
     <span>Gergely and Attila met</span>
     <span>and among other topics</span>
     <span>they discussed how badly</span>
     <span>their Python app scales&hellip;</span>
+    <span>Despite using Kubernetes&hellip;</span>
   </p>
 </div>
 <script>
@@ -618,7 +619,66 @@ Click the chart to zoom out and reveal the answer.
   })();
 </script>
 
-<!-- TODO Gergo add a breakdown of 2 vCPU servers per vendor (AWS: 146) -->
+## {#vcpus-2-count-breakdown .center}
+
+::: {.columns}
+::: {.column}
+
+```{=html}
+<style>
+  #vcpus-2-count-breakdown {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #vcpus-2-count-breakdown > h2 {
+    display: none;
+    margin: 0;
+    height: 0;
+  }
+  #vcpus-2-count-breakdown > .columns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    margin: 0;
+  }
+  #vcpus-2-count-breakdown .column:first-child .sourceCode,
+  #vcpus-2-count-breakdown .column:first-child pre {
+    width: fit-content;
+  }
+  #vcpus-2-count-breakdown .column:first-child pre code {
+    padding: 0.75em 1em;
+  }
+</style>
+```
+
+```sql {style="font-size: 1.5em;"}
+SELECT
+  vendor_id,
+  COUNT(*) AS servers
+FROM server
+WHERE vcpus = 2
+GROUP BY 1;
+```
+
+:::
+::: {.column .fragment}
+
+| vendor_id |  servers |
+|-----------|---------:|
+| alicloud  |      192 |
+| aws       |      146 |
+| azure     |      174 |
+| gcp       |       41 |
+| hcloud    |        8 |
+| ovh       |       13 |
+| upcloud   |       18 |
+| vultr     |       25 |
+:::
+:::
 
 # $ whois sparecores.com {#whois transition="convex-in convex-out"}
 
