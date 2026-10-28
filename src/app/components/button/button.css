@@ -70,7 +70,7 @@
 }
 
 .sc-button--ghost:has(.sc-button__swatch) {
-  @apply px-0;
+  @apply px-3;
 }
 
 .sc-button__icon {

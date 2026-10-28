@@ -27,7 +27,10 @@ import {
 import { Button } from "../../components/button/button";
 import { Router, RouterModule } from "@angular/router";
 
-import { chartColors } from "../../components/charts/shared/chart-colors.constants";
+import {
+  chartColors,
+  chartSeriesTokens,
+} from "../../components/charts/shared/chart-colors.constants";
 
 declare let Datamap: any;
 
@@ -35,20 +38,7 @@ const SCRIPT_PATH = "assets/datamaps/d3.min.js";
 const SCRIPT_PATH2 = "assets/datamaps/topojson.js";
 const SCRIPT_PATH3 = "assets/datamaps/datamaps.world.min.js";
 
-const colors = [
-  chartColors["blue-500"],
-  chartColors["red-400"],
-  chartColors["indigo-400"],
-  chartColors["pink-400"],
-  chartColors["emerald-400"],
-  chartColors["gray-200"],
-  chartColors["sky-400"],
-  chartColors["yellow-500"],
-  chartColors["red-400"],
-  chartColors["lime-400"],
-  chartColors["indigo-400"],
-  chartColors["slate-400"],
-];
+const colors = chartSeriesTokens.map((token) => chartColors[token]);
 
 @Component({
   selector: "sc-regions",
