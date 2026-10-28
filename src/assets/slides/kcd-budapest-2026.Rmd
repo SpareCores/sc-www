@@ -16,6 +16,7 @@ revealjs-plugins:
   - curtain
   - agentterminal
   - leanqr
+  - pollchart
 format:
   revealjs:
     theme: [black, css/custom-4.2.1.css]
@@ -318,6 +319,13 @@ indeed just focusing on the single-core performance -- like doing as many intege
        data-qr="https://sparecores.com/poll/kcd-2026"
        data-qr-poll="kcd-2026"></div>
 </div>
+```
+
+## {#vcpu-guess-results .center}
+
+```{=html}
+<p style="font-size: 48px; margin: 0 0 10px; text-align: center;">Your guesses</p>
+<div class="poll-chart" data-poll-chart="kcd-2026"></div>
 ```
 
 ## {#vcpu-diff-0 .center}

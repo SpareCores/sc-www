@@ -38,6 +38,7 @@
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-curtain/curtain.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-agent-terminal/agentterminal.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-lean-qr/leanqr.css" rel="stylesheet">
+  <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-poll-chart/pollchart.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
     .reveal div.sourceCode {
@@ -465,6 +466,11 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
   </div>
   <div class="qr-card" data-qr="https://sparecores.com/poll/kcd-2026" data-qr-poll="kcd-2026"></div>
 </div>
+</section>
+<section id="vcpu-guess-results" class="slide level2 center">
+<h2></h2>
+<p style="font-size: 48px; margin: 0 0 10px; text-align: center;">Your guesses</p>
+<div class="poll-chart" data-poll-chart="kcd-2026"></div>
 </section>
 <section id="vcpu-diff-0" class="slide level2 center">
 <h2></h2>
@@ -1776,6 +1782,7 @@ if (url.match("/?live")) {
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-agent-terminal/agentterminal.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-lean-qr/lean-qr-nano.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-lean-qr/leanqr.js"></script>
+  <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-poll-chart/pollchart.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
@@ -1968,7 +1975,7 @@ if (url.match("/?live")) {
         },
 
         // reveal.js plugins
-        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealBoxOverlay, RevealCurtain, RevealAgentTerminal, RevealLeanQR, QuartoSupport,
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealBoxOverlay, RevealCurtain, RevealAgentTerminal, RevealLeanQR, RevealPollChart, QuartoSupport,
 
           RevealMath,
           RevealNotes,
