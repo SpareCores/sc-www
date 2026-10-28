@@ -101,6 +101,24 @@ describe("Regions", () => {
     });
   });
 
+  it("should keep toggled vendors when the initial vendor request resolves late", async () => {
+    let resolveVendors!: (response: { body: object[] }) => void;
+    keeperApiService.getVendors.and.returnValue(
+      new Promise((resolve) => (resolveVendors = resolve)),
+    );
+
+    const lateFixture = TestBed.createComponent(Regions);
+    const lateComponent = lateFixture.componentInstance;
+    lateComponent.vendors = [
+      { vendor_id: "aws", name: "AWS", selected: false },
+    ];
+
+    resolveVendors({ body: [{ vendor_id: "aws", name: "AWS" }] });
+    await lateFixture.whenStable();
+
+    expect(lateComponent.isVendorHidden("aws")).toBeTrue();
+  });
+
   it("should route region clicks to the servers page with vendor_regions", () => {
     component.openLink({ vendor_id: "aws", region_id: "us-east-1" });
 

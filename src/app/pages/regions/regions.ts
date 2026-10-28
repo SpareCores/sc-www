@@ -95,11 +95,15 @@ export class Regions implements OnInit {
     );
 
     this.API.getRegions().then((regions) => {
-      this.regions = regions.body;
+      if (!this.regions.length) {
+        this.regions = regions.body;
+      }
     });
 
     this.API.getVendors().then((vendors) => {
-      this.vendors = vendors.body;
+      if (!this.vendors.length) {
+        this.vendors = vendors.body;
+      }
     });
 
     if (isPlatformBrowser(this.platformId)) {
