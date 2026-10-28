@@ -36,7 +36,7 @@
 }
 
 @utility benchmark-note-icon {
-  @apply h-4 w-auto shrink-0 cursor-help text-[#EAB308];
+  @apply h-4 w-auto shrink-0 cursor-help text-yellow-500;
 }
 
 @utility btn-primary {

@@ -48,7 +48,12 @@
     height: 40px;
   }
   .top_search_input.filter-draft-input--dirty {
-    @apply border-yellow-500 bg-yellow-100 focus:ring-yellow-500;
+    @apply border-yellow-500 focus:ring-yellow-500;
+    background-color: color-mix(
+      in oklab,
+      var(--color-yellow-500) 25%,
+      var(--color-white)
+    );
   }
   .top_search_input::placeholder {
     @apply text-sky-800/70;
@@ -97,7 +102,12 @@
   }
 
   .filter-draft-input--field.filter-draft-input--dirty {
-    @apply border-solid border-yellow-500 bg-yellow-100;
+    @apply border-solid border-yellow-500;
+    background-color: color-mix(
+      in oklab,
+      var(--color-yellow-500) 25%,
+      var(--color-white)
+    );
   }
 
   .filter-draft-pending-hint {
@@ -315,7 +325,12 @@
   }
 
   .custom-stepper__field.filter-draft-input--dirty {
-    @apply border-yellow-500 bg-yellow-100;
+    @apply border-yellow-500;
+    background-color: color-mix(
+      in oklab,
+      var(--color-yellow-500) 25%,
+      var(--color-white)
+    );
   }
 
   .custom-stepper__field:focus-within {

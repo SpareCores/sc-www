@@ -198,7 +198,7 @@
 }
 
 .benchmark-note-icon {
-  @apply h-4 w-4 shrink-0 text-amber-300;
+  @apply h-4 w-4 shrink-0 text-yellow-500;
 }
 
 .fixed_thead {

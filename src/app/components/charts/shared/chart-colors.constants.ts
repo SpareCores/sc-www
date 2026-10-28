@@ -1,7 +1,6 @@
 import { ChartColorPair } from "./benchmark-chart.types";
 
 export const chartColors = {
-  "amber-400": "#fbbf24",
   black: "#000000",
   "blue-500": "#3b82f6",
   "emerald-400": "#34d399",
@@ -17,7 +16,6 @@ export const chartColors = {
   "sky-975": "#06263a",
   "slate-400": "#94a3b8",
   white: "#ffffff",
-  "yellow-400": "#facc15",
   "yellow-500": "#eab308",
 } as const;
 
@@ -34,7 +32,7 @@ const radarDatasetTokens: ChartColorToken[] = [
   "emerald-400",
   "gray-200",
   "sky-400",
-  "yellow-400",
+  "yellow-500",
   "red-400",
   "lime-400",
   "indigo-400",
