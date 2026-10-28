@@ -81,13 +81,13 @@
   border: 3px solid #9ca3af; /* creates padding around scroll thumb */
 }
 
-:host ::ng-deep .dropdown_group_button.sc-button {
+.benchmark-type-modal ::ng-deep .dropdown_group_button.sc-button {
   @apply mx-2 w-auto px-2 py-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
   text-wrap: auto;
 }
 
-:host ::ng-deep .dropdown_group_button.sc-button:hover,
-:host ::ng-deep .dropdown_group_button.sc-button:focus {
+.benchmark-type-modal ::ng-deep .dropdown_group_button.sc-button:hover,
+.benchmark-type-modal ::ng-deep .dropdown_group_button.sc-button:focus {
   @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white;
 }
 

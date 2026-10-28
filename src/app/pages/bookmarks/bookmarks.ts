@@ -5,6 +5,7 @@ import {
   CdkDropList,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
+import { DialogRef } from "@angular/cdk/dialog";
 import { isPlatformBrowser } from "@angular/common";
 import {
   afterNextRender,
@@ -17,11 +18,11 @@ import {
   OnDestroy,
   PLATFORM_ID,
   signal,
+  TemplateRef,
   viewChild,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { LucideDynamicIcon } from "@lucide/angular";
-import { Modal, ModalOptions } from "flowbite";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
@@ -29,6 +30,7 @@ import {
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { Modal } from "../../components/modal/modal";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
 import { CollectionsStore } from "../../collections/collections-store";
 import type {
@@ -44,6 +46,7 @@ import { Dropdown } from "../../directives/dropdown";
 import { isKeyboardActivation } from "../../directives/dropdown-focus";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPI } from "../../services/keeper-api";
+import { ModalDialog } from "../../services/modal-dialog";
 import { Toast } from "../../services/toast";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { mutationKey } from "../../shared/store/with-mutation-status";
@@ -91,11 +94,6 @@ const EDITABLE_KINDS = new Set([
   "savedAssessments",
 ]);
 
-const noteModalOptions: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40",
-  closable: true,
-};
-
 function normalizeBookmarksNameQuery(value: string): string {
   return value.trim().toLocaleLowerCase();
 }
@@ -114,6 +112,7 @@ function normalizeBookmarksNameQuery(value: string): string {
     LucideDynamicIcon,
     CollectionSaveModal,
     Dropdown,
+    Modal,
   ],
   templateUrl: "./bookmarks.html",
   styleUrl: "./bookmarks.scss",
@@ -127,12 +126,14 @@ export class Bookmarks implements OnDestroy {
   private uiTooltip = inject(UiTooltip);
   private platformId = inject(PLATFORM_ID);
   private auth = inject(AuthState);
+  private modalDialog = inject(ModalDialog);
 
   private saveModal = viewChild(CollectionSaveModal);
-  private noteModalRef = viewChild<ElementRef<HTMLElement>>("noteModal");
+  private noteModalTemplate =
+    viewChild<TemplateRef<unknown>>("noteModalTemplate");
   private tooltipRef = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   private sortDropdown = viewChild<Dropdown>("sortDropdown");
-  private noteFlowbiteModal: Modal | null = null;
+  private noteDialogRef: DialogRef | null = null;
   private loadingFavoriteFeatures = new Set<string>();
   private vendorsLoaded = false;
 
@@ -319,8 +320,7 @@ export class Bookmarks implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.noteFlowbiteModal?.hide();
-    this.noteFlowbiteModal = null;
+    this.noteDialogRef?.close();
   }
 
   protected toggleFilter(key: BookmarksFilterKey, enabled: boolean): void {
@@ -572,17 +572,24 @@ export class Bookmarks implements OnDestroy {
   }
 
   protected openNoteCard(card: BookmarksCardViewModel): void {
-    if (!card.note || !isPlatformBrowser(this.platformId)) {
+    const noteModalTemplate = this.noteModalTemplate();
+    if (!card.note || !noteModalTemplate) {
       return;
     }
 
     this.noteCard.set(card);
     this.isNoteModalOpen.set(true);
-    this.ensureNoteModal()?.show();
-  }
 
-  protected closeNoteModal(): void {
-    this.noteFlowbiteModal?.hide();
+    if (this.noteDialogRef) {
+      return;
+    }
+
+    this.noteDialogRef = this.modalDialog.open(noteModalTemplate);
+    this.noteDialogRef.closed.subscribe(() => {
+      this.noteDialogRef = null;
+      this.isNoteModalOpen.set(false);
+      this.noteCard.set(null);
+    });
   }
 
   protected cardLink(card: BookmarksCardViewModel): string | any[] | null {
@@ -842,29 +849,6 @@ export class Bookmarks implements OnDestroy {
 
   private unwrapBody<T>(response: T | { body?: T }): T {
     return (response as { body?: T })?.body ?? (response as T);
-  }
-
-  private ensureNoteModal(): Modal | null {
-    if (!isPlatformBrowser(this.platformId)) {
-      return null;
-    }
-
-    if (!this.noteFlowbiteModal) {
-      const modalElement = this.noteModalRef()?.nativeElement;
-      if (!modalElement) {
-        return null;
-      }
-
-      this.noteFlowbiteModal = new Modal(modalElement, {
-        ...noteModalOptions,
-        onHide: () => {
-          this.isNoteModalOpen.set(false);
-          this.noteCard.set(null);
-        },
-      });
-    }
-
-    return this.noteFlowbiteModal;
   }
 
   private cardShareUrl(card: BookmarksCardViewModel): string | null {

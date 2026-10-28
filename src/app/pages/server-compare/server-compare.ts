@@ -6,6 +6,7 @@ import {
   HostBinding,
   OnInit,
   PLATFORM_ID,
+  TemplateRef,
   ViewChild,
   viewChild,
   OnDestroy,
@@ -15,6 +16,7 @@ import {
   signal,
   untracked,
 } from "@angular/core";
+import { DialogRef } from "@angular/cdk/dialog";
 import {
   INITIAL_SCROLLBAR_MIRROR_STATE,
   ScrollbarMirrorController,
@@ -44,7 +46,6 @@ import { ExtendedServerDetails } from "../server-details/server-details";
 import { ServerCompareCharts } from "../../components/server-compare-charts/server-compare-charts";
 import { CompareEmbedDialog } from "../../components/embed-dialog/compare-embed-dialog";
 import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
-import { Modal, ModalOptions } from "flowbite";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { Toast } from "../../services/toast";
@@ -53,6 +54,8 @@ import {
   SERVER_COMPARE_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { Modal } from "../../components/modal/modal";
+import { ModalDialog } from "../../services/modal-dialog";
 import { PrismHighlighter } from "../../services/prism-highlighter";
 import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
 import serverComparesData from "./server-compares.js";
@@ -83,11 +86,6 @@ import { CollectionsUi } from "../../collections/collections-ui";
 import { AuthState } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
-
-const optionsModal: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
-};
 
 const EMBEDDABLE_CHARTS: EmbedChartOption[] = [
   { id: "generic", name: "Server Specs and Prices" },
@@ -159,6 +157,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     LoadingSpinner,
     Dropdown,
     CollectionSaveModal,
+    Modal,
   ],
   templateUrl: "./server-compare.html",
   styleUrl: "./server-compare.scss",
@@ -181,6 +180,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   private compareCollections = inject(CompareCollections);
   private auth = inject(AuthState);
   private collectionsUi = inject(CollectionsUi);
+  private modalDialog = inject(ModalDialog);
   saveComparisonModal = viewChild(CollectionSaveModal);
   compareCharts = viewChild(ServerCompareCharts);
 
@@ -395,7 +395,9 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
   embeddableCharts: EmbedChartOption[] = EMBEDDABLE_CHARTS;
 
-  modalEmbed: any;
+  private embedModalTemplate =
+    viewChild.required<TemplateRef<unknown>>("embedModalTemplate");
+  private embedDialogRef: DialogRef | null = null;
 
   serverCompares: any[] = serverComparesData;
 
@@ -507,6 +509,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
       this.checkExistInterval = null;
     }
 
+    this.embedDialogRef?.close();
     this.stickyLayout.destroy();
     this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
     this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
@@ -807,17 +810,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
           );
 
           this.refreshBenchmarkCategoryData();
-
-          if (isPlatformBrowser(this.platformId)) {
-            const targetElModal = document.getElementById(
-              "embed-compare-modal",
-            );
-
-            this.modalEmbed = new Modal(targetElModal, optionsModal, {
-              id: "embed-compare-modal",
-              override: true,
-            });
-          }
           this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
         })
         .catch((err) => {
@@ -1681,16 +1673,19 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openModal() {
+    if (this.embedDialogRef) {
+      return;
+    }
+
     const compareCharts = this.compareCharts();
     this.embeddableCharts = compareCharts
       ? EMBEDDABLE_CHARTS.filter((chart) =>
           compareCharts.hasEmbeddableChart(chart.id),
         )
       : EMBEDDABLE_CHARTS;
-    this.modalEmbed?.show();
-  }
-
-  closeModal() {
-    this.modalEmbed?.hide();
+    this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
+    this.embedDialogRef.closed.subscribe(() => {
+      this.embedDialogRef = null;
+    });
   }
 }

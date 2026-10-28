@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  TemplateRef,
   WritableSignal,
   computed,
   effect,
@@ -24,7 +25,7 @@ import {
   LucideInfo,
   LucideScale,
 } from "@lucide/angular";
-import { Modal, ModalOptions } from "flowbite";
+import { DialogRef } from "@angular/cdk/dialog";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import {
   Benchmark,
@@ -80,6 +81,8 @@ import {
 import { AuthState } from "../../core/auth";
 import { AssessmentCollections } from "../../collections/assessment-collections";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { Modal } from "../../components/modal/modal";
+import { ModalDialog } from "../../services/modal-dialog";
 import { CollectionsUi } from "../../collections/collections-ui";
 import type { SavedAssessmentItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
@@ -185,11 +188,6 @@ type RecommendationResult = {
   recommendations: SearchServersServersGetData;
   totalCount: number;
   totalPages: number;
-};
-
-const advisorIntroductionModalOptions: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
 };
 
 const ADVISOR_BASELINE_SERVER_CONTROL_NAME = "baseline_server";
@@ -411,6 +409,7 @@ type AdvisorComparableResourceKey =
     RouterLink,
     SearchBar,
     CollectionSaveModal,
+    Modal,
   ],
   templateUrl: "./advisor.html",
   styleUrl: "./advisor.scss",
@@ -429,13 +428,15 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private collectionsUi = inject(CollectionsUi);
   private neetoCalService = inject(NeetoCal);
   private uiTooltip = inject(UiTooltip);
+  private modalDialog = inject(ModalDialog);
   readonly advisorUi = inject(AdvisorUi);
   saveAssessmentModal = viewChild(CollectionSaveModal);
   readonly currencyDropdown = viewChild<Dropdown>("currencyDropdown");
   readonly pageDropdown = viewChild<Dropdown>("pageDropdown");
   readonly searchBar = viewChild(SearchBar);
-  readonly introductionModalRef =
-    viewChild<ElementRef<HTMLElement>>("introductionModal");
+  private readonly introductionModalTemplate = viewChild.required<
+    TemplateRef<unknown>
+  >("introductionModalTemplate");
   readonly tooltipDefault =
     viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   private compareSubscription = new Subscription();
@@ -453,7 +454,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private baselinePriceComparisonRequestVersion = 0;
   private baselineAddonPricingRequestVersion = 0;
   private baselineScoreComparisonRequestVersion = 0;
-  private introductionModal: Modal | null = null;
+  private introductionDialogRef: DialogRef | null = null;
   showIntroductionVideo = false;
   private hasViewInitialized = signal(false);
   private pendingCustomControlFocus = signal<string | null>(null);
@@ -1645,8 +1646,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
       this.clipboardResetTimeout = null;
     }
 
-    this.introductionModal?.hide();
-    this.introductionModal = null;
+    this.introductionDialogRef?.close();
     this.toastService.removeToast(QUERY_ERROR_ADVISOR_TOAST_ID);
     this.toastService.removeToast(ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID);
     this.toastService.removeToast(ADVISOR_BENCHMARK_CONFIGS_ERROR_TOAST_ID);
@@ -2147,29 +2147,18 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openIntroductionModal(): void {
-    if (!isPlatformBrowser(this.platformId)) {
+    if (this.introductionDialogRef) {
       return;
     }
 
-    if (!this.introductionModal) {
-      const modalElement = this.introductionModalRef()?.nativeElement;
-
-      if (modalElement) {
-        this.introductionModal = new Modal(modalElement, {
-          ...advisorIntroductionModalOptions,
-          onHide: () => {
-            this.showIntroductionVideo = false;
-          },
-        });
-      }
-    }
-
     this.showIntroductionVideo = true;
-    this.introductionModal?.show();
-  }
-
-  closeIntroductionModal(): void {
-    this.introductionModal?.hide();
+    this.introductionDialogRef = this.modalDialog.open(
+      this.introductionModalTemplate(),
+    );
+    this.introductionDialogRef.closed.subscribe(() => {
+      this.introductionDialogRef = null;
+      this.showIntroductionVideo = false;
+    });
   }
 
   toggleCollapse(): void {

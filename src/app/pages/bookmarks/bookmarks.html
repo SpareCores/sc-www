@@ -393,41 +393,22 @@
     (closed)="onEditModalClosed()"
   ></sc-collection-save-modal>
 
-  <div
-    #noteModal
-    id="bookmarks-note-modal"
-    tabindex="-1"
-    class="bookmarks-note-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
-  >
-    <div class="relative w-full max-w-3xl mx-auto my-auto">
-      <div
-        class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
-      >
-        <div
-          class="flex items-start justify-between gap-4 p-4 md:p-6 border-b border-gray-600"
-        >
-          <div class="flex flex-col gap-2 min-w-0">
-            <h2 class="text-xl md:text-2xl font-semibold text-white">
-              {{ noteCard()?.title }}
-            </h2>
-          </div>
-          <sc-button
-            variant="close"
-            icon="x"
-            ariaLabel="Close modal"
-            (buttonClick)="closeNoteModal()"
-          ></sc-button>
-        </div>
-        @if (noteCard()?.note && isNoteModalOpen()) {
-          <div
-            class="bookmarks-note-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
-          >
-            <p class="bookmarks-note-modal-text">{{ noteCard()?.note }}</p>
-          </div>
-        }
+  <ng-template #noteModalTemplate>
+    <sc-modal id="bookmarks-note-modal" size="3xl">
+      <div modalHeader class="flex flex-col gap-2 min-w-0">
+        <h2 class="text-xl md:text-2xl font-semibold text-white">
+          {{ noteCard()?.title }}
+        </h2>
       </div>
-    </div>
-  </div>
+      @if (noteCard()?.note && isNoteModalOpen()) {
+        <div
+          class="bookmarks-note-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
+        >
+          <p class="bookmarks-note-modal-text">{{ noteCard()?.note }}</p>
+        </div>
+      }
+    </sc-modal>
+  </ng-template>
 
   <div
     id="tooltipDefault"
