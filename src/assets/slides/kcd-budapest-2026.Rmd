@@ -15,8 +15,7 @@ revealjs-plugins:
   - boxoverlay
   - curtain
   - agentterminal
-  - leanqr
-  - pollchart
+  - poll
 format:
   revealjs:
     theme: [black, css/custom-4.2.1.css]
