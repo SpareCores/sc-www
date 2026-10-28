@@ -781,6 +781,7 @@ high level numbers about the data we collect and make available
 
 Check server details page. Scoll over the benchmarks.
 - server metadata
+- lstopo
 - benchmarks 
 - price diffs -> oops .. spot vs ondemand
 
@@ -789,7 +790,7 @@ Check server details page. Scoll over the benchmarks.
 [[G]] ADVISOR!!
 :::
 
-<!-- TODO Gergo get lstopo on m8azn.metal-12xl -->
+<!-- TODO Gergo get lstopo on m8azn.metal-12xl DONE at https://keeper.sparecores.net/inspector/server/aws/m8azn.metal-12xl/task_block_reason_codes?tasks=lstopo -->
 
 ## $ curl sparecores.com/server/gcp/g2-standard-16
 
@@ -925,12 +926,12 @@ or plots as well for human inspection
 
 # $ curl sparecores.com/advisor
 
-<!-- TODO Gergo add advisor image and demo scenario for live walkthought
 
-https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
-
-https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
--->
+::: {.centered}
+<a href="https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&avg_cpu_utilization=100&minimum_memory=16&price_allocation_enabled=true&best_price_allocation=ONDEMAND_ONLY" target="_blank">
+  <img style="width: 90%;" src="images/sc-www-advisor-r5a-large.png" />
+</a>
+:::
 
 ::: {.notes}
 r5a.large
@@ -938,9 +939,6 @@ r5a.large
 AWS
 Oregaon
 ondemand price
-TODO Gergo Marci ticket ne ugraljon az advisor a tetejere gombnyomasra
-TODO Gergo Marci ticket bad best price https://sparecores.com/advisor?vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&workload_id=passmark:cpu_single_threaded_test&workload_config=%7B%7D&avg_cpu_utilization=100&minimum_memory=16&price_allocation_enabled=true&best_price_allocation=ONDEMAND_ONLY (wrong region?)
-
 
 [[A]] Can we query this in a programmatic way?  
 [[G]] yes ...
@@ -948,10 +946,8 @@ TODO Gergo Marci ticket bad best price https://sparecores.com/advisor?vendor_reg
 
 # $ curl docs.sparecores.com/api
 
-<!-- TODO Gergo replace image with docs site -->
-
 ::: {.centered}
-<img style="width:95%;" src="images/sc-keeper-preview.png" />
+<img style="width:85%;" src="images/sc-keeper-docs.png" />
 :::
 
 ::: {.notes}

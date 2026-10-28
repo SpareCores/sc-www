@@ -1187,7 +1187,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <span style="color:#ef4444;font-weight:bold">G:</span> Let’s order by performance then.<br>
 <span style="color:#34d399;font-weight:bold">A:</span> That metal server looks promising<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Let’s see the details …</p>
-<p>Check server details page. Scoll over the benchmarks. - server metadata - benchmarks - price diffs -&gt; oops .. spot vs ondemand</p>
+<p>Check server details page. Scoll over the benchmarks. - server metadata - lstopo - benchmarks - price diffs -&gt; oops .. spot vs ondemand</p>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> Actually, it’s $5 ondemand.<br>
 <span style="color:#34d399;font-weight:bold">A:</span> That’s too much. The devops team picked r5a.large .. can we find something better around the same price?<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> ADVISOR!!</p>
@@ -1202,7 +1202,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<!-- TODO Gergo get lstopo on m8azn.metal-12xl -->
+<!-- TODO Gergo get lstopo on m8azn.metal-12xl DONE at https://keeper.sparecores.net/inspector/server/aws/m8azn.metal-12xl/task_block_reason_codes?tasks=lstopo -->
 </section>
 <section id="curl-sparecores.comservergcpg2-standard-16" class="slide level2">
 <h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
@@ -1403,14 +1403,11 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 </section></section>
 <section id="curl-sparecores.comadvisor" class="title-slide slide level1">
 <h1>$ curl sparecores.com/advisor</h1>
-<!-- TODO Gergo add advisor image and demo scenario for live walkthought
-
-https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
-
-https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
--->
+<div class="centered">
+<p><a href="https://sparecores.com/advisor?vendor=aws&amp;baseline_vendor=aws&amp;baseline_server=r5a.large&amp;limit_architecture=true&amp;workload_id=stress_ng:best1&amp;workload_config=%7B%7D&amp;avg_cpu_utilization=100&amp;minimum_memory=16&amp;price_allocation_enabled=true&amp;best_price_allocation=ONDEMAND_ONLY" target="_blank"> <img style="width: 90%;" src="images/sc-www-advisor-r5a-large.png"> </a></p>
+</div>
 <aside class="notes">
-<p>r5a.large “cpu_single_threaded_test” AWS Oregaon ondemand price TODO Gergo Marci ticket ne ugraljon az advisor a tetejere gombnyomasra TODO Gergo Marci ticket bad best price https://sparecores.com/advisor?vendor_regions=aws~us-west-2&amp;baseline_vendor=aws&amp;baseline_server=r5a.large&amp;workload_id=passmark:cpu_single_threaded_test&amp;workload_config=%7B%7D&amp;avg_cpu_utilization=100&amp;minimum_memory=16&amp;price_allocation_enabled=true&amp;best_price_allocation=ONDEMAND_ONLY (wrong region?)</p>
+<p>r5a.large “cpu_single_threaded_test” AWS Oregaon ondemand price</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> Can we query this in a programmatic way?<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> yes …</p>
 <style type="text/css">
@@ -1428,9 +1425,8 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 
 <section id="curl-docs.sparecores.comapi" class="title-slide slide level1">
 <h1>$ curl docs.sparecores.com/api</h1>
-<!-- TODO Gergo replace image with docs site -->
 <div class="centered">
-<p><img style="width:95%;" src="images/sc-keeper-preview.png"></p>
+<p><img style="width:85%;" src="images/sc-keeper-docs.png"></p>
 </div>
 <aside class="notes">
 <p><span style="color:#ef4444;font-weight:bold">G:</span> for computers, we provide APIs … is it something you could use?<br>
