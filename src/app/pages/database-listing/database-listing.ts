@@ -131,7 +131,7 @@ type DatabaseListingQuery = Params &
     CollectionSaveModal,
   ],
   templateUrl: "./database-listing.html",
-  styleUrl: "./database-listing.scss",
+  styleUrl: "./database-listing.css",
 })
 export class DatabaseListing implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);

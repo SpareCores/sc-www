@@ -21,7 +21,7 @@ type DownloadItemVm = {
   selector: "sc-downloadable-logo-collection",
   imports: [NgOptimizedImage, Button],
   templateUrl: "./downloadable-logo-collection.html",
-  styleUrl: "./downloadable-logo-collection.scss",
+  styleUrl: "./downloadable-logo-collection.css",
 })
 export class DownloadableLogoCollection implements OnChanges {
   private readonly platformId = inject(PLATFORM_ID);

@@ -38,7 +38,7 @@ import { Subscription } from "rxjs";
     LightboxModule,
   ],
   templateUrl: "./article.html",
-  styleUrl: "./article.scss",
+  styleUrl: "./article.css",
 })
 export class Article implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);

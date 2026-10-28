@@ -42,7 +42,7 @@ a:hover {
     @apply relative h-8 w-8 overflow-hidden rounded-full;
   }
 
-  // Later photos cover earlier ones; keep enough of the previous face visible at normal scale.
+  /* Later photos cover earlier ones; keep enough of the previous face visible at normal scale. */
   .speaker-avatar + .speaker-avatar {
     margin-top: -1rem;
   }

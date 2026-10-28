@@ -115,7 +115,7 @@ function normalizeBookmarksNameQuery(value: string): string {
     Modal,
   ],
   templateUrl: "./bookmarks.html",
-  styleUrl: "./bookmarks.scss",
+  styleUrl: "./bookmarks.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Bookmarks implements OnDestroy {

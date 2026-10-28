@@ -19,7 +19,7 @@ import { PartnerCategory, PartnerInterestSection } from "./partners.types";
   selector: "sc-partners",
   imports: [Breadcrumbs, RouterLink],
   templateUrl: "./partners.html",
-  styleUrl: "./partners.scss",
+  styleUrl: "./partners.css",
 })
 export class Partners implements OnInit {
   private readonly seoHandler = inject(SeoHandler);

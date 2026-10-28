@@ -58,7 +58,7 @@ import {
     StoragePipe,
   ],
   templateUrl: "./storages.html",
-  styleUrl: "./storages.scss",
+  styleUrl: "./storages.css",
 })
 export class Storages implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);

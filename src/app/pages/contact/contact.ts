@@ -17,7 +17,6 @@ import { Toast } from "../../services/toast";
   selector: "sc-contact",
   imports: [ReactiveFormsModule, Breadcrumbs, Button],
   templateUrl: "./contact.html",
-  styleUrls: ["./contact.scss"],
 })
 export class Contact {
   private fb = inject(FormBuilder);
