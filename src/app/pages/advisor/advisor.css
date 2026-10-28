@@ -129,7 +129,7 @@
 }
 
 .advisor-summary-alert--positive {
-  @apply border-emerald-400/40 bg-emerald-500/10 text-emerald-100;
+  @apply border-emerald-400/40 bg-emerald-400/10 text-emerald-100;
 }
 
 .advisor-summary-alert--neutral {
@@ -261,7 +261,7 @@
 }
 
 .advisor-dropdown-menu-option {
-  @apply flex items-center gap-2 rounded-xs px-2 py-1 cursor-pointer hover:bg-emerald-500;
+  @apply flex items-center gap-2 rounded-xs px-2 py-1 cursor-pointer hover:bg-emerald-400/80;
 }
 
 .advisor-dropdown-menu-label {

@@ -248,7 +248,7 @@
     >
       @for (pageLimit of pageLimits; track $index) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
           (click)="selectPageSize(pageLimit)"
           tabindex="0"
         >
@@ -295,7 +295,7 @@
       @for (currency of availableCurrencies; track currency.name) {
         <li
           tabindex="0"
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
           (click)="selectCurrency(currency)"
         >
           <div class="text-white text-sm">

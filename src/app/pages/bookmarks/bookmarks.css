@@ -58,7 +58,7 @@
 }
 
 .bookmarks-sort-control__label:hover {
-  background: var(--color-emerald-500);
+  background: color-mix(in oklab, var(--color-emerald-400) 80%, transparent);
 }
 
 .bookmarks-sort-control__label-text {
@@ -222,7 +222,7 @@
 }
 
 .bookmarks-stats__item input:checked + .bookmarks-filter__track {
-  background: var(--color-emerald-500);
+  background: var(--color-emerald-400);
 }
 
 .bookmarks-stats__item
