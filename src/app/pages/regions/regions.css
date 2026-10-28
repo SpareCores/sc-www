@@ -15,10 +15,14 @@
   }
 
   tbody {
-    tr:nth-child(2n + 1) {
+    tr:nth-child(
+      2n + 1 of :not(.regions-table__row--hidden, .regions-table__empty)
+    ) {
       @apply bg-primary;
     }
-    tr:nth-child(2n) {
+    tr:nth-child(
+      2n of :not(.regions-table__row--hidden, .regions-table__empty)
+    ) {
       @apply bg-secondary;
     }
 
@@ -26,6 +30,23 @@
       @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
       td {
         @apply px-5 py-3 text-left text-sm;
+      }
+    }
+
+    tr.regions-table__row--hidden {
+      visibility: collapse;
+    }
+
+    tr.regions-table__empty {
+      background: var(--color-yellow-500);
+      cursor: default;
+
+      &:hover {
+        outline: none;
+      }
+
+      td {
+        color: var(--color-black);
       }
     }
   }

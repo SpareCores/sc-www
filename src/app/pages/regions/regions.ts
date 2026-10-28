@@ -274,4 +274,14 @@ export class Regions implements OnInit {
     return this.vendors?.find((vendor) => vendor.vendor_id === vendorId)
       ?.selected;
   }
+
+  isVendorHidden(vendorId: string) {
+    return this.isVendorSelected(vendorId) === false;
+  }
+
+  get visibleRegions() {
+    return this.regions.filter(
+      (region) => !this.isVendorHidden(region.vendor_id),
+    );
+  }
 }
