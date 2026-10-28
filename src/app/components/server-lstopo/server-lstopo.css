@@ -50,7 +50,7 @@
 .lstopo-container svg rect.L2:hover,
 .lstopo-container svg rect.L3:hover,
 .lstopo-container svg rect.PU:hover {
-  stroke: var(--color-emerald-200) !important;
+  stroke: var(--color-emerald-400) !important;
   stroke-width: 1.5 !important;
   filter: drop-shadow(0 0 1.5px var(--color-emerald-400));
 }

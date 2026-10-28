@@ -129,11 +129,11 @@
 }
 
 .advisor-summary-alert--positive {
-  @apply border-emerald-400/40 bg-emerald-400/10 text-emerald-100;
+  @apply border-emerald-400/40 bg-emerald-400/10 text-emerald-400;
 }
 
 .advisor-summary-alert--neutral {
-  @apply border-sky-400/30 bg-sky-500/10 text-sky-100;
+  @apply border-emerald-400/40 bg-emerald-400/10 text-emerald-400;
 }
 
 .advisor-summary-alert-title {
