@@ -1,0 +1,26 @@
+@let summary = description();
+@if (showHeader()) {
+  @if (summary.tagline) {
+    <p class="summary-tagline">{{ summary.tagline }}</p>
+  }
+  @if (summary.categories.length) {
+    <div class="summary-categories">
+      @for (category of summary.categories; track category) {
+        <span class="summary-category-pill">{{ category }}</span>
+      }
+    </div>
+  }
+}
+@if (summary.bullet_points.length) {
+  <div class="summary-highlights">
+    <h3 class="text-lg font-semibold text-white mb-3">Key highlights</h3>
+    <ul class="summary-bullets">
+      @for (point of summary.bullet_points; track point) {
+        <li>{{ point }}</li>
+      }
+    </ul>
+  </div>
+}
+@for (paragraph of summary.page; track $index) {
+  <p class="summary-paragraph">{{ paragraph }}</p>
+}

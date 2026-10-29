@@ -13,7 +13,6 @@ import {
   TemplateRef,
   ViewChild,
   inject,
-  signal,
   viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -43,6 +42,8 @@ import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner
 import { Modal } from "../../components/modal/modal";
 import { ServerCharts } from "../../components/server-charts/server-charts";
 import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
+import { ServerAvailabilityCard } from "../../components/server-availability-card/server-availability-card";
+import { ServerDescriptionSummary } from "../../components/server-description-summary/server-description-summary";
 import {
   ServerPropertyCard,
   ServerPropertySection,
@@ -51,7 +52,6 @@ import { Dropdown } from "../../directives/dropdown";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { formatStorageSize } from "../../pipes/pipe-utils";
-import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name-pipe";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { ModalDialog } from "../../services/modal-dialog";
@@ -63,7 +63,6 @@ import {
 import { CompareSelection } from "../../services/compare-selection";
 import { Toast } from "../../services/toast";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
-import { UiTooltip } from "../../services/ui-tooltip";
 import { initGiscus } from "../../tools/initGiscus";
 import { ServerEmbedDialog } from "../../components/embed-dialog/server-embed-dialog";
 import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
@@ -139,11 +138,12 @@ export interface ExtendedServerDetails extends ServerPKs {
     FormsModule,
     RouterModule,
     BaseChartDirective,
-    ReduceUnitNamePipe,
     AcceleratorCountPipe,
     ServerCharts,
     ServerLstopo,
     ServerPropertyCard,
+    ServerAvailabilityCard,
+    ServerDescriptionSummary,
     ServerEmbedDialog,
     LoadingSpinner,
     Dropdown,
@@ -165,7 +165,6 @@ export class ServerDetails implements OnInit, OnDestroy {
   private renderer = inject(Renderer2);
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
-  private uiTooltip = inject(UiTooltip);
   private memoryChartBuilder = inject(MemoryChartBuilder);
   private multiBarChartBuilder = inject(BenchmarkMultiBarChartBuilder);
   private modalDialog = inject(ModalDialog);
@@ -258,8 +257,6 @@ export class ServerDetails implements OnInit, OnDestroy {
   );
   private embedDialogRef: DialogRef | null = null;
   private summarizeDialogRef: DialogRef | null = null;
-  warningTooltipRef = viewChild<ElementRef<HTMLElement>>("warningTooltip");
-  warningTooltipContent = signal("");
 
   embeddableCharts: EmbedChartOption[] = [];
 
@@ -920,26 +917,6 @@ export class ServerDetails implements OnInit, OnDestroy {
         );
       }
     }
-  }
-
-  showWarningTooltip(event: MouseEvent | FocusEvent, content: string) {
-    this.uiTooltip.showIfPresent({
-      tooltipElement: this.warningTooltipRef()?.nativeElement,
-      event,
-      content,
-      variant: "warning",
-      onShow: (tooltipContent) => {
-        this.warningTooltipContent.set(tooltipContent);
-      },
-    });
-  }
-
-  getInactivePriceNote(observedAt: string | undefined): string {
-    return this.serverSpecCards.getInactivePriceNote(observedAt);
-  }
-
-  hideWarningTooltip() {
-    this.uiTooltip.hide(this.warningTooltipRef()?.nativeElement);
   }
 
   refreshPricesGraphs() {
