@@ -994,15 +994,14 @@ ondemand price
 :::
 
 ::: {.notes}
-[[A]] **GIL** history — for folks who **don't know the GIL** yet  
-- image: **G(H)uido** v(F)an Rossum + **Larry** Hastings (Gilectomy)  
-- **GIL** since early 90s · serializes Python bytecode · **more cores ≠ faster** for pure Python  
-- **Greg Stein** 1996 patch · parts landed, GIL stayed  
-- **Gilectomy** (**Larry Hastings**, ~2016): real PoC, fine-grained locks — **overhead** killed it (Guido: no single-thread regression)  
-- **Sam Gross** nogil → **PEP 703** (2023): optional **free-threaded** build  
-- **3.13** experimental · **3.14** officially supported, **not default** · **3.15** Stable ABI `abi3t`  
-- for **GILty**-class apps: promising **if** you redesign for threads + deps support · else still need **fast single core**  
-- working name for this project: **"Core Alone"** — fits, right?
+[[A]] **GIL** — for folks who don't know it yet
+
+- image: **G(H)uido** v(F)an Rossum + **Larry** Hastings (Gilectomy)
+- the **GIL** has been with us since the early **90s** — one thread at a time
+- promising tries **failed** — e.g. Larry's **Gilectomy** (~2016)
+- latest hope: **free-threaded Python** (still not the default)
+- we still need a **fast single core** → project name: **"Core Alone"**
+
 :::
 
 # $ strace -e environment gilty.py
