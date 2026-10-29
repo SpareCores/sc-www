@@ -1037,6 +1037,7 @@ plus `instance-cpu-sustained-clock-speed-mhz` — **vendor clock**, not a **benc
 
 - on the graph: ~**1000** AWS types · **clock speed** vs **PassMark** ST  
 - trend goes up — but same clock speed → **wildly different** scores  
+- sometimes a **lower** clock even **beats** a higher one  
 - so Karpenter’s **MHz filter** ≠ fastest core for **GILty**
 :::
 
