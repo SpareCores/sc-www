@@ -1,0 +1,101 @@
+<div
+  class="chart-block--half"
+  id="availability"
+  [class.chart-block--open]="isOpen()"
+>
+  <h3 class="text-2xl">Availability</h3>
+  <table class="sc-kv-table w-full">
+    <thead>
+      <tr>
+        <th>REGION / ID</th>
+        <th>SPOT</th>
+        <th>ONDEMAND</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (
+        region of regions();
+        track region.vendor_id + "_" + region.region_id
+      ) {
+        <tr class="availability_line" [class.opacity-60]="region.inactive">
+          <td>
+            <div class="flex items-center gap-1">
+              <span>
+                <b>{{ region.display_name }}</b> /
+                {{ region.api_reference }}
+              </span>
+              @if (region.inactive) {
+                @let inactivePriceNote =
+                  getInactivePriceNote(region.inactiveObservedAt);
+                <button
+                  type="button"
+                  class="inline-flex"
+                  [attr.aria-label]="inactivePriceNote"
+                  (mouseenter)="showWarningTooltip($event, inactivePriceNote)"
+                  (mouseleave)="hideWarningTooltip()"
+                  (focus)="showWarningTooltip($event, inactivePriceNote)"
+                  (blur)="hideWarningTooltip()"
+                >
+                  <svg lucideTriangleAlert class="benchmark-note-icon"></svg>
+                </button>
+              }
+            </div>
+          </td>
+          @if (region.spot.price) {
+            <td>
+              {{ region.spot.price }}
+              {{ region.spot.currency }}/{{ region.spot.unit | reduceUnitName }}
+            </td>
+          } @else {
+            <td>-</td>
+          }
+          @if (region.ondemand.price) {
+            <td>
+              {{ region.ondemand.price }}
+              {{ region.ondemand.currency }}/{{
+                region.ondemand.unit | reduceUnitName
+              }}
+            </td>
+          } @else {
+            <td>-</td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+  @if (canExpand() && !isOpen()) {
+    <div
+      class="absolute bottom-0 left-0 w-full py-3 flex justify-center bg-linear-to-t from-secondary from-25% to-transparent"
+      id="availability_more"
+    >
+      <sc-button
+        label="Show more"
+        size="small"
+        id="availability_more_button"
+        ariaControls="availability"
+        [ariaExpanded]="false"
+        data-ph-capture-attribute-sc-event="server details show more availability"
+        (click)="requestToggle()"
+      ></sc-button>
+    </div>
+  }
+  @if (canExpand() && isOpen()) {
+    <div class="w-full pt-3 flex justify-center" id="availability_less">
+      <sc-button
+        label="Show less"
+        size="small"
+        ariaControls="availability"
+        [ariaExpanded]="true"
+        data-ph-capture-attribute-sc-event="server details show less availability"
+        (click)="requestToggle()"
+      ></sc-button>
+    </div>
+  }
+</div>
+
+<div
+  #warningTooltip
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+>
+  {{ warningTooltipContent() }}
+</div>

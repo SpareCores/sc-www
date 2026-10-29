@@ -1,0 +1,29 @@
+@reference "../../../styles/tailwind.css";
+
+:host {
+  display: block;
+}
+
+.summary-tagline {
+  @apply text-emerald-400 text-lg mb-4;
+}
+
+.summary-categories {
+  @apply flex flex-wrap gap-2 mb-6;
+}
+
+.summary-category-pill {
+  @apply border border-solid border-emerald-400 text-emerald-400 rounded-full px-3 py-1 text-sm;
+}
+
+.summary-paragraph {
+  @apply text-gray-200 leading-relaxed mb-4 last:-mb-3;
+}
+
+.summary-highlights {
+  @apply mb-6 pb-6 border-b border-gray-600;
+}
+
+.summary-bullets {
+  @apply text-gray-200 space-y-2 list-disc list-inside;
+}
