@@ -16,7 +16,7 @@
 }
 
 .section_header_availability {
-  @apply uppercase font-semibold tracking-wide;
+  @apply uppercase tracking-wide;
 }
 
 .property_info_icon {
