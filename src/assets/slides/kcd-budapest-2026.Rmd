@@ -1103,7 +1103,7 @@ Pub talk → need **benchmark**-ranked types in **Karpenter** (incl. **EKS Auto*
 :::
 
 ::: {.notes}
-[[A]] planned with **Claude** — walk the six points:
+[[A]] we sat down with **Claude** and planned the fix — six decisions:
 
 - **own NodePools** — don't touch user / Auto Mode pools · **GitOps**-safe  
 - one **`SCNodePool`** → one Karpenter NodePool (template + type list)  
