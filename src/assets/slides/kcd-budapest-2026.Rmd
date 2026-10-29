@@ -39,6 +39,19 @@ format:
     highlight-style: arrow-dark
 ---
 
+<!-- TODO Gergo drop
+
+- vcpu-diff-0 -> speed up (15 sec)
+- vcpu-diff slides -> 5 sec
+- vcpu-difference : Vincent - how to pick fomr the many instnaces .. 32x diff
+- vcpus-2-count-breakdown -> speed up
+
+- whois DROP
+- server search -> no network
+
+- feedback: aprobetus helyett nagybetus resz + fragment
+-->
+
 # {#cover-slide data-curtain="close"}
 
 <script>
@@ -1001,11 +1014,10 @@ TODO Gergo check on aws r8i-flex -- burstable?
 ::: {.notes}
 [[A]] **GIL** — for folks who don't know it yet
 
-- image: **G(H)uido** v(F)an Rossum + **Larry** Hastings (Gilectomy)
 - the **GIL** has been with us since the early **90s** — one thread at a time
-- promising tries **failed** — e.g. Larry's **Gilectomy** (~2016)
-- latest hope: **free-threaded Python** (still not the default)
-- we still need a **fast single core** → project name: **"Core Alone"**
+- several attemps to remove GIL, like **G(H)uido** v(F)an Rossum + **Larry** Hastings (Gilectomy) without clear success for a long time
+- there's a new hope (**free-threaded Python**)
+- but we still usually need a **fast single core** → project name: **"Core Alone"**
 
 :::
 
@@ -1202,6 +1214,8 @@ Great for **picking** types · **not** for inspector-style **multi-cloud JIT**
 
 ::: {.notes}
 [[A]] great for picking types — **not** for inspector **JIT**
+
+There are still several limitations as you can see, but due to time constraints, let's rather focus on the ideal scenario instead.
 
 - we only write a **NodePool** — Karpenter still does the launch  
 - **one** cloud, **one** cluster — no per-pod region  
