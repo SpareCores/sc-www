@@ -63,6 +63,7 @@
     #lstopo,
     #description
   ) {
+  @apply scrollbar-brand;
   overflow-y: auto;
 }
 
