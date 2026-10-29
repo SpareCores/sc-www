@@ -5,8 +5,8 @@
 <script src="kcd-budapest-2026_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="kcd-budapest-2026_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="kcd-budapest-2026_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="kcd-budapest-2026_files/libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.27">
+<link href="kcd-budapest-2026_files/libs/quarto-html/quarto-syntax-highlighting-dark-b626d73c4c936ccc3cb08be7d45d1df6.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.19">
 
   <meta name="author" content="Gergely Daroczi">
   <meta name="author" content="Attila Nagy">
@@ -18,10 +18,16 @@
   <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/reveal.css">
   <style>
-    code{white-space: pre-wrap;}
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
@@ -96,7 +102,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/theme/quarto-0ba2550f576cf5de89bd8e81d5f93b5d.css">
+  <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/theme/quarto-1544793c4831c97fdcd9596a0d755e9e.css">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -203,12 +209,12 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Gergely Daroczi 
+Gergely Daroczi
 </div>
 </div>
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Attila Nagy 
+Attila Nagy
 </div>
 </div>
 </div>
@@ -1500,15 +1506,14 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <p><img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> <strong>GIL</strong> history — for folks who <strong>don’t know the GIL</strong> yet<br>
-- image: <strong>G(H)uido</strong> v(F)an Rossum + <strong>Larry</strong> Hastings (Gilectomy)<br>
-- <strong>GIL</strong> since early 90s · serializes Python bytecode · <strong>more cores ≠ faster</strong> for pure Python<br>
-- <strong>Greg Stein</strong> 1996 patch · parts landed, GIL stayed<br>
-- <strong>Gilectomy</strong> (<strong>Larry Hastings</strong>, ~2016): real PoC, fine-grained locks — <strong>overhead</strong> killed it (Guido: no single-thread regression)<br>
-- <strong>Sam Gross</strong> nogil → <strong>PEP 703</strong> (2023): optional <strong>free-threaded</strong> build<br>
-- <strong>3.13</strong> experimental · <strong>3.14</strong> officially supported, <strong>not default</strong> · <strong>3.15</strong> Stable ABI <code>abi3t</code><br>
-- for <strong>GILty</strong>-class apps: promising <strong>if</strong> you redesign for threads + deps support · else still need <strong>fast single core</strong><br>
-- working name for this project: <strong>“Core Alone”</strong> — fits, right?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> <strong>GIL</strong> — for folks who don’t know it yet</p>
+<ul>
+<li>image: <strong>G(H)uido</strong> v(F)an Rossum + <strong>Larry</strong> Hastings (Gilectomy)</li>
+<li>the <strong>GIL</strong> has been with us since the early <strong>90s</strong> — one thread at a time</li>
+<li>promising tries <strong>failed</strong> — e.g.&nbsp;Larry’s <strong>Gilectomy</strong> (~2016)</li>
+<li>latest hope: <strong>free-threaded Python</strong> (still not the default)</li>
+<li>we still need a <strong>fast single core</strong> → project name: <strong>“Core Alone”</strong></li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1532,7 +1537,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor clock</strong>, not a <strong>benchmark</strong><br>
 → <strong>how do we pick the fastest core for GILty?</strong></p>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> path to the gap</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> what have we tried so far?</p>
 <ul>
 <li><strong>before:</strong> CAS + fixed node groups — bad fit for <strong>GILty</strong><br>
 </li>
@@ -1562,13 +1567,13 @@ plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor cloc
 <p><img src="images/aws-passmark-vs-ghz.png" style="width: 92%; margin-top: -30px;"></p>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> glance at the chart</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> does <strong>clock speed</strong> predict <strong>single-thread</strong> performance?</p>
 <ul>
-<li>~<strong>a thousand</strong> AWS types · GHz vs PassMark single-thread<br>
+<li>on the graph: ~<strong>1000</strong> AWS types · <strong>clock speed</strong> vs <strong>PassMark</strong> ST<br>
 </li>
-<li>trends up, but look at the <strong>vertical stacks</strong> — same clock, very different scores<br>
+<li>trend goes up — but same clock speed → <strong>wildly different</strong> scores<br>
 </li>
-<li>so Karpenter’s MHz filter ≠ <strong>fastest core</strong> for <strong>GILty</strong></li>
+<li>so Karpenter’s <strong>MHz filter</strong> ≠ fastest core for <strong>GILty</strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1591,13 +1596,13 @@ plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor cloc
 Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </p>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> same GHz → max PassMark gap</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> same clock — how far apart are the scores?</p>
 <ul>
-<li>each bar = one catalog GHz · <strong>(max − min) / min</strong><br>
+<li>each bar: one <strong>GHz</strong> · gap between <strong>slowest</strong> and <strong>fastest</strong><br>
 </li>
-<li>some bands <strong>double+</strong> (~<strong>+100%</strong>…<strong>+200%</strong>)<br>
+<li>some clocks: <strong>2×</strong> difference in <strong>PassMark</strong><br>
 </li>
-<li>red ≈ bad · GHz alone won’t pick the <strong>fast core</strong></li>
+<li>red = bad news · <strong>GHz alone</strong> won’t find the <strong>fast core</strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1621,23 +1626,29 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <th></th>
 <th style="text-align: right;"><strong>r5a.large</strong></th>
 <th style="text-align: right;"><strong>c8a.large</strong></th>
-<th style="text-align: right;"><strong>m8azn.large</strong> (5 GHz)</th>
+<th style="text-align: right;"><strong>m8azn.large</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>catalog GHz</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">4.5</td>
+<td style="text-align: right;"><strong>5.0</strong></td>
+</tr>
+<tr class="even">
 <td>PassMark ST</td>
 <td style="text-align: right;">~1400</td>
 <td style="text-align: right;">~3800</td>
 <td style="text-align: right;">~4300</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>on-demand</td>
 <td style="text-align: right;">~$0.11</td>
 <td style="text-align: right;">~$0.11</td>
 <td style="text-align: right;">~$0.21</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>regions</td>
 <td style="text-align: right;">~16</td>
 <td style="text-align: right;">~7</td>
@@ -1654,19 +1665,18 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> “then just require 5 GHz?”</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> sould we just require 5 GHz, the current maximum?</p>
 <ul>
 <li><strong>tiny menu</strong> — handful of SKUs, mostly <strong>m8azn</strong> / <strong>x8aedz</strong><br>
 </li>
 <li><strong>few regions</strong> · new / niche<br>
 </li>
-<li><strong>m8azn.large</strong> ≈ <strong>twice</strong> <strong>c8a.large</strong> price · only a bit faster<br>
-</li>
-<li><strong>x8aedz</strong> = huge RAM tax<br>
+<li>vs <strong>c8a</strong>: <strong>2×</strong> the price · only ~<strong>10%</strong> more PassMark<br>
 </li>
 <li>Karpenter wants <strong>diversity</strong> — 5 GHz pin = brittle<br>
 </li>
-<li>need <strong>benchmark ranking</strong>, not a GHz floor</li>
+<li>need <strong>benchmark ranking</strong>, not a GHz floor<br>
+</li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1697,29 +1707,20 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ol>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> how we designed it (with Claude)</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> planned with <strong>Claude</strong> — walk the six points:</p>
 <ul>
-<li>problem: Karpenter has <strong>shape + price</strong>, not <strong>measured single-core</strong><br>
+<li><strong>own NodePools</strong> — don’t touch user / Auto Mode pools · <strong>GitOps</strong>-safe<br>
 </li>
-<li>constraint: <strong>EKS Auto Mode</strong> → can’t fork Karpenter / patch their pools<br>
+<li>one <strong><code>SCNodePool</code></strong> → one Karpenter NodePool (template + type list)<br>
 </li>
-<li>also: <strong>GitOps</strong> (Argo CD, …) — don’t mutate a pool the user owns → sync wars<br>
+<li>NodePool gets only <strong>instance-type / arch / capacity</strong> — no AWS-only labels → avoid <strong>RequirementsDrifted</strong> loops<br>
 </li>
-<li><strong>ADR-001:</strong> create <strong>our own</strong> NodePools only<br>
+<li><strong>Keeper</strong> ranks by benchmark (e.g.&nbsp;<strong>PassMark</strong> ST)<br>
 </li>
-<li><strong>ADR-003:</strong> one <strong><code>SCNodePool</code></strong> → one NodePool<br>
+<li><strong>churn</strong> control — ranking moves a bit → don’t <strong>replace</strong> running nodes<br>
 </li>
-<li><strong>ADR-004:</strong> only stamp keys every provider accepts — else <strong>drift loop</strong><br>
+<li><strong>Go</strong> — reuse Karpenter’s own validators<br>
 </li>
-<li><strong>ADR-002:</strong> read <strong>Keeper API</strong>, filter/rank client-side<br>
-</li>
-<li><strong>ADR-006:</strong> <strong>churn</strong> — don’t replace nodes every time the ranking wiggles<br>
-</li>
-<li><strong>ADR-007:</strong> <strong>Go</strong> so we import Karpenter’s own validators<br>
-</li>
-<li>plans 01→08: scaffold → selection → adapters → controller → tests → Helm<br>
-</li>
-<li>next: <strong>demo</strong> the result</li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {

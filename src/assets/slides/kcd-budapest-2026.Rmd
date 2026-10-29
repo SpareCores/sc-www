@@ -1063,8 +1063,9 @@ Within one clock band: up to about **+200%** PassMark ST spread
 ::: {style="font-size: 0.75em;"}
 Simple idea: `instance-cpu-sustained-clock-speed-mhz >= 5000`
 
-| | **r5a.large** | **c8a.large** | **m8azn.large** (5 GHz) |
+| | **r5a.large** | **c8a.large** | **m8azn.large** |
 |---|---:|---:|---:|
+| catalog GHz | 2.5 | 4.5 | **5.0** |
 | PassMark ST | ~1400 | ~3800 | ~4300 |
 | on-demand | ~\$0.11 | ~\$0.11 | ~\$0.21 |
 | regions | ~16 | ~7 | **~6** |
@@ -1075,14 +1076,13 @@ Simple idea: `instance-cpu-sustained-clock-speed-mhz >= 5000`
 :::
 
 ::: {.notes}
-[[A]] “then just require 5 GHz?”
+[[A]] should we just require 5 GHz, the current maximum?
 
 - **tiny menu** — handful of SKUs, mostly **m8azn** / **x8aedz**  
 - **few regions** · new / niche  
-- **m8azn.large** ≈ **twice** **c8a.large** price · only a bit faster  
-- **x8aedz** = huge RAM tax  
+- vs **c8a**: **2×** the price · only ~**10%** more PassMark  
 - Karpenter wants **diversity** — 5 GHz pin = brittle  
-- need **benchmark ranking**, not a GHz floor
+- need **benchmark ranking**, not a GHz floor  
 :::
 
 # $ claude --plan "fix problem"
@@ -1103,19 +1103,14 @@ Pub talk → need **benchmark**-ranked types in **Karpenter** (incl. **EKS Auto*
 :::
 
 ::: {.notes}
-[[A]] how we designed it (with Claude)
+[[A]] planned with **Claude** — walk the six points:
 
-- problem: Karpenter has **shape + price**, not **measured single-core**  
-- constraint: **EKS Auto Mode** → can't fork Karpenter / patch their pools  
-- also: **GitOps** (Argo CD, …) — don't mutate a pool the user owns → sync wars  
-- **ADR-001:** create **our own** NodePools only  
-- **ADR-003:** one **`SCNodePool`** → one NodePool  
-- **ADR-004:** only stamp keys every provider accepts — else **drift loop**  
-- **ADR-002:** read **Keeper API**, filter/rank client-side  
-- **ADR-006:** **churn** — don't replace nodes every time the ranking wiggles  
-- **ADR-007:** **Go** so we import Karpenter's own validators  
-- plans 01→08: scaffold → selection → adapters → controller → tests → Helm  
-- next: **demo** the result
+- **own NodePools** — don't touch user / Auto Mode pools · **GitOps**-safe  
+- one **`SCNodePool`** → one Karpenter NodePool (template + type list)  
+- NodePool gets only **instance-type / arch / capacity** — no AWS-only labels → avoid **RequirementsDrifted** loops  
+- **Keeper** ranks by benchmark (e.g. **PassMark** ST)  
+- **churn** control — ranking moves a bit → don't **replace** running nodes  
+- **Go** — reuse Karpenter's own validators  
 :::
 
 # {#demo}
