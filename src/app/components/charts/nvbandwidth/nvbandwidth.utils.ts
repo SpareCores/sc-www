@@ -12,9 +12,19 @@ const NVBANDWIDTH_GROUP_LABELS: Record<string, string> = {
   efficiency: "Efficiency",
 };
 
-const NVBANDWIDTH_ENVIRONMENT_FIELDS = [
+// `legacyKey` is read when `key` is missing, e.g. on scores recorded by an
+// older crawler release before the field was renamed
+const NVBANDWIDTH_ENVIRONMENT_FIELDS: {
+  key: string;
+  name: string;
+  legacyKey?: string;
+}[] = [
   { key: "driver_version", name: "Driver Version" },
-  { key: "cuda_runtime_version", name: "CUDA Runtime Version" },
+  {
+    key: "cuda_version",
+    name: "CUDA Version (driver)",
+    legacyKey: "cuda_runtime_version",
+  },
   { key: "nvbandwidth_version", name: "nvbandwidth Version" },
   { key: "gpu_count", name: "GPU Count" },
   { key: "p2p_supported", name: "P2P Supported" },
@@ -122,9 +132,17 @@ export function buildNvbandwidthEnvironmentRows(
   return NVBANDWIDTH_ENVIRONMENT_FIELDS.map((field) => ({
     key: field.key,
     name: field.name,
-    description: String(fieldDescriptions[field.key] ?? ""),
+    description: String(
+      fieldDescriptions[field.key] ??
+        (field.legacyKey ? fieldDescriptions[field.legacyKey] : undefined) ??
+        "",
+    ),
     values: environments.map((environment) =>
-      formatEnvironmentValue(field.key, environment?.[field.key]),
+      formatEnvironmentValue(
+        field.key,
+        environment?.[field.key] ??
+          (field.legacyKey ? environment?.[field.legacyKey] : undefined),
+      ),
     ),
   })).filter((row) => row.values.some((value) => value !== "-"));
 }
@@ -136,7 +154,7 @@ function formatEnvironmentValue(key: string, value: unknown): string {
   if (typeof value === "boolean") {
     return value ? "check" : "x";
   }
-  if (key === "cuda_runtime_version" && typeof value === "number") {
+  if (key === "cuda_version" && typeof value === "number") {
     return `${Math.floor(value / 1000)}.${Math.floor((value % 1000) / 10)}`;
   }
   return String(value);
