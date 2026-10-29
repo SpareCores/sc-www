@@ -1,5 +1,5 @@
 import { DialogRef } from "@angular/cdk/dialog";
-import { Location, formatDate, isPlatformBrowser } from "@angular/common";
+import { Location, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   DestroyRef,
@@ -29,7 +29,6 @@ import {
   ServerDescription,
   ServerPKs,
   ServerPrice,
-  Status,
 } from "../../../../sdk/data-contracts";
 import type { RequestParams } from "../../../../sdk/http-client";
 import { Accordion, AccordionItem } from "../../components/accordion/accordion";
@@ -39,19 +38,14 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import {
-  formatBooleanIconHtml,
-  formatNumberWithCommas,
-} from "../../components/charts/shared/server-compare-table.utils";
+import { formatNumberWithCommas } from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { Modal } from "../../components/modal/modal";
 import { ServerCharts } from "../../components/server-charts/server-charts";
 import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
 import {
   ServerPropertyCard,
-  ServerPropertyRow,
   ServerPropertySection,
-  ServerPropertyTooltip,
 } from "../../components/server-property-card/server-property-card";
 import { Dropdown } from "../../directives/dropdown";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
@@ -62,6 +56,10 @@ import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { ModalDialog } from "../../services/modal-dialog";
 import { SeoHandler } from "../../services/seo-handler";
+import {
+  AvailabilityRegion,
+  ServerSpecCards,
+} from "../../services/server-spec-cards";
 import { CompareSelection } from "../../services/compare-selection";
 import { Toast } from "../../services/toast";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
@@ -84,7 +82,6 @@ import { buildServerFaqs } from "./server-details-faqs";
 import {
   BURSTABLE_INSTANCE_WARNING_BODY,
   BURSTABLE_INSTANCE_WARNING_TITLE,
-  HIDDEN_SERVER_PROPERTY_IDS,
 } from "./server-details.constants";
 
 import { chartColors } from "../../components/charts/shared/chart-colors.constants";
@@ -131,11 +128,6 @@ export interface ExtendedServerDetails extends ServerPKs {
   vendor_name?: string;
 }
 
-interface PropertyCategoryDefinition {
-  name: string;
-  category: string;
-}
-
 @Component({
   selector: "sc-server-details",
   imports: [
@@ -177,6 +169,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   private memoryChartBuilder = inject(MemoryChartBuilder);
   private multiBarChartBuilder = inject(BenchmarkMultiBarChartBuilder);
   private modalDialog = inject(ModalDialog);
+  private serverSpecCards = inject(ServerSpecCards);
   private serverLoadId = 0;
   private loadAbortController: AbortController | null = null;
   private similarAbortController: AbortController | null = null;
@@ -211,7 +204,7 @@ export class ServerDetails implements OnInit, OnDestroy {
 
   faqs: AccordionItem[] = [];
 
-  availabilityRegions: any[] = [];
+  availabilityRegions: AvailabilityRegion[] = [];
   availabilityZones: any[] = [];
 
   regionFilters: any[] = [];
@@ -229,15 +222,6 @@ export class ServerDetails implements OnInit, OnDestroy {
     { name: "By CPU performance per price", key: "byPerformancePerPrice" },
   ];
   selectedSimilarOption: any = this.similarOptions[0];
-
-  propertyCategoryDefinitions: PropertyCategoryDefinition[] = [
-    { name: "General", category: "meta" },
-    { name: "CPU", category: "cpu" },
-    { name: "Memory", category: "memory" },
-    { name: "Accelerators", category: "gpu" },
-    { name: "Storage", category: "storage" },
-    { name: "Network", category: "network" },
-  ];
 
   metadataSections: ServerPropertySection[] = [];
   processorSections: ServerPropertySection[] = [];
@@ -376,40 +360,22 @@ export class ServerDetails implements OnInit, OnDestroy {
                   (b) => b.benchmark_id === "stress_ng:bestn",
                 )?.score;
 
-              const isOrderable =
-                this.serverDetails.status === Status.Active ||
-                this.serverDetails.status === Status.PlannedForRetirement;
               this.hasInactivePrices = false;
 
               if (prices) {
-                this.serverDetails.prices = (
-                  JSON.parse(JSON.stringify(prices)) as ExtendedServerPrice[]
-                )
-                  .filter(
-                    (price) => !isOrderable || price.status === Status.Active,
-                  )
-                  .sort((a, b) => a.price - b.price);
-                this.hasInactivePrices = this.serverDetails.prices.some(
-                  (price) => price.status !== Status.Active,
+                this.serverDetails.prices = this.serverSpecCards.preparePrices(
+                  prices,
+                  this.serverDetails.status,
+                  regions,
+                  zones,
+                );
+                this.hasInactivePrices = this.serverSpecCards.hasInactivePrices(
+                  this.serverDetails.prices,
                 );
 
-                if (this.serverDetails.prices?.length > 0) {
-                  this.serverDetails.min_price = this.serverDetails.prices
-                    ? this.serverDetails.prices[0].price
-                    : 0;
-                  this.serverDetails.prices.forEach((price: any) => {
-                    price.region = regions.find(
-                      (r: any) =>
-                        r.vendor_id === price.vendor_id &&
-                        r.region_id === price.region_id,
-                    );
-                    price.zone = zones.find(
-                      (z: any) =>
-                        z.vendor_id === price.vendor_id &&
-                        z.region_id === price.region_id &&
-                        z.zone_id === price.zone_id,
-                    );
-                  });
+                if (this.serverDetails.prices.length > 0) {
+                  this.serverDetails.min_price =
+                    this.serverDetails.prices[0].price;
                 }
               }
 
@@ -482,7 +448,14 @@ export class ServerDetails implements OnInit, OnDestroy {
                 });
               }
 
-              this.buildPropertyCardSections();
+              const { metadataSections, processorSections, resourceSections } =
+                this.serverSpecCards.buildSections(
+                  this.serverDetails,
+                  this.instanceProperties,
+                );
+              this.metadataSections = metadataSections;
+              this.processorSections = processorSections;
+              this.resourceSections = resourceSections;
 
               this.benchmarksByCategory = [];
               this.serverDetails.benchmark_scores?.forEach((b: any) => {
@@ -962,15 +935,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   }
 
   getInactivePriceNote(observedAt: string | undefined): string {
-    if (!observedAt) {
-      return "Last known price, not currently orderable.";
-    }
-
-    const timestamp = /(Z|[+-]\d{2}:?\d{2})$/.test(observedAt)
-      ? observedAt
-      : `${observedAt}Z`;
-
-    return `Last known price (at ${formatDate(timestamp, "yyyy-MM-dd HH:mm", "en-US", "UTC")} UTC), not currently orderable.`;
+    return this.serverSpecCards.getInactivePriceNote(observedAt);
   }
 
   hideWarningTooltip() {
@@ -986,66 +951,8 @@ export class ServerDetails implements OnInit, OnDestroy {
   updateChart1() {
     this.availabilityRegions = [];
     if (this.serverDetails.prices.length > 0) {
-      this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
-        const region = this.availabilityRegions.find(
-          (r) =>
-            r.vendor_id === price.vendor_id && r.region_id === price.region_id,
-        );
-        const allocation = price.allocation || "spot";
-        const inactiveObservedAt =
-          price.status !== Status.Active ? price.observed_at : undefined;
-        if (!region) {
-          const data: any = {
-            vendor_id: price.vendor_id,
-            region_id: price.region_id,
-            display_name: price.region.display_name,
-            api_reference: price.region.api_reference,
-            inactive: price.status !== Status.Active,
-            inactiveObservedAt,
-            spot: {
-              price: 0,
-              unit: price.unit,
-              count: 0,
-              currency: price.currency,
-            },
-            ondemand: {
-              price: 0,
-              unit: price.unit,
-              count: 0,
-              currency: price.currency,
-            },
-          };
-          data[allocation].price += price.price;
-          data[allocation].count++;
-          this.availabilityRegions.push(data);
-        } else {
-          region[allocation].price += price.price;
-          region[allocation].count++;
-          region.inactive ||= price.status !== Status.Active;
-          if (
-            inactiveObservedAt &&
-            (!region.inactiveObservedAt ||
-              inactiveObservedAt > region.inactiveObservedAt)
-          ) {
-            region.inactiveObservedAt = inactiveObservedAt;
-          }
-        }
-      });
-
-      this.availabilityRegions.forEach((region: any) => {
-        if (region.spot.count)
-          region.spot.price =
-            Math.round((region.spot.price / region.spot.count) * 1000000) /
-            1000000;
-        if (region.ondemand.count)
-          region.ondemand.price =
-            Math.round(
-              (region.ondemand.price / region.ondemand.count) * 1000000,
-            ) / 1000000;
-      });
-
-      this.availabilityRegions.sort(
-        (a, b) => a["ondemand"].price - b["ondemand"].price,
+      this.availabilityRegions = this.serverSpecCards.buildAvailabilityRegions(
+        this.serverDetails.prices,
       );
 
       const series: ChartData<"bar"> = {
@@ -1069,7 +976,7 @@ export class ServerDetails implements OnInit, OnDestroy {
         (s: any) => s.label === "Ondemand",
       );
 
-      this.availabilityRegions.forEach((region: any) => {
+      this.availabilityRegions.forEach((region) => {
         series.labels!.push(region.display_name);
         if (spotIdx > -1) {
           series.datasets[spotIdx].data.push(region.spot?.price || 0);
@@ -1250,108 +1157,6 @@ export class ServerDetails implements OnInit, OnDestroy {
     }
   }
 
-  getProperty(column: any) {
-    const name = column.id;
-    const prop = (this.serverDetails as any)[name];
-
-    if (name === "hw_virt") {
-      if (prop === true) {
-        return formatBooleanIconHtml(true);
-      }
-
-      if (prop === false) {
-        return formatBooleanIconHtml(false);
-      }
-
-      if (prop === undefined || prop === null) {
-        return "-";
-      }
-
-      if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
-        return "-";
-      }
-    }
-
-    if (prop === undefined || prop === null || typeof prop === "boolean") {
-      return undefined;
-    }
-
-    if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
-      return undefined;
-    }
-
-    if (name === "storages") {
-      let html = "<ul>";
-      (prop as any[]).forEach((s: any) => {
-        html += `<li>${s.size} GB ${s.storage_type ? s.storage_type : ""}${s.description ? " (" + s.description + ")" : ""}</li>`;
-      });
-      html += "</ul>";
-      return html;
-    }
-
-    if (name === "accelerators") {
-      let html = "<ul>";
-      (prop as any[]).forEach((s: any) => {
-        html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
-        const fields = [
-          "memory",
-          "firmware_version",
-          "bios_version",
-          "graphics_clock",
-        ];
-        const field_names = [
-          "Memory amount",
-          "Firmware version",
-          "BIOS version",
-          "Clock rate",
-        ];
-        let extraData = "";
-        for (let i = 0; i < fields.length; i++) {
-          if (s[fields[i]]) {
-            if (extraData.length > 0) {
-              extraData += ", ";
-            } else {
-              extraData += "(";
-            }
-            extraData += `${field_names[i]}: ${s[fields[i]]}`;
-          }
-        }
-        if (extraData.length > 0) {
-          html += extraData + ")";
-        }
-
-        html += "</li>";
-      });
-      html += "</ul>";
-      return html;
-    }
-
-    if (typeof prop === "number") {
-      return this.roundBytes(prop, column.unit);
-    }
-    if (typeof prop === "string") {
-      return prop;
-    }
-    if (Array.isArray(prop)) {
-      return prop.join(", ");
-    }
-
-    return "-";
-  }
-
-  roundBytes(bytes: number, unit: string) {
-    const sizes = ["byte", "KiB", "MiB", "GiB", "TB"];
-
-    let idx = sizes.indexOf(unit);
-
-    if (idx < 0 || bytes === 0) {
-      return `${bytes} ${unit || ""}`;
-    }
-
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, i)).toFixed(0) + " " + sizes[i + idx];
-  }
-
   getBenchmark(isMulti: boolean) {
     const score = this.serverDetails.benchmark_scores?.find(
       (b: any) =>
@@ -1385,152 +1190,6 @@ export class ServerDetails implements OnInit, OnDestroy {
     return this.serverCompare.isSelected(this.serverDetails)
       ? "Don't Compare"
       : "Compare";
-  }
-
-  private buildPropertyCardSections() {
-    const categorizedSections = this.propertyCategoryDefinitions.map(
-      (definition) => ({
-        name: definition.name,
-        category: definition.category,
-        properties: [] as ServerPropertyRow[],
-      }),
-    );
-
-    this.instanceProperties.forEach((property: any) => {
-      const group = categorizedSections.find(
-        (category) => category.category === property.category,
-      );
-      const value = this.getProperty(property);
-      if (!group || !value || HIDDEN_SERVER_PROPERTY_IDS.has(property.id)) {
-        return;
-      }
-
-      group.properties.push({
-        id: property.id,
-        name: property.name,
-        value,
-        tooltips: property.description
-          ? [
-              {
-                key: property.id,
-                content: property.description,
-              },
-            ]
-          : [],
-      });
-    });
-
-    const metadataProperties =
-      categorizedSections.find((category) => category.category === "meta")
-        ?.properties || [];
-    const cpuProperties =
-      categorizedSections.find((category) => category.category === "cpu")
-        ?.properties || [];
-
-    this.metadataSections = [
-      {
-        name: "Server Metadata",
-        properties: this.dedupeMetadataProperties(metadataProperties),
-      },
-    ];
-    this.processorSections = [
-      {
-        name: "CPU",
-        properties: cpuProperties,
-      },
-    ];
-    this.resourceSections = categorizedSections
-      .filter((category) =>
-        ["memory", "gpu", "storage", "network"].includes(category.category),
-      )
-      .map((category) => ({
-        name: category.name,
-        properties: category.properties,
-      }))
-      .filter((category) => category.properties.length > 0);
-  }
-
-  private dedupeMetadataProperties(
-    properties: ServerPropertyRow[],
-  ): ServerPropertyRow[] {
-    const nameProperty = properties.find((property) => property.id === "name");
-    if (!nameProperty) {
-      return properties;
-    }
-
-    const hiddenMetadataIds = new Set([
-      "server_id",
-      "api_reference",
-      "display_name",
-    ]);
-    const identityPropertyIds = [
-      "server_id",
-      "name",
-      "api_reference",
-      "display_name",
-    ];
-    const matchingIdentityProperties = properties.filter(
-      (property) =>
-        property.id !== "name" &&
-        identityPropertyIds.includes(property.id) &&
-        this.normalizeComparableValue(property.value) ===
-          this.normalizeComparableValue(nameProperty.value),
-    );
-    const shouldAggregateIdentityTooltips =
-      matchingIdentityProperties.length > 0;
-    const nameTooltips = shouldAggregateIdentityTooltips
-      ? this.uniqueTooltips(
-          [nameProperty, ...matchingIdentityProperties].flatMap(
-            (property) => property.tooltips || [],
-          ),
-        )
-      : nameProperty.tooltips || [];
-
-    const filteredProperties = properties.filter((property) => {
-      if (!hiddenMetadataIds.has(property.id)) {
-        return true;
-      }
-
-      if (
-        this.normalizeComparableValue(property.value) !==
-        this.normalizeComparableValue(nameProperty.value)
-      ) {
-        return true;
-      }
-
-      return false;
-    });
-
-    return filteredProperties.map((property) => {
-      if (property.id !== "name") {
-        return property;
-      }
-
-      return {
-        ...property,
-        tooltips: nameTooltips,
-      };
-    });
-  }
-
-  private uniqueTooltips(tooltips: ServerPropertyTooltip[]) {
-    const seen = new Set<string>();
-
-    return tooltips.filter((tooltip) => {
-      if (seen.has(tooltip.key)) {
-        return false;
-      }
-
-      seen.add(tooltip.key);
-      return true;
-    });
-  }
-
-  private normalizeComparableValue(value: string) {
-    return value
-      .replace(/<[^>]*>/g, "")
-      .trim()
-      .toLowerCase();
   }
 
   generateSchemaJSON() {
