@@ -25,4 +25,21 @@ describe("EmbeddedServerChart", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("renders the matching spec card for a spec card id", () => {
+    component.showChart = "metadata";
+    component.serverDetails = { vendor_id: "aws", api_reference: "m5.large" };
+    component.metadataSections = [
+      {
+        name: "Server Metadata",
+        properties: [{ id: "name", name: "Name", value: "m5.large" }],
+      },
+    ];
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector("#details")).not.toBeNull();
+    expect(element.querySelector("#details_more_button")).toBeNull();
+    expect(element.querySelector("sc-server-charts")).toBeNull();
+  });
 });

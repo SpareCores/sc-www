@@ -52,6 +52,7 @@ export class ServerPropertyCard {
   moreLabel = input("View more details");
   lessLabel = input("Show less");
   isOpen = input(false);
+  expandable = input(true);
 
   toggleRequested = output<void>();
 
@@ -63,7 +64,7 @@ export class ServerPropertyCard {
   private overflowCheckTimeout?: ReturnType<typeof setTimeout>;
   private destroyRef = inject(DestroyRef);
 
-  hasExpandableContent = computed(() => this.canExpand());
+  hasExpandableContent = computed(() => this.expandable() && this.canExpand());
 
   visibleSections = computed(() =>
     this.sections().filter((section) => section.properties.length > 0),

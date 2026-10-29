@@ -55,7 +55,13 @@
     #passmark_other,
     #nvbandwidth,
     #stress_ng_full,
-    #workload_profile
+    #workload_profile,
+    #details,
+    #availability,
+    #processor,
+    #system_resources,
+    #lstopo,
+    #description
   ) {
   overflow-y: auto;
 }

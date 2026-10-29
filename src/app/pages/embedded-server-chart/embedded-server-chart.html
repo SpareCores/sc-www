@@ -1,12 +1,75 @@
 <div class="content_embed chart-context--embedded">
-  <sc-server-charts
-    class="w-full flex flex-wrap gap-8 bg-secondary h-[calc(100%-64px)]"
-    [serverDetails]="serverDetails"
-    [benchmarksByCategory]="benchmarksByCategory"
-    [benchmarkMeta]="benchmarkMeta"
-    [showChart]="showChart"
-    [isEmbedded]="true"
-  ></sc-server-charts>
+  @if (isSpecCard()) {
+    <div class="w-full flex bg-secondary h-[calc(100%-64px)]">
+      @if (serverDetails) {
+        @switch (showChart) {
+          @case ("metadata") {
+            <sc-server-property-card
+              cardTitle="Server Metadata"
+              cardId="details"
+              [sections]="metadataSections"
+              [showSectionHeaders]="false"
+              [expandable]="false"
+            ></sc-server-property-card>
+          }
+          @case ("availability") {
+            <sc-server-availability-card
+              [regions]="availabilityRegions"
+              [expandable]="false"
+            ></sc-server-availability-card>
+          }
+          @case ("processor") {
+            <sc-server-property-card
+              cardTitle="Processor"
+              cardId="processor"
+              [sections]="processorSections"
+              [showSectionHeaders]="false"
+              [expandable]="false"
+            ></sc-server-property-card>
+          }
+          @case ("system_resources") {
+            <sc-server-property-card
+              cardTitle="System Resources and Accelerators"
+              cardId="system_resources"
+              [sections]="resourceSections"
+              [showSectionHeaders]="true"
+              sectionHeaderVariant="availability"
+              [expandable]="false"
+            ></sc-server-property-card>
+          }
+          @case ("lstopo") {
+            <div class="chart-block--full" id="lstopo">
+              <sc-server-lstopo
+                ngSkipHydration
+                [vendorId]="serverDetails.vendor_id"
+                [apiReference]="serverDetails.api_reference"
+              ></sc-server-lstopo>
+            </div>
+          }
+          @case ("description") {
+            @if (serverDescription) {
+              <div class="chart-block--full" id="description">
+                <h3 class="text-2xl">Server Description</h3>
+                <sc-server-description-summary
+                  [description]="serverDescription"
+                  [showHeader]="true"
+                ></sc-server-description-summary>
+              </div>
+            }
+          }
+        }
+      }
+    </div>
+  } @else {
+    <sc-server-charts
+      class="w-full flex flex-wrap gap-8 bg-secondary h-[calc(100%-64px)]"
+      [serverDetails]="serverDetails"
+      [benchmarksByCategory]="benchmarksByCategory"
+      [benchmarkMeta]="benchmarkMeta"
+      [showChart]="showChart"
+      [isEmbedded]="true"
+    ></sc-server-charts>
+  }
   @if (serverDetails) {
     <a
       class="w-full flex flex-col justify-center items-center text-white bg-primary px-6 py-4 hover:text-gray-200"
