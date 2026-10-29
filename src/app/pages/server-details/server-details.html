@@ -169,8 +169,16 @@
 
     @if (serverDetails) {
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
-        <div class="my-2 w-full">
+        <div class="my-2 w-full flex justify-between items-center">
           <h2 class="text-3xl font-bold">Specifications</h2>
+          <sc-button
+            label="Embed chart"
+            icon="copy"
+            iconPosition="end"
+            variant="outline"
+            data-ph-capture-attribute-sc-event="server details embed chart open"
+            (click)="openModal()"
+          ></sc-button>
         </div>
         <sc-server-property-card
           cardTitle="Server Metadata"
@@ -332,15 +340,8 @@
           }
         </div>
         @if (serverDetails.benchmark_scores.length) {
-          <div class="my-2 w-full flex justify-between items-center">
+          <div class="my-2 w-full">
             <h2 class="text-3xl font-bold">Performance</h2>
-            <sc-button
-              label="Embed chart"
-              icon="copy"
-              iconPosition="end"
-              variant="outline"
-              (click)="openModal()"
-            ></sc-button>
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
