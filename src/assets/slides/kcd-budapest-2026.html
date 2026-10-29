@@ -1838,14 +1838,19 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span></p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> great for picking types — <strong>not</strong> for inspector <strong>JIT</strong></p>
 <ul>
-<li><strong>yes</strong>, Pod can use <strong>nodeSelector / affinity</strong> on <code>instance-type</code> — Karpenter will prefer/launch that<br>
-· <strong>if</strong> that type is in the generated <strong>NodePool</strong> (SC selection / ranking)<br>
+<li>we only write a <strong>NodePool</strong> — Karpenter still does the launch<br>
 </li>
-<li><strong>no</strong>: one Pod cannot jump to <strong>another cloud/region</strong> — pool is still <strong>this</strong> cluster’s provider<br>
+<li><strong>one</strong> cloud, <strong>one</strong> cluster — no per-pod region<br>
 </li>
-<li>still need <strong>multi-vendor provider + join</strong> → next slide (<strong>scarpenter</strong> / ROADMAP)</li>
+<li>can’t hop <strong>AWS → GCP → Hetzner</strong> from one Pod<br>
+</li>
+<li><strong>Karpenter + cloud provider</strong> must already be there<br>
+</li>
+<li>no VPC / image / Flatcar / mesh — out of scope<br>
+</li>
+<li>Pod <strong>can</strong> pin a type <strong>if</strong> it’s already in the pool — not “any SKU anywhere” like <strong><code>start.yml</code></strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {

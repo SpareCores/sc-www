@@ -1215,12 +1215,14 @@ Great for **picking** types · **not** for inspector-style **multi-cloud JIT**
 :::
 
 ::: {.notes}
-[[A]]
+[[A]] great for picking types — **not** for inspector **JIT**
 
-- **yes**, Pod can use **nodeSelector / affinity** on `instance-type` — Karpenter will prefer/launch that  
-  · **if** that type is in the generated **NodePool** (SC selection / ranking)  
-- **no**: one Pod cannot jump to **another cloud/region** — pool is still **this** cluster’s provider  
-- still need **multi-vendor provider + join** → next slide (**scarpenter** / ROADMAP)
+- we only write a **NodePool** — Karpenter still does the launch  
+- **one** cloud, **one** cluster — no per-pod region  
+- can't hop **AWS → GCP → Hetzner** from one Pod  
+- **Karpenter + cloud provider** must already be there  
+- no VPC / image / Flatcar / mesh — out of scope  
+- Pod **can** pin a type **if** it's already in the pool — not “any SKU anywhere” like **`start.yml`**
 :::
 
 # $ cat sc-karpenter-nodepool/ROADMAP.md
