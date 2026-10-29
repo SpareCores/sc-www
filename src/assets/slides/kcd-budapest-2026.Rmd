@@ -39,19 +39,6 @@ format:
     highlight-style: arrow-dark
 ---
 
-<!-- TODO Gergo drop
-
-- vcpu-diff-0 -> speed up (15 sec)
-- vcpu-diff slides -> 5 sec
-- vcpu-difference : Vincent - how to pick fomr the many instnaces .. 32x diff
-- vcpus-2-count-breakdown -> speed up
-
-- whois DROP
-- server search -> no network
-
-- drop responses from dynamoddb
--->
-
 # {#cover-slide data-curtain="close"}
 
 <script>
@@ -366,16 +353,14 @@ indeed just focusing on the single-core performance -- like doing as many intege
 ## {#vcpu-diff-0 .center}
 
 ::: {.notes}
-Both the slowest and the fastest servers are from a hyperscaler .. not because I picked so,
-it just happened to be the case.
+Both the slowest and the fastest servers are from a hyperscaler.
 
 Now I'm not going to give away the identity of the actual server types,
-and shame them publicly ... especially in the era of awakening AGI (TODO autonomous general intelligence?).
-
-But you can easily find out on your own if you are interested,
-and I'm happy to show how.
+and shame cloud SKUs publicly ... especially in the era of awakening AGI (Artificial General Intelligence).
 
 But we do know both comes with 2 vCPUs.
+
+SPEEDRUN!
 
 [...]
 
@@ -482,9 +467,11 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <div class="slide-text-overlay fragment"><span>30-50x</span></div>
 
 ::: {.notes}
+Before we move on, I wanted to quickly share a few further benchmarks of these two servers to show the spectrum: 
+
 logarithmic scale
 
-note that this is a syntethic test
+SPEEDRUN!
 :::
 
 ## {#vcpu-diff-2 .center}
@@ -494,11 +481,7 @@ note that this is a syntethic test
 <div class="slide-text-overlay fragment"><span>10-20x</span></div>
 
 ::: {.notes}
-see Server A in the middle with scores around 500 across all dimensions?
-so left hand side is single core, right hand side is multi core performance ... pretty much the same for Server A.
-
-BUT Server B looking better: jumping from around 35 hundreds to 6000,
-and in some workloads the diff between Server A and Server B are even larger.
+SPEEDRUN!
 :::
 
 ## {#vcpu-diff-3 .center}
@@ -508,8 +491,7 @@ and in some workloads the diff between Server A and Server B are even larger.
 <div class="slide-text-overlay fragment"><span>100x</span></div>
 
 ::: {.notes}
-now this is not single-core anymore .. we run OpenSSL speed tests,
-using various cipher and hash functions .. and Server A is hardly visible on this screen ..
+now this is not single-core anymore .. we run OpenSSL speed tests ..
 :::
 
 ## {#vcpu-diff-4 .center}
@@ -525,6 +507,8 @@ Back to Vincent from Pulp Fiction .. who now looks even more confused.
 
 Because it's possible that you get a 32 vCPU server, and your app that perfectly scales to multiple cores,
 runs slower than on a single core of another cloud server type.
+
+So how to pick the right instance type from thousands of options?
 :::
 
 ::: {.centered}
@@ -703,30 +687,6 @@ GROUP BY 1;
 :::
 :::
 
-# $ whois sparecores.com {#whois transition="convex-in convex-out"}
-
-<ul style="font-size: 0.9em;">
-  <li class="fragment" data-fragment-index=1>Funded by NGI Search (EU consortium) in 2024</li>
-  <ul>
-    <li class="fragment" data-fragment-index=1>Vendor independent, open-source project</li>
-  </ul>
-  <li class="fragment" data-fragment-index=2>Seal of Excellence from the European Commission in 2026</li>
-  <li class="fragment" data-fragment-index=3>Accepted into NVIDIA Inception, AWS Open Source Credits</li>
-  <li class="fragment" data-fragment-index=4>Beneficiary of cloud credits from 8 vendors (overall ~$100k)</li>
-  <li class="fragment" data-fragment-index=5>20+ talks in 9 countries (e.g. Berlin Buzzwords, PyData, KCD)</li>
-  <li class="fragment" data-fragment-index=6>Featured by The Pragmatic Engineer in Oct 2024</li>
-  <li class="fragment" data-fragment-index=7>Jeff Barr (Chief Evangelist at AWS) on our Reddit post:</li>
-</ul>
-
-<blockquote class="fragment" data-fragment-index=7 style="margin-left: 40px;">
-  This was awesome, thanks for sharing.
-</blockquote>
-
-::: {.notes}
-first of all, just to build some credibility for the project:
-we are committed to be vendor-agnostic, open-source, and transparent about our data
-:::
-
 # $ apropos sparecores.com {#apropos transition="convex-in convex-out"}
 
 <ul style="font-size: 0.9em;">
@@ -793,8 +753,6 @@ high level numbers about the data we collect and make available
 [[G]] The easiest way to query this data is through our web component, as you can see on the screen ...  
 [[G]] What kind of server are we looking for?  
 [[A]] min 2 vCPU, 16 GB RAM, AWS, Oregon  
-[[G]] Any special network requirements? We track outbound traffic prices ...  
-[[A]] No.  
 [[G]] Anything else?  
 [[A]] Single core performance is the most important  
 [[G]] We support a bunch of benchmarks, e.g. PassMark CPU Single Threaded Test?  
@@ -802,16 +760,15 @@ high level numbers about the data we collect and make available
 [[A]] That metal server looks promising  
 [[G]] Let's see the details ...
 
-Check server details page. Scoll over the benchmarks.
+Check server details page:
 - server metadata
 - lstopo
-- benchmarks 
+- benchmarks
 - price diffs -> oops .. spot vs ondemand
 
 [[G]] Actually, it's $5 ondemand.  
 [[A]] That's too much. The devops team picked r5a.large .. can we find something better around the same price?  
 [[G]] ADVISOR!!
-
 ...
 
 [[A]] is there a way to query this data in a programmatic way?

@@ -215,21 +215,6 @@ Attila Nagy
 
   <p class="date">2026-10-30</p>
 </section>
-<section class="slide level2">
-
-<!-- TODO Gergo drop
-
-- vcpu-diff-0 -> speed up (15 sec)
-- vcpu-diff slides -> 5 sec
-- vcpu-difference : Vincent - how to pick fomr the many instnaces .. 32x diff
-- vcpus-2-count-breakdown -> speed up
-
-- whois DROP
-- server search -> no network
-
-- drop responses from dynamoddb
--->
-</section>
 <section id="cover-slide" class="title-slide slide level1" data-curtain="close">
 <h1></h1>
 <script>
@@ -578,10 +563,10 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <section id="vcpu-diff-0" class="slide level2 center">
 <h2></h2>
 <aside class="notes">
-<p>Both the slowest and the fastest servers are from a hyperscaler .. not because I picked so, it just happened to be the case.</p>
-<p>Now I’m not going to give away the identity of the actual server types, and shame them publicly … especially in the era of awakening AGI (TODO autonomous general intelligence?).</p>
-<p>But you can easily find out on your own if you are interested, and I’m happy to show how.</p>
+<p>Both the slowest and the fastest servers are from a hyperscaler.</p>
+<p>Now I’m not going to give away the identity of the actual server types, and shame cloud SKUs publicly … especially in the era of awakening AGI (Artificial General Intelligence).</p>
 <p>But we do know both comes with 2 vCPUs.</p>
+<p>SPEEDRUN!</p>
 <p>[…]</p>
 <p>How do I know all this stuff?</p>
 <style type="text/css">
@@ -765,8 +750,9 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>30-50x</span>
 </div>
 <aside class="notes">
+<p>Before we move on, I wanted to quickly share a few further benchmarks of these two servers to show the spectrum:</p>
 <p>logarithmic scale</p>
-<p>note that this is a syntethic test</p>
+<p>SPEEDRUN!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -786,8 +772,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>10-20x</span>
 </div>
 <aside class="notes">
-<p>see Server A in the middle with scores around 500 across all dimensions? so left hand side is single core, right hand side is multi core performance … pretty much the same for Server A.</p>
-<p>BUT Server B looking better: jumping from around 35 hundreds to 6000, and in some workloads the diff between Server A and Server B are even larger.</p>
+<p>SPEEDRUN!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -807,7 +792,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>100x</span>
 </div>
 <aside class="notes">
-<p>now this is not single-core anymore .. we run OpenSSL speed tests, using various cipher and hash functions .. and Server A is hardly visible on this screen ..</p>
+<p>now this is not single-core anymore .. we run OpenSSL speed tests ..</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -832,6 +817,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <aside class="notes">
 <p>Back to Vincent from Pulp Fiction .. who now looks even more confused.</p>
 <p>Because it’s possible that you get a 32 vCPU server, and your app that perfectly scales to multiple cores, runs slower than on a single core of another cloud server type.</p>
+<p>So how to pick the right instance type from thousands of options?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1032,54 +1018,6 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 </table>
 </div></div>
 </section></section>
-<section id="whois" class="title-slide slide level1" data-transition="convex-in convex-out">
-<h1>$ whois sparecores.com</h1>
-<ul style="font-size: 0.9em;">
-<li class="fragment" data-fragment-index="1">
-Funded by NGI Search (EU consortium) in 2024
-</li>
-<ul>
-<li class="fragment" data-fragment-index="1">
-Vendor independent, open-source project
-</li>
-</ul>
-<li class="fragment" data-fragment-index="2">
-Seal of Excellence from the European Commission in 2026
-</li>
-<li class="fragment" data-fragment-index="3">
-Accepted into NVIDIA Inception, AWS Open Source Credits
-</li>
-<li class="fragment" data-fragment-index="4">
-Beneficiary of cloud credits from 8 vendors (overall ~$100k)
-</li>
-<li class="fragment" data-fragment-index="5">
-20+ talks in 9 countries (e.g.&nbsp;Berlin Buzzwords, PyData, KCD)
-</li>
-<li class="fragment" data-fragment-index="6">
-Featured by The Pragmatic Engineer in Oct 2024
-</li>
-<li class="fragment" data-fragment-index="7">
-Jeff Barr (Chief Evangelist at AWS) on our Reddit post:
-</li>
-</ul>
-<blockquote class="fragment" data-fragment-index="7" style="margin-left: 40px;">
-This was awesome, thanks for sharing.
-</blockquote>
-<aside class="notes">
-<p>first of all, just to build some credibility for the project: we are committed to be vendor-agnostic, open-source, and transparent about our data</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
-
 <section>
 <section id="apropos" class="title-slide slide level1" data-transition="convex-in convex-out">
 <h1>$ apropos sparecores.com</h1>
@@ -1200,19 +1138,16 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> The easiest way to query this data is through our web component, as you can see on the screen …<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> What kind of server are we looking for?<br>
 <span style="color:#34d399;font-weight:bold">A:</span> min 2 vCPU, 16 GB RAM, AWS, Oregon<br>
-<span style="color:#ef4444;font-weight:bold">G:</span> Any special network requirements? We track outbound traffic prices …<br>
-<span style="color:#34d399;font-weight:bold">A:</span> No.<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Anything else?<br>
 <span style="color:#34d399;font-weight:bold">A:</span> Single core performance is the most important<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> We support a bunch of benchmarks, e.g.&nbsp;PassMark CPU Single Threaded Test?<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Let’s order by performance then.<br>
 <span style="color:#34d399;font-weight:bold">A:</span> That metal server looks promising<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Let’s see the details …</p>
-<p>Check server details page. Scoll over the benchmarks. - server metadata - lstopo - benchmarks - price diffs -&gt; oops .. spot vs ondemand</p>
+<p>Check server details page: - server metadata - lstopo - benchmarks - price diffs -&gt; oops .. spot vs ondemand</p>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> Actually, it’s $5 ondemand.<br>
 <span style="color:#34d399;font-weight:bold">A:</span> That’s too much. The devops team picked r5a.large .. can we find something better around the same price?<br>
-<span style="color:#ef4444;font-weight:bold">G:</span> ADVISOR!!</p>
-<p>…</p>
+<span style="color:#ef4444;font-weight:bold">G:</span> ADVISOR!! …</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> is there a way to query this data in a programmatic way?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
