@@ -182,6 +182,7 @@ describe("ClerkClient", () => {
 
     expect(setActive).toHaveBeenCalledOnceWith({ session: null });
   });
+
   describe("lazy SDK loading", () => {
     type ClerkModule = typeof import("@clerk/clerk-js");
     type LoaderInternals = {
@@ -266,6 +267,19 @@ describe("ClerkClient", () => {
 
       expect(service.isLoaded()).toBeFalse();
       expect(service.instance).toBeNull();
+    });
+
+    it("retries loading after a failed attempt", async () => {
+      const service = createService();
+      const loadClerk = spyOn(loader(service), "loadClerk").and.returnValues(
+        Promise.reject(new Error("chunk failed")),
+        Promise.resolve(),
+      );
+
+      await expectAsync(service.init()).toBeRejected();
+      await expectAsync(service.init()).toBeResolved();
+
+      expect(loadClerk).toHaveBeenCalledTimes(2);
     });
   });
 });

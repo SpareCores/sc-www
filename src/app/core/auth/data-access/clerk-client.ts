@@ -45,7 +45,10 @@ export class ClerkClient {
       return this.initPromise;
     }
 
-    this.initPromise = this.loadClerk();
+    this.initPromise = this.loadClerk().catch((error: unknown) => {
+      this.initPromise = null;
+      throw error;
+    });
     return this.initPromise;
   }
 
