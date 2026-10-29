@@ -1017,7 +1017,7 @@ plus `instance-cpu-sustained-clock-speed-mhz` — **vendor clock**, not a **benc
 → **how do we pick the fastest core for GILty?**
 
 ::: {.notes}
-[[A]] path to the gap
+[[A]] what have we tried so far?
 
 - **before:** CAS + fixed node groups — bad fit for **GILty**  
 - moved to **Karpenter**, then **EKS Auto mode** — flexible instance lists  
@@ -1033,11 +1033,11 @@ plus `instance-cpu-sustained-clock-speed-mhz` — **vendor clock**, not a **benc
 :::
 
 ::: {.notes}
-[[A]] glance at the chart
+[[A]] does **clock speed** predict **single-thread** performance?
 
-- ~**a thousand** AWS types · GHz vs PassMark single-thread  
-- trends up, but look at the **vertical stacks** — same clock, very different scores  
-- so Karpenter’s MHz filter ≠ **fastest core** for **GILty**
+- on the graph: ~**1000** AWS types · **clock speed** vs **PassMark** ST  
+- trend goes up — but same clock speed → **wildly different** scores  
+- so Karpenter’s **MHz filter** ≠ fastest core for **GILty**
 :::
 
 ## Same GHz, how wide is PassMark? {#passmark-ghz-spread}
@@ -1051,11 +1051,11 @@ Within one clock band: up to about **+200%** PassMark ST spread
 </p>
 
 ::: {.notes}
-[[A]] same GHz → max PassMark gap
+[[A]] same clock — how far apart are the scores?
 
-- each bar = one catalog GHz · **(max − min) / min**  
-- some bands **double+** (~**+100%**…**+200%**)  
-- red ≈ bad · GHz alone won’t pick the **fast core**
+- each bar: one **GHz** · gap between **slowest** and **fastest**  
+- some clocks: **2×** difference in **PassMark**  
+- red = bad news · **GHz alone** won’t find the **fast core**
 :::
 
 ## Just set the filter to 5 GHz? {#just-5ghz}
