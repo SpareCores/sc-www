@@ -95,6 +95,10 @@ const SIMILAR_SERVER_CATEGORIES: Partial<
 };
 
 const DEFAULT_EMBEDDABLE_CHARTS = [
+  { id: "metadata", name: "Server Metadata" },
+  { id: "availability", name: "Availability" },
+  { id: "processor", name: "Processor" },
+  { id: "system_resources", name: "System Resources and Accelerators" },
   { id: "workload_profile", name: "Workload Profiles" },
   { id: "bw_mem", name: "Memory Bandwidth" },
   { id: "compress", name: "Compression" },
@@ -259,6 +263,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   private summarizeDialogRef: DialogRef | null = null;
 
   embeddableCharts: EmbedChartOption[] = [];
+  visibleEmbeddableCharts: EmbedChartOption[] = [];
 
   @ViewChild("giscusParent") giscusParent!: ElementRef;
 
@@ -585,6 +590,40 @@ export class ServerDetails implements OnInit, OnDestroy {
               const isMultiCore =
                 !!this.serverDetails.vcpus && this.serverDetails.vcpus > 1;
               this.embeddableCharts = [
+                {
+                  id: "metadata",
+                  name: "Server Metadata",
+                  show: this.metadataSections.some(
+                    (section) => section.properties.length > 0,
+                  ),
+                },
+                {
+                  id: "availability",
+                  name: "Availability",
+                  show: this.availabilityRegions.length > 0,
+                },
+                {
+                  id: "processor",
+                  name: "Processor",
+                  show: this.processorSections.some(
+                    (section) => section.properties.length > 0,
+                  ),
+                },
+                {
+                  id: "system_resources",
+                  name: "System Resources and Accelerators",
+                  show: this.resourceSections.length > 0,
+                },
+                {
+                  id: "lstopo",
+                  name: "CPU and System Topology",
+                  show: true,
+                },
+                {
+                  id: "description",
+                  name: "Server Description",
+                  show: true,
+                },
                 {
                   id: "workload_profile",
                   name: "Workload Profiles",
@@ -1323,6 +1362,11 @@ export class ServerDetails implements OnInit, OnDestroy {
       return;
     }
 
+    this.visibleEmbeddableCharts = this.embeddableCharts.filter(
+      (chart) =>
+        (chart.id !== "lstopo" || this.lstopoSvgExists !== false) &&
+        (chart.id !== "description" || this.descriptionsAvailable),
+    );
     this.isModalOpen = true;
     this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
     this.embedDialogRef.closed.subscribe(() => {
