@@ -226,13 +226,12 @@ curtain!
 ::: {.notes}
 Our main goal is to stop cloud waste, and while there are many ways to do this, such as:
 
-- identifying idle resources
+- identifying and deleting unused resources or migrating e.g. to cheaper storage tiers etc
 - automatically scaling down resources when they're not needed
-- deleting unused resources or migrating e.g. to cheaper storage tiers etc
 
 Our secret sauce -- which is not that secret keeping in mind that we are a fully open-source project, so i'll rather call it specialty is how we solve this problem: instead of throwing more of the very same silicon at the problem to solve scaling issues we find the right hardware for a given workload.
 
-Note that this optimization is orthogonal to the previously mentioned solutions, so you can keep using reserved instances, spot etc.
+Note that this optimization is orthogonal to the previously mentioned solutions, so you can keep using reserved instances, spot etc. for the right SKU.
 :::
 
 # {#no-cloud transition="convex-in slide-out" .center}
@@ -470,8 +469,6 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 logarithmic scale
 
 note that this is a syntethic test
-
-TODO Gergo speaker notes
 :::
 
 ## {#vcpu-diff-2 .center}
@@ -486,8 +483,6 @@ so left hand side is single core, right hand side is multi core performance ... 
 
 BUT Server B looking better: jumping from around 35 hundreds to 6000,
 and in some workloads the diff between Server A and Server B are even larger.
-
-TODO Gergo speaker notes
 :::
 
 ## {#vcpu-diff-3 .center}
@@ -499,10 +494,6 @@ TODO Gergo speaker notes
 ::: {.notes}
 now this is not single-core anymore .. we run OpenSSL speed tests,
 using various cipher and hash functions .. and Server A is hardly visible on this screen ..
-
-
-
-TODO Gergo speaker notes
 :::
 
 ## {#vcpu-diff-4 .center}
@@ -510,10 +501,6 @@ TODO Gergo speaker notes
 ![](images/vcpu-diff-4.png){.r-stretch fig-align="center"}
 
 <div class="slide-text-overlay fragment"><span>10-100x</span></div>
-
-::: {.notes}
-TODO Gergo speaker notes
-:::
 
 ## {#vcpu-difference transition="slide-in slide-out"}  
 
@@ -1181,17 +1168,15 @@ TODO Attila speaker notes
 :::
 
 ::: {.notes}
-TODO Gergo add speaker notes
+[[G]] this is cool .. we could definitely use something like this at Spare Cores,
+as today we use GitHub Actions with Pulumi to pick and start VMs, keeping status
+and logs in GitHub repos, sometimes in S3 as well, and it became quite compliacated
+over the years to make sure we are decommisioning unwanted resources etc.
 
-Gergo: this is cool .. we could definitely use something like this at spare cores
-GH/Pulumit etc fajdalom .. schedule/stop/tasks.
+Instead of this, using k8s and a pod asking for an exact instance type at a given vendor
+would be so much simpler and more flexible.
 
 I've checked Gardener, Container API ... did not find anything plug and play.
-
-TODO Gergo clean up speaker notes here:
-
-- today **`start.yml`**: GH Actions + Pulumi · pick **vendor + instance** · start VM  
-- dream: Pod asks for **exact** type (and cloud/region) → node appears → isolate → tear down  
 
 [[G]] how to use your kubernetes controller for this?
 :::

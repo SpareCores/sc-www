@@ -414,12 +414,11 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <aside class="notes">
 <p>Our main goal is to stop cloud waste, and while there are many ways to do this, such as:</p>
 <ul>
-<li>identifying idle resources</li>
+<li>identifying and deleting unused resources or migrating e.g.&nbsp;to cheaper storage tiers etc</li>
 <li>automatically scaling down resources when they’re not needed</li>
-<li>deleting unused resources or migrating e.g.&nbsp;to cheaper storage tiers etc</li>
 </ul>
 <p>Our secret sauce – which is not that secret keeping in mind that we are a fully open-source project, so i’ll rather call it specialty is how we solve this problem: instead of throwing more of the very same silicon at the problem to solve scaling issues we find the right hardware for a given workload.</p>
-<p>Note that this optimization is orthogonal to the previously mentioned solutions, so you can keep using reserved instances, spot etc.</p>
+<p>Note that this optimization is orthogonal to the previously mentioned solutions, so you can keep using reserved instances, spot etc. for the right SKU.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -752,7 +751,6 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <aside class="notes">
 <p>logarithmic scale</p>
 <p>note that this is a syntethic test</p>
-<p>TODO Gergo speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -774,7 +772,6 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <aside class="notes">
 <p>see Server A in the middle with scores around 500 across all dimensions? so left hand side is single core, right hand side is multi core performance … pretty much the same for Server A.</p>
 <p>BUT Server B looking better: jumping from around 35 hundreds to 6000, and in some workloads the diff between Server A and Server B are even larger.</p>
-<p>TODO Gergo speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -795,7 +792,6 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 </div>
 <aside class="notes">
 <p>now this is not single-core anymore .. we run OpenSSL speed tests, using various cipher and hash functions .. and Server A is hardly visible on this screen ..</p>
-<p>TODO Gergo speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -814,19 +810,6 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <img data-src="images/vcpu-diff-4.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
 <span>10-100x</span>
 </div>
-<aside class="notes">
-<p>TODO Gergo speaker notes</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section id="vcpu-difference" class="slide level2" data-transition="slide-in slide-out">
 <h2></h2>
@@ -1799,15 +1782,9 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <p><img src="images/crawling.png" style="margin: auto;"></p>
 </div>
 <aside class="notes">
-<p>TODO Gergo add speaker notes</p>
-<p>Gergo: this is cool .. we could definitely use something like this at spare cores GH/Pulumit etc fajdalom .. schedule/stop/tasks.</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> this is cool .. we could definitely use something like this at Spare Cores, as today we use GitHub Actions with Pulumi to pick and start VMs, keeping status and logs in GitHub repos, sometimes in S3 as well, and it became quite compliacated over the years to make sure we are decommisioning unwanted resources etc.</p>
+<p>Instead of this, using k8s and a pod asking for an exact instance type at a given vendor would be so much simpler and more flexible.</p>
 <p>I’ve checked Gardener, Container API … did not find anything plug and play.</p>
-<p>TODO Gergo clean up speaker notes here:</p>
-<ul>
-<li>today <strong><code>start.yml</code></strong>: GH Actions + Pulumi · pick <strong>vendor + instance</strong> · start VM<br>
-</li>
-<li>dream: Pod asks for <strong>exact</strong> type (and cloud/region) → node appears → isolate → tear down</li>
-</ul>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> how to use your kubernetes controller for this?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
