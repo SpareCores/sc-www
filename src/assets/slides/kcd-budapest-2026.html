@@ -5,8 +5,8 @@
 <script src="kcd-budapest-2026_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="kcd-budapest-2026_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="kcd-budapest-2026_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="kcd-budapest-2026_files/libs/quarto-html/quarto-syntax-highlighting-dark-b626d73c4c936ccc3cb08be7d45d1df6.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.10.19">
+<link href="kcd-budapest-2026_files/libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.27">
 
   <meta name="author" content="Gergely Daroczi">
   <meta name="author" content="Attila Nagy">
@@ -18,16 +18,10 @@
   <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/reveal.css">
   <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
+    code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
@@ -102,7 +96,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/theme/quarto-1544793c4831c97fdcd9596a0d755e9e.css">
+  <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/theme/quarto-0ba2550f576cf5de89bd8e81d5f93b5d.css">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -209,12 +203,12 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Gergely Daroczi
+Gergely Daroczi 
 </div>
 </div>
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Attila Nagy
+Attila Nagy 
 </div>
 </div>
 </div>
@@ -250,7 +244,7 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … great pleasure to be back to KCD Budapest … last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year, who recommended a different approach this time (and we will sing a song)!</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … great pleasure to be back to KCD Budapest … last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year (PAUSE), who recommended a different approach this time (and we will sing a song)!</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> that’s not what we have discussed …</p>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> then we will present a drama</p>
 <p>curtain!</p>
@@ -418,13 +412,14 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <p><img src="images/cloud-bleeding.png" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
 <aside class="notes">
-<p>Our main goal is to stop cloud waste, and while there are many ways to do this, some even works, such as:</p>
+<p>Our main goal is to stop cloud waste, and while there are many ways to do this, such as:</p>
 <ul>
 <li>identifying idle resources</li>
 <li>automatically scaling down resources when they’re not needed</li>
 <li>deleting unused resources or migrating e.g.&nbsp;to cheaper storage tiers etc</li>
 </ul>
-<p>We focus on:</p>
+<p>Our secret sauce – which is not that secret keeping in mind that we are a fully open-source project, so i’ll rather call it specialty is how we solve this problem: instead of throwing more of the very same silicon at the problem to solve scaling issues we find the right hardware for a given workload.</p>
+<p>Note that this optimization is orthogonal to the previously mentioned solutions, so you can keep using reserved instances, spot etc.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -445,7 +440,8 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <p><img src="images/no-cloud-just-another-comp.png" style="max-width: 75%; max-height: 50%;"></p>
 </div>
 <aside class="notes">
-<p>While pretty much everyone understands that cloud is still just another computer, at a remote location, that I can spin up quickly and throw away as needed, BUT we often don’t really know what kind of computer that is.</p>
+<p>While everyone understands that cloud is still just another computer, at a remote location, that I can spin up quickly and throw away as needed, BUT we often don’t really know what kind of computer that is.</p>
+<p>there are more than 6,000 cloud server options out there but do we really know all these options in the past you could just walked your server and check if it’s still comes with a turbo button</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -755,7 +751,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 </div>
 <aside class="notes">
 <p>logarithmic scale</p>
-<p>note that this is a syntethic tets</p>
+<p>note that this is a syntethic test</p>
 <p>TODO Gergo speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1217,6 +1213,8 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> Actually, it’s $5 ondemand.<br>
 <span style="color:#34d399;font-weight:bold">A:</span> That’s too much. The devops team picked r5a.large .. can we find something better around the same price?<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> ADVISOR!!</p>
+<p>…</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> is there a way to query this data in a programmatic way?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1429,12 +1427,20 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <section id="curl-sparecores.comadvisor" class="title-slide slide level1">
 <h1>$ curl sparecores.com/advisor</h1>
 <div class="centered">
-<p><a href="https://sparecores.com/advisor?vendor=aws&amp;baseline_vendor=aws&amp;baseline_server=r5a.large&amp;limit_architecture=true&amp;workload_id=stress_ng:best1&amp;workload_config=%7B%7D&amp;avg_cpu_utilization=100&amp;minimum_memory=16&amp;price_allocation_enabled=true&amp;best_price_allocation=ONDEMAND_ONLY" target="_blank"> <img style="width: 90%;" src="images/sc-www-advisor-r5a-large.png"> </a></p>
+<p><a href="https://sparecores.com/advisor?baseline_vendor=aws&amp;baseline_server=r5a.large&amp;limit_cpu_allocation=true&amp;workload_id=passmark:cpu_single_threaded_test&amp;workload_config=%7B%7D&amp;avg_cpu_utilization=100&amp;minimum_memory=16&amp;price_allocation_enabled=true&amp;best_price_allocation=ONDEMAND_ONLY&amp;order_by=selected_benchmark_score_per_price&amp;order_dir=desc" target="_blank"> <img style="width: 90%;" src="images/sc-www-advisor-r5a-large.png"> </a></p>
 </div>
 <aside class="notes">
-<p>r5a.large “cpu_single_threaded_test” AWS Oregaon ondemand price</p>
+<p>r5a.large “cpu_single_threaded_test” AWS Oregon ondemand price</p>
+<ol type="1">
+<li>look at cheaper options</li>
+<li>order by cost efficiency</li>
+<li>exclude more expensive options</li>
+</ol>
+<p>TODO Gergo check on aws r8i-flex – burstable?</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> compare baseline w/ r6a.large</p>
+<p>…</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> Can we query this in a programmatic way?<br>
-<span style="color:#ef4444;font-weight:bold">G:</span> yes …</p>
+<span style="color:#ef4444;font-weight:bold">G:</span> yes!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1531,8 +1537,11 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <h1>$ strace -e environment gilty.py</h1>
 <p><strong>Before:</strong> <strong>AWS</strong> · <strong>EKS</strong> · <strong>Cluster Autoscaler</strong> + <strong>fixed node groups</strong><br>
 → capacity, not <strong>single-core</strong> / <strong>latency</strong></p>
+<div class="fragment">
 <p>Then: <strong>Karpenter</strong> → <strong>EKS Auto mode</strong><br>
 → dynamic EC2 pick under load — easy</p>
+</div>
+<div class="fragment">
 <p>But Karpenter AWS filters: family · cpu count · gen · …<br>
 plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor clock</strong>, not a <strong>benchmark</strong><br>
 → <strong>how do we pick the fastest core for GILty?</strong></p>
@@ -1560,6 +1569,7 @@ plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor cloc
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
+</div>
 </section>
 <section id="passmark-vs-ghz" class="slide level2">
 <h2>PassMark ST vs catalog GHz</h2>
@@ -1665,7 +1675,7 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> sould we just require 5 GHz, the current maximum?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> should we just require 5 GHz, the current maximum?</p>
 <ul>
 <li><strong>tiny menu</strong> — handful of SKUs, mostly <strong>m8azn</strong> / <strong>x8aedz</strong><br>
 </li>
@@ -1707,7 +1717,7 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ol>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> planned with <strong>Claude</strong> — walk the six points:</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> we sat down with <strong>Claude</strong> and planned the fix — six decisions:</p>
 <ul>
 <li><strong>own NodePools</strong> — don’t touch user / Auto Mode pools · <strong>GitOps</strong>-safe<br>
 </li>
@@ -1738,7 +1748,7 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <section id="demo" class="title-slide slide level1">
 <h1></h1>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css">
-<div id="demo-player" style="width: 100%; height: 730px; margin-top: -30px;"></div>
+<div id="demo-player" style="width: 90%; height: 730px; margin-left: auto; margin-right: auto; margin-top: -30px;margin-bottom: 0px;"></div>
 <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
 <script>
   (function () {
@@ -1762,6 +1772,12 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
     });
   })();
 </script>
+
+<p class="centered" style="margin-top: -30px;">
+  <a href="https://sparecores.github.io/sc-karpenter-nodepool/demo/" target="_blank" class="centered" style="margin-top: -30px;">
+    <code>sc-karpenter-nodepool</code> demo
+  </a>
+</p>
 <aside class="notes">
 <p>TODO Attila speaker notes</p>
 <style type="text/css">
@@ -1786,7 +1802,13 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <p>TODO Gergo add speaker notes</p>
 <p>Gergo: this is cool .. we could definitely use something like this at spare cores GH/Pulumit etc fajdalom .. schedule/stop/tasks.</p>
 <p>I’ve checked Gardener, Container API … did not find anything plug and play.</p>
-<p>how to use your kubernetes controller for this?</p>
+<p>TODO Gergo clean up speaker notes here:</p>
+<ul>
+<li>today <strong><code>start.yml</code></strong>: GH Actions + Pulumi · pick <strong>vendor + instance</strong> · start VM<br>
+</li>
+<li>dream: Pod asks for <strong>exact</strong> type (and cloud/region) → node appears → isolate → tear down</li>
+</ul>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> how to use your kubernetes controller for this?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1816,12 +1838,8 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> can we run <strong>sc-inspector</strong> on this?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span></p>
 <ul>
-<li>today <strong><code>start.yml</code></strong>: GH Actions + Pulumi · pick <strong>vendor + instance</strong> · start VM<br>
-</li>
-<li>dream: Pod asks for <strong>exact</strong> type (and cloud/region) → node appears → isolate → tear down<br>
-</li>
 <li><strong>yes</strong>, Pod can use <strong>nodeSelector / affinity</strong> on <code>instance-type</code> — Karpenter will prefer/launch that<br>
 · <strong>if</strong> that type is in the generated <strong>NodePool</strong> (SC selection / ranking)<br>
 </li>
@@ -1890,23 +1908,43 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <section id="feedback" class="title-slide slide level1">
 <h1>&gt; /review plan</h1>
 <style>
+  #feedback {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+  }
+  #feedback > h1 {
+    flex: 0 0 auto;
+  }
+  #feedback .feedback-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
   #feedback .feedback-question {
-    position: absolute;
-    inset: 0;
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
     font-size: 2.5em;
     text-align: center;
-    pointer-events: none;
   }
-  #feedback .feedback-question > * {
-    pointer-events: auto;
+  #feedback .feedback-footnote {
+    flex: 0 0 auto;
+    margin: 0 0 0.4em;
+    font-size: 0.85em;
+    text-align: center;
   }
 </style>
-<div class="feedback-question fragment centered">
-<p>Would you find something like this useful?</p>
+<div class="feedback-body">
+<div class="feedback-question fragment centered" data-fragment-index="1">
+<p>Would you find something like this* useful?</p>
+</div>
+<div class="feedback-footnote fragment centered" data-fragment-index="1">
+<p>* any k8s cluster + capacity need + cloud credential =<br>ephemeral instances from any region of any cloud</p>
+</div>
 </div>
 <aside class="notes">
 <p>TODO Gergo speaker notes</p>
