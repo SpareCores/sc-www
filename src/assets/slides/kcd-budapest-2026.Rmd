@@ -1058,6 +1058,7 @@ plus `instance-cpu-sustained-clock-speed-mhz` — **vendor clock**, not a **benc
 
 - on the graph: ~**1000** AWS types · **clock speed** vs **PassMark** ST  
 - trend goes up — but same clock speed → **wildly different** scores  
+- sometimes a **lower** clock even **beats** a higher one  
 - so Karpenter’s **MHz filter** ≠ fastest core for **GILty**
 :::
 
@@ -1242,16 +1243,15 @@ Ideal stack for **sc-inspector** (replace GH Actions + Pulumi `start.yml`):
 :::
 
 ::: {.notes}
-[[A]] what we’d build for Spare Cores inspector
+[[A]] ideal stack — replace **`start.yml`** with Pod-driven **JIT**
 
-- today: **`start.yml`** every 15m · Pulumi stacks · idle VMs · git as state  
-- want: **Pod-driven JIT** · any of **8 clouds** · join **our** cluster · kill node when done  
-- **k3s + Headscale** — CP anywhere · nodes behind NAT OK  
-- **Hatchet** replaces the GH schedule / retry spaghetti  
-- **scarpenter** = the missing piece (multi-cloud Karpenter) — **not** sc-karpenter-nodepool alone  
-- Flatcar everywhere · generic kubelet join · consolidateAfter ≈ **0**  
-- sc-karpenter-nodepool stays useful: **which** types · **PassMark** / price band  
-- design: `sc-docs/k8s-inspector` · ask the room if they’d use this → next slide
+- **k3s** on cheap/on-prem VMs — **not** EKS/GKE/AKS  
+- **Headscale** mesh — workers only need **outbound** (any cloud, NAT OK)  
+- **Hatchet** runs the plans · Pods · retries (not GH Actions spaghetti)  
+- **scarpenter** — one **multi-cloud** Karpenter · catalog from **Keeper**  
+- **Flatcar** · TLS join · **single-tenant** (one bench at a time; more jobs → more nodes) · die when empty  
+
+- flow: Pod asks for a type → boot → inspect → **tear down**
 :::
 
 # > /review plan {#feedback}
