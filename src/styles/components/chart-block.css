@@ -52,7 +52,7 @@
 }
 
 @media (width < theme(--breakpoint-wide)) {
-  .chart-context--full-below-wide .chart-block--half {
+  .chart-block--full-below-wide {
     width: 100%;
   }
 }
