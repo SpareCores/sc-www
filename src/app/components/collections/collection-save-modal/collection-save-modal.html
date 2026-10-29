@@ -6,7 +6,7 @@
         <input
           #nameInput
           type="text"
-          class="rounded-lg border bg-primary px-3 py-2 text-white"
+          class="rounded-lg border bg-primary px-3 py-2 text-white focus:border-current"
           [class.border-gray-600]="!showNameWarning()"
           [class.border-red-500]="showNameWarning()"
           [ngModel]="name()"
@@ -26,7 +26,7 @@
         <span>{{ notesLabel() }}</span>
         <textarea
           rows="5"
-          class="rounded-lg border border-gray-600 bg-primary px-3 py-2 text-white"
+          class="rounded-lg border border-gray-600 bg-primary px-3 py-2 text-white focus:border-current"
           [ngModel]="note()"
           (ngModelChange)="note.set($event)"
           [maxlength]="noteMaxLength"
