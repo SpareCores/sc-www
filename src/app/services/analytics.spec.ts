@@ -8,6 +8,7 @@ type AnalyticsInternals = {
   importPostHog: () => Promise<PostHogModule>;
   loadPostHog: (key: string, host: string) => Promise<void>;
   trackingPromise: Promise<void> | null;
+  pendingEvents: unknown[];
 };
 
 describe("Analytics", () => {
@@ -132,13 +133,29 @@ describe("Analytics", () => {
     spyOn(internals(), "importPostHog").and.rejectWith(
       new Error("chunk failed"),
     );
+    spyOn(console, "error");
 
     await expectAsync(
       internals().loadPostHog("key", "https://host"),
-    ).toBeRejected();
+    ).toBeResolved();
 
     service.identify("user-1");
     expect(service.getId()).toBe("");
     expect(posthog.identify).not.toHaveBeenCalled();
+  });
+
+  it("stops queueing events once the SDK fails to load", async () => {
+    spyOn(internals(), "importPostHog").and.rejectWith(
+      new Error("chunk failed"),
+    );
+    spyOn(console, "error");
+    internals().trackingPromise = Promise.resolve();
+
+    service.trackEvent("beforeFailure", {});
+    await internals().loadPostHog("key", "https://host");
+    service.trackEvent("afterFailure", {});
+
+    expect(internals().trackingPromise).toBeNull();
+    expect(internals().pendingEvents).toEqual([]);
   });
 });
