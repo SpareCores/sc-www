@@ -16,6 +16,7 @@ revealjs-plugins:
   - curtain
   - agentterminal
   - poll
+  - slidetimer
 format:
   revealjs:
     theme: [black, css/custom-4.2.1.css]
@@ -77,13 +78,15 @@ format:
 </p>
 
 ::: {.notes}
-[[G]] welcome ... great pleasure to be back to KCD Budapest ... last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year, who recommended a different approach this time (and we will sing a song)! 
+[[G]] welcome ... great pleasure to be back to KCD Budapest ... last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year (PAUSE), who recommended that instead of presenting hundreds of slides and an unprocessable amount of information, we should take a different approach this time (and we will sing a song)! 
 
 [[A]] that's not what we have discussed ...
 
-[[G]] then we will present a drama
+[[G]] then we will present a drama with a painful problem of a devops engineer, epic emotional journey and of course cathartic solution!
 
-curtain!
+let's get started!
+
+curtain ...
 :::
 
 # {#crawl data-curtain="open"}
@@ -195,7 +198,7 @@ curtain!
 ```
 
 ::: {.notes}
-[[G]] The story starts with meeting Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:
+[[G]] The story starts with meeting Attila a few weeks ago, and this was the conversation we had:
 
 [[G]] Hey Attila, ... how are you doing, you look a bit concerned..  
 
@@ -224,14 +227,14 @@ curtain!
 :::
 
 ::: {.notes}
-Our main goal is to stop cloud waste, and while there are many ways to do this,
-some even works, such as:
+Our main goal is to stop cloud waste, and while there are many ways to do this, such as:
 
-- identifying idle resources
+- identifying and deleting unused resources or migrating e.g. to cheaper storage tiers etc
 - automatically scaling down resources when they're not needed
-- deleting unused resources or migrating e.g. to cheaper storage tiers etc
 
-We focus on:
+Our secret sauce -- which is not that secret keeping in mind that we are a fully open-source project, so i'll rather call it specialty is how we solve this problem: instead of throwing more of the very same silicon at the problem to solve scaling issues we find the right hardware for a given workload.
+
+Note that this optimization is orthogonal to the previously mentioned solutions, so you can keep using reserved instances, spot etc. for the right SKU.
 :::
 
 # {#no-cloud transition="convex-in slide-out" .center}
@@ -241,9 +244,11 @@ We focus on:
 :::
 
 ::: {.notes}
-While pretty much everyone understands that cloud is still just another computer,
+While everyone understands that cloud is still just another computer,
 at a remote location, that I can spin up quickly and throw away as needed,
 BUT we often don't really know what kind of computer that is.
+
+there are more than 6,000 cloud server options out there but do we really know all these options in the past you could just walked your server and check if it's still comes with a turbo button 
 :::
 
 ## {#old-vs-new transition="slide-in fade-out"}
@@ -348,16 +353,14 @@ indeed just focusing on the single-core performance -- like doing as many intege
 ## {#vcpu-diff-0 .center}
 
 ::: {.notes}
-Both the slowest and the fastest servers are from a hyperscaler .. not because I picked so,
-it just happened to be the case.
+Both the slowest and the fastest servers are from a hyperscaler.
 
 Now I'm not going to give away the identity of the actual server types,
-and shame them publicly ... especially in the era of awakening AGI (TODO autonomous general intelligence?).
-
-But you can easily find out on your own if you are interested,
-and I'm happy to show how.
+and shame cloud SKUs publicly ... especially in the era of awakening AGI (Artificial General Intelligence).
 
 But we do know both comes with 2 vCPUs.
+
+SPEEDRUN!
 
 [...]
 
@@ -464,11 +467,11 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <div class="slide-text-overlay fragment"><span>30-50x</span></div>
 
 ::: {.notes}
+Before we move on, I wanted to quickly share a few further benchmarks of these two servers to show the spectrum: 
+
 logarithmic scale
 
-note that this is a syntethic tets
-
-TODO Gergo speaker notes
+SPEEDRUN!
 :::
 
 ## {#vcpu-diff-2 .center}
@@ -478,13 +481,7 @@ TODO Gergo speaker notes
 <div class="slide-text-overlay fragment"><span>10-20x</span></div>
 
 ::: {.notes}
-see Server A in the middle with scores around 500 across all dimensions?
-so left hand side is single core, right hand side is multi core performance ... pretty much the same for Server A.
-
-BUT Server B looking better: jumping from around 35 hundreds to 6000,
-and in some workloads the diff between Server A and Server B are even larger.
-
-TODO Gergo speaker notes
+SPEEDRUN!
 :::
 
 ## {#vcpu-diff-3 .center}
@@ -494,12 +491,7 @@ TODO Gergo speaker notes
 <div class="slide-text-overlay fragment"><span>100x</span></div>
 
 ::: {.notes}
-now this is not single-core anymore .. we run OpenSSL speed tests,
-using various cipher and hash functions .. and Server A is hardly visible on this screen ..
-
-
-
-TODO Gergo speaker notes
+now this is not single-core anymore .. we run OpenSSL speed tests ..
 :::
 
 ## {#vcpu-diff-4 .center}
@@ -508,10 +500,6 @@ TODO Gergo speaker notes
 
 <div class="slide-text-overlay fragment"><span>10-100x</span></div>
 
-::: {.notes}
-TODO Gergo speaker notes
-:::
-
 ## {#vcpu-difference transition="slide-in slide-out"}  
 
 ::: {.notes}
@@ -519,6 +507,8 @@ Back to Vincent from Pulp Fiction .. who now looks even more confused.
 
 Because it's possible that you get a 32 vCPU server, and your app that perfectly scales to multiple cores,
 runs slower than on a single core of another cloud server type.
+
+So how to pick the right instance type from thousands of options?
 :::
 
 ::: {.centered}
@@ -697,30 +687,6 @@ GROUP BY 1;
 :::
 :::
 
-# $ whois sparecores.com {#whois transition="convex-in convex-out"}
-
-<ul style="font-size: 0.9em;">
-  <li class="fragment" data-fragment-index=1>Funded by NGI Search (EU consortium) in 2024</li>
-  <ul>
-    <li class="fragment" data-fragment-index=1>Vendor independent, open-source project</li>
-  </ul>
-  <li class="fragment" data-fragment-index=2>Seal of Excellence from the European Commission in 2026</li>
-  <li class="fragment" data-fragment-index=3>Accepted into NVIDIA Inception, AWS Open Source Credits</li>
-  <li class="fragment" data-fragment-index=4>Beneficiary of cloud credits from 8 vendors (overall ~$100k)</li>
-  <li class="fragment" data-fragment-index=5>20+ talks in 9 countries (e.g. Berlin Buzzwords, PyData, KCD)</li>
-  <li class="fragment" data-fragment-index=6>Featured by The Pragmatic Engineer in Oct 2024</li>
-  <li class="fragment" data-fragment-index=7>Jeff Barr (Chief Evangelist at AWS) on our Reddit post:</li>
-</ul>
-
-<blockquote class="fragment" data-fragment-index=7 style="margin-left: 40px;">
-  This was awesome, thanks for sharing.
-</blockquote>
-
-::: {.notes}
-first of all, just to build some credibility for the project:
-we are committed to be vendor-agnostic, open-source, and transparent about our data
-:::
-
 # $ apropos sparecores.com {#apropos transition="convex-in convex-out"}
 
 <ul style="font-size: 0.9em;">
@@ -787,8 +753,6 @@ high level numbers about the data we collect and make available
 [[G]] The easiest way to query this data is through our web component, as you can see on the screen ...  
 [[G]] What kind of server are we looking for?  
 [[A]] min 2 vCPU, 16 GB RAM, AWS, Oregon  
-[[G]] Any special network requirements? We track outbound traffic prices ...  
-[[A]] No.  
 [[G]] Anything else?  
 [[A]] Single core performance is the most important  
 [[G]] We support a bunch of benchmarks, e.g. PassMark CPU Single Threaded Test?  
@@ -796,15 +760,18 @@ high level numbers about the data we collect and make available
 [[A]] That metal server looks promising  
 [[G]] Let's see the details ...
 
-Check server details page. Scoll over the benchmarks.
+Check server details page:
 - server metadata
 - lstopo
-- benchmarks 
+- benchmarks
 - price diffs -> oops .. spot vs ondemand
 
 [[G]] Actually, it's $5 ondemand.  
 [[A]] That's too much. The devops team picked r5a.large .. can we find something better around the same price?  
 [[G]] ADVISOR!!
+...
+
+[[A]] is there a way to query this data in a programmatic way?
 :::
 
 ## $ curl sparecores.com/server/gcp/g2-standard-16
@@ -943,7 +910,7 @@ or plots as well for human inspection
 
 
 ::: {.centered}
-<a href="https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&avg_cpu_utilization=100&minimum_memory=16&price_allocation_enabled=true&best_price_allocation=ONDEMAND_ONLY" target="_blank">
+<a href="https://sparecores.com/advisor?baseline_vendor=aws&baseline_server=r5a.large&limit_cpu_allocation=true&workload_id=passmark:cpu_single_threaded_test&workload_config=%7B%7D&avg_cpu_utilization=100&minimum_memory=16&price_allocation_enabled=true&best_price_allocation=ONDEMAND_ONLY&order_by=selected_benchmark_score_per_price&order_dir=desc" target="_blank">
   <img style="width: 90%;" src="images/sc-www-advisor-r5a-large.png" />
 </a>
 :::
@@ -952,11 +919,21 @@ or plots as well for human inspection
 r5a.large
 "cpu_single_threaded_test"
 AWS
-Oregaon
+Oregon
 ondemand price
 
+1. look at cheaper options
+2. order by cost efficiency
+3. exclude more expensive options
+
+TODO Gergo check on aws r8i-flex -- burstable?
+
+[[G]] compare baseline w/ r6a.large
+
+...
+
 [[A]] Can we query this in a programmatic way?  
-[[G]] yes ...
+[[G]] yes!
 :::
 
 # $ curl docs.sparecores.com/api
@@ -996,11 +973,10 @@ ondemand price
 ::: {.notes}
 [[A]] **GIL** — for folks who don't know it yet
 
-- image: **G(H)uido** v(F)an Rossum + **Larry** Hastings (Gilectomy)
 - the **GIL** has been with us since the early **90s** — one thread at a time
-- promising tries **failed** — e.g. Larry's **Gilectomy** (~2016)
-- latest hope: **free-threaded Python** (still not the default)
-- we still need a **fast single core** → project name: **"Core Alone"**
+- several attemps to remove GIL, like **G(H)uido** v(F)an Rossum + **Larry** Hastings (Gilectomy) without clear success for a long time
+- there's a new hope (**free-threaded Python**)
+- but we still usually need a **fast single core** → project name: **"Core Alone"**
 
 :::
 
@@ -1009,8 +985,12 @@ ondemand price
 **Before:** **AWS** · **EKS** · **Cluster Autoscaler** + **fixed node groups**  
 → capacity, not **single-core** / **latency**
 
+. . .
+
 Then: **Karpenter** → **EKS Auto mode**  
 → dynamic EC2 pick under load — easy
+
+. . .
 
 But Karpenter AWS filters: family · cpu count · gen · …  
 plus `instance-cpu-sustained-clock-speed-mhz` — **vendor clock**, not a **benchmark**  
@@ -1033,10 +1013,11 @@ plus `instance-cpu-sustained-clock-speed-mhz` — **vendor clock**, not a **benc
 :::
 
 ::: {.notes}
-[[A]] does **clock speed** predict **single-thread** performance?
+[[A]] My question was: does **clock speed** predict **single-thread** performance?
 
-- on the graph: ~**1000** AWS types · **clock speed** vs **PassMark** ST  
+- According to our measurements: there's association between the **clock speed** and the **PassMark** ST score, and 
 - trend goes up — but same clock speed → **wildly different** scores  
+- sometimes a **lower** clock even **beats** a higher one  
 - so Karpenter’s **MHz filter** ≠ fastest core for **GILty**
 :::
 
@@ -1063,8 +1044,9 @@ Within one clock band: up to about **+200%** PassMark ST spread
 ::: {style="font-size: 0.75em;"}
 Simple idea: `instance-cpu-sustained-clock-speed-mhz >= 5000`
 
-| | **r5a.large** | **c8a.large** | **m8azn.large** (5 GHz) |
+| | **r5a.large** | **c8a.large** | **m8azn.large** |
 |---|---:|---:|---:|
+| catalog GHz | 2.5 | 4.5 | **5.0** |
 | PassMark ST | ~1400 | ~3800 | ~4300 |
 | on-demand | ~\$0.11 | ~\$0.11 | ~\$0.21 |
 | regions | ~16 | ~7 | **~6** |
@@ -1075,14 +1057,13 @@ Simple idea: `instance-cpu-sustained-clock-speed-mhz >= 5000`
 :::
 
 ::: {.notes}
-[[A]] “then just require 5 GHz?”
+[[A]] should we just require 5 GHz, the current maximum?
 
 - **tiny menu** — handful of SKUs, mostly **m8azn** / **x8aedz**  
 - **few regions** · new / niche  
-- **m8azn.large** ≈ **twice** **c8a.large** price · only a bit faster  
-- **x8aedz** = huge RAM tax  
+- vs **c8a**: **2×** the price · only ~**10%** more PassMark  
 - Karpenter wants **diversity** — 5 GHz pin = brittle  
-- need **benchmark ranking**, not a GHz floor
+- need **benchmark ranking**, not a GHz floor  
 :::
 
 # $ claude --plan "fix problem"
@@ -1103,26 +1084,21 @@ Pub talk → need **benchmark**-ranked types in **Karpenter** (incl. **EKS Auto*
 :::
 
 ::: {.notes}
-[[A]] how we designed it (with Claude)
+[[A]] we sat down with **Claude** and planned the fix — six decisions:
 
-- problem: Karpenter has **shape + price**, not **measured single-core**  
-- constraint: **EKS Auto Mode** → can't fork Karpenter / patch their pools  
-- also: **GitOps** (Argo CD, …) — don't mutate a pool the user owns → sync wars  
-- **ADR-001:** create **our own** NodePools only  
-- **ADR-003:** one **`SCNodePool`** → one NodePool  
-- **ADR-004:** only stamp keys every provider accepts — else **drift loop**  
-- **ADR-002:** read **Keeper API**, filter/rank client-side  
-- **ADR-006:** **churn** — don't replace nodes every time the ranking wiggles  
-- **ADR-007:** **Go** so we import Karpenter's own validators  
-- plans 01→08: scaffold → selection → adapters → controller → tests → Helm  
-- next: **demo** the result
+- **own NodePools** — don't touch user / Auto Mode pools · **GitOps**-safe  
+- one **`SCNodePool`** → one Karpenter NodePool (template + type list)  
+- NodePool gets only **instance-type / arch / capacity** — no AWS-only labels → avoid **RequirementsDrifted** loops  
+- **Keeper** ranks by benchmark (e.g. **PassMark** ST)  
+- **churn** control — ranking moves a bit → don't **replace** running nodes  
+- **Go** — reuse Karpenter's own validators  
 :::
 
 # {#demo}
 
 ```{=html}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css" />
-<div id="demo-player" style="width: 100%; height: 730px; margin-top: -30px;"></div>
+<div id="demo-player" style="width: 90%; height: 730px; margin-left: auto; margin-right: auto; margin-top: -30px;margin-bottom: 0px;"></div>
 <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
 <script>
   (function () {
@@ -1146,6 +1122,12 @@ Pub talk → need **benchmark**-ranked types in **Karpenter** (incl. **EKS Auto*
     });
   })();
 </script>
+
+<p class="centered" style="margin-top: -30px;">
+  <a href="https://sparecores.github.io/sc-karpenter-nodepool/demo/" target="_blank" class="centered" style="margin-top: -30px;">
+    <code>sc-karpenter-nodepool</code> demo
+  </a>
+</p>
 ```
 
 ::: {.notes}
@@ -1159,14 +1141,17 @@ TODO Attila speaker notes
 :::
 
 ::: {.notes}
-TODO Gergo add speaker notes
+[[G]] this is cool .. we could definitely use something like this at Spare Cores,
+as today we use GitHub Actions with Pulumi to pick and start VMs, keeping status
+and logs in GitHub repos, sometimes in S3 as well, and it became quite compliacated
+over the years to make sure we are decommisioning unwanted resources etc.
 
-Gergo: this is cool .. we could definitely use something like this at spare cores
-GH/Pulumit etc fajdalom .. schedule/stop/tasks.
+Instead of this, using k8s and a pod asking for an exact instance type at a given vendor
+would be so much simpler and more flexible.
 
 I've checked Gardener, Container API ... did not find anything plug and play.
 
-how to use your kubernetes controller for this?
+[[G]] how to use your kubernetes controller for this?
 :::
 
 # ENTRYPOINT ["sc-karpenter-nodepool"]
@@ -1188,14 +1173,16 @@ Great for **picking** types · **not** for inspector-style **multi-cloud JIT**
 :::
 
 ::: {.notes}
-[[A]] can we run **sc-inspector** on this?
+[[A]] great for picking types — **not** for inspector **JIT**
 
-- today **`start.yml`**: GH Actions + Pulumi · pick **vendor + instance** · start VM  
-- dream: Pod asks for **exact** type (and cloud/region) → node appears → isolate → tear down  
-- **yes**, Pod can use **nodeSelector / affinity** on `instance-type` — Karpenter will prefer/launch that  
-  · **if** that type is in the generated **NodePool** (SC selection / ranking)  
-- **no**: one Pod cannot jump to **another cloud/region** — pool is still **this** cluster’s provider  
-- still need **multi-vendor provider + join** → next slide (**scarpenter** / ROADMAP)
+There are still several limitations as you can see, but due to time constraints, let's rather focus on the ideal scenario instead.
+
+- we only write a **NodePool** — Karpenter still does the launch  
+- **one** cloud, **one** cluster — no per-pod region  
+- can't hop **AWS → GCP → Hetzner** from one Pod  
+- **Karpenter + cloud provider** must already be there  
+- no VPC / image / Flatcar / mesh — out of scope  
+- Pod **can** pin a type **if** it's already in the pool — not “any SKU anywhere” like **`start.yml`**
 :::
 
 # $ cat sc-karpenter-nodepool/ROADMAP.md
@@ -1215,41 +1202,64 @@ Ideal stack for **sc-inspector** (replace GH Actions + Pulumi `start.yml`):
 :::
 
 ::: {.notes}
-[[A]] what we’d build for Spare Cores inspector
+[[A]] ideal stack — replace **`start.yml`** with Pod-driven **JIT**
 
-- today: **`start.yml`** every 15m · Pulumi stacks · idle VMs · git as state  
-- want: **Pod-driven JIT** · any of **8 clouds** · join **our** cluster · kill node when done  
-- **k3s + Headscale** — CP anywhere · nodes behind NAT OK  
-- **Hatchet** replaces the GH schedule / retry spaghetti  
-- **scarpenter** = the missing piece (multi-cloud Karpenter) — **not** sc-karpenter-nodepool alone  
-- Flatcar everywhere · generic kubelet join · consolidateAfter ≈ **0**  
-- sc-karpenter-nodepool stays useful: **which** types · **PassMark** / price band  
-- design: `sc-docs/k8s-inspector` · ask the room if they’d use this → next slide
+- **k3s** on cheap/on-prem VMs — **not** EKS/GKE/AKS  
+- **Headscale** mesh — workers only need **outbound** (any cloud, NAT OK)  
+- **Hatchet** runs the plans · Pods · retries (not GH Actions spaghetti)  
+- **scarpenter** — one **multi-cloud** Karpenter · catalog from **Keeper**  
+- **Flatcar** · TLS join · **single-tenant** (one bench at a time; more jobs → more nodes) · die when empty  
+
+- flow: Pod asks for a type → boot → inspect → **tear down**
 :::
 
 # > /review plan {#feedback}
 
 ```{=html}
 <style>
+  #feedback {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+  }
+  #feedback > h1 {
+    flex: 0 0 auto;
+  }
+  #feedback .feedback-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
   #feedback .feedback-question {
-    position: absolute;
-    inset: 0;
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
-    font-size: 2.5em;
+    font-size: 1.25em;
     text-align: center;
-    pointer-events: none;
   }
-  #feedback .feedback-question > * {
-    pointer-events: auto;
+  #feedback .feedback-footnote {
+    flex: 0 0 auto;
+    margin: 0 0 0.4em;
+    font-size: 2em;
+    text-align: center;
+  }
+  #feedback .feedback-footnote span {
+    color: #14B8A6;
   }
 </style>
 ```
 
+::: {.feedback-body}
 ::: {.feedback-question .fragment .centered}
-Would you find something like this useful?
+Would you find something like this* useful?
+:::
+
+::: {.feedback-footnote .fragment .centered}
+\* any k8s cluster <span>+</span> cloud credential <span>+</span> capacity need<span class="fragment" style="color: #34D399;"><span style="color: #14B8A6;"> =></span><br/>ephemeral instances from any region of any cloud</span>
+:::
 :::
 
 ::: {.notes}

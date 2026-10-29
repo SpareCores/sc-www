@@ -244,10 +244,11 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … great pleasure to be back to KCD Budapest … last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year, who recommended a different approach this time (and we will sing a song)!</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … great pleasure to be back to KCD Budapest … last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year (PAUSE), who recommended that instead of presenting hundreds of slides and an unprocessable amount of information, we should take a different approach this time (and we will sing a song)!</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> that’s not what we have discussed …</p>
-<p><span style="color:#ef4444;font-weight:bold">G:</span> then we will present a drama</p>
-<p>curtain!</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> then we will present a drama with a painful problem of a devops engineer, epic emotional journey and of course cathartic solution!</p>
+<p>let’s get started!</p>
+<p>curtain …</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -368,7 +369,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
   })();
 </script>
 <aside class="notes">
-<p><span style="color:#ef4444;font-weight:bold">G:</span> The story starts with meeting Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> The story starts with meeting Attila a few weeks ago, and this was the conversation we had:</p>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> Hey Attila, … how are you doing, you look a bit concerned..</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> As an engineer, concerned is my default state</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> frustrated <strong>Python app</strong> · needs <strong>low latency</strong> · <strong>won’t scale</strong> · <strong>GIL</strong> -&gt; <strong>single-core</strong> performance · hunting right <strong>instance type</strong> · fed up with it -&gt; <strong>memes</strong> [show image]</p>
@@ -412,13 +413,13 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <p><img src="images/cloud-bleeding.png" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
 <aside class="notes">
-<p>Our main goal is to stop cloud waste, and while there are many ways to do this, some even works, such as:</p>
+<p>Our main goal is to stop cloud waste, and while there are many ways to do this, such as:</p>
 <ul>
-<li>identifying idle resources</li>
+<li>identifying and deleting unused resources or migrating e.g.&nbsp;to cheaper storage tiers etc</li>
 <li>automatically scaling down resources when they’re not needed</li>
-<li>deleting unused resources or migrating e.g.&nbsp;to cheaper storage tiers etc</li>
 </ul>
-<p>We focus on:</p>
+<p>Our secret sauce – which is not that secret keeping in mind that we are a fully open-source project, so i’ll rather call it specialty is how we solve this problem: instead of throwing more of the very same silicon at the problem to solve scaling issues we find the right hardware for a given workload.</p>
+<p>Note that this optimization is orthogonal to the previously mentioned solutions, so you can keep using reserved instances, spot etc. for the right SKU.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -439,7 +440,8 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <p><img src="images/no-cloud-just-another-comp.png" style="max-width: 75%; max-height: 50%;"></p>
 </div>
 <aside class="notes">
-<p>While pretty much everyone understands that cloud is still just another computer, at a remote location, that I can spin up quickly and throw away as needed, BUT we often don’t really know what kind of computer that is.</p>
+<p>While everyone understands that cloud is still just another computer, at a remote location, that I can spin up quickly and throw away as needed, BUT we often don’t really know what kind of computer that is.</p>
+<p>there are more than 6,000 cloud server options out there but do we really know all these options in the past you could just walked your server and check if it’s still comes with a turbo button</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -561,10 +563,10 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <section id="vcpu-diff-0" class="slide level2 center">
 <h2></h2>
 <aside class="notes">
-<p>Both the slowest and the fastest servers are from a hyperscaler .. not because I picked so, it just happened to be the case.</p>
-<p>Now I’m not going to give away the identity of the actual server types, and shame them publicly … especially in the era of awakening AGI (TODO autonomous general intelligence?).</p>
-<p>But you can easily find out on your own if you are interested, and I’m happy to show how.</p>
+<p>Both the slowest and the fastest servers are from a hyperscaler.</p>
+<p>Now I’m not going to give away the identity of the actual server types, and shame cloud SKUs publicly … especially in the era of awakening AGI (Artificial General Intelligence).</p>
 <p>But we do know both comes with 2 vCPUs.</p>
+<p>SPEEDRUN!</p>
 <p>[…]</p>
 <p>How do I know all this stuff?</p>
 <style type="text/css">
@@ -748,9 +750,9 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>30-50x</span>
 </div>
 <aside class="notes">
+<p>Before we move on, I wanted to quickly share a few further benchmarks of these two servers to show the spectrum:</p>
 <p>logarithmic scale</p>
-<p>note that this is a syntethic tets</p>
-<p>TODO Gergo speaker notes</p>
+<p>SPEEDRUN!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -770,9 +772,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>10-20x</span>
 </div>
 <aside class="notes">
-<p>see Server A in the middle with scores around 500 across all dimensions? so left hand side is single core, right hand side is multi core performance … pretty much the same for Server A.</p>
-<p>BUT Server B looking better: jumping from around 35 hundreds to 6000, and in some workloads the diff between Server A and Server B are even larger.</p>
-<p>TODO Gergo speaker notes</p>
+<p>SPEEDRUN!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -792,8 +792,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>100x</span>
 </div>
 <aside class="notes">
-<p>now this is not single-core anymore .. we run OpenSSL speed tests, using various cipher and hash functions .. and Server A is hardly visible on this screen ..</p>
-<p>TODO Gergo speaker notes</p>
+<p>now this is not single-core anymore .. we run OpenSSL speed tests ..</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -812,25 +811,13 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <img data-src="images/vcpu-diff-4.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
 <span>10-100x</span>
 </div>
-<aside class="notes">
-<p>TODO Gergo speaker notes</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section id="vcpu-difference" class="slide level2" data-transition="slide-in slide-out">
 <h2></h2>
 <aside class="notes">
 <p>Back to Vincent from Pulp Fiction .. who now looks even more confused.</p>
 <p>Because it’s possible that you get a 32 vCPU server, and your app that perfectly scales to multiple cores, runs slower than on a single core of another cloud server type.</p>
+<p>So how to pick the right instance type from thousands of options?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1031,54 +1018,6 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 </table>
 </div></div>
 </section></section>
-<section id="whois" class="title-slide slide level1" data-transition="convex-in convex-out">
-<h1>$ whois sparecores.com</h1>
-<ul style="font-size: 0.9em;">
-<li class="fragment" data-fragment-index="1">
-Funded by NGI Search (EU consortium) in 2024
-</li>
-<ul>
-<li class="fragment" data-fragment-index="1">
-Vendor independent, open-source project
-</li>
-</ul>
-<li class="fragment" data-fragment-index="2">
-Seal of Excellence from the European Commission in 2026
-</li>
-<li class="fragment" data-fragment-index="3">
-Accepted into NVIDIA Inception, AWS Open Source Credits
-</li>
-<li class="fragment" data-fragment-index="4">
-Beneficiary of cloud credits from 8 vendors (overall ~$100k)
-</li>
-<li class="fragment" data-fragment-index="5">
-20+ talks in 9 countries (e.g.&nbsp;Berlin Buzzwords, PyData, KCD)
-</li>
-<li class="fragment" data-fragment-index="6">
-Featured by The Pragmatic Engineer in Oct 2024
-</li>
-<li class="fragment" data-fragment-index="7">
-Jeff Barr (Chief Evangelist at AWS) on our Reddit post:
-</li>
-</ul>
-<blockquote class="fragment" data-fragment-index="7" style="margin-left: 40px;">
-This was awesome, thanks for sharing.
-</blockquote>
-<aside class="notes">
-<p>first of all, just to build some credibility for the project: we are committed to be vendor-agnostic, open-source, and transparent about our data</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
-
 <section>
 <section id="apropos" class="title-slide slide level1" data-transition="convex-in convex-out">
 <h1>$ apropos sparecores.com</h1>
@@ -1199,18 +1138,17 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> The easiest way to query this data is through our web component, as you can see on the screen …<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> What kind of server are we looking for?<br>
 <span style="color:#34d399;font-weight:bold">A:</span> min 2 vCPU, 16 GB RAM, AWS, Oregon<br>
-<span style="color:#ef4444;font-weight:bold">G:</span> Any special network requirements? We track outbound traffic prices …<br>
-<span style="color:#34d399;font-weight:bold">A:</span> No.<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Anything else?<br>
 <span style="color:#34d399;font-weight:bold">A:</span> Single core performance is the most important<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> We support a bunch of benchmarks, e.g.&nbsp;PassMark CPU Single Threaded Test?<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Let’s order by performance then.<br>
 <span style="color:#34d399;font-weight:bold">A:</span> That metal server looks promising<br>
 <span style="color:#ef4444;font-weight:bold">G:</span> Let’s see the details …</p>
-<p>Check server details page. Scoll over the benchmarks. - server metadata - lstopo - benchmarks - price diffs -&gt; oops .. spot vs ondemand</p>
+<p>Check server details page: - server metadata - lstopo - benchmarks - price diffs -&gt; oops .. spot vs ondemand</p>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> Actually, it’s $5 ondemand.<br>
 <span style="color:#34d399;font-weight:bold">A:</span> That’s too much. The devops team picked r5a.large .. can we find something better around the same price?<br>
-<span style="color:#ef4444;font-weight:bold">G:</span> ADVISOR!!</p>
+<span style="color:#ef4444;font-weight:bold">G:</span> ADVISOR!! …</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> is there a way to query this data in a programmatic way?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1423,12 +1361,20 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <section id="curl-sparecores.comadvisor" class="title-slide slide level1">
 <h1>$ curl sparecores.com/advisor</h1>
 <div class="centered">
-<p><a href="https://sparecores.com/advisor?vendor=aws&amp;baseline_vendor=aws&amp;baseline_server=r5a.large&amp;limit_architecture=true&amp;workload_id=stress_ng:best1&amp;workload_config=%7B%7D&amp;avg_cpu_utilization=100&amp;minimum_memory=16&amp;price_allocation_enabled=true&amp;best_price_allocation=ONDEMAND_ONLY" target="_blank"> <img style="width: 90%;" src="images/sc-www-advisor-r5a-large.png"> </a></p>
+<p><a href="https://sparecores.com/advisor?baseline_vendor=aws&amp;baseline_server=r5a.large&amp;limit_cpu_allocation=true&amp;workload_id=passmark:cpu_single_threaded_test&amp;workload_config=%7B%7D&amp;avg_cpu_utilization=100&amp;minimum_memory=16&amp;price_allocation_enabled=true&amp;best_price_allocation=ONDEMAND_ONLY&amp;order_by=selected_benchmark_score_per_price&amp;order_dir=desc" target="_blank"> <img style="width: 90%;" src="images/sc-www-advisor-r5a-large.png"> </a></p>
 </div>
 <aside class="notes">
-<p>r5a.large “cpu_single_threaded_test” AWS Oregaon ondemand price</p>
+<p>r5a.large “cpu_single_threaded_test” AWS Oregon ondemand price</p>
+<ol type="1">
+<li>look at cheaper options</li>
+<li>order by cost efficiency</li>
+<li>exclude more expensive options</li>
+</ol>
+<p>TODO Gergo check on aws r8i-flex – burstable?</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> compare baseline w/ r6a.large</p>
+<p>…</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> Can we query this in a programmatic way?<br>
-<span style="color:#ef4444;font-weight:bold">G:</span> yes …</p>
+<span style="color:#ef4444;font-weight:bold">G:</span> yes!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1500,15 +1446,13 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <p><img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> <strong>GIL</strong> history — for folks who <strong>don’t know the GIL</strong> yet<br>
-- image: <strong>G(H)uido</strong> v(F)an Rossum + <strong>Larry</strong> Hastings (Gilectomy)<br>
-- <strong>GIL</strong> since early 90s · serializes Python bytecode · <strong>more cores ≠ faster</strong> for pure Python<br>
-- <strong>Greg Stein</strong> 1996 patch · parts landed, GIL stayed<br>
-- <strong>Gilectomy</strong> (<strong>Larry Hastings</strong>, ~2016): real PoC, fine-grained locks — <strong>overhead</strong> killed it (Guido: no single-thread regression)<br>
-- <strong>Sam Gross</strong> nogil → <strong>PEP 703</strong> (2023): optional <strong>free-threaded</strong> build<br>
-- <strong>3.13</strong> experimental · <strong>3.14</strong> officially supported, <strong>not default</strong> · <strong>3.15</strong> Stable ABI <code>abi3t</code><br>
-- for <strong>GILty</strong>-class apps: promising <strong>if</strong> you redesign for threads + deps support · else still need <strong>fast single core</strong><br>
-- working name for this project: <strong>“Core Alone”</strong> — fits, right?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> <strong>GIL</strong> — for folks who don’t know it yet</p>
+<ul>
+<li>the <strong>GIL</strong> has been with us since the early <strong>90s</strong> — one thread at a time</li>
+<li>several attemps to remove GIL, like <strong>G(H)uido</strong> v(F)an Rossum + <strong>Larry</strong> Hastings (Gilectomy) without clear success for a long time</li>
+<li>there’s a new hope (<strong>free-threaded Python</strong>)</li>
+<li>but we still usually need a <strong>fast single core</strong> → project name: <strong>“Core Alone”</strong></li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1526,13 +1470,16 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <h1>$ strace -e environment gilty.py</h1>
 <p><strong>Before:</strong> <strong>AWS</strong> · <strong>EKS</strong> · <strong>Cluster Autoscaler</strong> + <strong>fixed node groups</strong><br>
 → capacity, not <strong>single-core</strong> / <strong>latency</strong></p>
+<div class="fragment">
 <p>Then: <strong>Karpenter</strong> → <strong>EKS Auto mode</strong><br>
 → dynamic EC2 pick under load — easy</p>
+</div>
+<div class="fragment">
 <p>But Karpenter AWS filters: family · cpu count · gen · …<br>
 plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor clock</strong>, not a <strong>benchmark</strong><br>
 → <strong>how do we pick the fastest core for GILty?</strong></p>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> path to the gap</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> what have we tried so far?</p>
 <ul>
 <li><strong>before:</strong> CAS + fixed node groups — bad fit for <strong>GILty</strong><br>
 </li>
@@ -1555,6 +1502,7 @@ plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor cloc
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
+</div>
 </section>
 <section id="passmark-vs-ghz" class="slide level2">
 <h2>PassMark ST vs catalog GHz</h2>
@@ -1562,13 +1510,14 @@ plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor cloc
 <p><img src="images/aws-passmark-vs-ghz.png" style="width: 92%; margin-top: -30px;"></p>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> glance at the chart</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> My question was: does <strong>clock speed</strong> predict <strong>single-thread</strong> performance?</p>
 <ul>
-<li>~<strong>a thousand</strong> AWS types · GHz vs PassMark single-thread<br>
+<li>According to our measurements: there’s association between the <strong>clock speed</strong> and the <strong>PassMark</strong> ST score, and</li>
+<li>trend goes up — but same clock speed → <strong>wildly different</strong> scores<br>
 </li>
-<li>trends up, but look at the <strong>vertical stacks</strong> — same clock, very different scores<br>
+<li>sometimes a <strong>lower</strong> clock even <strong>beats</strong> a higher one<br>
 </li>
-<li>so Karpenter’s MHz filter ≠ <strong>fastest core</strong> for <strong>GILty</strong></li>
+<li>so Karpenter’s <strong>MHz filter</strong> ≠ fastest core for <strong>GILty</strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1591,13 +1540,13 @@ plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor cloc
 Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </p>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> same GHz → max PassMark gap</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> same clock — how far apart are the scores?</p>
 <ul>
-<li>each bar = one catalog GHz · <strong>(max − min) / min</strong><br>
+<li>each bar: one <strong>GHz</strong> · gap between <strong>slowest</strong> and <strong>fastest</strong><br>
 </li>
-<li>some bands <strong>double+</strong> (~<strong>+100%</strong>…<strong>+200%</strong>)<br>
+<li>some clocks: <strong>2×</strong> difference in <strong>PassMark</strong><br>
 </li>
-<li>red ≈ bad · GHz alone won’t pick the <strong>fast core</strong></li>
+<li>red = bad news · <strong>GHz alone</strong> won’t find the <strong>fast core</strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1621,23 +1570,29 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <th></th>
 <th style="text-align: right;"><strong>r5a.large</strong></th>
 <th style="text-align: right;"><strong>c8a.large</strong></th>
-<th style="text-align: right;"><strong>m8azn.large</strong> (5 GHz)</th>
+<th style="text-align: right;"><strong>m8azn.large</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>catalog GHz</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">4.5</td>
+<td style="text-align: right;"><strong>5.0</strong></td>
+</tr>
+<tr class="even">
 <td>PassMark ST</td>
 <td style="text-align: right;">~1400</td>
 <td style="text-align: right;">~3800</td>
 <td style="text-align: right;">~4300</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>on-demand</td>
 <td style="text-align: right;">~$0.11</td>
 <td style="text-align: right;">~$0.11</td>
 <td style="text-align: right;">~$0.21</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>regions</td>
 <td style="text-align: right;">~16</td>
 <td style="text-align: right;">~7</td>
@@ -1654,19 +1609,18 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> “then just require 5 GHz?”</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> should we just require 5 GHz, the current maximum?</p>
 <ul>
 <li><strong>tiny menu</strong> — handful of SKUs, mostly <strong>m8azn</strong> / <strong>x8aedz</strong><br>
 </li>
 <li><strong>few regions</strong> · new / niche<br>
 </li>
-<li><strong>m8azn.large</strong> ≈ <strong>twice</strong> <strong>c8a.large</strong> price · only a bit faster<br>
-</li>
-<li><strong>x8aedz</strong> = huge RAM tax<br>
+<li>vs <strong>c8a</strong>: <strong>2×</strong> the price · only ~<strong>10%</strong> more PassMark<br>
 </li>
 <li>Karpenter wants <strong>diversity</strong> — 5 GHz pin = brittle<br>
 </li>
-<li>need <strong>benchmark ranking</strong>, not a GHz floor</li>
+<li>need <strong>benchmark ranking</strong>, not a GHz floor<br>
+</li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1697,29 +1651,20 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ol>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> how we designed it (with Claude)</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> we sat down with <strong>Claude</strong> and planned the fix — six decisions:</p>
 <ul>
-<li>problem: Karpenter has <strong>shape + price</strong>, not <strong>measured single-core</strong><br>
+<li><strong>own NodePools</strong> — don’t touch user / Auto Mode pools · <strong>GitOps</strong>-safe<br>
 </li>
-<li>constraint: <strong>EKS Auto Mode</strong> → can’t fork Karpenter / patch their pools<br>
+<li>one <strong><code>SCNodePool</code></strong> → one Karpenter NodePool (template + type list)<br>
 </li>
-<li>also: <strong>GitOps</strong> (Argo CD, …) — don’t mutate a pool the user owns → sync wars<br>
+<li>NodePool gets only <strong>instance-type / arch / capacity</strong> — no AWS-only labels → avoid <strong>RequirementsDrifted</strong> loops<br>
 </li>
-<li><strong>ADR-001:</strong> create <strong>our own</strong> NodePools only<br>
+<li><strong>Keeper</strong> ranks by benchmark (e.g.&nbsp;<strong>PassMark</strong> ST)<br>
 </li>
-<li><strong>ADR-003:</strong> one <strong><code>SCNodePool</code></strong> → one NodePool<br>
+<li><strong>churn</strong> control — ranking moves a bit → don’t <strong>replace</strong> running nodes<br>
 </li>
-<li><strong>ADR-004:</strong> only stamp keys every provider accepts — else <strong>drift loop</strong><br>
+<li><strong>Go</strong> — reuse Karpenter’s own validators<br>
 </li>
-<li><strong>ADR-002:</strong> read <strong>Keeper API</strong>, filter/rank client-side<br>
-</li>
-<li><strong>ADR-006:</strong> <strong>churn</strong> — don’t replace nodes every time the ranking wiggles<br>
-</li>
-<li><strong>ADR-007:</strong> <strong>Go</strong> so we import Karpenter’s own validators<br>
-</li>
-<li>plans 01→08: scaffold → selection → adapters → controller → tests → Helm<br>
-</li>
-<li>next: <strong>demo</strong> the result</li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1737,7 +1682,7 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <section id="demo" class="title-slide slide level1">
 <h1></h1>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css">
-<div id="demo-player" style="width: 100%; height: 730px; margin-top: -30px;"></div>
+<div id="demo-player" style="width: 90%; height: 730px; margin-left: auto; margin-right: auto; margin-top: -30px;margin-bottom: 0px;"></div>
 <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
 <script>
   (function () {
@@ -1761,6 +1706,12 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
     });
   })();
 </script>
+
+<p class="centered" style="margin-top: -30px;">
+  <a href="https://sparecores.github.io/sc-karpenter-nodepool/demo/" target="_blank" class="centered" style="margin-top: -30px;">
+    <code>sc-karpenter-nodepool</code> demo
+  </a>
+</p>
 <aside class="notes">
 <p>TODO Attila speaker notes</p>
 <style type="text/css">
@@ -1782,10 +1733,10 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <p><img src="images/crawling.png" style="margin: auto;"></p>
 </div>
 <aside class="notes">
-<p>TODO Gergo add speaker notes</p>
-<p>Gergo: this is cool .. we could definitely use something like this at spare cores GH/Pulumit etc fajdalom .. schedule/stop/tasks.</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> this is cool .. we could definitely use something like this at Spare Cores, as today we use GitHub Actions with Pulumi to pick and start VMs, keeping status and logs in GitHub repos, sometimes in S3 as well, and it became quite compliacated over the years to make sure we are decommisioning unwanted resources etc.</p>
+<p>Instead of this, using k8s and a pod asking for an exact instance type at a given vendor would be so much simpler and more flexible.</p>
 <p>I’ve checked Gardener, Container API … did not find anything plug and play.</p>
-<p>how to use your kubernetes controller for this?</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> how to use your kubernetes controller for this?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1815,18 +1766,20 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> can we run <strong>sc-inspector</strong> on this?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> great for picking types — <strong>not</strong> for inspector <strong>JIT</strong></p>
+<p>There are still several limitations as you can see, but due to time constraints, let’s rather focus on the ideal scenario instead.</p>
 <ul>
-<li>today <strong><code>start.yml</code></strong>: GH Actions + Pulumi · pick <strong>vendor + instance</strong> · start VM<br>
+<li>we only write a <strong>NodePool</strong> — Karpenter still does the launch<br>
 </li>
-<li>dream: Pod asks for <strong>exact</strong> type (and cloud/region) → node appears → isolate → tear down<br>
+<li><strong>one</strong> cloud, <strong>one</strong> cluster — no per-pod region<br>
 </li>
-<li><strong>yes</strong>, Pod can use <strong>nodeSelector / affinity</strong> on <code>instance-type</code> — Karpenter will prefer/launch that<br>
-· <strong>if</strong> that type is in the generated <strong>NodePool</strong> (SC selection / ranking)<br>
+<li>can’t hop <strong>AWS → GCP → Hetzner</strong> from one Pod<br>
 </li>
-<li><strong>no</strong>: one Pod cannot jump to <strong>another cloud/region</strong> — pool is still <strong>this</strong> cluster’s provider<br>
+<li><strong>Karpenter + cloud provider</strong> must already be there<br>
 </li>
-<li>still need <strong>multi-vendor provider + join</strong> → next slide (<strong>scarpenter</strong> / ROADMAP)</li>
+<li>no VPC / image / Flatcar / mesh — out of scope<br>
+</li>
+<li>Pod <strong>can</strong> pin a type <strong>if</strong> it’s already in the pool — not “any SKU anywhere” like <strong><code>start.yml</code></strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1855,23 +1808,18 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> what we’d build for Spare Cores inspector</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> ideal stack — replace <strong><code>start.yml</code></strong> with Pod-driven <strong>JIT</strong></p>
 <ul>
-<li>today: <strong><code>start.yml</code></strong> every 15m · Pulumi stacks · idle VMs · git as state<br>
-</li>
-<li>want: <strong>Pod-driven JIT</strong> · any of <strong>8 clouds</strong> · join <strong>our</strong> cluster · kill node when done<br>
-</li>
-<li><strong>k3s + Headscale</strong> — CP anywhere · nodes behind NAT OK<br>
-</li>
-<li><strong>Hatchet</strong> replaces the GH schedule / retry spaghetti<br>
-</li>
-<li><strong>scarpenter</strong> = the missing piece (multi-cloud Karpenter) — <strong>not</strong> sc-karpenter-nodepool alone<br>
-</li>
-<li>Flatcar everywhere · generic kubelet join · consolidateAfter ≈ <strong>0</strong><br>
-</li>
-<li>sc-karpenter-nodepool stays useful: <strong>which</strong> types · <strong>PassMark</strong> / price band<br>
-</li>
-<li>design: <code>sc-docs/k8s-inspector</code> · ask the room if they’d use this → next slide</li>
+<li><p><strong>k3s</strong> on cheap/on-prem VMs — <strong>not</strong> EKS/GKE/AKS<br>
+</p></li>
+<li><p><strong>Headscale</strong> mesh — workers only need <strong>outbound</strong> (any cloud, NAT OK)<br>
+</p></li>
+<li><p><strong>Hatchet</strong> runs the plans · Pods · retries (not GH Actions spaghetti)<br>
+</p></li>
+<li><p><strong>scarpenter</strong> — one <strong>multi-cloud</strong> Karpenter · catalog from <strong>Keeper</strong><br>
+</p></li>
+<li><p><strong>Flatcar</strong> · TLS join · <strong>single-tenant</strong> (one bench at a time; more jobs → more nodes) · die when empty</p></li>
+<li><p>flow: Pod asks for a type → boot → inspect → <strong>tear down</strong></p></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1889,23 +1837,46 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 <section id="feedback" class="title-slide slide level1">
 <h1>&gt; /review plan</h1>
 <style>
+  #feedback {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+  }
+  #feedback > h1 {
+    flex: 0 0 auto;
+  }
+  #feedback .feedback-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
   #feedback .feedback-question {
-    position: absolute;
-    inset: 0;
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
-    font-size: 2.5em;
+    font-size: 1.25em;
     text-align: center;
-    pointer-events: none;
   }
-  #feedback .feedback-question > * {
-    pointer-events: auto;
+  #feedback .feedback-footnote {
+    flex: 0 0 auto;
+    margin: 0 0 0.4em;
+    font-size: 2em;
+    text-align: center;
+  }
+  #feedback .feedback-footnote span {
+    color: #14B8A6;
   }
 </style>
+<div class="feedback-body">
 <div class="feedback-question fragment centered">
-<p>Would you find something like this useful?</p>
+<p>Would you find something like this* useful?</p>
+</div>
+<div class="feedback-footnote fragment centered">
+<p>* any k8s cluster <span>+</span> cloud credential <span>+</span> capacity need<span class="fragment" style="color: #34D399;"><span style="color: #14B8A6;"> =&gt;</span><br>ephemeral instances from any region of any cloud</span></p>
+</div>
 </div>
 <aside class="notes">
 <p>TODO Gergo speaker notes</p>
@@ -2038,6 +2009,7 @@ if (url.match("/?live")) {
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-agent-terminal/agentterminal.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-poll/lean-qr-nano.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-poll/poll.js"></script>
+  <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-slide-timer/slidetimer.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
@@ -2230,7 +2202,7 @@ if (url.match("/?live")) {
         },
 
         // reveal.js plugins
-        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealBoxOverlay, RevealCurtain, RevealAgentTerminal, RevealPoll, QuartoSupport,
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealBoxOverlay, RevealCurtain, RevealAgentTerminal, RevealPoll, RevealSlideTimer, QuartoSupport,
 
           RevealMath,
           RevealNotes,

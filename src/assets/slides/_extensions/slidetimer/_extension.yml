@@ -1,0 +1,9 @@
+title: slidetimer
+author: Spare Cores
+version: 1.0.0
+quarto-required: ">=1.4.0"
+contributes:
+  revealjs-plugins:
+    - name: RevealSlideTimer
+      script:
+        - slidetimer.js
