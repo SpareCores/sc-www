@@ -1665,7 +1665,7 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> sould we just require 5 GHz, the current maximum?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> should we just require 5 GHz, the current maximum?</p>
 <ul>
 <li><strong>tiny menu</strong> — handful of SKUs, mostly <strong>m8azn</strong> / <strong>x8aedz</strong><br>
 </li>
@@ -1707,7 +1707,7 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ol>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> planned with <strong>Claude</strong> — walk the six points:</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> we sat down with <strong>Claude</strong> and planned the fix — six decisions:</p>
 <ul>
 <li><strong>own NodePools</strong> — don’t touch user / Auto Mode pools · <strong>GitOps</strong>-safe<br>
 </li>
@@ -1816,18 +1816,19 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> can we run <strong>sc-inspector</strong> on this?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> great for picking types — <strong>not</strong> for inspector <strong>JIT</strong></p>
 <ul>
-<li>today <strong><code>start.yml</code></strong>: GH Actions + Pulumi · pick <strong>vendor + instance</strong> · start VM<br>
+<li>we only write a <strong>NodePool</strong> — Karpenter still does the launch<br>
 </li>
-<li>dream: Pod asks for <strong>exact</strong> type (and cloud/region) → node appears → isolate → tear down<br>
+<li><strong>one</strong> cloud, <strong>one</strong> cluster — no per-pod region<br>
 </li>
-<li><strong>yes</strong>, Pod can use <strong>nodeSelector / affinity</strong> on <code>instance-type</code> — Karpenter will prefer/launch that<br>
-· <strong>if</strong> that type is in the generated <strong>NodePool</strong> (SC selection / ranking)<br>
+<li>can’t hop <strong>AWS → GCP → Hetzner</strong> from one Pod<br>
 </li>
-<li><strong>no</strong>: one Pod cannot jump to <strong>another cloud/region</strong> — pool is still <strong>this</strong> cluster’s provider<br>
+<li>Karpenter + provider must <strong>already</strong> be there<br>
 </li>
-<li>still need <strong>multi-vendor provider + join</strong> → next slide (<strong>scarpenter</strong> / ROADMAP)</li>
+<li>no VPC / image / Flatcar / mesh — out of scope<br>
+</li>
+<li>Pod <strong>can</strong> pin a type <strong>if</strong> it’s already in the pool — not “any SKU anywhere” like <strong><code>start.yml</code></strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {

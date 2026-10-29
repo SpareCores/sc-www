@@ -1188,7 +1188,7 @@ Great for **picking** types · **not** for inspector-style **multi-cloud JIT**
 - we only write a **NodePool** — Karpenter still does the launch  
 - **one** cloud, **one** cluster — no per-pod region  
 - can't hop **AWS → GCP → Hetzner** from one Pod  
-- Karpenter + provider must **already** be there  
+- **Karpenter + cloud provider** must already be there  
 - no VPC / image / Flatcar / mesh — out of scope  
 - Pod **can** pin a type **if** it's already in the pool — not “any SKU anywhere” like **`start.yml`**
 :::
