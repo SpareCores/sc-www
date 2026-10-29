@@ -215,6 +215,21 @@ Attila Nagy
 
   <p class="date">2026-10-30</p>
 </section>
+<section class="slide level2">
+
+<!-- TODO Gergo drop
+
+- vcpu-diff-0 -> speed up (15 sec)
+- vcpu-diff slides -> 5 sec
+- vcpu-difference : Vincent - how to pick fomr the many instnaces .. 32x diff
+- vcpus-2-count-breakdown -> speed up
+
+- whois DROP
+- server search -> no network
+
+- drop responses from dynamoddb
+-->
+</section>
 <section id="cover-slide" class="title-slide slide level1" data-curtain="close">
 <h1></h1>
 <script>
@@ -244,10 +259,11 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … great pleasure to be back to KCD Budapest … last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year (PAUSE), who recommended a different approach this time (and we will sing a song)!</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … great pleasure to be back to KCD Budapest … last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year (PAUSE), who recommended that instead of presenting hundreds of slides and an unprocessable amount of information, we should take a different approach this time (and we will sing a song)!</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> that’s not what we have discussed …</p>
-<p><span style="color:#ef4444;font-weight:bold">G:</span> then we will present a drama</p>
-<p>curtain!</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> then we will present a drama with a painful problem of a devops engineer, epic emotional journey and of course cathartic solution!</p>
+<p>let’s get started!</p>
+<p>curtain …</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -368,7 +384,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
   })();
 </script>
 <aside class="notes">
-<p><span style="color:#ef4444;font-weight:bold">G:</span> The story starts with meeting Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> The story starts with meeting Attila a few weeks ago, and this was the conversation we had:</p>
 <p><span style="color:#ef4444;font-weight:bold">G:</span> Hey Attila, … how are you doing, you look a bit concerned..</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> As an engineer, concerned is my default state</p>
 <p><span style="color:#34d399;font-weight:bold">A:</span> frustrated <strong>Python app</strong> · needs <strong>low latency</strong> · <strong>won’t scale</strong> · <strong>GIL</strong> -&gt; <strong>single-core</strong> performance · hunting right <strong>instance type</strong> · fed up with it -&gt; <strong>memes</strong> [show image]</p>
@@ -1497,11 +1513,10 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <aside class="notes">
 <p><span style="color:#34d399;font-weight:bold">A:</span> <strong>GIL</strong> — for folks who don’t know it yet</p>
 <ul>
-<li>image: <strong>G(H)uido</strong> v(F)an Rossum + <strong>Larry</strong> Hastings (Gilectomy)</li>
 <li>the <strong>GIL</strong> has been with us since the early <strong>90s</strong> — one thread at a time</li>
-<li>promising tries <strong>failed</strong> — e.g.&nbsp;Larry’s <strong>Gilectomy</strong> (~2016)</li>
-<li>latest hope: <strong>free-threaded Python</strong> (still not the default)</li>
-<li>we still need a <strong>fast single core</strong> → project name: <strong>“Core Alone”</strong></li>
+<li>several attemps to remove GIL, like <strong>G(H)uido</strong> v(F)an Rossum + <strong>Larry</strong> Hastings (Gilectomy) without clear success for a long time</li>
+<li>there’s a new hope (<strong>free-threaded Python</strong>)</li>
+<li>but we still usually need a <strong>fast single core</strong> → project name: <strong>“Core Alone”</strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1560,11 +1575,12 @@ plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor cloc
 <p><img src="images/aws-passmark-vs-ghz.png" style="width: 92%; margin-top: -30px;"></p>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> does <strong>clock speed</strong> predict <strong>single-thread</strong> performance?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> My question was: does <strong>clock speed</strong> predict <strong>single-thread</strong> performance?</p>
 <ul>
-<li>on the graph: ~<strong>1000</strong> AWS types · <strong>clock speed</strong> vs <strong>PassMark</strong> ST<br>
-</li>
+<li>According to our measurements: there’s association between the <strong>clock speed</strong> and the <strong>PassMark</strong> ST score, and</li>
 <li>trend goes up — but same clock speed → <strong>wildly different</strong> scores<br>
+</li>
+<li>sometimes a <strong>lower</strong> clock even <strong>beats</strong> a higher one<br>
 </li>
 <li>so Karpenter’s <strong>MHz filter</strong> ≠ fastest core for <strong>GILty</strong></li>
 </ul>
@@ -1816,6 +1832,7 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </div>
 <aside class="notes">
 <p><span style="color:#34d399;font-weight:bold">A:</span> great for picking types — <strong>not</strong> for inspector <strong>JIT</strong></p>
+<p>There are still several limitations as you can see, but due to time constraints, let’s rather focus on the ideal scenario instead.</p>
 <ul>
 <li>we only write a <strong>NodePool</strong> — Karpenter still does the launch<br>
 </li>
@@ -1856,23 +1873,18 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
 </ul>
 </div>
 <aside class="notes">
-<p><span style="color:#34d399;font-weight:bold">A:</span> what we’d build for Spare Cores inspector</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> ideal stack — replace <strong><code>start.yml</code></strong> with Pod-driven <strong>JIT</strong></p>
 <ul>
-<li>today: <strong><code>start.yml</code></strong> every 15m · Pulumi stacks · idle VMs · git as state<br>
-</li>
-<li>want: <strong>Pod-driven JIT</strong> · any of <strong>8 clouds</strong> · join <strong>our</strong> cluster · kill node when done<br>
-</li>
-<li><strong>k3s + Headscale</strong> — CP anywhere · nodes behind NAT OK<br>
-</li>
-<li><strong>Hatchet</strong> replaces the GH schedule / retry spaghetti<br>
-</li>
-<li><strong>scarpenter</strong> = the missing piece (multi-cloud Karpenter) — <strong>not</strong> sc-karpenter-nodepool alone<br>
-</li>
-<li>Flatcar everywhere · generic kubelet join · consolidateAfter ≈ <strong>0</strong><br>
-</li>
-<li>sc-karpenter-nodepool stays useful: <strong>which</strong> types · <strong>PassMark</strong> / price band<br>
-</li>
-<li>design: <code>sc-docs/k8s-inspector</code> · ask the room if they’d use this → next slide</li>
+<li><p><strong>k3s</strong> on cheap/on-prem VMs — <strong>not</strong> EKS/GKE/AKS<br>
+</p></li>
+<li><p><strong>Headscale</strong> mesh — workers only need <strong>outbound</strong> (any cloud, NAT OK)<br>
+</p></li>
+<li><p><strong>Hatchet</strong> runs the plans · Pods · retries (not GH Actions spaghetti)<br>
+</p></li>
+<li><p><strong>scarpenter</strong> — one <strong>multi-cloud</strong> Karpenter · catalog from <strong>Keeper</strong><br>
+</p></li>
+<li><p><strong>Flatcar</strong> · TLS join · <strong>single-tenant</strong> (one bench at a time; more jobs → more nodes) · die when empty</p></li>
+<li><p>flow: Pod asks for a type → boot → inspect → <strong>tear down</strong></p></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1910,22 +1922,25 @@ Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
     align-items: center;
     justify-content: center;
     margin: 0;
-    font-size: 2.5em;
+    font-size: 1.25em;
     text-align: center;
   }
   #feedback .feedback-footnote {
     flex: 0 0 auto;
     margin: 0 0 0.4em;
-    font-size: 0.85em;
+    font-size: 2em;
     text-align: center;
+  }
+  #feedback .feedback-footnote span {
+    color: #14B8A6;
   }
 </style>
 <div class="feedback-body">
-<div class="feedback-question fragment centered" data-fragment-index="1">
+<div class="feedback-question fragment centered">
 <p>Would you find something like this* useful?</p>
 </div>
-<div class="feedback-footnote fragment centered" data-fragment-index="1">
-<p>* any k8s cluster + capacity need + cloud credential =<br>ephemeral instances from any region of any cloud</p>
+<div class="feedback-footnote fragment centered">
+<p>* any k8s cluster <span>+</span> cloud credential <span>+</span> capacity need<span class="fragment" style="color: #34D399;"><span style="color: #14B8A6;"> =&gt;</span><br>ephemeral instances from any region of any cloud</span></p>
 </div>
 </div>
 <aside class="notes">

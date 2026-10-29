@@ -49,7 +49,7 @@ format:
 - whois DROP
 - server search -> no network
 
-- feedback: aprobetus helyett nagybetus resz + fragment
+- drop responses from dynamoddb
 -->
 
 # {#cover-slide data-curtain="close"}
@@ -91,13 +91,15 @@ format:
 </p>
 
 ::: {.notes}
-[[G]] welcome ... great pleasure to be back to KCD Budapest ... last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year (PAUSE), who recommended a different approach this time (and we will sing a song)! 
+[[G]] welcome ... great pleasure to be back to KCD Budapest ... last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year (PAUSE), who recommended that instead of presenting hundreds of slides and an unprocessable amount of information, we should take a different approach this time (and we will sing a song)! 
 
 [[A]] that's not what we have discussed ...
 
-[[G]] then we will present a drama
+[[G]] then we will present a drama with a painful problem of a devops engineer, epic emotional journey and of course cathartic solution!
 
-curtain!
+let's get started!
+
+curtain ...
 :::
 
 # {#crawl data-curtain="open"}
@@ -209,7 +211,7 @@ curtain!
 ```
 
 ::: {.notes}
-[[G]] The story starts with meeting Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:
+[[G]] The story starts with meeting Attila a few weeks ago, and this was the conversation we had:
 
 [[G]] Hey Attila, ... how are you doing, you look a bit concerned..  
 
@@ -1054,9 +1056,9 @@ plus `instance-cpu-sustained-clock-speed-mhz` — **vendor clock**, not a **benc
 :::
 
 ::: {.notes}
-[[A]] does **clock speed** predict **single-thread** performance?
+[[A]] My question was: does **clock speed** predict **single-thread** performance?
 
-- on the graph: ~**1000** AWS types · **clock speed** vs **PassMark** ST  
+- According to our measurements: there's association between the **clock speed** and the **PassMark** ST score, and 
 - trend goes up — but same clock speed → **wildly different** scores  
 - sometimes a **lower** clock even **beats** a higher one  
 - so Karpenter’s **MHz filter** ≠ fastest core for **GILty**
@@ -1278,25 +1280,28 @@ Ideal stack for **sc-inspector** (replace GH Actions + Pulumi `start.yml`):
     align-items: center;
     justify-content: center;
     margin: 0;
-    font-size: 2.5em;
+    font-size: 1.25em;
     text-align: center;
   }
   #feedback .feedback-footnote {
     flex: 0 0 auto;
     margin: 0 0 0.4em;
-    font-size: 0.85em;
+    font-size: 2em;
     text-align: center;
+  }
+  #feedback .feedback-footnote span {
+    color: #14B8A6;
   }
 </style>
 ```
 
 ::: {.feedback-body}
-::: {.feedback-question .fragment .centered data-fragment-index="1"}
+::: {.feedback-question .fragment .centered}
 Would you find something like this* useful?
 :::
 
-::: {.feedback-footnote .fragment .centered data-fragment-index="1"}
-\* any k8s cluster + capacity need + cloud credential =<br/>ephemeral instances from any region of any cloud
+::: {.feedback-footnote .fragment .centered}
+\* any k8s cluster <span>+</span> cloud credential <span>+</span> capacity need<span class="fragment" style="color: #34D399;"><span style="color: #14B8A6;"> =></span><br/>ephemeral instances from any region of any cloud</span>
 :::
 :::
 
