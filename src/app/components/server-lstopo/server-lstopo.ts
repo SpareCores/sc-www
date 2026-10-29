@@ -50,6 +50,7 @@ type TooltipListener = {
 export class ServerLstopo implements OnChanges {
   @Input() vendorId: string = "";
   @Input() apiReference: string = "";
+  @Input() fullscreenEnabled = true;
   @Output() svgExists = new EventEmitter<boolean>();
   @Output() svgWidth = new EventEmitter<number>();
 
