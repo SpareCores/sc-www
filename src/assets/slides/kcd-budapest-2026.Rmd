@@ -16,6 +16,7 @@ revealjs-plugins:
   - curtain
   - agentterminal
   - poll
+  - slidetimer
 format:
   revealjs:
     theme: [black, css/custom-4.2.1.css]
