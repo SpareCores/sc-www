@@ -46,10 +46,7 @@ export class Analytics {
 
     // PostHog installs timers and global listeners that should not block hydration.
     this.trackingPromise ??= this.ngZone.runOutsideAngular(() =>
-      this.loadPostHog(POSTHOG_KEY, POSTHOG_HOST).catch((error) => {
-        this.pendingEvents = [];
-        console.error("PostHog initialization failed:", error);
-      }),
+      this.loadPostHog(POSTHOG_KEY, POSTHOG_HOST),
     );
     return this.trackingPromise;
   }
@@ -138,12 +135,22 @@ export class Analytics {
   }
 
   private async loadPostHog(key: string, host: string): Promise<void> {
-    const { default: posthog } = await this.importPostHog();
-    posthog.init(key, {
-      api_host: host,
-      persistence: "sessionStorage",
-    });
-    this.posthog = posthog;
+    try {
+      const { default: posthog } = await this.importPostHog();
+      this.ngZone.runOutsideAngular(() => {
+        posthog.init(key, {
+          api_host: host,
+          persistence: "sessionStorage",
+        });
+      });
+      this.posthog = posthog;
+    } catch (error) {
+      this.trackingPromise = null;
+      this.pendingEvents = [];
+      console.error("PostHog initialization failed:", error);
+      return;
+    }
+
     this.flushPendingReset();
     this.flushPendingIdentify();
     this.flushPendingEvents();
@@ -169,7 +176,9 @@ export class Analytics {
     }
 
     this.pendingReset = false;
-    this.posthog?.reset();
+    this.ngZone.runOutsideAngular(() => {
+      this.posthog?.reset();
+    });
   }
 
   private flushPendingEvents(): void {
