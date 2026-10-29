@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Spare Cores Poll</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: #06263a;
+        color: #f1f5f9;
+        font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+      main {
+        width: 100%;
+        max-width: 32rem;
+        text-align: center;
+      }
+      h1 {
+        font-size: 1.5rem;
+        line-height: 1.35;
+        font-weight: 600;
+        margin: 0 0 1.5rem;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      input,
+      button {
+        width: 100%;
+        font: inherit;
+        font-size: 1.25rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 2px solid #34d399;
+      }
+      input {
+        background: #fff;
+        color: #0f172a;
+        text-align: center;
+      }
+      button {
+        background: #34d399;
+        color: #06263a;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:disabled,
+      input:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .spinner {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin: 0.25rem auto;
+        border: 4px solid rgba(52, 211, 153, 0.25);
+        border-top-color: #34d399;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      #status {
+        min-height: 1.5em;
+        margin-top: 1rem;
+        color: #cbd5e1;
+      }
+      #status.error {
+        color: #fca5a5;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 id="question">Loading…</h1>
+      <form id="form" hidden>
+        <input id="value" name="value" autocomplete="off" required />
+        <button id="submit" type="submit">Submit</button>
+        <div id="spinner" class="spinner" aria-label="Submitting" hidden></div>
+      </form>
+      <p id="status" role="status"></p>
+    </main>
+    <script>
+      (function () {
+        const API =
+          location.hostname === "sparecores.com"
+            ? "https://www-api.sparecores.com"
+            : "https://www-api-staging.sparecores.net";
+        const pathMatch = location.pathname.match(/^\/poll\/([^/]+)\/?$/);
+        const pollId = pathMatch
+          ? decodeURIComponent(pathMatch[1])
+          : new URLSearchParams(location.search).get("id") || "";
+        const question = document.getElementById("question");
+        const form = document.getElementById("form");
+        const input = document.getElementById("value");
+        const button = document.getElementById("submit");
+        const status = document.getElementById("status");
+        const spinner = document.getElementById("spinner");
+        let poll = null;
+        let clockOffset = 0;
+
+        function setStatus(text, isError) {
+          status.textContent = text;
+          status.classList.toggle("error", !!isError);
+        }
+
+        function randomNonce() {
+          const bytes = crypto.getRandomValues(new Uint8Array(16));
+          return Array.from(bytes, function (b) {
+            return b.toString(16).padStart(2, "0");
+          }).join("");
+        }
+
+        async function sha256Hex(text) {
+          const digest = await crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(text),
+          );
+          return Array.from(new Uint8Array(digest), function (b) {
+            return b.toString(16).padStart(2, "0");
+          }).join("");
+        }
+
+        async function solve(nonce, timestamp, difficulty) {
+          const target = "0".repeat(difficulty);
+          const batch = 500;
+          for (let start = 0; ; start += batch) {
+            const hashes = await Promise.all(
+              Array.from({ length: batch }, function (_, i) {
+                return sha256Hex(
+                  pollId + ":" + nonce + ":" + timestamp + ":" + (start + i),
+                );
+              }),
+            );
+            const index = hashes.findIndex(function (h) {
+              return h.startsWith(target);
+            });
+            if (index >= 0) return start + index;
+            await new Promise(function (resolve) {
+              setTimeout(resolve, 0);
+            });
+          }
+        }
+
+        async function load() {
+          const res = await fetch(API + "/polls/" + encodeURIComponent(pollId));
+          if (!res.ok) {
+            throw new Error(
+              res.status === 404
+                ? "Poll not found"
+                : "Couldn't load the poll, please refresh.",
+            );
+          }
+          poll = await res.json();
+          clockOffset = poll.server_time - Date.now();
+          question.textContent = poll.question;
+          document.title = poll.question;
+          if (poll.type === "number") {
+            input.type = "number";
+            input.step = "any";
+            input.inputMode = "decimal";
+          } else {
+            input.type = "text";
+            input.maxLength = 500;
+          }
+          form.hidden = false;
+          input.focus();
+        }
+
+        form.addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const raw = input.value.trim();
+          if (!raw) return;
+          const value = poll.type === "number" ? Number(raw) : raw;
+          if (poll.type === "number" && !Number.isFinite(value)) {
+            setStatus("Please enter a number.", true);
+            return;
+          }
+          input.disabled = true;
+          button.hidden = true;
+          spinner.hidden = false;
+          setStatus("");
+          try {
+            const nonce = randomNonce();
+            const timestamp = Date.now() + clockOffset;
+            const solution = await solve(nonce, timestamp, poll.difficulty);
+            const res = await fetch(
+              API + "/polls/" + encodeURIComponent(pollId) + "/votes",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ value, nonce, timestamp, solution }),
+              },
+            );
+            if (!res.ok) {
+              const body = await res.json().catch(function () {
+                return {};
+              });
+              const error = new Error("HTTP " + res.status);
+              if (res.status < 500 && typeof body.detail === "string") {
+                error.userMessage = body.detail;
+              }
+              throw error;
+            }
+            form.hidden = true;
+            question.hidden = true;
+            setStatus("Thanks for voting! 🎉");
+          } catch (err) {
+            console.error(err);
+            input.disabled = false;
+            spinner.hidden = true;
+            button.hidden = false;
+            setStatus(
+              err.userMessage || "Something went wrong, please try again.",
+              true,
+            );
+          }
+        });
+
+        load().catch(function (err) {
+          console.error(err);
+          question.textContent =
+            err.message === "Poll not found"
+              ? err.message
+              : "Couldn't load the poll, please refresh.";
+        });
+      })();
+    </script>
+  </body>
+</html>
