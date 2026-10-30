@@ -1,0 +1,47 @@
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "Roboto Mono", monospace, sans-serif;
+
+  --color-emerald-100: #d1fae5;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+
+  --color-sky-100: #e0f2fe;
+  --color-sky-300: #7dd3fc;
+  --color-sky-400: #38bdf8;
+  --color-sky-500: #0ea5e9;
+  --color-sky-700: #0369a1;
+  --color-sky-800: #075985;
+  --color-sky-900: #0c4a6e;
+  --color-sky-950: #082f49;
+
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-800: #991b1b;
+
+  --color-yellow-100: #fef9c3;
+  --color-yellow-400: #facc15;
+  --color-yellow-500: #eab308;
+
+  --color-amber-300: #fcd34d;
+
+  --color-blue-600: #2563eb;
+
+  --color-sky-975: oklch(25.7% 0.052 240.8);
+
+  --color-primary: var(--color-sky-950);
+  --color-secondary: var(--color-sky-975);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));

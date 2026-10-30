@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .content_embed {
   color: #fff;
   background: transparent;
