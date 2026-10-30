@@ -62,7 +62,7 @@ describe("Regions", () => {
   describe("vendor toggles", () => {
     const visibleRows = (): NodeListOf<HTMLTableRowElement> =>
       fixture.nativeElement.querySelectorAll(
-        ".items_table tbody tr:not(.regions-table__row--hidden)",
+        ".sc-table tbody tr:not(.regions-table__row--hidden)",
       );
 
     beforeEach(() => {

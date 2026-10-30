@@ -93,9 +93,9 @@
             @for (compare of serverCompares; track compare.title) {
               <div
                 class="flex flex-col py-6 gap-2 text-white"
-                [ngClass]="{
-                  'bg-secondary rounded-lg px-6': compare.type === 'card',
-                }"
+                [class]="
+                  compare.type === 'card' ? 'bg-secondary rounded-lg px-6' : ''
+                "
               >
                 @if (compare.type === "section") {
                   <div
@@ -105,7 +105,7 @@
                   <h2 class="section_heading text-2xl font-semibold">
                     <span>{{ compare.title }}</span>
                     <a
-                      class="header-anchor"
+                      class="sc-header-anchor"
                       [href]="'/servers/compare#' + compare.id"
                       [attr.aria-label]="'Link to ' + compare.title"
                       [attr.title]="'Link to ' + compare.title"
@@ -130,16 +130,16 @@
                 ) {
                   <div
                     class="description_inner_html"
-                    [ngClass]="{
-                      'text-lg space-y-4': compare.type === 'section',
-                    }"
+                    [class]="
+                      compare.type === 'section' ? 'text-lg space-y-4' : ''
+                    "
                     [innerHTML]="compare.description"
                   ></div>
                 }
                 @if (compare.query) {
                   <details
                     class="flex flex-col gap-2 open:[&_svg]:-rotate-90"
-                    [ngClass]="{ 'mt-4': compare.type === 'section' }"
+                    [class.mt-4]="compare.type === 'section'"
                   >
                     <summary class="text-sm list-none cursor-pointer">
                       SQL query used to select instances
@@ -224,7 +224,7 @@
         >
           @if (isBrowser() && isTableOutsideViewport()) {
             <div class="fixed_thead" [style]="stickyFixedDivStyle()">
-              <table class="items_table" [style]="stickyMainTableStyle()">
+              <table class="sc-compare-table" [style]="stickyMainTableStyle()">
                 <thead>
                   <tr>
                     <th [style]="stickyFirstColStyle()"></th>
@@ -238,8 +238,7 @@
                         class="compact-number-header-cell compare-table-header-cell"
                       >
                         <div
-                          class="ml-auto flex flex-col items-end gap-1"
-                          style="width: fit-content"
+                          class="ml-auto flex flex-col items-end gap-1 w-fit"
                         >
                           <a
                             class="underline decoration-dotted whitespace-nowrap"
@@ -287,7 +286,7 @@
               <div
                 #scrollbarMirrorBottomRef
                 class="scrollbar_mirror_outer"
-                [ngStyle]="
+                [style]="
                   scrollbarMirrorController.toStyle(mirror.bottomPosition)
                 "
                 (scroll)="onMirrorScroll($event)"
@@ -308,35 +307,22 @@
 <div
   id="tooltipDefault"
   #tooltipDefault
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none"
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
 >
   {{ tooltipContent }}
 </div>
 
 <ng-template #baselinePanel>
-  <div
-    id="baseline_server_options"
-    class="compare-dropdown-menu bg-secondary rounded-lg shadow-sm w-64 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="baseline_server_button"
-    >
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
-        (click)="selectBaselineServer(null)"
-      >
+  <div id="baseline_server_options" class="sc-dropdown w-64">
+    <ul class="sc-dropdown__list" aria-labelledby="baseline_server_button">
+      <li class="sc-dropdown__option" (click)="selectBaselineServer(null)">
         <div class="text-white text-sm">No baseline</div>
       </li>
       @for (
         server of servers;
         track server.vendor_id + "_" + server.server_id
       ) {
-        <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
-          (click)="selectBaselineServer(server)"
-        >
+        <li class="sc-dropdown__option" (click)="selectBaselineServer(server)">
           <div class="text-white text-sm">
             {{ server.display_name }} ({{ server.vendor_id }})
           </div>
@@ -347,19 +333,10 @@
 </ng-template>
 
 <ng-template #currencyPanel>
-  <div
-    id="currency_options"
-    class="compare-dropdown-menu bg-secondary rounded-lg shadow-sm w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="currency_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (currency of availableCurrencies; track currency.name) {
-        <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
-          (click)="selectCurrency(currency)"
-        >
+        <li class="sc-dropdown__option" (click)="selectCurrency(currency)">
           <div class="text-white text-sm">
             {{ currency.name }} ({{ currency.symbol }})
           </div>

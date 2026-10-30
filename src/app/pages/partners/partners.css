@@ -122,16 +122,13 @@
   visibility: hidden;
 }
 
-.header-anchor {
-  opacity: 0;
-  text-decoration: none;
-  margin-left: 0.5rem;
-  transition: opacity 0.2s;
+.sc-header-anchor:focus,
+.sc-header-anchor:focus-visible,
+.partners-heading:focus-within .sc-header-anchor,
+.partners-heading:hover .sc-header-anchor {
+  opacity: 1;
 }
 
-.header-anchor:focus,
-.header-anchor:focus-visible,
-.partners-heading:focus-within .header-anchor,
-.partners-heading:hover .header-anchor {
-  opacity: 1;
+a.sc-header-anchor:hover {
+  color: inherit;
 }

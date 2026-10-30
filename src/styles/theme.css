@@ -49,5 +49,3 @@
   --color-slot-base: oklch(32.2% 0.13 22.7);
   --color-slot-base-disabled: oklch(24.3% 0.1 29.2);
 }
-
-@custom-variant dark (&:where(.dark, .dark *));

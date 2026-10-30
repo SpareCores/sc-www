@@ -5,15 +5,11 @@
     <div class="text-white text-xl pr-16 mx-2 xl:mx-0">
       Currently we are tracking {{ vendors.length }} cloud provider vendors as
       part of the
-      <a
-        href="/#project_components"
-        class="underline decoration-dotted hover:text-gray-500"
-        >SC Crawler project</a
-      >:
+      <a href="/#project_components" class="sc-link">SC Crawler project</a>:
     </div>
 
     <div class="overflow-x-auto mx-2 xl:mx-0">
-      <table class="items_table w-full">
+      <table class="sc-table sc-table--interactive w-full">
         <thead>
           <tr>
             <th></th>
@@ -60,7 +56,7 @@
                 <a
                   href="{{ vendor.homepage }}"
                   (click)="$event.stopPropagation()"
-                  class="underline decoration-dotted hover:text-gray-500"
+                  class="sc-link"
                   target="_blank"
                   rel="noopener"
                 >

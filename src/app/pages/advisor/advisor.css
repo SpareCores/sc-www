@@ -1,10 +1,5 @@
 @reference "../../../styles/tailwind.css";
 
-.advisor-page--loading-baseline-workloads,
-:host ::ng-deep .advisor-page--loading-baseline-workloads * {
-  cursor: wait !important;
-}
-
 .advisor-page-body {
   @apply flex gap-8;
 }
@@ -66,16 +61,6 @@
   display: block;
   flex: 1;
   min-height: 0;
-}
-
-:host
-  ::ng-deep
-  .advisor-filter-bar
-  .advisor-filter-bar-filters
-  sc-search-bar
-  .search_bar_content
-  .filters {
-  border-right: 0;
 }
 
 .advisor-filter-bar.advisor-filter-bar-collapsed {
@@ -174,29 +159,14 @@
 }
 
 .advisor-table-wrap {
-  @apply overflow-x-auto;
+  @apply overflow-x-auto scrollbar-thin;
   overflow-y: visible;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
   padding-left: 1px;
 }
 
 .advisor-table-loading-overlay {
   @apply absolute top-0 left-0 w-full h-full;
   background-color: color-mix(in oklab, var(--color-black) 20%, transparent);
-}
-
-.advisor-table-wrap::-webkit-scrollbar {
-  height: 2px;
-}
-
-.advisor-table-wrap::-webkit-scrollbar-track {
-  background: var(--color-gray-700);
-}
-
-.advisor-table-wrap::-webkit-scrollbar-thumb {
-  background-color: var(--color-emerald-400);
-  border-radius: 3px;
 }
 
 .advisor-results-table {
@@ -250,22 +220,6 @@
       }
     }
   }
-}
-
-.advisor-dropdown-menu {
-  @apply z-10 rounded-lg border border-solid border-emerald-400 bg-secondary shadow-sm;
-}
-
-.advisor-dropdown-menu-list {
-  @apply py-2 text-sm text-gray-700;
-}
-
-.advisor-dropdown-menu-option {
-  @apply flex items-center gap-2 rounded-xs px-2 py-1 cursor-pointer hover:bg-emerald-400/80;
-}
-
-.advisor-dropdown-menu-label {
-  @apply text-sm text-white;
 }
 
 .advisor-table-vendor-logo {

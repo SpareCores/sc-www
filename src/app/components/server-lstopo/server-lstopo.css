@@ -1,11 +1,3 @@
-/* Hide scrollbars on modal body while keeping drag-to-pan scroll functional */
-.lstopo-modal-body {
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 .lstopo-container svg {
   display: block;
 }

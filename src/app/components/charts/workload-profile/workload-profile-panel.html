@@ -2,14 +2,7 @@
   <div
     class="w-full h-auto overflow-visible relative flex flex-col gap-4 workload-profile-charts-to-hide-for-test"
     [attr.id]="isEmbedded() ? 'workload_profile' : null"
-    [ngClass]="{
-      'px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]':
-        layout() === 'compare' && !isEmbedded(),
-      'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]':
-        layout() === 'details' && !isEmbedded(),
-      block_full_inline: layout() === 'compare' && isEmbedded(),
-      block_full: layout() === 'details' && isEmbedded(),
-    }"
+    [class]="panelClass()"
   >
     @if (showHeader()) {
       <div class="flex justify-between items-center mb-4 gap-4">
@@ -56,17 +49,17 @@
           <ng-template #profilePanel>
             <div
               [id]="profileOptionsId"
-              class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
+              class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
             >
               <ul
-                class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                class="sc-dropdown__list"
                 [attr.aria-labelledby]="profileButtonId"
               >
                 @for (item of profileDropdownItems(); track item.id) {
                   <li>
                     <button
                       type="button"
-                      class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-400/80"
+                      class="sc-dropdown__option"
                       (click)="selectProfile(item.id)"
                     >
                       <div class="text-white text-sm">{{ item.title }}</div>
@@ -323,7 +316,7 @@
                     </td>
                     <td
                       class="compact-number workload-profile-breakdown-table__impact-value"
-                      [ngClass]="getImpactColorClass(row.impact)"
+                      [class]="getImpactColorClass(row.impact)"
                     >
                       {{ formatImpactPercent(row.impact) }}
                     </td>

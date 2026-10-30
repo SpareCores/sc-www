@@ -6,15 +6,15 @@
 @source "../assets/articles";
 
 @utility partners-content {
-  & a:not(.header-anchor) {
+  & a:not(.sc-header-anchor) {
     @apply underline decoration-dotted;
   }
 
-  & a:not(.header-anchor):hover {
+  & a:not(.sc-header-anchor):hover {
     @apply text-gray-500;
   }
 
-  & a:not(.header-anchor):focus-visible {
+  & a:not(.sc-header-anchor):focus-visible {
     @apply text-gray-500;
   }
 }
@@ -85,4 +85,38 @@
 
 @utility content_gutter {
   @apply px-2 xl:px-0;
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
+
+  &::-webkit-scrollbar {
+    height: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-gray-700);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-emerald-400);
+    border-radius: 3px;
+  }
+}
+
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility cursor-wait-all {
+  cursor: wait !important;
+
+  & * {
+    cursor: wait !important;
+  }
 }

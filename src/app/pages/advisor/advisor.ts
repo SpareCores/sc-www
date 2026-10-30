@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
@@ -386,7 +386,6 @@ type AdvisorComparableResourceKey =
 @Component({
   selector: "sc-advisor",
   imports: [
-    CommonModule,
     Button,
     Breadcrumbs,
     Dropdown,

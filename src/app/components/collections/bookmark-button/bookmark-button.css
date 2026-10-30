@@ -35,48 +35,20 @@
   height: 1.25rem;
 }
 
-.bookmark-button__icon--add,
-.bookmark-button__icon--remove {
-  display: none;
-  position: absolute;
-}
-
-.bookmark-button--active {
+.sc-bookmark-toggle--active {
   color: var(--color-emerald-400);
 }
 
-.bookmark-button--active .bookmark-button__icon--default {
-  fill: currentColor;
-}
-
-.bookmark-button:hover:not(:disabled) .bookmark-button__icon {
-  fill: currentColor;
-}
-
-.bookmark-button--can-add:hover:not(:disabled) {
+.sc-bookmark-toggle--can-add:hover:not(:disabled) {
   color: var(--color-emerald-400);
 }
 
-.bookmark-button--can-add:hover:not(:disabled) .bookmark-button__icon--default {
-  display: none;
-}
-
-.bookmark-button--can-add:hover:not(:disabled) .bookmark-button__icon--add {
-  display: block;
-  position: static;
-}
-
-.bookmark-button--can-remove:hover:not(:disabled) {
+.sc-bookmark-toggle--can-remove:hover:not(:disabled) {
   color: var(--color-red-500);
 }
 
-.bookmark-button--can-remove:hover:not(:disabled)
-  .bookmark-button__icon--default {
-  display: none;
-}
-
-.bookmark-button--can-remove:hover:not(:disabled)
-  .bookmark-button__icon--remove {
-  display: block;
-  position: static;
+.bookmark-button.bookmark-button--large,
+.bookmark-button--large .bookmark-button__icon {
+  width: 1.5rem;
+  height: 1.5rem;
 }
