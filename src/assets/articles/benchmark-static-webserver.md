@@ -154,7 +154,7 @@ outperforming the `c7i.large` in this specific workload.
 
 So depending on the size of data to be served and the number of
 concurrent connections, you might have better options either in the
-ARM or x86 instances.
+Arm or x86 instances.
 
 ## Server Performance
 

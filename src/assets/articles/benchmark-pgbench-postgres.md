@@ -36,7 +36,7 @@ on both self-hosted and managed PostgreSQL. Some highlights:
   do not show up in the score.
 - **From tiny to large servers**: runs on anything from 2 GiB of RAM up to
   servers with hundreds of vCPUs.
-- **ARM and x86**: the images are published for both `arm64` and `amd64`.
+- **Arm and x86**: the images are published for both `arm64` and `amd64`.
 - **One comparable number**: each run records a concurrency curve with p50, p95,
   and p99 latency at up to four client counts, then reduces it to a single score
   in peak transactions per minute (TPM) that compares the CPU and memory
@@ -211,7 +211,7 @@ database dimension. Note the following:
 We now proudly publish a PostgreSQL benchmark that runs the same way on
 self-hosted and managed databases, and focuses on the CPU and memory work that
 differs most between server types. It scales from 2 GiB nodes to servers with
-hundreds of vCPUs, on both ARM and x86. The concurrency profile shows not just
+hundreds of vCPUs, on both Arm and x86. The concurrency profile shows not just
 how fast a server is, but how well it scales. Since [Navigator](/servers) also
 tracks server prices, you can weigh TPM against cost when picking a server.
 
