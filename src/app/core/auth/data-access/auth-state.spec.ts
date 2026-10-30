@@ -226,6 +226,7 @@ describe("AuthState", () => {
 
   it("toasts when Clerk is not initialized on sign in or sign up", async () => {
     const auth = createAuth();
+    spyOn(clerkService(), "init").and.resolveTo();
     const toastSpy = spyOn(
       (
         auth as unknown as {
@@ -237,6 +238,7 @@ describe("AuthState", () => {
 
     expect(() => auth.signIn()).not.toThrow();
     expect(() => auth.signUp()).not.toThrow();
+    await Promise.resolve();
     expect(auth.signInModalOpen()).toBeFalse();
     expect(auth.signUpModalOpen()).toBeFalse();
     expect(toastSpy).toHaveBeenCalledTimes(2);
@@ -249,6 +251,49 @@ describe("AuthState", () => {
     expect(() => auth.openUserProfile()).not.toThrow();
     expect(auth.profileModalOpen()).toBeFalse();
     await expectAsync(auth.signOut()).toBeResolved();
+  });
+
+  it("opens sign in once Clerk finishes loading", async () => {
+    const auth = createAuth();
+    let finishLoading: () => void = () => undefined;
+    spyOn(clerkService(), "init").and.callFake(
+      () =>
+        new Promise<void>((resolve) => {
+          finishLoading = () => {
+            setClerkInstance({});
+            resolve();
+          };
+        }),
+    );
+
+    auth.signIn();
+    expect(auth.signInModalOpen()).toBeFalse();
+
+    finishLoading();
+    await Promise.resolve();
+
+    expect(auth.signInModalOpen()).toBeTrue();
+  });
+
+  it("toasts when Clerk fails to load on sign up", async () => {
+    const auth = createAuth();
+    spyOn(clerkService(), "init").and.rejectWith(new Error("chunk failed"));
+    const toastSpy = spyOn(
+      (
+        auth as unknown as {
+          toastService: { show: (options: unknown) => void };
+        }
+      ).toastService,
+      "show",
+    );
+
+    auth.signUp();
+    await Promise.resolve();
+
+    expect(auth.signUpModalOpen()).toBeFalse();
+    expect(toastSpy).toHaveBeenCalledOnceWith(
+      jasmine.objectContaining({ title: AUTH_MESSAGES.authUnavailable }),
+    );
   });
 
   it("returns null token outside the browser", async () => {

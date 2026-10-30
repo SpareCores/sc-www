@@ -48,12 +48,12 @@
               inputmode="decimal"
               scNumbersOnly
               id="filter_range_value_{{ parameter.name }}"
-              class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
+              class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-hidden text-white rounded-xs h-5 text-center"
               [class.filter-draft-input--dirty]="
                 isParameterDraftDirty(parameter)
               "
               [ngModel]="getParameterDraftValue(parameter)"
-              [ngStyle]="getInputStyle(parameter)"
+              [style]="getInputStyle(parameter)"
               (ngModelChange)="setParameterDraftValue($event)"
               (keyup.enter)="commitParameterInput($event)"
               (blur)="commitParameterInput($event)"
@@ -108,12 +108,12 @@
             scNumbersOnly
             [allowDecimal]="false"
             id="filter_discrete_range_value_{{ parameter.name }}"
-            class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
+            class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-hidden text-white rounded-xs h-5 text-center"
             [class.filter-draft-input--dirty]="
               isCpuCacheRangeDraftDirty(parameter)
             "
             [ngModel]="getCpuCacheRangeInputValue()"
-            [ngStyle]="getCpuCacheRangeInputStyle()"
+            [style]="getCpuCacheRangeInputStyle()"
             (ngModelChange)="setCpuCacheRangeDraftValue($event)"
             (keyup.enter)="commitCpuCacheRangeFromEnter($event)"
             (blur)="commitCpuCacheRangeAfterFocusLoss($event)"

@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .page-header {
   @apply flex gap-4 justify-between items-center;
 }
@@ -16,7 +18,7 @@
   height: 2rem;
   border: 0;
   background: transparent;
-  color: rgb(156 163 175 / 0.7);
+  color: color-mix(in oklab, var(--color-gray-400) 70%, transparent);
   cursor: pointer;
   position: relative;
   transition:
@@ -25,19 +27,15 @@
 }
 
 .page-header__icon-btn:hover:not(:disabled) {
-  background: rgb(255 255 255 / 0.08);
+  background: color-mix(in oklab, var(--color-white) 8%, transparent);
 }
 
 .page-header__bookmark:hover:not(:disabled) {
   background: transparent;
 }
 
-.page-header__bookmark:hover:not(:disabled) .page-header__bookmark-icon {
-  fill: currentColor;
-}
-
 .page-header__edit:hover:not(:disabled) {
-  color: #34d399;
+  color: var(--color-emerald-400);
 }
 
 .page-header__icon-btn:disabled {
@@ -59,11 +57,6 @@
   margin-right: 0;
 }
 
-.page-header__bookmark {
-  width: 2rem;
-  height: 2rem;
-}
-
 .page-header__bookmark--locked {
   opacity: 0.55;
   cursor: pointer;
@@ -79,48 +72,16 @@
   height: 2rem;
 }
 
-.page-header__bookmark-icon--add,
-.page-header__bookmark-icon--remove {
-  display: none;
-  position: absolute;
+.sc-bookmark-toggle--active {
+  color: var(--color-emerald-400);
 }
 
-.page-header__bookmark--active {
-  color: #34d399;
+.sc-bookmark-toggle--can-add:hover:not(:disabled) {
+  color: var(--color-emerald-400);
 }
 
-.page-header__bookmark--active .page-header__bookmark-icon--default {
-  fill: currentColor;
-}
-
-.page-header__bookmark--can-add:hover:not(:disabled) {
-  color: #34d399;
-}
-
-.page-header__bookmark--can-add:hover:not(:disabled)
-  .page-header__bookmark-icon--default {
-  display: none;
-}
-
-.page-header__bookmark--can-add:hover:not(:disabled)
-  .page-header__bookmark-icon--add {
-  display: block;
-  position: static;
-}
-
-.page-header__bookmark--can-remove:hover:not(:disabled) {
-  color: #ef4444;
-}
-
-.page-header__bookmark--can-remove:hover:not(:disabled)
-  .page-header__bookmark-icon--default {
-  display: none;
-}
-
-.page-header__bookmark--can-remove:hover:not(:disabled)
-  .page-header__bookmark-icon--remove {
-  display: block;
-  position: static;
+.sc-bookmark-toggle--can-remove:hover:not(:disabled) {
+  color: var(--color-red-500);
 }
 
 .page-header__actions {

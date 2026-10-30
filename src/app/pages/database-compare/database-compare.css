@@ -1,107 +1,12 @@
+@reference "../../../styles/tailwind.css";
+
 :host {
   display: block;
   width: 100%;
 }
 
-.items_table {
-  @apply w-full text-white;
-
-  min-width: 100%;
-
-  --compare-first-column-width: clamp(8rem, 12vw, 12rem);
-
-  position: relative;
-  border-collapse: collapse;
-  table-layout: fixed;
-
-  col.compare-first-column-col {
-    width: var(--compare-first-column-width);
-  }
-
-  thead {
-    @apply border-b border-gray-200 border-solid bg-secondary;
-    th {
-      @apply text-left px-5 py-3 font-normal text-xs;
-    }
-
-    .compact-number-header-cell {
-      text-align: right !important;
-    }
-
-    tr {
-      th:nth-of-type(1) {
-        position: sticky;
-        left: 0;
-        z-index: 21;
-        width: var(--compare-first-column-width);
-        min-width: var(--compare-first-column-width);
-        max-width: var(--compare-first-column-width);
-        white-space: nowrap;
-        @apply bg-secondary;
-      }
-    }
-  }
-
-  tbody {
-    tr.section_header {
-      @apply bg-secondary text-white;
-      td:nth-of-type(1) {
-        @apply bg-secondary;
-      }
-
-      td {
-        vertical-align: middle;
-      }
-    }
-
-    tr {
-      @apply bg-primary;
-
-      td:nth-of-type(1) {
-        @apply bg-primary;
-      }
-    }
-
-    tr {
-      td {
-        @apply px-5 py-3 text-left text-sm;
-      }
-
-      td:not(:nth-of-type(1)) {
-        text-align: right;
-      }
-
-      td:nth-of-type(1) {
-        position: sticky;
-        left: 0;
-        z-index: 20;
-        width: var(--compare-first-column-width);
-        min-width: var(--compare-first-column-width);
-        max-width: var(--compare-first-column-width);
-        white-space: nowrap;
-      }
-    }
-
-    tr.compare-instance-section-gap {
-      height: 1.5rem;
-
-      td {
-        height: 1.5rem;
-        padding: 0;
-        line-height: 0;
-        border: none;
-        @apply bg-primary;
-      }
-    }
-
-    tr.compare-instance-section-first-row td {
-      padding-top: 0;
-    }
-
-    tr.compare-instance-section-last-row td {
-      padding-bottom: 0;
-    }
-  }
+.sc-compare-table thead .compact-number-header-cell {
+  text-align: right !important;
 }
 
 .compare-table-header-cell {
@@ -115,7 +20,7 @@
   right: 0;
   bottom: 0;
   height: 0.3rem;
-  background-color: #34d399;
+  background-color: var(--color-emerald-400);
 }
 
 .compare-table-metric-cell {
@@ -137,11 +42,11 @@
 }
 
 .compare-table-delta--positive {
-  color: #34d399;
+  color: var(--color-emerald-400);
 }
 
 .compare-table-delta--negative {
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .compare-table-delta--neutral {
@@ -158,18 +63,7 @@
   visibility: hidden;
 }
 
-.header-anchor {
-  opacity: 0;
-  margin-left: 0.5rem;
-  text-decoration: none;
-  transition: opacity 0.2s;
-
-  &:hover {
-    @apply text-emerald-400;
-  }
-}
-
-.section_heading:hover .header-anchor {
+.section_heading:hover .sc-header-anchor {
   opacity: 1;
 }
 
@@ -196,7 +90,7 @@
 }
 
 .benchmark-note-icon {
-  @apply h-4 w-4 shrink-0 text-amber-300;
+  @apply h-4 w-4 shrink-0 text-yellow-500;
 }
 
 .fixed_thead {
@@ -217,22 +111,22 @@
 }
 
 .scrollbar_mirror_outer {
-  background: #374151;
+  background: var(--color-gray-700);
   overflow-y: hidden;
   scrollbar-width: thin;
-  scrollbar-color: #34d399 #374151;
+  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
 
   &::-webkit-scrollbar {
     height: 11px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #374151;
+    background: var(--color-gray-700);
   }
 
   &::-webkit-scrollbar-thumb {
     height: 11px;
-    background-color: #34d399;
+    background-color: var(--color-emerald-400);
     border-radius: 3px;
     border: 0;
   }
@@ -242,17 +136,6 @@
   height: 1px;
   margin: 0;
   padding: 0;
-}
-:host ::ng-deep .block_full_inline {
-  @apply px-6 py-6 bg-transparent flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 460px;
-  height: 460px;
-}
-
-:host ::ng-deep .block_full_inline .chart_div {
-  height: 100% !important;
-  min-height: 0;
 }
 
 .compact-number-header-cell {

@@ -67,7 +67,7 @@
                   <div class="flex gap-1">
                     <a
                       [routerLink]="['/vendors', vendor.vendor_id]"
-                      class="underline decoration-dotted hover:text-gray-500"
+                      class="sc-link"
                     >
                       {{
                         vendorNameById()[vendor.vendor_id] || vendor.vendor_id
@@ -453,13 +453,11 @@
             <span class="text-white hidden md:inline">items per page</span>
 
             @if (showPageSizeOptions()) {
-              <div
-                class="z-10 bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid absolute top-12 left-0"
-              >
+              <div class="z-10 sc-dropdown w-44 absolute top-12 left-0">
                 <ul class="py-2 px-1 text-sm text-gray-700" role="listbox">
                   @for (pageLimit of pageLimits; track pageLimit) {
                     <li
-                      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+                      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
                       (click)="selectPageSize(pageLimit)"
                       (keydown.enter)="selectPageSize(pageLimit)"
                       (keydown.space)="
@@ -486,7 +484,7 @@
                 ariaLabel="Previous page"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button pagination-button--nav"
+                buttonClass="sc-button--pagination sc-button--pagination-nav"
                 (click)="goToPage(page() - 1)"
               ></sc-button>
             }
@@ -495,7 +493,7 @@
                 label="1"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(1)"
               ></sc-button>
               @if (page() > 3) {
@@ -511,7 +509,7 @@
                 [label]="'' + pageNumber"
                 [variant]="pageNumber === page() ? 'solid' : 'ghost'"
                 [color]="pageNumber === page() ? 'brand' : 'inverse'"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(pageNumber)"
               ></sc-button>
             }
@@ -525,7 +523,7 @@
                 [label]="'' + totalPages()"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(totalPages())"
               ></sc-button>
             } @else if (totalPages() === page() + 2) {
@@ -533,7 +531,7 @@
                 [label]="'' + totalPages()"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(totalPages())"
               ></sc-button>
             }
@@ -543,7 +541,7 @@
                 ariaLabel="Next page"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button pagination-button--nav"
+                buttonClass="sc-button--pagination sc-button--pagination-nav"
                 (click)="goToPage(page() + 1)"
               ></sc-button>
             }

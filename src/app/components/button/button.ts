@@ -28,7 +28,7 @@ export type ScButtonColor = "brand" | "neutral" | "danger" | "inverse";
   selector: "sc-button",
   imports: [NgTemplateOutlet, RouterLink, LucideDynamicIcon],
   templateUrl: "./button.html",
-  styleUrl: "./button.css",
+  styleUrls: ["./button.css", "./button-variants.css"],
 })
 export class Button {
   size = input<ScButtonSize>("default");
@@ -48,6 +48,7 @@ export class Button {
   ariaLabel = input<string | null>(null);
   ariaExpanded = input<boolean | null>(null);
   ariaControls = input<string | null>(null);
+  ariaPressed = input<boolean | null>(null);
   title = input<string | null>(null);
   buttonClass = input<string>("");
   badge = input<string | number | null>(null);

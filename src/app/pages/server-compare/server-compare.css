@@ -1,58 +1,11 @@
-.items_table {
-  @apply w-full text-white;
+@reference "../../../styles/tailwind.css";
 
-  position: relative;
-  border-collapse: collapse;
+.sc-compare-table thead .compact-number-header-cell {
+  text-align: right !important;
+}
 
-  thead {
-    @apply border-b border-gray-200 border-solid bg-secondary;
-    th {
-      @apply text-left px-5 py-3 font-normal text-xs;
-    }
-
-    .compact-number-header-cell {
-      text-align: right !important;
-    }
-
-    tr {
-      th:nth-of-type(1) {
-        position: sticky;
-        left: 0;
-        z-index: 21;
-        @apply bg-secondary;
-      }
-    }
-  }
-
-  tbody {
-    tr.section_header {
-      @apply bg-secondary text-white;
-      td:nth-of-type(1) {
-        @apply bg-secondary;
-      }
-      scroll-margin-top: 10rem;
-    }
-
-    tr {
-      @apply bg-primary;
-
-      td:nth-of-type(1) {
-        @apply bg-primary;
-      }
-    }
-
-    tr {
-      td {
-        @apply px-5 py-3 text-left text-sm;
-      }
-
-      td:nth-of-type(1) {
-        position: sticky;
-        left: 0;
-        z-index: 20;
-      }
-    }
-  }
+.sc-compare-table tbody tr.section_header {
+  scroll-margin-top: 10rem;
 }
 
 .section_heading {
@@ -65,18 +18,7 @@
   visibility: hidden;
 }
 
-.header-anchor {
-  opacity: 0;
-  margin-left: 0.5rem;
-  text-decoration: none;
-  transition: opacity 0.2s;
-
-  &:hover {
-    @apply text-emerald-400;
-  }
-}
-
-.section_heading:hover .header-anchor {
+.section_heading:hover .sc-header-anchor {
   opacity: 1;
 }
 
@@ -98,22 +40,22 @@
 }
 
 .scrollbar_mirror_outer {
-  background: #374151;
+  background: var(--color-gray-700);
   overflow-y: hidden;
   scrollbar-width: thin;
-  scrollbar-color: #34d399 #374151;
+  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
 
   &::-webkit-scrollbar {
     height: 11px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #374151;
+    background: var(--color-gray-700);
   }
 
   &::-webkit-scrollbar-thumb {
     height: 11px;
-    background-color: #34d399;
+    background-color: var(--color-emerald-400);
     border-radius: 3px;
     border: 0;
   }
@@ -136,91 +78,12 @@
 
 ::-webkit-scrollbar-thumb {
   height: 6px;
-  background-color: #9ca3af;
+  background-color: var(--color-gray-400);
   border-radius: 20px; /* roundness of the scroll thumb */
-}
-:host ::ng-deep .block_full_inline {
-  @apply px-6 py-6 bg-transparent flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 460px;
-  height: 460px;
-}
-
-:host ::ng-deep .block_full_inline .chart_div {
-  height: 100% !important;
-  min-height: 0;
-}
-
-:host ::ng-deep .block_full_inline.memory-compare-chart--cache-markers {
-  min-height: 508px;
-  height: 508px;
-}
-:host ::ng-deep .block_full_short_inline {
-  @apply px-6 py-4 bg-transparent flex flex-col gap-4 relative overflow-visible;
-  width: calc(100%);
-  min-height: 460px;
-  height: 460px;
-}
-
-:host ::ng-deep .block_full_short_inline .charts_div {
-  @apply flex gap-4;
-}
-
-:host ::ng-deep .block_full_short_inline .charts_div .chart_div {
-  @apply w-1/2;
-  height: 380px;
-}
-
-:host ::ng-deep .block_full_short_geekbench {
-  @apply px-4 py-4 bg-transparent flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 460px;
-  height: 500px;
-}
-
-:host ::ng-deep .block_full_short_geekbench .charts_div {
-  @apply flex gap-4;
-}
-
-:host ::ng-deep .block_full_short_geekbench .charts_div .chart_div {
-  @apply w-1/2;
-  height: 460px;
-}
-
-@media screen and (max-width: 1024px) {
-  :host ::ng-deep .block_full_short_inline {
-    min-height: 860px;
-    height: 860px;
-  }
-
-  :host ::ng-deep .block_full_short_inline .charts_div {
-    flex-direction: column;
-  }
-
-  :host ::ng-deep .block_full_short_inline .charts_div .chart_div {
-    width: 100%;
-  }
-
-  :host ::ng-deep .block_full_short_geekbench {
-    min-height: 940px;
-    height: 940px;
-  }
-
-  :host ::ng-deep .block_full_short_geekbench .charts_div {
-    flex-direction: column;
-  }
-
-  :host ::ng-deep .block_full_short_geekbench .charts_div .chart_div {
-    width: 100%;
-  }
 }
 
 .align-baseline {
   vertical-align: baseline;
-}
-
-.compare-dropdown-menu {
-  z-index: 50;
 }
 
 .compare-table-header-cell {
@@ -234,5 +97,5 @@
   right: 0;
   bottom: 0;
   height: 0.3rem;
-  background-color: #34d399;
+  background-color: var(--color-emerald-400);
 }

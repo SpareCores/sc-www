@@ -223,7 +223,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     E2EEvent.prepareHeaderForScreenshot();
 
     // We check that the table body contains at least one row before snapping.
-    cy.get("table.items_table tbody tr").should("have.length.at.least", 1);
+    cy.get("table.sc-table tbody tr").should("have.length.at.least", 1);
 
     // Capture the visual snapshot
     cy.compareSnapshot({
@@ -240,6 +240,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     cy.contains("Strategic & Ecosystem Partners").should("be.visible");
     cy.get(".partner-logos").should("have.length.at.least", 1);
+    E2EEvent.loadImagesForScreenshot(".partner-logo-image");
 
     cy.compareSnapshot({
       name: visualSnapshotName("partners-page", "mobile"),

@@ -1,9 +1,8 @@
 <nav class="bg-custom px-4 lg:px-6 py-2.5 w-full">
   <div class="content flex justify-between items-center w-full">
-    <a routerLink="/" class="h-12" style="max-width: 284px; width: 284px">
+    <a routerLink="/" class="h-12 max-w-[284px] w-[284px]">
       <img
-        class="h-12"
-        style="max-width: 284px; width: 284px"
+        class="h-12 max-w-[284px] w-[284px]"
         src="./assets/images/logos/logo_header.png"
         alt="Spare Cores Logo"
       />
@@ -123,7 +122,7 @@
                 [avatarAlt]="auth.userName()"
                 icon="chevron-down"
                 iconPosition="end"
-                buttonClass="!text-white max-xl:gap-0 max-xl:px-1 [&_.sc-button__icon]:max-xl:hidden"
+                buttonClass="text-white! max-xl:gap-0 max-xl:px-1"
                 ariaLabel="Account menu"
               ></sc-button>
               <div
@@ -185,12 +184,9 @@
 </nav>
 
 <ng-template #menuPanel>
-  <div
-    id="menu_options"
-    class="mobile_menu_panel bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
-  >
+  <div id="menu_options" class="mobile_menu_panel sc-dropdown">
     <ul
-      class="mobile_menu_panel__list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      class="mobile_menu_panel__list sc-dropdown__list"
       aria-labelledby="dropdownDefaultButton"
       (click)="closeMenu()"
     >
@@ -222,7 +218,7 @@
       ></li>
       @if (auth.isAuthenticated()) {
         <li id="menu_account" class="py-2 sm:hidden">
-          <span class="navbar_link hover:!text-white">
+          <span class="navbar_link hover:text-white!">
             <span class="navbar_icon">
               <svg lucideUser class="h-4 w-4"></svg>
             </span>
@@ -248,7 +244,7 @@
         <li class="py-2 ml-6 sm:hidden">
           <button
             type="button"
-            class="navbar_link !text-[#EF4444] hover:!text-red-400"
+            class="navbar_link text-[#EF4444]! hover:text-red-400!"
             (click)="signOut()"
           >
             <span class="navbar_icon">
@@ -260,7 +256,7 @@
         <li class="mx-3 my-1 border-b border-emerald-400/30 sm:hidden"></li>
       }
       <li class="py-2">
-        <span class="navbar_link hover:!text-white">
+        <span class="navbar_link hover:text-white!">
           <span class="navbar_icon">
             <svg lucideInfo class="h-4 w-4"></svg>
           </span>
@@ -316,7 +312,7 @@
         </button>
       </li>
       <li class="py-2">
-        <span class="navbar_link hover:!text-white">
+        <span class="navbar_link hover:text-white!">
           <span class="navbar_icon">
             <svg lucideShipWheel class="h-4 w-4"></svg>
           </span>
@@ -458,12 +454,9 @@
 </ng-template>
 
 <ng-template #authPanel>
-  <div
-    id="auth_options"
-    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
-  >
+  <div id="auth_options" class="sc-dropdown">
     <ul
-      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      class="navbar_menu_list sc-dropdown__list"
       aria-labelledby="auth_button"
       (click)="closeAuth()"
     >
@@ -487,7 +480,7 @@
       <li>
         <button
           type="button"
-          class="navbar_link !text-[#EF4444] hover:!text-red-400"
+          class="navbar_link text-red-500! hover:text-red-400!"
           (click)="signOut()"
         >
           <span class="navbar_icon">
@@ -501,12 +494,9 @@
 </ng-template>
 
 <ng-template #aboutPanel>
-  <div
-    id="about_options"
-    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
-  >
+  <div id="about_options" class="sc-dropdown">
     <ul
-      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      class="navbar_menu_list sc-dropdown__list"
       aria-labelledby="dropdownDefaultButton"
       (click)="closeAbout()"
     >
@@ -564,12 +554,9 @@
 </ng-template>
 
 <ng-template #navigatorPanel>
-  <div
-    id="navigator_options"
-    class="bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
-  >
+  <div id="navigator_options" class="sc-dropdown">
     <ul
-      class="navbar_menu_list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      class="navbar_menu_list sc-dropdown__list"
       aria-labelledby="dropdownDefaultButton"
       (click)="closeNavigator()"
     >
@@ -693,10 +680,7 @@
 </ng-template>
 
 <ng-template #comparePanel>
-  <div
-    id="compare_options"
-    class="compare_dropdown_panel bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
-  >
+  <div id="compare_options" class="compare_dropdown_panel sc-dropdown">
     <div class="compare_dropdown_content">
       @if (serverCompareCount() > 0) {
         <div class="compare_dropdown_section_title">

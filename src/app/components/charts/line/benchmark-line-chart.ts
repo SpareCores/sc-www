@@ -98,7 +98,7 @@ export class BenchmarkLineChart {
   orderTooltip = input("");
   infoTooltip = input("");
   noteTooltip = input("");
-  blockClass = input("block_half");
+  blockClass = input("chart-block--half");
   elementId = input("");
   canvasId = input("");
   detailsServer = input<LineChartDetailsServer | undefined>(undefined);

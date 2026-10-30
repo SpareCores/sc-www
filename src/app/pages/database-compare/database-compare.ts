@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
@@ -167,7 +167,6 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
 @Component({
   selector: "sc-database-compare",
   imports: [
-    CommonModule,
     RouterModule,
     Breadcrumbs,
     Button,
@@ -256,7 +255,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
   readonly stickyMainTableStyle = signal("");
   readonly stickyFirstColStyle = signal<{ width?: string }>({});
   readonly stickyColumnStyles = signal<string[]>([]);
-  readonly bestCellStyle = "font-weight: 600; color: #34D399";
+  readonly bestCellStyle = "font-weight: 600; color: var(--color-emerald-400)";
 
   private subscription = new Subscription();
   private compareLoadId = 0;

@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .partners-paragraph {
   @apply my-10 text-lg text-white;
 
@@ -26,10 +28,15 @@
   @apply my-8 flex flex-wrap items-center justify-center gap-8 overflow-x-auto pb-2;
 
   scrollbar-width: thin;
-  scrollbar-color: #34d39933 transparent;
+  scrollbar-color: color-mix(
+      in oklab,
+      var(--color-emerald-400) 20%,
+      transparent
+    )
+    transparent;
 }
 
-@media (max-width: 767px) {
+@media (width < theme(--breakpoint-md)) {
   .partner-logos--two-rows-mobile {
     @apply flex-wrap justify-center pb-0;
 
@@ -97,16 +104,16 @@
 .partners-divider {
   @apply my-10 border-0 border-t;
 
-  border-color: rgb(52 211 153 / 0.4);
+  border-color: color-mix(in oklab, var(--color-emerald-400) 40%, transparent);
 }
 
 .partner-logos::-webkit-scrollbar {
   height: 4px;
-  background: rgb(52 211 153 / 0.12);
+  background: color-mix(in oklab, var(--color-emerald-400) 12%, transparent);
 }
 
 .partner-logos::-webkit-scrollbar-thumb {
-  background: rgb(52 211 153 / 0.65);
+  background: color-mix(in oklab, var(--color-emerald-400) 65%, transparent);
 }
 
 .partners-anchor-target {
@@ -115,16 +122,13 @@
   visibility: hidden;
 }
 
-.header-anchor {
-  opacity: 0;
-  text-decoration: none;
-  margin-left: 0.5rem;
-  transition: opacity 0.2s;
+.sc-header-anchor:focus,
+.sc-header-anchor:focus-visible,
+.partners-heading:focus-within .sc-header-anchor,
+.partners-heading:hover .sc-header-anchor {
+  opacity: 1;
 }
 
-.header-anchor:focus,
-.header-anchor:focus-visible,
-.partners-heading:focus-within .header-anchor,
-.partners-heading:hover .header-anchor {
-  opacity: 1;
+a.sc-header-anchor:hover {
+  color: inherit;
 }

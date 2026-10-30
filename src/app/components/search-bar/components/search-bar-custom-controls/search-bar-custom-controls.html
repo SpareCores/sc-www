@@ -12,7 +12,7 @@
     ) {
       <div class="font-bold text-emerald-400 text-sm">
         <span
-          class="data-[required]:after:content-['*'] data-[required]:after:text-red-300"
+          class="data-required:after:content-['*'] data-required:after:text-red-300"
           [textContent]="control.title"
           [attr.data-required]="control.required ? '' : null"
         ></span>
@@ -374,7 +374,7 @@
             class="custom-stepper__input"
             [attr.aria-label]="control.title"
             [attr.min]="control.min ?? null"
-            [ngStyle]="getPowerOfTwoStepperInputStyle(control)"
+            [style]="getPowerOfTwoStepperInputStyle(control)"
             [value]="getPowerOfTwoStepperInputValue(control)"
             (focus)="handlePowerOfTwoStepperFocus(control)"
             (input)="onPowerOfTwoStepperInput(control, $event)"

@@ -103,7 +103,7 @@ export class Toast implements OnDestroy {
     const safeActionLabel = action ? escapeHtml(action.label) : "";
 
     toast.innerHTML = `
-      <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${this.getColorClasses(type).background} ${this.getColorClasses(type).text}" role="alert">
+      <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow-sm ${this.getColorClasses(type).background} ${this.getColorClasses(type).text}" role="alert">
         <div class="flex items-center w-full">
           <div class="ml-3 text-sm font-semibold" data-cy="toast-title">${safeTitle}</div>
           ${
@@ -117,7 +117,7 @@ export class Toast implements OnDestroy {
               : ""
           }
         </div>
-        ${safeBody ? `<div class="ml-3 text-sm font-normal mt-1 whitespace-pre-wrap break-words" data-cy="toast-body">${safeBody}</div>` : ""}
+        ${safeBody ? `<div class="ml-3 text-sm font-normal mt-1 whitespace-pre-wrap wrap-break-word" data-cy="toast-body">${safeBody}</div>` : ""}
         ${
           action
             ? `<button type="button" data-toast-action class="ml-3 mt-1 text-sm font-semibold underline underline-offset-2 cursor-pointer text-left">${safeActionLabel}</button>`
@@ -241,7 +241,7 @@ export class Toast implements OnDestroy {
         return {
           background: "bg-emerald-400",
           text: "text-white",
-          hover: "hover:bg-emerald-500",
+          hover: "hover:bg-white/20",
         };
       case "error":
         return {
@@ -253,7 +253,7 @@ export class Toast implements OnDestroy {
         return {
           background: "bg-yellow-500",
           text: "text-white",
-          hover: "hover:bg-yellow-400",
+          hover: "hover:bg-white/20",
         };
       case "info":
       default:

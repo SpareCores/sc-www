@@ -1,11 +1,3 @@
-/* Hide scrollbars on modal body while keeping drag-to-pan scroll functional */
-.lstopo-modal-body {
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 .lstopo-container svg {
   display: block;
 }
@@ -50,9 +42,9 @@
 .lstopo-container svg rect.L2:hover,
 .lstopo-container svg rect.L3:hover,
 .lstopo-container svg rect.PU:hover {
-  stroke: #a7f3d0 !important;
+  stroke: var(--color-emerald-400) !important;
   stroke-width: 1.5 !important;
-  filter: drop-shadow(0 0 1.5px #34d399);
+  filter: drop-shadow(0 0 1.5px var(--color-emerald-400));
 }
 
 .lstopo-container svg text.HostBridge,

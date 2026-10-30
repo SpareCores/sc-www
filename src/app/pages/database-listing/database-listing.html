@@ -34,13 +34,11 @@
 
     <div class="flex gap-8 mx-2 xl:mx-0">
       <div
-        class="filter_bar bg-primary"
-        [ngClass]="{
-          collapsed: isCollapsed,
-        }"
+        class="sc-filter-sidebar bg-primary"
+        [class.sc-filter-sidebar--collapsed]="isCollapsed"
       >
         <div
-          class="collapser bg-secondary"
+          class="sc-filter-sidebar__collapser bg-secondary"
           (click)="toggleCollapse()"
           tabindex="0"
           data-ph-capture-attribute-sc-event="database listing toggle sidebar"
@@ -59,13 +57,11 @@
       </div>
       <div
         class="list_holder flex flex-col gap-4 min-w-0"
-        [ngClass]="{
-          'limited-full': !isCollapsed,
-          'w-full': isCollapsed,
-        }"
+        [class.sc-listing-results--narrow]="!isCollapsed"
+        [class.w-full]="isCollapsed"
       >
         <div
-          class="top_buttons w-[calc(100%-60px)] flex justify-end gap-4 items-center ml-auto"
+          class="sc-listing-toolbar w-[calc(100%-60px)] flex justify-end gap-4 items-center ml-auto"
         >
           <div class="min-w-0">
             <sc-button
@@ -115,30 +111,27 @@
         </div>
         <div>
           <div
-            class="w-full overflow-x-auto relative"
+            class="w-full overflow-x-auto scrollbar-thin relative pl-px"
             [class.min-h-80]="isLoading && !databases.length"
-            style="padding-left: 1px"
           >
             @if (isLoading) {
-              <div
-                class="absolute top-0 left-0 w-full h-full"
-                style="background-color: rgba(0, 0, 0, 0.2)"
-              >
+              <div class="absolute top-0 left-0 w-full h-full bg-black/20">
                 <div class="flex justify-center mt-16 opacity-100">
                   <sc-loading-spinner size="lg"></sc-loading-spinner>
                 </div>
               </div>
             }
-            <table class="items_table" id="databases_table">
+            <table
+              class="sc-table sc-table--compact sc-table--interactive w-full"
+              id="databases_table"
+            >
               <thead>
                 <tr>
-                  <th class="checkbox_column"></th>
+                  <th class="sc-table__checkbox"></th>
                   <th class="favorite_column"></th>
                   @for (column of tableColumns; track column.name) {
                     <th
-                      [ngClass]="{
-                        'cursor-pointer': column.orderField,
-                      }"
+                      [class.cursor-pointer]="column.orderField"
                       (click)="toggleOrdering(column)"
                     >
                       <div class="flex gap-1 whitespace-nowrap">
@@ -185,7 +178,7 @@
                   >
                     <td
                       (click)="toggleCompare2($event, item)"
-                      class="checkbox_column"
+                      class="sc-table__checkbox"
                     >
                       <div class="flex items-center">
                         <input
@@ -197,7 +190,7 @@
                           [disabled]="
                             isCompareCheckboxDisabled(!!item.selected, item)
                           "
-                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                         />
                       </div>
                     </td>
@@ -429,7 +422,7 @@
                   <tr>
                     <td
                       [attr.colspan]="tableColumns.length + 2"
-                      class="px-5 py-6 text-center text-gray-400 text-sm"
+                      class="text-gray-400"
                     >
                       No databases match the selected filters.
                     </td>
@@ -472,9 +465,13 @@
 </div>
 
 @if (compareCount() >= 2) {
-  <div class="fixed_buttons" [class.fixed_buttons--collapsed]="isCollapsed">
+  <div
+    class="sc-floating-actions"
+    [class.sc-floating-actions--collapsed]="isCollapsed"
+  >
     <div class="flex gap-4">
       <sc-button
+        labelClass="sc-button__label--fit"
         label="Clear"
         icon="circle-x"
         iconPosition="start"
@@ -484,6 +481,7 @@
         (click)="clearCompare()"
       ></sc-button>
       <sc-button
+        labelClass="sc-button__label--fit"
         [label]="'Compare (' + compareCount() + ')'"
         icon="scale"
         iconPosition="start"
@@ -496,17 +494,11 @@
 }
 
 <ng-template #pageSizePanel>
-  <div
-    id="pagesize_options"
-    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="pagesize_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (pageLimit of pageLimits; track $index) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="sc-dropdown__option"
           (click)="selectPageSize(pageLimit)"
           (keydown.enter)="selectPageSize(pageLimit)"
           (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
@@ -522,20 +514,14 @@
 </ng-template>
 
 <ng-template #allocationPanel>
-  <div
-    id="allocation_options"
-    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="allocation_button"
-    >
+  <div id="allocation_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" aria-labelledby="allocation_button">
       @for (
         allocationType of bestPriceAllocationTypes;
         track allocationType.name
       ) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="sc-dropdown__option"
           (click)="selectAllocation(allocationType)"
           (keydown.enter)="selectAllocation(allocationType)"
           (keydown.space)="
@@ -553,17 +539,11 @@
 </ng-template>
 
 <ng-template #currencyPanel>
-  <div
-    id="currency_options"
-    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="currency_button"
-    >
+  <div id="currency_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list" aria-labelledby="currency_button">
       @for (currency of availableCurrencies; track currency.name) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="sc-dropdown__option"
           (click)="selectCurrency(currency)"
           (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
           (keydown.space)="selectCurrency(currency); $event.preventDefault()"
@@ -581,21 +561,15 @@
 </ng-template>
 
 <ng-template #columnPanel>
-  <div
-    id="column_options"
-    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-3 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="column_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list px-3" aria-labelledby="dropdownDefaultButton">
       @for (column of possibleColumns; track column.name) {
         <li class="flex py-1 gap-2 items-center">
           <input
             type="checkbox"
             [(ngModel)]="column.show"
             (ngModelChange)="refreshColumns()"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
           />
           <div class="text-white text-sm">{{ column.name }}</div>
         </li>
@@ -607,8 +581,7 @@
 <div
   id="tooltipDefault"
   #tooltipDefault
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none"
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
 >
   {{ tooltipContent }}
 </div>

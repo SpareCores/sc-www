@@ -17,7 +17,7 @@ vCPUs across different instance generations doesn't make much sense:
 <div class="flex justify-center items-center mt-8 mb-6 w-full">
   <a href="https://x.com/sszuecs/status/1825626542216511640"
      target="_blank" rel="noopener"
-     class="max-w-[80%] !no-underline">
+     class="max-w-[80%] no-underline!">
     <img
       title="Tweet stating how useless it is to compare servers based on their vCPU count, along with mentions to example benchmarks."
       src="/assets/images/blog/binserve-twitter.webp"/>

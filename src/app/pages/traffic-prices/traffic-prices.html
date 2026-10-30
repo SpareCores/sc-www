@@ -20,13 +20,11 @@
 
     <div class="flex gap-8 mx-2 xl:mx-0">
       <div
-        class="filter_bar bg-primary"
-        [ngClass]="{
-          collapsed: isCollapsed,
-        }"
+        class="sc-filter-sidebar bg-primary"
+        [class.sc-filter-sidebar--collapsed]="isCollapsed"
       >
         <div
-          class="collapser bg-secondary"
+          class="sc-filter-sidebar__collapser bg-secondary"
           (click)="toggleCollapse()"
           tabindex="0"
           data-ph-capture-attribute-sc-event="server listing toggle sidebar"
@@ -44,12 +42,12 @@
       </div>
       <div
         class="list_holder flex flex-col gap-4 min-w-0"
-        [ngClass]="{
-          'limited-full': !isCollapsed,
-          'w-full': isCollapsed,
-        }"
+        [class.sc-listing-results--narrow]="!isCollapsed"
+        [class.w-full]="isCollapsed"
       >
-        <div class="top_buttons w-full flex justify-end gap-4 items-center">
+        <div
+          class="sc-listing-toolbar w-full flex justify-end gap-4 items-center"
+        >
           <sc-button
             id="currency_button"
             [scDropdown]="currencyPanel"
@@ -68,26 +66,20 @@
           ></sc-button>
         </div>
         <div>
-          <div
-            class="w-full overflow-x-auto relative"
-            style="padding-left: 1px"
-          >
+          <div class="w-full overflow-x-auto relative pl-px">
             @if (isLoading) {
               <div
-                class="absolute top-0 left-0 w-full h-full pt-16"
-                style="background-color: rgba(0, 0, 0, 0.2)"
+                class="absolute top-0 left-0 w-full h-full pt-16 bg-black/20"
               >
                 <sc-loading-spinner size="lg"></sc-loading-spinner>
               </div>
             }
-            <table class="items_table">
+            <table class="sc-table sc-table--compact w-full">
               <thead>
                 <tr>
                   @for (column of tableColumns; track column.name) {
                     <th
-                      [ngClass]="{
-                        'cursor-pointer': column.orderField,
-                      }"
+                      [class.cursor-pointer]="column.orderField"
                       (click)="toggleOrdering(column)"
                     >
                       <div class="flex gap-1">
@@ -147,7 +139,7 @@
                         </td>
                       }
                       @if (column.type === "region") {
-                        <td class="min-w-225">
+                        <td class="min-w-[225px]">
                           <div class="text-sm text-white">
                             {{ price.region.display_name }}
                           </div>
@@ -239,17 +231,11 @@
 </div>
 
 <ng-template #pageSizePanel>
-  <div
-    id="pagesize_options"
-    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="pagesize_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (pageLimit of pageLimits; track $index) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="sc-dropdown__option"
           (click)="selectPageSize(pageLimit)"
           tabindex="0"
         >
@@ -261,21 +247,15 @@
 </ng-template>
 
 <ng-template #columnPanel>
-  <div
-    id="column_options"
-    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-3 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="column_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list px-3" aria-labelledby="dropdownDefaultButton">
       @for (column of possibleColumns; track column.name) {
         <li class="flex py-1 gap-2 items-center">
           <input
             type="checkbox"
             [(ngModel)]="column.show"
             (ngModelChange)="refreshColumns()"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
           />
           <div class="text-white text-sm">{{ column.name }}</div>
         </li>
@@ -285,18 +265,12 @@
 </ng-template>
 
 <ng-template #currencyPanel>
-  <div
-    id="currency_options"
-    class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="currency_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (currency of availableCurrencies; track currency.name) {
         <li
           tabindex="0"
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          class="sc-dropdown__option"
           (click)="selectCurrency(currency)"
         >
           <div class="text-white text-sm">

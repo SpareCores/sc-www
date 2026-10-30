@@ -87,6 +87,9 @@ import {
   HIDDEN_SERVER_PROPERTY_IDS,
 } from "./server-details.constants";
 
+import { chartColors } from "../../components/charts/shared/chart-colors.constants";
+import { isBelowBreakpoint } from "../../tools/breakpoints";
+
 const SIMILAR_SERVER_CATEGORIES: Partial<
   Record<string, "score" | "score_per_price" | "specs">
 > = {
@@ -288,7 +291,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   @HostListener("window:resize")
   onResize() {
     if (isPlatformBrowser(this.platformId)) {
-      this.isSmallScreen = window.innerWidth <= 1178;
+      this.isSmallScreen = isBelowBreakpoint(window, "wide");
     }
   }
 
@@ -1051,12 +1054,12 @@ export class ServerDetails implements OnInit, OnDestroy {
           {
             data: [],
             label: "Spot",
-            backgroundColor: "#34D399",
+            backgroundColor: chartColors["emerald-400"],
           },
           {
             data: [],
             label: "Ondemand",
-            backgroundColor: "#E5E7EB",
+            backgroundColor: chartColors["gray-200"],
           },
         ],
       };
@@ -1136,12 +1139,12 @@ export class ServerDetails implements OnInit, OnDestroy {
           {
             data: [],
             label: "Spot",
-            backgroundColor: "#34D399",
+            backgroundColor: chartColors["emerald-400"],
           },
           {
             data: [],
             label: "Ondemand",
-            backgroundColor: "#E5E7EB",
+            backgroundColor: chartColors["gray-200"],
           },
         ],
       };
@@ -1228,13 +1231,13 @@ export class ServerDetails implements OnInit, OnDestroy {
       series.datasets.push({
         data: [],
         label: "Spot",
-        backgroundColor: "#34D399",
+        backgroundColor: chartColors["emerald-400"],
       });
 
       series.datasets.push({
         data: [],
         label: "Ondemand",
-        backgroundColor: "#E5E7EB",
+        backgroundColor: chartColors["gray-200"],
       });
 
       pricesPerZone.forEach((zone: any) => {

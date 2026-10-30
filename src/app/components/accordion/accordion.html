@@ -23,9 +23,9 @@
         [attr.itemscope]="useFaqSchema() ? '' : null"
         [attr.itemprop]="useFaqSchema() ? 'mainEntity' : null"
         [attr.itemtype]="useFaqSchema() ? 'https://schema.org/Question' : null"
-        [ngClass]="{
-          'border-b border-solid border-gray-200': i < items().length - 1,
-        }"
+        [class]="
+          i < items().length - 1 ? 'border-b border-solid border-gray-200' : ''
+        "
       >
         <button
           type="button"
@@ -46,15 +46,13 @@
           }
         </button>
         <p
-          class="min-w-0 pl-2 text-wrap break-words font-light"
+          class="min-w-0 pl-2 text-wrap wrap-break-word font-light"
           [class.mb-6]="i < items().length - 1"
           [attr.itemscope]="useFaqSchema() ? '' : null"
           [attr.itemprop]="useFaqSchema() ? 'acceptedAnswer' : null"
           [attr.itemtype]="useFaqSchema() ? 'https://schema.org/Answer' : null"
-          [ngClass]="{
-            block: activeIndex() === i,
-            hidden: activeIndex() !== i,
-          }"
+          [class.block]="activeIndex() === i"
+          [class.hidden]="activeIndex() !== i"
         >
           @if (!item.html) {
             <span [attr.itemprop]="useFaqSchema() ? 'text' : null">{{
@@ -68,7 +66,7 @@
             ></span>
           }
           @if (item.note) {
-            <span class="block mt-2 text-[#EAB308]">{{ item.note }}</span>
+            <span class="block mt-2 text-yellow-500">{{ item.note }}</span>
           }
         </p>
       </div>

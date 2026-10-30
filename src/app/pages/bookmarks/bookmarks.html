@@ -355,17 +355,11 @@
   </div>
 
   <ng-template #sortPanel>
-    <div
-      id="bookmarks_sort_options"
-      class="bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
-    >
-      <ul
-        class="py-2 px-1 text-sm text-gray-700"
-        aria-labelledby="bookmarks_sort_button"
-      >
+    <div id="bookmarks_sort_options" class="sc-dropdown w-52">
+      <ul class="sc-dropdown__list" aria-labelledby="bookmarks_sort_button">
         @for (option of sortOptions; track option.value) {
           <li
-            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+            class="sc-dropdown__option"
             (click)="selectSortBy(option.value)"
             (keydown.enter)="
               selectSortBy(option.value); $event.preventDefault()
@@ -413,8 +407,7 @@
   <div
     id="tooltipDefault"
     #tooltipDefault
-    style="opacity: 0; display: none"
-    class="tooltip-panel fixed z-100 pointer-events-none"
+    class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
   >
     {{ tooltipContent }}
   </div>

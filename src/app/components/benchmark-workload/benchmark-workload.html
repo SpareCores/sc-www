@@ -1,6 +1,4 @@
-<div
-  class="relative flex flex-col gap-5 rounded-lg border border-solid border-emerald-400 bg-secondary p-6 overflow-hidden"
->
+<div class="relative flex flex-col gap-5 sc-card p-6 overflow-hidden">
   <!-- Status indicator — absolute top-right corner -->
   <div class="absolute top-4 right-4">
     @if (isActive()) {
@@ -10,12 +8,10 @@
         (mouseleave)="hideTooltip()"
       >
         <span
-          class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-          style="background-color: #34d399"
+          class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-emerald-400"
         ></span>
         <span
-          class="relative inline-flex rounded-full h-3 w-3"
-          style="background-color: #34d399"
+          class="relative inline-flex rounded-full h-3 w-3 bg-emerald-400"
         ></span>
       </span>
     } @else {
@@ -25,12 +21,10 @@
         (mouseleave)="hideTooltip()"
       >
         <span
-          class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-          style="background-color: #ef4444"
+          class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-red-500"
         ></span>
         <span
-          class="relative inline-flex rounded-full h-3 w-3"
-          style="background-color: #ef4444"
+          class="relative inline-flex rounded-full h-3 w-3 bg-red-500"
         ></span>
       </span>
     }
@@ -178,7 +172,7 @@
                     <div class="flex flex-wrap gap-1">
                       @for (ex of entry.examples; track ex) {
                         <span
-                          class="inline-block rounded bg-sky-900/60 border border-sky-700/50 px-1.5 py-0.5 font-mono text-xs text-sky-300"
+                          class="inline-block rounded-sm bg-sky-900/60 border border-sky-700/50 px-1.5 py-0.5 font-mono text-xs text-sky-300"
                         >
                           {{ ex }}
                         </span>
@@ -237,8 +231,7 @@
 <!-- Floating tooltip -->
 <div
   #tooltipEl
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none max-w-48"
+  class="tooltip-panel fixed z-100 pointer-events-none max-w-48 opacity-0 hidden"
 >
   {{ tooltipContent() }}
 </div>

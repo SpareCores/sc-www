@@ -5,11 +5,7 @@
     <div class="text-white text-xl pr-16 mx-2 xl:mx-0">
       Currently we are tracking {{ regions.length }} regions at
       {{ vendors.length }} cloud provider vendors as part of the
-      <a
-        href="/#project_components"
-        class="underline decoration-dotted hover:text-gray-500"
-        >SC Crawler project</a
-      >:
+      <a href="/#project_components" class="sc-link">SC Crawler project</a>:
     </div>
 
     @if (vendors.length) {
@@ -22,6 +18,7 @@
             [swatchColor]="vendor.color || '#06263a'"
             variant="ghost"
             color="inverse"
+            [ariaPressed]="!isVendorHidden(vendor.vendor_id)"
             [buttonClass]="
               isVendorSelected(vendor.vendor_id)
                 ? ''
@@ -39,7 +36,7 @@
       #datamapdiv
     ></div>
 
-    <table class="items_table mx-2 xl:mx-0">
+    <table class="sc-table sc-table--interactive mx-2 xl:mx-0">
       <thead>
         <tr>
           <th class="cursor-pointer" (click)="toggleOrdering('region')">
@@ -86,7 +83,12 @@
           region of regions;
           track region.vendor_id + "_" + region.region_id
         ) {
-          <tr (click)="openLink(region)">
+          <tr
+            [class.regions-table__row--hidden]="
+              isVendorHidden(region.vendor_id)
+            "
+            (click)="openLink(region)"
+          >
             <td>
               <div class="flex gap-1">
                 {{ region.display_name }}
@@ -112,6 +114,15 @@
                   ></svg>
                 </a>
               </div>
+            </td>
+          </tr>
+        }
+        @if (regions.length && !visibleRegions.length) {
+          <tr class="regions-table__empty">
+            <td colspan="5">
+              <strong>All vendors are hidden.</strong>
+              Turn on at least one vendor above the map to list its regions
+              here.
             </td>
           </tr>
         }

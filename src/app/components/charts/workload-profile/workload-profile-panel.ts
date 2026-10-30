@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -49,9 +49,11 @@ import {
   hasWorkloadProfileChartData,
 } from "./workload-profile.utils";
 
+import { chartColors } from "../shared/chart-colors.constants";
+
 const SCORE_GAUGE_MAX = 2;
-const SCORE_GAUGE_TRACK_COLOR = "#0C4A6E";
-const SCORE_GAUGE_FILL_COLOR = "#34D399";
+const SCORE_GAUGE_TRACK_COLOR = chartColors["sky-900"];
+const SCORE_GAUGE_FILL_COLOR = chartColors["emerald-400"];
 
 const scoreGaugeTickPlugin: Plugin<"doughnut"> = {
   id: "workloadProfileScoreGaugeTicks",
@@ -87,7 +89,7 @@ const scoreGaugeTickPlugin: Plugin<"doughnut"> = {
     const labelY = centerY + Math.sin(angle) * labelRadius;
 
     ctx.save();
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = chartColors.white;
     ctx.font = "11px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -95,7 +97,7 @@ const scoreGaugeTickPlugin: Plugin<"doughnut"> = {
     ctx.moveTo(tickInnerX, tickInnerY);
     ctx.lineTo(tickOuterX, tickOuterY);
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "#FFFFFF";
+    ctx.strokeStyle = chartColors.white;
     ctx.stroke();
     ctx.fillText("Fleet median", labelX, labelY);
     ctx.restore();
@@ -157,7 +159,6 @@ function buildScoreGaugeChart(score: number | null | undefined): {
   selector: "sc-workload-profile-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     Button,
     LucideDynamicIcon,
     LucideCircleArrowUp,
@@ -198,6 +199,17 @@ export class WorkloadProfilePanel {
   readonly activeAccordionIndex = signal(-1);
   readonly selectedProfileId = signal<string | undefined>(undefined);
   readonly isBrowser = isPlatformBrowser(this.platformId);
+
+  readonly panelClass = computed(() => {
+    if (this.isEmbedded()) {
+      return this.layout() === "compare"
+        ? "chart-block--inline"
+        : "chart-block--full";
+    }
+    return this.layout() === "compare"
+      ? "px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]"
+      : "px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]";
+  });
 
   readonly workloadProfileBenchmarks = computed(() =>
     resolveWorkloadProfileBenchmarksWithData({

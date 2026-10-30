@@ -1,0 +1,25 @@
+.sc-bookmark-toggle__icon--add,
+.sc-bookmark-toggle__icon--remove {
+  display: none;
+  position: absolute;
+}
+
+.sc-bookmark-toggle--active .sc-bookmark-toggle__icon--default,
+.sc-bookmark-toggle:hover:not(:disabled) .sc-bookmark-toggle__icon {
+  fill: currentColor;
+}
+
+.sc-bookmark-toggle--can-add:hover:not(:disabled)
+  .sc-bookmark-toggle__icon--default,
+.sc-bookmark-toggle--can-remove:hover:not(:disabled)
+  .sc-bookmark-toggle__icon--default {
+  display: none;
+}
+
+.sc-bookmark-toggle--can-add:hover:not(:disabled)
+  .sc-bookmark-toggle__icon--add,
+.sc-bookmark-toggle--can-remove:hover:not(:disabled)
+  .sc-bookmark-toggle__icon--remove {
+  display: block;
+  position: static;
+}

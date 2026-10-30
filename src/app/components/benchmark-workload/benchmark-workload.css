@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .histogram_container {
   position: relative;
   height: 220px;
@@ -24,7 +26,7 @@
     }
 
     tr {
-      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
+      @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
       td {
         @apply pl-3 pr-2 py-3 text-left text-sm align-middle;
       }

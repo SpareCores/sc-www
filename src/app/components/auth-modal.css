@@ -1,3 +1,5 @@
+@reference "../../styles/tailwind.css";
+
 .auth-modal {
   position: fixed;
   inset: 0;
@@ -6,7 +8,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgb(0 0 0 / 0.5);
+  background: color-mix(in oklab, var(--color-black) 50%, transparent);
 }
 
 .auth-modal__panel {
@@ -14,8 +16,9 @@
   width: min(100%, 25rem);
   border: 0;
   border-radius: 0.75rem;
-  background: #082f49;
-  box-shadow: 0 25px 50px -12px rgb(15 23 42 / 0.75);
+  background: var(--color-primary);
+  box-shadow: 0 25px 50px -12px
+    color-mix(in oklab, var(--color-slate-900) 75%, transparent);
 }
 
 .auth-modal__body {
@@ -47,7 +50,7 @@
   justify-content: center;
   min-height: 2rem;
   padding-inline: 2.5rem;
-  color: #ffffff;
+  color: var(--color-white);
   font-size: 1.375rem;
   font-weight: 700;
   line-height: 1.25;
@@ -55,7 +58,7 @@
 
 .auth-modal__subtitle {
   margin: 0;
-  color: #9ca3af;
+  color: var(--color-gray-400);
   font-size: 0.875rem;
   line-height: 1.4;
 }
@@ -64,7 +67,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #9ca3af;
+  color: var(--color-gray-400);
   font-size: 0.8125rem;
 }
 
@@ -73,7 +76,7 @@
   content: "";
   flex: 1 1 auto;
   height: 1px;
-  background: rgb(255 255 255 / 0.12);
+  background: color-mix(in oklab, var(--color-white) 12%, transparent);
 }
 
 .auth-modal__divider span {
@@ -135,17 +138,17 @@
 }
 
 .auth-modal__field span {
-  color: #ffffff;
+  color: var(--color-white);
   font-size: 0.8125rem;
   font-weight: 600;
 }
 
 .auth-modal__field input {
   width: 100%;
-  border: 1px solid #34d399;
+  border: 1px solid var(--color-emerald-400);
   border-radius: 0.5rem;
-  background: #e5e7eb;
-  color: #082f49;
+  background: var(--color-gray-200);
+  color: var(--color-primary);
   font-size: 0.875rem;
   line-height: 1.25rem;
   padding: 0.5rem 1rem;
@@ -157,12 +160,12 @@
 }
 
 .auth-modal__field input.auth-modal__input--invalid {
-  border-color: #ef4444;
+  border-color: var(--color-red-500);
   padding-inline-end: 2.75rem;
 }
 
 .auth-modal__field input.auth-modal__input--invalid:focus {
-  box-shadow: 0 0 0 2px #ef4444;
+  box-shadow: 0 0 0 2px var(--color-red-500);
 }
 
 .auth-modal__validation-icon {
@@ -174,7 +177,7 @@
   justify-content: center;
   width: 2.75rem;
   pointer-events: none;
-  color: #ef4444;
+  color: var(--color-red-500);
 }
 
 .auth-modal__validation-icon svg {
@@ -184,7 +187,7 @@
 
 .auth-modal__field-error {
   margin: 0;
-  color: #ef4444;
+  color: var(--color-red-500);
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
@@ -218,13 +221,13 @@
   border: 0;
   padding: 0;
   background: transparent;
-  color: rgb(7 89 133 / 0.7);
+  color: color-mix(in oklab, var(--color-sky-800) 70%, transparent);
   cursor: pointer;
 }
 
 .auth-modal__password-toggle:hover,
 .auth-modal__password-toggle:focus-visible {
-  color: #082f49;
+  color: var(--color-primary);
 }
 
 .auth-modal__password-toggle:focus-visible {
@@ -237,18 +240,18 @@
 }
 
 .auth-modal__field input::placeholder {
-  color: rgb(7 89 133 / 0.7);
+  color: color-mix(in oklab, var(--color-sky-800) 70%, transparent);
 }
 
 .auth-modal__field input:focus {
-  box-shadow: 0 0 0 2px #34d399;
+  box-shadow: 0 0 0 2px var(--color-emerald-400);
 }
 
 .auth-modal__checkbox {
   display: flex;
   align-items: flex-start;
   gap: 0.625rem;
-  color: #ffffff;
+  color: var(--color-white);
   font-size: 0.8125rem;
   line-height: 1.4;
 }
@@ -261,16 +264,16 @@
   height: 0.875rem;
   margin-top: 0.15rem;
   flex-shrink: 0;
-  border: 1px solid #34d399;
+  border: 1px solid var(--color-emerald-400);
   border-radius: 0.25rem;
-  background-color: #06263a;
-  color: #34d399;
+  background-color: var(--color-secondary);
+  color: var(--color-emerald-400);
   cursor: pointer;
 }
 
 .auth-modal__checkbox input:checked {
-  border-color: #34d399 !important;
-  background-color: #34d399 !important;
+  border-color: var(--color-emerald-400) !important;
+  background-color: var(--color-emerald-400) !important;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 4.5' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
@@ -278,7 +281,7 @@
 }
 
 .auth-modal__checkbox input:focus-visible {
-  outline: 2px solid #34d399;
+  outline: 2px solid var(--color-emerald-400);
   outline-offset: 2px;
 }
 
@@ -299,18 +302,12 @@
   flex: 1 1 0;
 }
 
-.auth-modal__verify-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-}
-
 .auth-modal__checkbox a,
 .auth-modal__footer-link {
   border: 0;
   padding: 0;
   background: transparent;
-  color: #34d399;
+  color: var(--color-emerald-400);
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 600;
@@ -321,19 +318,19 @@
 
 .auth-modal__checkbox a:hover,
 .auth-modal__footer-link:hover {
-  color: #6ee7b7;
+  color: color-mix(in oklab, var(--color-emerald-400) 80%, transparent);
 }
 
 .auth-modal__error {
   margin: 0;
-  color: #ef4444;
+  color: var(--color-red-500);
   font-size: 0.8125rem;
   line-height: 1.4;
 }
 
 .auth-modal__info {
   margin: 0;
-  color: #6ee7b7;
+  color: var(--color-emerald-400);
   font-size: 0.8125rem;
   line-height: 1.4;
 }
@@ -341,8 +338,8 @@
 .auth-modal__footer {
   margin-top: 0.25rem;
   padding-top: 0.875rem;
-  border-top: 1px solid rgb(255 255 255 / 0.12);
-  color: #9ca3af;
+  border-top: 1px solid color-mix(in oklab, var(--color-white) 12%, transparent);
+  color: var(--color-gray-400);
   font-size: 0.875rem;
   text-align: center;
 }
@@ -378,12 +375,12 @@
 
 .auth-modal__pending-text {
   margin: 0;
-  color: #9ca3af;
+  color: var(--color-gray-400);
   font-size: 0.875rem;
   line-height: 1.4;
 }
 
-@media (max-width: 640px) {
+@media (width < theme(--breakpoint-sm)) {
   .auth-modal__body {
     padding: 1.5rem 1.25rem 1rem;
   }

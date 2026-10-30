@@ -1,0 +1,51 @@
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "Roboto Mono", monospace, sans-serif;
+
+  --breakpoint-tablet: 50rem;
+  --breakpoint-wide: 75rem;
+
+  --color-emerald-400: #34d399;
+
+  --color-teal-500: #14b8a6;
+
+  --color-sky-300: #7dd3fc;
+  --color-sky-400: #38bdf8;
+  --color-sky-700: #0369a1;
+  --color-sky-800: #075985;
+  --color-sky-900: #0c4a6e;
+  --color-sky-950: #082f49;
+
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-800: #991b1b;
+
+  --color-yellow-500: #eab308;
+
+  --color-blue-600: #2563eb;
+
+  --color-indigo-400: #818cf8;
+
+  --color-lime-400: #a3e635;
+
+  --color-slate-400: #94a3b8;
+
+  --color-sky-975: oklch(25.7% 0.052 240.8);
+
+  --color-primary: var(--color-sky-950);
+  --color-secondary: var(--color-sky-975);
+
+  --color-slot-face: oklch(60.3% 0.242 19.7);
+  --color-slot-face-border: oklch(51.6% 0.208 21.9);
+  --color-slot-face-hover: oklch(45.8% 0.187 26.5);
+  --color-slot-face-hover-border: oklch(37.7% 0.155 29.2);
+  --color-slot-face-disabled: oklch(37.2% 0.149 16.4);
+  --color-slot-face-disabled-border: oklch(27.1% 0.111 29.2);
+  --color-slot-label-disabled: oklch(42.7% 0.094 17.3);
+  --color-slot-base: oklch(32.2% 0.13 22.7);
+  --color-slot-base-disabled: oklch(24.3% 0.1 29.2);
+}

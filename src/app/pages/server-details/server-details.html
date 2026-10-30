@@ -20,9 +20,9 @@
     @if (serverDetails) {
       <div
         id="server_base_info_box"
-        class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+        class="mx-2 xl:mx-0 flex flex-wrap justify-between sc-card gap-8 px-6 py-6 mt-12"
       >
-        <div class="flex gap-6 flex-grow lg:w-1/2 w-full">
+        <div class="flex gap-6 grow lg:w-1/2 w-full">
           <div class="flex gap-4 flex-col shrink-0">
             <div
               class="vendor-logo w-28 h-28 min-w-28 xl:w-20 xl:h-20 xl:min-w-20 bg-white rounded-lg"
@@ -39,6 +39,7 @@
             <h1 class="text-2xl flex items-center gap-x-2 flex-wrap">
               <sc-bookmark-button
                 kind="server"
+                size="large"
                 [vendorId]="serverDetails.vendor_id"
                 [entityId]="serverDetails.api_reference"
                 data-ph-capture-attribute-sc-event="server details favorite"
@@ -52,7 +53,7 @@
                 by
                 <a
                   [routerLink]="['/vendors', serverDetails.vendor.vendor_id]"
-                  class="underline decoration-dotted hover:text-gray-500"
+                  class="sc-link"
                 >
                   {{ serverDetails.vendor.name }}
                 </a>
@@ -180,12 +181,12 @@
           (toggleRequested)="toggleCard('details')"
         ></sc-server-property-card>
         <div
-          class="block_half"
+          class="chart-block--half"
           id="availability"
           [class.open]="expandedCards.availability"
         >
           <h3 class="text-2xl">Availability</h3>
-          <table class="items_table">
+          <table class="sc-kv-table w-full">
             <thead>
               <tr>
                 <th>REGION / ID</th>
@@ -311,7 +312,7 @@
         ></sc-server-property-card>
         @if (lstopoSvgExists !== false) {
           <div
-            class="block_full"
+            class="chart-block--full"
             id="lstopo"
             [style.width]="
               !isSmallScreen && lstopoSvgWidth > 0 && lstopoSvgWidth <= 600
@@ -330,8 +331,8 @@
         }
         @if (descriptionsAvailable && serverDescription) {
           <div
-            class="block_half server-description-card"
-            [class.block_full]="descriptionCardIsFullWidth()"
+            class="chart-block--half server-description-card"
+            [class.chart-block--full]="descriptionCardIsFullWidth()"
             [class.open]="true"
           >
             <div class="flex justify-between items-center gap-4">
@@ -371,7 +372,7 @@
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Economics</h2>
         </div>
-        <div class="block_full price-sections-to-hide-for-test">
+        <div class="chart-block--full price-sections-to-hide-for-test">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Average Price per Region</h3>
           </div>
@@ -390,7 +391,7 @@
             </div>
           }
         </div>
-        <div class="block_half price-sections-to-hide-for-test">
+        <div class="chart-block--half price-sections-to-hide-for-test">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Prices per Zone</h3>
             <div class="flex gap-4">
@@ -421,7 +422,7 @@
             </div>
           }
         </div>
-        <div class="block_half price-sections-to-hide-for-test">
+        <div class="chart-block--half price-sections-to-hide-for-test">
           <h3 class="text-2xl">Lowest Prices</h3>
           @if (isBrowser()) {
             <div>
@@ -451,7 +452,7 @@
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
-              class="mx-2 xl:mx-0 mb-4 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-[100%]"
+              class="mx-2 xl:mx-0 mb-4 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-full"
               role="alert"
             >
               <svg lucideTriangleAlert class="h-6 w-6 bounce-3"></svg>
@@ -473,8 +474,8 @@
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Alternatives</h2>
         </div>
-        <div class="block_half">
-          <div class="flex items-center" style="min-height: 42px">
+        <div class="chart-block--half">
+          <div class="flex items-center min-h-[42px]">
             <h3 class="text-2xl">Servers of the Same Family</h3>
           </div>
           <table class="items_table_similar similar_family_table">
@@ -494,7 +495,7 @@
                 <tr>
                   <td>
                     <a
-                      class="underline decoration-dotted hover:text-gray-500"
+                      class="sc-link"
                       [routerLink]="[
                         '/server',
                         server.vendor_id,
@@ -512,7 +513,7 @@
             </tbody>
           </table>
         </div>
-        <div class="block_half" id="similar_servers">
+        <div class="chart-block--half" id="similar_servers">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Similar Servers</h3>
             <div class="flex gap-4">
@@ -554,7 +555,7 @@
                 <tr class="similar_line">
                   <td>
                     <a
-                      class="underline decoration-dotted hover:text-gray-500"
+                      class="sc-link"
                       [routerLink]="[
                         '/server',
                         server.vendor_id,
@@ -608,14 +609,8 @@
 
 <!-- Dropdown menu -->
 <ng-template #regionPanel>
-  <div
-    id="region_options"
-    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="region_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (filter of regionFilters; track filter.name; let i = $index) {
         <li class="flex py-1 gap-2 items-center">
           <input
@@ -623,7 +618,7 @@
             id="filter_region"
             [(ngModel)]="filter.selected"
             (ngModelChange)="refreshPricesGraphs()"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
           />
           <div class="text-white text-sm">{{ filter.name }}</div>
         </li>
@@ -635,17 +630,14 @@
 <ng-template #similarPanel>
   <div
     id="similar_server_options"
-    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="similar_type_button"
-    >
+    <ul class="sc-dropdown__list" aria-labelledby="similar_type_button">
       @for (option of similarOptions; track option.key) {
         <li>
           <button
             type="button"
-            class="flex w-full items-center rounded-sm border-0 bg-transparent px-2 py-1 text-left text-sm text-white hover:bg-emerald-500"
+            class="flex w-full items-center rounded-xs border-0 bg-transparent px-2 py-1 text-left text-sm text-white hover:bg-emerald-400/80"
             (click)="selectSimilarServerOption(option)"
           >
             {{ option.name }}
@@ -680,6 +672,7 @@
 @if (serverDetails && !isLoading) {
   <sc-button
     class="summarize-fab summarize-fab-to-hide-for-test"
+    buttonClass="sc-button--round"
     icon="sparkles"
     ariaLabel="Summarize server"
     [disabled]="!descriptionsAvailable"
@@ -744,8 +737,7 @@
 
 <div
   #warningTooltip
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none"
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
 >
   {{ warningTooltipContent() }}
 </div>

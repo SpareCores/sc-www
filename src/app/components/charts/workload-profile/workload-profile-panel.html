@@ -2,14 +2,7 @@
   <div
     class="w-full h-auto overflow-visible relative flex flex-col gap-4 workload-profile-charts-to-hide-for-test"
     [attr.id]="isEmbedded() ? 'workload_profile' : null"
-    [ngClass]="{
-      'px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]':
-        layout() === 'compare' && !isEmbedded(),
-      'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]':
-        layout() === 'details' && !isEmbedded(),
-      block_full_inline: layout() === 'compare' && isEmbedded(),
-      block_full: layout() === 'details' && isEmbedded(),
-    }"
+    [class]="panelClass()"
   >
     @if (showHeader()) {
       <div class="flex justify-between items-center mb-4 gap-4">
@@ -56,17 +49,17 @@
           <ng-template #profilePanel>
             <div
               [id]="profileOptionsId"
-              class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+              class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
             >
               <ul
-                class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+                class="sc-dropdown__list"
                 [attr.aria-labelledby]="profileButtonId"
               >
                 @for (item of profileDropdownItems(); track item.id) {
                   <li>
                     <button
                       type="button"
-                      class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                      class="sc-dropdown__option"
                       (click)="selectProfile(item.id)"
                     >
                       <div class="text-white text-sm">{{ item.title }}</div>
@@ -135,10 +128,10 @@
                 }
               </div>
               <div class="workload-profile-details-panel__description min-w-0">
-                <div class="min-w-0 text-wrap break-words font-light">
+                <div class="min-w-0 text-wrap wrap-break-word font-light">
                   <span>{{ selectedItem.content }}</span>
                   @if (selectedItem.note) {
-                    <span class="block mt-2 text-[#EAB308]">{{
+                    <span class="block mt-2 text-yellow-500">{{
                       selectedItem.note
                     }}</span>
                   }
@@ -323,7 +316,7 @@
                     </td>
                     <td
                       class="compact-number workload-profile-breakdown-table__impact-value"
-                      [ngClass]="getImpactColorClass(row.impact)"
+                      [class]="getImpactColorClass(row.impact)"
                     >
                       {{ formatImpactPercent(row.impact) }}
                     </td>
@@ -353,7 +346,7 @@
         </div>
         @if (accordionItems().length) {
           <div
-            class="w-full min-w-0 text-base pr-4 lg:min-h-[460px] lg:pt-[4.5rem] lg:col-start-2 lg:row-start-1"
+            class="w-full min-w-0 text-base pr-4 lg:min-h-[460px] lg:pt-18 lg:col-start-2 lg:row-start-1"
           >
             <sc-accordion
               class="workload-profile-accordion"

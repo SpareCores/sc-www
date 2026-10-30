@@ -1,12 +1,11 @@
-<div class="content_embed">
+<div class="content_embed chart-context--embedded">
   <sc-server-charts
-    class="w-full flex flex-wrap gap-8 bg-secondary"
+    class="w-full flex flex-wrap gap-8 bg-secondary h-[calc(100%-64px)]"
     [serverDetails]="serverDetails"
     [benchmarksByCategory]="benchmarksByCategory"
     [benchmarkMeta]="benchmarkMeta"
     [showChart]="showChart"
     [isEmbedded]="true"
-    style="height: calc(100% - 64px)"
   ></sc-server-charts>
   @if (serverDetails) {
     <a
