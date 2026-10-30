@@ -1,26 +1,31 @@
+import { DialogRef } from "@angular/cdk/dialog";
 import { isPlatformBrowser } from "@angular/common";
 import {
+  afterNextRender,
   ChangeDetectorRef,
   Component,
   DestroyRef,
   ElementRef,
   EventEmitter,
   inject,
+  Injector,
   Input,
   OnChanges,
   Output,
   PLATFORM_ID,
+  TemplateRef,
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
-import { Modal, ModalOptions } from "flowbite";
 import { Subscription, of, switchMap } from "rxjs";
 import { DragToPan } from "../../directives/drag-to-pan";
 import { LstopoSvg } from "../../services/lstopo-svg";
+import { ModalDialog } from "../../services/modal-dialog";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { Button } from "../button/button";
+import { Modal } from "../modal/modal";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
@@ -29,16 +34,17 @@ const LSTOPO_PATH_SUFFIX = "0/lstopo/lstopo.svg";
 // moving lstopo under the "0" variant folder has completed (~2026-10-23)
 const LSTOPO_LEGACY_PATH_SUFFIX = "lstopo/lstopo.svg";
 
-const lstopoModalOptions: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
+type TooltipListener = {
+  el: Element;
+  type: string;
+  fn: EventListener;
 };
 
 @Component({
   selector: "sc-server-lstopo",
-  imports: [Button, DragToPan],
+  imports: [Button, DragToPan, Modal],
   templateUrl: "./server-lstopo.html",
-  styleUrl: "./server-lstopo.scss",
+  styleUrl: "./server-lstopo.css",
   encapsulation: ViewEncapsulation.None,
 })
 export class ServerLstopo implements OnChanges {
@@ -53,6 +59,8 @@ export class ServerLstopo implements OnChanges {
   private cdr = inject(ChangeDetectorRef);
   private svgService = inject(LstopoSvg);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
+  private modalDialog = inject(ModalDialog);
 
   constructor() {
     this.destroyRef.onDestroy(() => this.resetRenderedSvg());
@@ -65,20 +73,18 @@ export class ServerLstopo implements OnChanges {
   isLoading: boolean = false;
   showFullscreen = false;
 
-  @ViewChild("lstopoModal") private lstopoModalRef?: ElementRef<HTMLElement>;
+  @ViewChild("lstopoModalTemplate")
+  private lstopoModalTemplate?: TemplateRef<unknown>;
   @ViewChild("lstopoTooltip") private tooltipRef?: ElementRef<HTMLElement>;
 
   tooltipContent = "";
 
-  private modal: Modal | null = null;
+  private dialogRef: DialogRef | null = null;
   private svgSub?: Subscription;
   private resizeObserver?: ResizeObserver;
   private renderTimeout?: ReturnType<typeof setTimeout>;
-  private tooltipListeners: Array<{
-    el: Element;
-    type: string;
-    fn: EventListener;
-  }> = [];
+  private tooltipListeners: TooltipListener[] = [];
+  private modalTooltipListeners: TooltipListener[] = [];
 
   ngOnChanges(): void {
     if (!this.vendorId || !this.apiReference) {
@@ -133,14 +139,6 @@ export class ServerLstopo implements OnChanges {
                 this.renderTimeout = setTimeout(() => {
                   this.renderTimeout = undefined;
                   if (!this.inlineSvg) return;
-                  const el = this.lstopoModalRef?.nativeElement;
-                  if (el) {
-                    if (this.modal) {
-                      this.modal.destroyAndRemoveInstance();
-                      this.modal = null;
-                    }
-                    this.modal = new Modal(el, lstopoModalOptions);
-                  }
                   this.addSvgTooltips();
                   this.setupFullscreenCheck();
                 }, 0);
@@ -168,11 +166,31 @@ export class ServerLstopo implements OnChanges {
   }
 
   openLstopoModal(): void {
-    this.modal?.show();
-  }
+    if (this.dialogRef || !this.modalSvg || !this.lstopoModalTemplate) {
+      return;
+    }
 
-  closeLstopoModal(): void {
-    this.modal?.hide();
+    const dialogRef = this.modalDialog.open(this.lstopoModalTemplate);
+    dialogRef.closed.subscribe(() => {
+      this.dialogRef = null;
+      this.removeListeners(this.modalTooltipListeners);
+      this.modalTooltipListeners = [];
+      this.hideTooltip();
+    });
+    this.dialogRef = dialogRef;
+
+    afterNextRender(
+      () => {
+        if (this.dialogRef !== dialogRef) {
+          return;
+        }
+        this.modalTooltipListeners = this.bindSvgTooltips(
+          dialogRef.overlayRef.overlayElement,
+          ".lstopo-modal-svg [data-description]",
+        );
+      },
+      { injector: this.injector },
+    );
   }
 
   showTooltip(e: Event, content: string): void {
@@ -201,32 +219,43 @@ export class ServerLstopo implements OnChanges {
 
   private addSvgTooltips(): void {
     this.removeSvgTooltips();
-    const host: HTMLElement = this.elRef.nativeElement;
-    host
-      .querySelectorAll(
-        ".lstopo-interactive [data-description], .lstopo-modal-svg [data-description]",
-      )
-      .forEach((el) => {
-        const content = el.getAttribute("data-description")?.trim();
-        if (!content) {
-          return;
-        }
-        const mouseenter: EventListener = (e) => this.showTooltip(e, content);
-        const mouseleave: EventListener = () => this.hideTooltip();
-        el.addEventListener("mouseenter", mouseenter);
-        el.addEventListener("mouseleave", mouseleave);
-        this.tooltipListeners.push(
-          { el, type: "mouseenter", fn: mouseenter },
-          { el, type: "mouseleave", fn: mouseleave },
-        );
-      });
+    this.tooltipListeners = this.bindSvgTooltips(
+      this.elRef.nativeElement,
+      ".lstopo-interactive [data-description]",
+    );
+  }
+
+  private bindSvgTooltips(
+    root: ParentNode,
+    selector: string,
+  ): TooltipListener[] {
+    const listeners: TooltipListener[] = [];
+    root.querySelectorAll(selector).forEach((el) => {
+      const content = el.getAttribute("data-description")?.trim();
+      if (!content) {
+        return;
+      }
+      const mouseenter: EventListener = (e) => this.showTooltip(e, content);
+      const mouseleave: EventListener = () => this.hideTooltip();
+      el.addEventListener("mouseenter", mouseenter);
+      el.addEventListener("mouseleave", mouseleave);
+      listeners.push(
+        { el, type: "mouseenter", fn: mouseenter },
+        { el, type: "mouseleave", fn: mouseleave },
+      );
+    });
+    return listeners;
   }
 
   private removeSvgTooltips(): void {
-    this.tooltipListeners.forEach(({ el, type, fn }) => {
+    this.removeListeners(this.tooltipListeners);
+    this.tooltipListeners = [];
+  }
+
+  private removeListeners(listeners: TooltipListener[]): void {
+    listeners.forEach(({ el, type, fn }) => {
       el.removeEventListener(type, fn);
     });
-    this.tooltipListeners = [];
   }
 
   private setupFullscreenCheck(): void {
@@ -275,10 +304,7 @@ export class ServerLstopo implements OnChanges {
     this.removeSvgTooltips();
     this.teardownFullscreenCheck();
     this.showFullscreen = false;
-    if (isPlatformBrowser(this.platformId) && this.modal) {
-      this.modal.destroyAndRemoveInstance();
-      this.modal = null;
-    }
+    this.dialogRef?.close();
     this.inlineSvg = null;
     this.modalSvg = null;
   }

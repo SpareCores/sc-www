@@ -13,7 +13,7 @@ import { Subscription } from "rxjs";
   selector: "sc-articles",
   imports: [Breadcrumbs, ArticleCard],
   templateUrl: "./articles.html",
-  styleUrl: "./articles.scss",
+  styleUrl: "./articles.css",
 })
 export class Articles implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandler);

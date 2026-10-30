@@ -1,23 +1,27 @@
+import { DialogRef } from "@angular/cdk/dialog";
+
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   inject,
+  Injector,
   input,
   OnDestroy,
   output,
-  PLATFORM_ID,
   signal,
+  TemplateRef,
   viewChild,
 } from "@angular/core";
 
-import { isPlatformBrowser } from "@angular/common";
-
 import { FormsModule } from "@angular/forms";
 
-import { Modal, ModalOptions } from "flowbite";
-
 import { Button } from "../../button/button";
+
+import { Modal } from "../../modal/modal";
+
+import { ModalDialog } from "../../../services/modal-dialog";
 
 import {
   SAVED_NAME_MIN_LENGTH,
@@ -27,16 +31,10 @@ import {
 
 export type CollectionSaveModalMode = "create" | "edit";
 
-const modalOptions: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
-};
-
 @Component({
   selector: "sc-collection-save-modal",
-  imports: [FormsModule, Button],
+  imports: [FormsModule, Button, Modal],
   templateUrl: "./collection-save-modal.html",
-  styleUrl: "./collection-save-modal.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionSaveModal implements OnDestroy {
@@ -55,9 +53,11 @@ export class CollectionSaveModal implements OnDestroy {
   protected note = signal("");
   protected nameTouched = signal(false);
 
-  private platformId = inject(PLATFORM_ID);
-  private flowbiteModal: Modal | null = null;
-  private modalElement = viewChild<ElementRef<HTMLElement>>("modalRoot");
+  private modalDialog = inject(ModalDialog);
+  private injector = inject(Injector);
+  private dialogRef: DialogRef | null = null;
+  private modalTemplate =
+    viewChild.required<TemplateRef<unknown>>("modalTemplate");
   private nameInput = viewChild<ElementRef<HTMLInputElement>>("nameInput");
 
   protected readonly nameMinLength = SAVED_NAME_MIN_LENGTH;
@@ -69,20 +69,30 @@ export class CollectionSaveModal implements OnDestroy {
     this.nameTouched() && !isValidSavedName(this.name());
 
   ngOnDestroy(): void {
-    this.flowbiteModal?.hide();
-    this.flowbiteModal = null;
+    this.dialogRef?.close();
   }
 
   open(initialName = "", initialNote = ""): void {
     this.name.set(initialName);
     this.note.set(initialNote ?? "");
     this.nameTouched.set(false);
-    this.ensureModal()?.show();
-    this.focusNameInput();
+
+    if (!this.dialogRef) {
+      const dialogRef = this.modalDialog.open(this.modalTemplate(), {
+        autoFocus: "input",
+      });
+      dialogRef.closed.subscribe(() => {
+        this.dialogRef = null;
+        this.closed.emit();
+      });
+      this.dialogRef = dialogRef;
+    }
+
+    this.selectNameInput();
   }
 
   close(): void {
-    this.flowbiteModal?.hide();
+    this.dialogRef?.close();
   }
 
   confirm(): void {
@@ -107,46 +117,13 @@ export class CollectionSaveModal implements OnDestroy {
     this.confirm();
   }
 
-  private focusNameInput(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    queueMicrotask(() => {
-      this.nameInput()?.nativeElement.focus();
-      this.nameInput()?.nativeElement.select();
-    });
-  }
-
-  private ensureModal(): Modal | null {
-    if (!isPlatformBrowser(this.platformId)) {
-      return null;
-    }
-
-    if (!this.flowbiteModal) {
-      const modalElement = this.modalElement()?.nativeElement;
-      if (!modalElement) {
-        return null;
-      }
-
-      this.flowbiteModal = new Modal(
-        modalElement,
-        {
-          ...modalOptions,
-          onHide: () => {
-            this.closed.emit();
-          },
-          onShow: () => {
-            this.focusNameInput();
-          },
-        },
-        {
-          id: this.modalId(),
-          override: true,
-        },
-      );
-    }
-
-    return this.flowbiteModal;
+  private selectNameInput(): void {
+    afterNextRender(
+      () => {
+        this.nameInput()?.nativeElement.focus();
+        this.nameInput()?.nativeElement.select();
+      },
+      { injector: this.injector },
+    );
   }
 }

@@ -3,6 +3,7 @@ import {
   DestroyRef,
   PLATFORM_ID,
   OnInit,
+  TemplateRef,
   ViewChild,
   viewChild,
   ElementRef,
@@ -12,6 +13,7 @@ import {
   signal,
   untracked,
 } from "@angular/core";
+import { DialogRef } from "@angular/cdk/dialog";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
@@ -57,7 +59,8 @@ import {
 } from "../../services/compare-selection";
 import { Dropdown } from "../../directives/dropdown";
 import { Analytics } from "../../services/analytics";
-import { Modal, ModalOptions } from "flowbite";
+import { Modal } from "../../components/modal/modal";
+import { ModalDialog } from "../../services/modal-dialog";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { Toast } from "../../services/toast";
 import {
@@ -100,16 +103,6 @@ import {
   TableColumn,
 } from "../../tools/table-columns";
 
-const optionsModal: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
-};
-
-const serverListingIntroductionModalOptions: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
-};
-
 @Component({
   selector: "sc-server-listing",
   imports: [
@@ -141,9 +134,10 @@ const serverListingIntroductionModalOptions: ModalOptions = {
     BookmarkButton,
     InstanceFavoriteContextMenu,
     CollectionSaveModal,
+    Modal,
   ],
   templateUrl: "./server-listing.html",
-  styleUrl: "./server-listing.scss",
+  styleUrl: "./server-listing.css",
 })
 export class ServerListing implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
@@ -161,6 +155,7 @@ export class ServerListing implements OnInit, OnDestroy {
   private uiTooltip = inject(UiTooltip);
   private collectionsUi = inject(CollectionsUi);
   private auth = inject(AuthState);
+  private modalDialog = inject(ModalDialog);
   saveSearchModal = viewChild(CollectionSaveModal);
 
   isCollapsed = false;
@@ -186,6 +181,12 @@ export class ServerListing implements OnInit, OnDestroy {
       collapsed: true,
     },
     {
+      category_id: "memory",
+      name: "Memory",
+      icon: "memory-stick",
+      collapsed: true,
+    },
+    {
       category_id: "accelerator",
       name: "Accelerator",
       icon: "cpu",
@@ -193,12 +194,6 @@ export class ServerListing implements OnInit, OnDestroy {
     },
     { category_id: "gpu", name: "GPU", icon: "gpu", collapsed: true },
     { category_id: "asic", name: "ASIC", icon: "cpu-ai", collapsed: true },
-    {
-      category_id: "memory",
-      name: "Memory",
-      icon: "memory-stick",
-      collapsed: true,
-    },
     {
       category_id: "storage",
       name: "Storage",
@@ -291,7 +286,10 @@ export class ServerListing implements OnInit, OnDestroy {
     this.onBenchmarkConfigChanged();
   }
 
-  modalBenchmarkSelect: any;
+  private benchmarkModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "benchmarkModalTemplate",
+  );
+  private benchmarkDialogRef: DialogRef | null = null;
 
   //modal
   modalText: string = "Select Benchmark Category";
@@ -301,9 +299,10 @@ export class ServerListing implements OnInit, OnDestroy {
   modalFilterTerm: string | null = null;
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
-  introductionModalRef =
-    viewChild<ElementRef<HTMLElement>>("introductionModal");
-  private introductionModal: Modal | null = null;
+  private introductionModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "introductionModalTemplate",
+  );
+  private introductionDialogRef: DialogRef | null = null;
   showIntroductionVideo = false;
   clipboardIcon = "clipboard";
   tooltipContent = "";
@@ -649,13 +648,6 @@ export class ServerListing implements OnInit, OnDestroy {
           },
         ),
       );
-
-      const targetElModal = document.getElementById("benchmark-type-modal");
-
-      this.modalBenchmarkSelect = new Modal(targetElModal, optionsModal, {
-        id: "benchmark-type-modal",
-        override: true,
-      });
     }
   }
 
@@ -701,8 +693,8 @@ export class ServerListing implements OnInit, OnDestroy {
     this.searchAbortController?.abort();
     this.sub?.unsubscribe();
     this.subscription.unsubscribe();
-    this.introductionModal?.hide();
-    this.introductionModal = null;
+    this.introductionDialogRef?.close();
+    this.benchmarkDialogRef?.close();
     this.toastService.removeToast(QUERY_ERROR_SERVERS_TOAST_ID);
     this.toastService.removeToast(SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID);
     this.toastService.removeToast(BAD_BENCHMARK_URL_TOAST_ID);
@@ -1336,29 +1328,18 @@ export class ServerListing implements OnInit, OnDestroy {
   }
 
   openIntroductionModal(): void {
-    if (!isPlatformBrowser(this.platformId)) {
+    if (this.introductionDialogRef) {
       return;
     }
 
-    if (!this.introductionModal) {
-      const modalElement = this.introductionModalRef()?.nativeElement;
-
-      if (modalElement) {
-        this.introductionModal = new Modal(modalElement, {
-          ...serverListingIntroductionModalOptions,
-          onHide: () => {
-            this.showIntroductionVideo = false;
-          },
-        });
-      }
-    }
-
     this.showIntroductionVideo = true;
-    this.introductionModal?.show();
-  }
-
-  closeIntroductionModal(): void {
-    this.introductionModal?.hide();
+    this.introductionDialogRef = this.modalDialog.open(
+      this.introductionModalTemplate(),
+    );
+    this.introductionDialogRef.closed.subscribe(() => {
+      this.introductionDialogRef = null;
+      this.showIntroductionVideo = false;
+    });
   }
 
   showTooltip(el: any, content: string, autoHide = false) {
@@ -1389,11 +1370,16 @@ export class ServerListing implements OnInit, OnDestroy {
 
   openModal() {
     this.modalText = "Select Benchmark Category";
-    this.modalBenchmarkSelect.show();
-  }
+    if (this.benchmarkDialogRef) {
+      return;
+    }
 
-  closeModal() {
-    this.modalBenchmarkSelect?.hide();
+    this.benchmarkDialogRef = this.modalDialog.open(
+      this.benchmarkModalTemplate(),
+    );
+    this.benchmarkDialogRef.closed.subscribe(() => {
+      this.benchmarkDialogRef = null;
+    });
   }
 
   selectBenchmarkCategory(category: any, searchTerm: string | null = null) {
@@ -1424,7 +1410,7 @@ export class ServerListing implements OnInit, OnDestroy {
     const enableBenchmarkColumn = !!benchmarkColumn && !benchmarkColumn.show;
     this.selectedBenchmarkConfig = config;
 
-    this.modalBenchmarkSelect?.hide();
+    this.benchmarkDialogRef?.close();
     this.modalFilterTerm = null;
     const query: Params = {
       benchmark: btoa(

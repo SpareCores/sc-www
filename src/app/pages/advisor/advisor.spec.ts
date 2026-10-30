@@ -443,7 +443,7 @@ describe("Advisor", () => {
     });
     component.openIntroductionModal();
     fixture.detectChanges();
-    const introductionFrame = host.querySelector(
+    const introductionFrame = document.querySelector(
       "#advisor-introduction-modal iframe",
     ) as HTMLIFrameElement | null;
     expect(introductionFrame?.src).toContain("4QwvxaLTW2k");

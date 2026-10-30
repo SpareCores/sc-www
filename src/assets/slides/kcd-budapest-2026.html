@@ -29,6 +29,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
   </style>
   <link rel="stylesheet" href="kcd-budapest-2026_files/libs/revealjs/dist/theme/quarto-0ba2550f576cf5de89bd8e81d5f93b5d.css">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -37,6 +103,7 @@
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-box-overlay/boxoverlay.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-curtain/curtain.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-agent-terminal/agentterminal.css" rel="stylesheet">
+  <link href="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-poll/poll.css" rel="stylesheet">
   <link href="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
     .reveal div.sourceCode {
@@ -177,9 +244,11 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p>TODO Gergo speaker notes Gergo: welcome … last year lightning talk .. lucky you, we are happy to have Attila this year as well and we decided we will do this in a different way</p>
-<p>…</p>
-<p>courtain!</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> welcome … great pleasure to be back to KCD Budapest … last year lightning talk w/ 42 slides in 5 mins.. lucky you, we have Attila this year (PAUSE), who recommended that instead of presenting hundreds of slides and an unprocessable amount of information, we should take a different approach this time (and we will sing a song)!</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> that’s not what we have discussed …</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> then we will present a drama with a painful problem of a devops engineer, epic emotional journey and of course cathartic solution!</p>
+<p>let’s get started!</p>
+<p>curtain …</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -193,23 +262,139 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
       }</style></aside>
 </section>
 
-<section id="teaser" class="title-slide slide level1" data-curtain="open">
+<section>
+<section id="crawl" class="title-slide slide level1" data-curtain="open">
 <h1></h1>
+<style>
+  #crawl {
+    padding: 0 !important;
+  }
+  #crawl .sw-scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    perspective: 350px;
+  }
+  #crawl .sw-crawl {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: max-content;
+    max-width: none;
+    margin: 0;
+    transform-origin: 50% 100%;
+    transform: translateX(-50%) rotateX(55deg) translateY(25vh);
+    opacity: 0;
+    animation: none;
+    color: #4bd5ee;
+    font-family: "News Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 2.4em;
+    line-height: 1.45;
+    text-align: center;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 1px rgba(75, 213, 238, 0.4);
+  }
+  #crawl .sw-crawl.is-running {
+    animation: sw-crawl 90s linear forwards;
+  }
+  #crawl .sw-crawl span {
+    display: block;
+    white-space: nowrap;
+  }
+  @keyframes sw-crawl {
+    0%   { transform: translateX(-50%) rotateX(55deg) translateY(25vh); opacity: 0; }
+    4%   { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateX(-50%) rotateX(55deg) translateY(-160vh); opacity: 0; }
+  }
+</style>
+<div class="sw-scene">
+  <p class="sw-crawl">
+    <span>A couple weeks ago</span>
+    <span>at an undisclosed location </span>
+    <span>not too far, far away…</span>
+    <span>Gergely and Attila met</span>
+    <span>and among other topics</span>
+    <span>they discussed how badly</span>
+    <span>their Python app scales…</span>
+    <span>Despite using Kubernetes…</span>
+  </p>
+</div>
+<script>
+  (function () {
+    function crawlEl() {
+      return document.querySelector("#crawl .sw-crawl");
+    }
+    function startCrawl() {
+      var el = crawlEl();
+      if (!el) return;
+      el.classList.remove("is-running");
+      void el.offsetWidth;
+      el.classList.add("is-running");
+    }
+    function stopCrawl() {
+      var el = crawlEl();
+      if (!el) return;
+      el.classList.remove("is-running");
+    }
+    function bind(reveal) {
+      reveal.on("slidechanged", function (event) {
+        if (event.currentSlide && event.currentSlide.id === "crawl") {
+          startCrawl();
+        } else if (event.previousSlide && event.previousSlide.id === "crawl") {
+          stopCrawl();
+        }
+      });
+      if (reveal.getCurrentSlide && reveal.getCurrentSlide() &&
+          reveal.getCurrentSlide().id === "crawl") {
+        startCrawl();
+      }
+    }
+    function init() {
+      if (!(window.Reveal && Reveal.on)) return false;
+      if (Reveal.isReady && Reveal.isReady()) {
+        bind(Reveal);
+      } else {
+        Reveal.on("ready", function () { bind(Reveal); });
+      }
+      return true;
+    }
+    if (!init()) {
+      var tries = 0;
+      var timer = setInterval(function () {
+        if (init() || ++tries > 100) clearInterval(timer);
+      }, 50);
+    }
+  })();
+</script>
+<aside class="notes">
+<p><span style="color:#ef4444;font-weight:bold">G:</span> The story starts with meeting Attila a few weeks ago, and this was the conversation we had:</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> Hey Attila, … how are you doing, you look a bit concerned..</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> As an engineer, concerned is my default state</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> frustrated <strong>Python app</strong> · needs <strong>low latency</strong> · <strong>won’t scale</strong> · <strong>GIL</strong> -&gt; <strong>single-core</strong> performance · hunting right <strong>instance type</strong> · fed up with it -&gt; <strong>memes</strong> [show image]</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="teaser" class="slide level2">
+<h2></h2>
 <div class="centered">
 <p><img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
-<!-- TODO Gergo add "once upon a time, in a not too far pub ...." -->
 <aside class="notes">
-<p>more interactive .. so</p>
-<p>I met Attila a few weeks ago and he mentioned that he is struggling with a problem, and this was the conversation we had:</p>
-<p>G: Hey Attila, … how are you doing, you look a bit concerned.. A: TODO Attila speaker notes on nehezen skalazhato python app</p>
-<ul>
-<li>single-core performance,</li>
-<li>we need to pick the optimal server,</li>
-<li>we are fed up with it …</li>
-<li>we even came up with a mascot for it …</li>
-</ul>
-<p>G: Ah, interesting. I think what we do at Spare Cores might be relevant for you. A: Really? Could you pls show me what it does and how it can help us? G: Sure.</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> We call it <strong>GILty</strong>. Any ideas what to do with it?<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> Ah, interesting. I think what we do at Spare Cores might be relevant for you.<br>
+<span style="color:#34d399;font-weight:bold">A:</span> Sounds great, tell me more!<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> Sure.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -221,63 +406,20 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</section>
-
-<section id="recap" class="title-slide slide level1 center">
-<h1></h1>
-<div class="agent-terminal">
-  <div class="agent-titlebar">
-    <span class="agent-dot close"></span>
-    <span class="agent-dot minimize"></span>
-    <span class="agent-dot maximize"></span>
-    <span class="agent-title">hermes — gergely@big-mac-4</span>
-  </div>
-  <div class="agent-body">
-    <!-- TODO do we need this? OK to drop --> 
-    <div class="agent-banner">hermes agent · local model · 🎙 phone mic: recording (1h 47m)</div>
-    <div class="agent-step agent-prompt"><span class="agent-ps">❯</span> <span data-type="recap what I just discussed with Attila in the pub"></span><span class="agent-cursor"></span></div>
-    <div class="agent-step" data-wait="750"><span class="agent-running"><span class="agent-spinner"></span> thinking…</span><span class="agent-done"><span class="agent-ok">✓</span> need the pub conversation <span class="agent-meta">→ using the live recording</span></span></div>
-    <div class="agent-step" data-wait="500"><span class="agent-running"><span class="agent-spinner"></span> stopping audio recording on phone…</span><span class="agent-done"><span class="agent-ok">✓</span> recording stopped <span class="agent-meta">(1h 47m 12s, 192 MB, pub-chat.wav)</span></span></div>
-    <div class="agent-step" data-wait="1500"><span class="agent-running"><span class="agent-spinner"></span> transcribing locally with whisper…</span><span class="agent-done"><span class="agent-ok">✓</span> transcribed <span class="agent-meta">(2 speakers, 11,382 words, 487 words beeped, 5 beers)</span></span></div>
-    <div class="agent-step" data-wait="1000"><span class="agent-running"><span class="agent-spinner"></span> summarizing transcript…</span><span class="agent-done"><span class="agent-ok">✓</span> summarized <span class="agent-meta">(5 key points, 43 off-topic rants skipped)</span></span></div>
-    <!-- TODO Gergo review timings, e.g. "oh, thank you, it's super nice saying so from an agent" -->
-    <div class="agent-step agent-answer" data-wait="1000">Here's what you discussed with Attila:</div>
-    <div class="agent-step agent-bullet" data-wait="500">You bumped into Attila at the pub</div>
-    <div class="agent-step agent-bullet" data-wait="500">His team's Python app scales embarrassingly badly, and they need it to be faster</div>
-    <div class="agent-step agent-bullet" data-wait="500">He's been looking for help with speeding it up</div>
-    <div class="agent-step agent-bullet" data-wait="500">You mentioned you're giving a talk on exactly this at KCD Budapest</div>
-    <div class="agent-step agent-bullet" data-wait="1500">You offered to show him something there, and he promised to come and see it</div>
-    <div class="agent-step agent-final">Good luck with the talk! 🍀</div>
-  </div>
-</div>
-<aside class="notes">
-<p>TODO Gergo speaker notes</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
-
+</section></section>
 <section id="introduction" class="title-slide slide level1">
 <h1></h1>
 <div class="centered">
 <p><img src="images/cloud-bleeding.png" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
 <aside class="notes">
-<p>Our main goal is to stop cloud waste, and while there are many ways to do this, some even works, such as:</p>
+<p>Our main goal is to stop cloud waste, and while there are many ways to do this, such as:</p>
 <ul>
-<li>identifying idle resources</li>
+<li>identifying and deleting unused resources or migrating e.g.&nbsp;to cheaper storage tiers etc</li>
 <li>automatically scaling down resources when they’re not needed</li>
-<li>deleting unused resources or migrating e.g.&nbsp;to cheaper storage tiers etc</li>
 </ul>
-<p>We focus on:</p>
+<p>Our secret sauce – which is not that secret keeping in mind that we are a fully open-source project, so i’ll rather call it specialty is how we solve this problem: instead of throwing more of the very same silicon at the problem to solve scaling issues we find the right hardware for a given workload.</p>
+<p>Note that this optimization is orthogonal to the previously mentioned solutions, so you can keep using reserved instances, spot etc. for the right SKU.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -298,7 +440,8 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <p><img src="images/no-cloud-just-another-comp.png" style="max-width: 75%; max-height: 50%;"></p>
 </div>
 <aside class="notes">
-<p>While pretty much everyone understands that cloud is still just another computer, at a remote location, that I can spin up quickly and throw away as needed, BUT we often don’t really know what kind of computer that is.</p>
+<p>While everyone understands that cloud is still just another computer, at a remote location, that I can spin up quickly and throw away as needed, BUT we often don’t really know what kind of computer that is.</p>
+<p>there are more than 6,000 cloud server options out there but do we really know all these options in the past you could just walked your server and check if it’s still comes with a turbo button</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -381,23 +524,49 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<div class="centered">
-<p style="font-size: 78px;">
-Guess the Number!
-</p>
-<p style="font-size: 56px; margin-top: 60px;">
-How much better is the highest performing 2-vCPU cloud server’s single-core performance compared to the lowest?
-</p>
+<style>
+  .vcpu-guess-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5em;
+    width: 100%;
+    margin-top: -0.5em;
+  }
+
+  .vcpu-guess-layout .vcpu-guess-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .vcpu-guess-layout .qr-card {
+    flex: 0 0 auto;
+  }
+</style>
+<div class="vcpu-guess-layout centered">
+  <div class="vcpu-guess-copy">
+    <p style="font-size: 62px; margin-top: 0;">Guess the Number!</p>
+    <p style="font-size: 48px; margin-top: 40px;">
+      How much better is the highest performing 2-vCPU cloud
+      server's single-core performance compared to the lowest?
+    </p>
+  </div>
+  <div class="qr-card" data-qr="https://sparecores.com/poll/kcd-2026" data-qr-poll="kcd-2026"></div>
 </div>
-<!-- TODO Gego add poll link: https://surveys.free/a/NsTo-Rh4FfSZuvPtiKKkzg/responses/ -->
+</section>
+<section id="vcpu-guess-results" class="slide level2 center">
+<h2></h2>
+<p style="font-size: 48px; margin: 0 0 10px; text-align: center;">Your guesses</p>
+<div class="poll-chart" data-poll-chart="kcd-2026"></div>
 </section>
 <section id="vcpu-diff-0" class="slide level2 center">
 <h2></h2>
 <aside class="notes">
-<p>Both the slowest and the fastest servers are from a hyperscaler .. not because I picked so, it just happened to be the case.</p>
-<p>Now I’m not going to give away the identity of the actual server types, and shame them publicly … especially in the era of awakening AGI (TODO autonomous general intelligence?).</p>
-<p>But you can easily find out on your own if you are interested, and I’m happy to show how.</p>
+<p>Both the slowest and the fastest servers are from a hyperscaler.</p>
+<p>Now I’m not going to give away the identity of the actual server types, and shame cloud SKUs publicly … especially in the era of awakening AGI (Artificial General Intelligence).</p>
 <p>But we do know both comes with 2 vCPUs.</p>
+<p>SPEEDRUN!</p>
 <p>[…]</p>
 <p>How do I know all this stuff?</p>
 <style type="text/css">
@@ -581,9 +750,9 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>30-50x</span>
 </div>
 <aside class="notes">
+<p>Before we move on, I wanted to quickly share a few further benchmarks of these two servers to show the spectrum:</p>
 <p>logarithmic scale</p>
-<p>note that this is a syntethic tets</p>
-<p>TODO Gergo speaker notes</p>
+<p>SPEEDRUN!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -603,9 +772,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>10-20x</span>
 </div>
 <aside class="notes">
-<p>see Server A in the middle with scores around 500 across all dimensions? so left hand side is single core, right hand side is multi core performance … pretty much the same for Server A.</p>
-<p>BUT Server B looking better: jumping from around 35 hundreds to 6000, and in some workloads the diff between Server A and Server B are even larger.</p>
-<p>TODO Gergo speaker notes</p>
+<p>SPEEDRUN!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -625,8 +792,7 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <span>100x</span>
 </div>
 <aside class="notes">
-<p>now this is not single-core anymore .. we run OpenSSL speed tests, using various cipher and hash functions .. and Server A is hardly visible on this screen ..</p>
-<p>TODO Gergo speaker notes</p>
+<p>now this is not single-core anymore .. we run OpenSSL speed tests ..</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -645,25 +811,13 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
 <img data-src="images/vcpu-diff-4.png" class="r-stretch quarto-figure quarto-figure-center"><div class="slide-text-overlay fragment">
 <span>10-100x</span>
 </div>
-<aside class="notes">
-<p>TODO Gergo speaker notes</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section id="vcpu-difference" class="slide level2" data-transition="slide-in slide-out">
 <h2></h2>
 <aside class="notes">
 <p>Back to Vincent from Pulp Fiction .. who now looks even more confused.</p>
 <p>Because it’s possible that you get a 32 vCPU server, and your app that perfectly scales to multiple cores, runs slower than on a single core of another cloud server type.</p>
+<p>So how to pick the right instance type from thousands of options?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -780,56 +934,90 @@ https://sparecores.com/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoibThhem4
     }
   })();
 </script>
-<!-- TODO Gergo add a breakdown of 2 vCPU servers per vendor (AWS: 146) -->
-</section></section>
-<section id="whois" class="title-slide slide level1" data-transition="convex-in convex-out">
-<h1>$ whois sparecores.com</h1>
-<ul style="font-size: 0.9em;">
-<li class="fragment" data-fragment-index="1">
-Funded by NGI Search (EU consortium) in 2024
-</li>
-<ul>
-<li class="fragment" data-fragment-index="1">
-Vendor independent, open-source project
-</li>
-</ul>
-<li class="fragment" data-fragment-index="2">
-Seal of Excellence from the European Commission in 2026
-</li>
-<li class="fragment" data-fragment-index="3">
-Accepted into NVIDIA Inception, AWS Open Source Credits
-</li>
-<li class="fragment" data-fragment-index="4">
-Beneficiary of cloud credits from 8 vendors (overall ~$100k)
-</li>
-<li class="fragment" data-fragment-index="5">
-20+ talks in 9 countries (e.g.&nbsp;Berlin Buzzwords, PyData, KCD)
-</li>
-<li class="fragment" data-fragment-index="6">
-Featured by The Pragmatic Engineer in Oct 2024
-</li>
-<li class="fragment" data-fragment-index="7">
-Jeff Barr (Chief Evangelist at AWS) on our Reddit post:
-</li>
-</ul>
-<blockquote class="fragment" data-fragment-index="7" style="margin-left: 40px;">
-This was awesome, thanks for sharing.
-</blockquote>
-<aside class="notes">
-<p>first of all, just to build some credibility for the project: we are committed to be vendor-agnostic, open-source, and transparent about our data</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
-
+<section id="vcpus-2-count-breakdown" class="slide level2 center">
+<h2></h2>
+<div class="columns">
+<div class="column">
+<style>
+  #vcpus-2-count-breakdown {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #vcpus-2-count-breakdown > h2 {
+    display: none;
+    margin: 0;
+    height: 0;
+  }
+  #vcpus-2-count-breakdown > .columns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    margin: 0;
+  }
+  #vcpus-2-count-breakdown .column:first-child .sourceCode,
+  #vcpus-2-count-breakdown .column:first-child pre {
+    width: fit-content;
+  }
+  #vcpus-2-count-breakdown .column:first-child pre code {
+    padding: 0.75em 1em;
+  }
+</style>
+<div class="sourceCode" id="cb1" style="font-size: 1.5em;"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb1-2"><a href="" aria-hidden="true" tabindex="-1"></a>  vendor_id,</span>
+<span id="cb1-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> servers</span>
+<span id="cb1-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> server</span>
+<span id="cb1-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> vcpus <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb1-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span>;</span></code></pre></div>
+</div><div class="column fragment">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>vendor_id</th>
+<th style="text-align: right;">servers</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>alicloud</td>
+<td style="text-align: right;">192</td>
+</tr>
+<tr class="even">
+<td>aws</td>
+<td style="text-align: right;">146</td>
+</tr>
+<tr class="odd">
+<td>azure</td>
+<td style="text-align: right;">174</td>
+</tr>
+<tr class="even">
+<td>gcp</td>
+<td style="text-align: right;">41</td>
+</tr>
+<tr class="odd">
+<td>hcloud</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td>ovh</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr class="odd">
+<td>upcloud</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr class="even">
+<td>vultr</td>
+<td style="text-align: right;">25</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+</section></section>
 <section>
 <section id="apropos" class="title-slide slide level1" data-transition="convex-in convex-out">
 <h1>$ apropos sparecores.com</h1>
@@ -926,7 +1114,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
           display:block!important;
       }</style></aside>
 <aside class="notes">
-<p>A: wait, do I need to write SQL to query this data?</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> wait, do I need to write SQL to query this data?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -947,10 +1135,20 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <p><a href="https://sparecores.com/servers" target="_blank"> <img style="width:95%;" src="images/sc-www-listing-top-2026q2.png"> </a></p>
 </div>
 <aside class="notes">
-<p>The easiest way to query this data is through our web component, as you can see on the screen …</p>
-<p>G: What kind of server are we looking for? A: min 2 vCPU, 16 GB RAM, AWS, Oregon G: Any special network requirements? We track outbound traffic prices … A: No. G: Anything else? A: Single core performance is important for usage. G: We support a bunch of benchmarks, e.g.&nbsp;PassMark CPU Single Threaded Test? G: Let’s order by performance then. A: That metal server looks promising G: Let’s see the details …</p>
-<p>Check server details page. Scoll over the benchmarks. - server metadata - benchmarks - price diffs -&gt; oops .. spot vs ondemand</p>
-<p>G: Actually, it’s $5 ondemand. A: That’s too much. The devops team picked r5a.large .. can we find something better around the same price? G: ADVISOR!!</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> The easiest way to query this data is through our web component, as you can see on the screen …<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> What kind of server are we looking for?<br>
+<span style="color:#34d399;font-weight:bold">A:</span> min 2 vCPU, 16 GB RAM, AWS, Oregon<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> Anything else?<br>
+<span style="color:#34d399;font-weight:bold">A:</span> Single core performance is the most important<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> We support a bunch of benchmarks, e.g.&nbsp;PassMark CPU Single Threaded Test?<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> Let’s order by performance then.<br>
+<span style="color:#34d399;font-weight:bold">A:</span> That metal server looks promising<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> Let’s see the details …</p>
+<p>Check server details page: - server metadata - lstopo - benchmarks - price diffs -&gt; oops .. spot vs ondemand</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> Actually, it’s $5 ondemand.<br>
+<span style="color:#34d399;font-weight:bold">A:</span> That’s too much. The devops team picked r5a.large .. can we find something better around the same price?<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> ADVISOR!! …</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> is there a way to query this data in a programmatic way?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -962,7 +1160,6 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<!-- TODO Gergo get lstopo on m8azn.metal-12xl -->
 </section>
 <section id="curl-sparecores.comservergcpg2-standard-16" class="slide level2">
 <h2>$ curl sparecores.com/server/gcp/g2-standard-16</h2>
@@ -1163,15 +1360,21 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 </section></section>
 <section id="curl-sparecores.comadvisor" class="title-slide slide level1">
 <h1>$ curl sparecores.com/advisor</h1>
-<!-- TODO Gergo add advisor image and demo scenario for live walkthought
-
-https://sparecores.com/advisor?vendor=aws&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
-
-https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_vendor=aws&baseline_server=r5a.large&limit_architecture=true&workload_id=stress_ng:best1&workload_config=%7B%7D&optimization_goal=cost-efficiency&avg_cpu_utilization=100&minimum_memory=16
--->
+<div class="centered">
+<p><a href="https://sparecores.com/advisor?baseline_vendor=aws&amp;baseline_server=r5a.large&amp;limit_cpu_allocation=true&amp;workload_id=passmark:cpu_single_threaded_test&amp;workload_config=%7B%7D&amp;avg_cpu_utilization=100&amp;minimum_memory=16&amp;price_allocation_enabled=true&amp;best_price_allocation=ONDEMAND_ONLY&amp;order_by=selected_benchmark_score_per_price&amp;order_dir=desc" target="_blank"> <img style="width: 90%;" src="images/sc-www-advisor-r5a-large.png"> </a></p>
+</div>
 <aside class="notes">
-<p>r5a.large “cpu_single_threaded_test” AWS Oregaon ondemand price TODO Gergo Marci ticket ne ugraljon az advisor a tetejere gombnyomasra TODO Gergo Marci ticket bad best price https://sparecores.com/advisor?vendor_regions=aws~us-west-2&amp;baseline_vendor=aws&amp;baseline_server=r5a.large&amp;workload_id=passmark:cpu_single_threaded_test&amp;workload_config=%7B%7D&amp;avg_cpu_utilization=100&amp;minimum_memory=16&amp;price_allocation_enabled=true&amp;best_price_allocation=ONDEMAND_ONLY (wrong region?)</p>
-<p>A: Can we query this in a programmatic way? G: yes …</p>
+<p>r5a.large “cpu_single_threaded_test” AWS Oregon ondemand price</p>
+<ol type="1">
+<li>look at cheaper options</li>
+<li>order by cost efficiency</li>
+<li>exclude more expensive options</li>
+</ol>
+<p>TODO Gergo check on aws r8i-flex – burstable?</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> compare baseline w/ r6a.large</p>
+<p>…</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> Can we query this in a programmatic way?<br>
+<span style="color:#ef4444;font-weight:bold">G:</span> yes!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1187,13 +1390,12 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 
 <section id="curl-docs.sparecores.comapi" class="title-slide slide level1">
 <h1>$ curl docs.sparecores.com/api</h1>
-<!-- TODO Gergo replace image with docs site -->
 <div class="centered">
-<p><img style="width:95%;" src="images/sc-keeper-preview.png"></p>
+<p><img style="width:85%;" src="images/sc-keeper-docs.png"></p>
 </div>
 <aside class="notes">
-<p>for computers, we provide APIs …</p>
-<p>is it something you could use?</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> for computers, we provide APIs … is it something you could use?<br>
+<span style="color:#34d399;font-weight:bold">A:</span> Definitely! Let me show you what I came up with!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1214,10 +1416,17 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 <p><img style="width:60%; margin-top: -50px;" src="images/gilty-coffee.png"></p>
 </div>
 <aside class="notes">
-<p>TODO Attila add speaker notes</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> Back to <strong>GILty</strong> — <strong>pure Python</strong> app</p>
 <ul>
-<li>single core performance, GIL</li>
-<li>I’ve looked at the database and compared the performance of GILty with a few benchmarks to see which matches the best</li>
+<li><strong>latency</strong> + <strong>throughput</strong> → <strong>single-core</strong> (and cache) speed must be high
+<ul>
+<li>more CPUs -&gt; more throughput, but no <strong>help for latency</strong></li>
+</ul></li>
+<li>ran <strong>GILty</strong> on a few <strong>AWS</strong> instance types → measured <strong>speed</strong></li>
+<li>SC DB: which <strong>benchmarks</strong> <strong>correlate</strong> with those results?
+<ul>
+<li>proxy: <strong>PassMark CPU Single Threaded</strong> — rank machines without re-running GILty everywhere</li>
+</ul></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1237,12 +1446,12 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 <p><img src="images/kcd-budapest-teaser.jpg" style="max-height: 90%; max-width: 90%; margin-top: -50px;"></p>
 </div>
 <aside class="notes">
-<p>TODO Attila speaker notes</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> <strong>GIL</strong> — for folks who don’t know it yet</p>
 <ul>
-<li>GIL megkerulhetetlen</li>
-<li>we need to provide infra to make it faster</li>
-<li>using Spare Cores data in Karpenter?</li>
-<li>we called it “Core Alone”</li>
+<li>the <strong>GIL</strong> has been with us since the early <strong>90s</strong> — one thread at a time</li>
+<li>several attemps to remove GIL, like <strong>G(H)uido</strong> v(F)an Rossum + <strong>Larry</strong> Hastings (Gilectomy) without clear success for a long time</li>
+<li>there’s a new hope (<strong>free-threaded Python</strong>)</li>
+<li>but we still usually need a <strong>fast single core</strong> → project name: <strong>“Core Alone”</strong></li>
 </ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1256,16 +1465,60 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
           display:block!important;
       }</style></aside>
 </section></section>
+<section>
 <section id="strace--e-environment-gilty.py" class="title-slide slide level1">
 <h1>$ strace -e environment gilty.py</h1>
-<!-- TODO Attila describe the environment you run gilty.py -->
-<ul>
-<li>EKS</li>
-<li>Karpenter</li>
-<li>EKS Auto mode</li>
-</ul>
+<p><strong>Before:</strong> <strong>AWS</strong> · <strong>EKS</strong> · <strong>Cluster Autoscaler</strong> + <strong>fixed node groups</strong><br>
+→ capacity, not <strong>single-core</strong> / <strong>latency</strong></p>
+<div class="fragment">
+<p>Then: <strong>Karpenter</strong> → <strong>EKS Auto mode</strong><br>
+→ dynamic EC2 pick under load — easy</p>
+</div>
+<div class="fragment">
+<p>But Karpenter AWS filters: family · cpu count · gen · …<br>
+plus <code>instance-cpu-sustained-clock-speed-mhz</code> — <strong>vendor clock</strong>, not a <strong>benchmark</strong><br>
+→ <strong>how do we pick the fastest core for GILty?</strong></p>
 <aside class="notes">
-<p>TODO Attila speaker notes</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> what have we tried so far?</p>
+<ul>
+<li><strong>before:</strong> CAS + fixed node groups — bad fit for <strong>GILty</strong><br>
+</li>
+<li>moved to <strong>Karpenter</strong>, then <strong>EKS Auto mode</strong> — flexible instance lists<br>
+</li>
+<li>closest to “speed”: <code>karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz</code> (EC2 <code>SustainedClockSpeedInGhz</code> → MHz)<br>
+</li>
+<li>that’s <strong>catalog GHz</strong>, not measured single-thread · cache/IPC matter · GILty ≠ GHz ranking<br>
+</li>
+<li>still missing: <strong>PassMark / Geekbench</strong>-style pick</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="passmark-vs-ghz" class="slide level2">
+<h2>PassMark ST vs catalog GHz</h2>
+<div class="centered">
+<p><img src="images/aws-passmark-vs-ghz.png" style="width: 92%; margin-top: -30px;"></p>
+</div>
+<aside class="notes">
+<p><span style="color:#34d399;font-weight:bold">A:</span> My question was: does <strong>clock speed</strong> predict <strong>single-thread</strong> performance?</p>
+<ul>
+<li>According to our measurements: there’s association between the <strong>clock speed</strong> and the <strong>PassMark</strong> ST score, and</li>
+<li>trend goes up — but same clock speed → <strong>wildly different</strong> scores<br>
+</li>
+<li>sometimes a <strong>lower</strong> clock even <strong>beats</strong> a higher one<br>
+</li>
+<li>so Karpenter’s <strong>MHz filter</strong> ≠ fastest core for <strong>GILty</strong></li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1278,12 +1531,141 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
           display:block!important;
       }</style></aside>
 </section>
-
+<section id="passmark-ghz-spread" class="slide level2">
+<h2>Same GHz, how wide is PassMark?</h2>
+<div class="centered">
+<p><img src="images/aws-passmark-ghz-spread.png" style="max-height: 520px; width: auto; margin-top: -40px;"></p>
+</div>
+<p style="font-size: 0.85em; text-align: center; margin-top: 0;">
+Within one clock band: up to about <strong>+200%</strong> PassMark ST spread
+</p>
+<aside class="notes">
+<p><span style="color:#34d399;font-weight:bold">A:</span> same clock — how far apart are the scores?</p>
+<ul>
+<li>each bar: one <strong>GHz</strong> · gap between <strong>slowest</strong> and <strong>fastest</strong><br>
+</li>
+<li>some clocks: <strong>2×</strong> difference in <strong>PassMark</strong><br>
+</li>
+<li>red = bad news · <strong>GHz alone</strong> won’t find the <strong>fast core</strong></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="just-5ghz" class="slide level2">
+<h2>Just set the filter to 5 GHz?</h2>
+<div style="font-size: 0.75em;">
+<p>Simple idea: <code>instance-cpu-sustained-clock-speed-mhz &gt;= 5000</code></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;"><strong>r5a.large</strong></th>
+<th style="text-align: right;"><strong>c8a.large</strong></th>
+<th style="text-align: right;"><strong>m8azn.large</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>catalog GHz</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">4.5</td>
+<td style="text-align: right;"><strong>5.0</strong></td>
+</tr>
+<tr class="even">
+<td>PassMark ST</td>
+<td style="text-align: right;">~1400</td>
+<td style="text-align: right;">~3800</td>
+<td style="text-align: right;">~4300</td>
+</tr>
+<tr class="odd">
+<td>on-demand</td>
+<td style="text-align: right;">~$0.11</td>
+<td style="text-align: right;">~$0.11</td>
+<td style="text-align: right;">~$0.21</td>
+</tr>
+<tr class="even">
+<td>regions</td>
+<td style="text-align: right;">~16</td>
+<td style="text-align: right;">~7</td>
+<td style="text-align: right;"><strong>~6</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>only <strong>~16</strong> types · <strong>2</strong> families · ~<strong>1%</strong> of AWS catalog<br>
+</li>
+<li><strong>~2×</strong> the money for ~<strong>+10%</strong> PassMark vs <strong>c8a</strong><br>
+</li>
+<li>tiny fallback pool → <strong>capacity / spot</strong> pain</li>
+</ul>
+</div>
+<aside class="notes">
+<p><span style="color:#34d399;font-weight:bold">A:</span> should we just require 5 GHz, the current maximum?</p>
+<ul>
+<li><strong>tiny menu</strong> — handful of SKUs, mostly <strong>m8azn</strong> / <strong>x8aedz</strong><br>
+</li>
+<li><strong>few regions</strong> · new / niche<br>
+</li>
+<li>vs <strong>c8a</strong>: <strong>2×</strong> the price · only ~<strong>10%</strong> more PassMark<br>
+</li>
+<li>Karpenter wants <strong>diversity</strong> — 5 GHz pin = brittle<br>
+</li>
+<li>need <strong>benchmark ranking</strong>, not a GHz floor<br>
+</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
 <section id="claude-plan-fix-problem" class="title-slide slide level1">
 <h1>$ claude –plan “fix problem”</h1>
-<!-- TODO Attila describe the controller spec draft -->
+<div style="font-size: 0.72em;">
+<p>Pub talk → need <strong>benchmark</strong>-ranked types in <strong>Karpenter</strong> (incl.&nbsp;<strong>EKS Auto</strong>)</p>
+<p><strong>Plan</strong> (<code>sc-karpenter-nodepool</code> ADRs + sequenced v1 plans):</p>
+<ol type="1">
+<li><strong>Own NodePools only</strong> — never patch user pools / no <code>NodeOverlay</code><br>
+→ <strong>managed</strong> Karpenter <strong>+ GitOps</strong> (Argo CD, …) — no fights over a shared object</li>
+<li><strong><code>SCNodePool</code> → one NodePool</strong> — template verbatim + selected <code>instance-type</code> list</li>
+<li>Emit <strong>universal keys only</strong> (<code>instance-type</code> · arch · capacity)<br>
+→ avoid <strong>RequirementsDrifted</strong> loops</li>
+<li><strong>Selectors + ranking</strong> from <strong>Keeper</strong> (e.g.&nbsp;PassMark ST · family band)</li>
+<li><strong>Churn control</strong> — 24h refresh · hysteresis · never empty list</li>
+<li><strong>Go / kubebuilder</strong> — reuse Karpenter validation + provider test fakes</li>
+</ol>
+</div>
 <aside class="notes">
-<p>TODO Attila speaker notes</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> we sat down with <strong>Claude</strong> and planned the fix — six decisions:</p>
+<ul>
+<li><strong>own NodePools</strong> — don’t touch user / Auto Mode pools · <strong>GitOps</strong>-safe<br>
+</li>
+<li>one <strong><code>SCNodePool</code></strong> → one Karpenter NodePool (template + type list)<br>
+</li>
+<li>NodePool gets only <strong>instance-type / arch / capacity</strong> — no AWS-only labels → avoid <strong>RequirementsDrifted</strong> loops<br>
+</li>
+<li><strong>Keeper</strong> ranks by benchmark (e.g.&nbsp;<strong>PassMark</strong> ST)<br>
+</li>
+<li><strong>churn</strong> control — ranking moves a bit → don’t <strong>replace</strong> running nodes<br>
+</li>
+<li><strong>Go</strong> — reuse Karpenter’s own validators<br>
+</li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1300,7 +1682,7 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 <section id="demo" class="title-slide slide level1">
 <h1></h1>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css">
-<div id="demo-player" style="width: 100%; height: 730px; margin-top: -30px;"></div>
+<div id="demo-player" style="width: 90%; height: 730px; margin-left: auto; margin-right: auto; margin-top: -30px;margin-bottom: 0px;"></div>
 <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
 <script>
   (function () {
@@ -1324,6 +1706,12 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
     });
   })();
 </script>
+
+<p class="centered" style="margin-top: -30px;">
+  <a href="https://sparecores.github.io/sc-karpenter-nodepool/demo/" target="_blank" class="centered" style="margin-top: -30px;">
+    <code>sc-karpenter-nodepool</code> demo
+  </a>
+</p>
 <aside class="notes">
 <p>TODO Attila speaker notes</p>
 <style type="text/css">
@@ -1341,13 +1729,14 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 
 <section id="strace--e-environment-sparecores.com" class="title-slide slide level1">
 <h1>$ strace -e environment sparecores.com</h1>
-<!-- TODO Gergo find better title for this slide -->
-<!-- TODO Gergo add mermaid diagram from docs.sparecores.com/overview -->
+<div style="text-align: center; overflow-y: scroll; height: 95%; max-width: 800px; margin-left: auto; margin-right: auto;">
+<p><img src="images/crawling.png" style="margin: auto;"></p>
+</div>
 <aside class="notes">
-<p>TODO Gergo add speaker notes</p>
-<p>Gergo: this is cool .. we could definitely use something like this at spare cores GH/Pulumit etc fajdalom .. schedule/stop/tasks.</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> this is cool .. we could definitely use something like this at Spare Cores, as today we use GitHub Actions with Pulumi to pick and start VMs, keeping status and logs in GitHub repos, sometimes in S3 as well, and it became quite compliacated over the years to make sure we are decommisioning unwanted resources etc.</p>
+<p>Instead of this, using k8s and a pod asking for an exact instance type at a given vendor would be so much simpler and more flexible.</p>
 <p>I’ve checked Gardener, Container API … did not find anything plug and play.</p>
-<p>how to use your kubernetes controller for this?</p>
+<p><span style="color:#ef4444;font-weight:bold">G:</span> how to use your kubernetes controller for this?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1363,26 +1752,35 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 
 <section id="entrypoint-sc-karpenter-nodepool" class="title-slide slide level1">
 <h1>ENTRYPOINT [“sc-karpenter-nodepool”]</h1>
-<!-- TODO Attila describe the limitations -->
+<div style="font-size: 0.65em;">
+<p>Great for <strong>picking</strong> types · <strong>not</strong> for inspector-style <strong>multi-cloud JIT</strong></p>
+<p><strong>Limitations</strong> (vs “pod annotation → any cloud / region / AZ / SKU”):</p>
 <ul>
-<li>single cloud only</li>
-</ul>
-<div class="fragment">
-<ul>
-<li>defined region</li>
+<li class="fragment"><strong>not a provisioner</strong> — only writes a Karpenter <code>NodePool</code> (<code>instance-type</code> list)</li>
+<li class="fragment"><strong>one cloud · one cluster</strong> — regions from NodeClass / node labels, not per-pod</li>
+<li class="fragment"><strong>no cross-cloud / cross-region hop</strong> in one request (AWS≠GCP≠Hetzner from one Pod)</li>
+<li class="fragment"><strong>needs Karpenter + cloud provider</strong> already there (<strong>EKS / Auto · AKS NAP · GKE · …</strong>)</li>
+<li class="fragment"><strong>no</strong> VPC / image import / Flatcar join / mesh — that’s <strong>not</strong> this controller</li>
+<li class="fragment">Pod <strong>can</strong> pin a type (<code>node.kubernetes.io/instance-type</code>) — but only if it’s <strong>already in the pool</strong><br>
+· no “<strong>any</strong> vendor · <strong>any</strong> region · <strong>this</strong> SKU” from one annotation (≠ <code>start.yml</code>)</li>
 </ul>
 </div>
-<div class="fragment">
-<ul>
-<li>needs karpenter installed</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>needs EKS, GKE, AKS, etc.</li>
-</ul>
 <aside class="notes">
-<p>TODO Attila speaker notes</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> great for picking types — <strong>not</strong> for inspector <strong>JIT</strong></p>
+<p>There are still several limitations as you can see, but due to time constraints, let’s rather focus on the ideal scenario instead.</p>
+<ul>
+<li>we only write a <strong>NodePool</strong> — Karpenter still does the launch<br>
+</li>
+<li><strong>one</strong> cloud, <strong>one</strong> cluster — no per-pod region<br>
+</li>
+<li>can’t hop <strong>AWS → GCP → Hetzner</strong> from one Pod<br>
+</li>
+<li><strong>Karpenter + cloud provider</strong> must already be there<br>
+</li>
+<li>no VPC / image / Flatcar / mesh — out of scope<br>
+</li>
+<li>Pod <strong>can</strong> pin a type <strong>if</strong> it’s already in the pool — not “any SKU anywhere” like <strong><code>start.yml</code></strong></li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1394,26 +1792,35 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</div>
 </section>
 
 <section id="cat-sc-karpenter-nodepoolroadmap.md" class="title-slide slide level1">
 <h1>$ cat sc-karpenter-nodepool/ROADMAP.md</h1>
-<!-- TODO Attila describe the ideal stack -->
-<ol type="1">
-<li>onprem kubernetes cluster</li>
-</ol>
-<div class="fragment">
-<ol start="2" type="1">
-<li>be akarunk huzni gcp-t, hetznert etc AKARMIT EKS, GKE, AKS nelkul</li>
-</ol>
+<div style="font-size: 0.72em;">
+<p>Ideal stack for <strong>sc-inspector</strong> (replace GH Actions + Pulumi <code>start.yml</code>):</p>
+<ul>
+<li class="fragment"><strong>Control plane:</strong> on-prem / cheap VMs — <strong>k3s</strong> (3 servers) · <strong>not</strong> EKS/GKE/AKS</li>
+<li class="fragment"><strong>Mesh:</strong> <strong>Headscale</strong> tailnet — workers need <strong>outbound only</strong> (any cloud/region)</li>
+<li class="fragment"><strong>Orchestration:</strong> <strong>Hatchet</strong> — plan runs · create inspector Pods · retries / timeouts</li>
+<li class="fragment"><strong>Provisioner:</strong> <strong>scarpenter</strong> — multi-vendor <strong>Karpenter</strong> provider + <strong>sc-keeper</strong> catalog</li>
+<li class="fragment"><strong>Nodes:</strong> <strong>Flatcar</strong> + Ignition · TLS bootstrap join · <strong>single-tenant</strong> · die when empty</li>
+<li class="fragment"><strong>Flow:</strong> Pod <code>nodeSelector</code> (vendor/type) → pending → cheapest offering → boot → inspect → <strong>tear down</strong></li>
+</ul>
 </div>
-<div class="fragment">
-<ol start="3" type="1">
-<li>controller? operator? -&gt; vendor API create vpc/storage/node + network + join cluster</li>
-</ol>
 <aside class="notes">
-<p>TODO Attila speaker notes</p>
+<p><span style="color:#34d399;font-weight:bold">A:</span> ideal stack — replace <strong><code>start.yml</code></strong> with Pod-driven <strong>JIT</strong></p>
+<ul>
+<li><p><strong>k3s</strong> on cheap/on-prem VMs — <strong>not</strong> EKS/GKE/AKS<br>
+</p></li>
+<li><p><strong>Headscale</strong> mesh — workers only need <strong>outbound</strong> (any cloud, NAT OK)<br>
+</p></li>
+<li><p><strong>Hatchet</strong> runs the plans · Pods · retries (not GH Actions spaghetti)<br>
+</p></li>
+<li><p><strong>scarpenter</strong> — one <strong>multi-cloud</strong> Karpenter · catalog from <strong>Keeper</strong><br>
+</p></li>
+<li><p><strong>Flatcar</strong> · TLS join · <strong>single-tenant</strong> (one bench at a time; more jobs → more nodes) · die when empty</p></li>
+<li><p>flow: Pod asks for a type → boot → inspect → <strong>tear down</strong></p></li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1425,12 +1832,52 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</div>
 </section>
 
 <section id="feedback" class="title-slide slide level1">
-<h1></h1>
-<!-- TODO Gergo one question to the community of the would find something like this useful before we jump the rabbit hole to prepare for next year's KCD Budapest -->
+<h1>&gt; /review plan</h1>
+<style>
+  #feedback {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+  }
+  #feedback > h1 {
+    flex: 0 0 auto;
+  }
+  #feedback .feedback-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  #feedback .feedback-question {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-size: 1.25em;
+    text-align: center;
+  }
+  #feedback .feedback-footnote {
+    flex: 0 0 auto;
+    margin: 0 0 0.4em;
+    font-size: 2em;
+    text-align: center;
+  }
+  #feedback .feedback-footnote span {
+    color: #14B8A6;
+  }
+</style>
+<div class="feedback-body">
+<div class="feedback-question fragment centered">
+<p>Would you find something like this* useful?</p>
+</div>
+<div class="feedback-footnote fragment centered">
+<p>* any k8s cluster <span>+</span> cloud credential <span>+</span> capacity need<span class="fragment" style="color: #34D399;"><span style="color: #14B8A6;"> =&gt;</span><br>ephemeral instances from any region of any cloud</span></p>
+</div>
+</div>
 <aside class="notes">
 <p>TODO Gergo speaker notes</p>
 <style type="text/css">
@@ -1447,8 +1894,82 @@ https://sparecores.com/advisor?vendor=aws&vendor_regions=aws~us-west-2&baseline_
 </section>
 
 <section id="bye" class="title-slide slide level1">
-<h1>Bye</h1>
-<!-- TODO Gergo add thanks slide -->
+<h1>$ ping sparecores.com</h1>
+<style>
+  .reveal .bye-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5em;
+    margin-top: 1em;
+  }
+
+  .reveal .bye-layout .bye-contacts {
+    font-size: 0.6em;
+  }
+
+  .reveal .bye-layout .bye-group + .bye-group {
+    margin-top: 1.6em;
+  }
+
+  .reveal .bye-layout .bye-contacts h3 {
+    margin: 0 0 0.2em;
+    font-size: 1.15em;
+    text-transform: none;
+  }
+
+  .reveal .bye-layout .bye-contacts p {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    margin: 0.15em 0;
+  }
+
+  .reveal .bye-layout .bye-contacts span {
+    flex: 0 0 6.5em;
+    white-space: nowrap;
+    color: #94a3b8;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .reveal .bye-layout .bye-slides {
+    flex: 0 0 auto;
+    font-size: 0.8em;
+    text-align: center;
+  }
+
+  .reveal .bye-layout .qr-card-canvas {
+    width: 10em;
+    height: 10em;
+  }
+</style>
+<div class="bye-layout">
+  <div class="bye-contacts fragment" data-fragment-index="2">
+    <div class="bye-group">
+      <h3>Spare Cores</h3>
+      <p><span>Web</span><a href="https://sparecores.com" target="_blank">sparecores.com</a></p>
+      <p><span>Docs</span><a href="https://docs.sparecores.com" target="_blank">docs.sparecores.com</a></p>
+      <p><span>GitHub</span><a href="https://github.com/SpareCores" target="_blank">github.com/SpareCores</a></p>
+      <p><span>LinkedIn</span><a href="https://linkedin.com/company/SpareCores" target="_blank">linkedin.com/company/SpareCores</a></p>
+      <p><span>Email</span><a href="mailto:hi@sparecores.com">hi@sparecores.com</a></p>
+    </div>
+    <div class="bye-group">
+      <h3>Attila Nagy</h3>
+      <p><span>LinkedIn</span><a href="https://www.linkedin.com/in/11bra/" target="_blank">linkedin.com/in/11bra</a></p>
+      <p><span>Email</span><a href="mailto:attila@sparecores.com">attila@sparecores.com</a></p>
+    </div>
+    <div class="bye-group">
+      <h3>Gergely Daroczi</h3>
+      <p><span>LinkedIn</span><a href="https://www.linkedin.com/in/daroczig/" target="_blank">linkedin.com/in/daroczig</a></p>
+      <p><span>Email</span><a href="mailto:daroczig@sparecores.com">daroczig@sparecores.com</a></p>
+    </div>
+  </div>
+  <div class="bye-slides fragment" data-fragment-index="1">
+    <div class="qr-card" data-qr="https://sparecores.com/talks"></div>
+  </div>
+</div>
 <!--toggle visibility of items in live mode-->
 <script>
 var url = document.location.href;
@@ -1486,6 +2007,9 @@ if (url.match("/?live")) {
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-box-overlay/boxoverlay.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-curtain/curtain.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-agent-terminal/agentterminal.js"></script>
+  <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-poll/lean-qr-nano.js"></script>
+  <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-poll/poll.js"></script>
+  <script src="kcd-budapest-2026_files/libs/revealjs/plugin/reveal-slide-timer/slidetimer.js"></script>
   <script src="kcd-budapest-2026_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
@@ -1678,7 +2202,7 @@ if (url.match("/?live")) {
         },
 
         // reveal.js plugins
-        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealBoxOverlay, RevealCurtain, RevealAgentTerminal, QuartoSupport,
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealBoxOverlay, RevealCurtain, RevealAgentTerminal, RevealPoll, RevealSlideTimer, QuartoSupport,
 
           RevealMath,
           RevealNotes,

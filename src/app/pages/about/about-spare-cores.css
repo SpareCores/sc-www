@@ -1,0 +1,9 @@
+p {
+  @apply text-white text-xl pr-16 mb-4 pb-4;
+}
+a {
+  @apply underline decoration-dotted hover:text-gray-500;
+}
+h2 {
+  @apply font-semibold text-2xl mb-4;
+}

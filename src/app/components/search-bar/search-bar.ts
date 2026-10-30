@@ -1,10 +1,11 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { DialogRef } from "@angular/cdk/dialog";
+import { CommonModule } from "@angular/common";
 import {
   Component,
   ElementRef,
   OnDestroy,
   OnInit,
-  PLATFORM_ID,
+  TemplateRef,
   ViewEncapsulation,
   effect,
   inject,
@@ -16,14 +17,15 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LucideChevronDown, LucideDynamicIcon } from "@lucide/angular";
-import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { KeeperAPI } from "../../services/keeper-api";
 import { isAbortError } from "../../services/keeper-http-client";
+import { ModalDialog } from "../../services/modal-dialog";
 import { Toast } from "../../services/toast";
 import { SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { TooltipVariant, UiTooltip } from "../../services/ui-tooltip";
 import { Button } from "../button/button";
+import { Modal } from "../modal/modal";
 import {
   SearchBarCustomControls,
   SearchBarGeoFilters,
@@ -76,11 +78,6 @@ export type {
   VendorMetadata,
 } from "./types/search-bar.types";
 
-const optionsModal: ModalOptions = {
-  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
-  closable: true,
-};
-
 type ApiResponse<T> = {
   body?: T;
 };
@@ -91,6 +88,7 @@ type ApiResponse<T> = {
     CommonModule,
     FormsModule,
     Button,
+    Modal,
     LucideDynamicIcon,
     LucideChevronDown,
     SearchBarCustomControls,
@@ -98,14 +96,14 @@ type ApiResponse<T> = {
     SearchBarParameterField,
   ],
   templateUrl: "./search-bar.html",
-  styleUrl: "./search-bar.scss",
+  styleUrl: "./search-bar.css",
   encapsulation: ViewEncapsulation.None,
 })
 export class SearchBar implements OnInit, OnDestroy {
-  private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPI);
   private toastService = inject(Toast);
   private uiTooltip = inject(UiTooltip);
+  private modalDialog = inject(ModalDialog);
 
   query = input<SearchBarQuery>({});
   searchParameters = input.required<SearchBarParameter[]>();
@@ -129,6 +127,9 @@ export class SearchBar implements OnInit, OnDestroy {
 
   tooltip = viewChild.required<ElementRef<HTMLElement>>("tooltipDefault");
   customControlsComponents = viewChildren(SearchBarCustomControls);
+  searchPromptModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "searchPromptModalTemplate",
+  );
   tooltipContent = "";
 
   complianceFrameworks: ComplianceFrameworkMetadata[] = [];
@@ -141,13 +142,13 @@ export class SearchBar implements OnInit, OnDestroy {
 
   vendorRegionCollapsedVendors: Record<string, boolean> = {};
 
-  modalSearch: Modal | undefined;
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
   modalResponse: SearchBarQuery | null = null;
   modalResponseStr: string[] = [];
 
   private parameterDraftValues: Record<string, string> = {};
+  private searchPromptDialogRef: DialogRef | null = null;
 
   private readonly valueChangeDebouncer = new Subject<number>();
   private valueChangeGeneration = 0;
@@ -220,15 +221,6 @@ export class SearchBar implements OnInit, OnDestroy {
           this.filterServers();
         }),
     );
-
-    if (isPlatformBrowser(this.platformId)) {
-      const targetElModal = document.getElementById("search-prompt-modal");
-
-      this.modalSearch = new Modal(targetElModal, optionsModal, {
-        id: "search-prompt-modal",
-        override: true,
-      });
-    }
   }
 
   private syncQueryInput(query: SearchBarQuery) {
@@ -929,7 +921,17 @@ export class SearchBar implements OnInit, OnDestroy {
   }
 
   openSearchPrompt() {
-    this.modalSearch?.show();
+    if (this.searchPromptDialogRef) {
+      return;
+    }
+
+    this.searchPromptDialogRef = this.modalDialog.open(
+      this.searchPromptModalTemplate(),
+      { autoFocus: "textarea" },
+    );
+    this.searchPromptDialogRef.closed.subscribe(() => {
+      this.searchPromptDialogRef = null;
+    });
   }
 
   closeModal(confirm: boolean) {
@@ -955,7 +957,7 @@ export class SearchBar implements OnInit, OnDestroy {
       this.modalResponse = null;
     }
 
-    this.modalSearch?.hide();
+    this.searchPromptDialogRef?.close();
   }
 
   async submitFreetextSearch() {
@@ -1012,6 +1014,7 @@ export class SearchBar implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.searchPromptDialogRef?.close();
     this.loadAbortController.abort();
     this.subscription.unsubscribe();
     this.valueChangeDebouncer.complete();

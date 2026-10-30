@@ -29,7 +29,7 @@ type LogoDownloadManifest = {
   selector: "sc-design",
   imports: [Button, ThemeText, DesignPageCard, DownloadableLogoCollection],
   templateUrl: "./design.html",
-  styleUrls: ["./design.scss"],
+  styleUrls: ["./design.css"],
 })
 export class Design implements OnInit {
   private http = inject(HttpClient);

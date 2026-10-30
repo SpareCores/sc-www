@@ -1,11 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "selector",
-  plugins: [require("flowbite/plugin")],
   content: [
     "./src/**/*.{html,ts,scss}",
+    "./src/app/**/*.css",
+    "./src/styles.css",
     "./src/assets/articles/*.md",
-    "./node_modules/flowbite/**/*.js",
   ],
   theme: {
     extend: {

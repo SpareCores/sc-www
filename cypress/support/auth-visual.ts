@@ -99,7 +99,7 @@ function snap(name: string, prefix: VisualSizePrefix): void {
 }
 
 function snapViewport(name: string, prefix: VisualSizePrefix): void {
-  cy.scrollTo(0, 0);
+  cy.scrollTo(0, 0, { ensureScrollable: false });
   E2EEvent.hideScrollbarsForScreenshot({ lockOverflow: true });
   cy.compareSnapshot({
     name: visualSnapshotName(name, prefix),

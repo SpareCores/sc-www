@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/node:lts-jod AS build
+FROM public.ecr.aws/docker/library/node:lts-krypton AS build
 
 ARG BACKEND_BASE_URI=https://keeper.sparecores.net
 ENV NG_APP_BACKEND_BASE_URI=$BACKEND_BASE_URI
@@ -50,13 +50,14 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
+RUN node prelink.mjs
 RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
       npm run build -- --source-map="${BUILD_SOURCE_MAP}" --deploy-url="${STATIC_ASSET_BASE_URL}"; \
     else \
       npm run build -- --source-map="${BUILD_SOURCE_MAP}"; \
     fi
 
-FROM public.ecr.aws/docker/library/node:lts-jod
+FROM public.ecr.aws/docker/library/node:lts-krypton
 
 # optional Runtime SSR host allowlist for CommonEngine, defaults to localhost if not set
 ARG NG_ALLOWED_HOSTS

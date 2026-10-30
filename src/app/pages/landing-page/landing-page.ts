@@ -66,7 +66,7 @@ import {
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: "./landing-page.html",
-  styleUrl: "./landing-page.scss",
+  styleUrl: "./landing-page.css",
 })
 export class LandingPage implements OnInit {
   private platformId = inject(PLATFORM_ID);

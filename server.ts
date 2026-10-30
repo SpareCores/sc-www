@@ -310,6 +310,10 @@ export function app(): express.Express {
     next();
   });
 
+  server.get("/poll/:id", (req, res) => {
+    return res.sendFile(join(browserDistFolder, "assets", "poll.html"));
+  });
+
   // Legacy comparison URL redirects
   server.get("/compare", (req, res) => {
     return res.redirect(

@@ -49,7 +49,7 @@ type LegalArticleLoadResult =
     LoadingSpinner,
   ],
   templateUrl: "./tos.html",
-  styleUrl: "./tos.scss",
+  styleUrl: "./tos.css",
 })
 export class TOS implements OnInit {
   private readonly legalArticleIdPattern = /^[a-z0-9_-]+$/i;
