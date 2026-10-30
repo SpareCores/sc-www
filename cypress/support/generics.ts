@@ -231,6 +231,17 @@ export abstract class E2EEvent {
     cy.get("header").invoke("css", "position", "static");
   }
 
+  public static loadImagesForScreenshot(selector: string) {
+    cy.get(selector).each(($img) => {
+      const img = $img[0] as HTMLImageElement;
+      img.loading = "eager";
+      cy.wrap(img.decode(), { log: false });
+      cy.wrap($img)
+        .should("have.prop", "naturalWidth")
+        .and("be.greaterThan", 0);
+    });
+  }
+
   public static openMobileMenuForScreenshot() {
     cy.get("#menu_button").should("be.visible").click();
     cy.get("#menu_options").should("be.visible");

@@ -117,12 +117,17 @@ li {
 
 .bg-custom {
   background:
-    linear-gradient(180deg, #072437 7.11%, rgba(6, 38, 58, 0) 75.52%), #082f49;
+    linear-gradient(
+      180deg,
+      var(--color-secondary) 7.11%,
+      color-mix(in oklab, var(--color-secondary) 0%, transparent) 75.52%
+    ),
+    var(--color-primary);
 }
 
 .login_button {
-  background-color: #e5e7eb;
-  color: #1f2937;
+  background-color: var(--color-gray-200);
+  color: var(--color-gray-800);
   padding: 6px 12px;
   border-radius: 0.5rem;
   border: none;

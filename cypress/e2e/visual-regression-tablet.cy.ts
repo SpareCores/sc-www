@@ -246,6 +246,7 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
 
     cy.contains("Strategic & Ecosystem Partners").should("be.visible");
     cy.get(".partner-logos").should("have.length.at.least", 1);
+    E2EEvent.loadImagesForScreenshot(".partner-logo-image");
 
     cy.compareSnapshot({
       name: visualSnapshotName("partners-page", "tablet"),

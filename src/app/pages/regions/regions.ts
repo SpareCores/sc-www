@@ -27,26 +27,18 @@ import {
 import { Button } from "../../components/button/button";
 import { Router, RouterModule } from "@angular/router";
 
+import {
+  chartColors,
+  chartSeriesTokens,
+} from "../../components/charts/shared/chart-colors.constants";
+
 declare let Datamap: any;
 
 const SCRIPT_PATH = "assets/datamaps/d3.min.js";
 const SCRIPT_PATH2 = "assets/datamaps/topojson.js";
 const SCRIPT_PATH3 = "assets/datamaps/datamaps.world.min.js";
 
-const colors = [
-  "#3B82F6",
-  "#F87171",
-  "#FBBF24",
-  "#F472B6",
-  "#34D399",
-  "#E5E7EB",
-  "#38BDF8",
-  "#FACC15",
-  "#F87171",
-  "#A3E635",
-  "#818CF8",
-  "#94A3B8",
-];
+const colors = chartSeriesTokens.map((token) => chartColors[token]);
 
 @Component({
   selector: "sc-regions",
@@ -103,11 +95,15 @@ export class Regions implements OnInit {
     );
 
     this.API.getRegions().then((regions) => {
-      this.regions = regions.body;
+      if (!this.regions.length) {
+        this.regions = regions.body;
+      }
     });
 
     this.API.getVendors().then((vendors) => {
-      this.vendors = vendors.body;
+      if (!this.vendors.length) {
+        this.vendors = vendors.body;
+      }
     });
 
     if (isPlatformBrowser(this.platformId)) {
@@ -131,7 +127,7 @@ export class Regions implements OnInit {
               let element = this.document.getElementById("datamapdiv");
 
               let fills: any = {
-                defaultFill: "#06263a",
+                defaultFill: chartColors["sky-975"],
               };
 
               this.vendors.forEach((vendor, index) => {
@@ -147,7 +143,7 @@ export class Regions implements OnInit {
                 bubblesConfig: {
                   fillOpacity: 1,
                   borderOpacity: 0,
-                  highlightFillColor: "#34d399",
+                  highlightFillColor: chartColors["emerald-400"],
                   highlightBorderOpacity: 0,
                 },
                 fills: fills,
@@ -281,5 +277,15 @@ export class Regions implements OnInit {
   isVendorSelected(vendorId: string) {
     return this.vendors?.find((vendor) => vendor.vendor_id === vendorId)
       ?.selected;
+  }
+
+  isVendorHidden(vendorId: string) {
+    return this.isVendorSelected(vendorId) === false;
+  }
+
+  get visibleRegions() {
+    return this.regions.filter(
+      (region) => !this.isVendorHidden(region.vendor_id),
+    );
   }
 }

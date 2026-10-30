@@ -2,21 +2,15 @@
   --font-sans: "Inter", sans-serif;
   --font-mono: "Roboto Mono", monospace, sans-serif;
 
-  --color-emerald-100: #d1fae5;
-  --color-emerald-200: #a7f3d0;
+  --breakpoint-tablet: 50rem;
+  --breakpoint-wide: 75rem;
+
   --color-emerald-400: #34d399;
-  --color-emerald-500: #10b981;
-  --color-emerald-600: #059669;
-  --color-emerald-800: #065f46;
-  --color-emerald-900: #064e3b;
 
   --color-teal-500: #14b8a6;
-  --color-teal-600: #0d9488;
 
-  --color-sky-100: #e0f2fe;
   --color-sky-300: #7dd3fc;
   --color-sky-400: #38bdf8;
-  --color-sky-500: #0ea5e9;
   --color-sky-700: #0369a1;
   --color-sky-800: #075985;
   --color-sky-900: #0c4a6e;
@@ -30,18 +24,30 @@
   --color-red-600: #dc2626;
   --color-red-800: #991b1b;
 
-  --color-yellow-100: #fef9c3;
-  --color-yellow-400: #facc15;
   --color-yellow-500: #eab308;
 
-  --color-amber-300: #fcd34d;
-
   --color-blue-600: #2563eb;
+
+  --color-indigo-400: #818cf8;
+
+  --color-lime-400: #a3e635;
+
+  --color-slate-400: #94a3b8;
 
   --color-sky-975: oklch(25.7% 0.052 240.8);
 
   --color-primary: var(--color-sky-950);
   --color-secondary: var(--color-sky-975);
+
+  --color-slot-face: oklch(60.3% 0.242 19.7);
+  --color-slot-face-border: oklch(51.6% 0.208 21.9);
+  --color-slot-face-hover: oklch(45.8% 0.187 26.5);
+  --color-slot-face-hover-border: oklch(37.7% 0.155 29.2);
+  --color-slot-face-disabled: oklch(37.2% 0.149 16.4);
+  --color-slot-face-disabled-border: oklch(27.1% 0.111 29.2);
+  --color-slot-label-disabled: oklch(42.7% 0.094 17.3);
+  --color-slot-base: oklch(32.2% 0.13 22.7);
+  --color-slot-base-disabled: oklch(24.3% 0.1 29.2);
 }
 
 @custom-variant dark (&:where(.dark, .dark *));

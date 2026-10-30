@@ -36,11 +36,11 @@
 }
 
 @utility benchmark-note-icon {
-  @apply h-4 w-auto shrink-0 cursor-help text-[#EAB308];
+  @apply h-4 w-auto shrink-0 cursor-help text-yellow-500;
 }
 
 @utility btn-primary {
-  @apply bg-emerald-400 text-white rounded-lg font-bold hover:bg-emerald-500 focus:outline-hidden focus:ring-3 focus:ring-emerald-400/75;
+  @apply bg-emerald-400 text-white rounded-lg font-bold hover:bg-emerald-400/80 focus:outline-hidden focus:ring-3 focus:ring-emerald-400/75;
   transition-duration: 0.15s;
   transition-property: background-color, border-color, box-shadow, color;
   transition-timing-function: ease-in;
@@ -60,7 +60,7 @@
 }
 
 @utility dropdown_button {
-  @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-hidden font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
+  @apply text-white bg-emerald-400 hover:bg-emerald-400/80 focus:outline-hidden font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
   transition-duration: 0.15s;
   transition-property: background-color, border-color, box-shadow, color;
   transition-timing-function: ease-in;

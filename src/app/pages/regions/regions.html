@@ -22,6 +22,7 @@
             [swatchColor]="vendor.color || '#06263a'"
             variant="ghost"
             color="inverse"
+            [ariaPressed]="!isVendorHidden(vendor.vendor_id)"
             [buttonClass]="
               isVendorSelected(vendor.vendor_id)
                 ? ''
@@ -86,7 +87,12 @@
           region of regions;
           track region.vendor_id + "_" + region.region_id
         ) {
-          <tr (click)="openLink(region)">
+          <tr
+            [class.regions-table__row--hidden]="
+              isVendorHidden(region.vendor_id)
+            "
+            (click)="openLink(region)"
+          >
             <td>
               <div class="flex gap-1">
                 {{ region.display_name }}
@@ -112,6 +118,15 @@
                   ></svg>
                 </a>
               </div>
+            </td>
+          </tr>
+        }
+        @if (regions.length && !visibleRegions.length) {
+          <tr class="regions-table__empty">
+            <td colspan="5">
+              <strong>All vendors are hidden.</strong>
+              Turn on at least one vendor above the map to list its regions
+              here.
             </td>
           </tr>
         }

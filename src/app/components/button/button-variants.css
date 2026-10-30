@@ -43,7 +43,7 @@
 }
 
 .sc-button--link.sc-button--brand {
-  @apply text-emerald-400 hover:text-emerald-500 focus:text-emerald-500;
+  @apply text-emerald-400 hover:text-emerald-400/80 focus:text-emerald-400/80;
 }
 
 .sc-button--link.sc-button--neutral {
@@ -67,7 +67,7 @@
   .sc-button--dropdown,
   .sc-button--benchmark
 ).sc-button--brand {
-  @apply border-emerald-400 bg-emerald-400 hover:bg-emerald-500 focus:bg-emerald-500;
+  @apply border-emerald-400 bg-emerald-400 hover:bg-emerald-400/80 focus:bg-emerald-400/80;
 }
 
 :is(
@@ -111,7 +111,7 @@
 }
 
 .sc-button--ghost.sc-button--brand {
-  @apply text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 focus:bg-emerald-100 focus:text-emerald-800 dark:text-emerald-500 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400 dark:focus:bg-emerald-800/30 dark:focus:text-emerald-400;
+  @apply text-emerald-400 hover:bg-emerald-400/20 focus:bg-emerald-400/20;
 }
 
 .sc-button--ghost.sc-button--neutral {
@@ -123,11 +123,11 @@
 }
 
 .sc-button--ghost.sc-button--inverse {
-  @apply text-white hover:bg-white/10 focus:bg-white/10;
+  @apply text-white hover:bg-white/10 focus-visible:bg-white/10;
 }
 
 .sc-button--soft.sc-button--brand {
-  @apply bg-emerald-100 text-emerald-800 hover:bg-emerald-200 focus:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30 dark:focus:bg-emerald-500/30;
+  @apply bg-emerald-400/20 text-emerald-400 hover:bg-emerald-400/30 focus:bg-emerald-400/30;
 }
 
 .sc-button--soft.sc-button--neutral {

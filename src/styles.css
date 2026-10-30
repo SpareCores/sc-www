@@ -47,14 +47,14 @@
   textarea,
   select {
     appearance: none;
-    background-color: #fff;
+    background-color: var(--color-white);
     border-color: var(--color-body);
     border-width: 1px;
     border-radius: 0;
     padding: 0.5rem 0.75rem;
     font-size: 1rem;
     line-height: 1.5rem;
-    --tw-shadow: 0 0 #0000;
+    --tw-shadow: 0 0 transparent;
   }
 
   [type="text"]:focus,
@@ -76,7 +76,7 @@
     outline-offset: 2px;
     --tw-ring-inset: var(--tw-empty,);
     --tw-ring-offset-width: 0px;
-    --tw-ring-offset-color: #fff;
+    --tw-ring-offset-color: var(--color-white);
     --tw-ring-color: var(--color-brand);
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
       var(--tw-ring-offset-width) var(--tw-ring-offset-color);
@@ -137,10 +137,10 @@
     height: 1rem;
     width: 1rem;
     color: var(--color-brand);
-    background-color: #fff;
+    background-color: var(--color-white);
     border-color: var(--color-default);
     border-width: 1px;
-    --tw-shadow: 0 0 #0000;
+    --tw-shadow: 0 0 transparent;
   }
 
   [type="checkbox"] {
@@ -155,7 +155,7 @@
   [type="radio"]:focus {
     outline: 1px solid transparent;
     --tw-ring-inset: var(--tw-empty,);
-    --tw-ring-offset-color: #fff;
+    --tw-ring-offset-color: var(--color-white);
     --tw-ring-color: var(--color-brand);
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
       var(--tw-ring-offset-width) var(--tw-ring-offset-color);
@@ -239,7 +239,7 @@
       calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);
     box-shadow:
       var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
-      var(--tw-shadow, 0 0 #0000);
+      var(--tw-shadow, 0 0 transparent);
     --tw-ring-opacity: 1px;
     --tw-ring-color: rgb(164 202 254 / var(--tw-ring-opacity));
   }
@@ -332,7 +332,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: #082f49;
+  background: var(--color-primary);
 }
 
 .sc-auth-pending-overlay__content {
@@ -345,13 +345,13 @@
 
 .sc-auth-pending-overlay__text {
   margin: 0;
-  color: #fff;
+  color: var(--color-white);
   font-size: 1.125rem;
   line-height: 1.75rem;
 }
 
 .sc-auth-pending-overlay__text--error {
-  color: #f87171;
+  color: var(--color-red-400);
 }
 
 body {
@@ -360,11 +360,11 @@ body {
 }
 
 :root {
-  --swiper-pagination-color: #34d399;
+  --swiper-pagination-color: var(--color-emerald-400);
   --swiper-pagination-bullet-size: 8px;
   --swiper-pagination-bullet-width: 8px;
   --swiper-pagination-bullet-height: 8px;
-  --swiper-pagination-bullet-inactive-color: #fff;
+  --swiper-pagination-bullet-inactive-color: var(--color-white);
   --swiper-pagination-bullet-inactive-opacity: 0.2;
   --swiper-pagination-bullet-opacity: 1;
   --swiper-pagination-bullet-horizontal-gap: 4px;
@@ -372,23 +372,27 @@ body {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  background: #34d399; /* This is the color for emerald-400 in Tailwind CSS */
+  background: var(
+    --color-emerald-400
+  ); /* This is the color for emerald-400 in Tailwind CSS */
 }
 
 input[type="range"]::-moz-range-thumb {
-  background: #34d399;
+  background: var(--color-emerald-400);
 }
 
 input[type="range"]::-ms-thumb {
-  background: #34d399;
+  background: var(--color-emerald-400);
 }
 
 input[type="range"]::-moz-range-progress {
-  background: #34d399; /* This is the color for emerald-400 in Tailwind CSS */
+  background: var(
+    --color-emerald-400
+  ); /* This is the color for emerald-400 in Tailwind CSS */
 }
 
 input[type="range"]::-ms-fill-upper {
-  background: #34d399;
+  background: var(--color-emerald-400);
 }
 
 input[type="number"] {
@@ -449,5 +453,10 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .design-gradient-fill-with-brand-colors {
   @apply text-white font-semibold text-4xl;
-  background: radial-gradient(ellipse at top right, #34d399, #14b8a6, #0c4a6e);
+  background: radial-gradient(
+    ellipse at top right,
+    var(--color-emerald-400),
+    var(--color-teal-500),
+    var(--color-sky-900)
+  );
 }
