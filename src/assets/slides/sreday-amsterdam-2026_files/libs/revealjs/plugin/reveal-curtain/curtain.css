@@ -1,0 +1,139 @@
+.curtain-stage {
+  --curtain-duration: 1.6s;
+  --curtain-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --curtain-color: #8b1220;
+  --curtain-shadow: #3d050c;
+  --curtain-highlight: #c22a3a;
+  --curtain-trim: #d4a017;
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.curtain-stage.is-hidden {
+  display: none;
+}
+
+.reveal .controls {
+  z-index: 40;
+}
+
+.curtain-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(50% + 2px);
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.45),
+      transparent 14%,
+      transparent 82%,
+      rgba(0, 0, 0, 0.5)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--curtain-shadow) 0,
+      var(--curtain-color) 1.8%,
+      var(--curtain-highlight) 3.2%,
+      var(--curtain-color) 4.6%,
+      var(--curtain-shadow) 6.5%
+    );
+  transition: transform var(--curtain-duration) var(--curtain-ease);
+  will-change: transform;
+}
+
+.curtain-left {
+  left: 0;
+  transform-origin: left center;
+  box-shadow: inset -40px 0 50px -25px rgba(0, 0, 0, 0.75);
+}
+
+.curtain-right {
+  right: 0;
+  transform-origin: right center;
+  box-shadow: inset 40px 0 50px -25px rgba(0, 0, 0, 0.75);
+}
+
+.curtain-valance {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 9%;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 60%),
+    repeating-linear-gradient(
+      90deg,
+      var(--curtain-shadow) 0,
+      var(--curtain-color) 1.5%,
+      var(--curtain-highlight) 2.5%,
+      var(--curtain-color) 3.5%,
+      var(--curtain-shadow) 5%
+    );
+  border-bottom: 4px solid var(--curtain-trim);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+  transition: transform var(--curtain-duration) var(--curtain-ease);
+}
+
+.curtain-stage.is-open .curtain-left {
+  transform: translateX(-100%) scaleX(0.6);
+}
+
+.curtain-stage.is-open .curtain-right {
+  transform: translateX(100%) scaleX(0.6);
+}
+
+.curtain-stage.is-open .curtain-valance {
+  transform: translateY(-120%);
+}
+
+.curtain-stage.no-anim .curtain-panel,
+.curtain-stage.no-anim .curtain-valance {
+  transition: none !important;
+  animation: none !important;
+}
+
+.curtain-stage.is-closed.is-swinging .curtain-left {
+  transform-origin: top center;
+  animation: curtain-swing-left 0.9s ease-out;
+}
+
+.curtain-stage.is-closed.is-swinging .curtain-right {
+  transform-origin: top center;
+  animation: curtain-swing-right 0.9s ease-out;
+}
+
+@keyframes curtain-swing-left {
+  0% { transform: skewX(0deg); }
+  35% { transform: skewX(1.6deg); }
+  70% { transform: skewX(-0.6deg); }
+  100% { transform: skewX(0deg); }
+}
+
+@keyframes curtain-swing-right {
+  0% { transform: skewX(0deg); }
+  35% { transform: skewX(-1.6deg); }
+  70% { transform: skewX(0.6deg); }
+  100% { transform: skewX(0deg); }
+}
+
+section > .curtain-trigger {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curtain-stage {
+    --curtain-duration: 0.4s;
+  }
+  .curtain-stage.is-closed.is-swinging .curtain-panel {
+    animation: none;
+  }
+}
