@@ -1721,72 +1721,115 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <style>
   .reveal .bye-layout {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 1.5em;
-    margin-top: 1em;
+    gap: 1em;
+    margin-top: 0.25em;
+  }
+
+  .reveal .bye-layout .bye-recap {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.85em;
+  }
+
+  .reveal .bye-layout .bye-recap ul {
+    margin: 0;
+    padding-left: 0;
+    width: 100%;
+    list-style-position: inside;
+  }
+
+  .reveal .bye-layout .bye-recap li {
+    margin: 0.35em 0;
+    padding-left: 10px;
+  }
+
+  .reveal .bye-layout .bye-aside {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7em;
+  }
+
+  .reveal .bye-layout .bye-aside .qr-card {
+    width: max-content;
+    padding: 0.6em 0.6em 0.6em;
+  }
+
+  .reveal .bye-layout .bye-aside .qr-card-canvas {
+    width: 9em;
+    height: 9em;
+    margin: 0 auto;
+  }
+
+  .reveal .bye-layout .bye-aside .qr-card-link {
+    max-width: none;
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+    font-size: 0.42em;
   }
 
   .reveal .bye-layout .bye-contacts {
-    font-size: 0.6em;
+    font-size: 0.68em;
   }
 
-  .reveal .bye-layout .bye-group + .bye-group {
-    margin-top: 1.6em;
-  }
-
-  .reveal .bye-layout .bye-contacts h3 {
-    margin: 0 0 0.2em;
-    font-size: 1.15em;
-    text-transform: none;
+  .reveal .bye-layout .bye-contacts a {
+    text-decoration: none !important;
   }
 
   .reveal .bye-layout .bye-contacts p {
     display: flex;
     align-items: baseline;
-    gap: 0.6em;
-    margin: 0.15em 0;
+    gap: 0.55em;
+    margin: 0.22em 0;
   }
 
   .reveal .bye-layout .bye-contacts span {
-    flex: 0 0 6.5em;
+    flex: 0 0 5.2em;
     white-space: nowrap;
     color: #94a3b8;
-    font-size: 0.8em;
+    font-size: 0.85em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .reveal .bye-layout .bye-slides {
-    flex: 0 0 auto;
-    font-size: 0.8em;
-    text-align: center;
-  }
-
-  .reveal .bye-layout .qr-card-canvas {
-    width: 10em;
-    height: 10em;
+    letter-spacing: 0.04em;
   }
 </style>
 <div class="bye-layout">
-  <div class="bye-contacts fragment" data-fragment-index="2">
-    <div class="bye-group">
-      <h3>Spare Cores</h3>
-      <p><span>Web</span><a href="https://sparecores.com" target="_blank">sparecores.com</a></p>
-      <p><span>Docs</span><a href="https://docs.sparecores.com" target="_blank">docs.sparecores.com</a></p>
-      <p><span>GitHub</span><a href="https://github.com/SpareCores" target="_blank">github.com/SpareCores</a></p>
-      <p><span>LinkedIn</span><a href="https://linkedin.com/company/SpareCores" target="_blank">linkedin.com/company/SpareCores</a></p>
-      <p><span>Email</span><a href="mailto:hi@sparecores.com">hi@sparecores.com</a></p>
-    </div>
-    <div class="bye-group">
-      <h3>Gergely Daroczi</h3>
-      <p><span>LinkedIn</span><a href="https://www.linkedin.com/in/daroczig/" target="_blank">linkedin.com/in/daroczig</a></p>
-      <p><span>Email</span><a href="mailto:daroczig@sparecores.com">daroczig@sparecores.com</a></p>
-    </div>
-  </div>
-  <div class="bye-slides fragment" data-fragment-index="1">
-    <div class="qr-card" data-qr="https://sparecores.com/talks"></div>
-  </div>
+<div class="bye-recap">
+<ul>
+<li class="fragment">
+Pick the right silicon! 😊
+</li>
+<li class="fragment">
+Spare Cores Navigator can help you find the right virtual server, managed database, and other cloud resources for your workload:
+</li>
+<ul style="margin-left: 50px;">
+<li class="fragment">
+Web interfaces, APIs, SQL,
+</li>
+<li class="fragment">
+SDKs (e.g.&nbsp;Python, R, TypeScript),
+</li>
+<li class="fragment">
+integrations (e.g.&nbsp;Metaflow, k8s).
+</li>
+</ul>
+<li class="fragment">
+Software and raw data comes with open-source licenses (MPL, CC-BY-SA), managed services available under BSL and optional commercial support.
+</li>
+</ul>
+</div>
+<div class="bye-aside">
+<div class="qr-card" data-qr="https://sparecores.com/talks"></div>
+<div class="bye-contacts">
+  <p><span>Docs</span><a href="https://docs.sparecores.com" target="_blank">docs.sparecores.com</a></p>
+  <p><span>GitHub</span><a href="https://github.com/SpareCores" target="_blank">@SpareCores</a></p>
+  <p><span>LinkedIn</span><a href="https://linkedin.com/company/SpareCores" target="_blank">@SpareCores</a></p>
+  <p><span></span><a href="https://linkedin.com/in/daroczig" target="_blank">@daroczig</a></p>
+</div>
+</div>
 </div>
 <aside class="notes">
 <p>Thank you! TODO add speaker notes</p>
