@@ -1,0 +1,144 @@
+.reveal .agent-terminal {
+  width: 92%;
+  margin: 0 auto;
+  border: 1px solid #475569;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0b1220;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 21px;
+  line-height: 1.55;
+  color: #e2e8f0;
+}
+
+.reveal .agent-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border-bottom: 1px solid #475569;
+  font-size: 15px;
+  color: #94a3b8;
+}
+
+.reveal .agent-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.reveal .agent-dot.close {
+  background: #ff5f57;
+}
+.reveal .agent-dot.minimize {
+  background: #febc2e;
+}
+.reveal .agent-dot.maximize {
+  background: #28c840;
+}
+
+.reveal .agent-title {
+  flex: 1;
+  text-align: center;
+  margin-right: 60px;
+}
+
+.reveal .agent-body {
+  padding: 14px 20px 18px;
+  min-height: 460px;
+}
+
+.reveal .agent-banner {
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.reveal .agent-ps {
+  color: #34d399;
+  font-weight: bold;
+}
+
+.reveal .agent-step {
+  display: none;
+}
+
+.reveal .agent-step.agent-prompt,
+.reveal .agent-step.is-running,
+.reveal .agent-step.is-done {
+  display: block;
+}
+
+.reveal .agent-step .agent-done,
+.reveal .agent-step.is-done .agent-running {
+  display: none;
+}
+
+.reveal .agent-step.is-done .agent-done {
+  display: inline;
+}
+
+.reveal .agent-spinner {
+  color: #fbbf24;
+}
+
+.reveal .agent-running {
+  color: #94a3b8;
+}
+
+.reveal .agent-ok {
+  color: #34d399;
+}
+
+.reveal .agent-meta {
+  color: #64748b;
+}
+
+.reveal .agent-cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.1em;
+  vertical-align: text-bottom;
+  background: #e2e8f0;
+  animation: agent-blink 1s steps(1) infinite;
+}
+
+.reveal .agent-prompt.is-done .agent-cursor {
+  display: none;
+}
+
+@keyframes agent-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.reveal .agent-answer {
+  color: #f8fafc;
+}
+
+.reveal .agent-bullet {
+  padding-left: 1.4em;
+  text-indent: -1.4em;
+}
+
+.reveal .agent-bullet::before {
+  content: "•  ";
+  color: #34d399;
+}
+
+.reveal .agent-final {
+  margin-top: 10px;
+  color: #34d399;
+  font-weight: bold;
+}
+
+section > .agent-trigger {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0 !important;
+  pointer-events: none;
+}
