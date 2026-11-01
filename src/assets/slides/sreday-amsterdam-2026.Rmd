@@ -128,7 +128,7 @@ I'm happy to call to the stage and old and potentially mutual friend: **GILty**
 
 A Python app, that is heavily limited to a single CPU core, either due to 
 using an algorithm that cannot be parallelized -- such as training hierarchical mixed-effects models, 
-or due to the GIL (global interpreter lock) e.g. web applications with low latency requirements.
+or due to the GIL (global interpreter lock) e.g. web services with low latency requirements.
 
 TODO confirm with Attila
 :::
@@ -1108,7 +1108,7 @@ LIMIT 25;
 
 ```{=html}
 <!-- fragment index 1 = 2nd code-line-numbers step (21-49 results); show on click, hide on next -->
-<div class="slide-image-overlay fragment fade-in-then-out" data-fragment-index="1">
+<div class="slide-image-overlay fragment fade-in-then-out" data-fragment-index="4">
   <img src="images/yoda-llm-gpu.jpg" alt="A GPU on the cloud, you need?">
 </div>
 ```
@@ -1176,6 +1176,49 @@ LIMIT 25;
 
 ```
 
+
+# >>> from metaflow import track_resources {.centered}
+
+```python {code-line-numbers="1,9" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px; height: 595px;"}
+from metaflow import Flow, FlowSpec, step, track_resources
+
+class ResourceTrackingFlow(FlowSpec):
+    @step
+    def start(self):
+        print("Starting step")
+        self.next(self.my_sleeping_data)
+
+    @track_resources
+    @step
+    def my_sleeping_data(self):
+        data = bytearray(500 * 1024 * 1024)  # 500MB
+        sleep(3)
+        self.next(self.end)
+
+    @step
+    def end(self):
+        print("Step finished")
+        pass
+
+if __name__ == "__main__":
+    ResourceTrackingFlow()
+```
+
+## >>> from metaflow import track_resources {.centered}
+
+<a href="/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank">
+  <img src="images/metaflow-cloud-server-card-preview.png" style="margin-top: -60px; width: 90%;" />
+</a>
+
+::: {.notes}
+A more realistic example run on a cloud server instead of using my laptop:
+
+- Note the cloud environment was automatically discovered.
+- Potential cost savings also calculated.
+
+CLICK for HTML
+:::
+
 # {#gilty-goes-k8s .center}
 
 ::: {.centered}
@@ -1225,6 +1268,61 @@ https://www.cncf.io/phippy/
 ::: {.notes}
 TODO Attila speaker notes
 :::
+
+
+## > /review plan {#feedback}
+
+```{=html}
+<style>
+  #feedback {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+  }
+  #feedback > h1 {
+    flex: 0 0 auto;
+  }
+  #feedback .feedback-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  #feedback .feedback-question {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-size: 1.25em;
+    text-align: center;
+  }
+  #feedback .feedback-footnote {
+    flex: 0 0 auto;
+    margin: 0 0 0.4em;
+    font-size: 2em;
+    text-align: center;
+  }
+  #feedback .feedback-footnote span {
+    color: #14B8A6;
+  }
+</style>
+```
+
+::: {.feedback-body}
+::: {.feedback-question .fragment .centered}
+Would you find something like this* useful?
+:::
+
+::: {.feedback-footnote .fragment .centered}
+\* any k8s cluster <span>+</span> cloud credential <span>+</span> capacity need<span class="fragment" style="color: #34D399;"><span style="color: #14B8A6;"> =></span><br/>ephemeral instances from any region of any cloud</span>
+:::
+:::
+
+::: {.notes}
+TODO Gergo speaker notes
+:::
+
 
 # $ ping sparecores.com {#bye}
 

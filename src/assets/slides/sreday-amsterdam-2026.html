@@ -280,7 +280,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <h1></h1>
 <aside class="notes">
 <p>To give you an actual example from real life, I’m happy to call to the stage and old and potentially mutual friend: <strong>GILty</strong> [<span style="color: red;">show image</span>]</p>
-<p>A Python app, that is heavily limited to a single CPU core, either due to using an algorithm that cannot be parallelized – such as training hierarchical mixed-effects models, or due to the GIL (global interpreter lock) e.g.&nbsp;web applications with low latency requirements.</p>
+<p>A Python app, that is heavily limited to a single CPU core, either due to using an algorithm that cannot be parallelized – such as training hierarchical mixed-effects models, or due to the GIL (global interpreter lock) e.g.&nbsp;web services with low latency requirements.</p>
 <p>TODO confirm with Attila</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1578,7 +1578,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
   })();
 </script>
 <!-- fragment index 1 = 2nd code-line-numbers step (21-49 results); show on click, hide on next -->
-<div class="slide-image-overlay fragment fade-in-then-out" data-fragment-index="1">
+<div class="slide-image-overlay fragment fade-in-then-out" data-fragment-index="4">
   <img src="images/yoda-llm-gpu.jpg" alt="A GPU on the cloud, you need?">
 </div>
 </section>
@@ -1650,6 +1650,54 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <span id="cb5-49"><a href=""></a><span class="ex">+-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+----------------@@box+@@+</span></span></code></pre></div>
 </section></section>
 <section>
+<section id="from-metaflow-import-track_resources" class="title-slide slide level1 centered">
+<h1>&gt;&gt;&gt; from metaflow import track_resources</h1>
+<div class="sourceCode" id="cb6" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px; height: 595px;" data-code-line-numbers="1,9"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb6-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> Flow, FlowSpec, step, track_resources</span>
+<span id="cb6-2"><a href=""></a></span>
+<span id="cb6-3"><a href=""></a><span class="kw">class</span> ResourceTrackingFlow(FlowSpec):</span>
+<span id="cb6-4"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb6-5"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb6-6"><a href=""></a>        <span class="bu">print</span>(<span class="st">"Starting step"</span>)</span>
+<span id="cb6-7"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.my_sleeping_data)</span>
+<span id="cb6-8"><a href=""></a></span>
+<span id="cb6-9"><a href=""></a>    <span class="at">@track_resources</span></span>
+<span id="cb6-10"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb6-11"><a href=""></a>    <span class="kw">def</span> my_sleeping_data(<span class="va">self</span>):</span>
+<span id="cb6-12"><a href=""></a>        data <span class="op">=</span> <span class="bu">bytearray</span>(<span class="dv">500</span> <span class="op">*</span> <span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span>)  <span class="co"># 500MB</span></span>
+<span id="cb6-13"><a href=""></a>        sleep(<span class="dv">3</span>)</span>
+<span id="cb6-14"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb6-15"><a href=""></a></span>
+<span id="cb6-16"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb6-17"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb6-18"><a href=""></a>        <span class="bu">print</span>(<span class="st">"Step finished"</span>)</span>
+<span id="cb6-19"><a href=""></a>        <span class="cf">pass</span></span>
+<span id="cb6-20"><a href=""></a></span>
+<span id="cb6-21"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb6-22"><a href=""></a>    ResourceTrackingFlow()</span></code></pre></div>
+</section>
+<section id="from-metaflow-import-track_resources-1" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<p><a href="/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank"> <img src="images/metaflow-cloud-server-card-preview.png" style="margin-top: -60px; width: 90%;"> </a></p>
+<aside class="notes">
+<p>A more realistic example run on a cloud server instead of using my laptop:</p>
+<ul>
+<li>Note the cloud environment was automatically discovered.</li>
+<li>Potential cost savings also calculated.</li>
+</ul>
+<p>CLICK for HTML</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
 <section id="gilty-goes-k8s" class="title-slide slide level1 center">
 <h1></h1>
 <div class="centered">
@@ -1704,6 +1752,64 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 </p>
 <aside class="notes">
 <p>TODO Attila speaker notes</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="feedback" class="slide level2">
+<h2>&gt; /review plan</h2>
+<style>
+  #feedback {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+  }
+  #feedback > h1 {
+    flex: 0 0 auto;
+  }
+  #feedback .feedback-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  #feedback .feedback-question {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-size: 1.25em;
+    text-align: center;
+  }
+  #feedback .feedback-footnote {
+    flex: 0 0 auto;
+    margin: 0 0 0.4em;
+    font-size: 2em;
+    text-align: center;
+  }
+  #feedback .feedback-footnote span {
+    color: #14B8A6;
+  }
+</style>
+<div class="feedback-body">
+<div class="feedback-question fragment centered">
+<p>Would you find something like this* useful?</p>
+</div>
+<div class="feedback-footnote fragment centered">
+<p>* any k8s cluster <span>+</span> cloud credential <span>+</span> capacity need<span class="fragment" style="color: #34D399;"><span style="color: #14B8A6;"> =&gt;</span><br>ephemeral instances from any region of any cloud</span></p>
+</div>
+</div>
+<aside class="notes">
+<p>TODO Gergo speaker notes</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
