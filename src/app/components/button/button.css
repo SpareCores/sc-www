@@ -367,6 +367,11 @@
   @apply shrink-0 text-emerald-400;
 }
 
+.sc-button--dropdown[aria-expanded="true"]
+  .sc-button__square-icon.lucide-chevron-down {
+  @apply rotate-180;
+}
+
 .sc-button--small .sc-button__square-icon {
   @apply size-3;
 }
