@@ -177,8 +177,7 @@ input[type="range"]:focus::-webkit-slider-thumb {
   box-shadow:
     var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
     var(--tw-shadow, 0 0 transparent);
-  --tw-ring-opacity: 1px;
-  --tw-ring-color: rgb(164 202 254 / var(--tw-ring-opacity));
+  --tw-ring-color: var(--color-emerald-400);
 }
 
 input[type="range"]::-moz-range-thumb {
