@@ -16,7 +16,7 @@
 }
 
 .block_half.open {
-  height: unset !important;
+  height: unset;
 }
 
 .items_table {

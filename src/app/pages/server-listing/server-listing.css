@@ -65,7 +65,7 @@
 }
 
 .dropdown_input::placeholder {
-  color: var(--color-white) !important;
+  color: var(--color-white);
 }
 
 .custom-scrollbar::-webkit-scrollbar {

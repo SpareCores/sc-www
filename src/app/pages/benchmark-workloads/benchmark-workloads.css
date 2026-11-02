@@ -12,7 +12,7 @@
 }
 .page_layout.layout_static ::ng-deep .filter_bar,
 .page_layout.layout_static .list_holder {
-  transition: none !important;
+  transition: none;
 }
 
 .list_holder {

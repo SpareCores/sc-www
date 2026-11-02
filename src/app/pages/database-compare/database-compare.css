@@ -253,7 +253,7 @@
 }
 
 :host ::ng-deep .block_full_inline .chart_div {
-  height: 100% !important;
+  height: 100%;
   min-height: 0;
 }
 

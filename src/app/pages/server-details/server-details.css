@@ -32,9 +32,9 @@
 }
 
 :host ::ng-deep .block_half .chart_div {
-  max-height: 350px !important;
-  height: 350px !important;
-  max-width: 100% !important;
+  max-height: 350px;
+  height: 350px;
+  max-width: 100%;
 }
 
 :host ::ng-deep .block_half_taller {
@@ -46,7 +46,7 @@
 
 :host ::ng-deep .block_half_taller .chart_div {
   max-height: 530px;
-  max-width: 100% !important;
+  max-width: 100%;
   display: flex;
   justify-content: center;
 }
@@ -60,24 +60,24 @@
 
 :host ::ng-deep .block_full .chart_div {
   max-height: 350px;
-  height: 350px !important;
-  max-width: 100% !important;
+  height: 350px;
+  max-width: 100%;
 }
 
 :host ::ng-deep .block_half.open {
-  height: unset !important;
+  height: unset;
 }
 
 :host #lstopo {
-  height: auto !important;
-  min-height: unset !important;
+  height: auto;
+  min-height: unset;
   overflow: hidden;
-  max-width: 100% !important;
+  max-width: 100%;
 }
 
 :host ::ng-deep .server-description-card {
-  height: auto !important;
-  min-height: unset !important;
+  height: auto;
+  min-height: unset;
 }
 
 .server-description-tagline {
@@ -221,9 +221,5 @@ div.giscus {
   :host ::ng-deep .block_half_taller {
     width: calc(100%);
     margin: auto;
-  }
-
-  :host #lstopo {
-    width: 100% !important;
   }
 }

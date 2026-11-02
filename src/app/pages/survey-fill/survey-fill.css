@@ -1,5 +1,5 @@
 :host ::ng-deep hr {
-  margin: 1rem !important;
+  margin: 1rem;
 }
 
 :host ::ng-deep label.sd-rating__item-star svg {

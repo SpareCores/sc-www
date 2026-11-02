@@ -24,8 +24,8 @@
 
 /* In the modal the SVG renders at its natural size (scroll/pan if needed) */
 .lstopo-modal-svg svg {
-  width: auto !important;
-  height: auto !important;
+  width: auto;
+  height: auto;
   min-width: max-content;
 }
 
@@ -50,8 +50,8 @@
 .lstopo-container svg rect.L2:hover,
 .lstopo-container svg rect.L3:hover,
 .lstopo-container svg rect.PU:hover {
-  stroke: var(--color-emerald-400) !important;
-  stroke-width: 1.5 !important;
+  stroke: var(--color-emerald-400);
+  stroke-width: 1.5;
   filter: drop-shadow(0 0 1.5px var(--color-emerald-400));
 }
 

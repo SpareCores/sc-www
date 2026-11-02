@@ -24,9 +24,9 @@ sc-database-details {
     min-height: 460px;
     height: 460px;
     .chart_div {
-      max-height: 350px !important;
-      height: 350px !important;
-      max-width: 100% !important;
+      max-height: 350px;
+      height: 350px;
+      max-width: 100%;
     }
   }
 
@@ -38,13 +38,13 @@ sc-database-details {
     height: 460px;
     .chart_div {
       max-height: 350px;
-      height: 350px !important;
-      max-width: 100% !important;
+      height: 350px;
+      max-width: 100%;
     }
   }
 
   .block_half.open {
-    height: unset !important;
+    height: unset;
   }
 
   .items_table {
