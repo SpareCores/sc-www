@@ -203,8 +203,8 @@ export class WorkloadProfilePanel {
   readonly panelClass = computed(() => {
     if (this.isEmbedded()) {
       return this.layout() === "compare"
-        ? "chart-block--inline"
-        : "chart-block--full";
+        ? "sc-chart-block sc-chart-block--inline"
+        : "sc-chart-block sc-chart-block--full";
     }
     return this.layout() === "compare"
       ? "px-4 py-4 bg-transparent min-h-[500px] h-auto overflow-visible max-lg:min-h-[520px]"

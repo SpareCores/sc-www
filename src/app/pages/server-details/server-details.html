@@ -181,9 +181,9 @@
           (toggleRequested)="toggleCard('details')"
         ></sc-server-property-card>
         <div
-          class="chart-block--half"
+          class="sc-chart-block sc-chart-block--half"
           id="availability"
-          [class.chart-block--open]="expandedCards.availability"
+          [class.sc-chart-block--open]="expandedCards.availability"
         >
           <h3 class="text-2xl">Availability</h3>
           <table class="sc-kv-table w-full">
@@ -305,7 +305,7 @@
         ></sc-server-property-card>
         @if (lstopoSvgExists !== false) {
           <div
-            class="chart-block--full"
+            class="sc-chart-block sc-chart-block--full"
             id="lstopo"
             [style.width]="
               !isSmallScreen && lstopoSvgWidth > 0 && lstopoSvgWidth <= 600
@@ -324,8 +324,8 @@
         }
         @if (descriptionsAvailable && serverDescription) {
           <div
-            class="chart-block--half chart-block--open server-description-card"
-            [class.chart-block--full]="descriptionCardIsFullWidth()"
+            class="sc-chart-block sc-chart-block--half sc-chart-block--open server-description-card"
+            [class.sc-chart-block--full]="descriptionCardIsFullWidth()"
           >
             <div class="flex justify-between items-center gap-4">
               <h3 class="text-2xl">Server Description</h3>
@@ -364,7 +364,9 @@
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Economics</h2>
         </div>
-        <div class="chart-block--full price-sections-to-hide-for-test">
+        <div
+          class="sc-chart-block sc-chart-block--full price-sections-to-hide-for-test"
+        >
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Average Price per Region</h3>
           </div>
@@ -383,7 +385,9 @@
             </div>
           }
         </div>
-        <div class="chart-block--half price-sections-to-hide-for-test">
+        <div
+          class="sc-chart-block sc-chart-block--half price-sections-to-hide-for-test"
+        >
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Prices per Zone</h3>
             <div class="flex gap-4">
@@ -414,7 +418,9 @@
             </div>
           }
         </div>
-        <div class="chart-block--half price-sections-to-hide-for-test">
+        <div
+          class="sc-chart-block sc-chart-block--half price-sections-to-hide-for-test"
+        >
           <h3 class="text-2xl">Lowest Prices</h3>
           @if (isBrowser()) {
             <div>
@@ -466,7 +472,7 @@
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Alternatives</h2>
         </div>
-        <div class="chart-block--half">
+        <div class="sc-chart-block sc-chart-block--half">
           <div class="flex items-center min-h-[42px]">
             <h3 class="text-2xl">Servers of the Same Family</h3>
           </div>
@@ -505,7 +511,7 @@
             </tbody>
           </table>
         </div>
-        <div class="chart-block--half" id="similar_servers">
+        <div class="sc-chart-block sc-chart-block--half" id="similar_servers">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Similar Servers</h3>
             <div class="flex gap-4">

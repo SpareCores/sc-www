@@ -69,7 +69,7 @@ export class GeekbenchRadarChart {
   chartData = input<GeekbenchRadarChartData | undefined>(undefined);
   chartOptions = input<GeekbenchRadarChartOptions>(undefined);
   chartType = input<"radar">("radar");
-  blockClass = input("chart-block--taller");
+  blockClass = input("sc-chart-block sc-chart-block--taller");
   elementId = input("");
   canvasId = input("");
   detailsChartMode = input<"single" | "multi">("single");

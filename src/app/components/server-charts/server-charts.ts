@@ -257,7 +257,7 @@ export class ServerCharts implements OnChanges {
   openBox(boxId: string) {
     const el = document.getElementById(boxId);
     if (el) {
-      el.classList.toggle("chart-block--open");
+      el.classList.toggle("sc-chart-block--open");
     }
     const el2 = document.getElementById(boxId + "_more");
     if (el2) {
