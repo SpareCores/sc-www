@@ -18,7 +18,10 @@
   height: 2rem;
   border: 0;
   background: transparent;
-  color: color-mix(in oklab, var(--color-gray-400) 70%, transparent);
+  color: var(
+    --sc-bookmark-toggle-color,
+    color-mix(in oklab, var(--color-gray-400) 70%, transparent)
+  );
   cursor: pointer;
   position: relative;
   transition:
@@ -70,18 +73,6 @@
 .page-header__bookmark-icon {
   width: 2rem;
   height: 2rem;
-}
-
-.sc-bookmark-toggle--active {
-  color: var(--color-emerald-400);
-}
-
-.sc-bookmark-toggle--can-add:hover:not(:disabled) {
-  color: var(--color-emerald-400);
-}
-
-.sc-bookmark-toggle--can-remove:hover:not(:disabled) {
-  color: var(--color-red-500);
 }
 
 .page-header__actions {

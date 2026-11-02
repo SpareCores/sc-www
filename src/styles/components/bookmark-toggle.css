@@ -1,3 +1,12 @@
+.sc-bookmark-toggle--active,
+.sc-bookmark-toggle--can-add:hover:not(:disabled) {
+  --sc-bookmark-toggle-color: var(--color-emerald-400);
+}
+
+.sc-bookmark-toggle--can-remove:hover:not(:disabled) {
+  --sc-bookmark-toggle-color: var(--color-red-500);
+}
+
 .sc-bookmark-toggle__icon--add,
 .sc-bookmark-toggle__icon--remove {
   display: none;

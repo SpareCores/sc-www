@@ -19,7 +19,10 @@
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 9999px;
-  color: color-mix(in oklab, var(--color-gray-400) 50%, transparent);
+  color: var(
+    --sc-bookmark-toggle-color,
+    color-mix(in oklab, var(--color-gray-400) 50%, transparent)
+  );
   transition: color 0.15s ease;
   position: relative;
   transform: translateY(-1px);
@@ -33,18 +36,6 @@
 .bookmark-button__icon {
   width: 1.25rem;
   height: 1.25rem;
-}
-
-.sc-bookmark-toggle--active {
-  color: var(--color-emerald-400);
-}
-
-.sc-bookmark-toggle--can-add:hover:not(:disabled) {
-  color: var(--color-emerald-400);
-}
-
-.sc-bookmark-toggle--can-remove:hover:not(:disabled) {
-  color: var(--color-red-500);
 }
 
 .bookmark-button.bookmark-button--large,
