@@ -331,6 +331,18 @@ a range of worker counts from one up to the number of vCPUs: the single-core
 SCore is the result with one worker, and the multi-core SCore is the highest
 result across the tested worker counts.
 
+The live chart below shows these runs for the six servers in this post: at
+each worker count, the throughput per worker as a percentage of the
+single-worker result. A line that stays near 100% gained a full core's worth
+of throughput from each added worker, while a line that drops toward 50% has
+two workers sharing each physical core. These are current production numbers,
+so they may differ from the 2024 results above.
+
+<iframe
+ src="https://sparecores.com/embed/compare/stress_ng_pct?instances=W3siZGlzcGxheV9uYW1lIjoiYzZhLmxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZhLmxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJjNmEuMnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4yeGxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJjNmcueGxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZnLnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoibTdhLnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6Im03YS54bGFyZ2UiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6ImM3YS4zMnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3YS4zMnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzZpLm1ldGFsIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZpLm1ldGFsIiwiem9uZXNSZWdpb25zIjpbXX1d"
+ style="height: 600px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 500px">
+</iframe>
+
 Of course, the SCore is just one metric. If your workload benefits from SMT,
 you should look at application-specific benchmarks instead, which we also
 provide for each server.
