@@ -1,9 +1,5 @@
 @reference "../../../styles/tailwind.css";
 
-.sc-compare-table tbody tr.section_header {
-  scroll-margin-top: 10rem;
-}
-
 .section_heading {
   scroll-margin-top: 10rem;
 }
