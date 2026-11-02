@@ -22,7 +22,13 @@ export type ScButtonVariant =
   | "benchmark"
   | "close";
 export type ScButtonIconPosition = "start" | "end";
-export type ScButtonColor = "brand" | "neutral" | "danger" | "inverse";
+export type ScButtonColor =
+  | "brand"
+  | "neutral"
+  | "danger"
+  | "inverse"
+  | "brand-inverse"
+  | "accent";
 
 @Component({
   selector: "sc-button",
