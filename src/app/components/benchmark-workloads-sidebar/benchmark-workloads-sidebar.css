@@ -235,5 +235,5 @@
 }
 
 :host(.workloads-sidebar--static) .filter_bar {
-  transition: none !important;
+  transition: none;
 }
