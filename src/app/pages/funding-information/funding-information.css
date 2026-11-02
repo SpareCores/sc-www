@@ -27,7 +27,7 @@
     margin: 12px 0;
   }
 
-  a {
+  a:not(.funding-download__button) {
     color: black;
     text-decoration: underline;
 
@@ -40,7 +40,7 @@
 .project-summary {
   margin-top: 30px;
   padding-top: 20px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .funding-download {
@@ -50,12 +50,12 @@
 }
 
 .funding-download__button {
-  color: white !important;
+  color: white;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 12px 24px;
-  background-color: #1e293b;
+  background-color: var(--color-gray-700);
   border-radius: 12px;
   font-weight: 600;
   text-decoration: none;
@@ -64,7 +64,7 @@
     color 0.2s ease;
 
   &:hover {
-    background-color: #233046;
+    background-color: var(--color-gray-600);
     text-decoration: none;
   }
 }

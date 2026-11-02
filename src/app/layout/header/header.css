@@ -6,11 +6,20 @@
   display: flex;
   gap: 0.5rem;
   white-space: nowrap;
-  @apply text-sm items-center hover:text-emerald-400;
+  @apply text-sm items-center;
+}
+
+a.navbar_link,
+button.navbar_link {
+  @apply hover:text-emerald-400;
 }
 
 button.navbar_link {
   @apply w-full border-0 bg-transparent p-0 text-left cursor-pointer;
+}
+
+.navbar_link.navbar_link--danger {
+  @apply text-red-500 hover:text-red-400;
 }
 
 .navbar_icon {
@@ -117,12 +126,17 @@ li {
 
 .bg-custom {
   background:
-    linear-gradient(180deg, #072437 7.11%, rgba(6, 38, 58, 0) 75.52%), #082f49;
+    linear-gradient(
+      180deg,
+      var(--color-secondary) 7.11%,
+      color-mix(in oklab, var(--color-secondary) 0%, transparent) 75.52%
+    ),
+    var(--color-primary);
 }
 
 .login_button {
-  background-color: #e5e7eb;
-  color: #1f2937;
+  background-color: var(--color-gray-200);
+  color: var(--color-gray-900);
   padding: 6px 12px;
   border-radius: 0.5rem;
   border: none;

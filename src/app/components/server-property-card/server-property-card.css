@@ -16,7 +16,7 @@
 }
 
 .block_half.open {
-  height: unset !important;
+  height: unset;
 }
 
 .items_table {
@@ -83,7 +83,7 @@
   }
 }
 
-@media screen and (max-width: 800px) {
+@media (width <= theme(--breakpoint-tablet)) {
   .block_half {
     width: calc(100%);
     margin: auto;

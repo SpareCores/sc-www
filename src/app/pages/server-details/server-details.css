@@ -32,9 +32,9 @@
 }
 
 :host ::ng-deep .block_half .chart_div {
-  max-height: 350px !important;
-  height: 350px !important;
-  max-width: 100% !important;
+  max-height: 350px;
+  height: 350px;
+  max-width: 100%;
 }
 
 :host ::ng-deep .block_half_taller {
@@ -46,7 +46,7 @@
 
 :host ::ng-deep .block_half_taller .chart_div {
   max-height: 530px;
-  max-width: 100% !important;
+  max-width: 100%;
   display: flex;
   justify-content: center;
 }
@@ -60,24 +60,24 @@
 
 :host ::ng-deep .block_full .chart_div {
   max-height: 350px;
-  height: 350px !important;
-  max-width: 100% !important;
+  height: 350px;
+  max-width: 100%;
 }
 
 :host ::ng-deep .block_half.open {
-  height: unset !important;
+  height: unset;
 }
 
 :host #lstopo {
-  height: auto !important;
-  min-height: unset !important;
+  height: auto;
+  min-height: unset;
   overflow: hidden;
-  max-width: 100% !important;
+  max-width: 100%;
 }
 
 :host ::ng-deep .server-description-card {
-  height: auto !important;
-  min-height: unset !important;
+  height: auto;
+  min-height: unset;
 }
 
 .server-description-tagline {
@@ -97,7 +97,7 @@
 }
 
 .server-description-read-more {
-  @apply text-emerald-400 hover:text-emerald-500 font-semibold text-left mt-auto;
+  @apply text-emerald-400 hover:text-emerald-400/80 font-semibold text-left mt-auto;
 }
 .summarize-fab {
   @apply fixed bottom-6 right-6 z-40;
@@ -117,21 +117,6 @@
 
 .summarize-modal-bullets {
   @apply text-gray-200 space-y-2 list-disc list-inside;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-secondary;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #374151;
-  border-radius: 20px;
-  border: 4px solid #34d399;
 }
 
 .items_table {
@@ -212,7 +197,7 @@ div.giscus {
   margin-bottom: 0.25rem;
 }
 
-@media screen and (max-width: 800px) {
+@media (width <= theme(--breakpoint-tablet)) {
   :host ::ng-deep .block_half {
     width: calc(100%);
     margin: auto;
@@ -221,9 +206,5 @@ div.giscus {
   :host ::ng-deep .block_half_taller {
     width: calc(100%);
     margin: auto;
-  }
-
-  :host #lstopo {
-    width: 100% !important;
   }
 }

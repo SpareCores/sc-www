@@ -190,7 +190,6 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       );
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("servers_table");
-      cy.get("sc-pagination").invoke("css", "visibility", "hidden");
       snapViewport("auth-register-feature-subtitle", prefix);
     });
 

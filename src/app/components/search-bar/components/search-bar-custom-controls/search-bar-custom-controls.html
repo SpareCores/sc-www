@@ -130,7 +130,7 @@
             {{ getCustomControlMinCharacters(control) }} characters to search.
           </div>
         } @else if ((control.options || []).length > 0) {
-          <div class="custom-autocomplete__panel custom-scrollbar">
+          <div class="custom-autocomplete__panel">
             @for (
               server of control.options || [];
               track server.vendor_id +
@@ -206,7 +206,7 @@
           (isBenchmarkConfigDropdownOpen(control) && !control.disabled)
         ) {
           @if ((control.benchmarkGroups || []).length > 0) {
-            <div class="custom-autocomplete__panel custom-scrollbar">
+            <div class="custom-autocomplete__panel">
               @for (group of control.benchmarkGroups || []; track group.name) {
                 <div class="benchmark-group">
                   <button
@@ -292,7 +292,7 @@
         </div>
 
         @if (isSingleSelectDropdownOpen(control) && !control.disabled) {
-          <div class="custom-autocomplete__panel custom-scrollbar">
+          <div class="custom-autocomplete__panel">
             @for (option of control.selectOptions || []; track option.value) {
               <button
                 type="button"

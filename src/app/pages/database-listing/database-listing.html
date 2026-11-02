@@ -120,10 +120,7 @@
             style="padding-left: 1px"
           >
             @if (isLoading) {
-              <div
-                class="absolute top-0 left-0 w-full h-full"
-                style="background-color: rgba(0, 0, 0, 0.2)"
-              >
+              <div class="absolute top-0 left-0 w-full h-full bg-black/20">
                 <div class="flex justify-center mt-16 opacity-100">
                   <sc-loading-spinner size="lg"></sc-loading-spinner>
                 </div>
@@ -205,49 +202,37 @@
                       class="favorite_column"
                       (click)="$event.stopPropagation()"
                     >
-                      <sc-instance-favorite-context-menu
+                      <sc-bookmark-button
                         kind="database"
                         [vendorId]="item.vendor_id"
                         [entityId]="item.api_reference"
-                      >
-                        <sc-bookmark-button
-                          kind="database"
-                          [vendorId]="item.vendor_id"
-                          [entityId]="item.api_reference"
-                        ></sc-bookmark-button>
-                      </sc-instance-favorite-context-menu>
+                      ></sc-bookmark-button>
                     </td>
                     @for (column of tableColumns; track column.name) {
                       @if (column.type === "name") {
                         <td>
-                          <sc-instance-favorite-context-menu
-                            kind="database"
-                            [vendorId]="item.vendor_id"
-                            [entityId]="item.api_reference"
-                          >
-                            <div (click)="$event.stopPropagation()">
-                              <a
-                                routerLink="/database/{{
-                                  item.vendor.vendor_id
-                                }}/{{ item.api_reference }}"
-                              >
-                                <div class="text-sm text-white flex gap-1">
+                          <div (click)="$event.stopPropagation()">
+                            <a
+                              routerLink="/database/{{
+                                item.vendor.vendor_id
+                              }}/{{ item.api_reference }}"
+                            >
+                              <div class="text-sm text-white flex gap-1">
+                                <span class="whitespace-nowrap"
+                                  >{{ item.display_name }}
+                                </span>
+                                @if (showAPIReference(item)) {
+                                  <span class="text-emerald-400">|</span>
                                   <span class="whitespace-nowrap"
-                                    >{{ item.display_name }}
+                                    >{{ item.api_reference }}
                                   </span>
-                                  @if (showAPIReference(item)) {
-                                    <span class="text-emerald-400">|</span>
-                                    <span class="whitespace-nowrap"
-                                      >{{ item.api_reference }}
-                                    </span>
-                                  }
-                                </div>
-                                <div class="text-xs text-white flex gap-1">
-                                  <span>{{ item.vendor_id }}</span>
-                                </div>
-                              </a>
-                            </div>
-                          </sc-instance-favorite-context-menu>
+                                }
+                              </div>
+                              <div class="text-xs text-white flex gap-1">
+                                <span>{{ item.vendor_id }}</span>
+                              </div>
+                            </a>
+                          </div>
                         </td>
                       }
                       @if (column.type === "processor") {
@@ -506,7 +491,7 @@
     >
       @for (pageLimit of pageLimits; track $index) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
           (click)="selectPageSize(pageLimit)"
           (keydown.enter)="selectPageSize(pageLimit)"
           (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
@@ -535,7 +520,7 @@
         track allocationType.name
       ) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
           (click)="selectAllocation(allocationType)"
           (keydown.enter)="selectAllocation(allocationType)"
           (keydown.space)="
@@ -563,7 +548,7 @@
     >
       @for (currency of availableCurrencies; track currency.name) {
         <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-xs"
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
           (click)="selectCurrency(currency)"
           (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
           (keydown.space)="selectCurrency(currency); $event.preventDefault()"

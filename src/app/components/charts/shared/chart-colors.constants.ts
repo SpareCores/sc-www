@@ -1,12 +1,45 @@
 import { ChartColorPair } from "./benchmark-chart.types";
 
-export const radarDatasetColors: ChartColorPair[] = [
-  { borderColor: "#34D399", backgroundColor: "#34D39933" },
-  { borderColor: "#E5E7EB", backgroundColor: "#E5E7EB33" },
-  { borderColor: "#38BDF8", backgroundColor: "#38BDF833" },
-  { borderColor: "#FACC15", backgroundColor: "#FACC1533" },
-  { borderColor: "#F87171", backgroundColor: "#F8717133" },
-  { borderColor: "#A3E635", backgroundColor: "#A3E63533" },
-  { borderColor: "#818CF8", backgroundColor: "#818CF833" },
-  { borderColor: "#94A3B8", backgroundColor: "#94A3B833" },
+export const chartColors = {
+  black: "#000000",
+  "emerald-400": "#34d399",
+  "gray-200": "#e5e7eb",
+  "gray-600": "#4b5563",
+  "indigo-400": "#818cf8",
+  "lime-400": "#a3e635",
+  "red-400": "#f87171",
+  "red-500": "#ef4444",
+  "sky-400": "#38bdf8",
+  "sky-900": "#0c4a6e",
+  "sky-975": "#06263a",
+  "slate-400": "#94a3b8",
+  white: "#ffffff",
+  "yellow-500": "#eab308",
+} as const;
+
+export type ChartColorToken = keyof typeof chartColors;
+
+export function chartColor(token: ChartColorToken, alpha: number): string {
+  const channel = Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, "0");
+  return `${chartColors[token]}${channel}`;
+}
+
+export const chartSeriesTokens: ChartColorToken[] = [
+  "emerald-400",
+  "gray-200",
+  "sky-400",
+  "yellow-500",
+  "red-400",
+  "lime-400",
+  "indigo-400",
+  "slate-400",
 ];
+
+export const radarDatasetColors: ChartColorPair[] = chartSeriesTokens.map(
+  (token) => ({
+    borderColor: chartColors[token],
+    backgroundColor: chartColor(token, 0.2),
+  }),
+);

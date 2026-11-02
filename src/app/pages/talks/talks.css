@@ -60,7 +60,7 @@ a:hover {
   .speaker-avatars
   .speaker-avatar
   + .speaker-avatar {
-  box-shadow: 0 0 0 2px #082f49;
+  box-shadow: 0 0 0 2px var(--color-primary);
 }
 
 .items_table
@@ -69,5 +69,5 @@ a:hover {
   .speaker-avatars
   .speaker-avatar
   + .speaker-avatar {
-  box-shadow: 0 0 0 2px #06263a;
+  box-shadow: 0 0 0 2px var(--color-secondary);
 }

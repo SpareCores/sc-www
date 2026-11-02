@@ -263,18 +263,6 @@ export class LandingPage implements OnInit {
     };
   }
 
-  getInnerStyle(i: number) {
-    if (i > 0) {
-      return "";
-    }
-
-    if (this.isSpinning || !this.hasRealValues) {
-      return "";
-    }
-
-    return "background: rgba(255,255,255,1) !important; color: #000 !important;";
-  }
-
   isSlotLinkActive(index: number) {
     return index === 0 && !this.isSpinning && this.hasRealValues;
   }

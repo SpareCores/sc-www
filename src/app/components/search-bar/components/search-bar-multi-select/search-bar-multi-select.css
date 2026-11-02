@@ -18,11 +18,11 @@
 }
 
 .search-bar-multi-select__badge {
-  @apply inline-flex max-w-full items-center gap-x-1 rounded-lg bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-900;
+  @apply inline-flex max-w-full items-center gap-x-1 rounded-lg bg-emerald-400/20 px-2 py-0.5 text-xs font-medium text-sky-950;
 }
 
 .search-bar-multi-select__badge-remove {
-  @apply inline-flex size-4 shrink-0 items-center justify-center rounded-full text-emerald-900 hover:bg-emerald-500/30 focus:outline-hidden focus:bg-emerald-500/30 disabled:pointer-events-none disabled:opacity-50;
+  @apply inline-flex size-4 shrink-0 items-center justify-center rounded-full text-sky-950 hover:bg-emerald-400/30 focus:outline-hidden focus:bg-emerald-400/30 disabled:pointer-events-none disabled:opacity-50;
 }
 
 .search-bar-multi-select__input {
@@ -31,22 +31,6 @@
 
 .search-bar-multi-select__panel {
   @apply absolute left-0 right-0 z-20 mt-1 max-h-64 overflow-y-auto rounded-lg border border-solid border-emerald-400 bg-primary;
-  scrollbar-width: thin;
-  scrollbar-color: #34d399 #374151;
-}
-
-.search-bar-multi-select__panel::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-.search-bar-multi-select__panel::-webkit-scrollbar-track {
-  background: #374151;
-}
-
-.search-bar-multi-select__panel::-webkit-scrollbar-thumb {
-  background-color: #34d399;
-  border-radius: 20px;
 }
 
 .search-bar-multi-select__option {
@@ -54,7 +38,7 @@
 }
 
 .search-bar-multi-select__option--active {
-  @apply bg-emerald-500/30;
+  @apply bg-emerald-400/30;
 }
 
 .search-bar-multi-select__option:last-child {
@@ -62,5 +46,5 @@
 }
 
 .search-bar-multi-select__hint {
-  @apply px-3 py-2 text-xs text-gray-300;
+  @apply px-3 py-2 text-xs text-gray-200;
 }

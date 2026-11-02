@@ -60,7 +60,6 @@ import {
   toSearchParams,
 } from "../../tools/listing-search-params";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import {
@@ -127,7 +126,6 @@ type DatabaseListingQuery = Params &
     Dropdown,
     BenchmarkIconPipe,
     BookmarkButton,
-    InstanceFavoriteContextMenu,
     CollectionSaveModal,
   ],
   templateUrl: "./database-listing.html",

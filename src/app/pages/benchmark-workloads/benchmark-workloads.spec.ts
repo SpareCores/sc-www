@@ -8,7 +8,6 @@ import { Status } from "../../../../sdk/data-contracts";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("BenchmarkWorkloads", () => {
-  const originalInnerWidth = window.innerWidth;
   const keeperApiService = {
     getBenchmarkWorkloads: jasmine.createSpy("getBenchmarkWorkloads"),
     getServerBenchmarkMeta: jasmine.createSpy("getServerBenchmarkMeta"),
@@ -18,12 +17,6 @@ describe("BenchmarkWorkloads", () => {
   let fixture: ComponentFixture<BenchmarkWorkloads>;
 
   beforeEach(async () => {
-    Object.defineProperty(window, "innerWidth", {
-      configurable: true,
-      value: originalInnerWidth,
-      writable: true,
-    });
-
     keeperApiService.getBenchmarkWorkloads.and.resolveTo({
       body: [
         {
@@ -77,14 +70,6 @@ describe("BenchmarkWorkloads", () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    Object.defineProperty(window, "innerWidth", {
-      configurable: true,
-      value: originalInnerWidth,
-      writable: true,
-    });
-  });
-
   it("should create", () => {
     expect(component).toBeTruthy();
   });
@@ -102,11 +87,9 @@ describe("BenchmarkWorkloads", () => {
   });
 
   it("should collapse the sidebar by default on mobile viewports", async () => {
-    Object.defineProperty(window, "innerWidth", {
-      configurable: true,
-      value: 768,
-      writable: true,
-    });
+    spyOn(window, "matchMedia").and.returnValue({
+      matches: true,
+    } as MediaQueryList);
 
     const mobileFixture = TestBed.createComponent(BenchmarkWorkloads);
     const mobileComponent = mobileFixture.componentInstance;
