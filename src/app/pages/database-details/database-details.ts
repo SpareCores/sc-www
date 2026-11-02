@@ -929,16 +929,16 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       return;
     }
 
-    const hadOpenClass = cardElement.classList.contains("open");
+    const hadOpenClass = cardElement.classList.contains("chart-block--open");
     if (hadOpenClass) {
-      cardElement.classList.remove("open");
+      cardElement.classList.remove("chart-block--open");
     }
 
     this.availabilityCanExpand =
       cardElement.scrollHeight > cardElement.clientHeight + 1;
 
     if (hadOpenClass) {
-      cardElement.classList.add("open");
+      cardElement.classList.add("chart-block--open");
     }
   }
 }

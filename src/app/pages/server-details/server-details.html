@@ -183,7 +183,7 @@
         <div
           class="chart-block--half"
           id="availability"
-          [class.open]="expandedCards.availability"
+          [class.chart-block--open]="expandedCards.availability"
         >
           <h3 class="text-2xl">Availability</h3>
           <table class="sc-kv-table w-full">
@@ -331,9 +331,8 @@
         }
         @if (descriptionsAvailable && serverDescription) {
           <div
-            class="chart-block--half server-description-card"
+            class="chart-block--half chart-block--open server-description-card"
             [class.chart-block--full]="descriptionCardIsFullWidth()"
-            [class.open]="true"
           >
             <div class="flex justify-between items-center gap-4">
               <h3 class="text-2xl">Server Description</h3>
