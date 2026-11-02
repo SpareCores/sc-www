@@ -94,64 +94,56 @@ export class Regions implements OnInit {
       "AWS regions, Google Cloud regions",
     );
 
-    this.API.getRegions().then((regions) => {
-      if (!this.regions.length) {
-        this.regions = regions.body;
-      }
-    });
+    const dataLoaded = Promise.all([
+      this.API.getRegions(),
+      this.API.getVendors(),
+    ]).then(([regions, vendors]) => {
+      this.regions = regions.body;
+      this.vendors = vendors.body;
 
-    this.API.getVendors().then((vendors) => {
-      if (!this.vendors.length) {
-        this.vendors = vendors.body;
-      }
+      this.vendors = this.vendors.map((vendor, index) => {
+        return {
+          ...vendor,
+          selected: true,
+          color: colors[index % colors.length],
+        };
+      });
+
+      this.sortRegions();
     });
 
     if (isPlatformBrowser(this.platformId)) {
       this.loadJsScript(SCRIPT_PATH)
         .then(() => this.loadJsScript(SCRIPT_PATH2))
         .then(() => this.loadJsScript(SCRIPT_PATH3))
+        .then(() => dataLoaded)
         .then(() => {
-          Promise.all([this.API.getRegions(), this.API.getVendors()]).then(
-            ([regions, vendors]) => {
-              this.regions = regions.body;
-              this.vendors = vendors.body;
+          let element = this.document.getElementById("datamapdiv");
 
-              this.vendors = this.vendors.map((vendor, index) => {
-                return {
-                  ...vendor,
-                  selected: true,
-                  color: colors[index % colors.length],
-                };
-              });
+          let fills: any = {
+            defaultFill: chartColors["sky-975"],
+          };
 
-              let element = this.document.getElementById("datamapdiv");
+          this.vendors.forEach((vendor) => {
+            fills[vendor.vendor_id] = vendor.color;
+          });
 
-              let fills: any = {
-                defaultFill: chartColors["sky-975"],
-              };
-
-              this.vendors.forEach((vendor, index) => {
-                fills[vendor.vendor_id] = colors[index % colors.length];
-              });
-
-              this.bubble_map = new Datamap({
-                element: element,
-                geographyConfig: {
-                  popupOnHover: false,
-                  highlightOnHover: false,
-                },
-                bubblesConfig: {
-                  fillOpacity: 1,
-                  borderOpacity: 0,
-                  highlightFillColor: chartColors["emerald-400"],
-                  highlightBorderOpacity: 0,
-                },
-                fills: fills,
-              });
-
-              this.generateBubbles();
+          this.bubble_map = new Datamap({
+            element: element,
+            geographyConfig: {
+              popupOnHover: false,
+              highlightOnHover: false,
             },
-          );
+            bubblesConfig: {
+              fillOpacity: 1,
+              borderOpacity: 0,
+              highlightFillColor: chartColors["emerald-400"],
+              highlightBorderOpacity: 0,
+            },
+            fills: fills,
+          });
+
+          this.generateBubbles();
         });
     }
   }
@@ -167,9 +159,13 @@ export class Regions implements OnInit {
   }
 
   generateBubbles() {
+    if (!this.bubble_map) {
+      return;
+    }
+
     this.bubble_map.bubbles(
       this.regions
-        .filter((region) => this.isVendorSelected(region.vendor_id))
+        .filter((region) => !this.isVendorHidden(region.vendor_id))
         .map((region) => {
           return {
             name: region.name,
@@ -228,6 +224,10 @@ export class Regions implements OnInit {
       this.orderDir = OrderDir.Desc;
     }
 
+    this.sortRegions();
+  }
+
+  private sortRegions() {
     if (this.orderBy === "region") {
       this.regions.sort((a, b) => {
         return this.orderDir === OrderDir.Desc
@@ -283,8 +283,8 @@ export class Regions implements OnInit {
     return this.isVendorSelected(vendorId) === false;
   }
 
-  get visibleRegions() {
-    return this.regions.filter(
+  get hasVisibleRegions() {
+    return this.regions.some(
       (region) => !this.isVendorHidden(region.vendor_id),
     );
   }

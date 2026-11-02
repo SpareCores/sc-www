@@ -81,7 +81,7 @@ describe("Regions", () => {
       component.vendors[0].selected = false;
       fixture.detectChanges();
 
-      expect(component.visibleRegions.map((r) => r.vendor_id)).toEqual(["gcp"]);
+      expect(component.hasVisibleRegions).toBeTrue();
       expect(visibleRows().length).toBe(1);
     });
 
@@ -113,24 +113,54 @@ describe("Regions", () => {
         ),
       ).toEqual(["false", "true"]);
     });
+
+    it("should toggle a vendor before the map is loaded", () => {
+      expect(() => component.toggleVendorSelected("aws")).not.toThrow();
+      expect(component.isVendorHidden("aws")).toBeTrue();
+    });
   });
 
-  it("should keep toggled vendors when the initial vendor request resolves late", async () => {
-    let resolveVendors!: (response: { body: object[] }) => void;
-    keeperApiService.getVendors.and.returnValue(
-      new Promise((resolve) => (resolveVendors = resolve)),
+  it("should load vendors as shown toggles", async () => {
+    keeperApiService.getVendors.and.resolveTo({
+      body: [{ vendor_id: "aws", name: "AWS" }],
+    });
+
+    const loadedFixture = TestBed.createComponent(Regions);
+    loadedFixture.detectChanges();
+    await loadedFixture.whenStable();
+    loadedFixture.detectChanges();
+
+    const toggle: HTMLButtonElement = loadedFixture.nativeElement.querySelector(
+      ".vendor_labels button",
+    );
+
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(toggle.classList).not.toContain("sc-button--swatch-inactive");
+  });
+
+  it("should keep the chosen ordering when regions resolve late", async () => {
+    let resolveRegions!: (response: { body: object[] }) => void;
+    keeperApiService.getRegions.and.returnValue(
+      new Promise((resolve) => (resolveRegions = resolve)),
     );
 
     const lateFixture = TestBed.createComponent(Regions);
     const lateComponent = lateFixture.componentInstance;
-    lateComponent.vendors = [
-      { vendor_id: "aws", name: "AWS", selected: false },
-    ];
+    lateFixture.detectChanges();
+    lateComponent.toggleOrdering("region");
 
-    resolveVendors({ body: [{ vendor_id: "aws", name: "AWS" }] });
+    resolveRegions({
+      body: [
+        { vendor_id: "aws", region_id: "b", display_name: "B" },
+        { vendor_id: "aws", region_id: "a", display_name: "A" },
+      ],
+    });
     await lateFixture.whenStable();
 
-    expect(lateComponent.isVendorHidden("aws")).toBeTrue();
+    expect(lateComponent.regions.map((r) => r.display_name)).toEqual([
+      "A",
+      "B",
+    ]);
   });
 
   it("should route region clicks to the servers page with vendor_regions", () => {

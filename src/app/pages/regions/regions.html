@@ -19,14 +19,14 @@
         @for (vendor of vendors; track vendor.vendor_id) {
           <sc-button
             [label]="vendor.name"
-            [swatchColor]="vendor.color || '#06263a'"
+            [swatchColor]="vendor.color"
             variant="ghost"
             color="inverse"
             [ariaPressed]="!isVendorHidden(vendor.vendor_id)"
             [buttonClass]="
-              isVendorSelected(vendor.vendor_id)
-                ? ''
-                : 'sc-button--swatch-inactive'
+              isVendorHidden(vendor.vendor_id)
+                ? 'sc-button--swatch-inactive'
+                : ''
             "
             (buttonClick)="toggleVendorSelected(vendor.vendor_id)"
           ></sc-button>
@@ -121,7 +121,7 @@
             </td>
           </tr>
         }
-        @if (regions.length && !visibleRegions.length) {
+        @if (regions.length && !hasVisibleRegions) {
           <tr class="regions-table__empty">
             <td colspan="5">
               <strong>All vendors are hidden.</strong>
