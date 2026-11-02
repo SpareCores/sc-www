@@ -1,5 +1,5 @@
 <div class="w-full">
-  <div class="content_section border-t-0!" id="hero">
+  <div class="content_section content_section--flush" id="hero">
     <div class="content">
       <div class="flex gap-8 flex-col lg:flex-row">
         <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
@@ -33,7 +33,6 @@
                 variant="link"
                 size="small"
                 color="accent"
-                buttonClass="justify-start! pl-4"
                 (click)="scrollTo('resource-tracker')"
               ></sc-button>
               <sc-button
@@ -41,7 +40,6 @@
                 variant="link"
                 size="small"
                 color="accent"
-                buttonClass="justify-start! pl-4"
                 (click)="scrollTo('sentinel')"
               ></sc-button>
             </div>
@@ -130,7 +128,7 @@
                         <a
                           id="slot_vendor_link"
                           class="slot_inner slot_link"
-                          [style]="getInnerStyle(i)"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
                           [routerLink]="getVendorRouteCommands(spinnerItem)"
                         >
                           @if (!spinnerItem.logo) {
@@ -148,7 +146,10 @@
                           }
                         </a>
                       } @else {
-                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                        <div
+                          class="slot_inner"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
+                        >
                           @if (!spinnerItem.logo) {
                             <div class="text-center font-bold text-3xl">
                               {{ spinnerItem.name }}
@@ -189,7 +190,7 @@
                         <a
                           id="slot_server_link"
                           class="slot_inner slot_link"
-                          [style]="getInnerStyle(i)"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
                           [routerLink]="getServerRouteCommands(spinnerItem)"
                         >
                           <div
@@ -207,7 +208,10 @@
                           </div>
                         </a>
                       } @else {
-                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                        <div
+                          class="slot_inner"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
+                        >
                           <div
                             class="text-center font-bold overflow-hidden"
                             style="text-overflow: ellipsis"
@@ -248,7 +252,7 @@
                         <a
                           id="slot_region_link"
                           class="slot_inner slot_link"
-                          [style]="getInnerStyle(i)"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
                           routerLink="/servers"
                           [queryParams]="getRegionQueryParams(spinnerItem)"
                         >
@@ -265,7 +269,10 @@
                           <div class="text-center">{{ spinnerItem.city }}</div>
                         </a>
                       } @else {
-                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                        <div
+                          class="slot_inner"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
+                        >
                           <div
                             class="text-center font-bold overflow-hidden"
                             style="text-overflow: ellipsis"
