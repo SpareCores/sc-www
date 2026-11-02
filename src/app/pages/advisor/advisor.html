@@ -4,6 +4,9 @@
     isLoadingBaselineBenchmarkScores()
   "
 >
+  @if (isLoadingBaselineBenchmarkScores()) {
+    <div class="advisor-page__wait-overlay" aria-hidden="true"></div>
+  }
   <div class="content pt-16 pb-16">
     <sc-breadcrumbs [segments]="displayBreadcrumbs()"></sc-breadcrumbs>
 

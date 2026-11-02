@@ -966,6 +966,9 @@ describe("Advisor", () => {
       "advisor-page--loading-baseline-workloads",
     );
     expect(getComputedStyle(advisorPage).cursor).toBe("wait");
+    expect(
+      advisorPage.querySelector(".advisor-page__wait-overlay"),
+    ).not.toBeNull();
 
     resolveBenchmarkScores?.({
       body: [
@@ -988,6 +991,7 @@ describe("Advisor", () => {
     expect(advisorPage.classList).not.toContain(
       "advisor-page--loading-baseline-workloads",
     );
+    expect(advisorPage.querySelector(".advisor-page__wait-overlay")).toBeNull();
   }));
 
   it("shows a warning empty state when a baseline has no benchmark workloads", fakeAsync(() => {
