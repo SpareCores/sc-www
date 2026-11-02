@@ -207,8 +207,8 @@ export class WorkloadProfilePanel {
         : "chart-block--full";
     }
     return this.layout() === "compare"
-      ? "px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]"
-      : "px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]";
+      ? "px-4 py-4 bg-transparent min-h-[500px] h-auto overflow-visible max-lg:min-h-[520px]"
+      : "px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px] h-auto overflow-visible";
   });
 
   readonly workloadProfileBenchmarks = computed(() =>
