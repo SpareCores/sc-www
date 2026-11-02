@@ -96,16 +96,16 @@
 .items_table {
   @apply w-full text-white;
 
-  .checkbox_column {
-    width: 2rem !important;
-    padding-right: 0.5rem !important;
-    padding-left: 0.75rem !important;
-  }
-
   thead {
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
       @apply text-left pl-3 pr-2 py-3 font-normal text-xs;
+
+      &.checkbox_column {
+        width: 2rem;
+        padding-right: 0.5rem;
+        padding-left: 0.75rem;
+      }
     }
   }
 
@@ -121,6 +121,12 @@
       @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
       td {
         @apply pl-3 pr-2 py-3 text-left text-sm;
+
+        &.checkbox_column {
+          width: 2rem;
+          padding-right: 0.5rem;
+          padding-left: 0.75rem;
+        }
       }
     }
   }

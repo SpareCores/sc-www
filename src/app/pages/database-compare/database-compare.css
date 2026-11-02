@@ -24,10 +24,10 @@
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
       @apply text-left px-5 py-3 font-normal text-xs;
-    }
 
-    .compact-number-header-cell {
-      text-align: right !important;
+      &.compact-number-header-cell {
+        text-align: right;
+      }
     }
 
     tr {
@@ -255,8 +255,4 @@
 :host ::ng-deep .block_full_inline .chart_div {
   height: 100%;
   min-height: 0;
-}
-
-.compact-number-header-cell {
-  text-align: right !important;
 }
