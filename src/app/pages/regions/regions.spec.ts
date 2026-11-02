@@ -163,6 +163,19 @@ describe("Regions", () => {
     ]);
   });
 
+  it("should list regions when the vendor request fails", async () => {
+    keeperApiService.getRegions.and.resolveTo({
+      body: [{ vendor_id: "aws", region_id: "us-east-1", display_name: "A" }],
+    });
+    keeperApiService.getVendors.and.rejectWith(new Error("vendors failed"));
+
+    const failedFixture = TestBed.createComponent(Regions);
+    failedFixture.detectChanges();
+    await failedFixture.whenStable();
+
+    expect(failedFixture.componentInstance.regions.length).toBe(1);
+  });
+
   it("should route region clicks to the servers page with vendor_regions", () => {
     component.openLink({ vendor_id: "aws", region_id: "us-east-1" });
 

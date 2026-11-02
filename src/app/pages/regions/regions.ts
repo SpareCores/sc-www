@@ -94,29 +94,32 @@ export class Regions implements OnInit {
       "AWS regions, Google Cloud regions",
     );
 
-    const dataLoaded = Promise.all([
-      this.API.getRegions(),
-      this.API.getVendors(),
-    ]).then(([regions, vendors]) => {
+    const regionsLoaded = this.API.getRegions().then((regions) => {
       this.regions = regions.body;
-      this.vendors = vendors.body;
-
-      this.vendors = this.vendors.map((vendor, index) => {
-        return {
-          ...vendor,
-          selected: true,
-          color: colors[index % colors.length],
-        };
-      });
-
       this.sortRegions();
     });
+
+    const vendorsLoaded = this.API.getVendors()
+      .then((vendors) => {
+        this.vendors = vendors.body;
+
+        this.vendors = this.vendors.map((vendor, index) => {
+          return {
+            ...vendor,
+            selected: true,
+            color: colors[index % colors.length],
+          };
+        });
+
+        this.sortRegions();
+      })
+      .catch(() => undefined);
 
     if (isPlatformBrowser(this.platformId)) {
       this.loadJsScript(SCRIPT_PATH)
         .then(() => this.loadJsScript(SCRIPT_PATH2))
         .then(() => this.loadJsScript(SCRIPT_PATH3))
-        .then(() => dataLoaded)
+        .then(() => Promise.all([regionsLoaded, vendorsLoaded]))
         .then(() => {
           let element = this.document.getElementById("datamapdiv");
 
