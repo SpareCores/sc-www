@@ -122,6 +122,14 @@
           status.classList.toggle("error", !!isError);
         }
 
+        function closePoll() {
+          input.disabled = true;
+          button.disabled = true;
+          button.hidden = false;
+          spinner.hidden = true;
+          setStatus("This poll has expired, voting is closed.", true);
+        }
+
         function randomNonce() {
           const bytes = crypto.getRandomValues(new Uint8Array(16));
           return Array.from(bytes, function (b) {
@@ -182,6 +190,14 @@
             input.maxLength = 500;
           }
           form.hidden = false;
+          const msLeft =
+            Date.parse(poll.expires_at) - (Date.now() + clockOffset);
+          if (msLeft <= 0) {
+            closePoll();
+            return;
+          }
+          // setTimeout overflows above ~24.8 days
+          if (msLeft < 2 ** 31) setTimeout(closePoll, msLeft);
           input.focus();
         }
 
@@ -210,6 +226,10 @@
                 body: JSON.stringify({ value, nonce, timestamp, solution }),
               },
             );
+            if (res.status === 403) {
+              closePoll();
+              return;
+            }
             if (!res.ok) {
               const body = await res.json().catch(function () {
                 return {};
