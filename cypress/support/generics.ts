@@ -348,6 +348,7 @@ export abstract class E2EEvent {
 
   public static hideListingTableResultsForScreenshot(tableId: string) {
     cy.get(`#${tableId} tbody`).invoke("css", "display", "none");
+    cy.get("sc-pagination").invoke("css", "visibility", "hidden");
   }
 
   public static hideWorkloadProfileChartsForScreenshot() {
