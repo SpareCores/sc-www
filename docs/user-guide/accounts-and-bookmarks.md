@@ -1,6 +1,6 @@
 # Use an account and manage bookmarks
 
-You can browse Navigator and use Advisor as a guest. Some actions and limits
+You can browse [Navigator](https://sparecores.com/servers) and use [Advisor](https://sparecores.com/advisor) as a guest. Some actions and limits
 require an account. The site provides **Log in** and **Register** entry
 points.
 
@@ -44,3 +44,6 @@ and notes. Deleting a bookmark removes it from the saved list.
 You can review profile and security settings through **Edit Profile**.
 
 [registered-users]: https://sparecores.com/article/registered-users
+
+For the related workflows, see [Find servers in Navigator](./navigator.md)
+and [Get recommendations in Advisor](./advisor.md).

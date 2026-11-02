@@ -1,6 +1,6 @@
 # Understand prices
 
-Navigator and Advisor provide controls for choosing which price data to use
+[Navigator](https://sparecores.com/servers) and [Advisor](https://sparecores.com/advisor) provide controls for choosing which price data to use
 and which currency to display. The displayed price depends on those choices.
 
 ## Choose a price category
@@ -32,3 +32,6 @@ The available categories, currencies, and prices can change. Use the current
 controls on [Navigator](https://sparecores.com/servers) or
 [Advisor](https://sparecores.com/advisor) rather than relying on a fixed list
 of currencies or prices.
+
+For the related workflows, see [Find servers in Navigator](./navigator.md)
+and [Get recommendations in Advisor](./advisor.md).

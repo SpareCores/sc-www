@@ -1,7 +1,7 @@
 # Compare servers
 
-You can compare servers from the Navigator listing, from a server detail page,
-or from Advisor recommendations.
+You can compare servers from the [Navigator](https://sparecores.com/servers) listing, from a server detail page,
+or from [Advisor](https://sparecores.com/advisor) recommendations.
 
 ## Start a comparison
 
@@ -39,3 +39,6 @@ use the current page rather than a copied list.
 
 For price display, see [Understand prices](./prices.md). For guest limits and
 bookmarks, see [Accounts and bookmarks](./accounts-and-bookmarks.md).
+
+For the related workflows, see [Find servers in Navigator](./navigator.md)
+and [Get recommendations in Advisor](./advisor.md).

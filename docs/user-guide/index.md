@@ -18,7 +18,7 @@ recommendations for a workload and baseline.
 
 ## Where the results come from
 
-The Spare Cores Navigator collects cloud resource information and prices,
+The [Spare Cores Navigator](https://sparecores.com/servers) collects cloud resource information and prices,
 inspects servers, and runs benchmark workloads. The website brings these
 resource and benchmark results together for browsing and comparison. For an
 overview of the platform and data flow, see the
