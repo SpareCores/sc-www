@@ -82,7 +82,6 @@ import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
 import { formatNumberInputValue } from "../../pipes/pipe-utils";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import {
@@ -132,7 +131,6 @@ import {
     Ipv4CountPipe,
     Dropdown,
     BookmarkButton,
-    InstanceFavoriteContextMenu,
     CollectionSaveModal,
     Modal,
   ],

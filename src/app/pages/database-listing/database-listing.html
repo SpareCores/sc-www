@@ -202,49 +202,37 @@
                       class="favorite_column"
                       (click)="$event.stopPropagation()"
                     >
-                      <sc-instance-favorite-context-menu
+                      <sc-bookmark-button
                         kind="database"
                         [vendorId]="item.vendor_id"
                         [entityId]="item.api_reference"
-                      >
-                        <sc-bookmark-button
-                          kind="database"
-                          [vendorId]="item.vendor_id"
-                          [entityId]="item.api_reference"
-                        ></sc-bookmark-button>
-                      </sc-instance-favorite-context-menu>
+                      ></sc-bookmark-button>
                     </td>
                     @for (column of tableColumns; track column.name) {
                       @if (column.type === "name") {
                         <td>
-                          <sc-instance-favorite-context-menu
-                            kind="database"
-                            [vendorId]="item.vendor_id"
-                            [entityId]="item.api_reference"
-                          >
-                            <div (click)="$event.stopPropagation()">
-                              <a
-                                routerLink="/database/{{
-                                  item.vendor.vendor_id
-                                }}/{{ item.api_reference }}"
-                              >
-                                <div class="text-sm text-white flex gap-1">
+                          <div (click)="$event.stopPropagation()">
+                            <a
+                              routerLink="/database/{{
+                                item.vendor.vendor_id
+                              }}/{{ item.api_reference }}"
+                            >
+                              <div class="text-sm text-white flex gap-1">
+                                <span class="whitespace-nowrap"
+                                  >{{ item.display_name }}
+                                </span>
+                                @if (showAPIReference(item)) {
+                                  <span class="text-emerald-400">|</span>
                                   <span class="whitespace-nowrap"
-                                    >{{ item.display_name }}
+                                    >{{ item.api_reference }}
                                   </span>
-                                  @if (showAPIReference(item)) {
-                                    <span class="text-emerald-400">|</span>
-                                    <span class="whitespace-nowrap"
-                                      >{{ item.api_reference }}
-                                    </span>
-                                  }
-                                </div>
-                                <div class="text-xs text-white flex gap-1">
-                                  <span>{{ item.vendor_id }}</span>
-                                </div>
-                              </a>
-                            </div>
-                          </sc-instance-favorite-context-menu>
+                                }
+                              </div>
+                              <div class="text-xs text-white flex gap-1">
+                                <span>{{ item.vendor_id }}</span>
+                              </div>
+                            </a>
+                          </div>
                         </td>
                       }
                       @if (column.type === "processor") {
