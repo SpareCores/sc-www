@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .filter_bar {
   position: relative;
   width: 20rem;

@@ -203,7 +203,7 @@ export class LandingPage implements OnInit {
               // move spin_button up and down a bit to attact attention
               const spinButton = document.getElementById("spin_button");
               if (spinButton) {
-                spinButton.style.animation = "bounce 1s 3";
+                spinButton.style.animation = "sc-bounce 1s 3";
               }
             }
           }, startingDelay + 7000);

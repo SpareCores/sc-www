@@ -697,7 +697,7 @@
               }
             </tr>
           }
-          <tr class="h-[1rem]">
+          <tr class="h-4">
             <!-- spacer -->
           </tr>
         }
@@ -904,7 +904,7 @@
             </tr>
           }
         }
-        <tr class="h-[1rem]"></tr>
+        <tr class="h-4"></tr>
       }
       @for (
         benchmarkCategory of benchmarkCategories;
@@ -978,7 +978,7 @@
               <ng-template #stressNgSubcategoryPanel>
                 <div
                   id="stress_ng_full_subcategory_options"
-                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
                 >
                   <ul
                     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -988,7 +988,7 @@
                       <li>
                         <button
                           type="button"
-                          class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                          class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
                           data-ph-capture-attribute-sc-event="stress_ng_full select subcategory"
                           [attr.data-ph-capture-attribute-stress-ng-subcategory]="
                             section.name
@@ -1007,7 +1007,7 @@
               <ng-template #stressNgMetricPanel>
                 <div
                   id="stress_ng_full_metric_options"
-                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+                  class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow-sm"
                 >
                   <ul
                     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -1017,7 +1017,7 @@
                       <li>
                         <button
                           type="button"
-                          class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                          class="flex w-full items-center gap-2 rounded-xs border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
                           data-ph-capture-attribute-sc-event="stress_ng_full select metric"
                           [attr.data-ph-capture-attribute-stress-ng-metric]="
                             option.id
@@ -1152,7 +1152,7 @@
               }
             </tr>
           }
-          <tr class="h-[1rem]"></tr>
+          <tr class="h-4"></tr>
         }
         @if (benchmarkCategory.data.length && !benchmarkCategory.hidden) {
           @let isPassmark = isPassmarkBenchmarkCategory(benchmarkCategory.id);
@@ -1611,7 +1611,7 @@
                 }
               </tr>
             }
-            <tr class="h-[1rem]">
+            <tr class="h-4">
               <!-- spacer -->
             </tr>
           }
@@ -1665,7 +1665,7 @@
                     @if (benchmarkData.description) {
                       <button
                         type="button"
-                        class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                        class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent p-0 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
                         [attr.aria-expanded]="!benchmarkData.collapsed"
                         [attr.aria-label]="
                           benchmarkData.collapsed
@@ -1964,7 +1964,7 @@
                     @if (chartData.description) {
                       <button
                         type="button"
-                        class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                        class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent p-0 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
                         [attr.aria-expanded]="!chartData.collapsed"
                         [attr.aria-label]="
                           chartData.collapsed
@@ -2211,7 +2211,7 @@
               @if (benchmarkCategory.description) {
                 <button
                   type="button"
-                  class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                  class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent p-0 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
                   [attr.aria-expanded]="!benchmarkCategory.collapsed"
                   [attr.aria-label]="
                     benchmarkCategory.collapsed

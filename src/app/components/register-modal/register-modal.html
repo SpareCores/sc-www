@@ -167,7 +167,7 @@
                   label="Continue"
                   icon="chevron-right"
                   size="small"
-                  buttonClass="w-full !justify-center"
+                  buttonClass="w-full justify-center!"
                   [loading]="busy === 'submit'"
                   [disabled]="!canSubmitDetails(detailsForm) || !!busy"
                 ></sc-button>
@@ -184,7 +184,7 @@
                 size="small"
                 variant="outline"
                 color="brand"
-                buttonClass="w-full !justify-center"
+                buttonClass="w-full justify-center!"
                 [loading]="busy === 'github'"
                 [disabled]="!!busy"
                 (buttonClick)="continueWithGitHub()"
@@ -290,7 +290,7 @@
                 variant="outline"
                 color="brand"
                 size="small"
-                buttonClass="w-full !justify-center"
+                buttonClass="w-full justify-center!"
                 [disabled]="!!busy"
                 (buttonClick)="cancelConsent()"
               ></sc-button>
@@ -299,7 +299,7 @@
                 label="Continue"
                 icon="chevron-right"
                 size="small"
-                buttonClass="w-full !justify-center"
+                buttonClass="w-full justify-center!"
                 [loading]="busy === 'submit' || busy === 'github'"
                 [disabled]="!canSubmitConsent() || !!busy"
               ></sc-button>
@@ -342,7 +342,7 @@
                 variant="outline"
                 color="brand"
                 size="small"
-                buttonClass="w-full !justify-center"
+                buttonClass="w-full justify-center!"
                 [loading]="busy === 'resend'"
                 [disabled]="!!busy"
                 (buttonClick)="resendCode()"
@@ -351,7 +351,7 @@
                 type="submit"
                 label="Verify email"
                 size="small"
-                buttonClass="w-full !justify-center"
+                buttonClass="w-full justify-center!"
                 [loading]="busy === 'verify'"
                 [disabled]="!canVerify() || !!busy"
               ></sc-button>

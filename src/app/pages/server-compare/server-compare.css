@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .items_table {
   @apply w-full text-white;
 

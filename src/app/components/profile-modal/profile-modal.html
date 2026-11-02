@@ -95,7 +95,7 @@
                 variant="outline"
                 color="brand"
                 size="small"
-                buttonClass="w-full !justify-center"
+                buttonClass="w-full justify-center!"
                 [disabled]="!!busy()"
                 (buttonClick)="cancelReverify()"
               ></sc-button>
@@ -104,7 +104,7 @@
                 label="Continue"
                 icon="chevron-right"
                 size="small"
-                buttonClass="w-full !justify-center"
+                buttonClass="w-full justify-center!"
                 data-ph-capture-attribute-sc-event="profile reverify"
                 [loading]="busy() === 'reverify'"
                 [disabled]="reverifyForm.invalid || !!busy()"

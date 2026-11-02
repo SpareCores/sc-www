@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 sc-database-details {
   .content {
     min-height: 75vh;
