@@ -1408,7 +1408,7 @@
   <div id="advisor_column_options" class="sc-dropdown w-56">
     <ul class="sc-dropdown__list px-3" aria-labelledby="advisor_column_button">
       @for (column of possibleColumns(); track column.name) {
-        <li class="sc-dropdown__option">
+        <li class="flex py-1 gap-2 items-center">
           <input
             type="checkbox"
             [checked]="column.show"
