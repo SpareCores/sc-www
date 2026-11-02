@@ -224,7 +224,14 @@ export class AuthState {
   }
 
   private async processGitHubCallback(): Promise<GitHubCallbackResult> {
-    await this.init();
+    try {
+      await this.init();
+    } catch (error) {
+      console.error("Clerk initialization failed:", error);
+      const message = AUTH_MESSAGES.unableToContinueGitHub;
+      await this.failGitHubCallback(message);
+      return { status: "error", message };
+    }
     const params = new URLSearchParams(window.location.search);
     const oauthError = params.get("error");
     if (oauthError) {

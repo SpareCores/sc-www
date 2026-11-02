@@ -1415,6 +1415,24 @@ describe("AuthState", () => {
     });
   });
 
+  it("fails the GitHub callback when Clerk fails to load", async () => {
+    const auth = createAuth();
+    spyOn(clerkService(), "init").and.rejectWith(new Error("chunk failed"));
+    spyOn(console, "error");
+    const redirect = spyOn(clerkService(), "handleRedirectCallback");
+    const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    flowStore().setReturnUrl("/servers");
+    go("/auth/callback?intent=signIn");
+
+    await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
+      status: "error",
+      message: AUTH_MESSAGES.unableToContinueGitHub,
+    });
+
+    expect(redirect).not.toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledOnceWith("/servers", { replaceUrl: true });
+  });
+
   it("rejects a GitHub callback with no intent instead of guessing sign-up", async () => {
     const auth = createAuth();
     setClerkInstance({
