@@ -265,8 +265,8 @@
               style="
                 background: linear-gradient(
                   360deg,
-                  #06263a 23.44%,
-                  rgba(6, 38, 58, 0) 100%
+                  var(--color-sky-975) 23.44%,
+                  transparent 100%
                 );
               "
             >
@@ -645,7 +645,7 @@
         <li>
           <button
             type="button"
-            class="flex w-full items-center rounded-xs border-0 bg-transparent px-2 py-1 text-left text-sm text-white hover:bg-emerald-500"
+            class="flex w-full items-center rounded-xs border-0 bg-transparent px-2 py-1 text-left text-sm text-white hover:bg-emerald-400/80"
             (click)="selectSimilarServerOption(option)"
           >
             {{ option.name }}
@@ -719,9 +719,7 @@
       }
     </div>
     @if (serverDescription && isSummarizeModalOpen) {
-      <div
-        class="summarize-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
-      >
+      <div class="summarize-modal-body p-4 md:p-6 max-h-[70vh] overflow-y-auto">
         @if (serverDescription.bullet_points.length) {
           <div class="summarize-modal-highlights">
             <h3 class="text-lg font-semibold text-white mb-3">

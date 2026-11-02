@@ -37,13 +37,15 @@ import { SeoHandler } from "../../services/seo-handler";
 import { Toast } from "../../services/toast";
 import { VENDOR_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 
+import { chartColors } from "../../components/charts/shared/chart-colors.constants";
+
 declare let Datamap: any;
 
 const SCRIPT_PATH = "assets/datamaps/d3.min.js";
 const SCRIPT_PATH2 = "assets/datamaps/topojson.js";
 const SCRIPT_PATH3 = "assets/datamaps/datamaps.world.min.js";
 
-const VENDOR_MAP_COLOR = "#34D399";
+const VENDOR_MAP_COLOR = chartColors["emerald-400"];
 
 type OpenApiProperty = {
   description?: string;
@@ -471,7 +473,7 @@ export class VendorDetails implements OnInit, OnDestroy {
             highlightBorderOpacity: 0,
           },
           fills: {
-            defaultFill: "#06263a",
+            defaultFill: chartColors["sky-975"],
             [this.vendor.vendor_id]: VENDOR_MAP_COLOR,
           },
         });

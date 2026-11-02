@@ -70,7 +70,7 @@
 }
 
 .sc-button--ghost:has(.sc-button__swatch) {
-  @apply px-0;
+  @apply px-3;
 }
 
 .sc-button--solid,
@@ -116,7 +116,7 @@
 }
 
 .sc-button--link.sc-button--brand {
-  @apply text-emerald-400 hover:text-emerald-500 focus:text-emerald-500;
+  @apply text-emerald-400 hover:text-emerald-400/80 focus:text-emerald-400/80;
 }
 
 .sc-button--link.sc-button--neutral {
@@ -131,8 +131,12 @@
   @apply text-white hover:text-emerald-400 focus:text-emerald-400;
 }
 
+.sc-button--link.sc-button--accent {
+  @apply text-teal-500 hover:text-teal-500/80 focus:text-teal-500/80;
+}
+
 .sc-button--white {
-  @apply border border-gray-200 bg-white shadow-xs hover:bg-gray-50 focus:bg-gray-50;
+  @apply border border-gray-200 bg-white shadow-xs hover:bg-gray-100 focus:bg-gray-100;
 }
 
 :is(
@@ -140,7 +144,7 @@
   .sc-button--dropdown,
   .sc-button--benchmark
 ).sc-button--brand {
-  @apply border-emerald-400 bg-emerald-400 hover:bg-emerald-500 focus:bg-emerald-500;
+  @apply border-emerald-400 bg-emerald-400 hover:bg-emerald-400/80 focus:bg-emerald-400/80;
 }
 
 :is(
@@ -148,7 +152,7 @@
   .sc-button--dropdown,
   .sc-button--benchmark
 ).sc-button--neutral {
-  @apply border-gray-800 bg-gray-800 hover:bg-gray-900 focus:bg-gray-900;
+  @apply border-gray-900 bg-gray-900 hover:bg-black focus:bg-black;
 }
 
 :is(
@@ -164,15 +168,19 @@
   .sc-button--dropdown,
   .sc-button--benchmark
 ).sc-button--inverse {
-  @apply border-transparent bg-white text-gray-800 hover:bg-white/90 focus:bg-white/90;
+  @apply border-transparent bg-white text-gray-900 hover:bg-white/90 focus:bg-white/90;
 }
 
-.sc-button--outline.sc-button--brand {
+.sc-button--outline:is(.sc-button--brand, .sc-button--brand-inverse) {
   @apply border-emerald-400 text-emerald-400 hover:bg-emerald-400/10 focus:bg-emerald-400/10;
 }
 
+.sc-button--outline.sc-button--brand-inverse {
+  @apply text-white;
+}
+
 .sc-button--outline.sc-button--neutral {
-  @apply border-gray-200 text-gray-500 hover:border-gray-800 hover:text-gray-800 focus:border-gray-800 focus:text-gray-800;
+  @apply border-gray-200 text-gray-500 hover:border-gray-900 hover:text-gray-900 focus:border-gray-900 focus:text-gray-900;
 }
 
 .sc-button--outline.sc-button--danger {
@@ -184,7 +192,7 @@
 }
 
 .sc-button--ghost.sc-button--brand {
-  @apply text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 focus:bg-emerald-100 focus:text-emerald-800;
+  @apply text-emerald-400 hover:bg-emerald-400/20 focus:bg-emerald-400/20;
 }
 
 .sc-button--ghost.sc-button--neutral {
@@ -196,15 +204,15 @@
 }
 
 .sc-button--ghost.sc-button--inverse {
-  @apply text-white hover:bg-white/10 focus:bg-white/10;
+  @apply text-white hover:bg-white/10 focus-visible:bg-white/10;
 }
 
 .sc-button--soft.sc-button--brand {
-  @apply bg-emerald-100 text-emerald-800 hover:bg-emerald-200 focus:bg-emerald-200;
+  @apply bg-emerald-400/20 text-emerald-400 hover:bg-emerald-400/30 focus:bg-emerald-400/30;
 }
 
 .sc-button--soft.sc-button--neutral {
-  @apply bg-gray-100 text-gray-800 hover:bg-gray-200 focus:bg-gray-200;
+  @apply bg-gray-100 text-gray-900 hover:bg-gray-200 focus:bg-gray-200;
 }
 
 .sc-button--soft.sc-button--danger {
@@ -220,7 +228,7 @@
 }
 
 .sc-button--white.sc-button--neutral {
-  @apply text-gray-800;
+  @apply text-gray-900;
 }
 
 .sc-button--white.sc-button--danger {

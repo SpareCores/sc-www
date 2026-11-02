@@ -1,5 +1,5 @@
 <div class="w-full">
-  <div class="content_section border-t-0!" id="hero">
+  <div class="content_section content_section--flush" id="hero">
     <div class="content">
       <div class="flex gap-8 flex-col lg:flex-row">
         <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
@@ -32,14 +32,14 @@
                 label="Measure AI/ML jobs >"
                 variant="link"
                 size="small"
-                buttonClass="justify-start! pl-4 text-teal-500! hover:text-teal-600! focus:text-teal-600!"
+                color="accent"
                 (click)="scrollTo('resource-tracker')"
               ></sc-button>
               <sc-button
                 label="Explore Sentinel >"
                 variant="link"
                 size="small"
-                buttonClass="justify-start! pl-4 text-teal-500! hover:text-teal-600! focus:text-teal-600!"
+                color="accent"
                 (click)="scrollTo('sentinel')"
               ></sc-button>
             </div>
@@ -128,7 +128,7 @@
                         <a
                           id="slot_vendor_link"
                           class="slot_inner slot_link"
-                          [style]="getInnerStyle(i)"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
                           [routerLink]="getVendorRouteCommands(spinnerItem)"
                         >
                           @if (!spinnerItem.logo) {
@@ -146,7 +146,10 @@
                           }
                         </a>
                       } @else {
-                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                        <div
+                          class="slot_inner"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
+                        >
                           @if (!spinnerItem.logo) {
                             <div class="text-center font-bold text-3xl">
                               {{ spinnerItem.name }}
@@ -187,7 +190,7 @@
                         <a
                           id="slot_server_link"
                           class="slot_inner slot_link"
-                          [style]="getInnerStyle(i)"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
                           [routerLink]="getServerRouteCommands(spinnerItem)"
                         >
                           <div
@@ -205,7 +208,10 @@
                           </div>
                         </a>
                       } @else {
-                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                        <div
+                          class="slot_inner"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
+                        >
                           <div
                             class="text-center font-bold overflow-hidden"
                             style="text-overflow: ellipsis"
@@ -246,7 +252,7 @@
                         <a
                           id="slot_region_link"
                           class="slot_inner slot_link"
-                          [style]="getInnerStyle(i)"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
                           routerLink="/servers"
                           [queryParams]="getRegionQueryParams(spinnerItem)"
                         >
@@ -263,7 +269,10 @@
                           <div class="text-center">{{ spinnerItem.city }}</div>
                         </a>
                       } @else {
-                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                        <div
+                          class="slot_inner"
+                          [class.slot_inner--active]="isSlotLinkActive(i)"
+                        >
                           <div
                             class="text-center font-bold overflow-hidden"
                             style="text-overflow: ellipsis"
@@ -1112,7 +1121,7 @@
           label="Or check out our conference talks >"
           size="large"
           variant="link"
-          buttonClass="text-teal-500! hover:text-teal-600! focus:text-teal-600!"
+          color="accent"
           [routerLink]="'/talks'"
         ></sc-button>
       </div>

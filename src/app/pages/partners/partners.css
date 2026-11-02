@@ -26,12 +26,9 @@
 .partner-logos {
   --partner-mobile-gap: 2rem;
   @apply my-8 flex flex-wrap items-center justify-center gap-8 overflow-x-auto pb-2;
-
-  scrollbar-width: thin;
-  scrollbar-color: #34d39933 transparent;
 }
 
-@media (max-width: 767px) {
+@media (width < theme(--breakpoint-md)) {
   .partner-logos--two-rows-mobile {
     @apply flex-wrap justify-center pb-0;
 
@@ -99,16 +96,7 @@
 .partners-divider {
   @apply my-10 border-0 border-t;
 
-  border-color: rgb(52 211 153 / 0.4);
-}
-
-.partner-logos::-webkit-scrollbar {
-  height: 4px;
-  background: rgb(52 211 153 / 0.12);
-}
-
-.partner-logos::-webkit-scrollbar-thumb {
-  background: rgb(52 211 153 / 0.65);
+  border-color: color-mix(in oklab, var(--color-emerald-400) 40%, transparent);
 }
 
 .partners-anchor-target {

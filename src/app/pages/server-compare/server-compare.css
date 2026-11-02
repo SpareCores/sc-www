@@ -10,10 +10,10 @@
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
       @apply text-left px-5 py-3 font-normal text-xs;
-    }
 
-    .compact-number-header-cell {
-      text-align: right !important;
+      &.compact-number-header-cell {
+        text-align: right;
+      }
     }
 
     tr {
@@ -100,46 +100,14 @@
 }
 
 .scrollbar_mirror_outer {
-  background: #374151;
+  background: var(--color-gray-700);
   overflow-y: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #34d399 #374151;
-
-  &::-webkit-scrollbar {
-    height: 11px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #374151;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    height: 11px;
-    background-color: #34d399;
-    border-radius: 3px;
-    border: 0;
-  }
 }
 
 .scrollbar_mirror_inner {
   height: 1px;
   margin: 0;
   padding: 0;
-}
-
-::-webkit-scrollbar {
-  width: 5px; /* width of the entire scrollbar */
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-secondary;
-}
-
-::-webkit-scrollbar-thumb {
-  height: 6px;
-  background-color: #9ca3af;
-  border-radius: 20px; /* roundness of the scroll thumb */
 }
 :host ::ng-deep .block_full_inline {
   @apply px-6 py-6 bg-transparent flex flex-col gap-4 relative overflow-hidden;
@@ -149,7 +117,7 @@
 }
 
 :host ::ng-deep .block_full_inline .chart_div {
-  height: 100% !important;
+  height: 100%;
   min-height: 0;
 }
 
@@ -189,7 +157,7 @@
   height: 460px;
 }
 
-@media screen and (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   :host ::ng-deep .block_full_short_inline {
     min-height: 860px;
     height: 860px;
@@ -236,5 +204,5 @@
   right: 0;
   bottom: 0;
   height: 0.3rem;
-  background-color: #34d399;
+  background-color: var(--color-emerald-400);
 }

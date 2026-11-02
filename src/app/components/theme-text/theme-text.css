@@ -2,6 +2,6 @@
   letter-spacing: 0.125rem;
   gap: 0.125rem;
   display: flex;
-  color: #fff;
+  color: var(--color-white);
   font-family: "Roboto Mono", sans-serif;
 }

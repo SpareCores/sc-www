@@ -60,7 +60,7 @@
       #optionsPanel
       role="listbox"
       [id]="listboxId()"
-      class="search-bar-multi-select__panel custom-scrollbar"
+      class="search-bar-multi-select__panel"
     >
       @if (filteredOptions().length) {
         @for (option of filteredOptions(); track option; let index = $index) {

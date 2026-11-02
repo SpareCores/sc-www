@@ -32,7 +32,7 @@
               type="text"
               id="name"
               formControlName="name"
-              class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-500 transition-colors bg-transparent text-white disabled:cursor-not-allowed"
+              class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-400/80 transition-colors bg-transparent text-white disabled:cursor-not-allowed"
               [class.border-red-500]="
                 contactForm.get('name')?.invalid &&
                 contactForm.get('name')?.touched
@@ -55,7 +55,7 @@
               type="text"
               id="affiliation"
               formControlName="affiliation"
-              class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-500 transition-colors bg-transparent text-white disabled:cursor-not-allowed"
+              class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-400/80 transition-colors bg-transparent text-white disabled:cursor-not-allowed"
             />
           </div>
         </div>
@@ -71,7 +71,7 @@
               type="email"
               id="email"
               formControlName="email"
-              class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-500 transition-colors bg-transparent text-white disabled:cursor-not-allowed"
+              class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-400/80 transition-colors bg-transparent text-white disabled:cursor-not-allowed"
               [class.border-red-500]="
                 contactForm.get('email')?.invalid &&
                 contactForm.get('email')?.touched
@@ -100,7 +100,7 @@
               type="tel"
               id="phone"
               formControlName="phone"
-              class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-500 transition-colors bg-transparent text-white disabled:cursor-not-allowed"
+              class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-400/80 transition-colors bg-transparent text-white disabled:cursor-not-allowed"
             />
           </div>
         </div>
@@ -111,7 +111,7 @@
             id="message"
             formControlName="message"
             rows="5"
-            class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-500 transition-colors resize-y min-h-[120px] bg-transparent text-white disabled:cursor-not-allowed"
+            class="px-3 py-2 rounded-md focus:shadow-none focus:ring-0 focus:border-emerald-400/80 transition-colors resize-y min-h-[120px] bg-transparent text-white disabled:cursor-not-allowed"
             style="field-sizing: content"
             [class.border-red-500]="
               contactForm.get('message')?.invalid &&
@@ -139,7 +139,7 @@
             I (a certified human, not a robot) accept the
             <a
               href="/legal/privacy-policy"
-              class="text-emerald-500 underline"
+              class="text-emerald-400 underline hover:text-emerald-400/80 focus:text-emerald-400/80"
               target="_blank"
               >Privacy Policy</a
             >.
