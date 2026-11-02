@@ -196,7 +196,7 @@
       margin: 0.5rem 0.5rem;
       border-radius: 1rem;
       background: transparent;
-      color: var(--color-gray-300);
+      color: var(--color-gray-200);
       display: flex;
       flex-direction: column;
       justify-content: center;

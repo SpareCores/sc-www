@@ -156,7 +156,7 @@
   .cpu-cache-slider-label {
     position: absolute;
     transform: translateX(-50%);
-    color: var(--color-gray-300);
+    color: var(--color-gray-200);
     font-size: 0.65rem;
     line-height: 1;
     white-space: nowrap;
@@ -237,11 +237,11 @@
   }
 
   .custom-autocomplete__meta {
-    @apply text-xs text-gray-300;
+    @apply text-xs text-gray-200;
   }
 
   .custom-autocomplete__hint {
-    @apply text-xs text-gray-300;
+    @apply text-xs text-gray-200;
   }
 
   .benchmark-group {
@@ -299,7 +299,7 @@
     display: flex;
     justify-content: space-between;
     gap: 0.5rem;
-    color: var(--color-gray-300);
+    color: var(--color-gray-200);
     font-size: 0.65rem;
     line-height: 1;
   }

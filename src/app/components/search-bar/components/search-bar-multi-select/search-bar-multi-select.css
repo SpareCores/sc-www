@@ -62,5 +62,5 @@
 }
 
 .search-bar-multi-select__hint {
-  @apply px-3 py-2 text-xs text-gray-300;
+  @apply px-3 py-2 text-xs text-gray-200;
 }

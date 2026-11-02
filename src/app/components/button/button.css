@@ -132,7 +132,7 @@
 }
 
 .sc-button--white {
-  @apply border border-gray-200 bg-white shadow-xs hover:bg-gray-50 focus:bg-gray-50;
+  @apply border border-gray-200 bg-white shadow-xs hover:bg-gray-100 focus:bg-gray-100;
 }
 
 :is(
@@ -148,7 +148,7 @@
   .sc-button--dropdown,
   .sc-button--benchmark
 ).sc-button--neutral {
-  @apply border-gray-800 bg-gray-800 hover:bg-gray-900 focus:bg-gray-900;
+  @apply border-gray-900 bg-gray-900 hover:bg-black focus:bg-black;
 }
 
 :is(
@@ -164,7 +164,7 @@
   .sc-button--dropdown,
   .sc-button--benchmark
 ).sc-button--inverse {
-  @apply border-transparent bg-white text-gray-800 hover:bg-white/90 focus:bg-white/90;
+  @apply border-transparent bg-white text-gray-900 hover:bg-white/90 focus:bg-white/90;
 }
 
 .sc-button--outline.sc-button--brand {
@@ -172,7 +172,7 @@
 }
 
 .sc-button--outline.sc-button--neutral {
-  @apply border-gray-200 text-gray-500 hover:border-gray-800 hover:text-gray-800 focus:border-gray-800 focus:text-gray-800;
+  @apply border-gray-200 text-gray-500 hover:border-gray-900 hover:text-gray-900 focus:border-gray-900 focus:text-gray-900;
 }
 
 .sc-button--outline.sc-button--danger {
@@ -204,7 +204,7 @@
 }
 
 .sc-button--soft.sc-button--neutral {
-  @apply bg-gray-100 text-gray-800 hover:bg-gray-200 focus:bg-gray-200;
+  @apply bg-gray-100 text-gray-900 hover:bg-gray-200 focus:bg-gray-200;
 }
 
 .sc-button--soft.sc-button--danger {
@@ -220,7 +220,7 @@
 }
 
 .sc-button--white.sc-button--neutral {
-  @apply text-gray-800;
+  @apply text-gray-900;
 }
 
 .sc-button--white.sc-button--danger {
