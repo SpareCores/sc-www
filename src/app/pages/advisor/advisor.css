@@ -4,13 +4,6 @@
   cursor: wait;
 }
 
-.advisor-page__wait-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  cursor: wait;
-}
-
 .advisor-page-body {
   @apply flex gap-8;
 }
