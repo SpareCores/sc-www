@@ -238,7 +238,7 @@ describe("AuthState", () => {
 
     expect(() => auth.signIn()).not.toThrow();
     expect(() => auth.signUp()).not.toThrow();
-    await Promise.resolve();
+    await new Promise((resolve) => setTimeout(resolve));
     expect(auth.signInModalOpen()).toBeFalse();
     expect(auth.signUpModalOpen()).toBeFalse();
     expect(toastSpy).toHaveBeenCalledTimes(2);
@@ -253,14 +253,15 @@ describe("AuthState", () => {
     await expectAsync(auth.signOut()).toBeResolved();
   });
 
-  it("opens sign in once Clerk finishes loading", async () => {
+  it("opens sign in once Clerk finishes loading", fakeAsync(() => {
     const auth = createAuth();
+    const addListener = jasmine.createSpy("addListener");
     let finishLoading: () => void = () => undefined;
     spyOn(clerkService(), "init").and.callFake(
       () =>
         new Promise<void>((resolve) => {
           finishLoading = () => {
-            setClerkInstance({});
+            setClerkInstance({ user: null, addListener });
             resolve();
           };
         }),
@@ -270,12 +271,32 @@ describe("AuthState", () => {
     expect(auth.signInModalOpen()).toBeFalse();
 
     finishLoading();
-    await Promise.resolve();
+    flushMicrotasks();
 
     expect(auth.signInModalOpen()).toBeTrue();
-  });
+    expect(addListener).toHaveBeenCalledTimes(1);
+  }));
 
-  it("toasts when Clerk fails to load on sign up", async () => {
+  it("syncs the Clerk user when sign in retries a failed load", fakeAsync(() => {
+    const auth = createAuth();
+    const addListener = jasmine.createSpy("addListener");
+    const init = spyOn(clerkService(), "init").and.rejectWith(
+      new Error("chunk failed"),
+    );
+    auth.init().catch(() => undefined);
+    flushMicrotasks();
+
+    init.and.callFake(async () => {
+      setClerkInstance({ user: { id: "user_1" }, addListener });
+    });
+    auth.signIn();
+    flushMicrotasks();
+
+    expect(auth.isAuthenticated()).toBeTrue();
+    expect(addListener).toHaveBeenCalledTimes(1);
+  }));
+
+  it("toasts when Clerk fails to load on sign up", fakeAsync(() => {
     const auth = createAuth();
     spyOn(clerkService(), "init").and.rejectWith(new Error("chunk failed"));
     const toastSpy = spyOn(
@@ -288,13 +309,13 @@ describe("AuthState", () => {
     );
 
     auth.signUp();
-    await Promise.resolve();
+    flushMicrotasks();
 
     expect(auth.signUpModalOpen()).toBeFalse();
     expect(toastSpy).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({ title: AUTH_MESSAGES.authUnavailable }),
     );
-  });
+  }));
 
   it("returns null token outside the browser", async () => {
     const auth = createAuth("server");

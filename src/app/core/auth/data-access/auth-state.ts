@@ -1078,7 +1078,7 @@ export class AuthState {
       return;
     }
 
-    this.clerk.init().then(
+    this.init().then(
       () => (this.clerk.isLoaded() ? action() : this.toastAuthUnavailable()),
       () => this.toastAuthUnavailable(),
     );
