@@ -135,16 +135,6 @@ div.giscus {
   padding-right: 0.5em;
 }
 
-::ng-deep .html_content table::-webkit-scrollbar {
-  height: 4px;
-  width: 4px;
-  background: color-mix(in oklab, var(--color-emerald-400) 20%, transparent);
-}
-
-::ng-deep .html_content table::-webkit-scrollbar-thumb:horizontal {
-  background: var(--color-emerald-400);
-}
-
 ::ng-deep .html_content .header-anchor {
   opacity: 0;
   text-decoration: none;

@@ -31,22 +31,6 @@
 
 .search-bar-multi-select__panel {
   @apply absolute left-0 right-0 z-20 mt-1 max-h-64 overflow-y-auto rounded-lg border border-solid border-emerald-400 bg-primary;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
-}
-
-.search-bar-multi-select__panel::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-.search-bar-multi-select__panel::-webkit-scrollbar-track {
-  background: var(--color-gray-700);
-}
-
-.search-bar-multi-select__panel::-webkit-scrollbar-thumb {
-  background-color: var(--color-emerald-400);
-  border-radius: 20px;
 }
 
 .search-bar-multi-select__option {

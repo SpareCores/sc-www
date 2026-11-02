@@ -184,21 +184,6 @@
   z-index: 40;
 }
 
-::-webkit-scrollbar {
-  width: 5px; /* width of the entire scrollbar */
-  height: 5px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-secondary;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--color-gray-400);
-  border-radius: 20px; /* roundness of the scroll thumb */
-  border: 3px solid var(--color-gray-400); /* creates padding around scroll thumb */
-}
-
 .compare-chart-content {
   box-sizing: border-box;
   min-width: 0;

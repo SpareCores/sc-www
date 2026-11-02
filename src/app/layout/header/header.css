@@ -122,21 +122,6 @@ li {
   max-height: calc(100dvh - 6rem);
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
-}
-
-.mobile_menu_panel__list::-webkit-scrollbar {
-  width: 5px;
-}
-
-.mobile_menu_panel__list::-webkit-scrollbar-track {
-  background: var(--color-gray-700);
-}
-
-.mobile_menu_panel__list::-webkit-scrollbar-thumb {
-  background-color: var(--color-emerald-400);
-  border-radius: 20px;
 }
 
 .bg-custom {

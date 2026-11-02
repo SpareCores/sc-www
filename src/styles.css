@@ -24,6 +24,27 @@
 }
 
 @layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-gray-700);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-emerald-400);
+    border-radius: 20px;
+  }
+}
+
+@layer base {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;

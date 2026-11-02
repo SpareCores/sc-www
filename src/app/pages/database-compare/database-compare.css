@@ -221,23 +221,6 @@
 .scrollbar_mirror_outer {
   background: var(--color-gray-700);
   overflow-y: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
-
-  &::-webkit-scrollbar {
-    height: 11px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--color-gray-700);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    height: 11px;
-    background-color: var(--color-emerald-400);
-    border-radius: 3px;
-    border: 0;
-  }
 }
 
 .scrollbar_mirror_inner {

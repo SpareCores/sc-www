@@ -897,9 +897,7 @@
               (ngModelChange)="updateFilterTerm()"
             />
           </div>
-          <div
-            class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder flex-1"
-          >
+          <div class="flex flex-col overflow-y-auto button_list_holder flex-1">
             @for (
               benchmarkConfig of tempfilteredBenchmarkConfigs;
               track benchmarkConfig.benchmark_id + $index

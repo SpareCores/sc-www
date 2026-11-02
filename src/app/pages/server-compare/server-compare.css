@@ -102,44 +102,12 @@
 .scrollbar_mirror_outer {
   background: var(--color-gray-700);
   overflow-y: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-emerald-400) var(--color-gray-700);
-
-  &::-webkit-scrollbar {
-    height: 11px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--color-gray-700);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    height: 11px;
-    background-color: var(--color-emerald-400);
-    border-radius: 3px;
-    border: 0;
-  }
 }
 
 .scrollbar_mirror_inner {
   height: 1px;
   margin: 0;
   padding: 0;
-}
-
-::-webkit-scrollbar {
-  width: 5px; /* width of the entire scrollbar */
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-secondary;
-}
-
-::-webkit-scrollbar-thumb {
-  height: 6px;
-  background-color: var(--color-gray-400);
-  border-radius: 20px; /* roundness of the scroll thumb */
 }
 :host ::ng-deep .block_full_inline {
   @apply px-6 py-6 bg-transparent flex flex-col gap-4 relative overflow-hidden;
