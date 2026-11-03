@@ -1,4 +1,4 @@
-import { PLATFORM_ID } from "@angular/core";
+import { NgZone, PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { ClerkClient } from "./clerk-client";
@@ -188,6 +188,7 @@ describe("ClerkClient", () => {
     type LoaderInternals = {
       importClerk: () => Promise<ClerkModule>;
       loadClerk: (publishableKey?: string) => Promise<void>;
+      navigateRouter: (url: string, replace?: boolean) => Promise<boolean>;
     };
 
     afterEach(() => {
@@ -280,6 +281,59 @@ describe("ClerkClient", () => {
       await expectAsync(service.init()).toBeResolved();
 
       expect(loadClerk).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not retry loading for tokens after a failed attempt", async () => {
+      const service = createService();
+      const loadClerk = spyOn(loader(service), "loadClerk").and.rejectWith(
+        new Error("chunk failed"),
+      );
+
+      await expectAsync(service.init()).toBeRejected();
+      await expectAsync(service.getToken()).toBeResolvedTo(null);
+
+      expect(loadClerk).toHaveBeenCalledTimes(1);
+    });
+
+    it("resolves no sign-in or sign-up resource when loading fails", async () => {
+      const service = createService();
+      spyOn(loader(service), "loadClerk").and.rejectWith(
+        new Error("chunk failed"),
+      );
+
+      await expectAsync(service.getSignInResource()).toBeResolvedTo(null);
+      await expectAsync(service.getSignUpResource()).toBeResolvedTo(null);
+    });
+
+    it("loads the SDK outside the Angular zone", async () => {
+      const service = createService();
+      let insideZone: boolean | null = null;
+      spyOn(loader(service), "loadClerk").and.callFake(async () => {
+        insideZone = NgZone.isInAngularZone();
+      });
+
+      await TestBed.inject(NgZone).run(() => service.init());
+
+      expect(insideZone).toBeFalse();
+    });
+
+    it("navigates inside the Angular zone for Clerk router callbacks", async () => {
+      const service = createService();
+      let insideZone: boolean | null = null;
+      router.navigateByUrl.and.callFake(async () => {
+        insideZone = NgZone.isInAngularZone();
+        return true;
+      });
+
+      await TestBed.inject(NgZone).runOutsideAngular(() =>
+        loader(service).navigateRouter("/servers"),
+      );
+
+      expect(insideZone).toBeTrue();
+      expect(router.navigateByUrl).toHaveBeenCalledOnceWith(
+        "/servers",
+        undefined,
+      );
     });
   });
 });

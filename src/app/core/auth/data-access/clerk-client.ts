@@ -1,5 +1,11 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, inject, isDevMode } from "@angular/core";
+import {
+  Injectable,
+  NgZone,
+  PLATFORM_ID,
+  inject,
+  isDevMode,
+} from "@angular/core";
 import { Router } from "@angular/router";
 import type { Clerk } from "@clerk/clerk-js";
 import { isClerkRuntimeError, isNetworkError } from "@clerk/shared/error";
@@ -16,9 +22,11 @@ import { Analytics } from "../../../services/analytics";
 export class ClerkClient {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
+  private readonly ngZone = inject(NgZone);
   private readonly analytics = inject(Analytics);
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
+  private loadFailed = false;
 
   get instance(): Clerk | null {
     return this.clerk;
@@ -45,20 +53,24 @@ export class ClerkClient {
       return this.initPromise;
     }
 
-    this.initPromise = this.loadClerk().catch((error: unknown) => {
-      this.initPromise = null;
-      throw error;
-    });
+    this.loadFailed = false;
+    this.initPromise = this.ngZone
+      .runOutsideAngular(() => this.loadClerk())
+      .catch((error: unknown) => {
+        this.initPromise = null;
+        this.loadFailed = true;
+        throw error;
+      });
     return this.initPromise;
   }
 
   async getSignInResource(): Promise<SignInResource | null> {
-    await this.init();
+    await this.init().catch(() => undefined);
     return this.clerk?.client?.signIn ?? null;
   }
 
   async getSignUpResource(): Promise<SignUpResource | null> {
-    await this.init();
+    await this.init().catch(() => undefined);
     return this.clerk?.client?.signUp ?? null;
   }
 
@@ -75,7 +87,7 @@ export class ClerkClient {
   }
 
   async getToken(template?: string): Promise<string | null> {
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!isPlatformBrowser(this.platformId) || this.loadFailed) {
       return null;
     }
 
@@ -173,9 +185,11 @@ export class ClerkClient {
   }
 
   private navigateRouter(url: string, replace = false): Promise<boolean> {
-    return this.router.navigateByUrl(
-      this.toRelativePath(url),
-      replace ? { replaceUrl: true } : undefined,
+    return this.ngZone.run(() =>
+      this.router.navigateByUrl(
+        this.toRelativePath(url),
+        replace ? { replaceUrl: true } : undefined,
+      ),
     );
   }
 
