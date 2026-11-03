@@ -1,7 +1,8 @@
-# Get recommendations in Advisor
+# Get recommendations in the Advisor
 
-Advisor compares candidate servers with a baseline for a workload and
-utilization level. Open [Advisor](https://sparecores.com/advisor) to begin.
+The Advisor compares candidate servers with a baseline for a workload and
+utilization level. Open the [Advisor](https://sparecores.com/advisor) to
+begin.
 
 To see recommendations before you enter your own server, select **Example**
 in the page header. It fills in a sample baseline server, workload, and

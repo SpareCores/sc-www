@@ -1,9 +1,9 @@
 # Spare Cores website user guide
 
 The [Spare Cores website](https://sparecores.com/) lists cloud servers from
-many vendors with their prices and benchmark results. Use the Navigator's
-[server listing](https://sparecores.com/servers) to browse, filter, and
-compare servers yourself. Use the [Advisor](https://sparecores.com/advisor)
+many vendors with their prices and benchmark results. Use the
+[Navigator](https://sparecores.com/servers), the site's server listing, to
+browse, filter, and compare servers yourself. Use the [Advisor](https://sparecores.com/advisor)
 when you run a server today and want a cheaper or faster server for the same
 workload.
 
@@ -15,10 +15,10 @@ compare and location-filter limits; see
 
 ## Choose a task
 
-- [Find servers in Navigator](./navigator.md) to search, filter, and inspect
+- [Find servers in the Navigator](./navigator.md) to search, filter, and inspect
   servers.
 - [Compare servers](./compare.md) to review server options side by side.
-- [Get recommendations in Advisor](./advisor.md) to compare a baseline server
+- [Get recommendations in the Advisor](./advisor.md) to compare a baseline server
   with other servers for a selected workload.
 - [Understand prices](./prices.md) to learn what the price and currency
   controls change.
@@ -27,11 +27,10 @@ compare and location-filter limits; see
 
 ## Where the results come from
 
-The [Spare Cores Navigator](https://sparecores.com/servers) collects cloud resource information and prices,
-inspects servers, and runs benchmark workloads. The website brings these
-resource and benchmark results together for browsing and comparison. For an
-overview of the platform and data flow, see the
-[Navigator Overview](https://docs.sparecores.com/overview/). The
+The Navigator's data comes from
+[Spare Cores Navigator](https://docs.sparecores.com/overview/), the platform
+that collects cloud resource information and prices, inspects servers, and
+runs benchmark workloads; its Overview describes the data flow. The
 [Benchmarks](https://docs.sparecores.com/benchmarks/) reference describes
 benchmark workloads; the [Schemas](https://docs.sparecores.com/schemas/) and
 [API](https://docs.sparecores.com/api/) references describe technical ways to
@@ -41,5 +40,5 @@ access the data.
 
 For help or feedback, [contact Spare Cores](https://sparecores.com/contact).
 
-This guide covers Navigator and Advisor on the main website. It does not
+This guide covers the Navigator and the Advisor on the main website. It does not
 cover Resource Tracker, Sentinel, or booking a call.

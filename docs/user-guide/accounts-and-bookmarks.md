@@ -1,6 +1,7 @@
 # Use an account and manage bookmarks
 
-You can browse [Navigator](https://sparecores.com/servers) and use [Advisor](https://sparecores.com/advisor) as a guest. Some actions and limits
+You can browse the [Navigator](https://sparecores.com/servers) and use the
+[Advisor](https://sparecores.com/advisor) as a guest. Some actions and limits
 require an account. The site provides **Log in** and **Register** entry
 points.
 
@@ -44,13 +45,18 @@ its current filters include servers, databases, searches, comparisons, and
 assessments. Use the name search, category filters, or ordering controls to
 find an item.
 
-Available item actions include **Open**, **Edit**, **Delete**, and **Share**,
-depending on the item. For a saved search, **Edit** lets you change its name
-and notes. Deleting a bookmark removes it from the saved list.
+Each saved item offers the following actions:
+
+- **Open** opens the server, database, search, comparison, or assessment.
+- **View note** shows the item's notes.
+- **Edit** changes the name and notes of a search, comparison, or assessment.
+- **Share** copies the item's link.
+- **Delete** removes the item from your bookmarks.
 
 You can review profile and security settings through **Edit Profile**.
 
 [registered-users]: https://sparecores.com/article/registered-users
 
-For the related workflows, see [Find servers in Navigator](./navigator.md)
-and [Get recommendations in Advisor](./advisor.md).
+For the related workflows, see
+[Find servers in the Navigator](./navigator.md) and
+[Get recommendations in the Advisor](./advisor.md).
