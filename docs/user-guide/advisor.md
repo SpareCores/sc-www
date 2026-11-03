@@ -29,5 +29,6 @@ comparison includes the baseline and the selected server. For more detail on
 the comparison view, see [Compare servers](./compare.md).
 
 Price allocation and currency affect the price information shown. See
-[Understand prices](./prices.md). The [Benchmarks reference](../benchmarks/)
-describes benchmark workloads used in the results.
+[Understand prices](./prices.md). The
+[Benchmarks reference](https://docs.sparecores.com/benchmarks/) describes
+benchmark workloads used in the results.
