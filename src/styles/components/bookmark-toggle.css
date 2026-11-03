@@ -1,3 +1,11 @@
+.sc-bookmark-toggle {
+  color: var(
+    --sc-bookmark-toggle-color,
+    var(--sc-bookmark-toggle-idle-color, currentColor)
+  );
+  transition: color 0.15s ease;
+}
+
 .sc-bookmark-toggle--active,
 .sc-bookmark-toggle--can-add:hover:not(:disabled) {
   --sc-bookmark-toggle-color: var(--color-emerald-400);

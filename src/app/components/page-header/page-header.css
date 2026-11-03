@@ -18,10 +18,6 @@
   height: 2rem;
   border: 0;
   background: transparent;
-  color: var(
-    --sc-bookmark-toggle-color,
-    color-mix(in oklab, var(--color-gray-400) 70%, transparent)
-  );
   cursor: pointer;
   position: relative;
   transition:
@@ -33,8 +29,20 @@
   background: color-mix(in oklab, var(--color-white) 8%, transparent);
 }
 
+.page-header__bookmark {
+  --sc-bookmark-toggle-idle-color: color-mix(
+    in oklab,
+    var(--color-gray-400) 70%,
+    transparent
+  );
+}
+
 .page-header__bookmark:hover:not(:disabled) {
   background: transparent;
+}
+
+.page-header__edit {
+  color: color-mix(in oklab, var(--color-gray-400) 70%, transparent);
 }
 
 .page-header__edit:hover:not(:disabled) {
