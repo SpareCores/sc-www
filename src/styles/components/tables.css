@@ -27,8 +27,13 @@
   @apply pr-2 pl-3;
 }
 
+.sc-table--hoverable tbody tr,
 .sc-table--interactive tbody tr {
-  @apply cursor-pointer hover:outline-1 hover:-outline-offset-1 hover:outline-solid hover:outline-emerald-400;
+  @apply hover:outline-1 hover:-outline-offset-1 hover:outline-solid hover:outline-emerald-400;
+}
+
+.sc-table--interactive tbody tr {
+  @apply cursor-pointer;
 }
 
 .sc-table--links tbody td a {

@@ -4,6 +4,12 @@
   transition: width 0.2s ease-in-out;
 }
 
+.sc-filter-sidebar--sticky {
+  position: sticky;
+  top: 5rem;
+  z-index: 1;
+}
+
 .sc-filter-sidebar--collapsed {
   width: 0rem;
   min-width: unset;
