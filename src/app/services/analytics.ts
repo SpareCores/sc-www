@@ -4,16 +4,21 @@ import * as Sentry from "@sentry/angular";
 import type { PostHog } from "posthog-js";
 
 const SENTRY_DSN = import.meta.env.NG_APP_SENTRY_DSN;
+const MAX_PENDING_EVENTS = 50;
 
-type PendingIdentify = {
-  distinctId: string;
-  properties?: Record<string, unknown>;
-};
-
-type PendingEvent = {
-  eventName: string;
-  properties: Record<string, unknown>;
-};
+type PendingOp =
+  | {
+      type: "identify";
+      distinctId: string;
+      properties?: Record<string, unknown>;
+    }
+  | { type: "reset" }
+  | {
+      type: "capture";
+      eventName: string;
+      properties: Record<string, unknown>;
+      timestamp: Date;
+    };
 
 @Injectable({
   providedIn: "root",
@@ -21,9 +26,8 @@ type PendingEvent = {
 export class Analytics {
   private platformId = inject(PLATFORM_ID);
   private ngZone = inject(NgZone);
-  private pendingIdentify: PendingIdentify | null = null;
-  private pendingReset = false;
-  private pendingEvents: PendingEvent[] = [];
+  private pendingOps: PendingOp[] = [];
+  private pendingStaleIdentityCheck = false;
   private posthog: PostHog | null = null;
   private trackingPromise: Promise<void> | null = null;
 
@@ -61,7 +65,9 @@ export class Analytics {
 
     const posthog = this.posthog;
     if (!posthog) {
-      this.pendingIdentify = { distinctId, properties };
+      if (this.trackingPromise) {
+        this.pendingOps.push({ type: "identify", distinctId, properties });
+      }
       return;
     }
 
@@ -75,18 +81,32 @@ export class Analytics {
       return;
     }
 
-    this.pendingIdentify = null;
-
     const posthog = this.posthog;
     if (!posthog) {
-      this.pendingReset = true;
+      if (this.trackingPromise) {
+        this.pendingOps.push({ type: "reset" });
+      }
       return;
     }
 
-    this.pendingReset = false;
-
     this.ngZone.runOutsideAngular(() => {
       posthog.reset();
+    });
+  }
+
+  public clearStaleIdentity(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const posthog = this.posthog;
+    if (!posthog) {
+      this.pendingStaleIdentityCheck = true;
+      return;
+    }
+
+    this.ngZone.runOutsideAngular(() => {
+      this.resetIfIdentified(posthog);
     });
   }
 
@@ -96,8 +116,17 @@ export class Analytics {
   ): void {
     const posthog = this.posthog;
     if (!posthog) {
-      if (this.trackingPromise) {
-        this.pendingEvents.push({ eventName, properties });
+      if (this.trackingPromise && this.pendingOps.length < MAX_PENDING_EVENTS) {
+        this.pendingOps.push({
+          type: "capture",
+          eventName,
+          properties: {
+            ...properties,
+            $current_url: window.location.href,
+            $pathname: window.location.pathname,
+          },
+          timestamp: new Date(),
+        });
       }
       return;
     }
@@ -120,6 +149,11 @@ export class Analytics {
     return typeof distinctId === "string" ? distinctId : "";
   }
 
+  public async getIdWhenReady(): Promise<string> {
+    await this.trackingPromise;
+    return this.getId();
+  }
+
   public SentryException(
     exception: unknown,
     hint?: Parameters<typeof Sentry.captureException>[1],
@@ -137,55 +171,58 @@ export class Analytics {
   private async loadPostHog(key: string, host: string): Promise<void> {
     try {
       const { default: posthog } = await this.importPostHog();
-      this.ngZone.runOutsideAngular(() => {
-        posthog.init(key, {
-          api_host: host,
-          persistence: "sessionStorage",
-        });
+      posthog.init(key, {
+        api_host: host,
+        persistence: "sessionStorage",
       });
       this.posthog = posthog;
     } catch (error) {
       this.trackingPromise = null;
-      this.pendingEvents = [];
+      this.pendingOps = [];
+      this.pendingStaleIdentityCheck = false;
       console.error("PostHog initialization failed:", error);
       return;
     }
 
-    this.flushPendingReset();
-    this.flushPendingIdentify();
-    this.flushPendingEvents();
+    this.flushPending();
   }
 
   private importPostHog(): Promise<typeof import("posthog-js")> {
     return import("posthog-js");
   }
 
-  private flushPendingIdentify(): void {
-    const pending = this.pendingIdentify;
-    if (!pending) {
-      return;
+  private resetIfIdentified(posthog: PostHog): void {
+    if (posthog.get_property("$user_state") === "identified") {
+      posthog.reset();
     }
-
-    this.pendingIdentify = null;
-    this.identify(pending.distinctId, pending.properties);
   }
 
-  private flushPendingReset(): void {
-    if (!this.pendingReset) {
+  private flushPending(): void {
+    const posthog = this.posthog;
+    if (!posthog) {
       return;
     }
 
-    this.pendingReset = false;
+    const staleIdentityCheck = this.pendingStaleIdentityCheck;
+    const pending = this.pendingOps;
+    this.pendingStaleIdentityCheck = false;
+    this.pendingOps = [];
+
     this.ngZone.runOutsideAngular(() => {
-      this.posthog?.reset();
+      if (staleIdentityCheck) {
+        this.resetIfIdentified(posthog);
+      }
+      for (const op of pending) {
+        if (op.type === "identify") {
+          posthog.identify(op.distinctId, op.properties);
+        } else if (op.type === "reset") {
+          posthog.reset();
+        } else {
+          posthog.capture(op.eventName, op.properties, {
+            timestamp: op.timestamp,
+          });
+        }
+      }
     });
-  }
-
-  private flushPendingEvents(): void {
-    const pending = this.pendingEvents;
-    this.pendingEvents = [];
-    for (const { eventName, properties } of pending) {
-      this.trackEvent(eventName, properties);
-    }
   }
 }
