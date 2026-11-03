@@ -1,8 +1,17 @@
 # Spare Cores website user guide
 
-This guide helps you use the [Spare Cores website](https://sparecores.com/).
-Use Navigator to find and compare cloud servers. Use Advisor to get server
-recommendations for a baseline server and workload.
+The [Spare Cores website](https://sparecores.com/) lists cloud servers from
+many vendors with their prices and benchmark results. Use the Navigator's
+[server listing](https://sparecores.com/servers) to browse, filter, and
+compare servers yourself. Use the [Advisor](https://sparecores.com/advisor)
+when you run a server today and want a cheaper or faster server for the same
+workload.
+
+You do not need an account to start. As a guest, you can browse and filter
+servers, use Search Prompt and the Advisor, compare up to four servers at a
+time, and share links. Register for free to save bookmarks and to remove the
+compare and location-filter limits; see
+[Guest limits](./accounts-and-bookmarks.md#guest-limits).
 
 ## Choose a task
 
