@@ -22,9 +22,10 @@ select other servers from the listing and compare them together.
 
 ### From Advisor
 
-In Advisor, use the **Compare Baseline** quick filter and select a
-recommendation. The comparison includes the baseline and selected
-recommendation. See [Get recommendations in Advisor](./advisor.md).
+In Advisor, select **Compare baseline**, select the checkboxes of one or more
+recommendations, and select **Compare (N)**. The comparison shows the
+baseline next to the selected servers. See
+[Compare a recommendation with the baseline](./advisor.md#compare-a-recommendation-with-the-baseline).
 
 ## Read a comparison
 

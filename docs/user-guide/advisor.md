@@ -7,9 +7,13 @@ utilization level. Open [Advisor](https://sparecores.com/advisor) to begin.
 
 1. Choose a baseline server. The workload control is unavailable until you
    choose a baseline.
-2. Choose a **Workload Profile**. The list includes **LLM Inference**.
-3. Set average utilization. Advisor uses the utilization and workload to
-   calculate requirements for the recommendation search.
+2. Choose a **Baseline workload**. The list shows only workloads measured on
+   your baseline server, such as a web or LLM inference profile.
+3. Set **Average utilization** with the slider, from 0 to 100% in steps of
+   10%. It starts as "Not set", and the Advisor shows no results until you
+   set it. To use 0%, move the slider and then back to 0. The Advisor uses
+   the utilization and workload to calculate requirements for the
+   recommendation search.
 4. Choose an optimization goal: **Performance**, **Cost**, or
    **Cost-efficiency**. **Cost** is the default.
 5. Review the required memory value and other constraints shown for the
@@ -24,9 +28,13 @@ constraints you choose.
 
 ## Compare a recommendation with the baseline
 
-Use the **Compare Baseline** quick filter, then select a recommendation. The
-comparison includes the baseline and the selected server. For more detail on
-the comparison view, see [Compare servers](./compare.md).
+1. Select **Compare baseline** above the recommendations to add the baseline
+   to your comparison. The button changes to **Remove baseline**.
+2. Select the checkboxes of one or more recommendations.
+3. Select **Compare (N)** in the bar at the bottom of the page.
+
+The comparison shows the baseline and the selected servers side by side. For
+more detail on the comparison view, see [Compare servers](./compare.md).
 
 Price allocation and currency affect the price information shown. See
 [Understand prices](./prices.md). The

@@ -9,9 +9,12 @@ or describe what you need in Search Prompt.
 1. To find a known server, open **Basics** and enter part of its name or ID
    under **Partial name or id**. Press Enter or click away to apply the
    filter.
-2. To describe a requirement in your own words, open **Search Prompt** and
-   submit a request. Search Prompt turns the request into filters and may not
-   apply every part of it, so check the resulting filters.
+2. To describe a requirement in your own words, select **Search Prompt** at
+   the top of the sidebar, describe what you need, and select **Submit**.
+   Review the **Suggested filter parameters**, then select **Confirm** to
+   apply them. Confirm replaces your current filters with the suggestions, so
+   use Search Prompt before you set filters by hand. It may not apply every
+   part of a request, so check the resulting filters.
 3. Open filter groups such as **Processor**, **Memory**, **GPU**, **Storage**,
    **Network**, **Vendor**, and **Region** to narrow results further.
 

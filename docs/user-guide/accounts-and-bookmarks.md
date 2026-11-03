@@ -20,15 +20,18 @@ bookmark action as a guest, the site can prompt you to register or sign in;
 the pending action completes after registration. When signed in, the account
 menu includes **Bookmarks**, **Edit Profile**, and **Sign Out**.
 
-## Save a server or search
+## Save servers, searches, and comparisons
 
-1. To save a server or database, select its bookmark control in the listing
-   or on its detail page.
-2. To save a search, select **Bookmark this search** above the listing.
-3. To save a comparison, use the bookmark control on its comparison page. To
-   save an Advisor assessment, use its bookmark control in Advisor.
-4. Enter a name in the bookmark dialog. Notes are optional.
-5. Select **Confirm** to save.
+To bookmark a server or database, select its bookmark icon in the listing or
+on its detail page. The bookmark is saved at once, with no dialog; select the
+icon again to remove it.
+
+To save a search, a comparison, or an Advisor assessment:
+
+1. Select the bookmark icon in the page header of the listing, comparison, or
+   Advisor page.
+2. Enter a **Name** of at least three characters. **Notes** are optional.
+3. Select **Confirm** to save.
 
 ## Find and manage saved items
 
