@@ -24,6 +24,11 @@ Use any of the following ways to narrow the listing:
   **Memory**, **Accelerator**, **GPU**, **ASIC**, **Storage**, **Network**,
   **Vendor**, and **Region**; only **Processor** is open by default.
 
+The following screenshot shows the Search Prompt dialog with suggested filter
+parameters, before you select **Confirm**:
+
+![The Search Prompt dialog with a request for 4 vCPU and 16 GB RAM, the suggested filter parameters below it, and the Confirm button.](../../src/assets/images/user_guide/navigator-search-prompt.webp)
+
 The **Basics** group also includes **Active only** and **Orderable only**;
 Orderable only is selected by default. The **Performance** group includes the
 following filters:
@@ -52,8 +57,11 @@ see [Accounts and bookmarks](./accounts-and-bookmarks.md).
 Select **Select Benchmark** above the results to choose a benchmark and,
 where available, a configuration. Your choice sets what the **BENCHMARK** and
 **$ EFFICIENCY** columns show and what the benchmark filters in the
-**Performance** group compare against. Benchmark categories include LLM
-inference speed.
+**Performance** group compare against.
+
+![The row above the results table with the benchmark selector, the price selector set to Any price, the currency selector set to USD, and the Columns button.](../../src/assets/images/user_guide/navigator-benchmark-row.webp)
+
+Benchmark categories include LLM inference speed.
 Its configurations distinguish prompt processing from text generation and
 include model and token settings. For workload definitions, see the
 [Benchmarks reference](https://docs.sparecores.com/benchmarks/).

@@ -43,6 +43,8 @@ read it:
 - Badges on the server columns mark the lowest price (💰), the best value for
   price (🥇), and the top performance (💪).
 
+![A comparison of four servers with price and performance badges in the column headers, the Baseline server and currency controls, and the best values highlighted in green.](../../src/assets/images/user_guide/compare-header.webp)
+
 The page also has a currency control and a **Baseline server** selector.
 Choose a baseline to see how the other servers differ from it: its column is
 underlined in green, and rows such as prices and CPU speed show each
