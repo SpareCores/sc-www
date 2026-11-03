@@ -17,12 +17,7 @@
   width: 100%;
 }
 
-.sc-chart-block--half .chart_div {
-  max-height: 350px;
-  height: 350px;
-  max-width: 100%;
-}
-
+.sc-chart-block--half .chart_div,
 .sc-chart-block--full .chart_div {
   max-height: 350px;
   height: 350px;
@@ -153,12 +148,7 @@
 }
 
 .sc-chart-embed .sc-chart-block--half .chart_div,
-.sc-chart-embed .sc-chart-block--full .chart_div {
-  max-height: none;
-  max-width: none;
-  height: 100%;
-}
-
+.sc-chart-embed .sc-chart-block--full .chart_div,
 .sc-chart-embed .sc-chart-block--taller .chart_div {
   max-height: none;
   max-width: none;
