@@ -18,11 +18,11 @@
   @apply my-10;
 }
 
-:host ::ng-deep .sc-prose a {
+:host ::ng-deep .sc-prose a:not(.sc-header-anchor) {
   @apply underline decoration-dotted;
 }
 
-:host ::ng-deep .sc-prose a:hover {
+:host ::ng-deep .sc-prose a:not(.sc-header-anchor):hover {
   @apply text-gray-500;
 }
 

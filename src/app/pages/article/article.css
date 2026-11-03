@@ -78,14 +78,3 @@ div.giscus {
 :host ::ng-deep .sc-prose h6:hover .sc-header-anchor {
   opacity: 1;
 }
-
-:host ::ng-deep a.sc-header-anchor {
-  opacity: 0;
-  margin-left: 0.5rem;
-  text-decoration: none;
-  transition: opacity 0.2s;
-}
-
-:host ::ng-deep a.sc-header-anchor:hover {
-  @apply text-emerald-400;
-}
