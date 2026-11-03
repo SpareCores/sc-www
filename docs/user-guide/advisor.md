@@ -39,10 +39,9 @@ utilization. **Introduction**, next to it, opens a
    The table shows how each server differs from the baseline as a
    percentage, for example "+12%" on price.
 
-For example, selecting `aws / m5.large`, **LLM Inference**, and 50% average
-utilization produced recommendations and populated required memory as 4 GiB.
-Your results depend on the baseline, workload, utilization, and search
-constraints you choose.
+For example, with `aws / m5.large` as the baseline, an LLM inference
+workload, and 50% average utilization, the Advisor sets required memory to
+4 GiB.
 
 ## Compare a recommendation with the baseline
 

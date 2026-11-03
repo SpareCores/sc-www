@@ -25,13 +25,14 @@ considering.
 
 ## Change the display currency
 
-Use the currency selector to change the currency used for displayed prices.
-For example, changing from USD to EUR changed the best-price values in the
-Navigator listing.
+Use the currency selector above the
+[server listing](https://sparecores.com/servers), in the
+[Advisor](https://sparecores.com/advisor), or on a comparison page to show
+prices in another currency. USD is the default.
 
-Changing the display currency did not change benchmark efficiency figures
-expressed in USD per hour during testing. Check the units shown with a value
-before comparing prices or efficiency scores.
+Score-per-price values, such as $Core and **$ EFFICIENCY**, stay per USD per
+hour whichever currency you choose. Check the unit shown with a value before
+you compare prices or efficiency scores.
 
 The available categories, currencies, and prices can change. Use the current
 controls on [Navigator](https://sparecores.com/servers) or

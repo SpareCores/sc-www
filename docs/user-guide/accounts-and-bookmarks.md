@@ -6,12 +6,16 @@ points.
 
 ## Guest limits
 
-Guests can compare up to four servers at a time. The Region filter allows a
-guest to select one country; selecting a country disables other country
-choices. The [Registered users article][registered-users] also documents the
-guest limits for regions and databases. The article's registration and
-bookmark flows were tested when it was written; this guide's walkthrough
-rechecked the server comparison and one-country limits.
+As a guest, you can use everything except bookmarks, with the following
+limits:
+
+- Compare up to four servers, and separately up to four databases, at a time.
+- In the **Region** filter, select one country and up to three regions.
+
+You can still open comparison links that others share with you, even when
+they hold more servers. When you reach a limit, the site offers to register
+you; registering removes the limits. For more on what registration gives you,
+see the [Registered users article][registered-users].
 
 You need an account to save bookmarks. Select **Register** and either enter
 your name, email address, and password or continue with GitHub. Email
