@@ -21,8 +21,7 @@
   position: absolute;
 }
 
-.sc-bookmark-toggle--active .sc-bookmark-toggle__icon--default,
-.sc-bookmark-toggle:hover:not(:disabled) .sc-bookmark-toggle__icon {
+.sc-bookmark-toggle--active .sc-bookmark-toggle__icon--default {
   fill: currentColor;
 }
 
