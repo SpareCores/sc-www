@@ -3,6 +3,11 @@
 Advisor compares candidate servers with a baseline for a workload and
 utilization level. Open [Advisor](https://sparecores.com/advisor) to begin.
 
+To see recommendations before you enter your own server, select **Example**
+in the page header. It fills in a sample baseline server, workload, and
+utilization. **Introduction**, next to it, opens a
+[video about the Advisor](https://www.youtube.com/watch?v=4QwvxaLTW2k).
+
 ## Set up an assessment
 
 1. Choose a baseline server. The workload control is unavailable until you

@@ -2,7 +2,9 @@
 
 Open [Servers in Navigator](https://sparecores.com/servers) to browse the
 server listing. You can narrow the results with filters, search by name or ID,
-or describe what you need in Search Prompt.
+or describe what you need in Search Prompt. For a
+[video introduction](https://www.youtube.com/watch?v=hO0KQoxk1SM) to the
+listing, select **Introduction** in the page header.
 
 ## Search for servers
 
@@ -47,6 +49,10 @@ other properties.
 
 Select a server name to open its detail page. The detail page shows server
 specifications and benchmark information, and includes a **Compare** control.
+
+To share a search, select **Share** in the page header of the
+[server listing](https://sparecores.com/servers). It copies a link that keeps
+your filters, benchmark, and columns. You do not need an account to share.
 
 For price categories and currencies, see [Understand prices](./prices.md).
 For database schemas and programmatic access, see
