@@ -27,8 +27,8 @@ to reorder or remove servers or set a baseline, then select
 
 ### From the Advisor
 
-In the Advisor, select **Compare baseline**, select the checkboxes of one or more
-recommendations, and select **Compare (N)**. The comparison shows the
+In the Advisor, select **Compare baseline**, select the checkboxes of one or
+more recommendations, and select **Compare (N)**. The comparison shows the
 baseline next to the selected servers. See
 [Compare a Recommendation with the Baseline](./advisor.md#compare-a-recommendation-with-the-baseline).
 

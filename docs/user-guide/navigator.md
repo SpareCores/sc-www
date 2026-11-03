@@ -59,8 +59,9 @@ include model and token settings. For workload definitions, see the
 [Benchmarks reference](https://docs.sparecores.com/benchmarks/).
 
 Use **Columns** to change which server properties appear in the listing. For
-example, you can add CPU Cache. Select a column heading to sort by it. Two
-of the default columns need a definition:
+example, you can add the **CPU CACHE** column. Select a column heading to
+sort by it; each further selection cycles through descending, ascending, and
+no sorting. Two of the default columns need a definition:
 
 - **$ EFFICIENCY** shows how much performance you get for your money: the
   selected benchmark's score divided by the server's best price, in USD per

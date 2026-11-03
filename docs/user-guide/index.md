@@ -3,9 +3,9 @@
 The [Spare Cores website](https://sparecores.com/) lists cloud servers from
 many vendors with their prices and benchmark results. Use the
 [Navigator](https://sparecores.com/servers), the site's server listing, to
-browse, filter, and compare servers yourself. Use the [Advisor](https://sparecores.com/advisor)
-when you run a server today and want a cheaper or faster server for the same
-workload.
+browse, filter, and compare servers yourself. Use the
+[Advisor](https://sparecores.com/advisor) when you run a server today and want
+a cheaper or faster server for the same workload.
 
 You do not need an account to start. As a guest, you can browse and filter
 servers, use Search Prompt and the Advisor, compare up to four servers at a

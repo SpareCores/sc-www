@@ -2,7 +2,8 @@
 
 The [Navigator](https://sparecores.com/servers) and the
 [Advisor](https://sparecores.com/advisor) provide controls for choosing which
-price data to use and which currency to display. The displayed price depends on those choices.
+price data to use and which currency to display. The displayed price depends
+on those choices.
 
 ## Choose a Price Category
 
