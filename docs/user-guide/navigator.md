@@ -1,4 +1,4 @@
-# Find servers in the Navigator
+# Find Servers in the Navigator
 
 Open the [Navigator](https://sparecores.com/servers) to browse servers. You
 can narrow the results with filters, search by name or ID,
@@ -6,27 +6,35 @@ or describe what you need in Search Prompt. For a
 [video introduction](https://www.youtube.com/watch?v=hO0KQoxk1SM) to the
 listing, select **Introduction** in the page header.
 
-## Search for servers
+## Search for Servers
 
-1. To find a known server, open **Basics** and enter part of its name or ID
-   under **Partial name or id**. Press Enter or click away to apply the
-   filter.
-2. To describe a requirement in your own words, select **Search Prompt** at
-   the top of the sidebar, describe what you need, and select **Submit**.
-   Review the **Suggested filter parameters**, then select **Confirm** to
-   apply them. Confirm replaces your current filters with the suggestions, so
-   use Search Prompt before you set filters by hand. It may not apply every
-   part of a request, so check the resulting filters.
-3. Open the filter groups in the sidebar to narrow results further. The
-   groups are **Basics**, **Performance**, **Processor**, **CPU Cache**,
-   **Memory**, **Accelerator**, **GPU**, **ASIC**, **Storage**, **Network**,
-   **Vendor**, and **Region**; only **Processor** is open by default.
+Use any of the following ways to narrow the listing:
+
+- To find a known server, open **Basics** and enter part of its name or ID
+  under **Partial name or id**. Press Enter or click away to apply the
+  filter.
+- To describe a requirement in your own words, select **Search Prompt** at
+  the top of the sidebar, describe what you need, and select **Submit**.
+  Review the **Suggested filter parameters**, then select **Confirm** to
+  apply them. Confirm replaces your current filters with the suggestions, so
+  use Search Prompt before you set filters by hand. It may not apply every
+  part of a request, so check the resulting filters.
+- Open the filter groups in the sidebar to narrow results further. The
+  groups are **Basics**, **Performance**, **Processor**, **CPU Cache**,
+  **Memory**, **Accelerator**, **GPU**, **ASIC**, **Storage**, **Network**,
+  **Vendor**, and **Region**; only **Processor** is open by default.
 
 The **Basics** group also includes **Active only** and **Orderable only**;
-Orderable only is selected by default. The **Performance** group includes
-**Required SCore**, **Required $Core**, **Required benchmark score**,
-**Maximum benchmark score**, **Required benchmark score/price**, and
-**Required benchmark score/vCPU**.
+Orderable only is selected by default. The **Performance** group includes the
+following filters:
+
+- **Required SCore**
+- **Required $Core**
+- **Required benchmark score**
+- **Maximum benchmark score**
+- **Required benchmark score/price**
+- **Required benchmark score/vCPU**
+
 Select **Show filter description** beside a field if you are unsure what it
 filters. Two scores appear throughout the site:
 
@@ -39,7 +47,7 @@ filters. Two scores appear throughout the site:
 Guests can select one country in the Region filter. For other guest limits,
 see [Accounts and bookmarks](./accounts-and-bookmarks.md).
 
-## Choose a benchmark and view results
+## Choose a Benchmark and View Results
 
 Select **Select Benchmark** above the results to choose a benchmark and,
 where available, a configuration. Your choice sets what the **BENCHMARK** and
@@ -67,7 +75,7 @@ To share a search, select **Share** in the page header of the
 [Navigator](https://sparecores.com/servers). It copies a link that keeps
 your filters, benchmark, and columns. You do not need an account to share.
 
-## Find managed databases
+## Find Managed Databases
 
 The Navigator also lists managed database services, or DBaaS (Database as a
 Service), in the [database listing](https://sparecores.com/databases). Open
@@ -77,7 +85,7 @@ of two or more databases to compare them. Guests can compare up to four
 databases at a time. Its price selector offers **Any price**,
 **Hourly prices**, and **Monthly prices**.
 
-For price categories and currencies, see [Understand prices](./prices.md).
+For price categories and currencies, see [Understand Prices](./prices.md).
 For database schemas and programmatic access, see
 [Schemas](https://docs.sparecores.com/schemas/) and
 [API](https://docs.sparecores.com/api/).

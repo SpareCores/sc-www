@@ -1,11 +1,11 @@
-# Use an account and manage bookmarks
+# Create an Account and Manage Bookmarks
 
 You can browse the [Navigator](https://sparecores.com/servers) and use the
 [Advisor](https://sparecores.com/advisor) as a guest. Some actions and limits
-require an account. The site provides **Log in** and **Register** entry
-points.
+require an account. Select **Register** or **Log in** in the top-right corner
+of the site.
 
-## Guest limits
+## Guest Limits
 
 As a guest, you can use everything except bookmarks, with the following
 limits:
@@ -16,7 +16,8 @@ limits:
 You can still open comparison links that others share with you, even when
 they hold more servers. When you reach a limit, the site offers to register
 you; registering removes the limits. For more on what registration gives you,
-see the [Registered users article][registered-users].
+see the
+[Registered users article](https://sparecores.com/article/registered-users).
 
 You need an account to save bookmarks. Select **Register** and either enter
 your name, email address, and password or continue with GitHub. Email
@@ -25,7 +26,7 @@ bookmark action as a guest, the site can prompt you to register or sign in;
 the pending action completes after registration. When signed in, the account
 menu includes **Bookmarks**, **Edit Profile**, and **Sign Out**.
 
-## Save servers, searches, and comparisons
+## Save Servers, Searches, and Comparisons
 
 To bookmark a server or database, select its bookmark icon in the listing or
 on its detail page. The bookmark is saved at once, with no dialog; select the
@@ -38,7 +39,7 @@ To save a search, a comparison, or an Advisor assessment:
 2. Enter a **Name** of at least three characters. **Notes** are optional.
 3. Select **Confirm** to save.
 
-## Find and manage saved items
+## Find and Manage Saved Items
 
 Open **Bookmarks** from the account menu. The page groups saved items by type;
 its current filters include servers, databases, searches, comparisons, and
@@ -53,10 +54,3 @@ Each saved item offers the following actions:
 - **Share** copies the item's link.
 - **Delete** removes the item from your bookmarks.
 
-You can review profile and security settings through **Edit Profile**.
-
-[registered-users]: https://sparecores.com/article/registered-users
-
-For the related workflows, see
-[Find servers in the Navigator](./navigator.md) and
-[Get recommendations in the Advisor](./advisor.md).

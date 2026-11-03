@@ -1,10 +1,10 @@
-# Compare servers
+# Compare Servers
 
 You can compare servers from the [Navigator](https://sparecores.com/servers),
 from a server detail page, or from the
 [Advisor](https://sparecores.com/advisor)'s recommendations.
 
-## Start a comparison
+## Start a Comparison
 
 ### From the Navigator
 
@@ -16,7 +16,7 @@ from a server detail page, or from the
 Guests can compare up to four servers at a time. The listing disables further
 selection when the guest limit is reached and shows a registration prompt.
 
-### From a server detail page
+### From a Server Detail Page
 
 Open a server from the listing and select **Compare**. The control changes to
 **Don't Compare** when that server is in the current selection. Add other
@@ -30,9 +30,9 @@ to reorder or remove servers or set a baseline, then select
 In the Advisor, select **Compare baseline**, select the checkboxes of one or more
 recommendations, and select **Compare (N)**. The comparison shows the
 baseline next to the selected servers. See
-[Compare a recommendation with the baseline](./advisor.md#compare-a-recommendation-with-the-baseline).
+[Compare a Recommendation with the Baseline](./advisor.md#compare-a-recommendation-with-the-baseline).
 
-## Read a comparison
+## Read a Comparison
 
 The comparison page places the selected servers side by side: property
 sections such as CPU, Memory, and Storage, then **Workload Profiles**,
@@ -54,12 +54,7 @@ For what each benchmark workload measures, see the
 [Benchmarks reference](https://docs.sparecores.com/benchmarks/).
 
 The [curated server comparisons](https://sparecores.com/servers/compare)
-provide preselected groups to explore. Their available groups can change, so
-use the current page rather than a copied list.
+provide preselected groups to explore.
 
-For price display, see [Understand prices](./prices.md). For guest limits and
+For price display, see [Understand Prices](./prices.md). For guest limits and
 bookmarks, see [Accounts and bookmarks](./accounts-and-bookmarks.md).
-
-For the related workflows, see
-[Find servers in the Navigator](./navigator.md) and
-[Get recommendations in the Advisor](./advisor.md).
