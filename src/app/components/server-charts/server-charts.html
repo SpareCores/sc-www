@@ -64,7 +64,10 @@
 }
 
 @if (isChartShown("passmark_cpu") && passmarkCPUData?.length) {
-  <div class="sc-chart-block sc-chart-block--half" id="passmark_cpu">
+  <div
+    class="sc-chart-block sc-chart-block--half sc-chart-block--scrollable"
+    id="passmark_cpu"
+  >
     <div class="flex items-center min-h-[42px]">
       <h3 class="text-2xl flex items-center gap-2">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
@@ -143,7 +146,10 @@
 }
 
 @if (isChartShown("passmark_other") && passmarkOTHERData?.length) {
-  <div class="sc-chart-block sc-chart-block--half" id="passmark_other">
+  <div
+    class="sc-chart-block sc-chart-block--half sc-chart-block--scrollable"
+    id="passmark_other"
+  >
     <div class="flex items-center min-h-[42px]">
       <h3 class="text-2xl flex items-center gap-2">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>

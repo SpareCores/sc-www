@@ -106,14 +106,7 @@
   z-index: 35;
 }
 
-.sc-chart-embed
-  :is(
-    #passmark_cpu,
-    #passmark_other,
-    #nvbandwidth,
-    #stress_ng_full,
-    #workload_profile
-  ) {
+.sc-chart-embed .sc-chart-block--scrollable {
   overflow-y: auto;
 }
 
