@@ -19,7 +19,7 @@
 @import "./styles/components/dropdown.css" layer(components);
 @import "./styles/components/card.css" layer(components);
 @import "./styles/components/bookmark-toggle.css" layer(components);
-@import "./styles/components/prose.css";
+@import "./styles/components/link.css" layer(components);
 
 @layer base {
   *,

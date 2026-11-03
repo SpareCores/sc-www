@@ -1,0 +1,66 @@
+@reference "./tailwind.css";
+
+:host ::ng-deep .sc-prose h1,
+:host ::ng-deep .sc-prose h2,
+:host ::ng-deep .sc-prose h3,
+:host ::ng-deep .sc-prose h4,
+:host ::ng-deep .sc-prose h5,
+:host ::ng-deep .sc-prose h6 {
+  @apply font-bold text-emerald-400 my-4;
+}
+
+:host ::ng-deep .sc-prose h1 {
+  @apply text-4xl;
+}
+
+:host ::ng-deep .sc-prose h2 {
+  @apply text-2xl;
+  @apply my-10;
+}
+
+:host ::ng-deep .sc-prose a {
+  @apply underline decoration-dotted;
+}
+
+:host ::ng-deep .sc-prose a:hover {
+  @apply text-gray-500;
+}
+
+:host ::ng-deep .sc-prose p {
+  @apply my-10;
+  @apply text-lg;
+}
+
+:host ::ng-deep .sc-prose blockquote {
+  border-left: 1px solid var(--color-emerald-400);
+  padding: 0px 10px 0px 10px;
+  margin: 10px;
+}
+
+:host ::ng-deep .sc-prose ul {
+  @apply mb-2;
+}
+
+:host ::ng-deep .sc-prose img.zoomin {
+  cursor: zoom-in;
+}
+
+:host ::ng-deep .sc-prose table thead {
+  @apply border-b border-emerald-400 border-solid;
+}
+
+:host ::ng-deep .sc-prose table thead th {
+  @apply px-5 py-3 font-normal text-xs;
+}
+
+:host ::ng-deep .sc-prose table tbody tr:nth-child(2n + 1) {
+  @apply bg-primary;
+}
+
+:host ::ng-deep .sc-prose table tbody tr:nth-child(2n) {
+  @apply bg-secondary;
+}
+
+:host ::ng-deep .sc-prose table tbody tr td a:hover {
+  opacity: 0.5;
+}

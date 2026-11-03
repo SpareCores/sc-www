@@ -1,0 +1,3 @@
+.sc-link {
+  @apply underline decoration-dotted hover:text-gray-500;
+}
