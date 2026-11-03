@@ -41,8 +41,14 @@ read it:
 - Badges on the server columns mark the lowest price (💰), the best value for
   price (🥇), and the top performance (💪).
 
-The page also has a baseline selector and a currency control. For what each
-benchmark workload measures, see the
+The page also has a currency control and a **Baseline server** selector.
+Choose a baseline to see how the other servers differ from it: its column is
+underlined in green, and rows such as prices and CPU speed show each
+server's difference as a percentage, green where it beats the baseline and
+red where it falls short. The baseline is kept in the page's URL, so a shared
+link keeps it. Choose **No baseline** to remove it.
+
+For what each benchmark workload measures, see the
 [Benchmarks reference](https://docs.sparecores.com/benchmarks/).
 
 The [curated server comparisons](https://sparecores.com/servers/compare)
