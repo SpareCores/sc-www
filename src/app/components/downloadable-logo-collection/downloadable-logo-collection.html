@@ -41,14 +41,14 @@
           class="absolute left-0 right-0 top-full z-20 mt-2 w-full sc-dropdown"
           [attr.aria-labelledby]="downloadsToggleId"
         >
-          <ul class="py-2 px-1 text-sm text-gray-700">
+          <ul class="sc-dropdown__list">
             @for (
               downloadItem of downloadItems;
               track trackByFile($index, downloadItem)
             ) {
               <li>
                 <a
-                  class="flex w-full items-center rounded-xs border-0 bg-transparent px-2 py-1 text-left text-sm text-white no-underline hover:bg-emerald-400/80"
+                  class="sc-dropdown__option w-full text-white no-underline"
                   [href]="downloadItem.href"
                   [attr.download]="downloadItem.downloadName"
                   (click)="onDownloadClick($event, downloadItem)"
