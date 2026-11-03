@@ -28,8 +28,13 @@ Orderable only is selected by default. The **Performance** group includes
 **Maximum benchmark score**, **Required benchmark score/price**, and
 **Required benchmark score/vCPU**.
 Select **Show filter description** beside a field if you are unsure what it
-filters. For the meaning of SCore, see the
-[Docusaurus Glossary](https://docs.sparecores.com/glossary/#score).
+filters. Two scores appear throughout the site:
+
+- **SCore** (Spare Cores score) is a server's multi-core CPU speed, measured
+  with the CPU stressor of `stress-ng`. See the
+  [glossary](https://docs.sparecores.com/glossary/#score).
+- **$Core** is the SCore per USD per hour, using the server's best on-demand
+  or spot price across all zones.
 
 Guests can select one country in the Region filter. For other guest limits,
 see [Accounts and bookmarks](./accounts-and-bookmarks.md).
@@ -43,9 +48,14 @@ include model and token settings. For workload definitions, see the
 [Benchmarks reference](https://docs.sparecores.com/benchmarks/).
 
 Use **Columns** to change which server properties appear in the listing. For
-example, you can add CPU Cache. Select a column heading to sort by it; the
-table can show dollar efficiency, memory, storage, and best price, among
-other properties.
+example, you can add CPU Cache. Select a column heading to sort by it. Two
+of the default columns need a definition:
+
+- **$ EFFICIENCY** shows how much performance you get for your money: the
+  selected benchmark's score divided by the server's best price, in USD per
+  hour.
+- **BEST PRICE** is the server's lowest price across everything your search
+  allows, such as regions and price types.
 
 Select a server name to open its detail page. The detail page shows server
 specifications and benchmark information, and includes a **Compare** control.

@@ -14,11 +14,12 @@ utilization. **Introduction**, next to it, opens a
    choose a baseline.
 2. Choose a **Baseline workload**. The list shows only workloads measured on
    your baseline server, such as a web or LLM inference profile.
-3. Set **Average utilization** with the slider, from 0 to 100% in steps of
-   10%. It starts as "Not set", and the Advisor shows no results until you
-   set it. To use 0%, move the slider and then back to 0. The Advisor uses
-   the utilization and workload to calculate requirements for the
-   recommendation search.
+3. Set **Average utilization**: how busy your baseline server is on average,
+   such as its average CPU or GPU usage. The Advisor uses it to see how far
+   it can scale down the candidates' performance to save costs. Set it with
+   the slider, from 0 to 100% in steps of 10%. It starts as "Not set", and
+   the Advisor shows no results until you set it. To use 0%, move the slider
+   and then back to 0.
 4. Choose an optimization goal: **Performance**, **Cost**, or
    **Cost-efficiency**. **Cost** is the default.
 5. Review the required memory value and other constraints shown for the
