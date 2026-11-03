@@ -28,6 +28,7 @@ import * as Sentry from "@sentry/angular";
 import { provideAppCharts } from "./components/charts/shared/chart-providers";
 import { AuthState, authInterceptor, provideAuthFeature } from "./core/auth";
 import { provideCollectionsFeature } from "./collections/collections-feature.providers";
+import { Analytics } from "./services/analytics";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   return req.method === "GET";
@@ -101,8 +102,9 @@ export const appConfig: ApplicationConfig = {
       inject(Sentry.TraceService);
     }),
     provideAppInitializer(() => {
+      inject(Analytics).initializeTracking();
       inject(AuthState)
-        .init()
+        .bootstrap()
         .catch((error) => {
           console.error("Clerk initialization failed:", error);
         });

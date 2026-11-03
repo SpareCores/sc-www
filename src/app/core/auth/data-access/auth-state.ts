@@ -49,6 +49,8 @@ import { AuthFlowStore } from "./auth-flow-store";
 import { ClerkClient } from "./clerk-client";
 import { GitHub, type GitHubSignUpOutcome } from "./github";
 
+const CLERK_RETRY_COOLDOWN_MS = 30_000;
+
 @Injectable({ providedIn: "root" })
 export class AuthState {
   private readonly platformId = inject(PLATFORM_ID);
@@ -62,10 +64,13 @@ export class AuthState {
   private readonly github = inject(GitHub);
   private readonly flow = inject(AuthFlowStore);
   private activating = false;
+  private initPromise: Promise<void> | null = null;
+  private clerkLoadFailedAt = 0;
   private finalizePromise: Promise<void> | null = null;
   private gitHubCallbackPromise: Promise<GitHubCallbackResult> | null = null;
   private boundListener = false;
   private boundAuthRevalidation = false;
+  private authModalsAwaitingClerk = false;
   private authSyncInFlight = false;
   private authEpoch = 0;
   private accountDeleted = false;
@@ -98,38 +103,47 @@ export class AuthState {
 
   readonly userImageUrl = computed(() => this._user()?.imageUrl ?? "");
 
-  async init(): Promise<void> {
+  async bootstrap(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    await this.clerk.init();
-    this.syncUserFromClerk();
-    this.bindClerkListener();
-    this.bindAuthRevalidation();
-    this.resumeProfileFromQuery();
-    this.bindAuthRevalidation();
-    this.setAuthOverlayVisible(this.authInProgress());
-    if (this.finalizePromise || this.isAuthCallbackRoute()) {
-      return;
-    }
-    if (this.shouldResumeGitHubConsent()) {
+    const staleFlow = !this.isAuthCallbackRoute() && this.authInProgress();
+    if (staleFlow) {
       this.clearAuthPending();
-      return;
     }
-    if (this.authInProgress()) {
-      this.flow.clear();
-      this.setAuthOverlayVisible(false);
+    const resumeProfile = this.takeProfileReturnParam();
+    this.bindAuthRevalidation();
+
+    await this.init();
+
+    if (resumeProfile) {
+      this.openUserProfile();
+    }
+    if (staleFlow) {
+      this.clearStaleFlow();
     }
   }
 
-  signIn(): void {
-    this.whenClerkLoaded(() => {
-      this.setCurrentReturnUrl();
-      this.githubConsent.set(false);
-      this.signUpModalOpen.set(false);
-      this.signInModalOpen.set(true);
+  init(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return Promise.resolve();
+    }
+
+    this.initPromise ??= this.loadAndSync().catch((error: unknown) => {
+      this.initPromise = null;
+      this.clerkLoadFailedAt = Date.now();
+      throw error;
     });
+    return this.initPromise;
+  }
+
+  signIn(): void {
+    this.setCurrentReturnUrl();
+    this.githubConsent.set(false);
+    this.signUpModalOpen.set(false);
+    this.signInModalOpen.set(true);
+    this.awaitClerkForAuthModals();
   }
 
   closeSignIn(): void {
@@ -138,25 +152,20 @@ export class AuthState {
   }
 
   signUp(options?: { subtitle?: string }): void {
-    this.whenClerkLoaded(() => {
-      this.setCurrentReturnUrl();
-      this.signUpSubtitle.set(
-        options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
-      );
-      this.signInModalOpen.set(false);
+    this.setCurrentReturnUrl();
+    this.signUpSubtitle.set(
+      options?.subtitle ?? AUTH_MESSAGES.defaultSignUpSubtitle,
+    );
+    this.signInModalOpen.set(false);
 
-      if (this.shouldResumeGitHubConsent()) {
-        this.openGitHubConsent();
-        return;
-      }
-
-      if (this.github.needsConsent() || this.flow.githubIntent() === "signUp") {
-        this.github.resetSignUpState();
-      }
+    if (!this.clerk.isLoaded()) {
       this.githubConsent.set(false);
-      this.flow.setGitHubIntent(null);
       this.signUpModalOpen.set(true);
-    });
+      this.awaitClerkForAuthModals();
+      return;
+    }
+
+    this.openSignUpForm();
   }
 
   closeSignUp(): void {
@@ -702,7 +711,7 @@ export class AuthState {
         !this.signedOutIdentityCleared
       ) {
         this.signedOutIdentityCleared = true;
-        this.analytics.reset();
+        this.analytics.clearStaleIdentity();
       }
       return;
     }
@@ -847,10 +856,10 @@ export class AuthState {
     return this.flow.githubIntent();
   }
 
-  private resumeProfileFromQuery(): void {
+  private takeProfileReturnParam(): boolean {
     const params = new URLSearchParams(window.location.search);
     if (params.get(PROFILE_RETURN_PARAM) !== PROFILE_RETURN_VALUE) {
-      return;
+      return false;
     }
 
     params.delete(PROFILE_RETURN_PARAM);
@@ -860,7 +869,34 @@ export class AuthState {
       "",
       `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
     );
-    this.openUserProfile();
+    return true;
+  }
+
+  private async loadAndSync(): Promise<void> {
+    try {
+      await this.clerk.init();
+    } catch (error) {
+      if (!this.isAuthCallbackRoute()) {
+        this.clearAuthPending();
+      }
+      throw error;
+    }
+    this.syncUserFromClerk();
+    this.bindClerkListener();
+    this.bindAuthRevalidation();
+  }
+
+  private clearStaleFlow(): void {
+    if (
+      this.authInProgress() ||
+      this.finalizePromise ||
+      this.signInModalOpen() ||
+      this.signUpModalOpen() ||
+      this.shouldResumeGitHubConsent()
+    ) {
+      return;
+    }
+    this.flow.clear();
   }
 
   private isAuthCallbackRoute(): boolean {
@@ -905,11 +941,13 @@ export class AuthState {
     this.ngZone.runOutsideAngular(() => {
       this.document.addEventListener("visibilitychange", revalidate);
       win.addEventListener("focus", revalidate);
+      win.addEventListener("online", revalidate);
     });
 
     this.destroyRef.onDestroy(() => {
       this.document.removeEventListener("visibilitychange", revalidate);
       win.removeEventListener("focus", revalidate);
+      win.removeEventListener("online", revalidate);
       this.boundAuthRevalidation = false;
     });
   }
@@ -932,6 +970,11 @@ export class AuthState {
       return;
     }
 
+    if (!this.clerk.isLoaded()) {
+      await this.retryClerkLoad();
+      return;
+    }
+
     const epoch = this.authEpoch;
     this.authSyncInFlight = true;
     try {
@@ -943,6 +986,13 @@ export class AuthState {
     } finally {
       this.authSyncInFlight = false;
     }
+  }
+
+  private async retryClerkLoad(): Promise<void> {
+    if (Date.now() - this.clerkLoadFailedAt < CLERK_RETRY_COOLDOWN_MS) {
+      return;
+    }
+    await this.init().catch(() => undefined);
   }
 
   private async activateReloadedSessionIfNeeded(): Promise<void> {
@@ -1079,16 +1129,52 @@ export class AuthState {
     return { status: "error", message: AUTH_MESSAGES.authNotReady };
   }
 
-  private whenClerkLoaded(action: () => void): void {
-    if (this.clerk.isLoaded()) {
-      action();
+  private openSignUpForm(): void {
+    if (this.shouldResumeGitHubConsent()) {
+      this.openGitHubConsent();
       return;
     }
 
-    this.init().then(
-      () => (this.clerk.isLoaded() ? action() : this.toastAuthUnavailable()),
-      () => this.toastAuthUnavailable(),
-    );
+    if (this.github.needsConsent() || this.flow.githubIntent() === "signUp") {
+      this.github.resetSignUpState();
+    }
+    this.githubConsent.set(false);
+    this.flow.setGitHubIntent(null);
+    this.signUpModalOpen.set(true);
+  }
+
+  private awaitClerkForAuthModals(): void {
+    if (this.clerk.isLoaded() || this.authModalsAwaitingClerk) {
+      return;
+    }
+
+    this.authModalsAwaitingClerk = true;
+    void this.init()
+      .catch(() => undefined)
+      .then(() => {
+        this.authModalsAwaitingClerk = false;
+        this.settleAuthModals();
+      });
+  }
+
+  private settleAuthModals(): void {
+    if (!this.signInModalOpen() && !this.signUpModalOpen()) {
+      return;
+    }
+
+    const unavailable = !this.clerk.isLoaded();
+    if (unavailable || this.isAuthenticated()) {
+      this.closeSignIn();
+      this.closeSignUp();
+      if (unavailable) {
+        this.toastAuthUnavailable();
+      }
+      return;
+    }
+
+    if (this.signUpModalOpen()) {
+      this.openSignUpForm();
+    }
   }
 
   private toastAuthUnavailable(): void {
