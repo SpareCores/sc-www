@@ -66,33 +66,46 @@ export class SurveyFill implements OnInit, OnDestroy {
   }
 
   setup(id: string) {
-    this.visitorID = this.analytics.getId() || this.randomUUID();
-    this.http.get("assets/surveys/" + id + ".json").subscribe((data: any) => {
-      const title = data.title || data.metaTitle || `${id} Survey`;
-      const description = data.description || data.metaDescription;
-      this.SEOhandler.updateTitleAndMetaTags(
-        title + " - SpareCores",
-        description,
-        "",
-      );
-      if (data.ogImage) {
-        this.SEOhandler.updateThumbnail(data.ogImage);
-      }
-
-      if (isPlatformBrowser(this.platformId)) {
-        this.surveyModel = new Model(data);
-
-        this.surveyModel.applyTheme(surveyTheme);
-
-        this.surveyModel.onComplete.add(this.submit.bind(this));
-        this.surveyModel.onCurrentPageChanging.add((sender, options) =>
-          this.pageChange(sender, options),
+    if (isPlatformBrowser(this.platformId)) {
+      void this.analytics.getIdWhenReady().then((visitorId) => {
+        if (!this.visitorID && visitorId) {
+          this.visitorID = visitorId;
+        }
+      });
+    }
+    this.subscription.add(
+      this.http.get("assets/surveys/" + id + ".json").subscribe((data: any) => {
+        const title = data.title || data.metaTitle || `${id} Survey`;
+        const description = data.description || data.metaDescription;
+        this.SEOhandler.updateTitleAndMetaTags(
+          title + " - SpareCores",
+          description,
+          "",
         );
+        if (data.ogImage) {
+          this.SEOhandler.updateThumbnail(data.ogImage);
+        }
 
-        this.tracker = setInterval(this.trackProgress.bind(this), 10000);
-        this.startedAt = Date.now();
-      }
-    });
+        if (isPlatformBrowser(this.platformId)) {
+          this.surveyModel = new Model(data);
+
+          this.surveyModel.applyTheme(surveyTheme);
+
+          this.surveyModel.onComplete.add(this.submit.bind(this));
+          this.surveyModel.onCurrentPageChanging.add((sender, options) =>
+            this.pageChange(sender, options),
+          );
+
+          this.tracker = setInterval(this.trackProgress.bind(this), 10000);
+          this.startedAt = Date.now();
+        }
+      }),
+    );
+  }
+
+  private resolveVisitorId(): string {
+    this.visitorID ||= this.analytics.getId() || this.randomUUID();
+    return this.visitorID;
   }
 
   submit(sender: any) {
@@ -129,7 +142,7 @@ export class SurveyFill implements OnInit, OnDestroy {
    */
   private createBasePayload(data: any): any {
     return {
-      visitorID: this.visitorID,
+      visitorID: this.resolveVisitorId(),
       startedAt: this.startedAt,
       duration: Date.now() - this.startedAt,
       counter: this.trackPing,
@@ -154,7 +167,7 @@ export class SurveyFill implements OnInit, OnDestroy {
   private saveSurveyData(payload: any, event_name: string = "") {
     const eventPart = event_name ? `_${event_name}` : "";
     const currentTimestamp = Date.now();
-    const filename = `id_${this.visitorID}${eventPart}_timestamp_${currentTimestamp}`;
+    const filename = `id_${this.resolveVisitorId()}${eventPart}_timestamp_${currentTimestamp}`;
     try {
       this.http
         .post("/api/survey-data", {
