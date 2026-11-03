@@ -323,8 +323,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
       .map((parameter): SearchBarParameter => {
         const schema = { ...(parameter.schema ?? {}) };
         if (
-          schema.type === "boolean" ||
-          schema.anyOf?.some((item) => item.type === "boolean")
+          parameter.name !== "only_active" &&
+          parameter.name !== "only_orderable" &&
+          (schema.type === "boolean" ||
+            schema.anyOf?.some((item) => item.type === "boolean"))
         ) {
           schema.filter_mode = "tri_state_boolean";
         }
