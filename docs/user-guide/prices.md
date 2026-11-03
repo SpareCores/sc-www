@@ -5,15 +5,20 @@ and which currency to display. The displayed price depends on those choices.
 
 ## Choose a price category
 
-In Navigator, the price selector offers:
+The price selector above the [server listing](https://sparecores.com/servers)
+sets which prices count as a server's best price, which the **BEST PRICE**
+column and the price-based scores use. It offers the following categories:
 
-- **Any price**
-- **Ondemand prices**
-- **Monthly prices**
-- **Spot prices**
+- **Any price**: the lowest price of the three categories below. This is the
+  default.
+- **Ondemand prices**: pay-as-you-go hourly prices, with no commitment.
+- **Monthly prices**: on-demand prices per month.
+- **Spot prices**: discounted prices for spare capacity, which the vendor can
+  reclaim at short notice.
 
-Advisor has a **Price allocation** option. Enable it to choose from the same
-price categories.
+In the [Advisor](https://sparecores.com/advisor), select **Price allocation**
+under **Limit search for matching:** to choose one of the same categories.
+Without it, the Advisor uses any price.
 
 Check the listing for the price values available for the servers you are
 considering.

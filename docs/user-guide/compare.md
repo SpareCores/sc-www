@@ -17,8 +17,11 @@ selection when the guest limit is reached and shows a registration prompt.
 ### From a server detail page
 
 Open a server from the listing and select **Compare**. The control changes to
-**Don't Compare** when that server is in the current selection. You can then
-select other servers from the listing and compare them together.
+**Don't Compare** when that server is in the current selection. Add other
+servers the same way or from the listing. Once two or more servers are
+selected, the compare icon in the site header shows their number. Select it
+to reorder or remove servers or set a baseline, then select
+**Compare servers**.
 
 ### From Advisor
 
@@ -29,10 +32,18 @@ baseline next to the selected servers. See
 
 ## Read a comparison
 
-The comparison page places selected servers side by side and includes
-property details and benchmark sections. It also provides a baseline selector
-and a currency control. Review the properties relevant to your workload, and
-use the benchmark reference to understand what each workload measures.
+The comparison page places the selected servers side by side: property
+sections such as CPU, Memory, and Storage, then **Workload Profiles**,
+benchmark sections, and **Further Benchmarks**. Use the following cues to
+read it:
+
+- The best value in each row is highlighted in bold green.
+- Badges on the server columns mark the lowest price (💰), the best value for
+  price (🥇), and the top performance (💪).
+
+The page also has a baseline selector and a currency control. For what each
+benchmark workload measures, see the
+[Benchmarks reference](https://docs.sparecores.com/benchmarks/).
 
 The [curated server comparisons](https://sparecores.com/servers/compare)
 provide preselected groups to explore. Their available groups can change, so

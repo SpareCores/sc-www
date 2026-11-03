@@ -22,10 +22,22 @@ utilization. **Introduction**, next to it, opens a
    and then back to 0.
 4. Choose an optimization goal: **Performance**, **Cost**, or
    **Cost-efficiency**. **Cost** is the default.
-5. Review the required memory value and other constraints shown for the
-   assessment. Add or adjust search limits, such as vendor, region, or price
-   allocation, when those controls fit your requirements.
-6. Review the recommendations and compare candidates with the baseline.
+5. Check **Required memory (RAM)**. The Advisor fills it in from the
+   baseline's memory and your utilization; raise it to cover your peak memory
+   use. **Required GPU memory (VRAM)** starts at 0, which means no GPU
+   requirement.
+6. Optionally, enter **Required storage size** and **Required storage type**,
+   and **Monthly inbound traffic** and **Monthly outbound traffic** in GB. The
+   Advisor adds the cost of extra storage and of this traffic to each
+   server's price, so egress costs count in the comparison.
+7. Optionally, under **Limit search for matching:**, keep results to the
+   baseline's **CPU allocation** or **CPU architecture**, to one
+   **Price allocation** type, or to one **Region** where the baseline is
+   sold. The **Vendor** and **Region** filter groups limit results further.
+8. Review the recommendations. The Advisor reports how many servers matched,
+   or shows "No matches yet" if none did; then loosen your inputs or filters.
+   The table shows how each server differs from the baseline as a
+   percentage, for example "+12%" on price.
 
 For example, selecting `aws / m5.large`, **LLM Inference**, and 50% average
 utilization produced recommendations and populated required memory as 4 GiB.

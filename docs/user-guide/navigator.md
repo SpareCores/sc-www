@@ -41,8 +41,11 @@ see [Accounts and bookmarks](./accounts-and-bookmarks.md).
 
 ## Choose a benchmark and view results
 
-Use the benchmark selector above the results to choose a benchmark and, where
-available, a configuration. Benchmark categories include LLM inference speed.
+Select **Select Benchmark** above the results to choose a benchmark and,
+where available, a configuration. Your choice sets what the **BENCHMARK** and
+**$ EFFICIENCY** columns show and what the benchmark filters in the
+**Performance** group compare against. Benchmark categories include LLM
+inference speed.
 Its configurations distinguish prompt processing from text generation and
 include model and token settings. For workload definitions, see the
 [Benchmarks reference](https://docs.sparecores.com/benchmarks/).
@@ -63,6 +66,16 @@ specifications and benchmark information, and includes a **Compare** control.
 To share a search, select **Share** in the page header of the
 [server listing](https://sparecores.com/servers). It copies a link that keeps
 your filters, benchmark, and columns. You do not need an account to share.
+
+## Find managed databases
+
+The Navigator also lists managed database services, or DBaaS (Database as a
+Service), in the [database listing](https://sparecores.com/databases). Open
+it from **Databases** in the site's header menu. It works like the server
+listing: filter in the sidebar, use Search Prompt, and select the checkboxes
+of two or more databases to compare them. Guests can compare up to four
+databases at a time. Its price selector offers **Any price**,
+**Hourly prices**, and **Monthly prices**.
 
 For price categories and currencies, see [Understand prices](./prices.md).
 For database schemas and programmatic access, see
