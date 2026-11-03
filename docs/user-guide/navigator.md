@@ -15,8 +15,10 @@ or describe what you need in Search Prompt.
    apply them. Confirm replaces your current filters with the suggestions, so
    use Search Prompt before you set filters by hand. It may not apply every
    part of a request, so check the resulting filters.
-3. Open filter groups such as **Processor**, **Memory**, **GPU**, **Storage**,
-   **Network**, **Vendor**, and **Region** to narrow results further.
+3. Open the filter groups in the sidebar to narrow results further. The
+   groups are **Basics**, **Performance**, **Processor**, **CPU Cache**,
+   **Memory**, **Accelerator**, **GPU**, **ASIC**, **Storage**, **Network**,
+   **Vendor**, and **Region**; only **Processor** is open by default.
 
 The **Basics** group also includes **Active only** and **Orderable only**;
 Orderable only is selected by default. The **Performance** group includes
