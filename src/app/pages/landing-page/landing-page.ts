@@ -11,7 +11,7 @@ import {
   inject,
 } from "@angular/core";
 import { ArticleMeta, ArticlesApi } from "../../services/articles-api";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { KeeperAPI } from "../../services/keeper-api";
 import { isAbortError } from "../../services/keeper-http-client";
 import { Toast } from "../../services/toast";
@@ -50,7 +50,6 @@ import {
 @Component({
   selector: "sc-landingpage",
   imports: [
-    CommonModule,
     FormsModule,
     ThemeText,
     Button,

@@ -1,12 +1,11 @@
-<div class="w-full bg-primary overflow-x-hidden" style="height: 630px">
+<div class="w-full bg-primary overflow-x-hidden h-[630px]">
   <div class="content pt-6 pb-6 text-white">
     <div
       class="mx-6 flex flex-wrap justify-between align-middle gap-8 px-6 py-6"
     >
       <div>
         <img
-          class="h-12"
-          style="max-width: 284px; width: 284px"
+          class="h-12 max-w-[284px] w-[284px]"
           src="./assets/images/logos/logo_header.png"
           alt="Spare Cores Logo"
         />
@@ -14,9 +13,7 @@
       <div class="text-4xl align-middle">Cloud Server Details</div>
     </div>
 
-    <div
-      class="mx-12 rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid"
-    >
+    <div class="mx-12 sc-card gap-8 px-6 py-6">
       @if (serverDetails) {
         <div class="mx-6 grid justify-items-center pb-6">
           <div class="text-8xl text-emerald-400 font-bold">

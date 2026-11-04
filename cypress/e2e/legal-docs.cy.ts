@@ -19,7 +19,7 @@ describe("Legal Documents", () => {
       E2EEvent.isVisibleAndNotEmpty("h1.text-emerald-400");
 
       // Check rendered Markdown body
-      E2EEvent.isVisibleAndNotEmpty(".html_content");
+      E2EEvent.isVisibleAndNotEmpty(".sc-prose");
 
       // Verify the breadcrumbs exists
       E2EEvent.checkBreadcrumbs();

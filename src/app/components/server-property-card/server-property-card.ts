@@ -135,15 +135,15 @@ export class ServerPropertyCard {
       return;
     }
 
-    const hadOpenClass = cardElement.classList.contains("open");
+    const hadOpenClass = cardElement.classList.contains("sc-chart-block--open");
     if (hadOpenClass) {
-      cardElement.classList.remove("open");
+      cardElement.classList.remove("sc-chart-block--open");
     }
 
     this.canExpand.set(cardElement.scrollHeight > cardElement.clientHeight + 1);
 
     if (hadOpenClass) {
-      cardElement.classList.add("open");
+      cardElement.classList.add("sc-chart-block--open");
     }
   }
 }

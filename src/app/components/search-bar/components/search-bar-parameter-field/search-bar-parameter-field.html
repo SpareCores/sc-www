@@ -53,7 +53,7 @@
                 isParameterDraftDirty(parameter)
               "
               [ngModel]="getParameterDraftValue(parameter)"
-              [ngStyle]="getInputStyle(parameter)"
+              [style]="getInputStyle(parameter)"
               (ngModelChange)="setParameterDraftValue($event)"
               (keyup.enter)="commitParameterInput($event)"
               (blur)="commitParameterInput($event)"
@@ -113,7 +113,7 @@
               isCpuCacheRangeDraftDirty(parameter)
             "
             [ngModel]="getCpuCacheRangeInputValue()"
-            [ngStyle]="getCpuCacheRangeInputStyle()"
+            [style]="getCpuCacheRangeInputStyle()"
             (ngModelChange)="setCpuCacheRangeDraftValue($event)"
             (keyup.enter)="commitCpuCacheRangeFromEnter($event)"
             (blur)="commitCpuCacheRangeAfterFocusLoss($event)"

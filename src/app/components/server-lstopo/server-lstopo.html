@@ -44,7 +44,10 @@
 
 <ng-template #lstopoModalTemplate>
   <sc-modal id="lstopo-modal" title="CPU and System Topology" size="wide">
-    <div class="lstopo-modal-body overflow-auto max-h-[80vh]" scDragToPan>
+    <div
+      class="lstopo-modal-body overflow-auto scrollbar-hidden max-h-[80vh]"
+      scDragToPan
+    >
       <div
         class="lstopo-container lstopo-modal-svg"
         role="img"
@@ -57,8 +60,7 @@
 
 <div
   #lstopoTooltip
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-200 pointer-events-none max-w-xs"
+  class="tooltip-panel fixed z-200 pointer-events-none max-w-xs opacity-0 hidden"
 >
   {{ tooltipContent }}
 </div>

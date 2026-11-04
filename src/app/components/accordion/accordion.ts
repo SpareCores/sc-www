@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import { LucideChevronDown, LucideChevronUp } from "@lucide/angular";
 
@@ -11,7 +10,7 @@ export type AccordionItem = {
 
 @Component({
   selector: "sc-accordion",
-  imports: [CommonModule, LucideChevronDown, LucideChevronUp],
+  imports: [LucideChevronDown, LucideChevronUp],
   templateUrl: "./accordion.html",
 })
 export class Accordion {

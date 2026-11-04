@@ -1,0 +1,7 @@
+.sc-link {
+  @apply underline decoration-dotted hover:text-gray-500;
+}
+
+.sc-header-anchor {
+  @apply ml-2 no-underline opacity-0 transition-opacity duration-200 hover:text-emerald-400;
+}
