@@ -15,6 +15,20 @@ import { Analytics } from "../../services/analytics";
 import { SeoHandler } from "../../services/seo-handler";
 import { Subscription } from "rxjs";
 
+type SurveyPayload = {
+  visitorID?: string;
+  startedAt: number;
+  duration: number;
+  counter: number;
+  referrer: string;
+  payload: unknown;
+  event?: string;
+  isComplete?: boolean;
+  finishedAt?: number;
+  pageChangedAt?: number;
+  finishedPageIndex?: number;
+};
+
 @Component({
   selector: "sc-survey-fill",
   imports: [SurveyModule, RouterModule],
@@ -29,7 +43,6 @@ export class SurveyFill implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
 
   surveyModel!: Model;
-  visitorID: string = "";
 
   tracker: any;
   trackPing: number = 0;
@@ -103,11 +116,15 @@ export class SurveyFill implements OnInit, OnDestroy {
   private resolveVisitorId(): Promise<string> {
     this.visitorIdPromise ??= this.analytics
       .getIdWhenReady()
-      .then((visitorId) => (this.visitorID = visitorId || this.randomUUID()));
+      .then((visitorId) => visitorId || this.randomUUID());
     return this.visitorIdPromise;
   }
 
-  private async record(eventName: string, payload: any, saveName: string) {
+  private async record(
+    eventName: string,
+    payload: SurveyPayload,
+    saveName: string,
+  ) {
     payload.visitorID = await this.resolveVisitorId();
     this.analytics.trackEvent(eventName, payload);
     this.saveSurveyData(payload, saveName);
@@ -147,9 +164,8 @@ export class SurveyFill implements OnInit, OnDestroy {
    * @param data The survey data to include in the payload
    * @returns A payload object with common properties
    */
-  private createBasePayload(data: any): any {
+  private createBasePayload(data: unknown): SurveyPayload {
     return {
-      visitorID: this.visitorID,
       startedAt: this.startedAt,
       duration: Date.now() - this.startedAt,
       counter: this.trackPing,
@@ -171,7 +187,7 @@ export class SurveyFill implements OnInit, OnDestroy {
    * id_abc123_submit_timestamp_1234567890
    * id_abc123_pageChange_timestamp_1234567890
    */
-  private saveSurveyData(payload: any, event_name: string = "") {
+  private saveSurveyData(payload: SurveyPayload, event_name: string = "") {
     const eventPart = event_name ? `_${event_name}` : "";
     const currentTimestamp = Date.now();
     const filename = `id_${payload.visitorID}${eventPart}_timestamp_${currentTimestamp}`;
