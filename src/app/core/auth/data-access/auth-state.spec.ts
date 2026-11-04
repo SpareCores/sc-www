@@ -488,6 +488,27 @@ describe("AuthState", () => {
     expect(getToken).toHaveBeenCalledWith({ template: "keeper" });
   });
 
+  it("returns no token without loading Clerk while it is not loaded", async () => {
+    const auth = createAuth();
+    setClerkInstance(null, false);
+    const init = spyOn(clerkService(), "init");
+
+    await expectAsync(auth.getTokenIfLoaded()).toBeResolvedTo(null);
+    expect(init).not.toHaveBeenCalled();
+  });
+
+  it("returns the session token once Clerk is loaded", async () => {
+    const auth = createAuth();
+    const getToken = jasmine
+      .createSpy("getToken")
+      .and.resolveTo("session-token");
+    setClerkInstance({
+      session: { getToken },
+    });
+
+    await expectAsync(auth.getTokenIfLoaded()).toBeResolvedTo("session-token");
+  });
+
   it("binds the Clerk listener only once across repeated init calls", async () => {
     const auth = createAuth();
     const addListener = jasmine.createSpy("addListener");

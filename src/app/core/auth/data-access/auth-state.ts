@@ -691,6 +691,13 @@ export class AuthState {
     return this.clerk.getToken(template);
   }
 
+  async getTokenIfLoaded(): Promise<string | null> {
+    if (!this.clerk.isLoaded()) {
+      return null;
+    }
+    return this.clerk.getToken();
+  }
+
   private setUser(user: UserResource | null): void {
     const previousUser = this._user();
     this._user.set(user);
