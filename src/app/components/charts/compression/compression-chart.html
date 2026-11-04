@@ -34,6 +34,7 @@
         <div class="flex min-w-0 gap-4">
           @if (hasCoresSelector()) {
             <sc-button
+              class="min-w-0"
               #coresDropdown="scDropdown"
               [id]="coresButtonId"
               [scDropdown]="coresPanel"
@@ -44,6 +45,7 @@
             ></sc-button>
           }
           <sc-button
+            class="min-w-0"
             #selectorDropdown="scDropdown"
             [id]="buttonId"
             [scDropdown]="detailsPanel"
@@ -56,7 +58,7 @@
         </div>
       </div>
       @if (isBrowser) {
-        <div class="h-full">
+        <div class="min-h-0 flex-1">
           <div class="chart_div" chartType="bar">
             <canvas
               id="compress_canvas"
@@ -77,6 +79,7 @@
       <div class="flex justify-end items-center">
         <div class="flex gap-4">
           <sc-button
+            class="min-w-0"
             #selectorDropdown="scDropdown"
             [id]="buttonId"
             [scDropdown]="comparePanel"
