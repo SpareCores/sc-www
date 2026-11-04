@@ -5,6 +5,8 @@ import { SurveyFill } from "./survey-fill";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import { Analytics } from "../../services/analytics";
 
+const settle = () => new Promise<void>((resolve) => setTimeout(resolve));
+
 describe("SurveyFill", () => {
   let component: SurveyFill;
   let fixture: ComponentFixture<SurveyFill>;
@@ -57,14 +59,40 @@ describe("SurveyFill", () => {
     const track = spyOn(analytics, "trackEvent");
 
     component.setup("demo");
-    await Promise.resolve();
+    await settle();
     httpMock.expectOne("assets/surveys/demo.json").flush({ pages: [] });
     component.submit({ data: {} });
+    await settle();
 
     expect(track).toHaveBeenCalledWith(
       "survey submit",
       jasmine.objectContaining({ visitorID: "posthog-id" }),
     );
     httpMock.expectOne("/api/survey-data");
+  });
+
+  it("waits for the PostHog id before saving an early page change", async () => {
+    let resolveId!: (id: string) => void;
+    spyOn(analytics, "getIdWhenReady").and.returnValue(
+      new Promise<string>((resolve) => (resolveId = resolve)),
+    );
+
+    component.setup("demo");
+    httpMock.expectOne("assets/surveys/demo.json").flush({ pages: [] });
+    component.pageChange(
+      { data: { q1: "a" } },
+      { oldCurrentPage: { visibleIndex: 0 } },
+    );
+    await settle();
+    httpMock.expectNone("/api/survey-data");
+
+    resolveId("posthog-id");
+    await settle();
+
+    const saved = httpMock.expectOne("/api/survey-data");
+    expect(saved.request.body.filename).toMatch(
+      /^id_posthog-id_pageChange1_timestamp_\d+$/,
+    );
+    expect(saved.request.body.payload.visitorID).toBe("posthog-id");
   });
 });

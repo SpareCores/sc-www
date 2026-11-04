@@ -36,6 +36,7 @@ export class SurveyFill implements OnInit, OnDestroy {
   startedAt: number = 0;
   prevData: any;
   private subscription = new Subscription();
+  private visitorIdPromise?: Promise<string>;
 
   ngOnInit() {
     let id = this.route.snapshot.paramMap.get("id");
@@ -67,11 +68,7 @@ export class SurveyFill implements OnInit, OnDestroy {
 
   setup(id: string) {
     if (isPlatformBrowser(this.platformId)) {
-      void this.analytics.getIdWhenReady().then((visitorId) => {
-        if (!this.visitorID && visitorId) {
-          this.visitorID = visitorId;
-        }
-      });
+      void this.resolveVisitorId();
     }
     this.subscription.add(
       this.http.get("assets/surveys/" + id + ".json").subscribe((data: any) => {
@@ -103,9 +100,17 @@ export class SurveyFill implements OnInit, OnDestroy {
     );
   }
 
-  private resolveVisitorId(): string {
-    this.visitorID ||= this.analytics.getId() || this.randomUUID();
-    return this.visitorID;
+  private resolveVisitorId(): Promise<string> {
+    this.visitorIdPromise ??= this.analytics
+      .getIdWhenReady()
+      .then((visitorId) => (this.visitorID = visitorId || this.randomUUID()));
+    return this.visitorIdPromise;
+  }
+
+  private async record(eventName: string, payload: any, saveName: string) {
+    payload.visitorID = await this.resolveVisitorId();
+    this.analytics.trackEvent(eventName, payload);
+    this.saveSurveyData(payload, saveName);
   }
 
   submit(sender: any) {
@@ -114,8 +119,7 @@ export class SurveyFill implements OnInit, OnDestroy {
     payload.finishedAt = Date.now();
     payload.isComplete = true;
 
-    this.analytics.trackEvent("survey submit", payload);
-    this.saveSurveyData(payload, "submit");
+    void this.record("survey submit", payload, "submit");
 
     clearInterval(this.tracker);
   }
@@ -131,8 +135,11 @@ export class SurveyFill implements OnInit, OnDestroy {
     payload.pageChangedAt = Date.now();
     payload.finishedPageIndex = options.oldCurrentPage.visibleIndex + 1;
     payload.isComplete = false;
-    this.analytics.trackEvent("survey pageChange", payload);
-    this.saveSurveyData(payload, "pageChange" + payload.finishedPageIndex);
+    void this.record(
+      "survey pageChange",
+      payload,
+      "pageChange" + payload.finishedPageIndex,
+    );
   }
 
   /**
@@ -142,7 +149,7 @@ export class SurveyFill implements OnInit, OnDestroy {
    */
   private createBasePayload(data: any): any {
     return {
-      visitorID: this.resolveVisitorId(),
+      visitorID: this.visitorID,
       startedAt: this.startedAt,
       duration: Date.now() - this.startedAt,
       counter: this.trackPing,
@@ -167,7 +174,7 @@ export class SurveyFill implements OnInit, OnDestroy {
   private saveSurveyData(payload: any, event_name: string = "") {
     const eventPart = event_name ? `_${event_name}` : "";
     const currentTimestamp = Date.now();
-    const filename = `id_${this.resolveVisitorId()}${eventPart}_timestamp_${currentTimestamp}`;
+    const filename = `id_${payload.visitorID}${eventPart}_timestamp_${currentTimestamp}`;
     try {
       this.http
         .post("/api/survey-data", {
