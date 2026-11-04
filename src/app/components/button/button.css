@@ -436,6 +436,14 @@
   @apply rounded-full;
 }
 
+.sc-button.sc-button--group-start {
+  @apply rounded-e-none;
+}
+
+.sc-button.sc-button--group-end {
+  @apply rounded-s-none;
+}
+
 .sc-button__label.sc-button__label--fit {
   overflow: visible;
   text-overflow: clip;
