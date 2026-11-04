@@ -6,6 +6,7 @@ import {
   inject,
   signal,
   effect,
+  viewChild,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -31,6 +32,7 @@ import { SeoHandler } from "../../services/seo-handler";
 import { Toast } from "../../services/toast";
 import { BENCHMARK_COVERAGE_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { SearchBar } from "../../components/search-bar/search-bar";
+import { Dropdown } from "../../directives/dropdown";
 import {
   ServerDebugInfo,
   Vendor,
@@ -74,6 +76,7 @@ import {
     PercentPipe,
     PageLimitPipe,
     SearchBar,
+    Dropdown,
   ],
   templateUrl: "./benchmark-coverage.html",
   styleUrls: ["./benchmark-coverage.css"],
@@ -142,7 +145,7 @@ export class BenchmarkCoverage implements OnInit {
   readonly pageLimits = [10, 25, 50, 100, 250, Infinity];
   readonly page = signal<number>(1);
   readonly limit = signal<number>(25);
-  readonly showPageSizeOptions = signal<boolean>(false);
+  readonly pageDropdown = viewChild<Dropdown>("pageDropdown");
   readonly benchmarkFamilyFilters = signal<
     Record<string, BenchmarkFamilyFilterValue>
   >({});
@@ -453,11 +456,7 @@ export class BenchmarkCoverage implements OnInit {
   selectPageSize(limit: number) {
     this.limit.set(limit);
     this.page.set(1);
-    this.showPageSizeOptions.set(false);
-  }
-
-  togglePageSizeOptions() {
-    this.showPageSizeOptions.set(!this.showPageSizeOptions());
+    this.pageDropdown()?.hide();
   }
 
   goToPage(pageTarget: number) {

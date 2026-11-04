@@ -38,6 +38,7 @@
     >
       <!-- Sticky TOC sidebar -->
       <sc-benchmark-workloads-sidebar
+        [class.workloads-sidebar--static]="disableLayoutTransitions()"
         [benchmarkFamilies]="benchmarkFamilies()"
         [isCollapsed]="isCollapsed()"
         [activeBenchmarkId]="activeBenchmarkId()"
