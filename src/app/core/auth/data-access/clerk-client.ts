@@ -18,15 +18,18 @@ import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
 import { authUrls } from "../auth.utils";
 import { Analytics } from "../../../services/analytics";
 
+const CLERK_RETRY_COOLDOWN_MS = 30_000;
+
 @Injectable({ providedIn: "root" })
 export class ClerkClient {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
   private readonly ngZone = inject(NgZone);
   private readonly analytics = inject(Analytics);
+  private readonly publishableKey = CLERK_PUBLISHABLE_KEY;
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
-  private loadFailed = false;
+  private lastFailure: { at: number; error: unknown } | null = null;
 
   get instance(): Clerk | null {
     return this.clerk;
@@ -53,12 +56,19 @@ export class ClerkClient {
       return this.initPromise;
     }
 
-    this.loadFailed = false;
+    if (
+      this.lastFailure &&
+      Date.now() - this.lastFailure.at < CLERK_RETRY_COOLDOWN_MS
+    ) {
+      throw this.lastFailure.error;
+    }
+
+    this.lastFailure = null;
     this.initPromise = this.ngZone
       .runOutsideAngular(() => this.loadClerk())
       .catch((error: unknown) => {
         this.initPromise = null;
-        this.loadFailed = true;
+        this.lastFailure = { at: Date.now(), error };
         throw error;
       });
     return this.initPromise;
@@ -87,7 +97,7 @@ export class ClerkClient {
   }
 
   async getToken(template?: string): Promise<string | null> {
-    if (!isPlatformBrowser(this.platformId) || this.loadFailed) {
+    if (!isPlatformBrowser(this.platformId) || this.lastFailure) {
       return null;
     }
 
@@ -205,16 +215,14 @@ export class ClerkClient {
     return url;
   }
 
-  private async loadClerk(
-    publishableKey = CLERK_PUBLISHABLE_KEY,
-  ): Promise<void> {
-    if (!publishableKey) {
+  private async loadClerk(): Promise<void> {
+    if (!this.publishableKey) {
       console.error("NG_APP_CLERK_PUBLISHABLE_KEY is not set");
       return;
     }
 
     const { Clerk: ClerkSdk } = await this.importClerk();
-    const clerk = new ClerkSdk(publishableKey);
+    const clerk = new ClerkSdk(this.publishableKey);
     const urls = authUrls();
     await clerk.load({
       signInUrl: urls.origin,

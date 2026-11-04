@@ -49,8 +49,6 @@ import { AuthFlowStore } from "./auth-flow-store";
 import { ClerkClient } from "./clerk-client";
 import { GitHub, type GitHubSignUpOutcome } from "./github";
 
-const CLERK_RETRY_COOLDOWN_MS = 30_000;
-
 @Injectable({ providedIn: "root" })
 export class AuthState {
   private readonly platformId = inject(PLATFORM_ID);
@@ -65,7 +63,6 @@ export class AuthState {
   private readonly flow = inject(AuthFlowStore);
   private activating = false;
   private initPromise: Promise<void> | null = null;
-  private clerkLoadFailedAt = 0;
   private finalizePromise: Promise<void> | null = null;
   private gitHubCallbackPromise: Promise<GitHubCallbackResult> | null = null;
   private boundListener = false;
@@ -132,7 +129,6 @@ export class AuthState {
 
     this.initPromise ??= this.loadAndSync().catch((error: unknown) => {
       this.initPromise = null;
-      this.clerkLoadFailedAt = Date.now();
       throw error;
     });
     return this.initPromise;
@@ -978,7 +974,7 @@ export class AuthState {
     }
 
     if (!this.clerk.isLoaded()) {
-      await this.retryClerkLoad();
+      await this.init().catch(() => undefined);
       return;
     }
 
@@ -993,13 +989,6 @@ export class AuthState {
     } finally {
       this.authSyncInFlight = false;
     }
-  }
-
-  private async retryClerkLoad(): Promise<void> {
-    if (Date.now() - this.clerkLoadFailedAt < CLERK_RETRY_COOLDOWN_MS) {
-      return;
-    }
-    await this.init().catch(() => undefined);
   }
 
   private async activateReloadedSessionIfNeeded(): Promise<void> {

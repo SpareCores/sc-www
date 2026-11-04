@@ -187,7 +187,8 @@ describe("ClerkClient", () => {
     type ClerkModule = typeof import("@clerk/clerk-js");
     type LoaderInternals = {
       importClerk: () => Promise<ClerkModule>;
-      loadClerk: (publishableKey?: string) => Promise<void>;
+      publishableKey: string;
+      loadClerk: () => Promise<void>;
       navigateRouter: (url: string, replace?: boolean) => Promise<boolean>;
     };
 
@@ -213,7 +214,8 @@ describe("ClerkClient", () => {
         Clerk: FakeClerk,
       } as unknown as ClerkModule);
 
-      await loader(service).loadClerk("pk_test");
+      loader(service).publishableKey = "pk_test";
+      await loader(service).loadClerk();
 
       expect(importClerk).toHaveBeenCalledTimes(1);
       expect(constructed).toEqual(["pk_test"]);
@@ -236,7 +238,8 @@ describe("ClerkClient", () => {
         Clerk: FakeClerk,
       } as unknown as ClerkModule);
 
-      const loading = loader(service).loadClerk("pk_test");
+      loader(service).publishableKey = "pk_test";
+      const loading = loader(service).loadClerk();
       await new Promise((resolve) => setTimeout(resolve));
 
       expect(service.isLoaded()).toBeFalse();
@@ -252,7 +255,8 @@ describe("ClerkClient", () => {
       const importClerk = spyOn(loader(service), "importClerk");
       spyOn(console, "error");
 
-      await loader(service).loadClerk("");
+      loader(service).publishableKey = "";
+      await loader(service).loadClerk();
 
       expect(importClerk).not.toHaveBeenCalled();
       expect(service.isLoaded()).toBeFalse();
@@ -264,23 +268,41 @@ describe("ClerkClient", () => {
         new Error("chunk failed"),
       );
 
-      await expectAsync(loader(service).loadClerk("pk_test")).toBeRejected();
+      loader(service).publishableKey = "pk_test";
+      await expectAsync(loader(service).loadClerk()).toBeRejected();
 
       expect(service.isLoaded()).toBeFalse();
       expect(service.instance).toBeNull();
     });
 
-    it("retries loading after a failed attempt", async () => {
+    it("retries loading once the cooldown has passed", async () => {
       const service = createService();
+      const now = spyOn(Date, "now").and.returnValue(0);
       const loadClerk = spyOn(loader(service), "loadClerk").and.returnValues(
         Promise.reject(new Error("chunk failed")),
         Promise.resolve(),
       );
 
       await expectAsync(service.init()).toBeRejected();
+      now.and.returnValue(30_000);
       await expectAsync(service.init()).toBeResolved();
 
       expect(loadClerk).toHaveBeenCalledTimes(2);
+    });
+
+    it("rejects without reloading during the retry cooldown", async () => {
+      const service = createService();
+      const now = spyOn(Date, "now").and.returnValue(0);
+      const error = new Error("chunk failed");
+      const loadClerk = spyOn(loader(service), "loadClerk").and.rejectWith(
+        error,
+      );
+
+      await expectAsync(service.init()).toBeRejectedWith(error);
+      now.and.returnValue(29_999);
+      await expectAsync(service.init()).toBeRejectedWith(error);
+
+      expect(loadClerk).toHaveBeenCalledTimes(1);
     });
 
     it("does not retry loading for tokens after a failed attempt", async () => {

@@ -1,10 +1,5 @@
 import { PLATFORM_ID } from "@angular/core";
-import {
-  fakeAsync,
-  flushMicrotasks,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { fakeAsync, flushMicrotasks, TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { Analytics } from "../../../services/analytics";
 import {
@@ -2013,12 +2008,6 @@ describe("AuthState", () => {
     setVisibilityState("visible");
 
     window.dispatchEvent(new Event("focus"));
-    flushMicrotasks();
-
-    expect(init).toHaveBeenCalledTimes(1);
-
-    tick(30_000);
-    window.dispatchEvent(new Event("online"));
     flushMicrotasks();
 
     expect(init).toHaveBeenCalledTimes(2);
