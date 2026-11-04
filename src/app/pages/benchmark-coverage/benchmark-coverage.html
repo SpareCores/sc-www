@@ -15,8 +15,8 @@
       <div class="text-red-300 text-lg">{{ errorMessage() }}</div>
     } @else {
       <div class="overflow-x-auto mx-2 xl:mx-0">
-        <table class="items_table no-hover-table">
-          <thead>
+        <table class="sc-table sc-table--compact w-full">
+          <thead class="bg-secondary">
             <tr>
               <th class="px-3 md:px-12 py-4 min-w-[16rem]">
                 <div class="flex gap-1 whitespace-nowrap">VENDOR</div>
@@ -63,11 +63,11 @@
           <tbody>
             @for (vendor of vendorDebugData(); track vendor.vendor_id) {
               <tr>
-                <td class="pl-3 pr-2 py-3">
+                <td>
                   <div class="flex gap-1">
                     <a
                       [routerLink]="['/vendors', vendor.vendor_id]"
-                      class="underline decoration-dotted hover:text-gray-500"
+                      class="sc-link"
                     >
                       {{
                         vendorNameById()[vendor.vendor_id] || vendor.vendor_id
@@ -75,41 +75,41 @@
                     </a>
                   </div>
                 </td>
-                <td class="px-4">
+                <td>
                   <div class="flex justify-center">
                     {{ vendor.all }}
                   </div>
                 </td>
-                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                <td class="border-l border-gray-600 w-16">
                   <div class="flex justify-end">
                     {{ vendor.inactive }}
                   </div>
                 </td>
-                <td class="w-20 pl-1 pr-6">
+                <td class="w-20">
                   <div class="flex justify-start">
                     <div class="w-12 flex justify-end">
                       {{ vendor.inactive / vendor.all | percent: "1.2" }}
                     </div>
                   </div>
                 </td>
-                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                <td class="border-l border-gray-600 w-16">
                   <div class="flex justify-end">
                     {{ vendor.active }}
                   </div>
                 </td>
-                <td class="w-20 pl-1 pr-6">
+                <td class="w-20">
                   <div class="flex justify-start">
                     <div class="w-12 flex justify-end">
                       {{ vendor.active / vendor.all | percent: "1.2" }}
                     </div>
                   </div>
                 </td>
-                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                <td class="border-l border-gray-600 w-16">
                   <div class="flex justify-end">
                     {{ vendor.evaluated }}
                   </div>
                 </td>
-                <td class="w-20 pl-1 pr-6">
+                <td class="w-20">
                   <div class="flex justify-start">
                     <div class="w-12 flex justify-end">
                       {{
@@ -120,12 +120,12 @@
                     </div>
                   </div>
                 </td>
-                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                <td class="border-l border-gray-600 w-16">
                   <div class="flex justify-end">
                     {{ vendor.missing }}
                   </div>
                 </td>
-                <td class="w-20 pl-1 pr-6">
+                <td class="w-20">
                   <div class="flex justify-start">
                     <div class="w-12 flex justify-end">
                       {{
@@ -139,30 +139,30 @@
               </tr>
             }
             <tr class="font-bold border-t-2 border-emerald-400">
-              <td class="pl-3 pr-2 py-3">
+              <td>
                 <div class="flex gap-1">Total</div>
               </td>
-              <td class="px-4">
+              <td>
                 <div class="flex justify-center">
                   {{ vendorSummaryStats().all }}
                 </div>
               </td>
-              <td colspan="2" class="border-l border-gray-600 pl-6 pr-6">
+              <td colspan="2" class="border-l border-gray-600">
                 <div class="flex justify-center">
                   {{ vendorSummaryStats().inactive }}
                 </div>
               </td>
-              <td colspan="2" class="border-l border-gray-600 pl-6 pr-6">
+              <td colspan="2" class="border-l border-gray-600">
                 <div class="flex justify-center">
                   {{ vendorSummaryStats().active }}
                 </div>
               </td>
-              <td colspan="2" class="border-l border-gray-600 pl-6 pr-6">
+              <td colspan="2" class="border-l border-gray-600">
                 <div class="flex justify-center">
                   {{ vendorSummaryStats().evaluated }}
                 </div>
               </td>
-              <td colspan="2" class="border-l border-gray-600 pl-6 pr-6">
+              <td colspan="2" class="border-l border-gray-600">
                 <div class="flex justify-center">
                   {{ vendorSummaryStats().missing }}
                 </div>
@@ -181,10 +181,13 @@
       </div>
     </div>
 
-    <div class="flex gap-8 mx-2 xl:mx-0 page_layout">
-      <div class="filter_bar bg-primary" [class.collapsed]="isCollapsed">
+    <div class="flex items-start gap-8 mx-2 xl:mx-0">
+      <div
+        class="sc-filter-sidebar sc-filter-sidebar--sticky shrink-0 bg-primary"
+        [class.sc-filter-sidebar--collapsed]="isCollapsed"
+      >
         <div
-          class="collapser bg-secondary"
+          class="sc-filter-sidebar__collapser bg-secondary"
           (click)="toggleCollapse()"
           (keydown.enter)="toggleCollapse()"
           (keydown.space)="toggleCollapse(); $event.preventDefault()"
@@ -238,12 +241,14 @@
       </div>
 
       <div
-        class="list_holder flex flex-col gap-4"
-        [class.limited-full]="!isCollapsed"
+        class="z-0 min-w-0 flex flex-col gap-4"
+        [class.sc-listing-results--narrow]="!isCollapsed"
         [class.w-full]="isCollapsed"
       >
         <div class="w-full relative table_scroll_wrapper">
-          <table class="items_table debug_servers_table">
+          <table
+            class="sc-table sc-table--compact sc-table--hoverable w-full debug_servers_table"
+          >
             <thead>
               <tr>
                 <th class="bg-secondary"></th>
@@ -442,41 +447,18 @@
         </div>
 
         <div class="pagination_controls">
-          <div class="page_size_selector relative">
+          <div class="flex items-center gap-2">
             <sc-button
               id="pagesize_button"
+              [scDropdown]="pageSizePanel"
+              [dropdownFlip]="true"
+              [dropdownPlacement]="'bottom-start'"
+              #pageDropdown="scDropdown"
               [label]="limit() | pageLimitLabel"
               icon="chevron-down"
               variant="dropdown"
-              (click)="togglePageSizeOptions()"
             ></sc-button>
             <span class="text-white hidden md:inline">items per page</span>
-
-            @if (showPageSizeOptions()) {
-              <div
-                class="z-10 bg-secondary rounded-lg shadow-sm w-44 border border-emerald-400 border-solid absolute top-12 left-0"
-              >
-                <ul class="py-2 px-1 text-sm text-gray-700" role="listbox">
-                  @for (pageLimit of pageLimits; track pageLimit) {
-                    <li
-                      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-400/80 rounded-xs"
-                      (click)="selectPageSize(pageLimit)"
-                      (keydown.enter)="selectPageSize(pageLimit)"
-                      (keydown.space)="
-                        selectPageSize(pageLimit); $event.preventDefault()
-                      "
-                      role="option"
-                      [attr.aria-selected]="pageLimit === limit()"
-                      tabindex="0"
-                    >
-                      <div class="text-white text-sm">
-                        {{ pageLimit | pageLimitLabel }}
-                      </div>
-                    </li>
-                  }
-                </ul>
-              </div>
-            }
           </div>
 
           <div class="pagination_nav" aria-label="Table pagination">
@@ -486,7 +468,7 @@
                 ariaLabel="Previous page"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button pagination-button--nav"
+                buttonClass="sc-button--pagination sc-button--pagination-nav"
                 (click)="goToPage(page() - 1)"
               ></sc-button>
             }
@@ -495,7 +477,7 @@
                 label="1"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(1)"
               ></sc-button>
               @if (page() > 3) {
@@ -511,7 +493,7 @@
                 [label]="'' + pageNumber"
                 [variant]="pageNumber === page() ? 'solid' : 'ghost'"
                 [color]="pageNumber === page() ? 'brand' : 'inverse'"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(pageNumber)"
               ></sc-button>
             }
@@ -525,7 +507,7 @@
                 [label]="'' + totalPages()"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(totalPages())"
               ></sc-button>
             } @else if (totalPages() === page() + 2) {
@@ -533,7 +515,7 @@
                 [label]="'' + totalPages()"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button"
+                buttonClass="sc-button--pagination"
                 (click)="goToPage(totalPages())"
               ></sc-button>
             }
@@ -543,7 +525,7 @@
                 ariaLabel="Next page"
                 variant="ghost"
                 color="inverse"
-                buttonClass="pagination-button pagination-button--nav"
+                buttonClass="sc-button--pagination sc-button--pagination-nav"
                 (click)="goToPage(page() + 1)"
               ></sc-button>
             }
@@ -553,3 +535,25 @@
     </div>
   </div>
 </div>
+
+<ng-template #pageSizePanel>
+  <div id="pagesize_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" role="listbox">
+      @for (pageLimit of pageLimits; track pageLimit) {
+        <li
+          class="sc-dropdown__option"
+          (click)="selectPageSize(pageLimit)"
+          (keydown.enter)="selectPageSize(pageLimit)"
+          (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
+          role="option"
+          [attr.aria-selected]="pageLimit === limit()"
+          tabindex="0"
+        >
+          <div class="text-white text-sm">
+            {{ pageLimit | pageLimitLabel }}
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>

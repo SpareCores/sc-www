@@ -19,7 +19,6 @@ import { Router, RouterModule } from "@angular/router";
   selector: "sc-vendors",
   imports: [Breadcrumbs, LucideChevronRight, CountryIdtoNamePipe, RouterModule],
   templateUrl: "./vendors.html",
-  styleUrl: "./vendors.css",
 })
 export class Vendors implements OnInit {
   private SEOHandler = inject(SeoHandler);

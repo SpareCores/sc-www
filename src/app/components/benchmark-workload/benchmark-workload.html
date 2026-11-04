@@ -1,6 +1,4 @@
-<div
-  class="relative flex flex-col gap-5 rounded-lg border border-solid border-emerald-400 bg-secondary p-6 overflow-hidden"
->
+<div class="relative flex flex-col gap-5 sc-card p-6 overflow-hidden">
   <!-- Status indicator — absolute top-right corner -->
   <div class="absolute top-4 right-4">
     @if (isActive()) {
@@ -233,8 +231,7 @@
 <!-- Floating tooltip -->
 <div
   #tooltipEl
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none max-w-48"
+  class="tooltip-panel fixed z-100 pointer-events-none max-w-48 opacity-0 hidden"
 >
   {{ tooltipContent() }}
 </div>

@@ -141,8 +141,9 @@ describe("BenchmarkLineChart", () => {
 
     expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
     expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
-    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
-    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
+    expect(
+      firstOptionButton?.classList.contains("sc-dropdown__option"),
+    ).toBeTrue();
     expect(firstOptionLabel?.classList.contains("text-white")).toBeTrue();
   });
 });

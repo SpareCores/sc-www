@@ -20,7 +20,7 @@
       <select
         [(ngModel)]="chartname"
         (ngModelChange)="updateSrc()"
-        class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+        class="w-full max-w-md accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
       >
         @for (chart of charts; track chart.id) {
           <option value="{{ chart.id }}">

@@ -302,12 +302,6 @@
   flex: 1 1 0;
 }
 
-.auth-modal__verify-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-}
-
 .auth-modal__checkbox a,
 .auth-modal__footer-link {
   border: 0;

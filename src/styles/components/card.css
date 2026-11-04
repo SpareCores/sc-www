@@ -1,0 +1,7 @@
+.sc-card {
+  @apply rounded-lg border border-solid border-emerald-400 bg-secondary;
+}
+
+.sc-card--primary {
+  @apply bg-primary;
+}

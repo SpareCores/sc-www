@@ -65,7 +65,7 @@ describe("Clerk email login", () => {
 
     E2EEvent.visitURL("/servers", 4000);
     cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible").click();
-    cy.get("sc-bookmark-button button.bookmark-button--active", {
+    cy.get("sc-bookmark-button button.sc-bookmark-toggle--active", {
       timeout: 20000,
     }).should("have.length", 1);
 

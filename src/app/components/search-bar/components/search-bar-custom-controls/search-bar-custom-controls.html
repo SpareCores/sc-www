@@ -374,7 +374,7 @@
             class="custom-stepper__input"
             [attr.aria-label]="control.title"
             [attr.min]="control.min ?? null"
-            [ngStyle]="getPowerOfTwoStepperInputStyle(control)"
+            [style]="getPowerOfTwoStepperInputStyle(control)"
             [value]="getPowerOfTwoStepperInputValue(control)"
             (focus)="handlePowerOfTwoStepperFocus(control)"
             (input)="onPowerOfTwoStepperInput(control, $event)"
