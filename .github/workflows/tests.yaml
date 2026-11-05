@@ -113,7 +113,7 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
-  cypress-run:
+  cypress-shard:
     needs: [eslint, build, unit-tests]
     runs-on: ubuntu-22.04
     timeout-minutes: 30
@@ -191,9 +191,18 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+  cypress-run:
+    needs: cypress-shard
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check that every Cypress shard passed
+        run: test "${{ needs.cypress-shard.result }}" = "success"
+
   cypress-timings:
-    needs: cypress-run
-    if: ${{ !cancelled() && needs.cypress-run.result != 'skipped' }}
+    needs: cypress-shard
+    if: ${{ !cancelled() && needs.cypress-shard.result != 'skipped' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
