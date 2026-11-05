@@ -112,6 +112,18 @@ jobs:
           path: dist
           retention-days: 1
           if-no-files-found: error
+      - name: Restore Cypress spec timings
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: cypress/timings.json
+          key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: cypress-timings-
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: cypress-split-timings
+          path: cypress/timings.json
+          retention-days: 1
+          if-no-files-found: ignore
 
   cypress-shard:
     needs: [eslint, build, unit-tests]
@@ -123,12 +135,12 @@ jobs:
         shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v6.0.2
-      - name: Restore Cypress spec timings
-        uses: actions/cache/restore@v6.1.0
+      - name: Download Cypress spec timings
+        uses: actions/download-artifact@v7.0.0
+        continue-on-error: true
         with:
-          path: cypress/timings.json
-          key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: cypress-timings-
+          name: cypress-split-timings
+          path: cypress
       - uses: actions/setup-node@v7.1.0
         with:
           node-version: 24
