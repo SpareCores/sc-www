@@ -88,7 +88,7 @@ describe("EmbedDialog", () => {
     expect(iframe.style.width).toBe("80%");
   });
 
-  it("resets height and width when the preview size changes", () => {
+  it("resets height and width when the preview size changes without an aspect ratio", () => {
     component.chartId.set("metadata");
     component.height.set(650);
     component.width.set(80);
@@ -104,6 +104,23 @@ describe("EmbedDialog", () => {
     fixture.componentRef.setInput("aspectRatio", 0.5);
     component.chartId.set("metadata");
     fixture.detectChanges();
+    TestBed.tick();
+
+    const iframe: HTMLIFrameElement =
+      fixture.nativeElement.querySelector("iframe");
+    expect(component.height()).toBe(
+      Math.max(400, Math.round(iframe.offsetWidth * 0.5)),
+    );
+  });
+
+  it("refits the height when the current preview size is picked again", () => {
+    fixture.componentRef.setInput("aspectRatio", 0.5);
+    component.chartId.set("metadata");
+    fixture.detectChanges();
+    TestBed.tick();
+
+    component.height.set(9999);
+    component.selectPreviewSize(component.previewSize());
     TestBed.tick();
 
     const iframe: HTMLIFrameElement =

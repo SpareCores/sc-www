@@ -46,7 +46,9 @@ export class EmbedDialog {
   chartId = signal<string | null>(null);
   height = linkedSignal(() => this.defaultHeight());
   width = signal(100);
-  previewSize = signal(EMBED_PREVIEW_SIZES[EMBED_PREVIEW_SIZES.length - 1]);
+  previewSize = signal(EMBED_PREVIEW_SIZES[EMBED_PREVIEW_SIZES.length - 1], {
+    equal: () => false,
+  });
   previewMinHeight = linkedSignal<number, number>({
     source: this.height,
     computation: (height, previous) => Math.max(height, previous?.value ?? 0),
