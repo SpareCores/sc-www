@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import pluginCypress from "eslint-plugin-cypress";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,6 +61,13 @@ export default defineConfig([
       "@angular-eslint/template/click-events-have-key-events": "off",
       "@angular-eslint/template/interactive-supports-focus": "off",
       "@angular-eslint/template/no-autofocus": "off",
+    },
+  },
+  {
+    files: ["cypress/**/*.ts", "cypress.config.ts"],
+    extends: [pluginCypress.configs.globals],
+    rules: {
+      "cypress/no-unnecessary-waiting": "error",
     },
   },
 ]);
