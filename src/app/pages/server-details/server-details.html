@@ -224,7 +224,7 @@
               ngSkipHydration
               [vendorId]="serverDetails.vendor_id"
               [apiReference]="serverDetails.api_reference"
-              (svgExists)="lstopoSvgExists = $event"
+              (svgExists)="onLstopoSvgExists($event)"
               (svgWidth)="lstopoSvgWidth = $event"
             ></sc-server-lstopo>
           </div>

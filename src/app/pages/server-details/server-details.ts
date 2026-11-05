@@ -1357,16 +1357,25 @@ export class ServerDetails implements OnInit, OnDestroy {
     }
   }
 
+  updateVisibleEmbeddableCharts() {
+    this.visibleEmbeddableCharts = this.embeddableCharts.filter(
+      (chart) =>
+        (chart.id !== "lstopo" || this.lstopoSvgExists === true) &&
+        (chart.id !== "description" || this.descriptionsAvailable),
+    );
+  }
+
+  onLstopoSvgExists(exists: boolean) {
+    this.lstopoSvgExists = exists;
+    this.updateVisibleEmbeddableCharts();
+  }
+
   openModal() {
     if (this.embedDialogRef) {
       return;
     }
 
-    this.visibleEmbeddableCharts = this.embeddableCharts.filter(
-      (chart) =>
-        (chart.id !== "lstopo" || this.lstopoSvgExists !== false) &&
-        (chart.id !== "description" || this.descriptionsAvailable),
-    );
+    this.updateVisibleEmbeddableCharts();
     this.isModalOpen = true;
     this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
     this.embedDialogRef.closed.subscribe(() => {
@@ -1395,12 +1404,14 @@ export class ServerDetails implements OnInit, OnDestroy {
         } else {
           this.descriptionsAvailable = false;
         }
+        this.updateVisibleEmbeddableCharts();
       })
       .catch(() => {
         if (!isCurrent()) {
           return;
         }
         this.descriptionsAvailable = false;
+        this.updateVisibleEmbeddableCharts();
       });
   }
 
