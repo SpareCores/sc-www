@@ -1,5 +1,5 @@
-import { skipWithoutClerk } from "../support/clerk-testing";
-import { E2EEvent } from "../support/generics";
+import { skipWithoutClerk } from "../../support/clerk-testing";
+import { E2EEvent } from "../../support/generics";
 
 function assertRegisterModalOpened(): void {
   cy.get(".auth-modal__title").should("contain.text", "Create your account");

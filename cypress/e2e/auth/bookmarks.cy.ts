@@ -1,4 +1,4 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../support/generics";
 
 describe("Bookmarks auth guard", () => {
   it("redirects unauthenticated guests away from /bookmarks", () => {

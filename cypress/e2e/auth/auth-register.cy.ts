@@ -4,7 +4,7 @@ import {
   randomClerkTestPassword,
   registerClerkTestUser,
   skipWithoutClerk,
-} from "../support/clerk-testing";
+} from "../../support/clerk-testing";
 
 describe("Clerk +clerk_test registration", () => {
   const email = clerkTestEmail("register");

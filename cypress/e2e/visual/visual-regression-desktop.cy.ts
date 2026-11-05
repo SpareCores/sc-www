@@ -1,4 +1,4 @@
-import { E2EEvent, visualSnapshotName } from "../support/generics";
+import { E2EEvent, visualSnapshotName } from "../../support/generics";
 
 describe("Visual regression tests", () => {
   it("should compare screenshot of the landing page", () => {

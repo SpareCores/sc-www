@@ -1,4 +1,4 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../support/generics";
 
 describe("Dropdowns", () => {
   it("closes a header dropdown on Escape and restores focus", () => {
