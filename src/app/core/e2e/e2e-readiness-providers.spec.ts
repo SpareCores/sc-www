@@ -13,21 +13,24 @@ describe("provideE2eReadiness", () => {
     delete document.documentElement.dataset["scHydrated"];
   });
 
-  function renderOnce(): void {
+  function setup(): ApplicationRef {
     TestBed.configureTestingModule({ providers: [provideE2eReadiness()] });
-    TestBed.inject(ApplicationRef).tick();
+    return TestBed.inject(ApplicationRef);
   }
 
   it("marks the document as hydrated after the first render in e2e runs", () => {
     win[E2E_WINDOW_FLAG] = true;
+    const appRef = setup();
 
-    renderOnce();
+    expect(document.documentElement.dataset["scHydrated"]).toBeUndefined();
+
+    appRef.tick();
 
     expect(document.documentElement.dataset["scHydrated"]).toBe("true");
   });
 
   it("leaves the document unmarked outside e2e runs", () => {
-    renderOnce();
+    setup().tick();
 
     expect(document.documentElement.dataset["scHydrated"]).toBeUndefined();
   });
