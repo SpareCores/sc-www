@@ -1,6 +1,8 @@
 import { clerkSetup } from "@clerk/testing/cypress";
 import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
+import cypressOnFix from "cypress-on-fix";
+import cypressSplit from "cypress-split";
 import {
   ClerkTestUser,
   createClerkTestUser,
@@ -31,7 +33,8 @@ export default defineConfig({
   experimentalMemoryManagement: true,
   e2e: {
     baseUrl: "http://localhost:4200",
-    setupNodeEvents(on, config) {
+    setupNodeEvents(cypressOn, config) {
+      const on = cypressOnFix(cypressOn);
       on("task", {
         log(message) {
           console.log(message);
@@ -46,6 +49,7 @@ export default defineConfig({
       });
       getCompareSnapshotPlugin(on, config);
       on("before:browser:launch", customizeChromeHeadless);
+      cypressSplit(on, config);
 
       const publishableKey = process.env["NG_APP_CLERK_PUBLISHABLE_KEY"];
       const secretKey = process.env["CLERK_SECRET_KEY"];

@@ -116,9 +116,19 @@ jobs:
   cypress-run:
     needs: [eslint, build, unit-tests]
     runs-on: ubuntu-22.04
-    timeout-minutes: 45
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v6.0.2
+      - name: Restore Cypress spec timings
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: cypress/timings.json
+          key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: cypress-timings-
       - uses: actions/setup-node@v7.1.0
         with:
           node-version: 24
@@ -138,16 +148,28 @@ jobs:
           browser: chrome
         env:
           PORT: 4200
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
+          SPLIT_FILE: cypress/timings.json
+          SPLIT_OUTPUT_FILE: cypress/timings-shard.json
+          SPLIT_TIME_THRESHOLD: "1000000"
           NG_APP_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY_TESTING }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY_TESTING }}
       - uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-${{ matrix.shard }}
           path: |
             cypress/screenshots
             cypress-image-diff-screenshots
             cypress-image-diff-html-report
+          retention-days: 7
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v7.0.1
+        if: always()
+        with:
+          name: cypress-timings-${{ matrix.shard }}
+          path: cypress/timings-shard.json
           retention-days: 7
           if-no-files-found: ignore
       - name: Diff visual regression tests against main baselines
@@ -164,7 +186,49 @@ jobs:
       - uses: actions/upload-artifact@v7.0.1
         if: always() && github.ref != 'refs/heads/main'
         with:
-          name: visual-regression-vs-main
+          name: visual-regression-vs-main-${{ matrix.shard }}
           path: .visual-diff-vs-main/diff
           retention-days: 7
           if-no-files-found: ignore
+
+  cypress-timings:
+    needs: cypress-run
+    if: ${{ !cancelled() && needs.cypress-run.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          check-latest: true
+          cache: npm
+      - name: Install modules
+        run: npm ci --no-audit --no-fund
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+      - name: Restore Cypress spec timings
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: cypress/timings.json
+          key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: cypress-timings-
+      - uses: actions/download-artifact@v7.0.0
+        with:
+          pattern: cypress-timings-*
+          path: timings-shards
+      - name: Merge spec timings
+        run: |
+          if [ -f cypress/timings.json ]; then
+            mkdir -p timings-shards/previous
+            cp cypress/timings.json timings-shards/previous/timings-shard.json
+          fi
+          npx cypress-split-merge \
+            --parent-folder timings-shards \
+            --split-file timings-shard.json \
+            --output cypress/timings.json
+      - name: Save Cypress spec timings
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: cypress/timings.json
+          key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
