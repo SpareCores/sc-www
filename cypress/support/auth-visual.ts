@@ -371,7 +371,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
 
     it("compares save-search modal on servers", () => {
       E2EEvent.visitURL(SERVERS_FILTERED_URL);
-      E2EEvent.waitForListingResults("servers_table");
+      E2EEvent.waitForListingLoaded("servers_table");
       openPageHeaderSaveModal("server-listing-save-search-modal");
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();

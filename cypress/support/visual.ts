@@ -21,7 +21,7 @@ function waitForLandingPage(): void {
 
 function waitForFilteredListingPage(tableId: string, vendor: string): void {
   cy.get("sc-page-header h1").should("be.visible");
-  E2EEvent.waitForListingResults(tableId);
+  E2EEvent.waitForListingLoaded(tableId);
   cy.get(`#filter_enum_vendor_${vendor}`)
     .should("be.checked")
     .next()
