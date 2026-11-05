@@ -1,4 +1,4 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../support/generics";
 
 describe("Visit main pages", () => {
   it("Visit pages", () => {

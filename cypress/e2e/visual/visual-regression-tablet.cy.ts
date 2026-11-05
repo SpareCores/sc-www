@@ -1,8 +1,8 @@
-import { E2EEvent, visualSnapshotName } from "../support/generics";
+import { E2EEvent, visualSnapshotName } from "../../support/generics";
 
-describe("Visual regression tests (small screen - 800px)", () => {
+describe("Visual regression tests (medium screen - 1024px)", () => {
   beforeEach(() => {
-    cy.viewport(800, 900);
+    cy.viewport(1024, 900);
   });
 
   it("should compare screenshot of the landing page", () => {
@@ -18,12 +18,13 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.get("#resource-tracker-video").invoke("css", "display", "none");
 
     cy.compareSnapshot({
-      name: visualSnapshotName("landing-page", "mobile"),
+      name: visualSnapshotName("landing-page", "tablet"),
       exactName: true,
     });
   });
 
   it("should compare screenshot of the landing page with the mobile menu open", () => {
+    cy.viewport(960, 900);
     E2EEvent.visitURL("/");
 
     E2EEvent.prepareHeaderForScreenshot();
@@ -34,7 +35,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     E2EEvent.openMobileMenuForScreenshot();
 
     cy.compareSnapshot({
-      name: visualSnapshotName("landing-page-mobile-menu-open", "mobile"),
+      name: visualSnapshotName("landing-page-mobile-menu-open", "tablet"),
       exactName: true,
     });
   });
@@ -49,7 +50,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     E2EEvent.hideListingTableResultsForScreenshot("servers_table");
 
     cy.compareSnapshot({
-      name: visualSnapshotName("servers-hcloud-gpu1", "mobile"),
+      name: visualSnapshotName("servers-hcloud-gpu1", "tablet"),
       exactName: true,
     });
   });
@@ -64,7 +65,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     E2EEvent.hideListingTableResultsForScreenshot("databases_table");
 
     cy.compareSnapshot({
-      name: visualSnapshotName("databases-aws-vcpus2", "mobile"),
+      name: visualSnapshotName("databases-aws-vcpus2", "tablet"),
       exactName: true,
     });
   });
@@ -76,7 +77,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     E2EEvent.prepareHeaderForScreenshot();
 
     cy.compareSnapshot({
-      name: visualSnapshotName("design-page", "mobile"),
+      name: visualSnapshotName("design-page", "tablet"),
       exactName: true,
     });
   });
@@ -115,7 +116,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     E2EEvent.hideWorkloadProfileChartsForScreenshot();
 
     cy.compareSnapshot({
-      name: visualSnapshotName("server-details-gcp-t2d-standard-1", "mobile"),
+      name: visualSnapshotName("server-details-gcp-t2d-standard-1", "tablet"),
       exactName: true,
     });
   });
@@ -134,7 +135,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.compareSnapshot({
       name: visualSnapshotName(
         "database-details-gcp-db-c4a-highmem-48",
-        "mobile",
+        "tablet",
       ),
       exactName: true,
     });
@@ -147,8 +148,18 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     // Force isTableOutsideViewport to always set to false
     cy.window().then((win: any) => {
-      cy.get("sc-server-compare").then(($el) => {
-        if (win.ng?.getComponent) {
+      if (!win.ng?.getComponent) {
+        console.warn(
+          "Angular debug API not available; skipping table override",
+        );
+        return;
+      }
+
+      cy.get("sc-server-compare")
+        .should(($el) => {
+          expect(win.ng.getComponent($el[0])).to.be.an("object");
+        })
+        .then(($el) => {
           const component = win.ng.getComponent($el[0]);
           const alwaysFalseSignal = Object.assign(() => false, {
             set: () => {},
@@ -162,12 +173,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
           });
 
           win.ng.applyChanges(component);
-        } else {
-          console.warn(
-            "Angular debug API not available; skipping table override",
-          );
-        }
-      });
+        });
     });
 
     // Hide the dynamic table header
@@ -194,7 +200,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.compareSnapshot({
       name: visualSnapshotName(
         "server-comparison-aws-a1-medium-c6gd-medium",
-        "mobile",
+        "tablet",
       ),
       exactName: true,
     });
@@ -211,7 +217,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.get("#serverSearchBar").should("be.visible");
 
     cy.compareSnapshot({
-      name: visualSnapshotName("advisor-page", "mobile"),
+      name: visualSnapshotName("advisor-page", "tablet"),
       exactName: true,
     });
   });
@@ -227,7 +233,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     // Capture the visual snapshot
     cy.compareSnapshot({
-      name: visualSnapshotName("legal-documents-list", "mobile"),
+      name: visualSnapshotName("legal-documents-list", "tablet"),
       exactName: true,
     });
   });
@@ -243,7 +249,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     E2EEvent.loadImagesForScreenshot(".partner-logo-image");
 
     cy.compareSnapshot({
-      name: visualSnapshotName("partners-page", "mobile"),
+      name: visualSnapshotName("partners-page", "tablet"),
       exactName: true,
     });
   });
