@@ -349,6 +349,9 @@
     @if (control.type === "powerOfTwoStepper") {
       <sc-stepper
         class="mt-4"
+        [controls]="'custom_control_numeric_' + control.name"
+        [decreaseLabel]="'Decrease ' + control.title"
+        [increaseLabel]="'Increase ' + control.title"
         [canDecrement]="canDecrementPowerOfTwoValue(control)"
         [dirty]="isPowerOfTwoStepperDraftDirty(control)"
         (decrement)="decrementPowerOfTwoValue(control)"
