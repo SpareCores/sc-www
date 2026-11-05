@@ -1,4 +1,5 @@
 import { setupClerkTestingToken } from "@clerk/testing/cypress";
+import type { ClerkTestUser } from "./clerk-users";
 import { E2EEvent } from "./generics";
 
 export function randomClerkTestPassword(): string {
@@ -39,12 +40,10 @@ export function clerkTestEmail(label: string): string {
   return `sc-www+clerk_test+${label}+${Date.now()}@example.com`;
 }
 
-function waitForClerk(): void {
+export function waitForClerk(): void {
   cy.window({ timeout: 30000 }).should((win) => {
     expect(win).to.have.property("Clerk");
-    expect((win as Window & { Clerk: { loaded: boolean } }).Clerk.loaded).to.eq(
-      true,
-    );
+    expect(win.Clerk.loaded).to.eq(true);
   });
 }
 
@@ -87,7 +86,7 @@ export function expectAuthModalStep(title: string): void {
 
 function openGuestAuthModal(label: "Register" | "Log in", title: string): void {
   bypassClerkBotProtection();
-  E2EEvent.visitURL("/", 2000);
+  E2EEvent.visitURL("/");
   waitForClerk();
   openGuestAuthButton(label);
   expectAuthModalStep(title);
@@ -173,11 +172,12 @@ export function loginClerkTestUser(email: string, password: string): void {
 }
 
 export function signOutClerkTestUser(): void {
-  E2EEvent.visitURL("/", 2000);
+  E2EEvent.visitURL("/");
   cy.get("#auth_button").should("be.visible").click();
   cy.get("#auth_options").should("be.visible");
   cy.contains("#auth_options button", "Sign Out").click();
   cy.get("#auth_button").should("not.exist");
+  cy.then(() => Cypress.session.clearAllSavedSessions());
 }
 
 export function deleteClerkTestUser(email: string | undefined): void {
@@ -186,7 +186,57 @@ export function deleteClerkTestUser(email: string | undefined): void {
   }
 }
 
-export type ClerkTestUser = { email: string; password: string };
+async function completeClerkPasswordSignIn(
+  win: Window,
+  { email, password }: ClerkTestUser,
+): Promise<void> {
+  const signIn = win.Clerk.client?.signIn;
+  if (!signIn) {
+    throw new Error("Clerk client is not ready");
+  }
+
+  let result = await signIn.create({ identifier: email, password });
+
+  if (
+    result.status === "needs_second_factor" ||
+    result.status === "needs_client_trust"
+  ) {
+    const factor = result.supportedSecondFactors?.find(
+      ({ strategy }) => strategy === "email_code",
+    );
+    if (!factor || !("emailAddressId" in factor) || !factor.emailAddressId) {
+      throw new Error("Clerk requested a second factor without email_code");
+    }
+    await result.prepareSecondFactor({
+      strategy: "email_code",
+      emailAddressId: factor.emailAddressId,
+    });
+    result = await result.attemptSecondFactor({
+      strategy: "email_code",
+      code: CLERK_TEST_CODE,
+    });
+  }
+
+  if (result.status !== "complete" || !result.createdSessionId) {
+    throw new Error(`Clerk sign-in ended with status ${result.status}`);
+  }
+
+  await win.Clerk.setActive({ session: result.createdSessionId });
+}
+
+export function signInClerkTestUser(user: ClerkTestUser): void {
+  bypassClerkBotProtection();
+  E2EEvent.visitURL("/");
+  waitForClerk();
+  cy.window().then({ timeout: 30000 }, (win) =>
+    completeClerkPasswordSignIn(win, user),
+  );
+  expectSignedIn();
+}
+
+export function ensureClerkTestSession(user: ClerkTestUser): void {
+  cy.session(["clerk-test-user", user.email], () => signInClerkTestUser(user));
+}
 
 export function withRegisteredClerkTestUser(label: string): ClerkTestUser {
   const user: ClerkTestUser = { email: "", password: "" };
@@ -194,8 +244,7 @@ export function withRegisteredClerkTestUser(label: string): ClerkTestUser {
   before(() => {
     user.email = clerkTestEmail(label);
     user.password = randomClerkTestPassword();
-    registerClerkTestUser(user.email, user.password);
-    signOutClerkTestUser();
+    cy.task("createClerkTestUser", user, { timeout: 20000 });
   });
 
   after(() => {
