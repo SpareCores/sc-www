@@ -18,12 +18,10 @@ import {
 class TestRouteComponent {}
 
 describe("App", () => {
-  const initializeTracking = jasmine.createSpy("initializeTracking");
   const trackEvent = jasmine.createSpy("trackEvent");
 
   beforeEach(async () => {
     window.sessionStorage.clear();
-    initializeTracking.calls.reset();
     trackEvent.calls.reset();
 
     const [, ...nonRouterTestingProviders] = sharedTestingProviders;
@@ -35,7 +33,6 @@ describe("App", () => {
         {
           provide: Analytics,
           useValue: {
-            initializeTracking,
             trackEvent,
           },
         },
