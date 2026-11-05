@@ -6,3 +6,7 @@ pre {
     overflow-wrap: anywhere;
   }
 }
+
+:host ::ng-deep div.code-toolbar {
+  width: 100%;
+}

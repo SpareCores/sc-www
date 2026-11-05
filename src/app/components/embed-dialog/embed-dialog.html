@@ -1,128 +1,148 @@
 @if (isBrowser) {
   <div class="bg-primary p-4 w-full gap-4 flex flex-col">
-    <h3 class="text-white text-xl">Iframe Options</h3>
-    <div class="flex flex-wrap items-center justify-between gap-4 text-white">
-      <div class="flex flex-wrap items-center gap-4">
-        <div class="flex items-center gap-2">
-          <label [attr.for]="idPrefix() + '_height'">Height</label>
-          <sc-number-stepper
-            [inputId]="idPrefix() + '_height'"
-            label="iframe height"
-            unit="px"
-            [min]="minHeight()"
-            [step]="10"
-            [(value)]="height"
-            [attr.data-ph-capture-attribute-sc-event]="
-              captureEventPrefix() + ' height'
-            "
-          ></sc-number-stepper>
+    <div
+      class="sticky top-0 z-10 -mx-4 -mt-4 flex flex-col gap-4 border-b border-gray-600 bg-primary p-4"
+    >
+      <h3 class="text-white text-xl">Iframe Options</h3>
+      <div class="flex flex-wrap items-center justify-between gap-4 text-white">
+        <div
+          class="flex w-full flex-wrap items-center justify-between gap-4 sm:w-auto sm:justify-start"
+        >
+          @for (stepper of steppers(); track stepper.id) {
+            @let inputId = idPrefix() + "_" + stepper.id;
+            @let value = stepper.value();
+            <div class="flex items-center gap-2">
+              <label [attr.for]="inputId">{{ stepper.label }}</label>
+              <sc-stepper
+                [controls]="inputId"
+                [canDecrement]="value > stepper.min"
+                [canIncrement]="value < stepper.max"
+                [decreaseLabel]="'Decrease iframe ' + stepper.id"
+                [increaseLabel]="'Increase iframe ' + stepper.id"
+                [captureEvent]="captureEventPrefix() + ' ' + stepper.id"
+                (decrement)="stepBy(stepper, -1)"
+                (increment)="stepBy(stepper, 1)"
+              >
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  spellcheck="false"
+                  scNumbersOnly
+                  [allowDecimal]="false"
+                  class="sc-stepper__input"
+                  [style.width.ch]="stepperInputWidth(stepper)"
+                  [attr.maxlength]="stepperMaxDigits(stepper)"
+                  [id]="inputId"
+                  [value]="value"
+                  [attr.aria-label]="'iframe ' + stepper.id"
+                  (input)="onStepperInput(stepper, $event)"
+                  (blur)="commitStepper(stepper, $event)"
+                  (keydown.enter)="commitStepper(stepper, $event)"
+                />
+                <span class="sc-stepper__unit">{{ stepper.unit }}</span>
+              </sc-stepper>
+            </div>
+          }
         </div>
-        <div class="flex items-center gap-2">
-          <label [attr.for]="idPrefix() + '_width'">Width</label>
-          <sc-number-stepper
-            [inputId]="idPrefix() + '_width'"
-            label="iframe width"
-            unit="%"
-            [min]="10"
-            [max]="100"
-            [step]="5"
-            [(value)]="width"
-            [attr.data-ph-capture-attribute-sc-event]="
-              captureEventPrefix() + ' width'
-            "
-          ></sc-number-stepper>
-        </div>
-      </div>
-      <div class="flex min-w-0 max-w-md grow basis-72 items-center gap-2">
-        <span>Chart</span>
-        <sc-button
-          #chartDropdown="scDropdown"
-          class="min-w-0 flex-1"
-          [id]="idPrefix() + '_chart_button'"
-          [scDropdown]="chartPanel"
-          [dropdownFlip]="true"
-          [dropdownPlacement]="'bottom-end'"
-          [label]="selectedChartName()"
-          icon="chevron-down"
-          variant="dropdown"
-          size="small"
-          [attr.data-ph-capture-attribute-sc-event]="
-            captureEventPrefix() + ' chart select'
-          "
-        ></sc-button>
-        <ng-template #chartPanel>
+        <div class="flex w-full min-w-0 items-center gap-4 sm:w-auto">
           <div
-            class="w-max min-w-64 max-w-[calc(100vw-2rem)] max-h-80 overflow-y-auto sc-dropdown"
+            class="flex min-w-0 flex-1 items-center gap-2 sm:w-72 sm:flex-none"
           >
-            <ul
-              class="sc-dropdown__list"
-              [attr.aria-labelledby]="idPrefix() + '_chart_button'"
-            >
-              @for (chart of charts(); track chart.id) {
-                <li>
-                  <button
-                    type="button"
-                    class="sc-dropdown__option"
-                    [attr.data-ph-capture-attribute-sc-event]="
-                      captureEventPrefix() + ' chart option'
-                    "
-                    [attr.data-ph-capture-attribute-chart-id]="chart.id"
-                    (click)="chartId.set(chart.id); chartDropdown.hide()"
-                  >
-                    <div class="text-white text-sm">{{ chart.name }}</div>
-                  </button>
-                </li>
-              }
-            </ul>
+            <span>Chart</span>
+            <sc-button
+              #chartDropdown="scDropdown"
+              class="min-w-0 flex-1"
+              [id]="idPrefix() + '_chart_button'"
+              [scDropdown]="chartPanel"
+              [dropdownMinHeight]="160"
+              [dropdownPlacement]="'bottom-end'"
+              [label]="selectedChartName()"
+              icon="chevron-down"
+              variant="dropdown"
+              size="small"
+              [attr.data-ph-capture-attribute-sc-event]="
+                captureEventPrefix() + ' chart select'
+              "
+            ></sc-button>
+            <ng-template #chartPanel>
+              <div
+                class="w-max min-w-64 max-w-[calc(100vw-2rem)] overflow-y-auto sc-dropdown"
+              >
+                <ul
+                  class="sc-dropdown__list"
+                  [attr.aria-labelledby]="idPrefix() + '_chart_button'"
+                >
+                  @for (chart of charts(); track chart.id) {
+                    <li>
+                      <button
+                        type="button"
+                        class="sc-dropdown__option"
+                        [attr.data-ph-capture-attribute-sc-event]="
+                          captureEventPrefix() + ' chart option'
+                        "
+                        [attr.data-ph-capture-attribute-chart-id]="chart.id"
+                        (click)="chartId.set(chart.id); chartDropdown.hide()"
+                      >
+                        <div class="text-white text-sm">{{ chart.name }}</div>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </ng-template>
           </div>
-        </ng-template>
+          <div class="flex items-center gap-2">
+            <span>Device</span>
+            <sc-button
+              #previewDropdown="scDropdown"
+              [id]="idPrefix() + '_preview_button'"
+              [scDropdown]="previewPanel"
+              [dropdownPlacement]="'bottom-end'"
+              [label]="previewSize().name"
+              icon="chevron-down"
+              variant="dropdown"
+              size="small"
+              [attr.data-ph-capture-attribute-sc-event]="
+                captureEventPrefix() + ' preview size select'
+              "
+            ></sc-button>
+            <ng-template #previewPanel>
+              <div class="w-max min-w-48 sc-dropdown">
+                <ul
+                  class="sc-dropdown__list"
+                  [attr.aria-labelledby]="idPrefix() + '_preview_button'"
+                >
+                  @for (size of previewSizes; track size.id) {
+                    <li>
+                      <button
+                        type="button"
+                        class="sc-dropdown__option"
+                        [attr.data-ph-capture-attribute-sc-event]="
+                          captureEventPrefix() + ' preview size option'
+                        "
+                        [attr.data-ph-capture-attribute-preview-size]="size.id"
+                        (click)="
+                          selectPreviewSize(size); previewDropdown.hide()
+                        "
+                      >
+                        <div class="text-white text-sm">{{ size.name }}</div>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </ng-template>
+          </div>
+        </div>
       </div>
     </div>
     @if (safeSrc()) {
       <div class="relative">
         <pre><code #codeBlock class="language-html"></code></pre>
       </div>
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <h3 class="text-white text-xl">Iframe Preview</h3>
-        <sc-button
-          #previewDropdown="scDropdown"
-          [id]="idPrefix() + '_preview_button'"
-          [scDropdown]="previewPanel"
-          [dropdownPlacement]="'bottom-end'"
-          [label]="previewSize().name"
-          icon="chevron-down"
-          variant="dropdown"
-          size="small"
-          [attr.data-ph-capture-attribute-sc-event]="
-            captureEventPrefix() + ' preview size select'
-          "
-        ></sc-button>
-        <ng-template #previewPanel>
-          <div class="w-max min-w-48 sc-dropdown">
-            <ul
-              class="sc-dropdown__list"
-              [attr.aria-labelledby]="idPrefix() + '_preview_button'"
-            >
-              @for (size of previewSizes; track size.id) {
-                <li>
-                  <button
-                    type="button"
-                    class="sc-dropdown__option"
-                    [attr.data-ph-capture-attribute-sc-event]="
-                      captureEventPrefix() + ' preview size option'
-                    "
-                    [attr.data-ph-capture-attribute-preview-size]="size.id"
-                    (click)="selectPreviewSize(size); previewDropdown.hide()"
-                  >
-                    <div class="text-white text-sm">{{ size.name }}</div>
-                  </button>
-                </li>
-              }
-            </ul>
-          </div>
-        </ng-template>
-      </div>
-      <div class="overflow-x-auto" [style.min-height.px]="previewMinHeight()">
+      <h3 class="text-white text-xl">Iframe Preview</h3>
+      <div class="overflow-x-auto" data-modal-fill>
         <div [class]="previewSize().widthClass">
           <iframe
             #previewFrame

@@ -73,6 +73,23 @@ describe("EmbedDialog", () => {
     expect(component.width()).toBe(100);
   });
 
+  it("steps the width with the plus and minus buttons within limits", () => {
+    const button = (label: string): HTMLButtonElement =>
+      fixture.nativeElement.querySelector(`button[aria-label="${label}"]`);
+
+    expect(button("Increase iframe width").disabled).toBe(true);
+
+    button("Decrease iframe width").click();
+    fixture.detectChanges();
+    expect(component.width()).toBe(95);
+    expect(button("Increase iframe width").disabled).toBe(false);
+
+    button("Increase iframe width").click();
+    fixture.detectChanges();
+    expect(component.width()).toBe(100);
+    expect(button("Increase iframe width").disabled).toBe(true);
+  });
+
   it("only writes pixel heights and percent widths into the snippet", () => {
     component.chartId.set("metadata");
     component.height.set(650);

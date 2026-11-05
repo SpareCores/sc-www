@@ -15,13 +15,18 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { PrismHighlighter } from "../../services/prism-highlighter";
 import { Button } from "../button/button";
 import { Dropdown } from "../../directives/dropdown";
-import { NumberStepper } from "../number-stepper/number-stepper";
-import { EmbedChartOption, EmbedPreviewSize } from "./embed-dialog.types";
+import { NumbersOnly } from "../../directives/numbers-only";
+import { Stepper } from "../stepper/stepper";
+import {
+  EmbedChartOption,
+  EmbedPreviewSize,
+  EmbedStepper,
+} from "./embed-dialog.types";
 import { EMBED_PREVIEW_SIZES } from "./embed-dialog.constants";
 
 @Component({
   selector: "sc-embed-dialog",
-  imports: [Button, Dropdown, NumberStepper],
+  imports: [Button, Dropdown, NumbersOnly, Stepper],
   templateUrl: "./embed-dialog.html",
   styleUrl: "./embed-dialog.css",
   host: {
@@ -49,10 +54,26 @@ export class EmbedDialog {
   previewSize = signal(EMBED_PREVIEW_SIZES[EMBED_PREVIEW_SIZES.length - 1], {
     equal: () => false,
   });
-  previewMinHeight = linkedSignal<number, number>({
-    source: this.height,
-    computation: (height, previous) => Math.max(height, previous?.value ?? 0),
-  });
+  steppers = computed<EmbedStepper[]>(() => [
+    {
+      id: "height",
+      label: "Height",
+      unit: "px",
+      min: this.minHeight(),
+      max: 9999,
+      step: 10,
+      value: this.height,
+    },
+    {
+      id: "width",
+      label: "Width",
+      unit: "%",
+      min: 10,
+      max: 100,
+      step: 5,
+      value: this.width,
+    },
+  ]);
 
   selectedChartName = computed(
     () =>
@@ -99,6 +120,39 @@ export class EmbedDialog {
     this.previewSize.set(size);
     this.height.set(this.defaultHeight());
     this.width.set(100);
+  }
+
+  stepperMaxDigits(stepper: EmbedStepper) {
+    return String(stepper.max).length;
+  }
+
+  stepperInputWidth(stepper: EmbedStepper) {
+    return this.stepperMaxDigits(stepper) + 0.5;
+  }
+
+  stepBy(stepper: EmbedStepper, direction: 1 | -1) {
+    this.setClamped(stepper, stepper.value() + direction * stepper.step);
+  }
+
+  onStepperInput(stepper: EmbedStepper, event: Event) {
+    const { value } = event.target as HTMLInputElement;
+    const next = Number(value);
+    if (value && next >= stepper.min && next <= stepper.max) {
+      stepper.value.set(next);
+    }
+  }
+
+  commitStepper(stepper: EmbedStepper, event: Event) {
+    const field = event.target as HTMLInputElement;
+    this.setClamped(
+      stepper,
+      field.value ? Number(field.value) : stepper.value(),
+    );
+    field.value = String(stepper.value());
+  }
+
+  private setClamped(stepper: EmbedStepper, next: number) {
+    stepper.value.set(Math.min(stepper.max, Math.max(stepper.min, next)));
   }
 
   fitHeight() {
