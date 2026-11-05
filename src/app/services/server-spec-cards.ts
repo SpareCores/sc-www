@@ -107,7 +107,10 @@ export class ServerSpecCards {
 
     prices.forEach((price) => {
       const allocation = price.allocation || "spot";
-      if (allocation !== "spot" && allocation !== "ondemand") {
+      if (
+        !price.region ||
+        (allocation !== "spot" && allocation !== "ondemand")
+      ) {
         return;
       }
 
