@@ -78,10 +78,13 @@ export class EmbeddedServerChart implements OnInit, OnDestroy {
         const skipped = Promise.resolve({ body: null });
         const needsSections = PROPERTY_CARD_EMBED_IDS.includes(this.showChart);
         const needsPrices = this.showChart === "availability";
+        const needsBenchmarks = !this.isSpecCard();
 
         Promise.all([
-          this.keeperAPI.getServerBenchmarkMeta(),
-          this.keeperAPI.getServerBenchmark(vendor, id),
+          needsBenchmarks ? this.keeperAPI.getServerBenchmarkMeta() : skipped,
+          needsBenchmarks
+            ? this.keeperAPI.getServerBenchmark(vendor, id)
+            : skipped,
           this.keeperAPI.getServerV2(vendor, id),
           needsSections ? this.keeperAPI.getServerMeta() : skipped,
           needsPrices
