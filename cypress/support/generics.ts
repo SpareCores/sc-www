@@ -45,9 +45,17 @@ export abstract class E2EEvent {
     });
   }
 
-  public static waitForListingResults(tableId: string) {
+  public static waitForListingLoaded(tableId: string) {
     cy.get(`#${tableId} tbody tr`).should("have.length.at.least", 1);
     cy.get(".list_holder sc-loading-spinner").should("not.exist");
+  }
+
+  public static waitForListingResults(tableId: string) {
+    this.waitForListingLoaded(tableId);
+    cy.get(`#${tableId} tbody tr:not(:has(> td[colspan]))`).should(
+      "have.length.at.least",
+      1,
+    );
   }
 
   public static waitForServerDetails() {
