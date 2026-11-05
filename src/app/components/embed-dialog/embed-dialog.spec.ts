@@ -22,7 +22,7 @@ describe("EmbedDialog", () => {
     fixture.componentRef.setInput("captureEventPrefix", "test embed");
     fixture.componentRef.setInput("charts", [
       { id: "metadata", name: "Server Metadata" },
-      { id: "lstopo", name: "Topology" },
+      { id: "lstopo", name: "CPU and System Topology" },
     ]);
     fixture.componentRef.setInput(
       "srcFor",
@@ -51,9 +51,11 @@ describe("EmbedDialog", () => {
 
     const iframe: HTMLIFrameElement =
       fixture.nativeElement.querySelector("iframe");
-    expect(component.selectedChartName()).toBe("Topology");
+    expect(component.selectedChartName()).toBe("CPU and System Topology");
     expect(iframe.getAttribute("src")).toBe("about:blank#lstopo");
+    expect(iframe.title).toBe("CPU and System Topology");
     expect(component.snippet()).toContain('src="about:blank#lstopo"');
+    expect(component.snippet()).toContain('title="CPU and System Topology"');
   });
 
   it("clamps height and width on commit", () => {

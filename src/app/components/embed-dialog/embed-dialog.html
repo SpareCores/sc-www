@@ -127,6 +127,7 @@
           <iframe
             #previewFrame
             class="block"
+            [title]="selectedChartName()"
             [src]="safeSrc()"
             [style]="iframeStyle()"
           ></iframe>

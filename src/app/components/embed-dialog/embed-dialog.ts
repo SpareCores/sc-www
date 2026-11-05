@@ -71,7 +71,7 @@ export class EmbedDialog {
   );
   snippet = computed(
     () =>
-      `<iframe \n src="${this.src()}" \n style="${this.iframeStyle()}">\n</iframe>`,
+      `<iframe \n title="${this.selectedChartName()}" \n src="${this.src()}" \n style="${this.iframeStyle()}">\n</iframe>`,
   );
 
   private codeBlock = viewChild<ElementRef<HTMLElement>>("codeBlock");
