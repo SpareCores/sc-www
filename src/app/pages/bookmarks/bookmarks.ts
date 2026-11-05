@@ -309,7 +309,7 @@ export class Bookmarks implements OnDestroy {
   }
 
   private async revealBookmarks(): Promise<void> {
-    await this.auth.init();
+    await this.auth.init().catch(() => undefined);
 
     if (!this.auth.isAuthenticated()) {
       await this.router.navigateByUrl("/");
