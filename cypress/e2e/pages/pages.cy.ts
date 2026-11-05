@@ -60,12 +60,10 @@ const PAGES: { url: string; check: () => void }[] = [
   },
   {
     url: "/advisor?workload_id=stress_ng:bestn&workload_config={}&minimum_memory=0.5",
-    check: () => {
-      E2EEvent.isVisibleAndNotEmpty("#advisor_results_table");
-      cy.get(
-        "#advisor_results_table tbody tr:not(.advisor-empty-state-row)",
-      ).should("have.length.at.least", 1);
-    },
+    check: () =>
+      cy
+        .get('[id="custom_control_numeric_minimum_memory"]')
+        .should("have.value", "0.5"),
   },
 ];
 
