@@ -28,6 +28,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 - Read and edit only files explicitly referenced by the task or tagged by the user, unless the user approved a plan for a multi-file change; list those files in the plan.
 - Do not perform blind repository-wide scans. Use targeted search or symbol lookup only when a missing import, type interface, or dependency blocks immediate execution.
 - Ignore structural config files unless directly required. You are explicitly allowed to inspect `src/app/services/keeper-api.ts` to resolve server endpoints.
+- Store plans in `.claude/plans/` with a descriptive kebab-case file name prefixed by the Linear ID from the branch name and stating the plan's subject (e.g. `dev-1045-clerk-posthog-lazy-load-review-fixes.md`); never use random or generated names.
 
 ### Testing
 

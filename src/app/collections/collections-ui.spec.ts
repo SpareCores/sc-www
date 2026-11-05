@@ -17,9 +17,11 @@ describe("CollectionsUi", () => {
   let signUpModalOpen: ReturnType<typeof signal<boolean>>;
   let signInModalOpen: ReturnType<typeof signal<boolean>>;
   let isLoaded: ReturnType<typeof signal<boolean>>;
+  let serverIsFavorite: boolean;
 
   beforeEach(() => {
     sessionStorage.clear();
+    serverIsFavorite = false;
     isAuthenticated = signal(false);
     authInProgress = signal(false);
     signUpModalOpen = signal(false);
@@ -46,7 +48,7 @@ describe("CollectionsUi", () => {
           provide: CollectionsStore,
           useValue: {
             isLoaded: () => isLoaded(),
-            isFavoriteServer: () => false,
+            isFavoriteServer: () => serverIsFavorite,
             isFavoriteDatabase: () => false,
             isMutating: () => false,
             toggleFavoriteServer,
@@ -124,6 +126,23 @@ describe("CollectionsUi", () => {
     });
     expect(sessionStorage.getItem(PENDING_FEATURE_ACTION_KEY)).toBeNull();
     expect(service.takePendingFeatureAction()).toBeNull();
+  });
+
+  it("keeps an existing bookmark when replaying a pending favorite", async () => {
+    serverIsFavorite = true;
+    service.promptRegisterForFeature({
+      type: "favorite",
+      kind: "server",
+      vendorId: "aws",
+      entityId: "t3.nano",
+    });
+    isLoaded.set(true);
+    isAuthenticated.set(true);
+    TestBed.flushEffects();
+    await Promise.resolve();
+
+    expect(toggleFavoriteServer).not.toHaveBeenCalled();
+    expect(sessionStorage.getItem(PENDING_FEATURE_ACTION_KEY)).toBeNull();
   });
 
   it("clears pending feature state when registration is cancelled", async () => {

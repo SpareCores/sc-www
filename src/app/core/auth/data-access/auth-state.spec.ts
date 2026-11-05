@@ -160,22 +160,23 @@ describe("AuthState", () => {
     expect(auth.profileModalOpen()).toBeFalse();
   });
 
-  it("reopens the profile modal after a GitHub connect redirect", async () => {
+  it("reopens the profile modal after a GitHub connect redirect", fakeAsync(() => {
     const auth = createAuth();
-    setClerkInstance({
-      user: { id: "user_1", firstName: "Jane" },
-      session: { id: "sess_1" },
-      addListener: jasmine.createSpy("addListener"),
-    });
+    const { finishLoading } = deferClerkLoad({ id: "user_1" });
     go("/servers?profile=connected&tab=1");
 
-    await auth.init();
+    void auth.bootstrap();
 
-    expect(auth.profileModalOpen()).toBeTrue();
     expect(`${window.location.pathname}${window.location.search}`).toBe(
       "/servers?tab=1",
     );
-  });
+    expect(auth.profileModalOpen()).toBeFalse();
+
+    finishLoading();
+    flushMicrotasks();
+
+    expect(auth.profileModalOpen()).toBeTrue();
+  }));
 
   it("clears the remembered return URL when Login or Register is closed", () => {
     const auth = createAuth();
@@ -226,6 +227,7 @@ describe("AuthState", () => {
 
   it("toasts when Clerk is not initialized on sign in or sign up", async () => {
     const auth = createAuth();
+    spyOn(clerkService(), "init").and.resolveTo();
     const toastSpy = spyOn(
       (
         auth as unknown as {
@@ -236,7 +238,9 @@ describe("AuthState", () => {
     );
 
     expect(() => auth.signIn()).not.toThrow();
+    await new Promise((resolve) => setTimeout(resolve));
     expect(() => auth.signUp()).not.toThrow();
+    await new Promise((resolve) => setTimeout(resolve));
     expect(auth.signInModalOpen()).toBeFalse();
     expect(auth.signUpModalOpen()).toBeFalse();
     expect(toastSpy).toHaveBeenCalledTimes(2);
@@ -250,6 +254,195 @@ describe("AuthState", () => {
     expect(auth.profileModalOpen()).toBeFalse();
     await expectAsync(auth.signOut()).toBeResolved();
   });
+
+  function deferClerkLoad(user: { id: string } | null): {
+    init: jasmine.Spy;
+    finishLoading: () => void;
+    addListener: jasmine.Spy;
+  } {
+    const addListener = jasmine.createSpy("addListener");
+    let finishLoading: () => void = () => undefined;
+    const init = spyOn(clerkService(), "init").and.callFake(
+      () =>
+        new Promise<void>((resolve) => {
+          finishLoading = () => {
+            setClerkInstance({ user, addListener });
+            resolve();
+          };
+        }),
+    );
+    return { init, finishLoading: () => finishLoading(), addListener };
+  }
+
+  it("opens sign in immediately while Clerk loads", fakeAsync(() => {
+    const auth = createAuth();
+    const { finishLoading, addListener } = deferClerkLoad(null);
+
+    auth.signIn();
+    expect(auth.signInModalOpen()).toBeTrue();
+
+    finishLoading();
+    flushMicrotasks();
+
+    expect(auth.signInModalOpen()).toBeTrue();
+    expect(addListener).toHaveBeenCalledTimes(1);
+  }));
+
+  it("closes the auth modal when Clerk loads a signed-in user", fakeAsync(() => {
+    const auth = createAuth();
+    const { finishLoading } = deferClerkLoad({ id: "user_1" });
+
+    auth.signUp();
+    expect(auth.signUpModalOpen()).toBeTrue();
+
+    finishLoading();
+    flushMicrotasks();
+
+    expect(auth.isAuthenticated()).toBeTrue();
+    expect(auth.signUpModalOpen()).toBeFalse();
+    expect(auth.signInModalOpen()).toBeFalse();
+  }));
+
+  it("waits for Clerk once for repeated auth clicks", fakeAsync(() => {
+    const auth = createAuth();
+    const { init, finishLoading } = deferClerkLoad(null);
+
+    auth.signIn();
+    auth.signUp();
+    auth.signIn();
+    finishLoading();
+    flushMicrotasks();
+
+    expect(init).toHaveBeenCalledTimes(1);
+    expect(auth.signInModalOpen()).toBeTrue();
+  }));
+
+  it("keeps the return URL of the page where sign in was clicked", fakeAsync(() => {
+    const auth = createAuth();
+    const { finishLoading } = deferClerkLoad(null);
+    go("/servers?tab=1");
+
+    auth.signIn();
+    go("/pricing");
+    finishLoading();
+    flushMicrotasks();
+
+    expect(flowStore().peekReturnUrl()).toBe("/servers?tab=1");
+  }));
+
+  it("clears a stale auth flow before Clerk finishes loading", fakeAsync(() => {
+    const auth = createAuth();
+    const { finishLoading } = deferClerkLoad(null);
+    flowStore().setReturnUrl("/servers");
+    flowStore().setGitHubIntent("signIn");
+    flowStore().setPending(true);
+    document.documentElement.classList.add("sc-auth-pending");
+    go("/servers");
+
+    void auth.bootstrap();
+
+    expect(auth.authInProgress()).toBeFalse();
+    expect(
+      document.documentElement.classList.contains("sc-auth-pending"),
+    ).toBeFalse();
+
+    finishLoading();
+    flushMicrotasks();
+
+    expect(sessionStorage.getItem("scAuthFlow")).toBeNull();
+  }));
+
+  it("keeps a GitHub sign-in started while Clerk loads", fakeAsync(() => {
+    const auth = createAuth();
+    const { finishLoading } = deferClerkLoad(null);
+    spyOn(githubService(), "startSignIn").and.resolveTo({
+      status: "redirecting",
+    });
+    flowStore().setPending(true);
+    go("/servers?tab=1");
+
+    void auth.bootstrap();
+    auth.signIn();
+    void auth.signInWithGitHub();
+    finishLoading();
+    flushMicrotasks();
+
+    expect(auth.authInProgress()).toBeTrue();
+    expect(flowStore().githubIntent()).toBe("signIn");
+    expect(flowStore().peekReturnUrl()).toBe("/servers?tab=1");
+  }));
+
+  it("loads Clerk once for start-up, auth clicks and guards", fakeAsync(() => {
+    const auth = createAuth();
+    const { init, finishLoading, addListener } = deferClerkLoad(null);
+
+    void auth.bootstrap();
+    auth.signIn();
+    void auth.init();
+    finishLoading();
+    flushMicrotasks();
+    void auth.init();
+    flushMicrotasks();
+
+    expect(init).toHaveBeenCalledTimes(1);
+    expect(addListener).toHaveBeenCalledTimes(1);
+  }));
+
+  it("clears the auth overlay when Clerk fails to load", async () => {
+    const auth = createAuth();
+    spyOn(clerkService(), "init").and.rejectWith(new Error("chunk failed"));
+    flowStore().setPending(true);
+    document.documentElement.classList.add("sc-auth-pending");
+    go("/servers");
+
+    await expectAsync(auth.init()).toBeRejected();
+
+    expect(auth.authInProgress()).toBeFalse();
+    expect(
+      document.documentElement.classList.contains("sc-auth-pending"),
+    ).toBeFalse();
+  });
+
+  it("syncs the Clerk user when sign in retries a failed load", fakeAsync(() => {
+    const auth = createAuth();
+    const addListener = jasmine.createSpy("addListener");
+    const init = spyOn(clerkService(), "init").and.rejectWith(
+      new Error("chunk failed"),
+    );
+    auth.init().catch(() => undefined);
+    flushMicrotasks();
+
+    init.and.callFake(async () => {
+      setClerkInstance({ user: { id: "user_1" }, addListener });
+    });
+    auth.signIn();
+    flushMicrotasks();
+
+    expect(auth.isAuthenticated()).toBeTrue();
+    expect(addListener).toHaveBeenCalledTimes(1);
+  }));
+
+  it("toasts when Clerk fails to load on sign up", fakeAsync(() => {
+    const auth = createAuth();
+    spyOn(clerkService(), "init").and.rejectWith(new Error("chunk failed"));
+    const toastSpy = spyOn(
+      (
+        auth as unknown as {
+          toastService: { show: (options: unknown) => void };
+        }
+      ).toastService,
+      "show",
+    );
+
+    auth.signUp();
+    expect(auth.signUpModalOpen()).toBeTrue();
+    flushMicrotasks();
+
+    expect(auth.signUpModalOpen()).toBeFalse();
+    expect(toastSpy).toHaveBeenCalledOnceWith(
+      jasmine.objectContaining({ title: AUTH_MESSAGES.authUnavailable }),
+    );
+  }));
 
   it("returns null token outside the browser", async () => {
     const auth = createAuth("server");
@@ -288,6 +481,27 @@ describe("AuthState", () => {
 
     await expectAsync(auth.getToken("keeper")).toBeResolvedTo("keeper-token");
     expect(getToken).toHaveBeenCalledWith({ template: "keeper" });
+  });
+
+  it("returns no token without loading Clerk while it is not loaded", async () => {
+    const auth = createAuth();
+    setClerkInstance(null, false);
+    const init = spyOn(clerkService(), "init");
+
+    await expectAsync(auth.getTokenIfLoaded()).toBeResolvedTo(null);
+    expect(init).not.toHaveBeenCalled();
+  });
+
+  it("returns the session token once Clerk is loaded", async () => {
+    const auth = createAuth();
+    const getToken = jasmine
+      .createSpy("getToken")
+      .and.resolveTo("session-token");
+    setClerkInstance({
+      session: { getToken },
+    });
+
+    await expectAsync(auth.getTokenIfLoaded()).toBeResolvedTo("session-token");
   });
 
   it("binds the Clerk listener only once across repeated init calls", async () => {
@@ -521,6 +735,21 @@ describe("AuthState", () => {
       addListener: jasmine.createSpy("addListener"),
     });
     spyOn(clerkService(), "getSignInResource").and.resolveTo(null);
+
+    await expectAsync(
+      auth.submitLogin({ emailAddress: "ada@example.com", password: "secret" }),
+    ).toBeResolvedTo({
+      status: "error",
+      message: AUTH_MESSAGES.authNotReady,
+    });
+  });
+
+  it("returns authNotReady when Clerk fails to load during login", async () => {
+    const auth = createAuth();
+    const loader = clerkService() as unknown as {
+      loadClerk: () => Promise<void>;
+    };
+    spyOn(loader, "loadClerk").and.rejectWith(new Error("chunk failed"));
 
     await expectAsync(
       auth.submitLogin({ emailAddress: "ada@example.com", password: "secret" }),
@@ -1177,7 +1406,7 @@ describe("AuthState", () => {
     expect(flowStore().githubIntent()).toBe("signUp");
   });
 
-  it("keeps incomplete GitHub consent across init without auto-opening the modal", async () => {
+  it("keeps incomplete GitHub consent across start-up without auto-opening the modal", async () => {
     const auth = createAuth();
     setClerkInstance({
       user: null,
@@ -1189,7 +1418,7 @@ describe("AuthState", () => {
     flowStore().setPending(true);
     go("/servers");
 
-    await auth.init();
+    await auth.bootstrap();
 
     expect(auth.signUpModalOpen()).toBeFalse();
     expect(auth.githubConsentActive()).toBeFalse();
@@ -1349,6 +1578,24 @@ describe("AuthState", () => {
     });
   });
 
+  it("fails the GitHub callback when Clerk fails to load", async () => {
+    const auth = createAuth();
+    spyOn(clerkService(), "init").and.rejectWith(new Error("chunk failed"));
+    spyOn(console, "error");
+    const redirect = spyOn(clerkService(), "handleRedirectCallback");
+    const navigate = spyOn(router(), "navigateByUrl").and.resolveTo(true);
+    flowStore().setReturnUrl("/servers");
+    go("/auth/callback?intent=signIn");
+
+    await expectAsync(auth.handleGitHubCallback()).toBeResolvedTo({
+      status: "error",
+      message: AUTH_MESSAGES.unableToContinueGitHub,
+    });
+
+    expect(redirect).not.toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledOnceWith("/servers", { replaceUrl: true });
+  });
+
   it("rejects a GitHub callback with no intent instead of guessing sign-up", async () => {
     const auth = createAuth();
     setClerkInstance({
@@ -1419,7 +1666,7 @@ describe("AuthState", () => {
     flowStore().setPending(true);
     go("/servers");
 
-    await auth.init();
+    await auth.bootstrap();
 
     expect(auth.isAuthenticated()).toBeTrue();
     expect(auth.authInProgress()).toBeFalse();
@@ -1536,6 +1783,19 @@ describe("AuthState", () => {
 
     expect(trackSpy).not.toHaveBeenCalledWith("auth account deleted", {});
     expect(auth.isAuthenticated()).toBeFalse();
+  });
+
+  it("clears a stale analytics identity once for signed-out visitors", () => {
+    const auth = createAuth();
+    const analytics = analyticsService();
+    const clearSpy = spyOn(analytics, "clearStaleIdentity");
+    const resetSpy = spyOn(analytics, "reset");
+
+    setUser(auth, null);
+    setUser(auth, null);
+
+    expect(clearSpy).toHaveBeenCalledTimes(1);
+    expect(resetSpy).not.toHaveBeenCalled();
   });
 
   it("resets analytics when the user disappears without explicit deletion", () => {
@@ -1732,6 +1992,27 @@ describe("AuthState", () => {
 
     expect(syncSpy).toHaveBeenCalledTimes(1);
     expect(auth.isAuthenticated()).toBeFalse();
+  }));
+
+  it("retries loading Clerk on focus after a failed start", fakeAsync(() => {
+    const auth = createAuth();
+    const addListener = jasmine.createSpy("addListener");
+    const init = spyOn(clerkService(), "init").and.rejectWith(
+      new Error("network error"),
+    );
+    auth.bootstrap().catch(() => undefined);
+    flushMicrotasks();
+    init.and.callFake(async () => {
+      setClerkInstance({ user: { id: "user_1" }, addListener });
+    });
+    setVisibilityState("visible");
+
+    window.dispatchEvent(new Event("focus"));
+    flushMicrotasks();
+
+    expect(init).toHaveBeenCalledTimes(2);
+    expect(auth.isAuthenticated()).toBeTrue();
+    expect(addListener).toHaveBeenCalledTimes(1);
   }));
 
   it("does not reload Clerk on hidden visibility", fakeAsync(() => {

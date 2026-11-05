@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
 import {
-  AfterViewInit,
   Component,
   DOCUMENT,
   inject,
@@ -49,7 +48,7 @@ const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
   templateUrl: "./app.html",
   styleUrl: "./app.css",
 })
-export class App implements OnInit, AfterViewInit, OnDestroy {
+export class App implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
   private router = inject(Router);
@@ -119,12 +118,6 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.auth.signUp();
-  }
-
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.analytics.initializeTracking();
-    }
   }
 
   ngOnDestroy(): void {

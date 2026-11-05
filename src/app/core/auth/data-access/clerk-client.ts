@@ -1,7 +1,13 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, inject, isDevMode } from "@angular/core";
+import {
+  Injectable,
+  NgZone,
+  PLATFORM_ID,
+  inject,
+  isDevMode,
+} from "@angular/core";
 import { Router } from "@angular/router";
-import { Clerk } from "@clerk/clerk-js";
+import type { Clerk } from "@clerk/clerk-js";
 import { isClerkRuntimeError, isNetworkError } from "@clerk/shared/error";
 import type {
   SignInResource,
@@ -12,13 +18,18 @@ import { CLERK_PUBLISHABLE_KEY } from "../auth.constants";
 import { authUrls } from "../auth.utils";
 import { Analytics } from "../../../services/analytics";
 
+const CLERK_RETRY_COOLDOWN_MS = 30_000;
+
 @Injectable({ providedIn: "root" })
 export class ClerkClient {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
+  private readonly ngZone = inject(NgZone);
   private readonly analytics = inject(Analytics);
+  private readonly publishableKey = CLERK_PUBLISHABLE_KEY;
   private clerk: Clerk | null = null;
   private initPromise: Promise<void> | null = null;
+  private lastFailure: { at: number; error: unknown } | null = null;
 
   get instance(): Clerk | null {
     return this.clerk;
@@ -45,17 +56,31 @@ export class ClerkClient {
       return this.initPromise;
     }
 
-    this.initPromise = this.loadClerk();
+    if (
+      this.lastFailure &&
+      Date.now() - this.lastFailure.at < CLERK_RETRY_COOLDOWN_MS
+    ) {
+      throw this.lastFailure.error;
+    }
+
+    this.lastFailure = null;
+    this.initPromise = this.ngZone
+      .runOutsideAngular(() => this.loadClerk())
+      .catch((error: unknown) => {
+        this.initPromise = null;
+        this.lastFailure = { at: Date.now(), error };
+        throw error;
+      });
     return this.initPromise;
   }
 
   async getSignInResource(): Promise<SignInResource | null> {
-    await this.init();
+    await this.init().catch(() => undefined);
     return this.clerk?.client?.signIn ?? null;
   }
 
   async getSignUpResource(): Promise<SignUpResource | null> {
-    await this.init();
+    await this.init().catch(() => undefined);
     return this.clerk?.client?.signUp ?? null;
   }
 
@@ -72,7 +97,7 @@ export class ClerkClient {
   }
 
   async getToken(template?: string): Promise<string | null> {
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!isPlatformBrowser(this.platformId) || this.lastFailure) {
       return null;
     }
 
@@ -170,9 +195,11 @@ export class ClerkClient {
   }
 
   private navigateRouter(url: string, replace = false): Promise<boolean> {
-    return this.router.navigateByUrl(
-      this.toRelativePath(url),
-      replace ? { replaceUrl: true } : undefined,
+    return this.ngZone.run(() =>
+      this.router.navigateByUrl(
+        this.toRelativePath(url),
+        replace ? { replaceUrl: true } : undefined,
+      ),
     );
   }
 
@@ -189,22 +216,28 @@ export class ClerkClient {
   }
 
   private async loadClerk(): Promise<void> {
-    if (!CLERK_PUBLISHABLE_KEY) {
+    if (!this.publishableKey) {
       console.error("NG_APP_CLERK_PUBLISHABLE_KEY is not set");
       return;
     }
 
-    this.clerk = new Clerk(CLERK_PUBLISHABLE_KEY);
+    const { Clerk: ClerkSdk } = await this.importClerk();
+    const clerk = new ClerkSdk(this.publishableKey);
     const urls = authUrls();
-    await this.clerk.load({
+    await clerk.load({
       signInUrl: urls.origin,
       signUpUrl: urls.origin,
       routerPush: (url: string) => this.navigateRouter(url),
       routerReplace: (url: string) => this.navigateRouter(url, true),
       telemetry: false,
     });
+    this.clerk = clerk;
     if (isDevMode() || "Cypress" in window) {
       (window as Window & { Clerk: Clerk }).Clerk = this.clerk;
     }
+  }
+
+  private importClerk(): Promise<typeof import("@clerk/clerk-js")> {
+    return import("@clerk/clerk-js");
   }
 }
