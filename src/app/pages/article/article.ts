@@ -140,7 +140,10 @@ export class Article implements OnInit, OnDestroy {
                   );
                   // highlight code blocks
                   this.prismService.highlightAll();
-                  this.glossaryService.apply(this.articleDiv.nativeElement);
+                  this.glossaryService.apply(
+                    this.articleDiv.nativeElement,
+                    this.articleMeta.glossary,
+                  );
                   // estimate reading time
                   const text =
                     this.articleDiv.nativeElement.textContent ||

@@ -11,6 +11,7 @@ export type ArticleMeta = {
   filename: string;
   author: string;
   tags?: string[];
+  glossary?: string[];
 };
 
 export type SlidesMeta = {

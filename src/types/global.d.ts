@@ -25,7 +25,7 @@ declare global {
       autoInit?: () => void;
     };
     SpareCoresGlossary?: {
-      apply: (root: Element) => void;
+      apply: (root: Element, options?: { scopes?: string[] }) => void;
     };
   }
 }
