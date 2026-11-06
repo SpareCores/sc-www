@@ -28,6 +28,7 @@ import * as Sentry from "@sentry/angular";
 import { provideAppCharts } from "./components/charts/shared/chart-providers";
 import { AuthState, authInterceptor, provideAuthFeature } from "./core/auth";
 import { provideCollectionsFeature } from "./collections/collections-feature.providers";
+import { provideE2eReadiness } from "./core/e2e/e2e-readiness-providers";
 import { Analytics } from "./services/analytics";
 
 function httpFilter(req: HttpRequest<any>): boolean {
@@ -91,6 +92,7 @@ export const appConfig: ApplicationConfig = {
     provideAuthFeature(),
     provideCollectionsFeature(),
     provideAppCharts(),
+    provideE2eReadiness(),
     { provide: OVERLAY_DEFAULT_CONFIG, useValue: { usePopover: false } },
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),

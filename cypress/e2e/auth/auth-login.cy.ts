@@ -1,7 +1,7 @@
 import {
   UNLOCKED_BOOKMARK_BUTTON,
   openBookmarksPage,
-} from "../support/bookmarks";
+} from "../../support/bookmarks";
 import {
   CLERK_TEST_CODE,
   completeDeviceVerificationIfAsked,
@@ -10,13 +10,18 @@ import {
   loginClerkTestUser,
   openLoginModal,
   randomClerkTestPassword,
+  signInClerkTestUser,
   signOutClerkTestUser,
   skipWithoutClerk,
   submitLoginForm,
+  waitForClerk,
   withRegisteredClerkTestUser,
-} from "../support/clerk-testing";
-import { mockCollectionsApi } from "../support/collections-mock";
-import { E2EEvent } from "../support/generics";
+} from "../../support/clerk-testing";
+import {
+  collectionListUrl,
+  mockCollectionsApi,
+} from "../../support/collections-mock";
+import { E2EEvent } from "../../support/generics";
 
 function openUserProfile(): void {
   cy.get("#auth_button").should("be.visible").click();
@@ -38,7 +43,8 @@ function expectLoginRejected(email: string, password: string): void {
 }
 
 function expectRedirectedFromBookmarks(): void {
-  E2EEvent.visitURL("/bookmarks", 1000);
+  E2EEvent.visitURL("/bookmarks");
+  waitForClerk();
   cy.url().should("eq", E2EEvent.buildAbsoluteURL("/"));
 }
 
@@ -55,15 +61,24 @@ describe("Clerk email login", () => {
   it("signs in an existing user and lets them open bookmarks", () => {
     loginClerkTestUser(user.email, user.password);
 
-    E2EEvent.visitURL("/bookmarks", 4000);
+    E2EEvent.visitURL("/bookmarks");
+    waitForClerk();
+    expectSignedIn();
+    cy.get("#bookmarks-name-search").should("be.visible");
     cy.location("pathname").should("eq", "/bookmarks");
   });
 
   it("keeps the session across reload and restores bookmarks after re-login", () => {
     mockCollectionsApi();
     loginClerkTestUser(user.email, user.password);
+    cy.intercept("GET", collectionListUrl("favorite_servers")).as(
+      "favoriteServers",
+    );
 
-    E2EEvent.visitURL("/servers", 4000);
+    E2EEvent.visitURL("/servers");
+    waitForClerk();
+    expectSignedIn();
+    cy.wait("@favoriteServers");
     cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible").click();
     cy.get("sc-bookmark-button button.sc-bookmark-toggle--active", {
       timeout: 20000,
@@ -81,7 +96,7 @@ describe("Clerk email login", () => {
   });
 
   it("opens the profile for the signed-in user and closes it", () => {
-    loginClerkTestUser(user.email, user.password);
+    signInClerkTestUser(user);
     openUserProfile();
 
     cy.get('[data-testid="profile-emails"]')
@@ -128,7 +143,7 @@ describe("Clerk account deletion", () => {
   const user = withRegisteredClerkTestUser("delete");
 
   it("deletes the account from the profile", () => {
-    loginClerkTestUser(user.email, user.password);
+    signInClerkTestUser(user);
     openUserProfile();
     cy.get('[data-testid="profile-tab-security"]').click();
     cy.get('[data-testid="profile-delete-open"] button').click();

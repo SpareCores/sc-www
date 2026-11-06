@@ -1,4 +1,4 @@
-import { registerAuthVisualSuites } from "../support/auth-visual";
+import { registerAuthVisualSuites } from "../../support/auth-visual";
 
 describe("Auth visual (small screen - 800px)", () => {
   beforeEach(() => {

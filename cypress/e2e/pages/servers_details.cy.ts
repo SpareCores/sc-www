@@ -1,8 +1,9 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../support/generics";
 
 describe("Server Details", () => {
   it("Server with price", () => {
-    E2EEvent.visitURL("/server/aws/c6g.large", 4000);
+    E2EEvent.visitURL("/server/aws/c6g.large");
+    E2EEvent.waitForServerDetails();
 
     E2EEvent.checkBreadcrumbs();
 
@@ -25,6 +26,7 @@ describe("Server Details", () => {
     E2EEvent.isNotFound("availability_less");
 
     E2EEvent.isVisibleAndNotEmpty(`[id="price_chart"]`);
+    E2EEvent.waitForCharts(`[id="price_chart"]`);
 
     E2EEvent.isVisibleAndNotEmpty(`[id="bw_mem_chart"]`);
 
@@ -42,7 +44,8 @@ describe("Server Details", () => {
   });
 
   it("Server without price and charts", () => {
-    E2EEvent.visitURL("/server/gcp/x4-megamem-1440-metal", 4000);
+    E2EEvent.visitURL("/server/gcp/x4-megamem-1440-metal");
+    E2EEvent.waitForServerDetails();
 
     E2EEvent.checkBreadcrumbs();
 

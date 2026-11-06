@@ -5,16 +5,15 @@ import {
   loadAdvisorExample,
   openBookmarksPage,
   openPageHeaderSaveModal,
-} from "../support/bookmarks";
+} from "../../support/bookmarks";
 import {
-  clerkTestEmail,
-  deleteClerkTestUser,
-  randomClerkTestPassword,
-  registerClerkTestUser,
+  ensureClerkTestSession,
   skipWithoutClerk,
-} from "../support/clerk-testing";
-import { mockCollectionsApi } from "../support/collections-mock";
-import { E2EEvent } from "../support/generics";
+  waitForClerk,
+  withRegisteredClerkTestUser,
+} from "../../support/clerk-testing";
+import { mockCollectionsApi } from "../../support/collections-mock";
+import { E2EEvent } from "../../support/generics";
 
 type SaveSource = {
   label: string;
@@ -26,17 +25,17 @@ const SAVE_SOURCES: SaveSource[] = [
   {
     label: "server search",
     modalId: "server-listing-save-search-modal",
-    open: () => E2EEvent.visitURL(SERVERS_FILTERED_URL, 4000),
+    open: () => E2EEvent.visitURL(SERVERS_FILTERED_URL),
   },
   {
     label: "database search",
     modalId: "database-listing-save-search-modal",
-    open: () => E2EEvent.visitURL(DATABASES_FILTERED_URL, 4000),
+    open: () => E2EEvent.visitURL(DATABASES_FILTERED_URL),
   },
   {
     label: "server comparison",
     modalId: "server-compare-save-modal",
-    open: () => E2EEvent.visitURL(SERVER_COMPARE_URL, 4000),
+    open: () => E2EEvent.visitURL(SERVER_COMPARE_URL),
   },
   {
     label: "advisor assessment",
@@ -66,6 +65,7 @@ function saveFromPageHeader(
   note: string,
 ): void {
   source.open();
+  waitForClerk();
   openPageHeaderSaveModal(source.modalId);
   fillAndConfirmModal(source.modalId, name, note);
 }
@@ -77,20 +77,12 @@ function bookmarkCard(name: string) {
 }
 
 describe("Bookmarks behaviour", () => {
-  const email = clerkTestEmail("bookmarks");
-  const password = randomClerkTestPassword();
-
   skipWithoutClerk();
+  const user = withRegisteredClerkTestUser("bookmarks");
 
   beforeEach(() => {
     mockCollectionsApi();
-    cy.session(["auth-bookmarks-clerk-test", email], () => {
-      registerClerkTestUser(email, password);
-    });
-  });
-
-  after(() => {
-    deleteClerkTestUser(email);
+    ensureClerkTestSession(user);
   });
 
   SAVE_SOURCES.forEach((source) => {

@@ -1,4 +1,4 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../support/generics";
 
 describe("Dropdowns", () => {
   it("closes a header dropdown on Escape and restores focus", () => {
@@ -82,7 +82,8 @@ describe("Dropdowns", () => {
 
   it("flips the page-size dropdown above its trigger near the viewport bottom", () => {
     cy.viewport(1440, 600);
-    E2EEvent.visitURL("/servers", 4000);
+    E2EEvent.visitURL("/servers");
+    E2EEvent.waitForListingResults("servers_table");
 
     cy.get("#pagesize_button").click({ scrollBehavior: "bottom" });
 

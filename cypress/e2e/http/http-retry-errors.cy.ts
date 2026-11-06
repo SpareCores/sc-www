@@ -1,4 +1,4 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../support/generics";
 
 // Match Keeper API only — never the Angular document on :4200.
 const SERVERS_SEARCH_ROUTE =
@@ -45,7 +45,7 @@ function clientNavigate(path: string) {
 }
 
 function waitForMatchingStatus(
-  alias: string,
+  alias: `@${string}`,
   getUrl: () => string | undefined,
   statusCheck: (statusCode: number) => boolean,
 ) {
@@ -67,7 +67,11 @@ describe("HTTP retry errors", () => {
   // Full SSR visits hydrate from HttpTransferCache, so Cypress never sees
   // those GETs. Bootstrap on `/`, then SPA-navigate so requests hit the wire.
   beforeEach(() => {
-    E2EEvent.visitURL("/", 1000);
+    cy.intercept({ method: "GET", url: SERVERS_SEARCH_ROUTE }).as(
+      "landingServersSearch",
+    );
+    E2EEvent.visitURL("/");
+    cy.wait("@landingServersSearch", { timeout: API_WAIT_MS });
   });
 
   it("retries 408 then loads /servers", () => {
