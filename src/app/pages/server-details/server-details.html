@@ -169,8 +169,16 @@
 
     @if (serverDetails) {
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
-        <div class="my-2 w-full">
+        <div class="my-2 w-full flex justify-between items-center">
           <h2 class="text-3xl font-bold">Specifications</h2>
+          <sc-button
+            label="Embed chart"
+            icon="copy"
+            iconPosition="end"
+            variant="outline"
+            data-ph-capture-attribute-sc-event="server details embed chart open"
+            (click)="openModal()"
+          ></sc-button>
         </div>
         <sc-server-property-card
           cardTitle="Server Metadata"
@@ -180,112 +188,11 @@
           [isOpen]="expandedCards.details"
           (toggleRequested)="toggleCard('details')"
         ></sc-server-property-card>
-        <div
-          class="sc-chart-block sc-chart-block--half"
-          id="availability"
-          [class.sc-chart-block--open]="expandedCards.availability"
-        >
-          <h3 class="text-2xl">Availability</h3>
-          <table class="sc-kv-table w-full">
-            <thead>
-              <tr>
-                <th>REGION / ID</th>
-                <th>SPOT</th>
-                <th>ONDEMAND</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (
-                region of availabilityRegions;
-                track region.vendor_id + "_" + region.region_id
-              ) {
-                <tr
-                  class="availability_line"
-                  [class.opacity-60]="region.inactive"
-                >
-                  <td>
-                    <div class="flex items-center gap-1">
-                      <span>
-                        <b>{{ region.display_name }}</b> /
-                        {{ region.api_reference }}
-                      </span>
-                      @if (region.inactive) {
-                        @let inactivePriceNote =
-                          getInactivePriceNote(region.inactiveObservedAt);
-                        <button
-                          type="button"
-                          class="inline-flex"
-                          [attr.aria-label]="inactivePriceNote"
-                          (mouseenter)="
-                            showWarningTooltip($event, inactivePriceNote)
-                          "
-                          (mouseleave)="hideWarningTooltip()"
-                          (focus)="
-                            showWarningTooltip($event, inactivePriceNote)
-                          "
-                          (blur)="hideWarningTooltip()"
-                        >
-                          <svg
-                            lucideTriangleAlert
-                            class="benchmark-note-icon"
-                          ></svg>
-                        </button>
-                      }
-                    </div>
-                  </td>
-                  @if (region["spot"].price) {
-                    <td>
-                      {{ region["spot"].price }}
-                      {{ region["spot"].currency }}/{{
-                        region["spot"].unit | reduceUnitName
-                      }}
-                    </td>
-                  }
-                  @if (!region["spot"].price) {
-                    <td>-</td>
-                  }
-                  @if (region["ondemand"].price) {
-                    <td>
-                      {{ region["ondemand"].price }}
-                      {{ region["ondemand"].currency }}/{{
-                        region["ondemand"].unit | reduceUnitName
-                      }}
-                    </td>
-                  }
-                  @if (!region["ondemand"].price) {
-                    <td>-</td>
-                  }
-                </tr>
-              }
-            </tbody>
-          </table>
-          @if (availabilityRegions.length > 7 && !expandedCards.availability) {
-            <div
-              class="absolute bottom-0 left-0 w-full py-3 flex justify-center bg-linear-to-t from-sky-975 from-[23.44%] to-transparent"
-              id="availability_more"
-            >
-              <sc-button
-                label="Show more"
-                size="small"
-                id="availability_more_button"
-                [ariaExpanded]="false"
-                data-ph-capture-attribute-sc-event="server details show more availability"
-                (click)="toggleCard('availability', false)"
-              ></sc-button>
-            </div>
-          }
-          @if (availabilityRegions.length > 7 && expandedCards.availability) {
-            <div class="w-full pt-3 flex justify-center" id="availability_less">
-              <sc-button
-                label="Show less"
-                size="small"
-                [ariaExpanded]="true"
-                data-ph-capture-attribute-sc-event="server details show less availability"
-                (click)="toggleCard('availability', false)"
-              ></sc-button>
-            </div>
-          }
-        </div>
+        <sc-server-availability-card
+          [regions]="availabilityRegions"
+          [isOpen]="expandedCards.availability"
+          (toggleRequested)="toggleCard('availability', false)"
+        ></sc-server-availability-card>
         <sc-server-property-card
           cardTitle="Processor"
           cardId="processor"
@@ -317,7 +224,7 @@
               ngSkipHydration
               [vendorId]="serverDetails.vendor_id"
               [apiReference]="serverDetails.api_reference"
-              (svgExists)="lstopoSvgExists = $event"
+              (svgExists)="onLstopoSvgExists($event)"
               (svgWidth)="lstopoSvgWidth = $event"
             ></sc-server-lstopo>
           </div>
@@ -438,15 +345,8 @@
           }
         </div>
         @if (serverDetails.benchmark_scores.length) {
-          <div class="my-2 w-full flex justify-between items-center">
+          <div class="my-2 w-full">
             <h2 class="text-3xl font-bold">Performance</h2>
-            <sc-button
-              label="Embed chart"
-              icon="copy"
-              iconPosition="end"
-              variant="outline"
-              (click)="openModal()"
-            ></sc-button>
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
@@ -650,7 +550,7 @@
   <sc-modal
     id="embed-charts-modal"
     title="Embed Chart"
-    size="4xl"
+    size="wide"
     closeCaptureEvent="embed chart modal close"
     closeCaptureAction="close"
   >
@@ -659,7 +559,7 @@
         <sc-server-embed-dialog
           [id]="serverDetails.api_reference"
           [vendor]="serverDetails.vendor_id"
-          [charts]="embeddableCharts"
+          [charts]="visibleEmbeddableCharts"
         >
         </sc-server-embed-dialog>
       }
@@ -711,29 +611,10 @@
     </div>
     @if (serverDescription && isSummarizeModalOpen) {
       <div class="summarize-modal-body p-4 md:p-6 max-h-[70vh] overflow-y-auto">
-        @if (serverDescription.bullet_points.length) {
-          <div class="summarize-modal-highlights">
-            <h3 class="text-lg font-semibold text-white mb-3">
-              Key highlights
-            </h3>
-            <ul class="summarize-modal-bullets">
-              @for (point of serverDescription.bullet_points; track point) {
-                <li>{{ point }}</li>
-              }
-            </ul>
-          </div>
-        }
-        @for (paragraph of serverDescription.page; track $index) {
-          <p class="summarize-modal-paragraph">{{ paragraph }}</p>
-        }
+        <sc-server-description-summary
+          [description]="serverDescription"
+        ></sc-server-description-summary>
       </div>
     }
   </sc-modal>
 </ng-template>
-
-<div
-  #warningTooltip
-  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
->
-  {{ warningTooltipContent() }}
-</div>

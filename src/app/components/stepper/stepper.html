@@ -1,0 +1,41 @@
+<button
+  type="button"
+  class="sc-stepper__button"
+  [attr.aria-label]="decreaseLabel()"
+  [attr.aria-controls]="controls()"
+  [disabled]="!canDecrement()"
+  [attr.data-ph-capture-attribute-sc-event]="captureEvent()"
+  [attr.data-ph-capture-attribute-stepper-action]="
+    captureEvent() ? 'decrement' : null
+  "
+  (mousedown)="$event.preventDefault()"
+  (pointerdown)="startRepeat(-1, $event)"
+  (pointerup)="stopRepeat()"
+  (pointerleave)="stopRepeat()"
+  (pointercancel)="stopRepeat()"
+  (click)="onKeyboardClick(-1, $event)"
+>
+  <svg lucideMinus class="h-4 w-4"></svg>
+</button>
+<div class="sc-stepper__field" [class.sc-stepper__field--dirty]="dirty()">
+  <ng-content></ng-content>
+</div>
+<button
+  type="button"
+  class="sc-stepper__button"
+  [attr.aria-label]="increaseLabel()"
+  [attr.aria-controls]="controls()"
+  [disabled]="!canIncrement()"
+  [attr.data-ph-capture-attribute-sc-event]="captureEvent()"
+  [attr.data-ph-capture-attribute-stepper-action]="
+    captureEvent() ? 'increment' : null
+  "
+  (mousedown)="$event.preventDefault()"
+  (pointerdown)="startRepeat(1, $event)"
+  (pointerup)="stopRepeat()"
+  (pointerleave)="stopRepeat()"
+  (pointercancel)="stopRepeat()"
+  (click)="onKeyboardClick(1, $event)"
+>
+  <svg lucidePlus class="h-4 w-4"></svg>
+</button>

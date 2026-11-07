@@ -28,6 +28,7 @@
         }
       </h3>
       <sc-button
+        class="min-w-0"
         #primaryDropdown="scDropdown"
         [id]="buttonId"
         [scDropdown]="primaryPanel"
@@ -40,7 +41,7 @@
       ></sc-button>
     </div>
     @if (chartData() && isBrowserEnvironment()) {
-      <div class="h-full">
+      <div class="min-h-0 flex-1">
         <div class="chart_div" chartType="bar">
           <canvas
             baseChart
@@ -61,6 +62,7 @@
     >
       @if (hasSecondaryOptions()) {
         <sc-button
+          class="min-w-0"
           #secondaryDropdown="scDropdown"
           [id]="secondaryButtonId"
           [scDropdown]="secondaryPanel"
@@ -73,6 +75,7 @@
         ></sc-button>
       }
       <sc-button
+        class="min-w-0"
         #primaryDropdown="scDropdown"
         [id]="buttonId"
         [scDropdown]="primaryPanel"

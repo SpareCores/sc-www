@@ -1,13 +1,8 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { Component, PLATFORM_ID, inject, input, output } from "@angular/core";
 import type { TemplateRef } from "@angular/core";
-import {
-  LucideDynamicIcon,
-  LucideInfo,
-  LucideMinus,
-  LucidePlus,
-  LucideX,
-} from "@lucide/angular";
+import { LucideDynamicIcon, LucideInfo, LucideX } from "@lucide/angular";
+import { Stepper } from "../../../stepper/stepper";
 import { formatNumberInputValue } from "../../../../pipes/pipe-utils";
 import type {
   SearchBarBenchmarkConfigOption,
@@ -35,14 +30,7 @@ import {
 
 @Component({
   selector: "sc-search-bar-custom-controls",
-  imports: [
-    CommonModule,
-    LucideDynamicIcon,
-    LucideInfo,
-    LucideMinus,
-    LucidePlus,
-    LucideX,
-  ],
+  imports: [CommonModule, LucideDynamicIcon, LucideInfo, Stepper, LucideX],
   templateUrl: "./search-bar-custom-controls.html",
 })
 export class SearchBarCustomControls {
