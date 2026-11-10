@@ -8,7 +8,7 @@ import {
 describe("Visual regression tests", () => {
   registerVisualSuites("desktop");
 
-  it("should compare screenshot of embedded server chart", () => {
+  it("should compare screenshot of embedded server widget", () => {
     E2EEvent.visitURL("/embed/server/gcp/t2d-standard-1/geek_single");
 
     cy.get("sc-server-charts canvas").should("be.visible");
@@ -16,12 +16,12 @@ describe("Visual regression tests", () => {
     E2EEvent.loadImagesForScreenshot(".sc-chart-embed img");
 
     compareVisualSnapshot(
-      "embedded-server-chart-gcp-t2d-standard-1-geek-single",
+      "embedded-server-widget-gcp-t2d-standard-1-geek-single",
       "desktop",
     );
   });
 
-  it("should compare screenshot of embedded compare chart", () => {
+  it("should compare screenshot of embedded compare widget", () => {
     E2EEvent.visitURL(
       `/embed/compare/generic?instances=${SERVER_COMPARE_INSTANCES}`,
     );
@@ -40,7 +40,7 @@ describe("Visual regression tests", () => {
     E2EEvent.loadImagesForScreenshot(".sc-chart-embed img");
 
     compareVisualSnapshot(
-      "embedded-compare-chart-aws-a1-medium-c6gd-medium-generic",
+      "embedded-compare-widget-aws-a1-medium-c6gd-medium-generic",
       "desktop",
     );
   });

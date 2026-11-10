@@ -37,6 +37,7 @@
         </h3>
         @if (layout() === "details" && profileDropdownItems().length) {
           <sc-button
+            class="min-w-0"
             #profileDropdown="scDropdown"
             [id]="profileButtonId"
             [scDropdown]="profilePanel"

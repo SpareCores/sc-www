@@ -283,68 +283,6 @@
     font-size: 0.65rem;
     line-height: 1;
   }
-
-  .custom-stepper {
-    display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
-    gap: 0.75rem;
-    align-items: center;
-  }
-
-  .custom-stepper__field {
-    @apply rounded-lg border border-solid border-emerald-400 bg-gray-200 px-4 text-sky-950;
-
-    min-height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition:
-      box-shadow 150ms ease,
-      border-color 150ms ease,
-      background-color 150ms ease;
-  }
-
-  .custom-stepper__field.filter-draft-input--dirty {
-    @apply border-yellow-500;
-    background-color: color-mix(
-      in oklab,
-      var(--color-yellow-500) 25%,
-      var(--color-white)
-    );
-  }
-
-  .custom-stepper__field:focus-within {
-    box-shadow: 0 0 0 2px var(--color-emerald-400);
-  }
-
-  .custom-stepper__field.filter-draft-input--dirty:focus-within {
-    box-shadow: 0 0 0 2px var(--color-yellow-500);
-  }
-
-  .custom-stepper__button {
-    @apply rounded-lg border border-solid border-emerald-400 bg-secondary text-emerald-400 transition-colors duration-150 hover:bg-emerald-400 hover:text-white disabled:cursor-not-allowed disabled:border-gray-600 disabled:bg-primary disabled:text-gray-500;
-
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .custom-stepper__input {
-    @apply bg-transparent px-0 py-0 text-center text-sm font-semibold text-sky-950 outline-hidden;
-
-    min-width: 1.5ch;
-    max-width: 100%;
-    border: 0;
-    flex: 0 1 auto;
-  }
-
-  .custom-stepper__unit {
-    @apply pointer-events-none text-xs font-semibold text-sky-800;
-
-    position: static;
-    transform: none;
-  }
 }
 
 .search-bar--borderless .search_bar_content .filters {

@@ -36,6 +36,8 @@ import {
   isKeyboardActivation,
 } from "./dropdown-focus";
 
+const FIT_VIEWPORT_MARGIN = 16;
+
 @Directive({
   selector: "[scDropdown]",
   exportAs: "scDropdown",
@@ -56,6 +58,7 @@ export class Dropdown {
   dropdownFlip = input(false);
   dropdownPlacement = input<DropdownPlacement>("bottom-end");
   dropdownTriggerType = input<"click" | "none">("click");
+  dropdownMinHeight = input<number | null>(null);
 
   dropdownOpened = output<void>();
 
@@ -207,13 +210,17 @@ export class Dropdown {
   }
 
   private createOverlay(): OverlayRef {
+    const minHeight = this.dropdownMinHeight();
     this.positionStrategy = createFlexibleConnectedPositionStrategy(
       this.injector,
       this.host,
-    ).withFlexibleDimensions(false);
+    )
+      .withFlexibleDimensions(minHeight !== null)
+      .withViewportMargin(minHeight !== null ? FIT_VIEWPORT_MARGIN : 0);
 
     const overlayRef = createOverlayRef(this.injector, {
       positionStrategy: this.positionStrategy,
+      minHeight: minHeight ?? undefined,
       scrollStrategy: createRepositionScrollStrategy(this.injector),
     });
 

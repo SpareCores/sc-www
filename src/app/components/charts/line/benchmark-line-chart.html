@@ -36,6 +36,7 @@
       </h3>
       @if (hasSelector()) {
         <sc-button
+          class="min-w-0"
           #selectorDropdown="scDropdown"
           [id]="buttonId"
           [scDropdown]="selectorPanel"
@@ -48,7 +49,7 @@
       }
     </div>
     @if (resolvedChartData() && isBrowser) {
-      <div class="h-full">
+      <div class="min-h-0 flex-1">
         <div class="chart_div" [attr.chartType]="chartType()">
           @if (chartType() === "line") {
             <canvas
@@ -78,6 +79,7 @@
     @if (hasSelector()) {
       <div class="flex justify-end items-center">
         <sc-button
+          class="min-w-0"
           #selectorDropdown="scDropdown"
           [id]="buttonId"
           [scDropdown]="selectorPanel"
@@ -90,7 +92,7 @@
       </div>
     }
     @if (resolvedChartData() && isBrowser) {
-      <div class="h-full">
+      <div class="min-h-0 flex-1">
         <div class="chart_div" [attr.chartType]="chartType()">
           @if (chartType() === "line") {
             <canvas

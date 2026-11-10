@@ -59,7 +59,7 @@ describe("Advisor page", () => {
       "",
     );
     cy.get('[id="custom_control_numeric_minimum_memory"]')
-      .siblings(".custom-stepper__unit")
+      .siblings(".sc-stepper__unit")
       .should("contain.text", "GiB");
     cy.contains("CPU allocation (...)").should("not.exist");
     cy.contains("CPU architecture (...)").should("not.exist");

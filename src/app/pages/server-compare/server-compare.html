@@ -37,7 +37,7 @@
         >
           @if (instances.length) {
             <sc-button
-              label="Embed chart"
+              label="Embed Widget"
               icon="copy"
               iconPosition="end"
               variant="outline"
@@ -349,16 +349,16 @@
 <ng-template #embedModalTemplate>
   <sc-modal
     id="embed-compare-modal"
-    title="Embed Chart"
+    title="Embed Widget"
     size="wide"
-    closeCaptureEvent="embed chart modal close"
+    closeCaptureEvent="embed widget modal close"
     closeCaptureAction="close"
   >
     @if (instancesRaw) {
       <div class="space-y-4 flex flex-col">
         <sc-compare-embed-dialog
           [instances]="instancesRaw"
-          [charts]="embeddableCharts"
+          [widgets]="embeddableWidgets"
         >
         </sc-compare-embed-dialog>
       </div>
