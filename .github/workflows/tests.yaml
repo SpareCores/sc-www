@@ -223,32 +223,26 @@ jobs:
         run: test "${{ needs.cypress-shard.result }}" = "success"
 
   cypress-timings:
-    needs: [build, cypress-shard]
+    needs: cypress-shard
     if: ${{ !cancelled() && needs.cypress-shard.result != 'skipped' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6.0.2
       - uses: actions/setup-node@v7.1.0
         with:
           node-version: 24
           check-latest: true
-      - name: Download previous Cypress spec timings
-        if: needs.build.outputs.has-timings == 'true'
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: cypress-split-timings
-          path: timings-previous
       - uses: actions/download-artifact@v7.0.0
         with:
           pattern: cypress-timings-*
           path: timings-shards
       - name: Merge spec timings
         run: |
-          node .github/scripts/merge-cypress-timings.mjs \
-            timings-previous/timings.json \
-            timings-shards \
-            cypress/timings.json
+          mkdir -p cypress
+          npx --yes -p cypress-split@1.25.0 cypress-split-merge \
+            --parent-folder timings-shards \
+            --split-file timings-shard.json \
+            --output cypress/timings.json
       - name: Save Cypress spec timings
         uses: actions/cache/save@v6.1.0
         with:
