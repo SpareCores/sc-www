@@ -6,6 +6,8 @@ const SERVERS_SEARCH_ROUTE =
 const EXHAUSTION_TOAST_TIMEOUT_MS = 30000;
 const API_WAIT_MS = 30000;
 
+const navigation = { started: false };
+
 type SequenceResponse = {
   statusCode: number;
   body?: unknown;
@@ -21,6 +23,11 @@ function interceptSequence(
   let attempt = 0;
 
   cy.intercept({ method, url }, (req) => {
+    if (!navigation.started) {
+      req.continue();
+      return;
+    }
+
     if (attempt >= responses.length) {
       throw new Error(
         `Unexpected request #${attempt + 1} for ${alias}; expected at most ${responses.length}`,
@@ -39,6 +46,7 @@ function interceptSequence(
 
 function clientNavigate(path: string) {
   cy.window().then((win) => {
+    navigation.started = true;
     win.history.pushState({}, "", path);
     win.dispatchEvent(new PopStateEvent("popstate"));
   });
@@ -67,6 +75,7 @@ describe("HTTP retry errors", () => {
   // Full SSR visits hydrate from HttpTransferCache, so Cypress never sees
   // those GETs. Bootstrap on `/`, then SPA-navigate so requests hit the wire.
   beforeEach(() => {
+    navigation.started = false;
     cy.intercept({ method: "GET", url: SERVERS_SEARCH_ROUTE }).as(
       "landingServersSearch",
     );
@@ -79,6 +88,11 @@ describe("HTTP retry errors", () => {
     let anchorAttempts = 0;
 
     cy.intercept({ method: "GET", url: SERVERS_SEARCH_ROUTE }, (req) => {
+      if (!navigation.started) {
+        req.continue();
+        return;
+      }
+
       if (anchorUrl === undefined) {
         anchorUrl = req.url;
       }
@@ -117,6 +131,11 @@ describe("HTTP retry errors", () => {
     let anchorAttempts = 0;
 
     cy.intercept({ method: "GET", url: SERVERS_SEARCH_ROUTE }, (req) => {
+      if (!navigation.started) {
+        req.continue();
+        return;
+      }
+
       if (anchorUrl === undefined) {
         anchorUrl = req.url;
       }
