@@ -174,8 +174,7 @@ jobs:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: cypress/timings.json
-          SPLIT_OUTPUT_FILE: cypress/timings-shard.json
-          SPLIT_TIME_THRESHOLD: "1000000"
+          SHARD_TIMINGS_FILE: cypress/timings-shard.json
           NG_APP_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY_TESTING }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY_TESTING }}
       - uses: actions/upload-artifact@v7.0.1
@@ -224,7 +223,7 @@ jobs:
         run: test "${{ needs.cypress-shard.result }}" = "success"
 
   cypress-timings:
-    needs: cypress-shard
+    needs: [build, cypress-shard]
     if: ${{ !cancelled() && needs.cypress-shard.result != 'skipped' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -234,31 +233,22 @@ jobs:
         with:
           node-version: 24
           check-latest: true
-          cache: npm
-      - name: Install modules
-        run: npm ci --no-audit --no-fund
-        env:
-          CYPRESS_INSTALL_BINARY: 0
-      - name: Restore Cypress spec timings
-        uses: actions/cache/restore@v6.1.0
+      - name: Download previous Cypress spec timings
+        if: needs.build.outputs.has-timings == 'true'
+        uses: actions/download-artifact@v7.0.0
         with:
-          path: cypress/timings.json
-          key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: cypress-timings-
+          name: cypress-split-timings
+          path: timings-previous
       - uses: actions/download-artifact@v7.0.0
         with:
           pattern: cypress-timings-*
           path: timings-shards
       - name: Merge spec timings
         run: |
-          if [ -f cypress/timings.json ]; then
-            mkdir -p timings-shards/previous
-            cp cypress/timings.json timings-shards/previous/timings-shard.json
-          fi
-          npx cypress-split-merge \
-            --parent-folder timings-shards \
-            --split-file timings-shard.json \
-            --output cypress/timings.json
+          node .github/scripts/merge-cypress-timings.mjs \
+            timings-previous/timings.json \
+            timings-shards \
+            cypress/timings.json
       - name: Save Cypress spec timings
         uses: actions/cache/save@v6.1.0
         with:
