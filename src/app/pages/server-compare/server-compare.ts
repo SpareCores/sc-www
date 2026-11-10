@@ -11,6 +11,7 @@ import {
   viewChild,
   OnDestroy,
   DOCUMENT,
+  afterRenderEffect,
   effect,
   inject,
   signal,
@@ -186,7 +187,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
-  @ViewChild("comparesDiv") comparesDiv!: ElementRef;
+  private comparesDiv = viewChild<ElementRef>("comparesDiv");
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
@@ -404,7 +405,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   showZoneIds = false;
 
   private subscription = new Subscription();
-  private checkExistInterval: ReturnType<typeof setInterval> | null = null;
   private readonly pendingSaveComparisonClose = signal(false);
   private readonly editingComparisonId = signal<string | null>(null);
 
@@ -465,6 +465,14 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
         this.saveComparisonModal()?.close();
       }
     });
+
+    afterRenderEffect({
+      write: () => {
+        if (this.comparesDiv()) {
+          this.prismService.highlightAll();
+        }
+      },
+    });
   }
 
   ngOnInit() {
@@ -503,11 +511,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-
-    if (this.checkExistInterval !== null) {
-      clearInterval(this.checkExistInterval);
-      this.checkExistInterval = null;
-    }
 
     this.embedDialogRef?.close();
     this.stickyLayout.destroy();
@@ -853,18 +856,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
         });
     } else {
       this.isLoading = false;
-    }
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.checkExistInterval = setInterval(() => {
-        if (this.comparesDiv) {
-          this.prismService.highlightAll();
-          if (this.checkExistInterval !== null) {
-            clearInterval(this.checkExistInterval);
-            this.checkExistInterval = null;
-          }
-        }
-      }, 100);
     }
   }
 
