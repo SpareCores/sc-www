@@ -9,6 +9,7 @@ image: /assets/images/blog/thumbnails/postgresql-contour.webp
 image_alt: PostgreSQL logo, depicting a blue elephant on a transparent background.
 author: Adam Toth
 tags: [benchmark, performance, scalability, score]
+glossary: [benchmark-pgbench-postgres]
 ---
 
 Our [Navigator](/servers) project publishes performance measurements for 5000+
