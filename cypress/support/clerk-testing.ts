@@ -47,6 +47,11 @@ export function waitForClerk(): void {
   });
 }
 
+export function visitWithClerk(url: string): void {
+  E2EEvent.visitURL(url);
+  waitForClerk();
+}
+
 export function openGuestAuthButton(label: "Register" | "Log in"): void {
   const findVisibleButton = ($body: JQuery<HTMLElement>) =>
     $body.find("button").filter((_, el) => {
@@ -86,8 +91,7 @@ export function expectAuthModalStep(title: string): void {
 
 function openGuestAuthModal(label: "Register" | "Log in", title: string): void {
   bypassClerkBotProtection();
-  E2EEvent.visitURL("/");
-  waitForClerk();
+  visitWithClerk("/");
   openGuestAuthButton(label);
   expectAuthModalStep(title);
 }
@@ -226,8 +230,7 @@ async function completeClerkPasswordSignIn(
 
 export function signInClerkTestUser(user: ClerkTestUser): void {
   bypassClerkBotProtection();
-  E2EEvent.visitURL("/");
-  waitForClerk();
+  visitWithClerk("/");
   cy.window().then({ timeout: 30000 }, (win) =>
     completeClerkPasswordSignIn(win, user),
   );

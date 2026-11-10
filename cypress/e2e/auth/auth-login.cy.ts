@@ -14,7 +14,7 @@ import {
   signOutClerkTestUser,
   skipWithoutClerk,
   submitLoginForm,
-  waitForClerk,
+  visitWithClerk,
   withRegisteredClerkTestUser,
 } from "../../support/clerk-testing";
 import {
@@ -43,8 +43,7 @@ function expectLoginRejected(email: string, password: string): void {
 }
 
 function expectRedirectedFromBookmarks(): void {
-  E2EEvent.visitURL("/bookmarks");
-  waitForClerk();
+  visitWithClerk("/bookmarks");
   cy.url().should("eq", E2EEvent.buildAbsoluteURL("/"));
 }
 
@@ -61,8 +60,7 @@ describe("Clerk email login", () => {
   it("signs in an existing user and lets them open bookmarks", () => {
     loginClerkTestUser(user.email, user.password);
 
-    E2EEvent.visitURL("/bookmarks");
-    waitForClerk();
+    visitWithClerk("/bookmarks");
     expectSignedIn();
     cy.get("#bookmarks-name-search").should("be.visible");
     cy.location("pathname").should("eq", "/bookmarks");
@@ -75,8 +73,7 @@ describe("Clerk email login", () => {
       "favoriteServers",
     );
 
-    E2EEvent.visitURL("/servers");
-    waitForClerk();
+    visitWithClerk("/servers");
     expectSignedIn();
     cy.wait("@favoriteServers");
     cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible").click();

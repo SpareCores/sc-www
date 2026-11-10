@@ -1,9 +1,6 @@
 import { SERVER_COMPARE_URL } from "../../support/bookmarks";
 import { E2EEvent } from "../../support/generics";
 
-const hasTableRows = (selector: string) => () =>
-  cy.get(`${selector} tbody tr`).should("have.length.at.least", 1);
-
 const PAGES: { url: string; check: () => void }[] = [
   { url: "/", check: () => E2EEvent.isVisible("#slot-machine") },
   {
@@ -11,7 +8,10 @@ const PAGES: { url: string; check: () => void }[] = [
     check: () => E2EEvent.waitForListingResults("servers_table"),
   },
   { url: "/advisor", check: () => E2EEvent.isVisible("#serverSearchBar") },
-  { url: "/server_prices", check: hasTableRows("#server_prices_table") },
+  {
+    url: "/server_prices",
+    check: () => E2EEvent.waitForListingLoaded("server_prices_table"),
+  },
   {
     url: "/vendors",
     check: () => cy.contains("h1", "Supported Vendors").should("be.visible"),
@@ -40,7 +40,7 @@ const PAGES: { url: string; check: () => void }[] = [
     url: SERVER_COMPARE_URL,
     check: () => E2EEvent.waitForServerCompare(),
   },
-  { url: "/legal", check: hasTableRows("table.sc-table") },
+  { url: "/legal", check: () => E2EEvent.waitForTableRows("table.sc-table") },
   {
     url: "/legal/terms-of-service",
     check: () => E2EEvent.isVisibleAndNotEmpty(".sc-prose"),
@@ -51,7 +51,7 @@ const PAGES: { url: string; check: () => void }[] = [
   },
   {
     url: "/navigator/benchmark-coverage",
-    check: hasTableRows("table.sc-table"),
+    check: () => E2EEvent.waitForTableRows("table.sc-table"),
   },
   {
     url: "/navigator/benchmark-workloads",

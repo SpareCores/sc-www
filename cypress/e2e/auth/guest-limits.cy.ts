@@ -1,10 +1,4 @@
-import { skipWithoutClerk, waitForClerk } from "../../support/clerk-testing";
-import { E2EEvent } from "../../support/generics";
-
-function visitAsGuest(url: string): void {
-  E2EEvent.visitURL(url);
-  waitForClerk();
-}
+import { skipWithoutClerk, visitWithClerk } from "../../support/clerk-testing";
 
 function assertRegisterModalOpened(): void {
   cy.get(".auth-modal__title").should("contain.text", "Create your account");
@@ -41,7 +35,7 @@ describe("Guest feature limits", () => {
   skipWithoutClerk();
 
   it("opens register from the server compare limit toast", () => {
-    visitAsGuest("/servers");
+    visitWithClerk("/servers");
     cy.get('[id^="server_compare_checkbox_"]')
       .should("have.length.at.least", 4)
       .then(($boxes) => {
@@ -54,7 +48,7 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from the database compare limit toast", () => {
-    visitAsGuest("/databases");
+    visitWithClerk("/databases");
     cy.get('[id^="database_compare_checkbox_"]')
       .should("have.length.at.least", 4)
       .then(($boxes) => {
@@ -67,7 +61,7 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from the country limit toast", () => {
-    visitAsGuest("/servers");
+    visitWithClerk("/servers");
     expandCollapsedFilterCategories();
     expandGeoSection('[id="filter_title_countries"]');
 
@@ -82,7 +76,7 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from the region limit toast", () => {
-    visitAsGuest("/servers");
+    visitWithClerk("/servers");
     expandCollapsedFilterCategories();
     expandGeoSection('[id="filter_title_vendor_regions"]');
 
@@ -99,7 +93,7 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from a listing bookmark button", () => {
-    visitAsGuest("/servers");
+    visitWithClerk("/servers");
     cy.get("sc-bookmark-button button.bookmark-button--locked")
       .first()
       .should("be.visible")
@@ -108,13 +102,13 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from the listing page-header bookmark", () => {
-    visitAsGuest("/servers");
+    visitWithClerk("/servers");
     cy.get("button.page-header__bookmark--locked").should("be.visible").click();
     assertRegisterModalOpened();
   });
 
   it("opens register from a details bookmark button", () => {
-    visitAsGuest("/server/aws/c6g.large");
+    visitWithClerk("/server/aws/c6g.large");
     cy.get("sc-bookmark-button button.bookmark-button--locked")
       .first()
       .should("be.visible")

@@ -45,8 +45,12 @@ export abstract class E2EEvent {
     });
   }
 
+  public static waitForTableRows(selector: string) {
+    cy.get(`${selector} tbody tr`).should("have.length.at.least", 1);
+  }
+
   public static waitForListingLoaded(tableId: string) {
-    cy.get(`#${tableId} tbody tr`).should("have.length.at.least", 1);
+    this.waitForTableRows(`#${tableId}`);
     cy.get(".list_holder sc-loading-spinner").should("not.exist");
   }
 

@@ -19,7 +19,7 @@ import {
   randomClerkTestPassword,
   signOutClerkTestUser,
   skipWithoutClerk,
-  waitForClerk,
+  visitWithClerk,
   withRegisteredClerkTestUser,
 } from "./clerk-testing";
 import { mockCollectionsApi } from "./collections-mock";
@@ -158,8 +158,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
     });
 
     it("compares sign-in modal", () => {
-      E2EEvent.visitURL("/");
-      waitForClerk();
+      visitWithClerk("/");
       openGuestAuthButton("Log in");
       cy.get(".auth-modal__title").should(
         "contain.text",
@@ -170,8 +169,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
     });
 
     it("compares default registration subtitle", () => {
-      E2EEvent.visitURL("/");
-      waitForClerk();
+      visitWithClerk("/");
       openGuestAuthButton("Register");
       cy.get(".auth-modal__title").should(
         "contain.text",
@@ -186,8 +184,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
     });
 
     it("compares feature registration subtitle", () => {
-      E2EEvent.visitURL("/servers");
-      waitForClerk();
+      visitWithClerk("/servers");
       E2EEvent.waitForListingResults("servers_table");
       cy.get("sc-bookmark-button button.bookmark-button--locked")
         .first()
