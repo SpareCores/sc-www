@@ -28,6 +28,7 @@
         }
       </h3>
       <sc-button
+        class="min-w-0"
         #memoryDropdown="scDropdown"
         [id]="buttonId"
         [scDropdown]="memoryPanel"
@@ -39,7 +40,7 @@
       ></sc-button>
     </div>
     @if (isBrowser) {
-      <div class="h-full">
+      <div class="min-h-0 flex-1">
         <div class="chart_div" chartType="bar">
           <canvas
             id="bw_mem_canvas"

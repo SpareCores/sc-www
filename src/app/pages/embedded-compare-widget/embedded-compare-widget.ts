@@ -26,12 +26,12 @@ import {
 } from "../../tools/encoded-url-state";
 
 @Component({
-  selector: "sc-embedded-compare-chart",
+  selector: "sc-embedded-compare-widget",
   imports: [ServerCompareCharts, LucideExternalLink],
-  templateUrl: "./embedded-compare-chart.html",
-  styleUrl: "./embedded-compare-chart.css",
+  templateUrl: "./embedded-compare-widget.html",
+  styleUrl: "./embedded-compare-widget.css",
 })
-export class EmbeddedCompareChart implements OnInit, OnDestroy {
+export class EmbeddedCompareWidget implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandler);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -40,7 +40,7 @@ export class EmbeddedCompareChart implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private toastService = inject(Toast);
 
-  showChart: string = "all";
+  widgetId: string = "all";
 
   instancesRaw = "";
   instances: any[] = [];
@@ -242,10 +242,10 @@ export class EmbeddedCompareChart implements OnInit, OnDestroy {
   }
 
   setup() {
-    const chartname = this.route.snapshot.params["chartname"];
+    const widget = this.route.snapshot.params["widget"];
     const encodedInstances = this.route.snapshot.queryParams["instances"];
 
-    this.showChart = chartname;
+    this.widgetId = widget;
     this.instances = [];
     this.instancesRaw = "";
 
@@ -256,7 +256,7 @@ export class EmbeddedCompareChart implements OnInit, OnDestroy {
 
     this.benchmarkCategories.forEach((category) => {
       category.hidden = !(
-        this.showChart === category.id || this.showChart === "all"
+        this.widgetId === category.id || this.widgetId === "all"
       );
     });
 

@@ -173,18 +173,18 @@ export const routes: Routes = [
   },
 
   {
-    path: "embed/server/:vendor/:id/:chartname",
+    path: "embed/server/:vendor/:id/:widget",
     loadComponent: () =>
-      import("./pages/embedded-server-chart/embedded-server-chart").then(
-        (m) => m.EmbeddedServerChart,
+      import("./pages/embedded-server-widget/embedded-server-widget").then(
+        (m) => m.EmbeddedServerWidget,
       ),
   },
 
   {
-    path: "embed/compare/:chartname",
+    path: "embed/compare/:widget",
     loadComponent: () =>
-      import("./pages/embedded-compare-chart/embedded-compare-chart").then(
-        (m) => m.EmbeddedCompareChart,
+      import("./pages/embedded-compare-widget/embedded-compare-widget").then(
+        (m) => m.EmbeddedCompareWidget,
       ),
   },
 

@@ -1,6 +1,7 @@
 <div
   class="sc-chart-block sc-chart-block--half"
   [class.sc-chart-block--open]="isOpen()"
+  [class.sc-chart-block--scrollable]="!expandable()"
   [attr.id]="cardId()"
   #cardRoot
 >
