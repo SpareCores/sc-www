@@ -71,6 +71,15 @@ function waitForMatchingStatus(
   });
 }
 
+function waitForSuccess(alias: `@${string}`) {
+  cy.wait(alias, { timeout: API_WAIT_MS }).then(({ response }) => {
+    const status = response?.statusCode ?? 0;
+    if (status < 200 || status >= 300) {
+      waitForSuccess(alias);
+    }
+  });
+}
+
 describe("HTTP retry errors", () => {
   // Full SSR visits hydrate from HttpTransferCache, so Cypress never sees
   // those GETs. Bootstrap on `/`, then SPA-navigate so requests hit the wire.
@@ -80,7 +89,7 @@ describe("HTTP retry errors", () => {
       "landingServersSearch",
     );
     E2EEvent.visitURL("/");
-    cy.wait("@landingServersSearch", { timeout: API_WAIT_MS });
+    waitForSuccess("@landingServersSearch");
   });
 
   it("retries 408 then loads /servers", () => {
