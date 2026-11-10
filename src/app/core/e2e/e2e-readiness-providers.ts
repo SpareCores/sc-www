@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
+  ApplicationRef,
   PLATFORM_ID,
-  afterNextRender,
   inject,
   makeEnvironmentProviders,
   provideEnvironmentInitializer,
@@ -33,7 +33,9 @@ function markHydratedForE2E() {
   }
 
   const document = inject(DOCUMENT);
-  afterNextRender(() => {
-    document.documentElement.dataset["scHydrated"] = "true";
-  });
+  inject(ApplicationRef)
+    .whenStable()
+    .then(() => {
+      document.documentElement.dataset["scHydrated"] = "true";
+    });
 }

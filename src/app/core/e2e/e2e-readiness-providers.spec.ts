@@ -18,19 +18,19 @@ describe("provideE2eReadiness", () => {
     return TestBed.inject(ApplicationRef);
   }
 
-  it("marks the document as hydrated after the first render in e2e runs", () => {
+  it("marks the document as hydrated once the app is stable in e2e runs", async () => {
     win[E2E_WINDOW_FLAG] = true;
     const appRef = setup();
 
     expect(document.documentElement.dataset["scHydrated"]).toBeUndefined();
 
-    appRef.tick();
+    await appRef.whenStable();
 
     expect(document.documentElement.dataset["scHydrated"]).toBe("true");
   });
 
-  it("leaves the document unmarked outside e2e runs", () => {
-    setup().tick();
+  it("leaves the document unmarked outside e2e runs", async () => {
+    await setup().whenStable();
 
     expect(document.documentElement.dataset["scHydrated"]).toBeUndefined();
   });
