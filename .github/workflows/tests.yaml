@@ -71,6 +71,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      has-timings: ${{ steps.timings.outputs.found }}
     steps:
       - uses: actions/checkout@v6.0.2
       - uses: actions/setup-node@v7.1.0
@@ -118,12 +120,21 @@ jobs:
           path: cypress/timings.json
           key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: cypress-timings-
+      - name: Check for Cypress spec timings
+        id: timings
+        run: |
+          if [ -f cypress/timings.json ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/upload-artifact@v7.0.1
+        if: steps.timings.outputs.found == 'true'
         with:
           name: cypress-split-timings
           path: cypress/timings.json
           retention-days: 1
-          if-no-files-found: ignore
+          if-no-files-found: error
 
   cypress-shard:
     needs: [eslint, build, unit-tests]
@@ -136,8 +147,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
       - name: Download Cypress spec timings
+        if: needs.build.outputs.has-timings == 'true'
         uses: actions/download-artifact@v7.0.0
-        continue-on-error: true
         with:
           name: cypress-split-timings
           path: cypress
