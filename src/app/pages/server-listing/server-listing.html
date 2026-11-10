@@ -828,7 +828,7 @@
   >
     <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
       @if (!tempSelectedBenchmarkCategory) {
-        <div class="flex gap-2 flex-wrap justify-center">
+        <div class="grid grid-flow-dense grid-cols-3 gap-2">
           <sc-button
             label="All"
             variant="outline"
@@ -840,6 +840,7 @@
               [label]="category"
               variant="outline"
               buttonClass="sc-button--chip"
+              [class.col-span-2]="category.length > 16"
               (click)="selectBenchmarkCategory(category)"
             ></sc-button>
           }

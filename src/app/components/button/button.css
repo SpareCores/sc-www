@@ -423,7 +423,7 @@
 }
 
 .sc-button.sc-button--outline.sc-button--chip {
-  @apply mx-2 w-auto rounded-md border border-emerald-400 bg-transparent px-2 py-2 text-sm text-nowrap text-emerald-400 shadow-xs focus:outline-hidden;
+  @apply rounded-md border border-emerald-400 bg-transparent px-2 py-2 text-sm text-nowrap text-emerald-400 shadow-xs focus:outline-hidden;
   text-wrap: auto;
 }
 
