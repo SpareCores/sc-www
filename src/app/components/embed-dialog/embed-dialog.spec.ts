@@ -40,7 +40,7 @@ describe("EmbedDialog", () => {
   it("shows no snippet or preview until a chart is picked", () => {
     const element: HTMLElement = fixture.nativeElement;
 
-    expect(component.selectedChartName()).toBe("Select a chart");
+    expect(component.selectedChartName()).toBe("Select a widget");
     expect(element.querySelector("iframe")).toBeNull();
     expect(element.querySelector("pre")).toBeNull();
   });

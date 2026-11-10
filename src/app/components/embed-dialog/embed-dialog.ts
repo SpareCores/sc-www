@@ -78,7 +78,7 @@ export class EmbedDialog {
   selectedChartName = computed(
     () =>
       this.charts().find((chart) => chart.id === this.chartId())?.name ??
-      "Select a chart",
+      "Select a widget",
   );
   src = computed(() => {
     const chartId = this.chartId();
