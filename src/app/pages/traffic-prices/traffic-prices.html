@@ -66,7 +66,133 @@
           ></sc-button>
         </div>
         <div>
-          <div class="w-full overflow-x-auto relative pl-px">
+          <div class="relative">
+            <div class="w-full overflow-x-auto relative pl-px">
+              <table class="sc-table sc-table--compact w-full">
+                <thead>
+                  <tr>
+                    @for (column of tableColumns; track column.name) {
+                      <th
+                        [class.cursor-pointer]="column.orderField"
+                        (click)="toggleOrdering(column)"
+                      >
+                        <div class="flex gap-1">
+                          {{ column.name }}
+                          @if (column.info) {
+                            <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
+                          }
+                          @if (getOrderingIcon(column)) {
+                            <svg
+                              [lucideIcon]="getOrderingIcon(column)"
+                              class="h-4 w-4 text-white"
+                            ></svg>
+                          }
+                        </div>
+                      </th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (
+                    price of traffic_prices;
+                    track price.vendor_id +
+                      "_" +
+                      price.region_id +
+                      "_" +
+                      price.direction;
+                    let i = $index
+                  ) {
+                    <tr
+                      data-ph-capture-attribute-sc-event="server listing route to server details"
+                      [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                        price.vendor_id
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-row-index]="
+                        i + 1
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                        limit
+                      "
+                    >
+                      @for (column of tableColumns; track column.name) {
+                        @if (column.type === "vendor") {
+                          <td>
+                            @if (price.vendor.logo) {
+                              <div
+                                class="w-9 h-9 px-1 py-1 bg-white rounded-lg"
+                              >
+                                <img
+                                  [src]="price.vendor.logo"
+                                  alt="{{ price.vendor.name }} logo"
+                                />
+                              </div>
+                            }
+                            @if (!price.vendor.logo) {
+                              <div class="text-white text-sm">
+                                {{ price.vendor.name }}
+                              </div>
+                            }
+                          </td>
+                        }
+                        @if (column.type === "region") {
+                          <td class="min-w-[225px]">
+                            <div class="text-sm text-white">
+                              {{ price.region.display_name }}
+                            </div>
+                            <div class="text-xs text-white flex gap-1">
+                              <span>{{ price.region.region_id }} </span>
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "price") {
+                          <td>
+                            <div class="text-sm text-white">
+                              {{ price.price }} {{ price.currency }}/{{
+                                price.unit
+                              }}
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "priceMonthly") {
+                          <td>
+                            <div class="text-sm text-white">
+                              {{ price.price_monthly_traffic }}
+                              {{ price.currency }}/month
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "price_tiers") {
+                          <td>
+                            <div class="flex flex-col">
+                              @for (
+                                tiered_price of price.price_tiered;
+                                track tiered_price
+                              ) {
+                                <div
+                                  class="text-xs text-white flex justify-between"
+                                >
+                                  <div>
+                                    {{ getTieredPriceText(tiered_price) }}
+                                  </div>
+                                  <div>
+                                    {{ getTieredPriceValue(tiered_price) }}
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "text" && column.key) {
+                          <td>
+                            {{ getField(price, column.key) }}
+                          </td>
+                        }
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
             @if (isLoading) {
               <div
                 class="absolute top-0 left-0 w-full h-full pt-16 bg-black/20"
@@ -74,128 +200,6 @@
                 <sc-loading-spinner size="lg"></sc-loading-spinner>
               </div>
             }
-            <table class="sc-table sc-table--compact w-full">
-              <thead>
-                <tr>
-                  @for (column of tableColumns; track column.name) {
-                    <th
-                      [class.cursor-pointer]="column.orderField"
-                      (click)="toggleOrdering(column)"
-                    >
-                      <div class="flex gap-1">
-                        {{ column.name }}
-                        @if (column.info) {
-                          <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
-                        }
-                        @if (getOrderingIcon(column)) {
-                          <svg
-                            [lucideIcon]="getOrderingIcon(column)"
-                            class="h-4 w-4 text-white"
-                          ></svg>
-                        }
-                      </div>
-                    </th>
-                  }
-                </tr>
-              </thead>
-              <tbody>
-                @for (
-                  price of traffic_prices;
-                  track price.vendor_id +
-                    "_" +
-                    price.region_id +
-                    "_" +
-                    price.direction;
-                  let i = $index
-                ) {
-                  <tr
-                    data-ph-capture-attribute-sc-event="server listing route to server details"
-                    [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                      price.vendor_id
-                    "
-                    [attr.data-ph-capture-attribute-server-listing-row-index]="
-                      i + 1
-                    "
-                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                      limit
-                    "
-                  >
-                    @for (column of tableColumns; track column.name) {
-                      @if (column.type === "vendor") {
-                        <td>
-                          @if (price.vendor.logo) {
-                            <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-                              <img
-                                [src]="price.vendor.logo"
-                                alt="{{ price.vendor.name }} logo"
-                              />
-                            </div>
-                          }
-                          @if (!price.vendor.logo) {
-                            <div class="text-white text-sm">
-                              {{ price.vendor.name }}
-                            </div>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "region") {
-                        <td class="min-w-[225px]">
-                          <div class="text-sm text-white">
-                            {{ price.region.display_name }}
-                          </div>
-                          <div class="text-xs text-white flex gap-1">
-                            <span>{{ price.region.region_id }} </span>
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "price") {
-                        <td>
-                          <div class="text-sm text-white">
-                            {{ price.price }} {{ price.currency }}/{{
-                              price.unit
-                            }}
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "priceMonthly") {
-                        <td>
-                          <div class="text-sm text-white">
-                            {{ price.price_monthly_traffic }}
-                            {{ price.currency }}/month
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "price_tiers") {
-                        <td>
-                          <div class="flex flex-col">
-                            @for (
-                              tiered_price of price.price_tiered;
-                              track tiered_price
-                            ) {
-                              <div
-                                class="text-xs text-white flex justify-between"
-                              >
-                                <div>
-                                  {{ getTieredPriceText(tiered_price) }}
-                                </div>
-                                <div>
-                                  {{ getTieredPriceValue(tiered_price) }}
-                                </div>
-                              </div>
-                            }
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "text" && column.key) {
-                        <td>
-                          {{ getField(price, column.key) }}
-                        </td>
-                      }
-                    }
-                  </tr>
-                }
-              </tbody>
-            </table>
           </div>
           <div>
             <div class="flex justify-between mt-4 flex-wrap gap-4">
