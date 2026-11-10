@@ -112,7 +112,7 @@ jobs:
         with:
           name: ssr-dist
           path: dist
-          retention-days: 1
+          retention-days: 7
           if-no-files-found: error
       - name: Restore Cypress spec timings
         uses: actions/cache/restore@v6.1.0
@@ -133,7 +133,7 @@ jobs:
         with:
           name: cypress-split-timings
           path: cypress/timings.json
-          retention-days: 1
+          retention-days: 7
           if-no-files-found: error
 
   cypress-shard:
