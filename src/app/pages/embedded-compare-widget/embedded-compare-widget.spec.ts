@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ActivatedRoute } from "@angular/router";
 import { EMPTY } from "rxjs";
 
-import { EmbeddedCompareChart } from "./embedded-compare-chart";
+import { EmbeddedCompareWidget } from "./embedded-compare-widget";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
@@ -10,10 +10,10 @@ import { Toast } from "../../services/toast";
 import { BAD_SERVER_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
-describe("EmbeddedCompareChart", () => {
+describe("EmbeddedCompareWidget", () => {
   const routeSnapshot = {
     params: {
-      chartname: "all",
+      widget: "all",
     },
     queryParams: {} as Record<string, string>,
   };
@@ -29,11 +29,11 @@ describe("EmbeddedCompareChart", () => {
   const getServerPrices = jasmine.createSpy("getServerPrices");
   const getServerBenchmark = jasmine.createSpy("getServerBenchmark");
 
-  let component: EmbeddedCompareChart;
-  let fixture: ComponentFixture<EmbeddedCompareChart>;
+  let component: EmbeddedCompareWidget;
+  let fixture: ComponentFixture<EmbeddedCompareWidget>;
 
   beforeEach(async () => {
-    routeSnapshot.params = { chartname: "all" };
+    routeSnapshot.params = { widget: "all" };
     routeSnapshot.queryParams = {};
     showToast.calls.reset();
     removeToast.calls.reset();
@@ -48,7 +48,7 @@ describe("EmbeddedCompareChart", () => {
     getServerBenchmark.calls.reset();
 
     await TestBed.configureTestingModule({
-      imports: [EmbeddedCompareChart],
+      imports: [EmbeddedCompareWidget],
       providers: [
         ...sharedTestingProviders,
         {
@@ -92,9 +92,9 @@ describe("EmbeddedCompareChart", () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EmbeddedCompareChart);
+    fixture = TestBed.createComponent(EmbeddedCompareWidget);
     component = fixture.componentInstance;
-    component.showChart = "__test__";
+    component.widgetId = "__test__";
     component.benchmarkMeta = [];
     component.benchmarkCategories = [];
     component.instanceProperties = [];

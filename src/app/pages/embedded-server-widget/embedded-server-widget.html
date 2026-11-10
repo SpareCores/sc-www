@@ -2,7 +2,7 @@
   @if (isSpecCard()) {
     <div class="w-full flex bg-secondary h-[calc(100%-64px)]">
       @if (serverDetails) {
-        @switch (showChart) {
+        @switch (widgetId) {
           @case ("metadata") {
             <sc-server-property-card
               cardTitle="Server Metadata"
@@ -73,7 +73,7 @@
       [serverDetails]="serverDetails"
       [benchmarksByCategory]="benchmarksByCategory"
       [benchmarkMeta]="benchmarkMeta"
-      [showChart]="showChart"
+      [showChart]="widgetId"
       [isEmbedded]="true"
     ></sc-server-charts>
   }

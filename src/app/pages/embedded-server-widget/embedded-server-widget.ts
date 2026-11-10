@@ -31,7 +31,7 @@ export const SPEC_CARD_EMBED_IDS = [
 const PROPERTY_CARD_EMBED_IDS = ["metadata", "processor", "system_resources"];
 
 @Component({
-  selector: "sc-embedded-server-chart",
+  selector: "sc-embedded-server-widget",
   imports: [
     ServerCharts,
     LucideExternalLink,
@@ -40,10 +40,10 @@ const PROPERTY_CARD_EMBED_IDS = ["metadata", "processor", "system_resources"];
     ServerLstopo,
     ServerDescriptionSummary,
   ],
-  templateUrl: "./embedded-server-chart.html",
-  styleUrl: "./embedded-server-chart.css",
+  templateUrl: "./embedded-server-widget.html",
+  styleUrl: "./embedded-server-widget.css",
 })
-export class EmbeddedServerChart implements OnInit, OnDestroy {
+export class EmbeddedServerWidget implements OnInit, OnDestroy {
   private SEOHandler = inject(SeoHandler);
   private route = inject(ActivatedRoute);
   private analytics = inject(Analytics);
@@ -53,7 +53,7 @@ export class EmbeddedServerChart implements OnInit, OnDestroy {
   benchmarkMeta!: Benchmark[];
   benchmarksByCategory!: any[];
   serverDetails!: any;
-  showChart: string = "all";
+  widgetId: string = "all";
   metadataSections: ServerPropertySection[] = [];
   processorSections: ServerPropertySection[] = [];
   resourceSections: ServerPropertySection[] = [];
@@ -66,18 +66,18 @@ export class EmbeddedServerChart implements OnInit, OnDestroy {
       this.route.params.subscribe((params) => {
         const vendor = params["vendor"];
         const id = params["id"];
-        const chartname = params["chartname"];
+        const widget = params["widget"];
 
-        this.showChart = chartname || "all";
+        this.widgetId = widget || "all";
         this.serverDescription = null;
 
-        if (this.showChart === "description") {
+        if (this.widgetId === "description") {
           this.loadServerDescription(vendor, id);
         }
 
         const skipped = Promise.resolve({ body: null });
-        const needsSections = PROPERTY_CARD_EMBED_IDS.includes(this.showChart);
-        const needsPrices = this.showChart === "availability";
+        const needsSections = PROPERTY_CARD_EMBED_IDS.includes(this.widgetId);
+        const needsPrices = this.widgetId === "availability";
         const needsBenchmarks = !this.isSpecCard();
 
         Promise.all([
@@ -190,7 +190,7 @@ export class EmbeddedServerChart implements OnInit, OnDestroy {
   }
 
   isSpecCard() {
-    return SPEC_CARD_EMBED_IDS.includes(this.showChart);
+    return SPEC_CARD_EMBED_IDS.includes(this.widgetId);
   }
 
   getBaseURL() {
@@ -201,7 +201,7 @@ export class EmbeddedServerChart implements OnInit, OnDestroy {
     this.keeperAPI
       .getServerDescriptions(vendor, id)
       .then((response) => {
-        if (this.showChart === "description" && response?.body) {
+        if (this.widgetId === "description" && response?.body) {
           this.serverDescription = response.body as ServerDescription;
         }
       })

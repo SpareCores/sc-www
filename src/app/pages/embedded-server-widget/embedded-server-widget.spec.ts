@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EmbeddedServerChart } from "./embedded-server-chart";
+import { EmbeddedServerWidget } from "./embedded-server-widget";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
-describe("EmbeddedServerChart", () => {
-  let component: EmbeddedServerChart;
-  let fixture: ComponentFixture<EmbeddedServerChart>;
+describe("EmbeddedServerWidget", () => {
+  let component: EmbeddedServerWidget;
+  let fixture: ComponentFixture<EmbeddedServerWidget>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EmbeddedServerChart],
+      imports: [EmbeddedServerWidget],
       providers: [...sharedTestingProviders],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EmbeddedServerChart);
+    fixture = TestBed.createComponent(EmbeddedServerWidget);
     component = fixture.componentInstance;
-    component.showChart = "__test__";
+    component.widgetId = "__test__";
     component.benchmarkMeta = [];
     component.benchmarksByCategory = [];
     component.serverDetails = {};
@@ -27,7 +27,7 @@ describe("EmbeddedServerChart", () => {
   });
 
   it("renders the matching spec card for a spec card id", () => {
-    component.showChart = "metadata";
+    component.widgetId = "metadata";
     component.serverDetails = { vendor_id: "aws", api_reference: "m5.large" };
     component.metadataSections = [
       {
