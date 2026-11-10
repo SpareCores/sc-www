@@ -238,7 +238,13 @@ export function signInClerkTestUser(user: ClerkTestUser): void {
 }
 
 export function ensureClerkTestSession(user: ClerkTestUser): void {
-  cy.session(["clerk-test-user", user.email], () => signInClerkTestUser(user));
+  cy.session(["clerk-test-user", user.email], () => signInClerkTestUser(user), {
+    validate() {
+      bypassClerkBotProtection();
+      visitWithClerk("/");
+      cy.window().its("Clerk.user").should("exist");
+    },
+  });
 }
 
 export function withRegisteredClerkTestUser(label: string): ClerkTestUser {
