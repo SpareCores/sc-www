@@ -38,8 +38,7 @@ const PAGES: { url: string; check: () => void }[] = [
   },
   {
     url: SERVER_COMPARE_URL,
-    check: () =>
-      cy.get('[id^="main-table-th-"]').should("have.length.at.least", 1),
+    check: () => E2EEvent.waitForServerCompare(),
   },
   { url: "/legal", check: hasTableRows("table.sc-table") },
   {

@@ -184,10 +184,7 @@ export function registerVisualSuites(prefix: VisualSizePrefix): void {
 
   it("should compare screenshot of server comparison page", () => {
     E2EEvent.visitURL(SERVER_COMPARE_URL);
-    cy.get("sc-server-compare-charts table#main-table tbody tr").should(
-      "have.length.at.least",
-      1,
-    );
+    E2EEvent.waitForServerCompare();
 
     // Hide the dynamic table header
     cy.document().then((doc) => {

@@ -26,10 +26,7 @@ describe("Visual regression tests", () => {
       `/embed/compare/generic?instances=${SERVER_COMPARE_INSTANCES}`,
     );
 
-    cy.get("sc-server-compare-charts table#main-table tbody tr").should(
-      "have.length.at.least",
-      1,
-    );
+    E2EEvent.waitForServerCompare();
     cy.get(
       "sc-server-compare-charts table#main-table thead th[id^='main-table-th-']",
     ).should("have.length", 2);

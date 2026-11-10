@@ -391,9 +391,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
 
     it("compares save-comparison modal", () => {
       E2EEvent.visitURL(SERVER_COMPARE_URL);
-      cy.get(
-        "sc-server-compare-charts tr.compare-instance-section-first-row",
-      ).should("be.visible");
+      E2EEvent.waitForServerCompare();
       E2EEvent.loadImagesForScreenshot(
         "sc-server-compare-charts tr.compare-instance-section-first-row img",
       );

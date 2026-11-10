@@ -7,19 +7,6 @@ const COMPARE_PRICE_URL =
 const COMPARE_36_VCPU_URL =
   "/servers/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVuLjl4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImQyLjh4bGFyZ2UifV0%3D";
 
-function waitForCompareTable() {
-  cy.get("#main-table tr.rows-to-hide-for-test").should(
-    "have.length.at.least",
-    1,
-  );
-  cy.get("#main-table").should(($table) => {
-    expect(
-      $table[0].style.getPropertyValue("--compare-first-column-width"),
-      "compare first column width",
-    ).not.to.equal("");
-  });
-}
-
 function showCompareTooltip() {
   cy.get(
     '#main-table tr.rows-to-hide-for-test [data-cy="compare-score-tooltip-trigger"]',
@@ -39,7 +26,7 @@ function showCompareTooltip() {
 describe("Server Compare", () => {
   it("Server with price 1 vCPU", () => {
     E2EEvent.visitURL(COMPARE_PRICE_URL);
-    waitForCompareTable();
+    E2EEvent.waitForServerCompare();
 
     E2EEvent.checkBreadcrumbs();
 
@@ -56,7 +43,7 @@ describe("Server Compare", () => {
 
   it("Server with price 36 vCPU", () => {
     E2EEvent.visitURL(COMPARE_36_VCPU_URL);
-    waitForCompareTable();
+    E2EEvent.waitForServerCompare();
 
     E2EEvent.checkBreadcrumbs();
 
@@ -74,7 +61,7 @@ describe("Server Compare", () => {
   it("shows both compared server headers in the initial viewport", () => {
     cy.viewport(1280, 900);
     E2EEvent.visitURL(COMPARE_PRICE_URL);
-    waitForCompareTable();
+    E2EEvent.waitForServerCompare();
 
     cy.get("#table_holder").then(($tableHolder) => {
       const holderRect = $tableHolder[0].getBoundingClientRect();
@@ -91,7 +78,7 @@ describe("Server Compare", () => {
   it("keeps compare header server names on one line", () => {
     cy.viewport(1280, 900);
     E2EEvent.visitURL(COMPARE_PRICE_URL);
-    waitForCompareTable();
+    E2EEvent.waitForServerCompare();
 
     cy.get('#server-compare-table-header a[target="_blank"]').each(($link) => {
       expect($link).to.have.css("white-space", "nowrap");
@@ -102,7 +89,7 @@ describe("Server Compare", () => {
   it("keeps sticky compare header server names on one line", () => {
     cy.viewport(1280, 900);
     E2EEvent.visitURL(COMPARE_PRICE_URL);
-    waitForCompareTable();
+    E2EEvent.waitForServerCompare();
 
     cy.scrollTo(0, 500);
 
@@ -116,7 +103,7 @@ describe("Server Compare", () => {
   it("dismisses the compare tooltip when the table scrolls on smaller screens", () => {
     cy.viewport(800, 900);
     E2EEvent.visitURL(COMPARE_PRICE_URL);
-    waitForCompareTable();
+    E2EEvent.waitForServerCompare();
 
     showCompareTooltip();
 
@@ -136,7 +123,7 @@ describe("Server Compare", () => {
 
   it("dismisses the compare tooltip when the page scrolls", () => {
     E2EEvent.visitURL(COMPARE_PRICE_URL);
-    waitForCompareTable();
+    E2EEvent.waitForServerCompare();
 
     showCompareTooltip();
 

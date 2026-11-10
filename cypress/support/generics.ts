@@ -62,6 +62,19 @@ export abstract class E2EEvent {
     cy.get("#details .property_value").should("have.length.at.least", 1);
   }
 
+  public static waitForServerCompare() {
+    cy.get("#main-table tr.rows-to-hide-for-test").should(
+      "have.length.at.least",
+      1,
+    );
+    cy.get("#main-table").should(($table) => {
+      expect(
+        $table[0].style.getPropertyValue("--compare-first-column-width"),
+        "compare first column width",
+      ).not.to.equal("");
+    });
+  }
+
   public static hideAnnouncementForTests() {
     cy.document().then((doc) => {
       doc.getElementById("e2e-hide-announcement")?.remove();
