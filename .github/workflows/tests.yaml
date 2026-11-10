@@ -137,7 +137,7 @@ jobs:
           if-no-files-found: error
 
   cypress-shard:
-    needs: [eslint, build, unit-tests]
+    needs: build
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     strategy:
