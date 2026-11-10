@@ -856,7 +856,7 @@
             <input
               placeholder="Filter"
               type="text"
-              class="dropdown_input"
+              class="sc-input dropdown_input"
               [(ngModel)]="modalFilterTerm"
               (ngModelChange)="updateFilterTerm()"
             />
@@ -880,20 +880,16 @@
         </div>
       }
     </div>
-    <div modalFooter>
-      @if (tempSelectedBenchmarkCategory) {
-        <div
-          class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b"
-        >
-          <sc-button
-            label="Back to benchmark categories"
-            icon="chevron-left"
-            iconPosition="start"
-            variant="outline"
-            (click)="selectBenchmarkCategory(null)"
-          ></sc-button>
-        </div>
-      }
-    </div>
+    @if (tempSelectedBenchmarkCategory) {
+      <div modalFooter class="flex justify-center p-4 md:p-5">
+        <sc-button
+          label="Back to benchmark categories"
+          icon="chevron-left"
+          iconPosition="start"
+          variant="outline"
+          (click)="selectBenchmarkCategory(null)"
+        ></sc-button>
+      </div>
+    }
   </sc-modal>
 </ng-template>
