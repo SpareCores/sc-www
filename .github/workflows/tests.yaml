@@ -224,7 +224,7 @@ jobs:
 
   cypress-timings:
     needs: cypress-shard
-    if: ${{ !cancelled() && needs.cypress-shard.result != 'skipped' }}
+    if: ${{ needs.cypress-shard.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
