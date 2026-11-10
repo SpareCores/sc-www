@@ -27,7 +27,7 @@ describe("ServerEmbedDialog", () => {
     expect(component).toBeTruthy();
   });
 
-  it("builds the server embed url for a chart", () => {
+  it("builds the server embed url for a widget", () => {
     const baseURL = TestBed.inject(SeoHandler).getBaseURL();
 
     expect(component.srcFor()("metadata")).toBe(

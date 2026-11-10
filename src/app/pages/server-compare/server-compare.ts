@@ -45,7 +45,7 @@ import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details";
 import { ServerCompareCharts } from "../../components/server-compare-charts/server-compare-charts";
 import { CompareEmbedDialog } from "../../components/embed-dialog/compare-embed-dialog";
-import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
+import { EmbedWidgetOption } from "../../components/embed-dialog/embed-dialog.types";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { Toast } from "../../services/toast";
@@ -87,7 +87,7 @@ import { AuthState } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 
-const EMBEDDABLE_CHARTS: EmbedChartOption[] = [
+const EMBEDDABLE_WIDGETS: EmbedWidgetOption[] = [
   { id: "generic", name: "Server Specs and Prices" },
   { id: "workload_profile", name: "Workload Profiles" },
   { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
@@ -393,7 +393,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   instances: any[] = [];
   instancesRaw!: string;
 
-  embeddableCharts: EmbedChartOption[] = EMBEDDABLE_CHARTS;
+  embeddableWidgets: EmbedWidgetOption[] = EMBEDDABLE_WIDGETS;
 
   private embedModalTemplate =
     viewChild.required<TemplateRef<unknown>>("embedModalTemplate");
@@ -1678,11 +1678,11 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const compareCharts = this.compareCharts();
-    this.embeddableCharts = compareCharts
-      ? EMBEDDABLE_CHARTS.filter((chart) =>
-          compareCharts.hasEmbeddableChart(chart.id),
+    this.embeddableWidgets = compareCharts
+      ? EMBEDDABLE_WIDGETS.filter((widget) =>
+          compareCharts.hasEmbeddableWidget(widget.id),
         )
-      : EMBEDDABLE_CHARTS;
+      : EMBEDDABLE_WIDGETS;
     this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
     this.embedDialogRef.closed.subscribe(() => {
       this.embedDialogRef = null;

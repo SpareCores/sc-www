@@ -65,7 +65,7 @@ import { Toast } from "../../services/toast";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { initGiscus } from "../../tools/initGiscus";
 import { ServerEmbedDialog } from "../../components/embed-dialog/server-embed-dialog";
-import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
+import { EmbedWidgetOption } from "../../components/embed-dialog/embed-dialog.types";
 import { hasWorkloadProfileChartData } from "../../components/charts/workload-profile/workload-profile.utils";
 import { isStressNgStressor } from "../../components/charts/stress-ng-full/stress-ng-full.utils";
 import { MemoryChartBuilder } from "../../components/charts/memory/memory-chart-builder";
@@ -94,7 +94,7 @@ const SIMILAR_SERVER_CATEGORIES: Partial<
   bySpecs: "specs",
 };
 
-const DEFAULT_EMBEDDABLE_CHARTS = [
+const DEFAULT_EMBEDDABLE_WIDGETS = [
   { id: "metadata", name: "Server Metadata" },
   { id: "availability", name: "Availability" },
   { id: "processor", name: "Processor" },
@@ -262,8 +262,8 @@ export class ServerDetails implements OnInit, OnDestroy {
   private embedDialogRef: DialogRef | null = null;
   private summarizeDialogRef: DialogRef | null = null;
 
-  embeddableCharts: EmbedChartOption[] = [];
-  visibleEmbeddableCharts: EmbedChartOption[] = [];
+  embeddableWidgets: EmbedWidgetOption[] = [];
+  visibleEmbeddableWidgets: EmbedWidgetOption[] = [];
 
   @ViewChild("giscusParent") giscusParent!: ElementRef;
 
@@ -589,7 +589,7 @@ export class ServerDetails implements OnInit, OnDestroy {
                 );
               const isMultiCore =
                 !!this.serverDetails.vcpus && this.serverDetails.vcpus > 1;
-              this.embeddableCharts = [
+              this.embeddableWidgets = [
                 {
                   id: "metadata",
                   name: "Server Metadata",
@@ -912,7 +912,7 @@ export class ServerDetails implements OnInit, OnDestroy {
     this.geekScoreMulti = "0";
     this.keeperResponseErrorMsg = DEFAULT_SERVER_DETAILS_ERROR_MESSAGE;
     this.activeFAQ = -1;
-    this.embeddableCharts = [...DEFAULT_EMBEDDABLE_CHARTS];
+    this.embeddableWidgets = [...DEFAULT_EMBEDDABLE_WIDGETS];
   }
 
   ngOnDestroy() {
@@ -1357,17 +1357,17 @@ export class ServerDetails implements OnInit, OnDestroy {
     }
   }
 
-  updateVisibleEmbeddableCharts() {
-    this.visibleEmbeddableCharts = this.embeddableCharts.filter(
-      (chart) =>
-        (chart.id !== "lstopo" || this.lstopoSvgExists === true) &&
-        (chart.id !== "description" || this.descriptionsAvailable),
+  updateVisibleEmbeddableWidgets() {
+    this.visibleEmbeddableWidgets = this.embeddableWidgets.filter(
+      (widget) =>
+        (widget.id !== "lstopo" || this.lstopoSvgExists === true) &&
+        (widget.id !== "description" || this.descriptionsAvailable),
     );
   }
 
   onLstopoSvgExists(exists: boolean) {
     this.lstopoSvgExists = exists;
-    this.updateVisibleEmbeddableCharts();
+    this.updateVisibleEmbeddableWidgets();
   }
 
   openModal() {
@@ -1375,7 +1375,7 @@ export class ServerDetails implements OnInit, OnDestroy {
       return;
     }
 
-    this.updateVisibleEmbeddableCharts();
+    this.updateVisibleEmbeddableWidgets();
     this.isModalOpen = true;
     this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
     this.embedDialogRef.closed.subscribe(() => {
@@ -1404,14 +1404,14 @@ export class ServerDetails implements OnInit, OnDestroy {
         } else {
           this.descriptionsAvailable = false;
         }
-        this.updateVisibleEmbeddableCharts();
+        this.updateVisibleEmbeddableWidgets();
       })
       .catch(() => {
         if (!isCurrent()) {
           return;
         }
         this.descriptionsAvailable = false;
-        this.updateVisibleEmbeddableCharts();
+        this.updateVisibleEmbeddableWidgets();
       });
   }
 

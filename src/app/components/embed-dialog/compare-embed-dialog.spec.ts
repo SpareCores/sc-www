@@ -26,7 +26,7 @@ describe("CompareEmbedDialog", () => {
     expect(component).toBeTruthy();
   });
 
-  it("builds the compare embed url for a chart", () => {
+  it("builds the compare embed url for a widget", () => {
     const baseURL = TestBed.inject(SeoHandler).getBaseURL();
 
     expect(component.srcFor()("score")).toBe(

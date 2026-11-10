@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from "@angular/core";
 import { SeoHandler } from "../../services/seo-handler";
-import { EmbedChartOption } from "./embed-dialog.types";
+import { EmbedWidgetOption } from "./embed-dialog.types";
 import { EmbedDialog } from "./embed-dialog";
 
 @Component({
@@ -12,11 +12,11 @@ export class CompareEmbedDialog {
   private SEOHandler = inject(SeoHandler);
 
   instances = input.required<string>();
-  charts = input<EmbedChartOption[]>([]);
+  widgets = input<EmbedWidgetOption[]>([]);
 
   srcFor = computed(() => {
     const base = `${this.SEOHandler.getBaseURL()}/embed/compare`;
     const instances = this.instances();
-    return (chartId: string) => `${base}/${chartId}?instances=${instances}`;
+    return (widgetId: string) => `${base}/${widgetId}?instances=${instances}`;
   });
 }

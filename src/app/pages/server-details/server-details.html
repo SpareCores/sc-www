@@ -176,7 +176,7 @@
             icon="copy"
             iconPosition="end"
             variant="outline"
-            data-ph-capture-attribute-sc-event="server details embed chart open"
+            data-ph-capture-attribute-sc-event="server details embed widget open"
             (click)="openModal()"
           ></sc-button>
         </div>
@@ -548,10 +548,10 @@
 
 <ng-template #embedModalTemplate>
   <sc-modal
-    id="embed-charts-modal"
+    id="embed-widgets-modal"
     title="Embed Widget"
     size="wide"
-    closeCaptureEvent="embed chart modal close"
+    closeCaptureEvent="embed widget modal close"
     closeCaptureAction="close"
   >
     <div class="space-y-4 flex flex-col">
@@ -559,7 +559,7 @@
         <sc-server-embed-dialog
           [id]="serverDetails.api_reference"
           [vendor]="serverDetails.vendor_id"
-          [charts]="visibleEmbeddableCharts"
+          [widgets]="visibleEmbeddableWidgets"
         >
         </sc-server-embed-dialog>
       }

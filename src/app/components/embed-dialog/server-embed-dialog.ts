@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from "@angular/core";
 import { SeoHandler } from "../../services/seo-handler";
-import { EmbedChartOption } from "./embed-dialog.types";
+import { EmbedWidgetOption } from "./embed-dialog.types";
 import { EmbedDialog } from "./embed-dialog";
 
 @Component({
@@ -13,10 +13,10 @@ export class ServerEmbedDialog {
 
   vendor = input.required<string>();
   id = input.required<string>();
-  charts = input<EmbedChartOption[]>([]);
+  widgets = input<EmbedWidgetOption[]>([]);
 
   srcFor = computed(() => {
     const base = `${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor()}/${this.id()}`;
-    return (chartId: string) => `${base}/${chartId}`;
+    return (widgetId: string) => `${base}/${widgetId}`;
   });
 }

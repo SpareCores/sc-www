@@ -20,13 +20,13 @@ describe("EmbedDialog", () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput("idPrefix", "test_embed");
     fixture.componentRef.setInput("captureEventPrefix", "test embed");
-    fixture.componentRef.setInput("charts", [
+    fixture.componentRef.setInput("widgets", [
       { id: "metadata", name: "Server Metadata" },
       { id: "lstopo", name: "CPU and System Topology" },
     ]);
     fixture.componentRef.setInput(
       "srcFor",
-      (chartId: string) => `about:blank#${chartId}`,
+      (widgetId: string) => `about:blank#${widgetId}`,
     );
     fixture.componentRef.setInput("minHeight", 400);
     fixture.componentRef.setInput("defaultHeight", 510);
@@ -37,21 +37,21 @@ describe("EmbedDialog", () => {
     expect(component).toBeTruthy();
   });
 
-  it("shows no snippet or preview until a chart is picked", () => {
+  it("shows no snippet or preview until a widget is picked", () => {
     const element: HTMLElement = fixture.nativeElement;
 
-    expect(component.selectedChartName()).toBe("Select a widget");
+    expect(component.selectedWidgetName()).toBe("Select a widget");
     expect(element.querySelector("iframe")).toBeNull();
     expect(element.querySelector("pre")).toBeNull();
   });
 
-  it("builds the preview and snippet from the picked chart", () => {
-    component.chartId.set("lstopo");
+  it("builds the preview and snippet from the picked widget", () => {
+    component.widgetId.set("lstopo");
     fixture.detectChanges();
 
     const iframe: HTMLIFrameElement =
       fixture.nativeElement.querySelector("iframe");
-    expect(component.selectedChartName()).toBe("CPU and System Topology");
+    expect(component.selectedWidgetName()).toBe("CPU and System Topology");
     expect(iframe.getAttribute("src")).toBe("about:blank#lstopo");
     expect(iframe.title).toBe("CPU and System Topology");
     expect(component.snippet()).toContain('src="about:blank#lstopo"');
@@ -59,7 +59,7 @@ describe("EmbedDialog", () => {
   });
 
   it("clamps height and width on commit", () => {
-    component.chartId.set("metadata");
+    component.widgetId.set("metadata");
     fixture.detectChanges();
 
     const height = field("test_embed_height");
@@ -91,7 +91,7 @@ describe("EmbedDialog", () => {
   });
 
   it("only writes pixel heights and percent widths into the snippet", () => {
-    component.chartId.set("metadata");
+    component.widgetId.set("metadata");
     component.height.set(650);
     component.width.set(80);
     fixture.detectChanges();
@@ -106,7 +106,7 @@ describe("EmbedDialog", () => {
   });
 
   it("resets height and width when the preview size changes without an aspect ratio", () => {
-    component.chartId.set("metadata");
+    component.widgetId.set("metadata");
     component.height.set(650);
     component.width.set(80);
 
@@ -119,7 +119,7 @@ describe("EmbedDialog", () => {
 
   it("fits the height to the preview width when an aspect ratio is set", () => {
     fixture.componentRef.setInput("aspectRatio", 0.5);
-    component.chartId.set("metadata");
+    component.widgetId.set("metadata");
     fixture.detectChanges();
     TestBed.tick();
 
@@ -132,7 +132,7 @@ describe("EmbedDialog", () => {
 
   it("refits the height when the current preview size is picked again", () => {
     fixture.componentRef.setInput("aspectRatio", 0.5);
-    component.chartId.set("metadata");
+    component.widgetId.set("metadata");
     fixture.detectChanges();
     TestBed.tick();
 

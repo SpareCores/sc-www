@@ -18,7 +18,7 @@ import { Dropdown } from "../../directives/dropdown";
 import { NumbersOnly } from "../../directives/numbers-only";
 import { Stepper } from "../stepper/stepper";
 import {
-  EmbedChartOption,
+  EmbedWidgetOption,
   EmbedPreviewSize,
   EmbedStepper,
 } from "./embed-dialog.types";
@@ -41,14 +41,14 @@ export class EmbedDialog {
 
   idPrefix = input.required<string>();
   captureEventPrefix = input.required<string>();
-  charts = input.required<EmbedChartOption[]>();
-  srcFor = input.required<(chartId: string) => string>();
+  widgets = input.required<EmbedWidgetOption[]>();
+  srcFor = input.required<(widgetId: string) => string>();
   minHeight = input.required<number>();
   defaultHeight = input.required<number>();
   aspectRatio = input<number | null>(null);
 
   readonly previewSizes = EMBED_PREVIEW_SIZES;
-  chartId = signal<string | null>(null);
+  widgetId = signal<string | null>(null);
   height = linkedSignal(() => this.defaultHeight());
   width = signal(100);
   previewSize = signal(EMBED_PREVIEW_SIZES[EMBED_PREVIEW_SIZES.length - 1], {
@@ -75,14 +75,14 @@ export class EmbedDialog {
     },
   ]);
 
-  selectedChartName = computed(
+  selectedWidgetName = computed(
     () =>
-      this.charts().find((chart) => chart.id === this.chartId())?.name ??
+      this.widgets().find((widget) => widget.id === this.widgetId())?.name ??
       "Select a widget",
   );
   src = computed(() => {
-    const chartId = this.chartId();
-    return chartId ? this.srcFor()(chartId) : null;
+    const widgetId = this.widgetId();
+    return widgetId ? this.srcFor()(widgetId) : null;
   });
   safeSrc = computed(() => {
     const src = this.src();
@@ -94,7 +94,7 @@ export class EmbedDialog {
   );
   snippet = computed(
     () =>
-      `<iframe \n title="${this.selectedChartName()}" \n src="${this.src()}" \n style="${this.iframeStyle()}">\n</iframe>`,
+      `<iframe \n title="${this.selectedWidgetName()}" \n src="${this.src()}" \n style="${this.iframeStyle()}">\n</iframe>`,
   );
 
   private codeBlock = viewChild<ElementRef<HTMLElement>>("codeBlock");

@@ -47,40 +47,40 @@
         </div>
         <div class="flex w-full min-w-0 items-center sm:w-72">
           <sc-button
-            #chartDropdown="scDropdown"
+            #widgetDropdown="scDropdown"
             class="min-w-0 flex-1"
-            [id]="idPrefix() + '_chart_button'"
-            [scDropdown]="chartPanel"
+            [id]="idPrefix() + '_widget_button'"
+            [scDropdown]="widgetPanel"
             [dropdownMinHeight]="160"
             [dropdownPlacement]="'bottom-end'"
-            [label]="selectedChartName()"
+            [label]="selectedWidgetName()"
             icon="chevron-down"
             variant="dropdown"
             size="small"
             [attr.data-ph-capture-attribute-sc-event]="
-              captureEventPrefix() + ' chart select'
+              captureEventPrefix() + ' widget select'
             "
           ></sc-button>
-          <ng-template #chartPanel>
+          <ng-template #widgetPanel>
             <div
               class="w-max min-w-64 max-w-[calc(100vw-2rem)] overflow-y-auto sc-dropdown"
             >
               <ul
                 class="sc-dropdown__list"
-                [attr.aria-labelledby]="idPrefix() + '_chart_button'"
+                [attr.aria-labelledby]="idPrefix() + '_widget_button'"
               >
-                @for (chart of charts(); track chart.id) {
+                @for (widget of widgets(); track widget.id) {
                   <li>
                     <button
                       type="button"
                       class="sc-dropdown__option"
                       [attr.data-ph-capture-attribute-sc-event]="
-                        captureEventPrefix() + ' chart option'
+                        captureEventPrefix() + ' widget option'
                       "
-                      [attr.data-ph-capture-attribute-chart-id]="chart.id"
-                      (click)="chartId.set(chart.id); chartDropdown.hide()"
+                      [attr.data-ph-capture-attribute-widget-id]="widget.id"
+                      (click)="widgetId.set(widget.id); widgetDropdown.hide()"
                     >
-                      <div class="text-white text-sm">{{ chart.name }}</div>
+                      <div class="text-white text-sm">{{ widget.name }}</div>
                     </button>
                   </li>
                 }
@@ -140,7 +140,7 @@
           <iframe
             #previewFrame
             class="block"
-            [title]="selectedChartName()"
+            [title]="selectedWidgetName()"
             [src]="safeSrc()"
             [style]="iframeStyle()"
           ></iframe>

@@ -1,6 +1,6 @@
 import { WritableSignal } from "@angular/core";
 
-export interface EmbedChartOption {
+export interface EmbedWidgetOption {
   id: string;
   name: string;
 }
