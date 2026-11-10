@@ -45,95 +45,48 @@
             </div>
           }
         </div>
-        <div class="flex w-full min-w-0 items-center gap-4 sm:w-auto">
-          <div
-            class="flex min-w-0 flex-1 items-center gap-2 sm:w-72 sm:flex-none"
-          >
-            <span>Chart</span>
-            <sc-button
-              #chartDropdown="scDropdown"
-              class="min-w-0 flex-1"
-              [id]="idPrefix() + '_chart_button'"
-              [scDropdown]="chartPanel"
-              [dropdownMinHeight]="160"
-              [dropdownPlacement]="'bottom-end'"
-              [label]="selectedChartName()"
-              icon="chevron-down"
-              variant="dropdown"
-              size="small"
-              [attr.data-ph-capture-attribute-sc-event]="
-                captureEventPrefix() + ' chart select'
-              "
-            ></sc-button>
-            <ng-template #chartPanel>
-              <div
-                class="w-max min-w-64 max-w-[calc(100vw-2rem)] overflow-y-auto sc-dropdown"
+        <div class="flex w-full min-w-0 items-center sm:w-72">
+          <sc-button
+            #chartDropdown="scDropdown"
+            class="min-w-0 flex-1"
+            [id]="idPrefix() + '_chart_button'"
+            [scDropdown]="chartPanel"
+            [dropdownMinHeight]="160"
+            [dropdownPlacement]="'bottom-end'"
+            [label]="selectedChartName()"
+            icon="chevron-down"
+            variant="dropdown"
+            size="small"
+            [attr.data-ph-capture-attribute-sc-event]="
+              captureEventPrefix() + ' chart select'
+            "
+          ></sc-button>
+          <ng-template #chartPanel>
+            <div
+              class="w-max min-w-64 max-w-[calc(100vw-2rem)] overflow-y-auto sc-dropdown"
+            >
+              <ul
+                class="sc-dropdown__list"
+                [attr.aria-labelledby]="idPrefix() + '_chart_button'"
               >
-                <ul
-                  class="sc-dropdown__list"
-                  [attr.aria-labelledby]="idPrefix() + '_chart_button'"
-                >
-                  @for (chart of charts(); track chart.id) {
-                    <li>
-                      <button
-                        type="button"
-                        class="sc-dropdown__option"
-                        [attr.data-ph-capture-attribute-sc-event]="
-                          captureEventPrefix() + ' chart option'
-                        "
-                        [attr.data-ph-capture-attribute-chart-id]="chart.id"
-                        (click)="chartId.set(chart.id); chartDropdown.hide()"
-                      >
-                        <div class="text-white text-sm">{{ chart.name }}</div>
-                      </button>
-                    </li>
-                  }
-                </ul>
-              </div>
-            </ng-template>
-          </div>
-          <div class="flex items-center gap-2">
-            <span>Device</span>
-            <sc-button
-              #previewDropdown="scDropdown"
-              [id]="idPrefix() + '_preview_button'"
-              [scDropdown]="previewPanel"
-              [dropdownPlacement]="'bottom-end'"
-              [label]="previewSize().name"
-              icon="chevron-down"
-              variant="dropdown"
-              size="small"
-              [attr.data-ph-capture-attribute-sc-event]="
-                captureEventPrefix() + ' preview size select'
-              "
-            ></sc-button>
-            <ng-template #previewPanel>
-              <div class="w-max min-w-48 sc-dropdown">
-                <ul
-                  class="sc-dropdown__list"
-                  [attr.aria-labelledby]="idPrefix() + '_preview_button'"
-                >
-                  @for (size of previewSizes; track size.id) {
-                    <li>
-                      <button
-                        type="button"
-                        class="sc-dropdown__option"
-                        [attr.data-ph-capture-attribute-sc-event]="
-                          captureEventPrefix() + ' preview size option'
-                        "
-                        [attr.data-ph-capture-attribute-preview-size]="size.id"
-                        (click)="
-                          selectPreviewSize(size); previewDropdown.hide()
-                        "
-                      >
-                        <div class="text-white text-sm">{{ size.name }}</div>
-                      </button>
-                    </li>
-                  }
-                </ul>
-              </div>
-            </ng-template>
-          </div>
+                @for (chart of charts(); track chart.id) {
+                  <li>
+                    <button
+                      type="button"
+                      class="sc-dropdown__option"
+                      [attr.data-ph-capture-attribute-sc-event]="
+                        captureEventPrefix() + ' chart option'
+                      "
+                      [attr.data-ph-capture-attribute-chart-id]="chart.id"
+                      (click)="chartId.set(chart.id); chartDropdown.hide()"
+                    >
+                      <div class="text-white text-sm">{{ chart.name }}</div>
+                    </button>
+                  </li>
+                }
+              </ul>
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
@@ -141,7 +94,47 @@
       <div class="relative">
         <pre><code #codeBlock class="language-html"></code></pre>
       </div>
-      <h3 class="text-white text-xl">Iframe Preview</h3>
+      <h3 class="flex flex-wrap items-center gap-2 text-white text-xl">
+        <span>Iframe Preview simulated on a</span>
+        <sc-button
+          #previewDropdown="scDropdown"
+          [id]="idPrefix() + '_preview_button'"
+          [scDropdown]="previewPanel"
+          [dropdownPlacement]="'bottom-start'"
+          [label]="previewSize().name"
+          icon="chevron-down"
+          variant="dropdown"
+          size="small"
+          [attr.data-ph-capture-attribute-sc-event]="
+            captureEventPrefix() + ' preview size select'
+          "
+        ></sc-button>
+        <ng-template #previewPanel>
+          <div class="w-max min-w-48 sc-dropdown">
+            <ul
+              class="sc-dropdown__list"
+              [attr.aria-labelledby]="idPrefix() + '_preview_button'"
+            >
+              @for (size of previewSizes; track size.id) {
+                <li>
+                  <button
+                    type="button"
+                    class="sc-dropdown__option"
+                    [attr.data-ph-capture-attribute-sc-event]="
+                      captureEventPrefix() + ' preview size option'
+                    "
+                    [attr.data-ph-capture-attribute-preview-size]="size.id"
+                    (click)="selectPreviewSize(size); previewDropdown.hide()"
+                  >
+                    <div class="text-white text-sm">{{ size.name }}</div>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        </ng-template>
+        <span>device</span>
+      </h3>
       <div class="overflow-x-auto" data-modal-fill>
         <div [class]="previewSize().widthClass">
           <iframe
