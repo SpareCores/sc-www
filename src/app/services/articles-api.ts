@@ -67,8 +67,7 @@ export class ArticlesApi {
           .toLowerCase()
           .replace(/[^\w\s-]/g, "")
           .replace(/\s+/g, "-");
-        // add a hidden element before the header to offset the scroll position due to the sticky navbar
-        return `<div id="${id}" class="invisible relative -top-20"></div>\n\n${hashes} ${headerText} <a class="sc-header-anchor" href="/article/${slug}#${id}">#</a>`;
+        return `<div id="${id}"></div>\n\n${hashes} ${headerText} <a class="sc-header-anchor" href="/article/${slug}#${id}">#</a>`;
       },
     );
   }
