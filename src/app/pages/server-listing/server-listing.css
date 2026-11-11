@@ -8,12 +8,8 @@
 }
 
 .dropdown_input {
-  @apply py-3 ps-14 pe-4 block w-full border-emerald-400 rounded-lg text-sm text-white bg-emerald-400;
+  @apply py-3 ps-14 pe-4 block;
   min-width: 300px;
-}
-
-.dropdown_input::placeholder {
-  color: var(--color-white);
 }
 
 .button_list_holder {

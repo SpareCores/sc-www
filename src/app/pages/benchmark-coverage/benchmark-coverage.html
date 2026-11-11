@@ -10,7 +10,13 @@
     </div>
 
     @if (isLoading()) {
-      <div class="text-white text-lg">Loading benchmark data...</div>
+      <div class="flex justify-center items-center my-8">
+        <sc-loading-spinner
+          size="lg"
+          text="Loading benchmark coverage..."
+          textClasses="text-lg text-white"
+        ></sc-loading-spinner>
+      </div>
     } @else if (errorMessage()) {
       <div class="text-red-300 text-lg">{{ errorMessage() }}</div>
     } @else {
@@ -181,358 +187,369 @@
       </div>
     </div>
 
-    <div class="flex items-start gap-8 mx-2 xl:mx-0">
-      <div
-        class="sc-filter-sidebar sc-filter-sidebar--sticky shrink-0 bg-primary"
-        [class.sc-filter-sidebar--collapsed]="isCollapsed"
-      >
+    @if (isLoading()) {
+      <div class="flex justify-center items-center my-16">
+        <sc-loading-spinner
+          size="lg"
+          text="Loading benchmark data..."
+          textClasses="text-lg text-white"
+        ></sc-loading-spinner>
+      </div>
+    } @else {
+      <div class="flex items-start gap-8 mx-2 xl:mx-0">
         <div
-          class="sc-filter-sidebar__collapser bg-secondary"
-          (click)="toggleCollapse()"
-          (keydown.enter)="toggleCollapse()"
-          (keydown.space)="toggleCollapse(); $event.preventDefault()"
-          tabindex="0"
-          role="button"
-          [attr.aria-expanded]="!isCollapsed"
+          class="sc-filter-sidebar sc-filter-sidebar--sticky shrink-0 bg-primary"
+          [class.sc-filter-sidebar--collapsed]="isCollapsed"
         >
-          @if (isCollapsed) {
-            <svg
-              lucideChevronRight
-              class="h-6 w-6 shrink-0 text-emerald-400"
-            ></svg>
-          } @else {
-            <svg
-              lucideChevronLeft
-              class="h-6 w-6 shrink-0 text-emerald-400"
-            ></svg>
+          <div
+            class="sc-filter-sidebar__collapser bg-secondary"
+            (click)="toggleCollapse()"
+            (keydown.enter)="toggleCollapse()"
+            (keydown.space)="toggleCollapse(); $event.preventDefault()"
+            tabindex="0"
+            role="button"
+            [attr.aria-expanded]="!isCollapsed"
+          >
+            @if (isCollapsed) {
+              <svg
+                lucideChevronRight
+                class="h-6 w-6 shrink-0 text-emerald-400"
+              ></svg>
+            } @else {
+              <svg
+                lucideChevronLeft
+                class="h-6 w-6 shrink-0 text-emerald-400"
+              ></svg>
+            }
+          </div>
+          <sc-search-bar
+            [query]="searchQuery"
+            [filterCategories]="filterCategories"
+            [searchParameters]="searchParameters"
+            [useTopSearchInput]="true"
+            topSearchParameterName="search"
+            topSearchPlaceholder="Search vendor or API reference"
+            [showParameterTitles]="false"
+            [noTopPaddingCategoryIds]="['vendor', 'benchmark']"
+            (searchChanged)="searchBarChanged($event)"
+          >
+          </sc-search-bar>
+
+          @if (!isCollapsed) {
+            <div
+              class="px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
+            >
+              <div class="text-sm text-white text-center">
+                {{ filteredTableRows().length }} of
+                {{ tableRows().length }} servers
+              </div>
+              <sc-button
+                label="Clear filters"
+                icon="funnel-x"
+                iconPosition="start"
+                size="small"
+                class="w-full"
+                (click)="clearFilters()"
+              ></sc-button>
+            </div>
           }
         </div>
-        <sc-search-bar
-          [query]="searchQuery"
-          [filterCategories]="filterCategories"
-          [searchParameters]="searchParameters"
-          [useTopSearchInput]="true"
-          topSearchParameterName="search"
-          topSearchPlaceholder="Search vendor or API reference"
-          [showParameterTitles]="false"
-          [noTopPaddingCategoryIds]="['vendor', 'benchmark']"
-          (searchChanged)="searchBarChanged($event)"
+
+        <div
+          class="z-0 min-w-0 flex flex-col gap-4"
+          [class.sc-listing-results--narrow]="!isCollapsed"
+          [class.w-full]="isCollapsed"
         >
-        </sc-search-bar>
-
-        @if (!isCollapsed) {
-          <div
-            class="px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
-          >
-            <div class="text-sm text-white text-center">
-              {{ filteredTableRows().length }} of
-              {{ tableRows().length }} servers
-            </div>
-            <sc-button
-              label="Clear filters"
-              icon="funnel-x"
-              iconPosition="start"
-              size="small"
-              class="w-full"
-              (click)="clearFilters()"
-            ></sc-button>
-          </div>
-        }
-      </div>
-
-      <div
-        class="z-0 min-w-0 flex flex-col gap-4"
-        [class.sc-listing-results--narrow]="!isCollapsed"
-        [class.w-full]="isCollapsed"
-      >
-        <div class="w-full relative table_scroll_wrapper">
-          <table
-            class="sc-table sc-table--compact sc-table--hoverable w-full debug_servers_table"
-          >
-            <thead>
-              <tr>
-                <th class="bg-secondary"></th>
-                <th class="bg-secondary"></th>
-                <th class="left-bordered-cell">
-                  <div class="vertical_header">HAS PRICE</div>
-                </th>
-                <th class="bg-secondary">
-                  <div class="vertical_header">STATUS ACTIVE</div>
-                </th>
-                <th class="bg-secondary">
-                  <div class="vertical_header">HAS HW DISCOVERY</div>
-                </th>
-                <th class="bg-secondary">
-                  <div class="vertical_header">HAS ANY BENCHMARK</div>
-                </th>
-                @for (
-                  benchmarkFamily of benchmarkFamilies();
-                  track benchmarkFamily;
-                  let isFirst = $first
-                ) {
-                  <th
-                    [class.left-bordered-cell]="isFirst"
-                    class="border-gray-600 bg-secondary"
-                  >
-                    <div class="vertical_header">{{ benchmarkFamily }}</div>
+          <div class="w-full relative table_scroll_wrapper">
+            <table
+              class="sc-table sc-table--compact sc-table--hoverable w-full debug_servers_table"
+            >
+              <thead>
+                <tr>
+                  <th class="bg-secondary"></th>
+                  <th class="bg-secondary"></th>
+                  <th class="left-bordered-cell">
+                    <div class="vertical_header">HAS PRICE</div>
                   </th>
-                }
-                <th class="left-bordered-cell">
-                  <div class="vertical_header">ASSESSMENT</div>
-                </th>
-                <th class="left-bordered-cell">
-                  <div class="flex justify-center">
-                    <svg lucideLink class="h-4 w-4 shrink-0"></svg>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              @if (isLoading()) {
-                <tr>
-                  <td
-                    class="no_data"
-                    [attr.colspan]="8 + benchmarkFamilies().length"
-                  >
-                    Loading benchmark data...
-                  </td>
+                  <th class="bg-secondary">
+                    <div class="vertical_header">STATUS ACTIVE</div>
+                  </th>
+                  <th class="bg-secondary">
+                    <div class="vertical_header">HAS HW DISCOVERY</div>
+                  </th>
+                  <th class="bg-secondary">
+                    <div class="vertical_header">HAS ANY BENCHMARK</div>
+                  </th>
+                  @for (
+                    benchmarkFamily of benchmarkFamilies();
+                    track benchmarkFamily;
+                    let isFirst = $first
+                  ) {
+                    <th
+                      [class.left-bordered-cell]="isFirst"
+                      class="border-gray-600 bg-secondary"
+                    >
+                      <div class="vertical_header">{{ benchmarkFamily }}</div>
+                    </th>
+                  }
+                  <th class="left-bordered-cell">
+                    <div class="vertical_header">ASSESSMENT</div>
+                  </th>
+                  <th class="left-bordered-cell">
+                    <div class="flex justify-center">
+                      <svg lucideLink class="h-4 w-4 shrink-0"></svg>
+                    </div>
+                  </th>
                 </tr>
-              } @else if (errorMessage()) {
-                <tr>
-                  <td
-                    class="no_data"
-                    [attr.colspan]="8 + benchmarkFamilies().length"
-                  >
-                    {{ errorMessage() }}
-                  </td>
-                </tr>
-              } @else {
-                @for (row of paginatedTableRows(); track row.serverKey) {
-                  <tr>
-                    <td class="text-sm">{{ row.vendor_id }}</td>
-                    <td class="text-sm">{{ row.api_reference }}</td>
-                    <td class="text-center border-l border-gray-600 icon-cell">
-                      @if (row.has_price) {
-                        <svg
-                          lucideCheck
-                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
-                        ></svg>
-                      } @else {
-                        <svg lucideX class="h-4 w-4 shrink-0 text-white"></svg>
-                      }
-                    </td>
-                    <td class="text-center icon-cell">
-                      @if (row.is_active) {
-                        <svg
-                          lucideCheck
-                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
-                        ></svg>
-                      } @else {
-                        <svg
-                          lucideX
-                          class="h-4 w-4 shrink-0 text-white justify-self-center"
-                        ></svg>
-                      }
-                    </td>
-                    <td class="text-center icon-cell">
-                      @if (row.has_hw_info) {
-                        <svg
-                          lucideCheck
-                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
-                        ></svg>
-                      } @else {
-                        <svg
-                          lucideX
-                          class="h-4 w-4 shrink-0 text-white justify-self-center"
-                        ></svg>
-                      }
-                    </td>
-                    <td class="text-center icon-cell">
-                      @if (row.has_any_benchmark) {
-                        <svg
-                          lucideCheck
-                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
-                        ></svg>
-                      } @else {
-                        <svg
-                          lucideX
-                          class="h-4 w-4 shrink-0 text-white justify-self-center"
-                        ></svg>
-                      }
-                    </td>
-                    @for (
-                      benchmarkFamily of benchmarkFamilies();
-                      track benchmarkFamily;
-                      let isFirst = $first
-                    ) {
-                      <td
-                        class="text-center border-gray-600 icon-cell"
-                        [class.border-l]="isFirst"
-                      >
-                        @if (row.benchmarkFlags[benchmarkFamily]) {
-                          <svg
-                            lucideCheck
-                            class="h-4 w-4 shrink-0 text-emerald-400 block"
-                          ></svg>
-                        } @else {
-                          <a
-                            [href]="
-                              getBenchmarkRawDataUrl(
-                                row.vendor_id,
-                                row.api_reference,
-                                benchmarkFamily
-                              )
-                            "
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="flex cursor-pointer"
-                          >
-                            <svg
-                              lucideX
-                              class="h-4 w-4 shrink-0 text-white"
-                            ></svg>
-                          </a>
-                        }
-                      </td>
-                    }
-                    <td class="icon-cell border-l">
-                      <div [attr.title]="row.assessment.tooltip">
-                        @if (row.assessment.kind === "fully_evaluated") {
-                          <svg
-                            lucideCircleCheckBig
-                            class="h-4 w-4 text-emerald-400"
-                          ></svg>
-                        } @else if (row.assessment.kind === "cannot_evaluate") {
-                          <svg
-                            lucideCircleAlert
-                            class="h-4 w-4 text-yellow-500"
-                          ></svg>
-                        } @else if (row.assessment.kind === "in_progress") {
-                          <svg
-                            lucideClock
-                            class="h-4 w-4 text-yellow-500"
-                          ></svg>
-                        } @else {
-                          <svg lucideCircleX class="h-4 w-4 text-red-500"></svg>
-                        }
-                      </div>
-                    </td>
-                    <td class="border-l border-gray-600 icon-cell flex">
-                      <a
-                        routerLink="/server/{{ row.vendor_id }}/{{
-                          row.api_reference
-                        }}"
-                      >
-                        <svg
-                          lucideChevronRight
-                          class="h-6 w-6 shrink-0 text-emerald-400"
-                        ></svg>
-                      </a>
-                    </td>
-                  </tr>
-                }
-                @if (!paginatedTableRows().length) {
+              </thead>
+              <tbody>
+                @if (errorMessage()) {
                   <tr>
                     <td
                       class="no_data"
                       [attr.colspan]="8 + benchmarkFamilies().length"
                     >
-                      No servers match the selected filters.
+                      {{ errorMessage() }}
                     </td>
                   </tr>
+                } @else {
+                  @for (row of paginatedTableRows(); track row.serverKey) {
+                    <tr>
+                      <td class="text-sm">{{ row.vendor_id }}</td>
+                      <td class="text-sm">{{ row.api_reference }}</td>
+                      <td
+                        class="text-center border-l border-gray-600 icon-cell"
+                      >
+                        @if (row.has_price) {
+                          <svg
+                            lucideCheck
+                            class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
+                          ></svg>
+                        } @else {
+                          <svg
+                            lucideX
+                            class="h-4 w-4 shrink-0 text-white"
+                          ></svg>
+                        }
+                      </td>
+                      <td class="text-center icon-cell">
+                        @if (row.is_active) {
+                          <svg
+                            lucideCheck
+                            class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
+                          ></svg>
+                        } @else {
+                          <svg
+                            lucideX
+                            class="h-4 w-4 shrink-0 text-white justify-self-center"
+                          ></svg>
+                        }
+                      </td>
+                      <td class="text-center icon-cell">
+                        @if (row.has_hw_info) {
+                          <svg
+                            lucideCheck
+                            class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
+                          ></svg>
+                        } @else {
+                          <svg
+                            lucideX
+                            class="h-4 w-4 shrink-0 text-white justify-self-center"
+                          ></svg>
+                        }
+                      </td>
+                      <td class="text-center icon-cell">
+                        @if (row.has_any_benchmark) {
+                          <svg
+                            lucideCheck
+                            class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
+                          ></svg>
+                        } @else {
+                          <svg
+                            lucideX
+                            class="h-4 w-4 shrink-0 text-white justify-self-center"
+                          ></svg>
+                        }
+                      </td>
+                      @for (
+                        benchmarkFamily of benchmarkFamilies();
+                        track benchmarkFamily;
+                        let isFirst = $first
+                      ) {
+                        <td
+                          class="text-center border-gray-600 icon-cell"
+                          [class.border-l]="isFirst"
+                        >
+                          @if (row.benchmarkFlags[benchmarkFamily]) {
+                            <svg
+                              lucideCheck
+                              class="h-4 w-4 shrink-0 text-emerald-400 block"
+                            ></svg>
+                          } @else {
+                            <a
+                              [href]="
+                                getBenchmarkRawDataUrl(
+                                  row.vendor_id,
+                                  row.api_reference,
+                                  benchmarkFamily
+                                )
+                              "
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="flex cursor-pointer"
+                            >
+                              <svg
+                                lucideX
+                                class="h-4 w-4 shrink-0 text-white"
+                              ></svg>
+                            </a>
+                          }
+                        </td>
+                      }
+                      <td class="icon-cell border-l">
+                        <div [attr.title]="row.assessment.tooltip">
+                          @if (row.assessment.kind === "fully_evaluated") {
+                            <svg
+                              lucideCircleCheckBig
+                              class="h-4 w-4 text-emerald-400"
+                            ></svg>
+                          } @else if (
+                            row.assessment.kind === "cannot_evaluate"
+                          ) {
+                            <svg
+                              lucideCircleAlert
+                              class="h-4 w-4 text-yellow-500"
+                            ></svg>
+                          } @else if (row.assessment.kind === "in_progress") {
+                            <svg
+                              lucideClock
+                              class="h-4 w-4 text-yellow-500"
+                            ></svg>
+                          } @else {
+                            <svg
+                              lucideCircleX
+                              class="h-4 w-4 text-red-500"
+                            ></svg>
+                          }
+                        </div>
+                      </td>
+                      <td class="border-l border-gray-600 icon-cell flex">
+                        <a
+                          routerLink="/server/{{ row.vendor_id }}/{{
+                            row.api_reference
+                          }}"
+                        >
+                          <svg
+                            lucideChevronRight
+                            class="h-6 w-6 shrink-0 text-emerald-400"
+                          ></svg>
+                        </a>
+                      </td>
+                    </tr>
+                  }
+                  @if (!paginatedTableRows().length) {
+                    <tr>
+                      <td
+                        class="no_data"
+                        [attr.colspan]="8 + benchmarkFamilies().length"
+                      >
+                        No servers match the selected filters.
+                      </td>
+                    </tr>
+                  }
                 }
-              }
-            </tbody>
-          </table>
-        </div>
-
-        <div class="pagination_controls">
-          <div class="flex items-center gap-2">
-            <sc-button
-              id="pagesize_button"
-              [scDropdown]="pageSizePanel"
-              [dropdownFlip]="true"
-              [dropdownPlacement]="'bottom-start'"
-              #pageDropdown="scDropdown"
-              [label]="limit() | pageLimitLabel"
-              icon="chevron-down"
-              variant="dropdown"
-            ></sc-button>
-            <span class="text-white hidden md:inline">items per page</span>
+              </tbody>
+            </table>
           </div>
 
-          <div class="pagination_nav" aria-label="Table pagination">
-            @if (page() > 1) {
+          <div class="pagination_controls">
+            <div class="flex items-center gap-2">
               <sc-button
-                icon="chevron-left"
-                ariaLabel="Previous page"
-                variant="ghost"
-                color="inverse"
-                buttonClass="sc-button--pagination sc-button--pagination-nav"
-                (click)="goToPage(page() - 1)"
+                id="pagesize_button"
+                [scDropdown]="pageSizePanel"
+                [dropdownFlip]="true"
+                [dropdownPlacement]="'bottom-start'"
+                #pageDropdown="scDropdown"
+                [label]="limit() | pageLimitLabel"
+                icon="chevron-down"
+                variant="dropdown"
               ></sc-button>
-            }
-            @if (page() > 2) {
-              <sc-button
-                label="1"
-                variant="ghost"
-                color="inverse"
-                buttonClass="sc-button--pagination"
-                (click)="goToPage(1)"
-              ></sc-button>
-              @if (page() > 3) {
+              <span class="text-white hidden md:inline">items per page</span>
+            </div>
+
+            <div class="pagination_nav" aria-label="Table pagination">
+              @if (page() > 1) {
+                <sc-button
+                  icon="chevron-left"
+                  ariaLabel="Previous page"
+                  variant="ghost"
+                  color="inverse"
+                  buttonClass="sc-button--pagination sc-button--pagination-nav"
+                  (click)="goToPage(page() - 1)"
+                ></sc-button>
+              }
+              @if (page() > 2) {
+                <sc-button
+                  label="1"
+                  variant="ghost"
+                  color="inverse"
+                  buttonClass="sc-button--pagination"
+                  (click)="goToPage(1)"
+                ></sc-button>
+                @if (page() > 3) {
+                  <span
+                    class="text-white py-2 px-4 rounded-lg font-bold"
+                    aria-hidden="true"
+                    >...</span
+                  >
+                }
+              }
+              @for (pageNumber of possiblePages(); track pageNumber) {
+                <sc-button
+                  [label]="'' + pageNumber"
+                  [variant]="pageNumber === page() ? 'solid' : 'ghost'"
+                  [color]="pageNumber === page() ? 'brand' : 'inverse'"
+                  buttonClass="sc-button--pagination"
+                  (click)="goToPage(pageNumber)"
+                ></sc-button>
+              }
+              @if (totalPages() > page() + 2) {
                 <span
                   class="text-white py-2 px-4 rounded-lg font-bold"
                   aria-hidden="true"
                   >...</span
                 >
+                <sc-button
+                  [label]="'' + totalPages()"
+                  variant="ghost"
+                  color="inverse"
+                  buttonClass="sc-button--pagination"
+                  (click)="goToPage(totalPages())"
+                ></sc-button>
+              } @else if (totalPages() === page() + 2) {
+                <sc-button
+                  [label]="'' + totalPages()"
+                  variant="ghost"
+                  color="inverse"
+                  buttonClass="sc-button--pagination"
+                  (click)="goToPage(totalPages())"
+                ></sc-button>
               }
-            }
-            @for (pageNumber of possiblePages(); track pageNumber) {
-              <sc-button
-                [label]="'' + pageNumber"
-                [variant]="pageNumber === page() ? 'solid' : 'ghost'"
-                [color]="pageNumber === page() ? 'brand' : 'inverse'"
-                buttonClass="sc-button--pagination"
-                (click)="goToPage(pageNumber)"
-              ></sc-button>
-            }
-            @if (totalPages() > page() + 2) {
-              <span
-                class="text-white py-2 px-4 rounded-lg font-bold"
-                aria-hidden="true"
-                >...</span
-              >
-              <sc-button
-                [label]="'' + totalPages()"
-                variant="ghost"
-                color="inverse"
-                buttonClass="sc-button--pagination"
-                (click)="goToPage(totalPages())"
-              ></sc-button>
-            } @else if (totalPages() === page() + 2) {
-              <sc-button
-                [label]="'' + totalPages()"
-                variant="ghost"
-                color="inverse"
-                buttonClass="sc-button--pagination"
-                (click)="goToPage(totalPages())"
-              ></sc-button>
-            }
-            @if (page() < totalPages()) {
-              <sc-button
-                icon="chevron-right"
-                ariaLabel="Next page"
-                variant="ghost"
-                color="inverse"
-                buttonClass="sc-button--pagination sc-button--pagination-nav"
-                (click)="goToPage(page() + 1)"
-              ></sc-button>
-            }
+              @if (page() < totalPages()) {
+                <sc-button
+                  icon="chevron-right"
+                  ariaLabel="Next page"
+                  variant="ghost"
+                  color="inverse"
+                  buttonClass="sc-button--pagination sc-button--pagination-nav"
+                  (click)="goToPage(page() + 1)"
+                ></sc-button>
+              }
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    }
   </div>
 </div>
 
