@@ -91,7 +91,6 @@
     "@typescript-eslint/parser": "^8.54.0",
     "@typescript-eslint/utils": "^8.54.0",
     "cypress": "^15.9.0",
-    "cypress-image-diff-html-report": "^2.2.0",
     "cypress-image-diff-js": "^2.5.0",
     "cypress-on-fix": "^1.1.0",
     "cypress-split": "^1.25.0",
