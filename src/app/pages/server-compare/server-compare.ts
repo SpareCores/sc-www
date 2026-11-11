@@ -32,6 +32,7 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SeoHandler } from "../../services/seo-handler";
@@ -159,6 +160,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
     Dropdown,
     CollectionSaveModal,
     Modal,
+    HeaderAnchor,
   ],
   templateUrl: "./server-compare.html",
   styleUrl: "./server-compare.css",

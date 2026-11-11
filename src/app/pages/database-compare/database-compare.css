@@ -53,16 +53,6 @@
   scroll-margin-top: 10rem;
 }
 
-.section-anchor-target {
-  position: relative;
-  top: -80px;
-  visibility: hidden;
-}
-
-.section_heading:hover .sc-header-anchor {
-  opacity: 1;
-}
-
 .compare-section-header-title {
   @apply inline-flex max-w-none flex-nowrap items-center gap-2 whitespace-nowrap;
 }

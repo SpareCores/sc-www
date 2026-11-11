@@ -98,20 +98,14 @@
                 "
               >
                 @if (compare.type === "section") {
-                  <div
-                    class="section-anchor-target"
-                    [attr.id]="compare.id"
-                  ></div>
-                  <h2 class="section_heading text-2xl font-semibold">
+                  <h2
+                    class="section_heading sc-header-anchor-host text-2xl font-semibold"
+                  >
                     <span>{{ compare.title }}</span>
-                    <a
-                      class="sc-header-anchor"
-                      [href]="'/servers/compare#' + compare.id"
-                      [attr.aria-label]="'Link to ' + compare.title"
-                      [attr.title]="'Link to ' + compare.title"
-                    >
-                      #
-                    </a>
+                    <sc-header-anchor
+                      [anchorId]="compare.id"
+                      [label]="compare.title"
+                    ></sc-header-anchor>
                   </h2>
                 }
                 @if (compare.type === "card") {

@@ -60,6 +60,7 @@ import {
 } from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { Dropdown } from "../../directives/dropdown";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { formatKebabTitle } from "../../pipes/pipe-utils";
@@ -182,6 +183,7 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
     LucideTriangleAlert,
     LucideX,
     CollectionSaveModal,
+    HeaderAnchor,
   ],
   templateUrl: "./database-compare.html",
   styleUrl: "./database-compare.css",
