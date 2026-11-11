@@ -53,6 +53,22 @@ describe("CompareSelection", () => {
     expect(service).toBeTruthy();
   });
 
+  it("toggles databases through the resource API", () => {
+    service.toggleResourceCompare("database", "aws", "db-a", "db-a");
+
+    expect(service.isResourceSelected("database", "aws", "db-a")).toBeTrue();
+
+    service.toggleResourceCompare("database", "aws", "db-a", "db-a");
+
+    expect(service.isResourceSelected("database", "aws", "db-a")).toBeFalse();
+  });
+
+  it("reports selected servers through the resource API", () => {
+    expect(
+      service.isResourceSelected("server", serverA.vendor, serverA.server),
+    ).toBeTrue();
+  });
+
   it("reorders selected servers", () => {
     service.reorderSelectedForCompare(0, 2);
 
