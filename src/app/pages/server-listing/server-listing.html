@@ -844,7 +844,7 @@
   >
     <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
       @if (!tempSelectedBenchmarkCategory) {
-        <div class="flex gap-2 flex-wrap justify-center">
+        <div class="grid grid-flow-dense grid-cols-2 gap-2 sm:grid-cols-3">
           <sc-button
             label="All"
             variant="outline"
@@ -856,6 +856,7 @@
               [label]="category"
               variant="outline"
               buttonClass="sc-button--chip"
+              [class.col-span-2]="category.length > 16"
               (click)="selectBenchmarkCategory(category)"
             ></sc-button>
           }
@@ -872,7 +873,7 @@
             <input
               placeholder="Filter"
               type="text"
-              class="dropdown_input"
+              class="sc-input dropdown_input"
               [(ngModel)]="modalFilterTerm"
               (ngModelChange)="updateFilterTerm()"
             />
@@ -896,20 +897,16 @@
         </div>
       }
     </div>
-    <div modalFooter>
-      @if (tempSelectedBenchmarkCategory) {
-        <div
-          class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b"
-        >
-          <sc-button
-            label="Back to benchmark categories"
-            icon="chevron-left"
-            iconPosition="start"
-            variant="outline"
-            (click)="selectBenchmarkCategory(null)"
-          ></sc-button>
-        </div>
-      }
-    </div>
+    @if (tempSelectedBenchmarkCategory) {
+      <div modalFooter class="flex justify-center p-4 md:p-5">
+        <sc-button
+          label="Back to benchmark categories"
+          icon="chevron-left"
+          iconPosition="start"
+          variant="outline"
+          (click)="selectBenchmarkCategory(null)"
+        ></sc-button>
+      </div>
+    }
   </sc-modal>
 </ng-template>

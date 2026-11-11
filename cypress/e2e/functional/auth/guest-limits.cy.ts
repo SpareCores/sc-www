@@ -1,5 +1,7 @@
-import { skipWithoutClerk } from "../support/clerk-testing";
-import { E2EEvent } from "../support/generics";
+import {
+  skipWithoutClerk,
+  visitWithClerk,
+} from "../../../support/clerk-testing";
 
 function assertRegisterModalOpened(): void {
   cy.get(".auth-modal__title").should("contain.text", "Create your account");
@@ -36,7 +38,7 @@ describe("Guest feature limits", () => {
   skipWithoutClerk();
 
   it("opens register from the server compare limit toast", () => {
-    E2EEvent.visitURL("/servers", 4000);
+    visitWithClerk("/servers");
     cy.get('[id^="server_compare_checkbox_"]')
       .should("have.length.at.least", 4)
       .then(($boxes) => {
@@ -49,7 +51,7 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from the database compare limit toast", () => {
-    E2EEvent.visitURL("/databases", 4000);
+    visitWithClerk("/databases");
     cy.get('[id^="database_compare_checkbox_"]')
       .should("have.length.at.least", 4)
       .then(($boxes) => {
@@ -62,7 +64,7 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from the country limit toast", () => {
-    E2EEvent.visitURL("/servers", 4000);
+    visitWithClerk("/servers");
     expandCollapsedFilterCategories();
     expandGeoSection('[id="filter_title_countries"]');
 
@@ -77,7 +79,7 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from the region limit toast", () => {
-    E2EEvent.visitURL("/servers", 4000);
+    visitWithClerk("/servers");
     expandCollapsedFilterCategories();
     expandGeoSection('[id="filter_title_vendor_regions"]');
 
@@ -94,7 +96,7 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from a listing bookmark button", () => {
-    E2EEvent.visitURL("/servers", 4000);
+    visitWithClerk("/servers");
     cy.get("sc-bookmark-button button.bookmark-button--locked")
       .first()
       .should("be.visible")
@@ -103,13 +105,13 @@ describe("Guest feature limits", () => {
   });
 
   it("opens register from the listing page-header bookmark", () => {
-    E2EEvent.visitURL("/servers", 4000);
+    visitWithClerk("/servers");
     cy.get("button.page-header__bookmark--locked").should("be.visible").click();
     assertRegisterModalOpened();
   });
 
   it("opens register from a details bookmark button", () => {
-    E2EEvent.visitURL("/server/aws/c6g.large", 4000);
+    visitWithClerk("/server/aws/c6g.large");
     cy.get("sc-bookmark-button button.bookmark-button--locked")
       .first()
       .should("be.visible")

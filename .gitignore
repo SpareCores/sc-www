@@ -26,7 +26,6 @@ src/assets/slides/render.sh
 .env
 
 # Visual testing temporary files
-cypress-image-diff-html-report
 cypress-image-diff-screenshots/comparison
 cypress-image-diff-screenshots/diff
 cypress/screenshots

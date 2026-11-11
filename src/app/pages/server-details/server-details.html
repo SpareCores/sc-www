@@ -257,9 +257,12 @@
                   category of serverDescription.categories;
                   track category
                 ) {
-                  <span class="server-description-category-pill">{{
-                    category
-                  }}</span>
+                  <sc-button
+                    variant="outline"
+                    size="small"
+                    [label]="category"
+                    [disabled]="true"
+                  ></sc-button>
                 }
               </div>
             }
@@ -588,29 +591,35 @@
   <sc-modal
     id="server-summarize-modal"
     size="3xl"
+    [title]="serverDetails ? serverDetails.display_name : ''"
     closeCaptureEvent="server details summarize close"
   >
-    <div modalHeader class="flex flex-col gap-2 min-w-0">
-      @if (serverDetails) {
-        <h2 class="text-xl md:text-2xl font-semibold text-white">
-          {{ serverDetails.display_name }}
-        </h2>
-      }
-      @if (serverDescription?.tagline) {
-        <p class="text-emerald-400 text-sm md:text-base">
-          {{ serverDescription!.tagline }}
-        </p>
-      }
-      @if (serverDescription?.categories?.length) {
-        <div class="server-description-categories mt-4">
-          @for (category of serverDescription!.categories; track category) {
-            <span class="server-description-category-pill">{{ category }}</span>
-          }
-        </div>
-      }
-    </div>
     @if (serverDescription && isSummarizeModalOpen) {
-      <div class="summarize-modal-body p-4 md:p-6 max-h-[70vh] overflow-y-auto">
+      <div class="flex flex-col gap-4 p-4 md:p-6 max-h-[70vh] overflow-y-auto">
+        @if (serverDescription.tagline || serverDescription.categories.length) {
+          <div class="flex flex-col gap-4 pb-4 border-b border-gray-600">
+            @if (serverDescription.tagline) {
+              <p class="text-emerald-400 text-sm md:text-base">
+                {{ serverDescription.tagline }}
+              </p>
+            }
+            @if (serverDescription.categories.length) {
+              <div class="server-description-categories">
+                @for (
+                  category of serverDescription.categories;
+                  track category
+                ) {
+                  <sc-button
+                    variant="outline"
+                    size="small"
+                    [label]="category"
+                    [disabled]="true"
+                  ></sc-button>
+                }
+              </div>
+            }
+          </div>
+        }
         <sc-server-description-summary
           [description]="serverDescription"
         ></sc-server-description-summary>

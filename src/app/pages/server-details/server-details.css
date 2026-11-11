@@ -40,10 +40,6 @@
   @apply flex flex-wrap gap-2;
 }
 
-.server-description-category-pill {
-  @apply border border-solid border-emerald-400 text-emerald-400 rounded-full px-3 py-1 text-sm;
-}
-
 .server-description-text {
   @apply text-gray-200 leading-relaxed;
 }

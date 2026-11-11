@@ -1,5 +1,15 @@
+import { DialogRef } from "@angular/cdk/dialog";
 import { DatePipe, NgTemplateOutlet } from "@angular/common";
-import { Component, effect, inject, signal } from "@angular/core";
+import {
+  Component,
+  DestroyRef,
+  TemplateRef,
+  effect,
+  inject,
+  signal,
+  untracked,
+  viewChild,
+} from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import {
   LucideCircleUser,
@@ -18,8 +28,10 @@ import {
   type ProfileResult,
   type ProfileSession,
 } from "../../core/auth";
+import { ModalDialog } from "../../services/modal-dialog";
 import { Button } from "../button/button";
 import { LoadingSpinner } from "../loading-spinner/loading-spinner";
+import { Modal } from "../modal/modal";
 
 type ProfileTab = "account" | "security";
 type ProfileSection =
@@ -70,14 +82,19 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     LucideShield,
     LucideSmartphone,
     LoadingSpinner,
+    Modal,
   ],
   templateUrl: "./profile-modal.html",
   styleUrls: ["../auth-modal.css", "./profile-modal.css"],
-  host: { "(document:keydown.escape)": "close()" },
 })
 export class ProfileModal {
-  protected readonly auth = inject(AuthState);
+  private readonly auth = inject(AuthState);
   private readonly profileService = inject(Profile);
+  private readonly modalDialog = inject(ModalDialog);
+  private readonly modalTemplate = viewChild<TemplateRef<unknown>>(
+    "profileModalTemplate",
+  );
+  private dialogRef: DialogRef | null = null;
 
   protected readonly profile = this.profileService.profile;
   protected readonly deleteConfirmationText = PROFILE_DELETE_CONFIRMATION;
@@ -111,17 +128,44 @@ export class ProfileModal {
 
   constructor() {
     effect(() => {
-      if (!this.auth.profileModalOpen()) {
-        this.reset();
+      const open = this.auth.profileModalOpen();
+      const hasProfile = !!this.profile();
+      const template = this.modalTemplate();
+      untracked(() => {
+        if (!open) {
+          this.closeDialog();
+          this.reset();
+        } else if (hasProfile && template) {
+          this.openDialog(template);
+        }
+      });
+    });
+
+    effect(() => {
+      const busy = !!this.busy();
+      if (this.dialogRef) {
+        this.dialogRef.disableClose = busy;
       }
     });
+
+    inject(DestroyRef).onDestroy(() => this.closeDialog());
   }
 
-  protected close(): void {
-    if (!this.auth.profileModalOpen() || this.busy()) {
+  private openDialog(template: TemplateRef<unknown>): void {
+    if (this.dialogRef) {
       return;
     }
-    this.auth.closeUserProfile();
+    const dialogRef = this.modalDialog.open(template);
+    dialogRef.disableClose = !!this.busy();
+    dialogRef.closed.subscribe(() => {
+      this.dialogRef = null;
+      this.auth.closeUserProfile();
+    });
+    this.dialogRef = dialogRef;
+  }
+
+  private closeDialog(): void {
+    this.dialogRef?.close();
   }
 
   protected selectTab(tab: ProfileTab): void {

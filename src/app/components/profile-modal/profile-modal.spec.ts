@@ -1,5 +1,12 @@
-import { signal } from "@angular/core";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { Dialog } from "@angular/cdk/dialog";
+import { OverlayContainer } from "@angular/cdk/overlay";
+import { WritableSignal, signal } from "@angular/core";
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  flush,
+} from "@angular/core/testing";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import { AuthState, Profile, type ProfileView } from "../../core/auth";
 import { ProfileModal } from "./profile-modal";
@@ -7,6 +14,7 @@ import { ProfileModal } from "./profile-modal";
 describe("ProfileModal", () => {
   let fixture: ComponentFixture<ProfileModal>;
   let profileService: jasmine.SpyObj<Profile>;
+  let container: HTMLElement;
   const profileModalOpen = signal(true);
   const closeUserProfile = jasmine.createSpy("closeUserProfile");
   const profile = signal<ProfileView | null>({
@@ -30,6 +38,9 @@ describe("ProfileModal", () => {
   });
 
   beforeEach(async () => {
+    profileModalOpen.set(true);
+    closeUserProfile.calls.reset();
+    closeUserProfile.and.callFake(() => profileModalOpen.set(false));
     profileService = jasmine.createSpyObj<Profile>(
       "Profile",
       ["updateName", "listSessions"],
@@ -54,52 +65,91 @@ describe("ProfileModal", () => {
 
     fixture = TestBed.createComponent(ProfileModal);
     fixture.detectChanges();
+    container = TestBed.inject(OverlayContainer).getContainerElement();
   });
 
-  function element(): HTMLElement {
-    return fixture.nativeElement;
+  afterEach(() => {
+    TestBed.inject(Dialog).closeAll();
+  });
+
+  function modal(): HTMLElement | null {
+    return container.querySelector('[data-testid="profile-modal"]');
   }
 
-  it("should create and show the account tab", () => {
-    expect(fixture.componentInstance).toBeTruthy();
+  function pressEscape(): void {
+    document.body.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Escape",
+        keyCode: 27,
+        bubbles: true,
+      }),
+    );
+    fixture.detectChanges();
+  }
+
+  it("opens the account tab in a dialog titled Edit profile", () => {
+    expect(modal()?.querySelector("h2")?.textContent).toContain("Edit profile");
     expect(
-      element().querySelector('[data-testid="profile-emails"]')?.textContent,
+      modal()?.querySelector('[data-testid="profile-emails"]')?.textContent,
     ).toContain("jane@example.com");
   });
 
-  it("closes on Escape", () => {
-    closeUserProfile.calls.reset();
-    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+  it("closes the profile on Escape", fakeAsync(() => {
+    pressEscape();
+    flush();
 
     expect(closeUserProfile).toHaveBeenCalled();
-  });
+    expect(modal()).toBeNull();
+  }));
+
+  it("stays open on Escape while an action is running", fakeAsync(() => {
+    const component = fixture.componentInstance as unknown as {
+      busy: WritableSignal<string | null>;
+    };
+    component.busy.set("name");
+    fixture.detectChanges();
+
+    pressEscape();
+    flush();
+
+    expect(closeUserProfile).not.toHaveBeenCalled();
+    expect(modal()).not.toBeNull();
+  }));
+
+  it("closes the dialog when the profile is closed elsewhere", fakeAsync(() => {
+    profileModalOpen.set(false);
+    fixture.detectChanges();
+    flush();
+
+    expect(modal()).toBeNull();
+  }));
 
   it("loads active devices when the security tab opens", async () => {
-    element()
-      .querySelector<HTMLButtonElement>('[data-testid="profile-tab-security"]')
+    modal()
+      ?.querySelector<HTMLButtonElement>('[data-testid="profile-tab-security"]')
       ?.click();
     await fixture.whenStable();
     fixture.detectChanges();
 
     expect(profileService.listSessions).toHaveBeenCalled();
     expect(
-      element().querySelector('[data-testid="profile-delete"]'),
+      modal()?.querySelector('[data-testid="profile-delete"]'),
     ).not.toBeNull();
   });
 
   it("saves the updated name", async () => {
     profileService.updateName.and.resolveTo({ status: "complete" });
-    element()
-      .querySelector<HTMLButtonElement>('[data-testid="profile-edit"]')
+    modal()
+      ?.querySelector<HTMLButtonElement>('[data-testid="profile-edit"]')
       ?.click();
     fixture.detectChanges();
 
-    const modal = fixture.componentInstance as unknown as {
+    const component = fixture.componentInstance as unknown as {
       firstName: { set(value: string): void };
       saveName(form: { invalid: boolean }): Promise<void>;
     };
-    modal.firstName.set("Ada");
-    await modal.saveName({ invalid: false });
+    component.firstName.set("Ada");
+    await component.saveName({ invalid: false });
 
     expect(profileService.updateName).toHaveBeenCalledOnceWith({
       firstName: "Ada",
@@ -109,12 +159,12 @@ describe("ProfileModal", () => {
 
   it("unlocks the modal when an action rejects", async () => {
     profileService.updateName.and.rejectWith(new Error("boom"));
-    const modal = fixture.componentInstance as unknown as {
+    const component = fixture.componentInstance as unknown as {
       busy(): string | null;
       saveName(form: { invalid: boolean }): Promise<void>;
     };
 
-    await expectAsync(modal.saveName({ invalid: false })).toBeRejected();
-    expect(modal.busy()).toBeNull();
+    await expectAsync(component.saveName({ invalid: false })).toBeRejected();
+    expect(component.busy()).toBeNull();
   });
 });

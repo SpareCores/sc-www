@@ -31,6 +31,7 @@ export class Modal {
   title = input("");
   size = input<ModalSize>("xl");
   showClose = input(true);
+  closeDisabled = input(false);
   closeCaptureEvent = input<string | null>(null);
   closeCaptureAction = input<string | null>(null);
 

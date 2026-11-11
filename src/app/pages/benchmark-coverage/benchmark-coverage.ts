@@ -32,6 +32,7 @@ import { SeoHandler } from "../../services/seo-handler";
 import { Toast } from "../../services/toast";
 import { BENCHMARK_COVERAGE_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { SearchBar } from "../../components/search-bar/search-bar";
+import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { Dropdown } from "../../directives/dropdown";
 import {
   ServerDebugInfo,
@@ -76,6 +77,7 @@ import {
     PercentPipe,
     PageLimitPipe,
     SearchBar,
+    LoadingSpinner,
     Dropdown,
   ],
   templateUrl: "./benchmark-coverage.html",
