@@ -128,8 +128,10 @@ jobs:
             spec: cypress/e2e/visual/mobile/**
           - shard: visual-tablet
             spec: cypress/e2e/visual/tablet/**
-          - shard: functional
-            spec: cypress/e2e/functional/**
+          - shard: functional-auth-http
+            spec: cypress/e2e/functional/auth/**,cypress/e2e/functional/http/**
+          - shard: functional-pages
+            spec: cypress/e2e/functional/pages/**
     steps:
       - uses: actions/checkout@v6.0.2
       - uses: actions/setup-node@v7.1.0
