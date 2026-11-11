@@ -12,10 +12,8 @@ import {
 import { ComparedDatabase } from "./compare-selection";
 import { DatabaseCompareSpecs } from "./database-compare-specs";
 import { DatabaseSpecCards } from "./database-spec-cards";
-import {
-  DatabaseUnderlyingServer,
-  LoadedDatabase,
-} from "./database-spec-cards.types";
+import { LoadedDatabase } from "./database-spec-cards.types";
+import { DatabaseUnderlyingServer } from "./database-underlying-server";
 import { DatabasePgbench, hasPgbenchScores } from "./database-pgbench";
 import {
   COMPARE_PGBENCH_TITLE_FALLBACK,
@@ -36,6 +34,7 @@ export class DatabaseEmbedData {
   private pgbench = inject(DatabasePgbench);
   private specCards = inject(DatabaseSpecCards);
   private compareSpecs = inject(DatabaseCompareSpecs);
+  private underlyingServer = inject(DatabaseUnderlyingServer);
 
   async loadDetails(
     vendor: string,
@@ -71,13 +70,14 @@ export class DatabaseEmbedData {
       return null;
     }
 
-    const server = needsServer
-      ? await this.loadUnderlyingServer(body, isServerChart)
+    const underlying = needsServer
+      ? await this.underlyingServer.load(body, isServerChart)
       : undefined;
+    const server = underlying?.server;
     const database: LoadedDatabase = {
       ...body,
       prices: this.specCards.attachPrices(prices, regions),
-      underlyingServer: server?.server,
+      underlyingServer: server,
     };
     const model: DetailsEmbedModel = {
       path: `/database/${database.vendor_id}/${database.api_reference}`,
@@ -100,10 +100,10 @@ export class DatabaseEmbedData {
     model.pgbench = {
       meta: this.pgbench.meta(benchmarkMeta, DETAILS_PGBENCH_TITLE_FALLBACK),
       chart: isServerChart
-        ? server && hasPgbenchScores(server.scores)
+        ? server && underlying && hasPgbenchScores(underlying.scores)
           ? this.pgbench.detailsChart(
-              server.scores,
-              server.server.vcpus ?? server.server.cpu_cores,
+              underlying.scores,
+              server.vcpus ?? server.cpu_cores,
               benchmarkMeta,
             )
           : undefined
@@ -132,47 +132,6 @@ export class DatabaseEmbedData {
       propertySections: this.compareSpecs.buildPropertySections(databases),
       priceRows: this.compareSpecs.buildPriceRows(databases),
     };
-  }
-
-  private async loadUnderlyingServer(
-    database: Database,
-    withScores: boolean,
-  ): Promise<
-    { server: DatabaseUnderlyingServer; scores: PgbenchScore[] } | undefined
-  > {
-    if (!database.server_id) {
-      return undefined;
-    }
-
-    try {
-      const [serverResponse, scores] = await Promise.all([
-        this.keeperAPI.getServerV2(database.vendor_id, database.server_id),
-        withScores
-          ? this.loadScores(
-              this.keeperAPI.getServerBenchmark(
-                database.vendor_id,
-                database.server_id,
-              ),
-            )
-          : Promise.resolve([] as PgbenchScore[]),
-      ]);
-      const server = serverResponse?.body;
-      if (!server?.display_name || !server?.api_reference) {
-        return undefined;
-      }
-
-      return {
-        server: {
-          display_name: server.display_name,
-          api_reference: server.api_reference,
-          cpu_cores: server.cpu_cores,
-          vcpus: server.vcpus,
-        },
-        scores,
-      };
-    } catch {
-      return undefined;
-    }
   }
 
   private loadScores(

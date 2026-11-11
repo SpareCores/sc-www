@@ -49,6 +49,7 @@ import {
 } from "../../services/database-embed.constants";
 import { DatabaseSpecCards } from "../../services/database-spec-cards";
 import { LoadedDatabase } from "../../services/database-spec-cards.types";
+import { DatabaseUnderlyingServer } from "../../services/database-underlying-server";
 import {
   DETAILS_PGBENCH_TITLE_FALLBACK,
   PGBENCH_PEAK_BENCHMARK_ID,
@@ -79,6 +80,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private toastService = inject(Toast);
   private serverCompare = inject(CompareSelection);
   private specCards = inject(DatabaseSpecCards);
+  private underlyingServerLoader = inject(DatabaseUnderlyingServer);
 
   isLoading = true;
   databaseDetails: LoadedDatabase | null = null;
@@ -180,48 +182,8 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           const vendors = (vendorsResponse?.body || []) as Vendor[];
           const regions = (regionsResponse?.body || []) as Region[];
           const prices = (pricesResponse?.body || []) as DatabasePrice[];
-          let underlyingServer: LoadedDatabase["underlyingServer"];
-          let underlyingServerScores: PgbenchScore[] = [];
-          if (database.server_id) {
-            try {
-              const [serverResponse, serverBenchmarksResponse] =
-                await Promise.all([
-                  this.keeperAPI.getServerV2(
-                    database.vendor_id,
-                    database.server_id,
-                  ),
-                  this.keeperAPI
-                    .getServerBenchmark(database.vendor_id, database.server_id)
-                    .catch(() => ({ body: [] })),
-                ]);
-              if (
-                this.destroyRef.destroyed ||
-                requestId !== this.loadRequestId
-              ) {
-                return;
-              }
-              const server = serverResponse?.body;
-              if (server?.display_name && server?.api_reference) {
-                underlyingServer = {
-                  display_name: server.display_name,
-                  api_reference: server.api_reference,
-                  cpu_cores: server.cpu_cores,
-                  vcpus: server.vcpus,
-                };
-              }
-              underlyingServerScores = (serverBenchmarksResponse?.body ||
-                []) as PgbenchScore[];
-            } catch {
-              if (
-                this.destroyRef.destroyed ||
-                requestId !== this.loadRequestId
-              ) {
-                return;
-              }
-              underlyingServer = undefined;
-              underlyingServerScores = [];
-            }
-          }
+          const { server: underlyingServer, scores: underlyingServerScores } =
+            await this.underlyingServerLoader.load(database, true);
 
           if (this.destroyRef.destroyed || requestId !== this.loadRequestId) {
             return;

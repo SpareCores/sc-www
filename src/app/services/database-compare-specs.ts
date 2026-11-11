@@ -21,6 +21,7 @@ import { formatKebabTitle } from "../pipes/pipe-utils";
 import { ComparedDatabase } from "./compare-selection";
 import { PGBENCH_PEAK_BENCHMARK_ID } from "./database-pgbench.constants";
 import { DATABASE_SCHEMA_PROPERTIES } from "./database-schema.constants";
+import { DatabaseUnderlyingServer } from "./database-underlying-server";
 import { KeeperAPI } from "./keeper-api";
 import {
   ComparePropertyRow,
@@ -37,6 +38,7 @@ import {
 export class DatabaseCompareSpecs {
   private keeperAPI = inject(KeeperAPI);
   private advisorUi = inject(AdvisorUi);
+  private underlyingServer = inject(DatabaseUnderlyingServer);
 
   async load(
     instances: ComparedDatabase[],
@@ -83,21 +85,8 @@ export class DatabaseCompareSpecs {
         if (!database.server_id) {
           return;
         }
-        try {
-          const serverResponse = await this.keeperAPI.getServerV2(
-            database.vendor_id,
-            database.server_id,
-          );
-          const server = serverResponse?.body;
-          if (server?.display_name && server?.api_reference) {
-            database.underlyingServer = {
-              display_name: server.display_name,
-              api_reference: server.api_reference,
-            };
-          }
-        } catch {
-          database.underlyingServer = undefined;
-        }
+        const { server } = await this.underlyingServer.load(database, false);
+        database.underlyingServer = server;
       }),
     );
   }

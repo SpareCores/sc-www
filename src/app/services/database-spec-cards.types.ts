@@ -4,6 +4,7 @@ import {
   Region,
   Vendor,
 } from "../../../sdk/data-contracts";
+import { PgbenchScore } from "../components/charts/line/benchmark-line-chart.types";
 import { DetailsCardSection } from "../components/details-card/details-card.types";
 
 export type DatabaseUnderlyingServer = {
@@ -12,6 +13,11 @@ export type DatabaseUnderlyingServer = {
   cpu_cores?: number;
   vcpus?: number;
 };
+
+export interface LoadedUnderlyingServer {
+  server?: DatabaseUnderlyingServer;
+  scores: PgbenchScore[];
+}
 
 export type LoadedDatabase = Database & {
   vendor?: Vendor;
