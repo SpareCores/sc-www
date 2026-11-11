@@ -177,6 +177,8 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
       - name: Check for baseline changes against main
         id: baselines
         if: github.ref != 'refs/heads/main'
@@ -231,6 +233,7 @@ jobs:
           overwrite: true
       - name: Delete intermediate artifacts
         if: needs.cypress-shard.result == 'success'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
