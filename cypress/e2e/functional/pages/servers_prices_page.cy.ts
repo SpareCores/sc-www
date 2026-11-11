@@ -1,8 +1,8 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../../support/generics";
 
 describe("Server prices", () => {
   it("Test /server_prices page", () => {
-    E2EEvent.visitURL("/server_prices", 4000);
+    E2EEvent.visitURL("/server_prices");
 
     E2EEvent.checkBreadcrumbs();
 
@@ -24,7 +24,6 @@ describe("Server prices", () => {
 
     E2EEvent.visitURL(
       "/servers?vcpus_min=11&benchmark_score_stressng_cpu_min=200&page=2",
-      4000,
     );
 
     // wea re on page 2 now

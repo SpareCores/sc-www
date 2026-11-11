@@ -1,8 +1,8 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../../support/generics";
 
 describe("Advisor page", () => {
   it("Loads the advisor shell and verification panels", () => {
-    E2EEvent.visitURL("/advisor", 4000);
+    E2EEvent.visitURL("/advisor");
     E2EEvent.hideBaselineServerCaretForScreenshot();
 
     E2EEvent.checkBreadcrumbs();
@@ -18,14 +18,17 @@ describe("Advisor page", () => {
   });
 
   it("Filters baseline servers after two characters", () => {
-    E2EEvent.visitURL("/advisor", 4000);
+    E2EEvent.visitURL("/advisor");
     E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.get('input[placeholder="Search for server..."]').as(
       "baselineServerInput",
     );
 
-    cy.get("@baselineServerInput").type("gc");
+    cy.get("@baselineServerInput")
+      .should("be.visible")
+      .and("be.enabled")
+      .type("gc");
     cy.get(".custom-autocomplete__panel .custom-autocomplete__option").should(
       "have.length.greaterThan",
       0,
@@ -33,10 +36,13 @@ describe("Advisor page", () => {
   });
 
   it("Matches baseline servers across multiple search terms", () => {
-    E2EEvent.visitURL("/advisor", 4000);
+    E2EEvent.visitURL("/advisor");
     E2EEvent.hideBaselineServerCaretForScreenshot();
 
-    cy.get('input[placeholder="Search for server..."]').type("aws large");
+    cy.get('input[placeholder="Search for server..."]')
+      .should("be.visible")
+      .and("be.enabled")
+      .type("aws large");
     cy.get(".custom-autocomplete__panel .custom-autocomplete__option")
       .should("have.length.greaterThan", 0)
       .first()
@@ -44,7 +50,7 @@ describe("Advisor page", () => {
   });
 
   it("shows the summary alert with empty minimum memory and no baseline placeholders", () => {
-    E2EEvent.visitURL("/advisor", 4000);
+    E2EEvent.visitURL("/advisor");
     E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.contains("No matches yet").should("be.visible");
@@ -62,7 +68,7 @@ describe("Advisor page", () => {
   });
 
   it("keeps top actions working and guides focus from baseline server to workload", () => {
-    E2EEvent.visitURL("/advisor", 4000);
+    E2EEvent.visitURL("/advisor");
     E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.get('[id="advisor_example_button"] a')
@@ -90,7 +96,11 @@ describe("Advisor page", () => {
       "baselineWorkloadInput",
     );
 
-    cy.get("@baselineServerInput").clear().type("aws large");
+    cy.get("@baselineServerInput")
+      .should("be.visible")
+      .and("be.enabled")
+      .clear()
+      .type("aws large");
     cy.get(".custom-autocomplete__panel .custom-autocomplete__option")
       .should("have.length.greaterThan", 0)
       .first()

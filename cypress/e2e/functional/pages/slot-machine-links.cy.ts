@@ -1,3 +1,5 @@
+import { E2EEvent } from "../../../support/generics";
+
 describe("Landing page slot machine links", () => {
   const serverPricesResponse = [
     {
@@ -225,7 +227,7 @@ describe("Landing page slot machine links", () => {
       });
     }).as("getServerPrices");
 
-    cy.visit("http://localhost:4200/");
+    E2EEvent.visitURL("/");
 
     cy.wait("@searchServers");
     cy.wait("@getRegions");
