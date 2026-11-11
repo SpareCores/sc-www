@@ -18,6 +18,7 @@
         variant="close"
         icon="x"
         ariaLabel="Close modal"
+        [disabled]="closeDisabled()"
         [attr.data-ph-capture-attribute-sc-event]="closeCaptureEvent()"
         [attr.data-ph-capture-attribute-server-listing-search-prompt-action]="
           closeCaptureAction()
@@ -26,10 +27,17 @@
       ></sc-button>
     }
   </div>
-  <div
-    class="flex min-h-0 flex-1 flex-col overflow-y-auto has-[[data-modal-fill]]:bg-primary"
-  >
-    <ng-content></ng-content>
+  <div class="flex min-h-0 flex-1 flex-col bg-primary sm:flex-row">
+    <div
+      class="shrink-0 overflow-y-auto border-b border-gray-600 empty:hidden sm:border-b-0"
+    >
+      <ng-content select="[modalSidebar]"></ng-content>
+    </div>
+    <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+      <ng-content></ng-content>
+    </div>
   </div>
-  <ng-content select="[modalFooter]"></ng-content>
+  <div class="bg-secondary border-t border-gray-600 empty:hidden">
+    <ng-content select="[modalFooter]"></ng-content>
+  </div>
 </div>

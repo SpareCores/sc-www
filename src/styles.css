@@ -21,6 +21,7 @@
 @import "./styles/components/bookmark-toggle.css" layer(components);
 @import "./styles/components/link.css" layer(components);
 @import "./styles/components/stepper.css" layer(components);
+@import "./styles/components/input.css" layer(components);
 
 @layer base {
   *,

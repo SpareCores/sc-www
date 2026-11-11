@@ -6,8 +6,7 @@
         <input
           #nameInput
           type="text"
-          class="rounded-lg border bg-primary px-3 py-2 text-white"
-          [class.border-gray-600]="!showNameWarning()"
+          class="sc-input"
           [class.border-red-500]="showNameWarning()"
           [ngModel]="name()"
           (ngModelChange)="onNameChange($event)"
@@ -26,7 +25,7 @@
         <span>{{ notesLabel() }}</span>
         <textarea
           rows="5"
-          class="rounded-lg border border-gray-600 bg-primary px-3 py-2 text-white"
+          class="sc-input"
           [ngModel]="note()"
           (ngModelChange)="note.set($event)"
           [maxlength]="noteMaxLength"
@@ -35,21 +34,21 @@
           {{ note().length }}/{{ noteMaxLength }}
         </span>
       </label>
-      <div class="flex justify-end gap-3">
-        <sc-button
-          label="Cancel"
-          variant="outline"
-          color="brand"
-          (buttonClick)="close()"
-        ></sc-button>
-        <sc-button
-          [label]="confirmLabel()"
-          icon="circle-check"
-          [loading]="saving()"
-          [disabled]="!canConfirm()"
-          (buttonClick)="confirm()"
-        ></sc-button>
-      </div>
+    </div>
+    <div modalFooter class="flex justify-end gap-3 p-4">
+      <sc-button
+        label="Cancel"
+        variant="outline"
+        color="brand"
+        (buttonClick)="close()"
+      ></sc-button>
+      <sc-button
+        [label]="confirmLabel()"
+        icon="circle-check"
+        [loading]="saving()"
+        [disabled]="!canConfirm()"
+        (buttonClick)="confirm()"
+      ></sc-button>
     </div>
   </sc-modal>
 </ng-template>

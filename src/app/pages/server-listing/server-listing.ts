@@ -570,6 +570,7 @@ export class ServerListing implements OnInit, OnDestroy {
         this.benchmarkCategories = [];
         this.benchmarksConfigs.forEach((config: any) => {
           if (
+            config.category &&
             !this.benchmarkCategories.find(
               (category: any) => category === config.category,
             )

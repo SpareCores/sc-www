@@ -185,19 +185,9 @@
       </p>
       <textarea
         rows="4"
-        class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm focus:ring-emerald-400 focus:border-emerald-400"
+        class="sc-input"
         [(ngModel)]="freetextSearchInput"
       ></textarea>
-      <sc-button
-        class="w-full"
-        label="Submit"
-        icon="send"
-        iconPosition="start"
-        data-ph-capture-attribute-sc-event="server listing search prompt process"
-        data-ph-capture-attribute-server-listing-search-prompt-action="process"
-        [disabled]="modalSubmitted"
-        (buttonClick)="submitFreetextSearch()"
-      ></sc-button>
       @if (modalResponse) {
         <div>
           <div class="text-white">Suggested filter parameters</div>
@@ -209,12 +199,17 @@
         </div>
       }
     </div>
-    <div
-      modalFooter
-      class="flex flex-col p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b"
-    >
+    <div modalFooter class="flex justify-end gap-3 p-4">
       <sc-button
-        class="w-full"
+        label="Submit"
+        icon="send"
+        iconPosition="start"
+        data-ph-capture-attribute-sc-event="server listing search prompt process"
+        data-ph-capture-attribute-server-listing-search-prompt-action="process"
+        [disabled]="modalSubmitted"
+        (buttonClick)="submitFreetextSearch()"
+      ></sc-button>
+      <sc-button
         label="Confirm"
         icon="circle-check"
         iconPosition="start"

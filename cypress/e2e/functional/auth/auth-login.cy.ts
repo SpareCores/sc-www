@@ -99,7 +99,9 @@ describe("Clerk email login", () => {
     cy.get('[data-testid="profile-emails"]')
       .should("contain.text", "Email addresses")
       .and("contain.text", user.email);
-    cy.get('[data-testid="profile-close"] button').click();
+    cy.get(
+      '[data-testid="profile-modal"] button[aria-label="Close modal"]',
+    ).click();
 
     cy.get('[data-testid="profile-modal"]').should("not.exist");
     cy.get("#auth_button").should("be.visible");
