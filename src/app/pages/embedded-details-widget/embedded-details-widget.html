@@ -9,6 +9,8 @@
           [sections]="card.sections"
           [fixedRows]="card.fixedRows"
           [expandable]="false"
+          [rowClass]="card.cardId === 'availability' ? 'availability_line' : ''"
+          linkTarget="_blank"
         ></sc-details-card>
       </div>
     } @else if (data.serverCharts; as charts) {
@@ -76,5 +78,9 @@
         }
       </div>
     }
+  } @else if (failed()) {
+    <div class="w-full flex bg-secondary h-full">
+      <p class="m-auto text-white">This widget could not be loaded.</p>
+    </div>
   }
 </sc-embed-frame>

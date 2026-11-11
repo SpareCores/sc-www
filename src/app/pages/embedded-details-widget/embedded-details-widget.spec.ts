@@ -80,5 +80,19 @@ describe("EmbeddedDetailsWidget", () => {
     expect(element.querySelector("#details")).not.toBeNull();
     expect(element.querySelector("#details_more_button")).toBeNull();
     expect(element.querySelector("sc-server-charts")).toBeNull();
+    expect(component.failed()).toBeFalse();
+  });
+
+  it("shows a message when the widget fails to load", async () => {
+    load.and.rejectWith(new Error("failed"));
+    fixture = TestBed.createComponent(EmbeddedDetailsWidget);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.failed()).toBeTrue();
+    expect(fixture.nativeElement.textContent).toContain(
+      "This widget could not be loaded.",
+    );
   });
 });

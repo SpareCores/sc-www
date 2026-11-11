@@ -49,6 +49,7 @@ export class DetailsCard {
   captureEventPrefix = input<string | null>(null);
   isOpen = input(false);
   expandable = input(true);
+  linkTarget = input<string>();
 
   toggleRequested = output<void>();
 

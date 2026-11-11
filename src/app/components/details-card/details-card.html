@@ -74,7 +74,11 @@
                     </div>
                   } @else if (first && row.routerLink) {
                     <div class="property_value">
-                      <a class="sc-link" [routerLink]="row.routerLink">
+                      <a
+                        class="sc-link"
+                        [routerLink]="row.routerLink"
+                        [target]="linkTarget()"
+                      >
                         {{ value }}
                       </a>
                     </div>

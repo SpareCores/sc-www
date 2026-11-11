@@ -22,7 +22,7 @@ export class DatabaseCompareSpecRows {
   priceRows = input<ComparePropertyRow[]>([]);
   databases = input<LoadedCompareDatabase[]>([]);
   baselineIndex = input(-1);
-  linkTarget = input<string | null>(null);
+  linkTarget = input<string>();
 
   descriptionEnter = output<{ event: MouseEvent; content: string }>();
   descriptionLeave = output<void>();

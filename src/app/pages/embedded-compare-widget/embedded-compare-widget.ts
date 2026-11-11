@@ -36,6 +36,7 @@ import { Toast } from "../../services/toast";
   ],
   templateUrl: "./embedded-compare-widget.html",
   styleUrl: "./embedded-compare-widget.css",
+  host: { ngSkipHydration: "true" },
 })
 export class EmbeddedCompareWidget {
   private router = inject(Router);

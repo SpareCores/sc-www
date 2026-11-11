@@ -31,6 +31,7 @@ export class EmbeddedDetailsWidget {
 
   readonly widgetId = signal("all");
   readonly model = signal<DetailsEmbedModel | null>(null);
+  readonly failed = signal(false);
   private loadId = 0;
 
   constructor() {
@@ -50,14 +51,19 @@ export class EmbeddedDetailsWidget {
   private load(resource: EmbedResource, vendor: string, id: string) {
     const loadId = ++this.loadId;
     this.model.set(null);
+    this.failed.set(false);
     this.embedData
       .load(resource, vendor, id, this.widgetId())
       .then((model) => {
         if (loadId === this.loadId) {
           this.model.set(model);
+          this.failed.set(!model);
         }
       })
       .catch((err) => {
+        if (loadId === this.loadId) {
+          this.failed.set(true);
+        }
         console.error(err);
         this.analytics.SentryException(err, {
           tags: { location: this.constructor.name, function: "load" },
