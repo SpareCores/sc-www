@@ -1,0 +1,13 @@
+@if (state().bottomPosition; as position) {
+  <div
+    #mirror
+    class="scrollbar_mirror_outer"
+    [style]="toStyle(position)"
+    (scroll)="scrolled.emit($event)"
+  >
+    <div
+      class="scrollbar_mirror_inner"
+      [style.width.px]="state().innerWidth"
+    ></div>
+  </div>
+}
