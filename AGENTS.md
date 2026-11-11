@@ -35,6 +35,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 - Keep tests in sync: update existing unit specs and Cypress specs or selectors affected by your change.
 - Generate minimal `.spec.ts` files (component creation and core triggers only) when creating a new element or when explicitly requested.
 - Never regenerate visual regression baselines locally unless explicitly asked; they are regenerated in CI.
+- Put Cypress specs in the folders that the CI shards run: functional specs in `cypress/e2e/functional/` (`auth/`, `http/`, `pages/`, or a new subfolder there), visual specs in `cypress/e2e/visual/desktop/`, `mobile/` or `tablet/`. A spec outside these folders never runs in CI.
 
 ### Formatting
 
