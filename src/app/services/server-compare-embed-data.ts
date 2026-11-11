@@ -1,6 +1,16 @@
 import { Injectable, inject } from "@angular/core";
-import { Allocation } from "../../../sdk/data-contracts";
-import type { ExtendedServerDetails } from "../pages/server-details/server-details.types";
+import {
+  Allocation,
+  Benchmark,
+  Region,
+  ServerTableMetaData,
+  Vendor,
+  Zone,
+} from "../../../sdk/data-contracts";
+import type {
+  ExtendedServerDetails,
+  ExtendedServerPrice,
+} from "../pages/server-details/server-details.types";
 import { ComparedServer } from "./compare-selection";
 import { KeeperAPI } from "./keeper-api";
 import { ServerCompareEmbedDetails } from "./server-compare-embed.types";
@@ -17,7 +27,6 @@ export class ServerCompareEmbedData {
     instances: ComparedServer[],
     widgetId: string,
   ): Promise<ServerCompareEmbedDetails> {
-    const serverCount = instances.length;
     const result: ServerCompareEmbedDetails = {
       servers: [],
       instanceProperties: [],
@@ -29,60 +38,66 @@ export class ServerCompareEmbedData {
       category.hidden = !(widgetId === category.id || widgetId === "all");
     });
 
-    const promises: Promise<any>[] = [
+    const [
+      metaResponse,
+      benchmarkMetaResponse,
+      vendorsResponse,
+      regionsResponse,
+      zonesResponse,
+      ...serverResponses
+    ] = await Promise.all([
       this.keeperAPI.getServerMeta(),
       this.keeperAPI.getServerBenchmarkMeta(),
       this.keeperAPI.getVendors(),
       this.keeperAPI.getRegions(),
       this.keeperAPI.getZones(),
-    ];
-    instances.forEach((instance) => {
-      promises.push(
-        this.keeperAPI.getServerV2(instance.vendor, instance.server),
-      );
-      promises.push(
-        this.keeperAPI.getServerPrices(instance.vendor, instance.server, "USD"),
-      );
-      promises.push(
-        this.keeperAPI.getServerBenchmark(instance.vendor, instance.server),
-      );
-    });
-
-    const data = await Promise.all(promises);
-    const promiseAllData = data.map((x: any) => x.body);
-    const [meta, benchmarkMeta, vendors, regions, zones, ...servers] =
-      promiseAllData;
+      ...instances.map((instance) =>
+        Promise.all([
+          this.keeperAPI.getServerV2(instance.vendor, instance.server),
+          this.keeperAPI.getServerPrices(
+            instance.vendor,
+            instance.server,
+            "USD",
+          ),
+          this.keeperAPI.getServerBenchmark(instance.vendor, instance.server),
+        ]),
+      ),
+    ]);
+    const meta: ServerTableMetaData = metaResponse.body;
+    const benchmarkMeta: Benchmark[] = benchmarkMetaResponse.body;
+    const vendors: Vendor[] = vendorsResponse.body;
+    const regions: Region[] = regionsResponse.body;
+    const zones: Zone[] = zonesResponse.body;
 
     result.instanceProperties = meta.fields;
 
-    result.instancePropertyCategories.forEach((c) => {
-      c.properties = [];
-    });
+    for (const [
+      serverResponse,
+      pricesResponse,
+      scoresResponse,
+    ] of serverResponses) {
+      const server: ExtendedServerDetails = serverResponse.body;
 
-    result.servers = [];
-
-    for (let i = 0; i < serverCount; i++) {
-      let server: ExtendedServerDetails = servers[i * 3];
-
-      server.benchmark_scores = servers[i * 3 + 2];
-      server.prices = servers[i * 3 + 1]?.sort(
-        (a: any, b: any) => a.price - b.price,
+      server.benchmark_scores = scoresResponse.body;
+      server.prices = pricesResponse.body?.sort(
+        (a: ExtendedServerPrice, b: ExtendedServerPrice) => a.price - b.price,
       );
 
-      server.vendor = vendors.find(
-        (v: any) => v.vendor_id === server.vendor_id,
-      );
+      const vendor = vendors.find((v) => v.vendor_id === server.vendor_id);
+      if (vendor) {
+        server.vendor = vendor;
+      }
       server.vendor_name = server.vendor?.name;
 
       if (server.prices?.length > 0) {
-        server.prices.forEach((price: any) => {
+        server.prices.forEach((price) => {
           price.region = regions.find(
-            (r: any) =>
+            (r) =>
               r.vendor_id === price.vendor_id &&
               r.region_id === price.region_id,
           );
           price.zone = zones.find(
-            (z: any) =>
+            (z) =>
               z.vendor_id === price.vendor_id &&
               z.region_id === price.region_id &&
               z.zone_id === price.zone_id,
@@ -99,7 +114,7 @@ export class ServerCompareEmbedData {
       }
 
       server.score = server.benchmark_scores?.find(
-        (b: any) => b.benchmark_id === "stress_ng:bestn",
+        (b) => b.benchmark_id === "stress_ng:bestn",
       )?.score;
       server.price = server.prices?.length ? server.prices[0].price : 0;
       server.score_per_price =
@@ -110,17 +125,19 @@ export class ServerCompareEmbedData {
       result.servers.push(server);
     }
 
-    result.instanceProperties.forEach((p: any) => {
+    result.instanceProperties.forEach((p) => {
       const group = result.instancePropertyCategories.find(
         (g) => g.category === p.category,
       );
-      const hasValue = result.servers.some(
-        (s: any) =>
-          s[p.id] !== undefined &&
-          s[p.id] !== null &&
-          s[p.id] !== "" &&
-          !Array.isArray(s[p.id]),
-      );
+      const hasValue = result.servers.some((s) => {
+        const value = s[p.id as keyof ExtendedServerDetails];
+        return (
+          value !== undefined &&
+          value !== null &&
+          value !== "" &&
+          !Array.isArray(value)
+        );
+      });
 
       if (group && hasValue) {
         group.properties.push(p);
@@ -128,53 +145,35 @@ export class ServerCompareEmbedData {
     });
 
     result.benchmarkMeta = benchmarkMeta
-      ?.filter((benchmark: any) => {
-        let found = false;
-        result.servers.forEach((s: any) => {
-          if (
-            s.benchmark_scores?.find(
-              (score: any) => score.benchmark_id === benchmark.benchmark_id,
-            )
-          ) {
-            found = true;
-          }
-        });
-        return found;
-      })
-      .map((b: any) => {
-        return {
-          ...b,
-          collapsed: true,
-          configs: [],
-        };
-      });
+      .filter((benchmark) =>
+        result.servers.some((s) =>
+          s.benchmark_scores?.some(
+            (score) => score.benchmark_id === benchmark.benchmark_id,
+          ),
+        ),
+      )
+      .map((b) => ({ ...b, collapsed: true, configs: [] }));
 
-    result.benchmarkMeta.forEach((benchmark: any) => {
-      result.servers.forEach((server: any) => {
-        const scores = server.benchmark_scores?.filter(
-          (s: any) => s.benchmark_id === benchmark.benchmark_id,
-        );
-        if (scores) {
-          scores.forEach((score: any) => {
-            const config = benchmark.configs.find((c: any) => {
-              return JSON.stringify(c.config) === JSON.stringify(score.config);
-            });
+    result.benchmarkMeta.forEach((benchmark) => {
+      result.servers.forEach((server) => {
+        server.benchmark_scores
+          ?.filter((s) => s.benchmark_id === benchmark.benchmark_id)
+          .forEach((score) => {
+            const config = benchmark.configs.find(
+              (c) => JSON.stringify(c.config) === JSON.stringify(score.config),
+            );
             if (!config) {
-              benchmark.configs.push({
-                config: score.config,
-                values: [],
-              });
+              benchmark.configs.push({ config: score.config, values: [] });
             }
           });
-        }
       });
     });
 
-    result.benchmarkMeta.forEach((benchmark: any) => {
-      benchmark.configs.forEach((config: any) => {
-        result.servers.forEach((server: any) => {
+    result.benchmarkMeta.forEach((benchmark) => {
+      benchmark.configs.forEach((config) => {
+        result.servers.forEach((server) => {
           const score = server.benchmark_scores?.find(
-            (s: any) =>
+            (s) =>
               s.benchmark_id === benchmark.benchmark_id &&
               JSON.stringify(s.config) === JSON.stringify(config.config),
           );
@@ -184,27 +183,30 @@ export class ServerCompareEmbedData {
     });
 
     result.benchmarkCategories.forEach((category) => {
-      category.data = result.benchmarkMeta.filter((b: any) =>
+      category.data = result.benchmarkMeta.filter((b) =>
         category.benchmarks.includes(b.benchmark_id),
       );
-      category.data?.forEach((d: any) => {
+      category.data.forEach((d) => {
         d.name = d.name
           .replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, "$1$2")
           .replace(/PassMark: (.*?) Test|PassMark: (.*?)/, "$1$2");
       });
     });
 
-    let ngData: any[] = result.benchmarkCategories.find(
-      (c) => c.id === "stress_ng",
-    ).data;
-    if (ngData?.length > 0) {
-      ngData[0].configs = ngData[0].configs.sort((a: any, b: any) => {
-        return a.config.cores - b.config.cores;
-      });
+    const ngData =
+      result.benchmarkCategories.find((c) => c.id === "stress_ng")?.data ?? [];
+    if (ngData.length > 0) {
+      ngData[0].configs = ngData[0].configs.sort(
+        (a, b) => a.config?.["cores"] - b.config?.["cores"],
+      );
     }
 
-    result.benchmarkCategories.find((c) => c.id === "stress_ng_pct").data =
-      ngData;
+    const ngPercentCategory = result.benchmarkCategories.find(
+      (c) => c.id === "stress_ng_pct",
+    );
+    if (ngPercentCategory) {
+      ngPercentCategory.data = ngData;
+    }
 
     return result;
   }

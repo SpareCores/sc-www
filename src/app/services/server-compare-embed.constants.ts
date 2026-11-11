@@ -1,4 +1,9 @@
-export function createInstancePropertyCategories(): any[] {
+import {
+  CompareEmbedBenchmarkCategory,
+  InstancePropertyCategory,
+} from "./server-compare-embed.types";
+
+export function createInstancePropertyCategories(): InstancePropertyCategory[] {
   return [
     { name: "Metadata", category: "meta", properties: [] },
     { name: "CPU", category: "cpu", properties: [] },
@@ -9,7 +14,7 @@ export function createInstancePropertyCategories(): any[] {
   ];
 }
 
-export function createBenchmarkCategories(): any[] {
+export function createBenchmarkCategories(): CompareEmbedBenchmarkCategory[] {
   return [
     {
       name: "Geekbench",
