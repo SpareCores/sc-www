@@ -14,15 +14,14 @@
         <hr class="partners-divider" />
 
         @for (category of categories(); track category.id) {
-          <div class="partners-anchor-target" [attr.id]="category.id"></div>
-          <h2 class="partners-heading partners-heading--section">
+          <h2
+            class="partners-heading partners-heading--section sc-header-anchor-host"
+          >
             {{ category.heading }}
-            <a
-              class="sc-header-anchor"
-              [href]="'/about/partners#' + category.id"
-              [attr.aria-label]="'Permalink to ' + category.heading"
-              >#</a
-            >
+            <sc-header-anchor
+              [anchorId]="category.id"
+              [label]="category.heading"
+            ></sc-header-anchor>
           </h2>
 
           @for (paragraph of category.intro; track paragraph) {
@@ -31,17 +30,14 @@
 
           @for (section of category.sections; track section.id) {
             @if (section.heading) {
-              <div class="partners-anchor-target" [attr.id]="section.id"></div>
-              <h3 class="partners-heading partners-heading--subsection">
+              <h3
+                class="partners-heading partners-heading--subsection sc-header-anchor-host"
+              >
                 {{ section.heading }}
-                <a
-                  class="sc-header-anchor"
-                  [href]="'/about/partners#' + section.id"
-                  [attr.aria-label]="
-                    'Permalink to ' + (section.heading || section.id)
-                  "
-                  >#</a
-                >
+                <sc-header-anchor
+                  [anchorId]="section.id"
+                  [label]="section.heading"
+                ></sc-header-anchor>
               </h3>
             }
 
@@ -102,18 +98,14 @@
           }
         }
 
-        <div
-          class="partners-anchor-target"
-          [attr.id]="interestSection().id"
-        ></div>
-        <h2 class="partners-heading partners-heading--section">
+        <h2
+          class="partners-heading partners-heading--section sc-header-anchor-host"
+        >
           {{ interestSection().heading }}
-          <a
-            class="sc-header-anchor"
-            [href]="'/about/partners#' + interestSection().id"
-            [attr.aria-label]="'Permalink to ' + interestSection().heading"
-            >#</a
-          >
+          <sc-header-anchor
+            [anchorId]="interestSection().id"
+            [label]="interestSection().heading"
+          ></sc-header-anchor>
         </h2>
 
         @for (paragraph of interestSection().intro; track paragraph) {
