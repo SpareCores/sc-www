@@ -8,8 +8,19 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  position: relative;
   width: 10.5rem;
+  height: 100%;
   padding: 1.25rem 1rem 1.25rem 1.5rem;
+}
+
+.profile-modal__tabs::after {
+  content: "";
+  position: absolute;
+  inset-block: 1.25rem;
+  inset-inline-end: 0;
+  width: 1px;
+  background: color-mix(in oklab, var(--color-white) 12%, transparent);
 }
 
 .profile-modal__tab {
@@ -250,7 +261,12 @@
     width: auto;
     flex-direction: row;
     gap: 1rem;
+    height: auto;
     padding: 0 1.5rem;
+  }
+
+  .profile-modal__tabs::after {
+    content: none;
   }
 
   .profile-modal__tab {
