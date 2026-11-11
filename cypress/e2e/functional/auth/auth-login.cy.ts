@@ -1,7 +1,7 @@
 import {
   UNLOCKED_BOOKMARK_BUTTON,
   openBookmarksPage,
-} from "../../support/bookmarks";
+} from "../../../support/bookmarks";
 import {
   CLERK_TEST_CODE,
   completeDeviceVerificationIfAsked,
@@ -16,12 +16,12 @@ import {
   submitLoginForm,
   visitWithClerk,
   withRegisteredClerkTestUser,
-} from "../../support/clerk-testing";
+} from "../../../support/clerk-testing";
 import {
   collectionListUrl,
   mockCollectionsApi,
-} from "../../support/collections-mock";
-import { E2EEvent } from "../../support/generics";
+} from "../../../support/collections-mock";
+import { E2EEvent } from "../../../support/generics";
 
 function openUserProfile(): void {
   cy.get("#auth_button").should("be.visible").click();

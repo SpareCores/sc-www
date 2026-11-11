@@ -1,4 +1,4 @@
-import { E2EEvent } from "../../support/generics";
+import { E2EEvent } from "../../../support/generics";
 
 describe("Advisor page", () => {
   it("Loads the advisor shell and verification panels", () => {

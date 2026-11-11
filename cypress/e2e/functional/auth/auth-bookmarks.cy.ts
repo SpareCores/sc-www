@@ -5,15 +5,15 @@ import {
   loadAdvisorExample,
   openBookmarksPage,
   openPageHeaderSaveModal,
-} from "../../support/bookmarks";
+} from "../../../support/bookmarks";
 import {
   ensureClerkTestSession,
   skipWithoutClerk,
   waitForClerk,
   withRegisteredClerkTestUser,
-} from "../../support/clerk-testing";
-import { mockCollectionsApi } from "../../support/collections-mock";
-import { E2EEvent } from "../../support/generics";
+} from "../../../support/clerk-testing";
+import { mockCollectionsApi } from "../../../support/collections-mock";
+import { E2EEvent } from "../../../support/generics";
 
 type SaveSource = {
   label: string;

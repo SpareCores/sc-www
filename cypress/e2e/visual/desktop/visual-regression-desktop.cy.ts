@@ -1,9 +1,9 @@
-import { SERVER_COMPARE_INSTANCES } from "../../support/bookmarks";
-import { E2EEvent } from "../../support/generics";
+import { SERVER_COMPARE_INSTANCES } from "../../../support/bookmarks";
+import { E2EEvent } from "../../../support/generics";
 import {
   compareVisualSnapshot,
   registerVisualSuites,
-} from "../../support/visual";
+} from "../../../support/visual";
 
 describe("Visual regression tests", () => {
   registerVisualSuites("desktop");

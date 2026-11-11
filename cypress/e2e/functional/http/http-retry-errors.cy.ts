@@ -1,4 +1,4 @@
-import { E2EEvent } from "../../support/generics";
+import { E2EEvent } from "../../../support/generics";
 
 // Match Keeper API only — never the Angular document on :4200.
 const SERVERS_SEARCH_ROUTE =

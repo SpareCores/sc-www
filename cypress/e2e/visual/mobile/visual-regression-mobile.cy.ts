@@ -1,7 +1,7 @@
 import {
   registerMobileMenuSuite,
   registerVisualSuites,
-} from "../../support/visual";
+} from "../../../support/visual";
 
 describe("Visual regression tests (small screen - 800px)", () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import { E2EEvent } from "../../support/generics";
+import { E2EEvent } from "../../../support/generics";
 
 const BENCHMARKS_COUNT_WITHOUT_STRESSNG_DIV16 = 11;
 const BENCHMARKS_COUNT = 12;

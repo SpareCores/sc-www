@@ -1,5 +1,5 @@
-import { SERVER_COMPARE_URL } from "../../support/bookmarks";
-import { E2EEvent } from "../../support/generics";
+import { SERVER_COMPARE_URL } from "../../../support/bookmarks";
+import { E2EEvent } from "../../../support/generics";
 
 const PAGES: { url: string; check: () => void }[] = [
   { url: "/", check: () => E2EEvent.isVisible("#slot-machine") },

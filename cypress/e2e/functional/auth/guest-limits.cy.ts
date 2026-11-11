@@ -1,4 +1,7 @@
-import { skipWithoutClerk, visitWithClerk } from "../../support/clerk-testing";
+import {
+  skipWithoutClerk,
+  visitWithClerk,
+} from "../../../support/clerk-testing";
 
 function assertRegisterModalOpened(): void {
   cy.get(".auth-modal__title").should("contain.text", "Create your account");
