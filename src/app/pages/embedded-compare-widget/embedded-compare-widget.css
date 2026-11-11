@@ -1,15 +1,8 @@
-@reference "../../../styles/tailwind.css";
-
-.content_embed {
-  color: var(--color-white);
-  background: transparent;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
 sc-server-compare-charts {
   overflow-y: auto;
   min-height: 0;
+}
+
+.compare-table-header-cell {
+  vertical-align: top;
 }

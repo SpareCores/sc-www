@@ -1,51 +1,40 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ActivatedRoute } from "@angular/router";
-import { EMPTY } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 
 import { EmbeddedCompareWidget } from "./embedded-compare-widget";
 import { Analytics } from "../../services/analytics";
-import { KeeperAPI } from "../../services/keeper-api";
-import { SeoHandler } from "../../services/seo-handler";
+import { CompareEmbedData } from "../../services/compare-embed-data";
+import { ServerCompareEmbedData } from "../../services/server-compare-embed-data";
 import { Toast } from "../../services/toast";
-import { BAD_SERVER_COMPARE_URL_TOAST_ID } from "../../services/toast-ids";
+import {
+  BAD_DATABASE_COMPARE_URL_TOAST_ID,
+  BAD_SERVER_COMPARE_URL_TOAST_ID,
+} from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
+function flushPromises(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve));
+}
+
 describe("EmbeddedCompareWidget", () => {
-  const routeSnapshot = {
-    params: {
-      widget: "all",
-    },
-    queryParams: {} as Record<string, string>,
-  };
   const showToast = jasmine.createSpy("show");
   const removeToast = jasmine.createSpy("removeToast");
-  const sentryException = jasmine.createSpy("SentryException");
-  const getServerMeta = jasmine.createSpy("getServerMeta");
-  const getServerBenchmarkMeta = jasmine.createSpy("getServerBenchmarkMeta");
-  const getVendors = jasmine.createSpy("getVendors");
-  const getRegions = jasmine.createSpy("getRegions");
-  const getZones = jasmine.createSpy("getZones");
-  const getServerV2 = jasmine.createSpy("getServerV2");
-  const getServerPrices = jasmine.createSpy("getServerPrices");
-  const getServerBenchmark = jasmine.createSpy("getServerBenchmark");
+  const serverLoad = jasmine.createSpy("serverLoad");
+  let queryParams: BehaviorSubject<Record<string, string>>;
+  let routeData: BehaviorSubject<Record<string, string>>;
 
   let component: EmbeddedCompareWidget;
   let fixture: ComponentFixture<EmbeddedCompareWidget>;
 
   beforeEach(async () => {
-    routeSnapshot.params = { widget: "all" };
-    routeSnapshot.queryParams = {};
     showToast.calls.reset();
     removeToast.calls.reset();
-    sentryException.calls.reset();
-    getServerMeta.calls.reset();
-    getServerBenchmarkMeta.calls.reset();
-    getVendors.calls.reset();
-    getRegions.calls.reset();
-    getZones.calls.reset();
-    getServerV2.calls.reset();
-    getServerPrices.calls.reset();
-    getServerBenchmark.calls.reset();
+    serverLoad.calls.reset();
+    queryParams = new BehaviorSubject<Record<string, string>>({});
+    routeData = new BehaviorSubject<Record<string, string>>({
+      resource: "server",
+    });
 
     await TestBed.configureTestingModule({
       imports: [EmbeddedCompareWidget],
@@ -54,107 +43,87 @@ describe("EmbeddedCompareWidget", () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: routeSnapshot,
-            queryParams: EMPTY,
-            params: EMPTY,
+            data: routeData,
+            params: of({ widget: "generic" }),
+            queryParams,
           },
         },
-        {
-          provide: KeeperAPI,
-          useValue: {
-            getServerMeta,
-            getServerBenchmarkMeta,
-            getVendors,
-            getRegions,
-            getZones,
-            getServerV2,
-            getServerPrices,
-            getServerBenchmark,
-          },
-        },
-        {
-          provide: SeoHandler,
-          useValue: {},
-        },
+        { provide: ServerCompareEmbedData, useValue: { load: serverLoad } },
         {
           provide: Analytics,
-          useValue: {
-            SentryException: sentryException,
-          },
+          useValue: { SentryException: jasmine.createSpy() },
         },
-        {
-          provide: Toast,
-          useValue: {
-            show: showToast,
-            removeToast,
-          },
-        },
+        { provide: Toast, useValue: { show: showToast, removeToast } },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EmbeddedCompareWidget);
     component = fixture.componentInstance;
-    component.widgetId = "__test__";
-    component.benchmarkMeta = [];
-    component.benchmarkCategories = [];
-    component.instanceProperties = [];
-    component.instancePropertyCategories = [];
-    component.servers = [];
     spyOn(console, "warn");
+    fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
+    expect(removeToast).toHaveBeenCalledWith(BAD_SERVER_COMPARE_URL_TOAST_ID);
   });
 
-  it("shows a toast and skips loading for malformed instances data", () => {
-    routeSnapshot.queryParams = {
-      instances: "%not-base64%",
-    };
+  it("shows a toast and skips loading for malformed instances data", async () => {
+    queryParams.next({ instances: "%not-base64%" });
+    await flushPromises();
 
-    component.setup();
-
-    expect(component.instances).toEqual([]);
-    expect(component.instancesRaw).toBe("");
+    expect(component.model()).toBeNull();
     expect(showToast).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({
         title: "Invalid URL",
         body: "Select servers to compare.",
         type: "error",
         id: BAD_SERVER_COMPARE_URL_TOAST_ID,
-        action: jasmine.objectContaining({
-          label: "Server Navigator page",
-        }),
+        action: jasmine.objectContaining({ label: "Server Navigator page" }),
       }),
     );
-    expect(getServerMeta).not.toHaveBeenCalled();
+    expect(serverLoad).not.toHaveBeenCalled();
   });
 
-  it("shows a toast when decoded instances do not match the expected shape", () => {
-    routeSnapshot.queryParams = {
-      instances: btoa(JSON.stringify({ vendor: "aws", server: "c7a.large" })),
-    };
+  it("uses the database toast for database compare embeds", async () => {
+    routeData.next({ resource: "database" });
+    queryParams.next({
+      instances: btoa(JSON.stringify({ vendor: "aws", database: "db" })),
+    });
+    await flushPromises();
 
-    component.setup();
-
-    expect(component.instances).toEqual([]);
-    expect(component.instancesRaw).toBe("");
-    expect(showToast).toHaveBeenCalledOnceWith(
-      jasmine.objectContaining({
-        title: "Invalid URL",
-        body: "Select servers to compare.",
-        type: "error",
-        id: BAD_SERVER_COMPARE_URL_TOAST_ID,
-        action: jasmine.objectContaining({
-          label: "Server Navigator page",
-        }),
-      }),
+    expect(showToast).toHaveBeenCalledWith(
+      jasmine.objectContaining({ id: BAD_DATABASE_COMPARE_URL_TOAST_ID }),
     );
-    expect(getServerMeta).not.toHaveBeenCalled();
+  });
+
+  it("loads valid server instances", async () => {
+    serverLoad.and.resolveTo({
+      servers: [],
+      instanceProperties: [],
+      benchmarkMeta: [],
+      benchmarkCategories: [],
+      instancePropertyCategories: [],
+    });
+    const instances = [
+      {
+        display_name: "c7a.large",
+        vendor: "aws",
+        server: "c7a.large",
+        zonesRegions: [],
+      },
+    ];
+    queryParams.next({ instances: btoa(JSON.stringify(instances)) });
+    await flushPromises();
+
+    expect(serverLoad).toHaveBeenCalledWith(instances, "generic");
+    expect(component.model()?.server).toBeDefined();
+    expect(TestBed.inject(CompareEmbedData)).toBeTruthy();
   });
 
   it("removes the invalid URL toast on destroy", () => {
-    component.ngOnDestroy();
+    removeToast.calls.reset();
+    fixture.destroy();
 
     expect(removeToast).toHaveBeenCalledWith(BAD_SERVER_COMPARE_URL_TOAST_ID);
   });

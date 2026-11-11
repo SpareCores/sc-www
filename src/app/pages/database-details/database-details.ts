@@ -1,89 +1,59 @@
 import {
   Component,
   DestroyRef,
-  ElementRef,
-  HostListener,
   OnDestroy,
   OnInit,
-  afterNextRender,
   inject,
-  viewChild,
 } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { LucideCheck } from "@lucide/angular";
 import { Subscription } from "rxjs";
 import {
   Benchmark,
-  Database,
   DatabasePrice,
   PriceUnit,
   Region,
   Vendor,
 } from "../../../../sdk/data-contracts";
-import openApiSpec from "../../../../sdk/openapi.json";
 import { BenchmarkLineChart } from "../../components/charts/line/benchmark-line-chart";
-import { BenchmarkLineChartBuilder } from "../../components/charts/line/benchmark-line-chart-builder";
 import {
   PgbenchChartResult,
   PgbenchScore,
 } from "../../components/charts/line/benchmark-line-chart.types";
-import { getBenchmarkMetaNote } from "../../components/charts/shared/chart-tooltip.utils";
 import { formatNumberWithCommas } from "../../components/charts/shared/server-compare-table.utils";
-import { lineChartOptionsPgbench } from "../server-details/chartOptions";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
-import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { EmbedWidgetButton } from "../../components/embed-dialog/embed-widget-button";
 import {
-  ServerPropertyCard,
-  ServerPropertyRow,
-  ServerPropertySection,
-  ServerPropertyTooltip,
-} from "../../components/server-property-card/server-property-card";
+  DatabasePgbench,
+  hasPgbenchScores,
+} from "../../services/database-pgbench";
+import { PgbenchChartMeta } from "../../services/details-embed.types";
+import { EmbedWidgetOption } from "../../components/embed-dialog/embed-dialog.types";
+import { DetailsCard } from "../../components/details-card/details-card";
+import { DetailsHeader } from "../../components/details-header/details-header";
+import { DetailsCardSection } from "../../components/details-card/details-card.types";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { CompareSelection } from "../../services/compare-selection";
 import { Toast } from "../../services/toast";
 import { DATABASE_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
-import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name-pipe";
-import { formatKebabTitle } from "../../pipes/pipe-utils";
-
-type LoadedDatabase = Database & {
-  vendor?: Vendor;
-  prices?: (DatabasePrice & { region?: Region })[];
-  underlyingServer?: {
-    display_name: string;
-    api_reference: string;
-    cpu_cores?: number;
-    vcpus?: number;
-  };
-};
-
-const PGBENCH_CHART_BENCHMARK_ID = "pgbench:heavy_read_only";
-const PGBENCH_PEAK_BENCHMARK_ID = "pgbench:heavy_read_only:peak";
-const PGBENCH_SINGLE_BENCHMARK_ID = "pgbench:heavy_read_only:single";
-const PGBENCH_TITLE_FALLBACK = "pgbench Heavy Read-Only";
-
-type OpenApiProperty = {
-  description?: string;
-};
-
-const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
-  (
-    openApiSpec as {
-      components?: {
-        schemas?: {
-          Database?: {
-            properties?: Record<string, OpenApiProperty>;
-          };
-        };
-      };
-    }
-  ).components?.schemas?.Database?.properties ?? {};
+import {
+  DATABASE_PGBENCH_WIDGET_ID,
+  DATABASE_SPEC_CARD_WIDGETS,
+  UNDERLYING_SERVER_PGBENCH_WIDGET_ID,
+} from "../../services/database-embed.constants";
+import { DatabaseSpecCards } from "../../services/database-spec-cards";
+import { LoadedDatabase } from "../../services/database-spec-cards.types";
+import {
+  DETAILS_PGBENCH_TITLE_FALLBACK,
+  PGBENCH_PEAK_BENCHMARK_ID,
+  PGBENCH_SINGLE_BENCHMARK_ID,
+} from "../../services/database-pgbench.constants";
 
 @Component({
   selector: "sc-database-details",
@@ -92,11 +62,10 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     Breadcrumbs,
     Button,
     LoadingSpinner,
-    ServerPropertyCard,
+    DetailsCard,
     BenchmarkLineChart,
-    LucideCheck,
-    ReduceUnitNamePipe,
-    BookmarkButton,
+    EmbedWidgetButton,
+    DetailsHeader,
   ],
   templateUrl: "./database-details.html",
   styleUrl: "./database-details.css",
@@ -104,11 +73,12 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
 export class DatabaseDetails implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private keeperAPI = inject(KeeperAPI);
-  private lineChartBuilder = inject(BenchmarkLineChartBuilder);
+  private pgbench = inject(DatabasePgbench);
   private SEOHandler = inject(SeoHandler);
   private analytics = inject(Analytics);
   private toastService = inject(Toast);
   private serverCompare = inject(CompareSelection);
+  private specCards = inject(DatabaseSpecCards);
 
   isLoading = true;
   databaseDetails: LoadedDatabase | null = null;
@@ -122,11 +92,11 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     { name: "Databases", url: "/databases" },
   ];
 
-  metadataSections: ServerPropertySection[] = [];
-  engineSections: ServerPropertySection[] = [];
-  capacitySections: ServerPropertySection[] = [];
-  featureSections: ServerPropertySection[] = [];
-  securitySections: ServerPropertySection[] = [];
+  metadataSections: DetailsCardSection[] = [];
+  engineSections: DetailsCardSection[] = [];
+  capacitySections: DetailsCardSection[] = [];
+  featureSections: DetailsCardSection[] = [];
+  securitySections: DetailsCardSection[] = [];
 
   expandedCards: Record<string, boolean> = {
     details: false,
@@ -137,46 +107,23 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     availability: false,
   };
 
-  availabilityRows: {
-    region_id: string;
-    display_name: string;
-    api_reference: string;
-    ha: string;
-    ha_strategy: string;
-    price: number | null;
-    currency: string;
-    unit: string;
-  }[] = [];
+  availabilitySections: DetailsCardSection[] = [];
 
-  availabilityCanExpand = false;
   pgbenchChart: PgbenchChartResult | undefined;
-  pgbenchTitle = PGBENCH_TITLE_FALLBACK;
-  pgbenchInfoTooltip = "";
-  pgbenchNoteTooltip = "";
+  pgbenchMeta: PgbenchChartMeta = this.pgbench.meta(
+    [],
+    DETAILS_PGBENCH_TITLE_FALLBACK,
+  );
   pgbenchPeakScore: string | null = null;
   pgbenchSingleScore: string | null = null;
   showUnderlyingServerPerformance = false;
   underlyingServerPgbenchChart: PgbenchChartResult | undefined;
   underlyingServerLink: string[] | null = null;
+  embeddableWidgets: EmbedWidgetOption[] = [];
 
-  private availabilityCard =
-    viewChild<ElementRef<HTMLDivElement>>("availabilityCard");
-  private availabilityOverflowCheckTimeout?: ReturnType<typeof setTimeout>;
   private subscription = new Subscription();
   private destroyRef = inject(DestroyRef);
   private loadRequestId = 0;
-
-  constructor() {
-    afterNextRender(() => {
-      this.scheduleAvailabilityOverflowCheck();
-    });
-
-    this.destroyRef.onDestroy(() => {
-      if (this.availabilityOverflowCheckTimeout) {
-        clearTimeout(this.availabilityOverflowCheckTimeout);
-      }
-    });
-  }
 
   ngOnInit() {
     this.subscription.add(
@@ -191,11 +138,6 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.toastService.removeToast(DATABASE_DETAILS_ERROR_TOAST_ID);
-  }
-
-  @HostListener("window:resize")
-  onResize() {
-    this.scheduleAvailabilityOverflowCheck();
   }
 
   private loadDatabase(vendor: string, id: string) {
@@ -288,16 +230,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
           this.databaseDetails = {
             ...database,
             vendor: vendors.find((v) => v.vendor_id === database.vendor_id),
-            prices: prices
-              .map((price) => ({
-                ...price,
-                region: regions.find(
-                  (region) =>
-                    region.vendor_id === price.vendor_id &&
-                    region.region_id === price.region_id,
-                ),
-              }))
-              .sort((a, b) => a.price - b.price),
+            prices: this.specCards.attachPrices(prices, regions),
             underlyingServer,
           };
 
@@ -374,8 +307,15 @@ export class DatabaseDetails implements OnInit, OnDestroy {
             },
           ];
 
-          this.buildPropertySections(this.databaseDetails);
-          this.buildAvailabilityRows();
+          const sections = this.specCards.buildSections(this.databaseDetails);
+          this.metadataSections = sections.metadataSections;
+          this.engineSections = sections.engineSections;
+          this.capacitySections = sections.capacitySections;
+          this.featureSections = sections.featureSections;
+          this.securitySections = sections.securitySections;
+          this.availabilitySections = this.specCards.buildAvailabilitySections(
+            this.databaseDetails.prices || [],
+          );
           const benchmarkMeta = (benchmarkMetaResponse?.body ||
             []) as Benchmark[];
           this.applyPgbenchBenchmarks(
@@ -424,261 +364,28 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         }
 
         this.isLoading = false;
-        this.scheduleAvailabilityOverflowCheck();
       });
-  }
-
-  private buildPropertySections(database: LoadedDatabase) {
-    this.metadataSections = [
-      {
-        name: "Database Metadata",
-        properties: this.dedupeMetadataProperties(
-          this.rows(
-            [
-              {
-                id: "name",
-                name: "Name",
-                value: database.name,
-              },
-              {
-                id: "display_name",
-                name: "Display Name",
-                value: database.display_name,
-              },
-              {
-                id: "api_reference",
-                name: "API Reference",
-                value: database.api_reference,
-              },
-              {
-                id: "database_id",
-                name: "Database ID",
-                value: database.database_id,
-              },
-              { id: "family", name: "Family", value: database.family },
-              {
-                id: "server_id",
-                name: "Underlying Server",
-                ...this.formatUnderlyingServer(database),
-              },
-              { id: "status", name: "Status", value: database.status },
-            ],
-            true,
-          ),
-        ),
-      },
-    ];
-
-    this.engineSections = [
-      {
-        name: "Engine",
-        properties: this.rows([
-          { id: "engine", name: "Engine", value: database.engine },
-          {
-            id: "wire_protocol",
-            name: "Wire Protocol",
-            value: database.wire_protocol,
-          },
-          {
-            id: "engine_versions",
-            name: "Engine Versions",
-            value: this.formatList(database.engine_versions),
-          },
-          {
-            id: "auto_upgrade_versions",
-            name: "Auto Upgrade Versions",
-            value: this.formatBoolean(database.auto_upgrade_versions),
-          },
-          {
-            id: "custom_config",
-            name: "Custom Config",
-            value: this.formatBoolean(database.custom_config),
-          },
-          {
-            id: "custom_extensions",
-            name: "Custom Extensions",
-            value: this.formatBoolean(database.custom_extensions),
-          },
-        ]),
-      },
-    ];
-
-    this.capacitySections = [
-      {
-        name: "Capacity",
-        properties: this.rows([
-          { id: "vcpus", name: "vCPUs", value: database.vcpus },
-          {
-            id: "memory_amount",
-            name: "Memory",
-            value:
-              database.memory_amount === null ||
-              database.memory_amount === undefined
-                ? null
-                : `${(database.memory_amount / 1024).toFixed(1)} GiB`,
-          },
-          {
-            id: "storage_size",
-            name: "Bundled Storage",
-            value:
-              database.storage_size === null ||
-              database.storage_size === undefined
-                ? null
-                : `${database.storage_size} GB`,
-          },
-          {
-            id: "storage_extra_min",
-            name: "Extra Storage Min",
-            value:
-              database.storage_extra_min === null ||
-              database.storage_extra_min === undefined
-                ? null
-                : `${database.storage_extra_min} GB`,
-          },
-          {
-            id: "storage_extra_max",
-            name: "Extra Storage Max",
-            value:
-              database.storage_extra_max === null ||
-              database.storage_extra_max === undefined
-                ? null
-                : `${database.storage_extra_max} GB`,
-          },
-          {
-            id: "storage_extra_autosize",
-            name: "Storage Autosize",
-            value: this.formatBoolean(database.storage_extra_autosize),
-          },
-          {
-            id: "max_read_replicas",
-            name: "Max Read Replicas",
-            value: database.max_read_replicas,
-          },
-          {
-            id: "sla",
-            name: "SLA",
-            value:
-              database.sla === null || database.sla === undefined
-                ? null
-                : `${database.sla}%`,
-          },
-        ]),
-      },
-    ];
-
-    this.featureSections = [
-      {
-        name: "Features",
-        properties: this.rows([
-          {
-            id: "ha",
-            name: "High Availability",
-            value: this.formatList(database.ha),
-          },
-          {
-            id: "ha_strategy",
-            name: "HA Strategy",
-            value: this.formatList(database.ha_strategy),
-          },
-          {
-            id: "scheduled_backups",
-            name: "Scheduled Backups",
-            value: this.formatBoolean(database.scheduled_backups),
-          },
-          {
-            id: "continuous_backups",
-            name: "Continuous Backups (days)",
-            value: database.continuous_backups,
-          },
-          {
-            id: "connection_pool",
-            name: "Connection Pool",
-            value: this.formatBoolean(database.connection_pool),
-          },
-          {
-            id: "system_monitoring",
-            name: "System Monitoring",
-            value: this.formatBoolean(database.system_monitoring),
-          },
-          {
-            id: "database_monitoring",
-            name: "Database Monitoring",
-            value: this.formatBoolean(database.database_monitoring),
-          },
-          {
-            id: "autotuning_advice",
-            name: "Autotuning Advice",
-            value: this.formatBoolean(database.autotuning_advice),
-          },
-          {
-            id: "autotuning_apply",
-            name: "Autotuning Apply",
-            value: this.formatBoolean(database.autotuning_apply),
-          },
-        ]),
-      },
-    ];
-
-    this.securitySections = [
-      {
-        name: "Security",
-        properties: this.rows([
-          {
-            id: "disk_encryption",
-            name: "Disk Encryption",
-            value: this.formatBoolean(database.disk_encryption),
-          },
-          ...(database.security_features || []).map((feature) => ({
-            id: feature,
-            name: formatKebabTitle(feature),
-            value: "check",
-          })),
-        ]),
-      },
-    ];
-  }
-
-  private buildAvailabilityRows() {
-    const prices = this.databaseDetails?.prices || [];
-    this.availabilityRows = prices.map((price) => ({
-      region_id: price.region_id,
-      display_name: price.region?.display_name || price.region_id,
-      api_reference: price.region?.api_reference || price.region_id,
-      ha: price.ha || "none",
-      ha_strategy: price.ha_strategy || "none",
-      price: price.price,
-      currency: price.currency || "USD",
-      unit: price.unit,
-    }));
   }
 
   get hasPgbenchHeaderScores() {
     return this.pgbenchPeakScore !== null && this.pgbenchSingleScore !== null;
   }
 
-  addToCompare() {
-    if (!this.databaseDetails) {
-      return;
-    }
-
-    this.serverCompare.toggleDatabaseCompare(
-      !this.serverCompare.isDatabaseSelected(this.databaseDetails),
-      {
-        database: this.databaseDetails.api_reference,
-        vendor: this.databaseDetails.vendor_id,
-        display_name: this.databaseDetails.display_name,
-      },
-    );
-  }
-
-  compareText() {
-    if (!this.databaseDetails) {
-      return "Compare";
-    }
-
-    return this.serverCompare.isDatabaseSelected(this.databaseDetails)
-      ? "Don't Compare"
-      : "Compare";
+  updateEmbeddableWidgets() {
+    this.embeddableWidgets = [
+      ...DATABASE_SPEC_CARD_WIDGETS,
+      ...(this.pgbenchChart
+        ? [{ id: DATABASE_PGBENCH_WIDGET_ID, name: this.pgbenchMeta.title }]
+        : []),
+      ...(this.showUnderlyingServerPerformance
+        ? [
+            {
+              id: UNDERLYING_SERVER_PGBENCH_WIDGET_ID,
+              name: `Underlying Server: ${this.pgbenchMeta.title}`,
+            },
+          ]
+        : []),
+    ];
   }
 
   private applyPgbenchBenchmarks(
@@ -699,19 +406,11 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       ? formatNumberWithCommas(Math.round(single.score))
       : null;
 
-    const meta = benchmarkMeta.find(
-      (item) => item.benchmark_id === PGBENCH_CHART_BENCHMARK_ID,
+    this.pgbenchMeta = this.pgbench.meta(
+      benchmarkMeta,
+      DETAILS_PGBENCH_TITLE_FALLBACK,
     );
-    this.pgbenchTitle = meta?.name || PGBENCH_TITLE_FALLBACK;
-    this.pgbenchInfoTooltip = meta?.description || "";
-    this.pgbenchNoteTooltip =
-      getBenchmarkMetaNote(benchmarkMeta, PGBENCH_CHART_BENCHMARK_ID) || "";
-    this.pgbenchChart = this.lineChartBuilder.buildDetailsPgbenchChart({
-      scores,
-      vcpus,
-      optionsBase: lineChartOptionsPgbench,
-      scoreUnit: meta?.unit,
-    });
+    this.pgbenchChart = this.pgbench.detailsChart(scores, vcpus, benchmarkMeta);
   }
 
   private applyUnderlyingServerBenchmarks(
@@ -733,212 +432,20 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       underlyingServer.api_reference,
     ];
 
-    const hasPgbenchScores = scores.some(
-      (score) => score.benchmark_id === PGBENCH_CHART_BENCHMARK_ID,
-    );
-    if (!hasPgbenchScores) {
+    if (!hasPgbenchScores(scores)) {
       return;
     }
 
-    const meta = benchmarkMeta.find(
-      (item) => item.benchmark_id === PGBENCH_CHART_BENCHMARK_ID,
+    this.underlyingServerPgbenchChart = this.pgbench.detailsChart(
+      scores,
+      underlyingServer.vcpus ?? underlyingServer.cpu_cores,
+      benchmarkMeta,
     );
-    this.underlyingServerPgbenchChart =
-      this.lineChartBuilder.buildDetailsPgbenchChart({
-        scores,
-        vcpus: underlyingServer.vcpus ?? underlyingServer.cpu_cores,
-        optionsBase: lineChartOptionsPgbench,
-        scoreUnit: meta?.unit,
-      });
 
     this.showUnderlyingServerPerformance = !!this.underlyingServerPgbenchChart;
   }
 
-  private formatUnderlyingServer(database: LoadedDatabase): {
-    value: unknown;
-    routerLink?: string[];
-  } {
-    if (database.underlyingServer) {
-      const { display_name, api_reference } = database.underlyingServer;
-      return {
-        value: display_name,
-        routerLink: ["/server", database.vendor_id, api_reference],
-      };
-    }
-
-    return { value: database.server_id };
-  }
-
-  private dedupeMetadataProperties(
-    properties: ServerPropertyRow[],
-  ): ServerPropertyRow[] {
-    const nameProperty = properties.find((property) => property.id === "name");
-    if (!nameProperty) {
-      return properties;
-    }
-
-    const hiddenMetadataIds = new Set([
-      "database_id",
-      "api_reference",
-      "display_name",
-    ]);
-    const identityPropertyIds = [
-      "database_id",
-      "name",
-      "api_reference",
-      "display_name",
-    ];
-    const matchingIdentityProperties = properties.filter(
-      (property) =>
-        property.id !== "name" &&
-        identityPropertyIds.includes(property.id) &&
-        this.normalizeComparableValue(property.value) ===
-          this.normalizeComparableValue(nameProperty.value),
-    );
-    const shouldAggregateIdentityTooltips =
-      matchingIdentityProperties.length > 0;
-    const nameTooltips = shouldAggregateIdentityTooltips
-      ? this.uniqueTooltips(
-          [nameProperty, ...matchingIdentityProperties].flatMap(
-            (property) => property.tooltips || [],
-          ),
-        )
-      : nameProperty.tooltips || [];
-
-    const filteredProperties = properties.filter((property) => {
-      if (!hiddenMetadataIds.has(property.id)) {
-        return true;
-      }
-
-      if (
-        this.normalizeComparableValue(property.value) !==
-        this.normalizeComparableValue(nameProperty.value)
-      ) {
-        return true;
-      }
-
-      return false;
-    });
-
-    return filteredProperties.map((property) => {
-      if (property.id !== "name") {
-        return property;
-      }
-
-      return {
-        ...property,
-        tooltips: nameTooltips,
-      };
-    });
-  }
-
-  private uniqueTooltips(tooltips: ServerPropertyTooltip[]) {
-    const seen = new Set<string>();
-
-    return tooltips.filter((tooltip) => {
-      if (seen.has(tooltip.key)) {
-        return false;
-      }
-
-      seen.add(tooltip.key);
-      return true;
-    });
-  }
-
-  private normalizeComparableValue(value: string) {
-    return value
-      .replace(/<[^>]*>/g, "")
-      .trim()
-      .toLowerCase();
-  }
-
-  private rows(
-    items: {
-      id: string;
-      name: string;
-      value: unknown;
-      description?: string;
-      routerLink?: string[] | string;
-    }[],
-    useSchemaDescriptions = false,
-  ): ServerPropertyRow[] {
-    return items
-      .map((item) => {
-        const description =
-          item.description ??
-          (useSchemaDescriptions
-            ? DATABASE_SCHEMA_PROPERTIES[item.id]?.description
-            : undefined);
-        return {
-          id: item.id,
-          name: item.name,
-          value: this.toDisplayValue(item.value),
-          tooltips: description
-            ? [{ key: item.id, content: description }]
-            : undefined,
-          routerLink: item.routerLink,
-        };
-      })
-      .filter((item) => item.value !== "");
-  }
-
-  private toDisplayValue(value: unknown): string {
-    if (value === null || value === undefined || value === "") {
-      return "";
-    }
-    if (typeof value === "boolean") {
-      return value ? "check" : "x";
-    }
-    return String(value);
-  }
-
-  private formatBoolean(value: boolean | null | undefined): string | null {
-    if (value === null || value === undefined) {
-      return null;
-    }
-    return value ? "check" : "x";
-  }
-
-  private formatList(value: unknown): string | null {
-    if (!Array.isArray(value) || !value.length) {
-      return null;
-    }
-    return value.join(", ");
-  }
-
   toggleCard(cardId: string) {
     this.expandedCards[cardId] = !this.expandedCards[cardId];
-    if (cardId === "availability") {
-      this.scheduleAvailabilityOverflowCheck();
-    }
-  }
-
-  private scheduleAvailabilityOverflowCheck() {
-    if (this.availabilityOverflowCheckTimeout) {
-      clearTimeout(this.availabilityOverflowCheckTimeout);
-    }
-
-    this.availabilityOverflowCheckTimeout = setTimeout(() => {
-      this.updateAvailabilityOverflowState();
-    }, 0);
-  }
-
-  private updateAvailabilityOverflowState() {
-    const cardElement = this.availabilityCard()?.nativeElement;
-    if (!cardElement) {
-      return;
-    }
-
-    const hadOpenClass = cardElement.classList.contains("sc-chart-block--open");
-    if (hadOpenClass) {
-      cardElement.classList.remove("sc-chart-block--open");
-    }
-
-    this.availabilityCanExpand =
-      cardElement.scrollHeight > cardElement.clientHeight + 1;
-
-    if (hadOpenClass) {
-      cardElement.classList.add("sc-chart-block--open");
-    }
   }
 }

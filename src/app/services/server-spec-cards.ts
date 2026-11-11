@@ -2,7 +2,6 @@ import { formatDate } from "@angular/common";
 import { Injectable } from "@angular/core";
 import {
   IdNameAndDescriptionAndCategory,
-  PriceUnit,
   Region,
   ServerPrice,
   Status,
@@ -10,57 +9,24 @@ import {
 } from "../../../sdk/data-contracts";
 import { formatBooleanIconHtml } from "../components/charts/shared/server-compare-table.utils";
 import {
-  ServerPropertyRow,
-  ServerPropertySection,
-  ServerPropertyTooltip,
-} from "../components/server-property-card/server-property-card";
-import type { ExtendedServerPrice } from "../pages/server-details/server-details";
+  DetailsCardRow,
+  DetailsCardSection,
+} from "../components/details-card/details-card.types";
+import { dedupeIdentityRows } from "../components/details-card/details-card.utils";
+import { reduceUnitName } from "../pipes/pipe-utils";
+import type { ExtendedServerPrice } from "../pages/server-details/server-details.types";
 import { HIDDEN_SERVER_PROPERTY_IDS } from "../pages/server-details/server-details.constants";
-
-export interface ServerPropertyColumn {
-  id: string;
-  unit?: string | null;
-}
-
-export interface ServerSpecSections {
-  metadataSections: ServerPropertySection[];
-  processorSections: ServerPropertySection[];
-  resourceSections: ServerPropertySection[];
-}
-
-export interface AvailabilityPrice {
-  price: number;
-  unit: PriceUnit;
-  count: number;
-  currency?: string;
-}
-
-export interface AvailabilityRegion {
-  vendor_id: string;
-  region_id: string;
-  display_name: string;
-  api_reference: string;
-  inactive: boolean;
-  inactiveObservedAt?: string;
-  spot: AvailabilityPrice;
-  ondemand: AvailabilityPrice;
-}
-
-interface PropertyCategoryDefinition {
-  name: string;
-  category: string;
-}
-
-const PROPERTY_CATEGORY_DEFINITIONS: PropertyCategoryDefinition[] = [
-  { name: "General", category: "meta" },
-  { name: "CPU", category: "cpu" },
-  { name: "Memory", category: "memory" },
-  { name: "Accelerators", category: "gpu" },
-  { name: "Storage", category: "storage" },
-  { name: "Network", category: "network" },
-];
-
-const RESOURCE_CATEGORIES = ["memory", "gpu", "storage", "network"];
+import {
+  AvailabilityPrice,
+  AvailabilityRegion,
+  ServerPropertyColumn,
+  ServerSpecSections,
+} from "./server-spec-cards.types";
+import {
+  PROPERTY_CATEGORY_DEFINITIONS,
+  RESOURCE_CATEGORIES,
+  SERVER_IDENTITY_ROW_IDS,
+} from "./server-spec-cards.constants";
 
 @Injectable({
   providedIn: "root",
@@ -175,6 +141,35 @@ export class ServerSpecCards {
     return availabilityRegions.sort(
       (a, b) => a.ondemand.price - b.ondemand.price,
     );
+  }
+
+  buildAvailabilitySections(
+    regions: AvailabilityRegion[],
+  ): DetailsCardSection[] {
+    return [
+      {
+        name: "Availability",
+        columns: ["Region / ID", "Spot", "Ondemand"],
+        rows: regions.map((region) => ({
+          id: `${region.vendor_id}_${region.region_id}`,
+          name: region.display_name,
+          detail: region.api_reference,
+          values: [
+            this.formatAvailabilityPrice(region.spot),
+            this.formatAvailabilityPrice(region.ondemand),
+          ],
+          warning: region.inactive
+            ? this.getInactivePriceNote(region.inactiveObservedAt)
+            : undefined,
+        })),
+      },
+    ];
+  }
+
+  private formatAvailabilityPrice(price: AvailabilityPrice): string {
+    return price.price
+      ? `${price.price} ${price.currency}/${reduceUnitName(price.unit)}`
+      : "-";
   }
 
   getInactivePriceNote(observedAt: string | undefined): string {
@@ -299,7 +294,7 @@ export class ServerSpecCards {
       (definition) => ({
         name: definition.name,
         category: definition.category,
-        properties: [] as ServerPropertyRow[],
+        rows: [] as DetailsCardRow[],
       }),
     );
 
@@ -312,10 +307,10 @@ export class ServerSpecCards {
         return;
       }
 
-      group.properties.push({
+      group.rows.push({
         id: property.id,
         name: property.name,
-        value,
+        values: [value],
         tooltips: property.description
           ? [
               {
@@ -327,116 +322,34 @@ export class ServerSpecCards {
       });
     });
 
-    const metadataProperties =
+    const metadataRows =
       categorizedSections.find((category) => category.category === "meta")
-        ?.properties || [];
-    const cpuProperties =
+        ?.rows || [];
+    const cpuRows =
       categorizedSections.find((category) => category.category === "cpu")
-        ?.properties || [];
+        ?.rows || [];
 
     return {
       metadataSections: [
         {
           name: "Server Metadata",
-          properties: this.dedupeMetadataProperties(metadataProperties),
+          rows: dedupeIdentityRows(metadataRows, SERVER_IDENTITY_ROW_IDS),
         },
       ],
       processorSections: [
         {
           name: "CPU",
-          properties: cpuProperties,
+          rows: cpuRows,
         },
       ],
       resourceSections: categorizedSections
         .filter((category) => RESOURCE_CATEGORIES.includes(category.category))
         .map((category) => ({
           name: category.name,
-          properties: category.properties,
+          columns: [category.name, ""],
+          rows: category.rows,
         }))
-        .filter((category) => category.properties.length > 0),
+        .filter((category) => category.rows.length > 0),
     };
-  }
-
-  private dedupeMetadataProperties(
-    properties: ServerPropertyRow[],
-  ): ServerPropertyRow[] {
-    const nameProperty = properties.find((property) => property.id === "name");
-    if (!nameProperty) {
-      return properties;
-    }
-
-    const hiddenMetadataIds = new Set([
-      "server_id",
-      "api_reference",
-      "display_name",
-    ]);
-    const identityPropertyIds = [
-      "server_id",
-      "name",
-      "api_reference",
-      "display_name",
-    ];
-    const matchingIdentityProperties = properties.filter(
-      (property) =>
-        property.id !== "name" &&
-        identityPropertyIds.includes(property.id) &&
-        this.normalizeComparableValue(property.value) ===
-          this.normalizeComparableValue(nameProperty.value),
-    );
-    const shouldAggregateIdentityTooltips =
-      matchingIdentityProperties.length > 0;
-    const nameTooltips = shouldAggregateIdentityTooltips
-      ? this.uniqueTooltips(
-          [nameProperty, ...matchingIdentityProperties].flatMap(
-            (property) => property.tooltips || [],
-          ),
-        )
-      : nameProperty.tooltips || [];
-
-    const filteredProperties = properties.filter((property) => {
-      if (!hiddenMetadataIds.has(property.id)) {
-        return true;
-      }
-
-      if (
-        this.normalizeComparableValue(property.value) !==
-        this.normalizeComparableValue(nameProperty.value)
-      ) {
-        return true;
-      }
-
-      return false;
-    });
-
-    return filteredProperties.map((property) => {
-      if (property.id !== "name") {
-        return property;
-      }
-
-      return {
-        ...property,
-        tooltips: nameTooltips,
-      };
-    });
-  }
-
-  private uniqueTooltips(tooltips: ServerPropertyTooltip[]) {
-    const seen = new Set<string>();
-
-    return tooltips.filter((tooltip) => {
-      if (seen.has(tooltip.key)) {
-        return false;
-      }
-
-      seen.add(tooltip.key);
-      return true;
-    });
-  }
-
-  private normalizeComparableValue(value: string) {
-    return value
-      .replace(/<[^>]*>/g, "")
-      .trim()
-      .toLowerCase();
   }
 }

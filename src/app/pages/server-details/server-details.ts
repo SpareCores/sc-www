@@ -17,17 +17,15 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { LucideCheck, LucideTriangleAlert } from "@lucide/angular";
+import { LucideTriangleAlert } from "@lucide/angular";
 import { Chart, ChartConfiguration, ChartData } from "chart.js";
 import { BaseChartDirective } from "ng2-charts";
 import { Subscription } from "rxjs";
 import {
   Benchmark,
-  BenchmarkScore,
   GetSimilarServersServerVendorServerSimilarServersByNumGetData,
   ServerDescription,
   ServerPKs,
-  ServerPrice,
 } from "../../../../sdk/data-contracts";
 import type { RequestParams } from "../../../../sdk/http-client";
 import { Accordion, AccordionItem } from "../../components/accordion/accordion";
@@ -36,18 +34,15 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
-import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { formatNumberWithCommas } from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { Modal } from "../../components/modal/modal";
 import { ServerCharts } from "../../components/server-charts/server-charts";
 import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
-import { ServerAvailabilityCard } from "../../components/server-availability-card/server-availability-card";
 import { ServerDescriptionSummary } from "../../components/server-description-summary/server-description-summary";
-import {
-  ServerPropertyCard,
-  ServerPropertySection,
-} from "../../components/server-property-card/server-property-card";
+import { DetailsCard } from "../../components/details-card/details-card";
+import { DetailsHeader } from "../../components/details-header/details-header";
+import { DetailsCardSection } from "../../components/details-card/details-card.types";
 import { Dropdown } from "../../directives/dropdown";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
@@ -56,15 +51,13 @@ import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { ModalDialog } from "../../services/modal-dialog";
 import { SeoHandler } from "../../services/seo-handler";
-import {
-  AvailabilityRegion,
-  ServerSpecCards,
-} from "../../services/server-spec-cards";
+import { ServerSpecCards } from "../../services/server-spec-cards";
+import { AvailabilityRegion } from "../../services/server-spec-cards.types";
 import { CompareSelection } from "../../services/compare-selection";
 import { Toast } from "../../services/toast";
 import { SERVER_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { initGiscus } from "../../tools/initGiscus";
-import { ServerEmbedDialog } from "../../components/embed-dialog/server-embed-dialog";
+import { EmbedWidgetButton } from "../../components/embed-dialog/embed-widget-button";
 import { EmbedWidgetOption } from "../../components/embed-dialog/embed-dialog.types";
 import { hasWorkloadProfileChartData } from "../../components/charts/workload-profile/workload-profile.utils";
 import { isStressNgStressor } from "../../components/charts/stress-ng-full/stress-ng-full.utils";
@@ -85,50 +78,18 @@ import {
 
 import { chartColors } from "../../components/charts/shared/chart-colors.constants";
 import { isBelowBreakpoint } from "../../tools/breakpoints";
-
-const SIMILAR_SERVER_CATEGORIES: Partial<
-  Record<string, "score" | "score_per_price" | "specs">
-> = {
-  byScore: "score",
-  byPerformancePerPrice: "score_per_price",
-  bySpecs: "specs",
-};
-
-const DEFAULT_EMBEDDABLE_WIDGETS = [
-  { id: "metadata", name: "Server Metadata" },
-  { id: "availability", name: "Availability" },
-  { id: "processor", name: "Processor" },
-  { id: "system_resources", name: "System Resources and Accelerators" },
-  { id: "workload_profile", name: "Workload Profiles" },
-  { id: "bw_mem", name: "Memory Bandwidth" },
-  { id: "compress", name: "Compression" },
-  { id: "geek_single", name: "Geekbench Single-core" },
-  { id: "geek_multi", name: "Geekbench Multi-core" },
-  { id: "ssl", name: "OpenSSL" },
-  { id: "static_web", name: "Static Web Server" },
-  { id: "redis", name: "Redis" },
-];
-
-const DEFAULT_SERVER_DETAILS_ERROR_MESSAGE =
-  "Failed to load server details. Please try again later.";
+import {
+  ExtendedServerDetails,
+  ExtendedServerPrice,
+} from "./server-details.types";
+import {
+  DEFAULT_EMBEDDABLE_WIDGETS,
+  DEFAULT_SERVER_DETAILS_ERROR_MESSAGE,
+  SIMILAR_SERVER_CATEGORIES,
+} from "./server-details.constants";
 
 function createEmptyBarChartData(): ChartData<"bar"> {
   return JSON.parse(JSON.stringify(barChartDataEmpty));
-}
-
-export interface ExtendedServerPrice extends ServerPrice {
-  region: any;
-  zone: any;
-}
-
-export interface ExtendedServerDetails extends ServerPKs {
-  benchmark_scores: BenchmarkScore[];
-  prices: ExtendedServerPrice[];
-  bestOndemandPrice?: ExtendedServerPrice;
-  bestSpotPrice?: ExtendedServerPrice;
-  additionalOndemandPrices?: ExtendedServerPrice[];
-  additionalSpotPrices?: ExtendedServerPrice[];
-  vendor_name?: string;
 }
 
 @Component({
@@ -136,7 +97,6 @@ export interface ExtendedServerDetails extends ServerPKs {
   imports: [
     Button,
     Breadcrumbs,
-    LucideCheck,
     LucideTriangleAlert,
     Accordion,
     FormsModule,
@@ -145,14 +105,13 @@ export interface ExtendedServerDetails extends ServerPKs {
     AcceleratorCountPipe,
     ServerCharts,
     ServerLstopo,
-    ServerPropertyCard,
-    ServerAvailabilityCard,
+    DetailsCard,
     ServerDescriptionSummary,
-    ServerEmbedDialog,
+    EmbedWidgetButton,
     LoadingSpinner,
     Dropdown,
-    BookmarkButton,
     Modal,
+    DetailsHeader,
   ],
   templateUrl: "./server-details.html",
   styleUrl: "./server-details.css",
@@ -208,6 +167,8 @@ export class ServerDetails implements OnInit, OnDestroy {
   faqs: AccordionItem[] = [];
 
   availabilityRegions: AvailabilityRegion[] = [];
+  availabilitySections: DetailsCardSection[] =
+    this.serverSpecCards.buildAvailabilitySections([]);
   availabilityZones: any[] = [];
 
   regionFilters: any[] = [];
@@ -226,9 +187,9 @@ export class ServerDetails implements OnInit, OnDestroy {
   ];
   selectedSimilarOption: any = this.similarOptions[0];
 
-  metadataSections: ServerPropertySection[] = [];
-  processorSections: ServerPropertySection[] = [];
-  resourceSections: ServerPropertySection[] = [];
+  metadataSections: DetailsCardSection[] = [];
+  processorSections: DetailsCardSection[] = [];
+  resourceSections: DetailsCardSection[] = [];
   expandedCards: Record<string, boolean> = {
     details: false,
     processor: false,
@@ -254,12 +215,9 @@ export class ServerDetails implements OnInit, OnDestroy {
 
   activeFAQ: number = -1;
 
-  private embedModalTemplate =
-    viewChild.required<TemplateRef<unknown>>("embedModalTemplate");
   private summarizeModalTemplate = viewChild.required<TemplateRef<unknown>>(
     "summarizeModalTemplate",
   );
-  private embedDialogRef: DialogRef | null = null;
   private summarizeDialogRef: DialogRef | null = null;
 
   embeddableWidgets: EmbedWidgetOption[] = [];
@@ -268,7 +226,6 @@ export class ServerDetails implements OnInit, OnDestroy {
   @ViewChild("giscusParent") giscusParent!: ElementRef;
 
   isLoading = false;
-  isModalOpen = false;
 
   private subscription = new Subscription();
   private giscusInterval: ReturnType<typeof setInterval> | null = null;
@@ -594,7 +551,7 @@ export class ServerDetails implements OnInit, OnDestroy {
                   id: "metadata",
                   name: "Server Metadata",
                   show: this.metadataSections.some(
-                    (section) => section.properties.length > 0,
+                    (section) => section.rows.length > 0,
                   ),
                 },
                 {
@@ -606,7 +563,7 @@ export class ServerDetails implements OnInit, OnDestroy {
                   id: "processor",
                   name: "Processor",
                   show: this.processorSections.some(
-                    (section) => section.properties.length > 0,
+                    (section) => section.rows.length > 0,
                   ),
                 },
                 {
@@ -863,8 +820,6 @@ export class ServerDetails implements OnInit, OnDestroy {
 
   private resetServerState() {
     this.summarizeDialogRef?.close();
-    this.embedDialogRef?.close();
-    this.isModalOpen = false;
     this.similarAbortController?.abort();
     this.cleanupBrowserArtifacts();
     this.SEOHandler.cleanupStructuredData(this.document);
@@ -887,6 +842,9 @@ export class ServerDetails implements OnInit, OnDestroy {
     this.isSummarizeModalOpen = false;
     this.faqs = [];
     this.availabilityRegions = [];
+    this.availabilitySections = this.serverSpecCards.buildAvailabilitySections(
+      [],
+    );
     this.availabilityZones = [];
     this.regionFilters = [];
     this.similarByFamily = [];
@@ -921,7 +879,6 @@ export class ServerDetails implements OnInit, OnDestroy {
     this.cleanupBrowserArtifacts();
 
     this.summarizeDialogRef?.close();
-    this.embedDialogRef?.close();
 
     this.toastService.removeToast(SERVER_DETAILS_ERROR_TOAST_ID);
     this.SEOHandler.cleanupStructuredData(this.document);
@@ -966,10 +923,17 @@ export class ServerDetails implements OnInit, OnDestroy {
 
   updateChart1() {
     this.availabilityRegions = [];
+    this.availabilitySections = this.serverSpecCards.buildAvailabilitySections(
+      [],
+    );
     if (this.serverDetails.prices.length > 0) {
       this.availabilityRegions = this.serverSpecCards.buildAvailabilityRegions(
         this.serverDetails.prices,
       );
+      this.availabilitySections =
+        this.serverSpecCards.buildAvailabilitySections(
+          this.availabilityRegions,
+        );
 
       const series: ChartData<"bar"> = {
         labels: [],
@@ -1191,23 +1155,6 @@ export class ServerDetails implements OnInit, OnDestroy {
     return formatNumberWithCommas(Math.round(value));
   }
 
-  addToCompare() {
-    this.serverCompare.toggleCompare(
-      !this.serverCompare.isSelected(this.serverDetails),
-      {
-        server: this.serverDetails.api_reference,
-        vendor: this.serverDetails.vendor_id,
-        display_name: this.serverDetails.display_name,
-      },
-    );
-  }
-
-  compareText() {
-    return this.serverCompare.isSelected(this.serverDetails)
-      ? "Don't Compare"
-      : "Compare";
-  }
-
   generateSchemaJSON() {
     // we need 'offers' to be filled to avoid Google critical error
     if (
@@ -1368,20 +1315,6 @@ export class ServerDetails implements OnInit, OnDestroy {
   onLstopoSvgExists(exists: boolean) {
     this.lstopoSvgExists = exists;
     this.updateVisibleEmbeddableWidgets();
-  }
-
-  openModal() {
-    if (this.embedDialogRef) {
-      return;
-    }
-
-    this.updateVisibleEmbeddableWidgets();
-    this.isModalOpen = true;
-    this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
-    this.embedDialogRef.closed.subscribe(() => {
-      this.embedDialogRef = null;
-      this.isModalOpen = false;
-    });
   }
 
   loadServerDescriptions(

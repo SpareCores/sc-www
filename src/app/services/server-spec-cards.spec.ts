@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { ServerSpecCards } from "./server-spec-cards";
 import { PriceUnit, Status } from "../../../sdk/data-contracts";
-import type { ExtendedServerPrice } from "../pages/server-details/server-details";
+import type { ExtendedServerPrice } from "../pages/server-details/server-details.types";
 
 describe("ServerSpecCards", () => {
   let service: ServerSpecCards;
@@ -64,5 +64,23 @@ describe("ServerSpecCards", () => {
     expect(regions.map((region) => region.region_id)).toEqual(["us", "eu"]);
     expect(regions[1].ondemand.price).toBe(3);
     expect(regions[0].spot.price).toBe(0.5);
+  });
+
+  it("builds availability rows with formatted prices and inactive notes", () => {
+    const [section] = service.buildAvailabilitySections([
+      {
+        vendor_id: "aws",
+        region_id: "us",
+        display_name: "US East",
+        api_reference: "us-east-1",
+        inactive: true,
+        spot: { price: 0, unit: PriceUnit.Hour, count: 0, currency: "USD" },
+        ondemand: { price: 1, unit: PriceUnit.Hour, count: 1, currency: "USD" },
+      },
+    ]);
+
+    expect(section.columns).toEqual(["Region / ID", "Spot", "Ondemand"]);
+    expect(section.rows[0].values).toEqual(["-", "1 USD/h"]);
+    expect(section.rows[0].warning).toContain("not currently orderable");
   });
 });
