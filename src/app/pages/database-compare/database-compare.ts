@@ -1,4 +1,8 @@
 import { isPlatformBrowser } from "@angular/common";
+import { ComparePageController } from "../shared/compare-page/compare-page.controller";
+import { CompareGuide } from "../../components/compare-guide/compare-guide";
+import { CompareToolbar } from "../../components/compare-toolbar/compare-toolbar";
+import { ScrollbarMirror } from "../../components/scrollbar-mirror/scrollbar-mirror";
 import {
   AfterViewInit,
   Component,
@@ -9,60 +13,53 @@ import {
   OnInit,
   PLATFORM_ID,
   ViewChild,
-  effect,
+  computed,
   inject,
   signal,
-  untracked,
   viewChild,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import {
-  LucideCheck,
   LucideCircleArrowUp,
   LucideDynamicIcon,
   LucideInfo,
   LucideTriangleAlert,
-  LucideX,
 } from "@lucide/angular";
-import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
-import {
-  Benchmark,
-  Database,
-  DatabasePrice,
-  DatabaseSecurityFeature,
-  PriceUnit,
-  Region,
-  Vendor,
-} from "../../../../sdk/data-contracts";
-import openApiSpec from "../../../../sdk/openapi.json";
-import {
-  BreadcrumbSegment,
-  Breadcrumbs,
-} from "../../components/breadcrumbs/breadcrumbs";
+import { Subscription } from "rxjs";
+import { DatabasePrice, PriceUnit } from "../../../../sdk/data-contracts";
+import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { BenchmarkLineChart } from "../../components/charts/line/benchmark-line-chart";
 import {
   LineBenchmarkMeta,
   LineChartServer,
-  PGBENCH_HEAVY_READ_ONLY_ID,
-  PgbenchScore,
 } from "../../components/charts/line/benchmark-line-chart.types";
 import { ChartTooltip } from "../../components/charts/shared/chart-tooltip";
-import { getBenchmarkMetaNote } from "../../components/charts/shared/chart-tooltip.utils";
 import { CompareChartLegendVisibility } from "../../components/charts/shared/compare-chart-legend-visibility";
-import {
-  formatCompareDeltaLabel,
-  formatCompareSignedPercentageDeltaLabel,
-  getBestNumericCompareCellStyle,
-  isCompareBaselineServer,
-  toCompareDeltaView,
-  type CompareDeltaView,
-} from "../../components/charts/shared/server-compare-table.utils";
+import { isCompareBaselineServer } from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
-import { Dropdown } from "../../directives/dropdown";
+import { EmbedWidgetButton } from "../../components/embed-dialog/embed-widget-button";
+import { DatabaseCompareSpecRows } from "../../components/database-compare-spec-rows/database-compare-spec-rows";
+import {
+  DatabasePgbench,
+  hasPgbenchScores,
+} from "../../services/database-pgbench";
+import { COMPARE_PGBENCH_TITLE_FALLBACK } from "../../services/database-pgbench.constants";
+import { PgbenchChartMeta } from "../../services/details-embed.types";
+import { EmbedWidgetOption } from "../../components/embed-dialog/embed-dialog.types";
+import {
+  DATABASE_COMPARE_SPECS_WIDGET,
+  DATABASE_PGBENCH_WIDGET_ID,
+} from "../../services/database-embed.constants";
+import { DatabaseCompareSpecs } from "../../services/database-compare-specs";
+import { BEST_COMPARE_CELL_STYLE } from "../../services/database-compare-specs.constants";
+import {
+  ComparePropertyRow,
+  ComparePropertySection,
+  LoadedCompareDatabase,
+} from "../../services/database-compare-specs.types";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
-import { formatKebabTitle } from "../../pipes/pipe-utils";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
@@ -81,20 +78,12 @@ import {
   INVALID_DATABASE_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
   INVALID_DATABASE_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
 } from "../../services/url-toast-content";
-import { CompareCollections } from "../../collections/compare-collections";
 import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
-import { CollectionsUi } from "../../collections/collections-ui";
-import { AuthState } from "../../core/auth";
-import type { SavedComparisonItem } from "../../collections/collections.types";
-import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 import {
   decodeBase64JsonUrlState,
   isDatabaseCompareUrlState,
 } from "../../tools/encoded-url-state";
-import { encodeQueryParams } from "../../tools/queryParamFunctions";
-import { navigateListingQuery } from "../../tools/listing-query-navigate";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
-import { AdvisorUi } from "../advisor/advisor-ui";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import * as compareTableLayout from "../shared/compare-table/compare-table-layout.utils";
 import {
@@ -105,64 +94,16 @@ import {
 } from "./database-compare.constants";
 import {
   INITIAL_SCROLLBAR_MIRROR_STATE,
-  ScrollbarMirrorController,
   ScrollbarMirrorState,
 } from "../shared/compare-table/scrollbar-mirror.controller";
+import {
+  DATABASE_COMPARE_GUIDE_DESCRIPTION,
+  DATABASE_COMPARE_GUIDE_TITLE,
+  DATABASE_COMPARE_KEYWORDS,
+  DATABASE_COMPARE_PARENT_BREADCRUMB,
+  DATABASE_COMPARISON_TITLE,
+} from "./database-compare.constants";
 import databaseComparesData from "./database-compares.js";
-
-type LoadedCompareDatabase = Database & {
-  vendor?: Vendor;
-  prices?: (DatabasePrice & { region?: Region })[];
-  benchmark_scores: PgbenchScore[];
-  bestHourPrice?: DatabasePrice;
-  bestMonthPrice?: DatabasePrice;
-  underlyingServer?: {
-    display_name: string;
-    api_reference: string;
-  };
-};
-
-type ComparePropertyRow = {
-  id: string;
-  name: string;
-  values: string[];
-  rawValues: Array<number | null>;
-  description?: string;
-  lowerIsBetter?: boolean;
-};
-
-type ComparePropertySection = {
-  name: string;
-  rows: ComparePropertyRow[];
-};
-
-type OpenApiProperty = {
-  description?: string;
-};
-
-const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
-  (
-    openApiSpec as {
-      components?: {
-        schemas?: {
-          Database?: {
-            properties?: Record<string, OpenApiProperty>;
-          };
-        };
-      };
-    }
-  ).components?.schemas?.Database?.properties ?? {};
-
-const DATABASE_COMPARE_GUIDE_TITLE = "Cloud Database Compare Guide";
-const DATABASE_COMPARISON_TITLE = "Cloud Database Comparison";
-const DATABASE_COMPARE_BREADCRUMB = "Compare";
-const DATABASE_COMPARE_PARENT_BREADCRUMB = "Databases";
-const DATABASE_CUSTOM_COMPARISON_BREADCRUMB = "Custom Comparison";
-const DATABASE_COMPARE_GUIDE_DESCRIPTION =
-  "Compare managed databases (DBaaS) and their key specs, including engine type and versions supported, vCPU and RAM, storage throughput and backup options, high availability features etc. alongside benchmark metrics to find the optimal managed cloud database for your workload.";
-const PGBENCH_TITLE_FALLBACK = "PostgreSQL heavy read-only throughput";
-const PGBENCH_PEAK_BENCHMARK_ID = "pgbench:heavy_read_only:peak";
-const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
 
 @Component({
   selector: "sc-database-compare",
@@ -174,14 +115,16 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
     LoadingSpinner,
     BenchmarkLineChart,
     BenchmarkIconPipe,
-    Dropdown,
-    LucideCheck,
     LucideCircleArrowUp,
     LucideDynamicIcon,
     LucideInfo,
     LucideTriangleAlert,
-    LucideX,
     CollectionSaveModal,
+    EmbedWidgetButton,
+    DatabaseCompareSpecRows,
+    CompareGuide,
+    CompareToolbar,
+    ScrollbarMirror,
   ],
   templateUrl: "./database-compare.html",
   styleUrl: "./database-compare.css",
@@ -198,41 +141,53 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
-  private advisorUi = inject(AdvisorUi);
   private chartTooltip = inject(ChartTooltip);
   private legendVisibility = inject(CompareChartLegendVisibility);
-  private compareCollections = inject(CompareCollections);
-  private auth = inject(AuthState);
-  private collectionsUi = inject(CollectionsUi);
+  private compareSpecs = inject(DatabaseCompareSpecs);
+  private pgbench = inject(DatabasePgbench);
   saveComparisonModal = viewChild(CollectionSaveModal);
-  private readonly pendingSaveComparisonClose = signal(false);
-  private readonly editingComparisonId = signal<string | null>(null);
+  readonly comparePage = new ComparePageController(
+    {
+      collectionTarget: "compare-databases",
+      comparePath: "/databases/compare",
+      parentBreadcrumb: {
+        name: DATABASE_COMPARE_PARENT_BREADCRUMB,
+        url: "/databases",
+      },
+      guideTitle: DATABASE_COMPARE_GUIDE_TITLE,
+      guideDescription: DATABASE_COMPARE_GUIDE_DESCRIPTION,
+      comparisonTitle: DATABASE_COMPARISON_TITLE,
+      baselineIdParam: "baseline_database",
+      keywords: DATABASE_COMPARE_KEYWORDS,
+    },
+    {
+      instances: () => this.getCompareInstancesForSave(),
+      instancesRaw: () => this.instancesRaw,
+      baseline: () => this.baselineDatabase,
+      currency: () => this.selectedCurrency,
+      isLoading: () => this.isLoading,
+      compareDataReady: () => this.compareDataReady,
+      saveModal: () => this.saveComparisonModal(),
+      onLoadFinished: () => {
+        this.isLoading = false;
+        this.refreshCompareTableLayout();
+      },
+    },
+  );
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
   chartSectionTooltip = viewChild<ElementRef>("chartSectionTooltip");
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  baselineDropdown = viewChild<Dropdown>("baselineDropdown");
-  scrollbarMirrorBottomEl = viewChild<ElementRef>("scrollbarMirrorBottomRef");
-  readonly scrollbarMirrorController = ScrollbarMirrorController;
+  private scrollbarMirrorComponent = viewChild(ScrollbarMirror);
+  scrollbarMirrorBottomEl = computed(() =>
+    this.scrollbarMirrorComponent()?.element(),
+  );
   readonly scrollbarMirror = signal<ScrollbarMirrorState>({
     ...INITIAL_SCROLLBAR_MIRROR_STATE,
   });
 
-  breadcrumbs: BreadcrumbSegment[] = [
-    { name: "Home", url: "/" },
-    { name: DATABASE_COMPARE_PARENT_BREADCRUMB, url: "/databases" },
-    { name: DATABASE_COMPARE_BREADCRUMB, url: "/databases/compare" },
-  ];
-
-  title = DATABASE_COMPARE_GUIDE_TITLE;
-  description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
-  private bookmarkSource: SavedComparisonItem | null = null;
-  keywords = "cloud, database, dbaas, compare, sparecores";
-
   isLoading = true;
   instances: ComparedDatabase[] = [];
   instancesRaw = "";
-  private lastEncodedCompareQuery: string | null = null;
   private compareDataReady = false;
   databases: LoadedCompareDatabase[] = [];
   lineCompareServers: LineChartServer[] = [];
@@ -240,22 +195,22 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
   priceRows: ComparePropertyRow[] = [];
   databaseCompares: any[] = databaseComparesData;
 
-  availableCurrencies: CurrencyOption[] = availableCurrencies;
-  selectedCurrency = this.availableCurrencies[0];
+  selectedCurrency: CurrencyOption = availableCurrencies[0];
   baselineDatabase: LoadedCompareDatabase | null = null;
 
-  clipboardIcon = "clipboard";
-  pgbenchTitle = PGBENCH_TITLE_FALLBACK;
-  pgbenchInfoTooltip = "";
-  pgbenchNoteTooltip = "";
+  pgbenchMeta: PgbenchChartMeta = this.pgbench.meta(
+    [],
+    COMPARE_PGBENCH_TITLE_FALLBACK,
+  );
   chartTooltipContent = "";
   benchmarkMeta: LineBenchmarkMeta[] = [];
+  embeddableWidgets: EmbedWidgetOption[] = [];
   readonly isTableOutsideViewport = signal(false);
   readonly stickyFixedDivStyle = signal("");
   readonly stickyMainTableStyle = signal("");
   readonly stickyFirstColStyle = signal<{ width?: string }>({});
   readonly stickyColumnStyles = signal<string[]>([]);
-  readonly bestCellStyle = "font-weight: 600; color: var(--color-emerald-400)";
+  readonly bestCellStyle = BEST_COMPARE_CELL_STYLE;
 
   private subscription = new Subscription();
   private compareLoadId = 0;
@@ -283,85 +238,14 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     },
   });
 
-  constructor() {
-    effect(() => {
-      this.compareCollections.store.savedComparisons();
-      this.compareCollections.store.requestStatus();
-      if (this.compareDataReady && this.isLoading) {
-        this.finishCompareLoadIfReady();
-        return;
-      }
-      if (!this.isLoading) {
-        this.syncSavedComparisonChrome();
-      }
-    });
-
-    effect(() => {
-      if (!this.isAuthenticated()) {
-        return;
-      }
-      const modal = this.saveComparisonModal();
-      if (!modal) {
-        return;
-      }
-      if (!this.collectionsUi.takePendingOpenSave("compare-databases")) {
-        return;
-      }
-      untracked(() => this.openSaveComparisonModal());
-    });
-
-    effect(() => {
-      if (!this.pendingSaveComparisonClose()) {
-        return;
-      }
-
-      this.compareCollections.store.savedComparisons();
-      const editingId = this.editingComparisonId();
-      const saved = this.activeSavedComparison();
-      const id =
-        editingId ??
-        this.compareCollections.buildComparisonId(
-          this.getCompareInstancesForSave(),
-          this.buildCanonicalCompareUrl(),
-        );
-      const saving = this.compareCollections.isSavingComparison(id);
-      const updating = editingId
-        ? this.compareCollections.isUpdatingComparison(editingId)
-        : saved
-          ? this.compareCollections.isUpdatingComparison(saved.id)
-          : false;
-
-      if (saving || updating) {
-        return;
-      }
-
-      this.pendingSaveComparisonClose.set(false);
-      if (editingId || saved) {
-        this.saveComparisonModal()?.close();
-      }
-    });
-  }
-
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
-      this.title,
-      this.description,
-      this.keywords,
+      this.comparePage.title,
+      this.comparePage.description,
+      this.comparePage.keywords,
     );
 
-    this.subscription.add(
-      merge(this.route.paramMap, this.route.queryParamMap)
-        .pipe(
-          map(() => this.compareRouteKey()),
-          distinctUntilChanged(),
-        )
-        .subscribe(() => {
-          if (this.isOwnCompareUrlWrite()) {
-            return;
-          }
-          this.setup();
-        }),
-    );
+    this.comparePage.watchRoute(() => this.setup());
 
     this.subscription.add(
       this.serverCompare.databaseBaselineChanged.subscribe((baseline) => {
@@ -413,13 +297,6 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     this.stickyLayout.syncFromMirror(event.target as HTMLElement);
   }
 
-  getBaselineDatabaseLabel(): string {
-    if (!this.baselineDatabase) {
-      return "No baseline";
-    }
-    return `${this.baselineDatabase.display_name} (${this.baselineDatabase.vendor_id})`;
-  }
-
   isBaselineDatabase(database: LoadedCompareDatabase): boolean {
     return isCompareBaselineServer(database, this.baselineDatabase);
   }
@@ -460,12 +337,9 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     return `max(10.5rem, ${displayNameLength + 3}ch)`;
   }
 
-  getBestCellStyle(row: ComparePropertyRow, databaseIndex: number): string {
-    return getBestNumericCompareCellStyle(
-      row.rawValues[databaseIndex],
-      row.rawValues,
-      this.bestCellStyle,
-      row.lowerIsBetter || LOWER_IS_BETTER_ROW_IDS.has(row.id),
+  baselineIndex(): number {
+    return this.databases.findIndex((database) =>
+      this.isBaselineDatabase(database),
     );
   }
 
@@ -479,64 +353,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  shouldShowDeltaRow(row: ComparePropertyRow): boolean {
-    if (!this.baselineDatabase) {
-      return false;
-    }
-
-    const baselineIndex = this.databases.findIndex((database) =>
-      this.isBaselineDatabase(database),
-    );
-    if (baselineIndex < 0 || row.rawValues[baselineIndex] === null) {
-      return false;
-    }
-
-    return this.databases.some(
-      (database, index) =>
-        !this.isBaselineDatabase(database) && row.rawValues[index] !== null,
-    );
-  }
-
-  getRowDelta(
-    row: ComparePropertyRow,
-    databaseIndex: number,
-  ): CompareDeltaView | null {
-    if (!this.baselineDatabase || !this.shouldShowDeltaRow(row)) {
-      return null;
-    }
-
-    if (this.isBaselineDatabase(this.databases[databaseIndex])) {
-      return null;
-    }
-
-    const baselineIndex = this.databases.findIndex((database) =>
-      this.isBaselineDatabase(database),
-    );
-    const candidateValue = row.rawValues[databaseIndex];
-    const baselineValue = row.rawValues[baselineIndex];
-    if (candidateValue === null || baselineValue === null) {
-      return null;
-    }
-
-    const lowerIsBetter =
-      row.lowerIsBetter || LOWER_IS_BETTER_ROW_IDS.has(row.id);
-    const delta = lowerIsBetter
-      ? this.advisorUi.buildPriceDelta(candidateValue, baselineValue)
-      : this.advisorUi.buildComparableResourceDelta(
-          candidateValue,
-          baselineValue,
-        );
-
-    return toCompareDeltaView(
-      delta,
-      lowerIsBetter
-        ? formatCompareSignedPercentageDeltaLabel
-        : formatCompareDeltaLabel,
-    );
-  }
-
   selectBaselineDatabase(database: LoadedCompareDatabase | null): void {
-    this.baselineDropdown()?.hide();
     if (!database) {
       this.serverCompare.setBaselineDatabase(null);
       return;
@@ -548,9 +365,8 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
   }
 
   selectCurrency(currency: CurrencyOption): void {
-    this.currencyDropdown()?.hide();
     this.selectedCurrency = currency;
-    this.syncCompareUrlState();
+    this.comparePage.syncUrlState();
 
     if (!this.databases.length) {
       return;
@@ -589,25 +405,9 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
         database.bestMonthPrice = monthPrices[0];
       });
 
-      this.buildPriceRows();
+      this.priceRows = this.compareSpecs.buildPriceRows(this.databases);
       this.refreshCompareTableLayout();
     });
-  }
-
-  clipboardURL(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-    navigator.clipboard.writeText(window.location.href);
-    this.clipboardIcon = "check";
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 
   private setup() {
@@ -626,11 +426,11 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     this.baselineDatabase = null;
     this.compareDataReady = false;
     this.stickyLayout.reset();
-    this.restoreCurrencyFromUrl();
+    this.selectedCurrency = this.comparePage.currencyFromUrl();
 
     if (id || param) {
       this.isLoading = true;
-      this.breadcrumbs = this.baseCompareBreadcrumbs();
+      this.comparePage.breadcrumbs = this.comparePage.baseBreadcrumbs();
     }
 
     if (id) {
@@ -642,7 +442,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
       } else {
-        this.applyGuideChrome();
+        this.comparePage.applyGuideChrome();
         showInvalidUrlParamToast(this.toastService, this.platformId, {
           id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
           body: INVALID_COMPARE_URL_TOAST_BODY,
@@ -662,7 +462,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
 
       if (!decodedInstances.value) {
         console.warn("Invalid instances data in URL:", decodedInstances.error);
-        this.applyGuideChrome();
+        this.comparePage.applyGuideChrome();
         showInvalidUrlParamToast(this.toastService, this.platformId, {
           id: BAD_DATABASE_COMPARE_URL_TOAST_ID,
           body: INVALID_COMPARE_URL_TOAST_BODY,
@@ -679,12 +479,12 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
       this.instancesRaw = this.instances.length > 0 ? param : "";
       this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
       if (!this.instances.length) {
-        this.applyGuideChrome();
+        this.comparePage.applyGuideChrome();
         this.isLoading = false;
       }
     } else {
       this.toastService.removeToast(BAD_DATABASE_COMPARE_URL_TOAST_ID);
-      this.applyGuideChrome();
+      this.comparePage.applyGuideChrome();
       this.isLoading = false;
       return;
     }
@@ -696,85 +496,22 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
 
     this.isLoading = true;
     const loadInstances = this.instances.slice();
-    const promises: Promise<unknown>[] = [
-      this.keeperAPI.getServerBenchmarkMeta(),
-      this.keeperAPI.getVendors(),
-      this.keeperAPI.getRegions(),
-    ];
-    loadInstances.forEach((instance) => {
-      promises.push(
-        this.keeperAPI.getDatabase(instance.vendor, instance.database),
-      );
-      promises.push(
-        this.keeperAPI.getDatabasePrices(instance.vendor, instance.database, {
-          currency: this.selectedCurrency.slug,
-        }),
-      );
-      promises.push(
-        this.keeperAPI.getDatabaseBenchmarks(
-          instance.vendor,
-          instance.database,
-        ),
-      );
-    });
 
-    Promise.all(promises)
-      .then(async (data) => {
+    this.compareSpecs
+      .load(loadInstances, this.selectedCurrency.slug)
+      .then(async ({ benchmarkMeta, databases }) => {
         if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
           return;
         }
 
-        const bodies = data.map((item: any) => item.body);
-        const [benchmarkMeta, vendors, regions, ...databasePayloads] = bodies;
-        this.benchmarkMeta = (benchmarkMeta || []) as LineBenchmarkMeta[];
-        const meta = (benchmarkMeta as Benchmark[]).find(
-          (item) => item.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID,
+        this.benchmarkMeta = benchmarkMeta as LineBenchmarkMeta[];
+        this.pgbenchMeta = this.pgbench.meta(
+          benchmarkMeta,
+          COMPARE_PGBENCH_TITLE_FALLBACK,
         );
-        this.pgbenchTitle = meta?.name || PGBENCH_TITLE_FALLBACK;
-        this.pgbenchInfoTooltip = meta?.description || "";
-        this.pgbenchNoteTooltip =
-          getBenchmarkMetaNote(
-            this.benchmarkMeta,
-            PGBENCH_HEAVY_READ_ONLY_ID,
-          ) || "";
 
-        this.databases = [];
         this.serverCompare.clearDatabaseCompare();
-
-        for (let i = 0; i < loadInstances.length; i++) {
-          const database = databasePayloads[i * 3] as Database;
-          const prices = (databasePayloads[i * 3 + 1] || []) as DatabasePrice[];
-          const scores = (databasePayloads[i * 3 + 2] || []) as PgbenchScore[];
-
-          const loaded: LoadedCompareDatabase = {
-            ...database,
-            vendor: (vendors as Vendor[]).find(
-              (vendor) => vendor.vendor_id === database.vendor_id,
-            ),
-            prices: prices
-              .map((price) => ({
-                ...price,
-                region: (regions as Region[]).find(
-                  (region) =>
-                    region.vendor_id === price.vendor_id &&
-                    region.region_id === price.region_id,
-                ),
-              }))
-              .sort((a, b) => a.price - b.price),
-            benchmark_scores: scores,
-          };
-
-          const hourPrices =
-            loaded.prices?.filter((price) => price.unit === PriceUnit.Hour) ||
-            [];
-          const monthPrices =
-            loaded.prices?.filter((price) => price.unit === PriceUnit.Month) ||
-            [];
-          loaded.bestHourPrice = hourPrices[0];
-          loaded.bestMonthPrice = monthPrices[0];
-
-          this.databases.push(loaded);
-        }
+        this.databases = databases;
 
         this.serverCompare.replaceDatabaseCompareSelection(
           this.databases.map((database) => ({
@@ -784,35 +521,16 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
           })),
         );
 
-        await Promise.all(
-          this.databases.map(async (database) => {
-            if (!database.server_id) {
-              return;
-            }
-            try {
-              const serverResponse = await this.keeperAPI.getServerV2(
-                database.vendor_id,
-                database.server_id,
-              );
-              const server = serverResponse?.body;
-              if (server?.display_name && server?.api_reference) {
-                database.underlyingServer = {
-                  display_name: server.display_name,
-                  api_reference: server.api_reference,
-                };
-              }
-            } catch {
-              database.underlyingServer = undefined;
-            }
-          }),
-        );
+        await this.compareSpecs.attachUnderlyingServers(this.databases);
 
         if (this.destroyRef.destroyed || loadId !== this.compareLoadId) {
           return;
         }
 
-        this.buildPropertySections();
-        this.buildPriceRows();
+        this.propertySections = this.compareSpecs.buildPropertySections(
+          this.databases,
+        );
+        this.priceRows = this.compareSpecs.buildPriceRows(this.databases);
         this.refreshLineCompareServers();
         this.toastService.removeToast(DATABASE_COMPARE_ERROR_TOAST_ID);
       })
@@ -840,76 +558,24 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
 
         this.applyBaselineFromQuery();
         const specialId = this.route.snapshot.paramMap.get("id");
-        if (specialId && !this.exactSavedComparison()) {
+        if (specialId && !this.comparePage.exactSavedComparison()) {
           const specialCompare = this.databaseCompares.find(
             (x: any) => x.id === specialId,
           );
           if (specialCompare) {
-            this.applyComparisonChrome(
+            this.comparePage.applyComparisonChrome(
               specialCompare.title,
               specialCompare.description,
             );
-            this.setPremadeCompareBreadcrumb(
+            this.comparePage.setPremadeBreadcrumb(
               specialCompare.title,
               specialCompare.id,
             );
           }
         }
         this.compareDataReady = true;
-        this.finishCompareLoadIfReady();
+        this.comparePage.finishLoadIfReady();
       });
-  }
-
-  private compareRouteKey(): string {
-    const snapshot = this.route.snapshot;
-    return [
-      snapshot.paramMap.get("id") ?? "",
-      snapshot.queryParams["instances"] ?? "",
-      snapshot.queryParams["currency"] ?? "",
-      snapshot.queryParams["baseline_vendor"] ?? "",
-      snapshot.queryParams["baseline_database"] ?? "",
-    ].join("|");
-  }
-
-  private isOwnCompareUrlWrite(): boolean {
-    const snapshot = this.route.snapshot;
-    if (!this.compareDataReady || snapshot.paramMap.get("id")) {
-      return false;
-    }
-    const q = snapshot.queryParams;
-    return (
-      encodeQueryParams({
-        instances: q["instances"],
-        baseline_vendor: q["baseline_vendor"],
-        baseline_database: q["baseline_database"],
-        currency: q["currency"],
-      }) === this.lastEncodedCompareQuery
-    );
-  }
-
-  private collectionsReadyForChrome(): boolean {
-    if (!isPlatformBrowser(this.platformId) || !this.auth.isAuthenticated()) {
-      return true;
-    }
-
-    return (
-      this.compareCollections.store.isLoaded() ||
-      !!this.compareCollections.store.error()
-    );
-  }
-
-  private finishCompareLoadIfReady(): void {
-    if (!this.compareDataReady || !this.collectionsReadyForChrome()) {
-      return;
-    }
-
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    this.syncSavedComparisonChrome();
-    this.isLoading = false;
-    this.refreshCompareTableLayout();
   }
 
   private applyBaselineFromQuery(): void {
@@ -921,10 +587,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     if (!vendor || !database) {
       this.baselineDatabase = null;
       this.serverCompare.setBaselineDatabase(null);
-      this.lastEncodedCompareQuery = encodeQueryParams(
-        this.getCompareUrlQueryParams(),
-      );
-      this.syncSavedComparisonChrome();
+      this.comparePage.rememberUrlState();
       return;
     }
 
@@ -934,10 +597,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     if (!match) {
       this.baselineDatabase = null;
       this.serverCompare.setBaselineDatabase(null);
-      this.lastEncodedCompareQuery = encodeQueryParams(
-        this.getCompareUrlQueryParams(),
-      );
-      this.syncSavedComparisonChrome();
+      this.comparePage.rememberUrlState();
       return;
     }
 
@@ -946,78 +606,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
       vendor: match.vendor_id,
       database: match.api_reference,
     });
-    this.lastEncodedCompareQuery = encodeQueryParams(
-      this.getCompareUrlQueryParams(),
-    );
-    this.syncSavedComparisonChrome();
-  }
-
-  getCompareUrlQueryParams(): Record<string, string> {
-    const params: Record<string, string> = {};
-
-    if (this.instancesRaw) {
-      params.instances = this.instancesRaw;
-    }
-
-    if (this.baselineDatabase) {
-      params.baseline_vendor = this.baselineDatabase.vendor_id;
-      params.baseline_database = this.baselineDatabase.api_reference;
-    }
-
-    if (this.selectedCurrency.slug !== "USD") {
-      params.currency = this.selectedCurrency.slug;
-    }
-
-    return params;
-  }
-
-  private restoreCurrencyFromUrl(): void {
-    const currencySlug = isPlatformBrowser(this.platformId)
-      ? new URLSearchParams(window.location.search).get("currency")
-      : this.route.snapshot.queryParams["currency"];
-
-    this.selectedCurrency =
-      this.availableCurrencies.find(
-        (currency) => currency.slug === currencySlug,
-      ) || this.availableCurrencies[0];
-  }
-
-  private syncCompareUrlState(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    const queryParams = this.getCompareUrlQueryParams();
-    const encodedQuery = encodeQueryParams(queryParams);
-    const canonicalUrl = encodedQuery
-      ? `/databases/compare?${encodedQuery}`
-      : "/databases/compare";
-
-    if (this.route.snapshot.paramMap.get("id")) {
-      this.lastEncodedCompareQuery = encodedQuery;
-      void this.router.navigateByUrl(canonicalUrl, { replaceUrl: true });
-      this.syncSavedComparisonChrome();
-      return;
-    }
-
-    if (encodedQuery === this.lastEncodedCompareQuery) {
-      return;
-    }
-
-    this.lastEncodedCompareQuery = encodedQuery;
-    navigateListingQuery(this.router, this.route, queryParams, {
-      params: "replace",
-      history: "push",
-      preserveFragment: true,
-    });
-    this.syncSavedComparisonChrome();
-  }
-
-  private buildCanonicalCompareUrl(): string {
-    const encodedQuery = encodeQueryParams(this.getCompareUrlQueryParams());
-    return encodedQuery
-      ? `/databases/compare?${encodedQuery}`
-      : "/databases/compare";
+    this.comparePage.rememberUrlState();
   }
 
   private applySelectionFromService(selection: ComparedDatabase[]): void {
@@ -1037,12 +626,12 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
       this.propertySections = [];
       this.priceRows = [];
       this.baselineDatabase = null;
-      this.updateCompareBreadcrumb(0);
-      this.syncSavedComparisonChrome();
+      this.comparePage.setCustomBreadcrumb(0);
+      this.comparePage.syncSavedComparisonChrome();
       if (this.route.snapshot.paramMap.get("id")) {
         this.serverCompare.syncDatabaseCompareRoute();
       } else {
-        this.syncCompareUrlState();
+        this.comparePage.syncUrlState();
       }
       return;
     }
@@ -1089,7 +678,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
       database: item.database,
     }));
     this.instancesRaw = btoa(JSON.stringify(this.instances));
-    this.updateCompareBreadcrumb(this.databases.length);
+    this.comparePage.setCustomBreadcrumb(this.databases.length);
 
     if (
       this.baselineDatabase &&
@@ -1098,11 +687,13 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
       this.baselineDatabase = null;
     }
 
-    this.buildPropertySections();
-    this.buildPriceRows();
+    this.propertySections = this.compareSpecs.buildPropertySections(
+      this.databases,
+    );
+    this.priceRows = this.compareSpecs.buildPriceRows(this.databases);
     this.refreshLineCompareServers();
     if (!this.route.snapshot.paramMap.get("id")) {
-      this.syncCompareUrlState();
+      this.comparePage.syncUrlState();
     }
     this.refreshCompareTableLayout();
   }
@@ -1116,7 +707,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
 
     if (!baseline) {
       this.baselineDatabase = null;
-      this.syncCompareUrlState();
+      this.comparePage.syncUrlState();
       return;
     }
 
@@ -1126,171 +717,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
           item.vendor_id === baseline.vendor &&
           item.api_reference === baseline.database,
       ) || null;
-    this.syncCompareUrlState();
-  }
-
-  private applyGuideChrome(): void {
-    this.title = DATABASE_COMPARE_GUIDE_TITLE;
-    this.description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
-    this.bookmarkSource = null;
-    this.breadcrumbs = this.baseCompareBreadcrumbs();
-    this.seoHandler.updateTitleAndMetaTags(
-      this.title,
-      this.description,
-      this.keywords,
-    );
-  }
-
-  private applyComparisonChrome(title?: string, description?: string): void {
-    this.title = title || DATABASE_COMPARISON_TITLE;
-    this.description = description || DATABASE_COMPARE_GUIDE_DESCRIPTION;
-    this.bookmarkSource = null;
-    this.breadcrumbs = this.baseCompareBreadcrumbs();
-    this.seoHandler.updateTitleAndMetaTags(
-      this.title,
-      this.description,
-      this.keywords,
-    );
-  }
-
-  private baseCompareBreadcrumbs(): BreadcrumbSegment[] {
-    return [
-      { name: "Home", url: "/" },
-      { name: DATABASE_COMPARE_PARENT_BREADCRUMB, url: "/databases" },
-      { name: DATABASE_COMPARE_BREADCRUMB, url: "/databases/compare" },
-    ];
-  }
-
-  private setPremadeCompareBreadcrumb(title: string, id: string): void {
-    this.breadcrumbs = [
-      ...this.baseCompareBreadcrumbs(),
-      { name: title, url: `/databases/compare/${id}` },
-    ];
-  }
-
-  private updateCompareBreadcrumb(count: number): void {
-    if (count > 0) {
-      this.breadcrumbs = [
-        ...this.baseCompareBreadcrumbs(),
-        {
-          name: `${DATABASE_CUSTOM_COMPARISON_BREADCRUMB} (${count})`,
-          url: `/databases/compare`,
-          queryParams: this.instancesRaw
-            ? { instances: this.instancesRaw }
-            : undefined,
-        },
-      ];
-      return;
-    }
-
-    this.breadcrumbs = this.baseCompareBreadcrumbs();
-  }
-
-  isAuthenticated(): boolean {
-    return this.auth.isAuthenticated();
-  }
-
-  exactSavedComparison() {
-    const specialId = this.route.snapshot.paramMap.get("id");
-    return this.compareCollections.savedComparisonByUrls(
-      this.buildCanonicalCompareUrl(),
-      specialId ? `/databases/compare/${specialId}` : null,
-    );
-  }
-
-  activeSavedComparison() {
-    return this.exactSavedComparison();
-  }
-
-  canSaveComparison(): boolean {
-    return this.isAuthenticated() && this.instances.length >= 2;
-  }
-
-  openSaveComparisonModal(): void {
-    if (!this.isAuthenticated()) {
-      this.collectionsUi.promptRegisterForFeature({
-        type: "open-save",
-        target: "compare-databases",
-      });
-      return;
-    }
-
-    const exact = this.exactSavedComparison();
-    const draft = exact ?? this.bookmarkSource;
-    this.editingComparisonId.set(exact?.id ?? null);
-    this.saveComparisonModal()?.open(draft?.name ?? "", draft?.note ?? "");
-  }
-
-  isSaveComparisonPending(): boolean {
-    const editingId = this.editingComparisonId();
-    if (editingId) {
-      return this.compareCollections.isUpdatingComparison(editingId);
-    }
-
-    const saved = this.activeSavedComparison();
-    const id = this.compareCollections.buildComparisonId(
-      this.getCompareInstancesForSave(),
-      this.buildCanonicalCompareUrl(),
-    );
-
-    if (saved) {
-      return this.compareCollections.isUpdatingComparison(saved.id);
-    }
-
-    return this.compareCollections.isSavingComparison(id);
-  }
-
-  confirmSaveComparison(payload: { name: string; note?: string }): void {
-    this.syncCompareUrlState();
-    const instances = this.getCompareInstancesForSave();
-    const compareUrl = this.buildCanonicalCompareUrl();
-    const editingId = this.editingComparisonId();
-    this.pendingSaveComparisonClose.set(true);
-
-    if (editingId) {
-      this.compareCollections.updateComparison(
-        editingId,
-        instances,
-        payload.name,
-        payload.note,
-        compareUrl,
-      );
-      return;
-    }
-
-    this.compareCollections.saveComparison(
-      this.compareCollections.buildComparisonId(instances, compareUrl),
-      instances,
-      payload.name,
-      payload.note,
-      compareUrl,
-    );
-  }
-
-  deleteSavedComparison(): void {
-    const saved = this.exactSavedComparison();
-    if (!saved) {
-      return;
-    }
-
-    this.compareCollections.deleteComparison(saved.id);
-    this.bookmarkSource = null;
-    this.applyComparisonChrome();
-    this.updateCompareBreadcrumb(this.instances.length);
-  }
-
-  toggleSavedComparison(): void {
-    if (this.exactSavedComparison()) {
-      this.deleteSavedComparison();
-      return;
-    }
-
-    this.openSaveComparisonModal();
-  }
-
-  isDeleteComparisonPending(): boolean {
-    const saved = this.exactSavedComparison();
-    return !!saved && this.compareCollections.isDeletingComparison(saved.id);
+    this.comparePage.syncUrlState();
   }
 
   private getCompareInstancesForSave(): ComparedDatabase[] {
@@ -1301,425 +728,22 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  private syncSavedComparisonChrome(): void {
-    const exact = this.exactSavedComparison();
-    if (exact) {
-      this.bookmarkSource = exact;
-    } else if (!this.instances.length) {
-      this.bookmarkSource = null;
-    }
-
-    if (exact && this.instances.length) {
-      this.title = exact.name;
-      this.description = exact.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
-      this.breadcrumbs = [
-        ...this.baseCompareBreadcrumbs(),
-        { name: exact.name, url: exact.compare_url },
-      ];
-      this.seoHandler.updateTitleAndMetaTags(
-        this.title,
-        this.description,
-        this.keywords,
-      );
-      return;
-    }
-
-    if (this.route.snapshot.paramMap.get("id")) {
-      return;
-    }
-
-    if (this.instances.length) {
-      this.title = DATABASE_COMPARISON_TITLE;
-      this.description = DATABASE_COMPARE_GUIDE_DESCRIPTION;
-      this.updateCompareBreadcrumb(this.instances.length);
-      this.seoHandler.updateTitleAndMetaTags(
-        this.title,
-        this.description,
-        this.keywords,
-      );
-    }
-  }
-
-  private buildPropertySections(): void {
-    const sections: Array<{
-      name: string;
-      fields: Array<{
-        id: string;
-        name: string;
-        value: (database: LoadedCompareDatabase) => unknown;
-        raw?: (database: LoadedCompareDatabase) => number | null;
-        lowerIsBetter?: boolean;
-      }>;
-    }> = [
-      {
-        name: "",
-        fields: [
-          {
-            id: "vendor",
-            name: "Vendor",
-            value: (d) => d.vendor?.logo || d.vendor?.name || d.vendor_id,
-          },
-          { id: "name", name: "Name", value: (d) => d.name },
-          {
-            id: "display_name",
-            name: "Display Name",
-            value: (d) => d.display_name,
-          },
-          {
-            id: "api_reference",
-            name: "API Reference",
-            value: (d) => d.api_reference,
-          },
-          { id: "family", name: "Family", value: (d) => d.family },
-          { id: "status", name: "Status", value: (d) => d.status },
-        ],
-      },
-      {
-        name: "Engine",
-        fields: [
-          { id: "engine", name: "Engine", value: (d) => d.engine },
-          {
-            id: "wire_protocol",
-            name: "Wire Protocol",
-            value: (d) => d.wire_protocol,
-          },
-          {
-            id: "engine_versions",
-            name: "Engine Versions",
-            value: (d) => this.formatList(d.engine_versions),
-          },
-          {
-            id: "auto_upgrade_versions",
-            name: "Auto Upgrade Versions",
-            value: (d) => this.formatBoolean(d.auto_upgrade_versions),
-          },
-          {
-            id: "custom_config",
-            name: "Custom Config",
-            value: (d) => this.formatBoolean(d.custom_config),
-          },
-          {
-            id: "custom_extensions",
-            name: "Custom Extensions",
-            value: (d) => this.formatBoolean(d.custom_extensions),
-          },
-        ],
-      },
-      {
-        name: "Capacity",
-        fields: [
-          {
-            id: "vcpus",
-            name: "vCPUs",
-            value: (d) => d.vcpus,
-            raw: (d) => this.toRawNumber(d.vcpus),
-          },
-          {
-            id: "memory_amount",
-            name: "Memory",
-            value: (d) =>
-              d.memory_amount === null || d.memory_amount === undefined
-                ? null
-                : `${(d.memory_amount / 1024).toFixed(1)} GiB`,
-            raw: (d) => this.toRawNumber(d.memory_amount),
-          },
-          {
-            id: "storage_size",
-            name: "Bundled Storage",
-            value: (d) =>
-              d.storage_size === null || d.storage_size === undefined
-                ? null
-                : `${d.storage_size} GB`,
-            raw: (d) => this.toRawNumber(d.storage_size),
-          },
-          {
-            id: "storage_extra_min",
-            name: "Extra Storage Min",
-            value: (d) =>
-              d.storage_extra_min === null || d.storage_extra_min === undefined
-                ? null
-                : `${d.storage_extra_min} GB`,
-            raw: (d) => this.toRawNumber(d.storage_extra_min),
-          },
-          {
-            id: "storage_extra_max",
-            name: "Extra Storage Max",
-            value: (d) =>
-              d.storage_extra_max === null || d.storage_extra_max === undefined
-                ? null
-                : `${d.storage_extra_max} GB`,
-            raw: (d) => this.toRawNumber(d.storage_extra_max),
-          },
-          {
-            id: "storage_extra_autosize",
-            name: "Storage Autosize",
-            value: (d) => this.formatBoolean(d.storage_extra_autosize),
-          },
-          {
-            id: "max_read_replicas",
-            name: "Max Read Replicas",
-            value: (d) => d.max_read_replicas,
-            raw: (d) => this.toRawNumber(d.max_read_replicas),
-          },
-          {
-            id: "sla",
-            name: "SLA",
-            value: (d) =>
-              d.sla === null || d.sla === undefined ? null : `${d.sla}%`,
-            raw: (d) => this.toRawNumber(d.sla),
-          },
-        ],
-      },
-      {
-        name: "Features",
-        fields: [
-          {
-            id: "ha",
-            name: "High Availability",
-            value: (d) => this.formatList(d.ha),
-          },
-          {
-            id: "ha_strategy",
-            name: "HA Strategy",
-            value: (d) => this.formatList(d.ha_strategy),
-          },
-          {
-            id: "scheduled_backups",
-            name: "Scheduled Backups",
-            value: (d) => this.formatBoolean(d.scheduled_backups),
-          },
-          {
-            id: "continuous_backups",
-            name: "Continuous Backups (days)",
-            value: (d) => d.continuous_backups,
-            raw: (d) => this.toRawNumber(d.continuous_backups),
-          },
-          {
-            id: "connection_pool",
-            name: "Connection Pool",
-            value: (d) => this.formatBoolean(d.connection_pool),
-          },
-          {
-            id: "system_monitoring",
-            name: "System Monitoring",
-            value: (d) => this.formatBoolean(d.system_monitoring),
-          },
-          {
-            id: "database_monitoring",
-            name: "Database Monitoring",
-            value: (d) => this.formatBoolean(d.database_monitoring),
-          },
-          {
-            id: "autotuning_advice",
-            name: "Autotuning Advice",
-            value: (d) => this.formatBoolean(d.autotuning_advice),
-          },
-          {
-            id: "autotuning_apply",
-            name: "Autotuning Apply",
-            value: (d) => this.formatBoolean(d.autotuning_apply),
-          },
-        ],
-      },
-      {
-        name: "Security",
-        fields: [
-          {
-            id: "disk_encryption",
-            name: "Disk Encryption",
-            value: (d) => this.formatBoolean(d.disk_encryption),
-          },
-          ...this.buildSecurityFeatureFields(),
-        ],
-      },
-    ];
-
-    const alwaysShowSectionNames = new Set(["Capacity", "Features"]);
-
-    this.propertySections = sections
-      .map((section) => ({
-        name: section.name,
-        rows: section.fields
-          .map((field) => ({
-            id: field.id,
-            name: field.name,
-            values: this.databases.map((database) =>
-              field.id === "vendor"
-                ? this.toVendorDisplay(database)
-                : this.toDisplayValue(field.value(database)),
-            ),
-            rawValues: this.databases.map((database) =>
-              field.raw ? field.raw(database) : null,
-            ),
-            description: DATABASE_SCHEMA_PROPERTIES[field.id]?.description,
-            lowerIsBetter: field.lowerIsBetter,
-          }))
-          .filter((row) =>
-            alwaysShowSectionNames.has(section.name) || row.id === "vendor"
-              ? true
-              : row.values.some((value) => value !== "-"),
-          ),
-      }))
-      .filter((section) => section.rows.length > 0);
-  }
-
-  private buildSecurityFeatureFields(): Array<{
-    id: string;
-    name: string;
-    value: (database: LoadedCompareDatabase) => unknown;
-  }> {
-    const present = new Set<string>();
-    for (const database of this.databases) {
-      for (const feature of database.security_features || []) {
-        present.add(feature);
-      }
-    }
-
-    const knownFeatures = Object.values(DatabaseSecurityFeature);
-    const orderedFeatures = [
-      ...knownFeatures.filter((feature) => present.has(feature)),
-      ...[...present]
-        .filter(
-          (feature) =>
-            !knownFeatures.includes(feature as DatabaseSecurityFeature),
-        )
-        .sort(),
-    ];
-
-    return orderedFeatures.map((feature) => ({
-      id: feature,
-      name: formatKebabTitle(feature),
-      value: (database: LoadedCompareDatabase) =>
-        (database.security_features || []).includes(
-          feature as DatabaseSecurityFeature,
-        )
-          ? "check"
-          : "x",
-    }));
-  }
-
   private refreshLineCompareServers(): void {
-    this.lineCompareServers = this.databases.map((database) => ({
-      display_name: database.display_name,
-      vendor_id: database.vendor_id,
-      vendor_name: database.vendor?.name,
-      api_reference: database.api_reference,
-      benchmark_scores:
-        database.benchmark_scores as LineChartServer["benchmark_scores"],
-    }));
+    this.lineCompareServers = this.pgbench.lineServers(this.databases);
+  }
+
+  updateEmbeddableWidgets() {
+    this.embeddableWidgets = [
+      DATABASE_COMPARE_SPECS_WIDGET,
+      ...(this.hasPgbenchCompareChart()
+        ? [{ id: DATABASE_PGBENCH_WIDGET_ID, name: this.pgbenchMeta.title }]
+        : []),
+    ];
   }
 
   hasPgbenchCompareChart(): boolean {
     return this.lineCompareServers.some((server) =>
-      (server.benchmark_scores ?? []).some(
-        (score) =>
-          score.benchmark_id === PGBENCH_HEAVY_READ_ONLY_ID &&
-          score.score != null,
-      ),
+      hasPgbenchScores(server.benchmark_scores),
     );
-  }
-
-  private buildPriceRows(): void {
-    this.priceRows = [
-      {
-        id: "best_hour",
-        name: "Best Hourly Price",
-        values: this.databases.map((database) =>
-          this.formatPrice(database.bestHourPrice),
-        ),
-        rawValues: this.databases.map((database) =>
-          this.toRawNumber(database.bestHourPrice?.price),
-        ),
-        lowerIsBetter: true,
-      },
-      this.buildCostEfficiencyRow(),
-      {
-        id: "best_month",
-        name: "Best Monthly Price",
-        values: this.databases.map((database) =>
-          this.formatPrice(database.bestMonthPrice),
-        ),
-        rawValues: this.databases.map((database) =>
-          this.toRawNumber(database.bestMonthPrice?.price),
-        ),
-        lowerIsBetter: true,
-      },
-    ].filter((row) =>
-      row.values.some((value) => value !== "-" && value !== ""),
-    );
-  }
-
-  private buildCostEfficiencyRow(): ComparePropertyRow {
-    const rawValues = this.databases.map((database) => {
-      const peakScore = database.benchmark_scores?.find(
-        (score) => score.benchmark_id === PGBENCH_PEAK_BENCHMARK_ID,
-      )?.score;
-      const hourlyPrice = database.bestHourPrice?.price;
-      if (
-        typeof peakScore !== "number" ||
-        !Number.isFinite(peakScore) ||
-        typeof hourlyPrice !== "number" ||
-        !Number.isFinite(hourlyPrice) ||
-        hourlyPrice <= 0
-      ) {
-        return null;
-      }
-      return peakScore / hourlyPrice;
-    });
-
-    return {
-      id: "cost_efficiency",
-      name: "Cost-efficiency",
-      description:
-        "Peak pgbench performance per price ratio showing how much throughput you get for $1/hour.",
-      values: rawValues.map((value) =>
-        value === null ? "" : value.toFixed(2),
-      ),
-      rawValues,
-    };
-  }
-
-  private formatPrice(price?: DatabasePrice): string {
-    if (!price) {
-      return "-";
-    }
-    const rounded =
-      price.price < 1 ? price.price.toPrecision(2) : price.price.toFixed(2);
-    return `${rounded} ${price.currency}/${price.unit}`;
-  }
-
-  private formatBoolean(value: boolean | null | undefined): string | null {
-    if (value === null || value === undefined) {
-      return null;
-    }
-    return value ? "check" : "x";
-  }
-
-  private formatList(value: unknown): string | null {
-    if (!Array.isArray(value) || !value.length) {
-      return null;
-    }
-    return value.join(", ");
-  }
-
-  private toDisplayValue(value: unknown): string {
-    if (value === null || value === undefined || value === "") {
-      return "-";
-    }
-    return String(value);
-  }
-
-  private toVendorDisplay(database: LoadedCompareDatabase): string {
-    if (database.vendor?.logo) {
-      return `logo:${database.vendor.logo}`;
-    }
-    return database.vendor?.name || database.vendor_id || "-";
-  }
-
-  private toRawNumber(value: unknown): number | null {
-    if (typeof value === "number" && Number.isFinite(value)) {
-      return value;
-    }
-    return null;
   }
 }
