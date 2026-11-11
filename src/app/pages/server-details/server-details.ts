@@ -42,6 +42,7 @@ import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner
 import { Modal } from "../../components/modal/modal";
 import { ServerCharts } from "../../components/server-charts/server-charts";
 import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { ServerAvailabilityCard } from "../../components/server-availability-card/server-availability-card";
 import { ServerDescriptionSummary } from "../../components/server-description-summary/server-description-summary";
 import {
@@ -153,6 +154,7 @@ export interface ExtendedServerDetails extends ServerPKs {
     Dropdown,
     BookmarkButton,
     Modal,
+    HeaderAnchor,
   ],
   templateUrl: "./server-details.html",
   styleUrl: "./server-details.css",

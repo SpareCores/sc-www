@@ -16,12 +16,13 @@ import {
   ServerSpecCards,
 } from "../../services/server-spec-cards";
 import { UiTooltip } from "../../services/ui-tooltip";
+import { HeaderAnchor } from "../header-anchor/header-anchor";
 
 const COLLAPSED_REGION_LIMIT = 7;
 
 @Component({
   selector: "sc-server-availability-card",
-  imports: [Button, LucideTriangleAlert, ReduceUnitNamePipe],
+  imports: [Button, LucideTriangleAlert, ReduceUnitNamePipe, HeaderAnchor],
   templateUrl: "./server-availability-card.html",
   styleUrl: "./server-availability-card.css",
 })
@@ -32,6 +33,7 @@ export class ServerAvailabilityCard {
   regions = input<AvailabilityRegion[]>([]);
   isOpen = input(false);
   expandable = input(true);
+  anchored = input(false);
 
   toggleRequested = output<void>();
 

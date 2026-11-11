@@ -4,12 +4,14 @@
     [serverDetails]="serverDetails"
     [benchmarkMeta]="benchmarkMeta"
     [isEmbedded]="isEmbedded"
+    [anchorId]="isEmbedded ? null : 'workload_profile'"
   ></sc-workload-profile-panel>
 }
 @if (isChartShown("nvbandwidth")) {
   <sc-nvbandwidth-card
     [benchmarkMeta]="benchmarkMeta"
     [benchmarkScores]="serverDetails?.benchmark_scores"
+    [anchored]="!isEmbedded"
   ></sc-nvbandwidth-card>
 }
 @if (isChartShown("bw_mem")) {
@@ -17,11 +19,13 @@
     [serverDetails]="serverDetails"
     [benchmarksByCategory]="benchmarksByCategory"
     [benchmarkMeta]="memoryBenchmarkMeta"
+    [anchorId]="isEmbedded ? null : 'bw_mem'"
   ></sc-server-memory-chart>
 }
 @if (isChartShown("compress")) {
   <sc-compression-chart
     [benchmarksByCategory]="benchmarksByCategory"
+    [anchorId]="isEmbedded ? null : 'compress'"
   ></sc-compression-chart>
 }
 
@@ -33,6 +37,7 @@
     blockClass="sc-chart-block sc-chart-block--full"
     elementId="ssl_chart"
     canvasId="ssl_canvas"
+    [anchorId]="isEmbedded ? null : 'ssl'"
     chartType="bar"
     [benchmarksByCategory]="lineBenchmarkGroups"
     orderTooltip="Higher is better."
@@ -49,6 +54,7 @@
     [benchmarkMeta]="geekbenchBenchmarkMeta"
     [elementId]="'geekbench_chart'"
     [canvasId]="'geekbench_single_canvas'"
+    [anchorId]="isEmbedded ? null : 'geek_single'"
   ></sc-geekbench-radar-chart>
 }
 
@@ -60,6 +66,7 @@
     [benchmarkMeta]="geekbenchBenchmarkMeta"
     [elementId]="'geekbench_multi_chart'"
     [canvasId]="'geekbench_multi_canvas'"
+    [anchorId]="isEmbedded ? null : 'geek_multi'"
   ></sc-geekbench-radar-chart>
 }
 
@@ -69,9 +76,16 @@
     id="passmark_cpu"
   >
     <div class="flex items-center min-h-[42px]">
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3 class="text-2xl flex items-center gap-2 sc-header-anchor-host">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
         Passmark CPU Scores
+        @if (!isEmbedded) {
+          <sc-header-anchor
+            anchorId="passmark_cpu"
+            label="Passmark CPU Scores"
+            [withTarget]="false"
+          ></sc-header-anchor>
+        }
       </h3>
     </div>
     <table class="items_table_passmark similar_family_table">
@@ -151,9 +165,16 @@
     id="passmark_other"
   >
     <div class="flex items-center min-h-[42px]">
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3 class="text-2xl flex items-center gap-2 sc-header-anchor-host">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
         Passmark Memory Scores
+        @if (!isEmbedded) {
+          <sc-header-anchor
+            anchorId="passmark_other"
+            label="Passmark Memory Scores"
+            [withTarget]="false"
+          ></sc-header-anchor>
+        }
       </h3>
     </div>
     <table class="items_table_passmark similar_family_table">
@@ -210,6 +231,7 @@
     [benchmarkMeta]="benchmarkMeta"
     [benchmarkScores]="serverDetails?.benchmark_scores"
     [isEmbedded]="isEmbedded"
+    [anchored]="!isEmbedded"
   ></sc-stress-ng-full-card>
 }
 
@@ -221,6 +243,7 @@
     blockClass="sc-chart-block sc-chart-block--half"
     elementId="stress_ng_div16_chart"
     canvasId="stress_ng_div16_canvas"
+    [anchorId]="isEmbedded ? null : 'stress_ng_div16'"
     chartType="line"
     [detailsServer]="lineChartDetailsServer"
     [benchmarksByCategory]="lineBenchmarkGroups"
@@ -238,6 +261,7 @@
     blockClass="sc-chart-block sc-chart-block--half"
     elementId="stress_ng_relative_chart"
     canvasId="stress_ng_relative_canvas"
+    [anchorId]="isEmbedded ? null : 'stress_ng_relative'"
     chartType="line"
     [detailsServer]="lineChartDetailsServer"
     [benchmarksByCategory]="lineBenchmarkGroups"
@@ -252,6 +276,8 @@
     [benchmarkMeta]="benchmarkMeta"
     [showPrompt]="isChartShown('llm_prompt')"
     [showGeneration]="isChartShown('llm_generation')"
+    [promptAnchorId]="isEmbedded ? null : 'llm_prompt'"
+    [generationAnchorId]="isEmbedded ? null : 'llm_generation'"
   ></sc-llm-inference-chart>
 }
 
@@ -264,6 +290,7 @@
       [chartItem]="chartItem"
       [benchmarkMeta]="benchmarkMeta"
       [detailsBenchmarks]="benchmarksByCategory"
+      [anchorId]="isEmbedded ? null : chartItem.chart.id"
     ></sc-benchmark-multi-bar-chart>
   }
 }
@@ -276,6 +303,7 @@
     blockClass="sc-chart-block sc-chart-block--full"
     elementId="pgbench_chart"
     canvasId="pgbench_canvas"
+    [anchorId]="isEmbedded ? null : 'pgbench'"
     chartType="line"
     [detailsServer]="lineChartDetailsServer"
     [benchmarksByCategory]="lineBenchmarkGroups"

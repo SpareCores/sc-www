@@ -17,6 +17,7 @@ import {
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
+import { HeaderAnchor } from "../../header-anchor/header-anchor";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import {
@@ -44,6 +45,7 @@ import {
     LucideTriangleAlert,
     BaseChartDirective,
     BenchmarkIconPipe,
+    HeaderAnchor,
   ],
   templateUrl: "./geekbench-radar-chart.html",
   styles: [
@@ -72,6 +74,7 @@ export class GeekbenchRadarChart {
   blockClass = input("sc-chart-block sc-chart-block--taller");
   elementId = input("");
   canvasId = input("");
+  anchorId = input<string | null>(null);
   detailsChartMode = input<"single" | "multi">("single");
   benchmarksByCategory = input<GeekbenchBenchmarkGroup[]>([]);
   benchmarkMeta = input<GeekbenchBenchmarkMeta[]>([]);

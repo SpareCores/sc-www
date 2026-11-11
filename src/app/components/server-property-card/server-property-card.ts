@@ -16,6 +16,7 @@ import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
 import { Button } from "../button/button";
 import { ChartTooltip } from "../charts/shared/chart-tooltip";
+import { HeaderAnchor } from "../header-anchor/header-anchor";
 
 export interface ServerPropertyTooltip {
   key: string;
@@ -37,7 +38,7 @@ export interface ServerPropertySection {
 
 @Component({
   selector: "sc-server-property-card",
-  imports: [LucideDynamicIcon, LucideInfo, Button, RouterLink],
+  imports: [LucideDynamicIcon, LucideInfo, Button, RouterLink, HeaderAnchor],
   templateUrl: "./server-property-card.html",
   styleUrl: "./server-property-card.css",
 })
@@ -46,6 +47,7 @@ export class ServerPropertyCard {
 
   cardTitle = input.required<string>();
   cardId = input.required<string>();
+  anchorId = input<string | null>(null);
   sections = input<ServerPropertySection[]>([]);
   showSectionHeaders = input(true);
   sectionHeaderVariant = input<"default" | "availability">("default");

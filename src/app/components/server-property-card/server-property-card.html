@@ -5,7 +5,15 @@
   [attr.id]="cardId()"
   #cardRoot
 >
-  <h3 class="text-2xl">{{ cardTitle() }}</h3>
+  <h3 class="text-2xl sc-header-anchor-host sc-header-anchor-host--card">
+    {{ cardTitle() }}
+    @if (anchorId(); as id) {
+      <sc-header-anchor
+        [anchorId]="id"
+        [label]="cardTitle()"
+      ></sc-header-anchor>
+    }
+  </h3>
   <div class="card_sections">
     @for (section of visibleSections(); track section.name; let i = $index) {
       @if (showSectionHeaders() && i > 0) {

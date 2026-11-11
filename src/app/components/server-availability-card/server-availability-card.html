@@ -4,7 +4,16 @@
   [class.sc-chart-block--open]="isOpen()"
   [class.sc-chart-block--scrollable]="!expandable()"
 >
-  <h3 class="text-2xl">Availability</h3>
+  <h3 class="text-2xl sc-header-anchor-host">
+    Availability
+    @if (anchored()) {
+      <sc-header-anchor
+        anchorId="availability"
+        label="Availability"
+        [withTarget]="false"
+      ></sc-header-anchor>
+    }
+  </h3>
   <table class="sc-kv-table w-full">
     <thead>
       <tr>

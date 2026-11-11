@@ -3,7 +3,9 @@
     <div
       class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between"
     >
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3
+        class="text-2xl flex items-center gap-2 sc-header-anchor-host sc-header-anchor-host--card"
+      >
         <svg [lucideIcon]="'bwmem' | benchmarkIcon" class="h-6 w-6"></svg>
         <span class="whitespace-nowrap">Memory Bandwidth</span>
         <svg
@@ -25,6 +27,12 @@
             (mouseenter)="showWarningTooltip($event, currentMemoryChartNote())"
             (mouseleave)="hideTooltip()"
           ></svg>
+        }
+        @if (anchorId(); as id) {
+          <sc-header-anchor
+            [anchorId]="id"
+            label="Memory Bandwidth"
+          ></sc-header-anchor>
         }
       </h3>
       <sc-button
