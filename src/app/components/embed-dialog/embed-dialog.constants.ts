@@ -5,3 +5,8 @@ export const EMBED_PREVIEW_SIZES: EmbedPreviewSize[] = [
   { id: "tablet", name: "Tablet (768px)", widthClass: "w-[768px]" },
   { id: "desktop", name: "Desktop", widthClass: "w-full min-w-[1024px]" },
 ];
+
+export const COMPARE_EMBED_PATHS = {
+  server: "compare",
+  database: "database-compare",
+} as const;
