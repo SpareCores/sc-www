@@ -41,3 +41,4 @@ export const GUEST_REGION_LIMIT_TOAST_ID = "guest-region-limit";
 export const SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID = "search-bar-countries-error";
 export const CPU_CACHE_INPUT_ERROR_TOAST_ID = "cpu-cache-input-error";
 export const DESIGN_COLOR_COPY_TOAST_ID = "design-color-copy";
+export const HEADER_ANCHOR_COPY_TOAST_ID = "header-anchor-copy";
