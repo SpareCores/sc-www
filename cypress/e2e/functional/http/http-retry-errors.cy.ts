@@ -1,10 +1,12 @@
-import { E2EEvent } from "../support/generics";
+import { E2EEvent } from "../../../support/generics";
 
 // Match Keeper API only — never the Angular document on :4200.
 const SERVERS_SEARCH_ROUTE =
   /^https?:\/\/(?!localhost:4200(?:\/|$))[^/]+\/servers(?:\?.*)?$/;
 const EXHAUSTION_TOAST_TIMEOUT_MS = 30000;
 const API_WAIT_MS = 30000;
+
+const navigation = { started: false };
 
 type SequenceResponse = {
   statusCode: number;
@@ -21,6 +23,11 @@ function interceptSequence(
   let attempt = 0;
 
   cy.intercept({ method, url }, (req) => {
+    if (!navigation.started) {
+      req.continue();
+      return;
+    }
+
     if (attempt >= responses.length) {
       throw new Error(
         `Unexpected request #${attempt + 1} for ${alias}; expected at most ${responses.length}`,
@@ -39,13 +46,14 @@ function interceptSequence(
 
 function clientNavigate(path: string) {
   cy.window().then((win) => {
+    navigation.started = true;
     win.history.pushState({}, "", path);
     win.dispatchEvent(new PopStateEvent("popstate"));
   });
 }
 
 function waitForMatchingStatus(
-  alias: string,
+  alias: `@${string}`,
   getUrl: () => string | undefined,
   statusCheck: (statusCode: number) => boolean,
 ) {
@@ -63,11 +71,25 @@ function waitForMatchingStatus(
   });
 }
 
+function waitForSuccess(alias: `@${string}`) {
+  cy.wait(alias, { timeout: API_WAIT_MS }).then(({ response }) => {
+    const status = response?.statusCode ?? 0;
+    if (status < 200 || status >= 300) {
+      waitForSuccess(alias);
+    }
+  });
+}
+
 describe("HTTP retry errors", () => {
   // Full SSR visits hydrate from HttpTransferCache, so Cypress never sees
   // those GETs. Bootstrap on `/`, then SPA-navigate so requests hit the wire.
   beforeEach(() => {
-    E2EEvent.visitURL("/", 1000);
+    navigation.started = false;
+    cy.intercept({ method: "GET", url: SERVERS_SEARCH_ROUTE }).as(
+      "landingServersSearch",
+    );
+    E2EEvent.visitURL("/");
+    waitForSuccess("@landingServersSearch");
   });
 
   it("retries 408 then loads /servers", () => {
@@ -75,6 +97,11 @@ describe("HTTP retry errors", () => {
     let anchorAttempts = 0;
 
     cy.intercept({ method: "GET", url: SERVERS_SEARCH_ROUTE }, (req) => {
+      if (!navigation.started) {
+        req.continue();
+        return;
+      }
+
       if (anchorUrl === undefined) {
         anchorUrl = req.url;
       }
@@ -113,6 +140,11 @@ describe("HTTP retry errors", () => {
     let anchorAttempts = 0;
 
     cy.intercept({ method: "GET", url: SERVERS_SEARCH_ROUTE }, (req) => {
+      if (!navigation.started) {
+        req.continue();
+        return;
+      }
+
       if (anchorUrl === undefined) {
         anchorUrl = req.url;
       }

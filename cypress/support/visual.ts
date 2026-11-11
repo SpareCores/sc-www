@@ -1,46 +1,92 @@
-import { E2EEvent, visualSnapshotName } from "../support/generics";
+import { SERVER_COMPARE_URL } from "./bookmarks";
+import { E2EEvent, VisualSizePrefix, visualSnapshotName } from "./generics";
 
-describe("Visual regression tests (small screen - 800px)", () => {
-  beforeEach(() => {
-    cy.viewport(800, 900);
+export function compareVisualSnapshot(
+  name: string,
+  prefix: VisualSizePrefix,
+): void {
+  cy.compareSnapshot({
+    name: visualSnapshotName(name, prefix),
+    exactName: true,
   });
+}
+
+function waitForLandingPage(): void {
+  cy.contains("#hero", "Don't gamble with your cloud costs.").should(
+    "be.visible",
+  );
+  cy.get(".articles_holder sc-article-card").should("have.length.at.least", 1);
+  cy.get("pre.language-python .token").should("exist");
+}
+
+function waitForFilteredListingPage(tableId: string, vendor: string): void {
+  cy.get("sc-page-header h1").should("be.visible");
+  E2EEvent.waitForListingLoaded(tableId);
+  cy.get(`#filter_enum_vendor_${vendor}`)
+    .should("be.checked")
+    .next()
+    .should(($label) => {
+      expect($label.text().trim()).not.to.eq(vendor);
+    });
+}
+
+function waitForServerDetailsPage(): void {
+  cy.get("#server_base_info_box").should("be.visible");
+  E2EEvent.waitForServerDetails();
+  cy.get("#details_more_button").should("be.visible");
+  cy.get("#processor_more_button").should("be.visible");
+  cy.get("#lstopo .lstopo-inline-svg svg").should("exist");
+  cy.get(".server-description-card").should("be.visible");
+  cy.get("table.items_table_similar.similar_family_table tbody tr").should(
+    "have.length.at.least",
+    1,
+  );
+}
+
+function waitForDatabaseDetailsPage(): void {
+  cy.get("#database_base_info_box").should("be.visible");
+  cy.get("#details tbody tr").should("have.length.at.least", 1);
+  cy.get("#features_more_button").should("be.visible");
+  cy.get("#security_more_button").should("be.visible");
+  cy.get("#pgbench_canvas").should("exist");
+  cy.get("#underlying_server_pgbench_canvas").should("exist");
+}
+
+function prepareLandingPage(): void {
+  E2EEvent.visitURL("/");
+  waitForLandingPage();
+
+  // Prepare header position for a consistent visual regression snapshot
+  E2EEvent.prepareHeaderForScreenshot();
+
+  // Hide slot machine for screenshot consistency
+  cy.get("#slot-machine").invoke("css", "display", "none");
+
+  // Hide resource tracker video for screenshot consistency
+  cy.get("#resource-tracker-video").invoke("css", "display", "none");
+
+  E2EEvent.loadImagesForScreenshot(".articles_holder img");
+}
+
+export function registerMobileMenuSuite(prefix: VisualSizePrefix): void {
+  it("should compare screenshot of the landing page with the mobile menu open", () => {
+    prepareLandingPage();
+    E2EEvent.openMobileMenuForScreenshot();
+    compareVisualSnapshot("landing-page-mobile-menu-open", prefix);
+  });
+}
+
+export function registerVisualSuites(prefix: VisualSizePrefix): void {
+  const compare = (name: string) => compareVisualSnapshot(name, prefix);
 
   it("should compare screenshot of the landing page", () => {
-    E2EEvent.visitURL("/");
-
-    // Prepare header position for a consistent visual regression snapshot
-    E2EEvent.prepareHeaderForScreenshot();
-
-    // Hide slot machine for screenshot consistency
-    cy.get("#slot-machine").invoke("css", "display", "none");
-
-    // Hide resource tracker video for screenshot consistency
-    cy.get("#resource-tracker-video").invoke("css", "display", "none");
-
-    cy.compareSnapshot({
-      name: visualSnapshotName("landing-page", "mobile"),
-      exactName: true,
-    });
-  });
-
-  it("should compare screenshot of the landing page with the mobile menu open", () => {
-    E2EEvent.visitURL("/");
-
-    E2EEvent.prepareHeaderForScreenshot();
-
-    cy.get("#slot-machine").invoke("css", "display", "none");
-    cy.get("#resource-tracker-video").invoke("css", "display", "none");
-
-    E2EEvent.openMobileMenuForScreenshot();
-
-    cy.compareSnapshot({
-      name: visualSnapshotName("landing-page-mobile-menu-open", "mobile"),
-      exactName: true,
-    });
+    prepareLandingPage();
+    compare("landing-page");
   });
 
   it("should compare screenshot of servers list (Hetzner / GPU >=1)", () => {
     E2EEvent.visitURL("/servers?vendor=hcloud&gpu_min=1&gpu_memory_min=1");
+    waitForFilteredListingPage("servers_table", "hcloud");
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
@@ -48,14 +94,12 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Hide table results for screenshot consistency
     E2EEvent.hideListingTableResultsForScreenshot("servers_table");
 
-    cy.compareSnapshot({
-      name: visualSnapshotName("servers-hcloud-gpu1", "mobile"),
-      exactName: true,
-    });
+    compare("servers-hcloud-gpu1");
   });
 
   it("should compare screenshot of databases list (AWS / 2 vCPUs)", () => {
     E2EEvent.visitURL("/databases?vendor=aws&vcpus_min=2&vcpus_max=2");
+    waitForFilteredListingPage("databases_table", "aws");
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
@@ -63,26 +107,24 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Hide table results for screenshot consistency
     E2EEvent.hideListingTableResultsForScreenshot("databases_table");
 
-    cy.compareSnapshot({
-      name: visualSnapshotName("databases-aws-vcpus2", "mobile"),
-      exactName: true,
-    });
+    compare("databases-aws-vcpus2");
   });
 
   it("should compare screenshot of design page", () => {
     E2EEvent.visitURL("/design");
+    cy.get("sc-downloadable-logo-collection").should("have.length.at.least", 1);
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
 
-    cy.compareSnapshot({
-      name: visualSnapshotName("design-page", "mobile"),
-      exactName: true,
-    });
+    E2EEvent.loadImagesForScreenshot(".design-grid img");
+
+    compare("design-page");
   });
 
   it("should compare screenshot of server details page", () => {
     E2EEvent.visitURL("/server/gcp/t2d-standard-1");
+    waitForServerDetailsPage();
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
@@ -114,14 +156,17 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     E2EEvent.hideWorkloadProfileChartsForScreenshot();
 
-    cy.compareSnapshot({
-      name: visualSnapshotName("server-details-gcp-t2d-standard-1", "mobile"),
-      exactName: true,
-    });
+    E2EEvent.loadImagesForScreenshot("#server_base_info_box .vendor-logo img");
+    E2EEvent.waitForCharts(
+      "sc-server-charts > :not(sc-workload-profile-panel)",
+    );
+
+    compare("server-details-gcp-t2d-standard-1");
   });
 
   it("should compare screenshot of database details page", () => {
     E2EEvent.visitURL("/database/gcp/db-c4a-highmem-48");
+    waitForDatabaseDetailsPage();
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
@@ -131,51 +176,22 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     E2EEvent.hideDatabaseCardPriceForScreenshot();
 
-    cy.compareSnapshot({
-      name: visualSnapshotName(
-        "database-details-gcp-db-c4a-highmem-48",
-        "mobile",
-      ),
-      exactName: true,
-    });
+    E2EEvent.loadImagesForScreenshot("#database_base_info_box img");
+    E2EEvent.waitForCharts("sc-benchmark-line-chart");
+
+    compare("database-details-gcp-db-c4a-highmem-48");
   });
 
   it("should compare screenshot of server comparison page", () => {
-    E2EEvent.visitURL(
-      "/servers/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYTEubWVkaXVtIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjNmdkLm1lZGl1bSJ9XQ%3D%3D",
-    );
-
-    // Force isTableOutsideViewport to always set to false
-    cy.window().then((win: any) => {
-      cy.get("sc-server-compare").then(($el) => {
-        if (win.ng?.getComponent) {
-          const component = win.ng.getComponent($el[0]);
-          const alwaysFalseSignal = Object.assign(() => false, {
-            set: () => {},
-            update: () => {},
-          });
-
-          Object.defineProperty(component, "isTableOutsideViewport", {
-            get: () => alwaysFalseSignal,
-            set: () => {},
-            configurable: true,
-          });
-
-          win.ng.applyChanges(component);
-        } else {
-          console.warn(
-            "Angular debug API not available; skipping table override",
-          );
-        }
-      });
-    });
+    E2EEvent.visitURL(SERVER_COMPARE_URL);
+    E2EEvent.waitForServerCompare();
 
     // Hide the dynamic table header
     cy.document().then((doc) => {
       const style = doc.createElement("style");
-      style.textContent = `.fixed_thead { 
-        display: none !important; 
-        visibility: hidden !important; 
+      style.textContent = `.fixed_thead {
+        display: none !important;
+        visibility: hidden !important;
         pointer-events: none !important;
         opacity: 0 !important;
         }`;
@@ -191,17 +207,18 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     E2EEvent.hideWorkloadProfileChartsForScreenshot();
 
-    cy.compareSnapshot({
-      name: visualSnapshotName(
-        "server-comparison-aws-a1-medium-c6gd-medium",
-        "mobile",
-      ),
-      exactName: true,
-    });
+    E2EEvent.loadImagesForScreenshot(
+      "sc-server-compare-charts table#main-table img",
+    );
+    E2EEvent.waitForCharts(
+      "sc-server-compare-charts .compare-chart-content > :not(sc-workload-profile-panel)",
+    );
+
+    compare("server-comparison-aws-a1-medium-c6gd-medium");
   });
 
   it("should compare screenshot of advisor page", () => {
-    E2EEvent.visitURL("/advisor", 4000);
+    E2EEvent.visitURL("/advisor");
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
@@ -210,10 +227,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.contains("No matches yet").should("be.visible");
     cy.get("#serverSearchBar").should("be.visible");
 
-    cy.compareSnapshot({
-      name: visualSnapshotName("advisor-page", "mobile"),
-      exactName: true,
-    });
+    compare("advisor-page");
   });
 
   it("should compare screenshot of legal documents page", () => {
@@ -225,11 +239,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // We check that the table body contains at least one row before snapping.
     cy.get("table.sc-table tbody tr").should("have.length.at.least", 1);
 
-    // Capture the visual snapshot
-    cy.compareSnapshot({
-      name: visualSnapshotName("legal-documents-list", "mobile"),
-      exactName: true,
-    });
+    compare("legal-documents-list");
   });
 
   it("should compare screenshot of partners page", () => {
@@ -242,9 +252,6 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.get(".partner-logos").should("have.length.at.least", 1);
     E2EEvent.loadImagesForScreenshot(".partner-logo-image");
 
-    cy.compareSnapshot({
-      name: visualSnapshotName("partners-page", "mobile"),
-      exactName: true,
-    });
+    compare("partners-page");
   });
-});
+}
