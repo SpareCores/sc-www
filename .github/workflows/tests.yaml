@@ -71,8 +71,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    outputs:
-      has-timings: ${{ steps.timings.outputs.found }}
     steps:
       - uses: actions/checkout@v6.0.2
       - uses: actions/setup-node@v7.1.0
@@ -114,27 +112,6 @@ jobs:
           path: dist
           retention-days: 7
           if-no-files-found: error
-      - name: Restore Cypress spec timings
-        uses: actions/cache/restore@v6.1.0
-        with:
-          path: cypress/timings.json
-          key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: cypress-timings-
-      - name: Check for Cypress spec timings
-        id: timings
-        run: |
-          if [ -f cypress/timings.json ]; then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-          fi
-      - uses: actions/upload-artifact@v7.0.1
-        if: steps.timings.outputs.found == 'true'
-        with:
-          name: cypress-split-timings
-          path: cypress/timings.json
-          retention-days: 7
-          if-no-files-found: error
 
   cypress-shard:
     needs: build
@@ -146,12 +123,6 @@ jobs:
         shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v6.0.2
-      - name: Download Cypress spec timings
-        if: needs.build.outputs.has-timings == 'true'
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: cypress-split-timings
-          path: cypress
       - uses: actions/setup-node@v7.1.0
         with:
           node-version: 24
@@ -173,29 +144,53 @@ jobs:
           PORT: 4200
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
-          SPLIT_FILE: cypress/timings.json
-          SHARD_TIMINGS_FILE: cypress/timings-shard.json
           NG_APP_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY_TESTING }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY_TESTING }}
       - uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
-          name: cypress-screenshots-${{ matrix.shard }}
+          name: cypress-shard-${{ matrix.shard }}
+          path: |
+            cypress/screenshots
+            cypress-image-diff-screenshots/comparison
+            cypress-image-diff-screenshots/diff
+          retention-days: 7
+          if-no-files-found: ignore
+
+  cypress-run:
+    needs: cypress-shard
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          check-latest: true
+          cache: npm
+      - name: Install modules
+        run: npm ci --no-audit --no-fund
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+      - uses: actions/download-artifact@v7.0.0
+        with:
+          pattern: cypress-shard-*
+          merge-multiple: true
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: cypress-screenshots
           path: |
             cypress/screenshots
             cypress-image-diff-screenshots
-            cypress-image-diff-html-report
           retention-days: 7
           if-no-files-found: ignore
-      - uses: actions/upload-artifact@v7.0.1
-        if: always()
-        with:
-          name: cypress-timings-${{ matrix.shard }}
-          path: cypress/timings-shard.json
-          retention-days: 7
-          if-no-files-found: ignore
+          overwrite: true
       - name: Diff visual regression tests against main baselines
-        if: always() && github.ref != 'refs/heads/main'
+        if: github.ref != 'refs/heads/main'
         run: |
           git fetch --depth=1 origin main
           mkdir -p .visual-diff-vs-main/baseline
@@ -206,45 +201,24 @@ jobs:
             cypress-image-diff-screenshots/comparison \
             .visual-diff-vs-main/diff
       - uses: actions/upload-artifact@v7.0.1
-        if: always() && github.ref != 'refs/heads/main'
+        if: github.ref != 'refs/heads/main'
         with:
-          name: visual-regression-vs-main-${{ matrix.shard }}
+          name: visual-regression-vs-main
           path: .visual-diff-vs-main/diff
           retention-days: 7
           if-no-files-found: ignore
-
-  cypress-run:
-    needs: cypress-shard
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
+          overwrite: true
+      - name: Delete intermediate artifacts
+        if: needs.cypress-shard.result == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate \
+            "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
+            --jq '.artifacts[]
+              | select(.name | test("^(ssr-dist|cypress-shard-[0-9]+)$"))
+              | .id' \
+            | xargs -r -I{} gh api -X DELETE \
+              "repos/${GITHUB_REPOSITORY}/actions/artifacts/{}"
       - name: Check that every Cypress shard passed
         run: test "${{ needs.cypress-shard.result }}" = "success"
-
-  cypress-timings:
-    needs: cypress-shard
-    if: ${{ needs.cypress-shard.result == 'success' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 24
-          check-latest: true
-      - uses: actions/download-artifact@v7.0.0
-        with:
-          pattern: cypress-timings-*
-          path: timings-shards
-      - name: Merge spec timings
-        run: |
-          mkdir -p cypress
-          npx --yes -p cypress-split@1.25.0 cypress-split-merge \
-            --parent-folder timings-shards \
-            --split-file timings-shard.json \
-            --output cypress/timings.json
-      - name: Save Cypress spec timings
-        uses: actions/cache/save@v6.1.0
-        with:
-          path: cypress/timings.json
-          key: cypress-timings-${{ github.run_id }}-${{ github.run_attempt }}
