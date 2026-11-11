@@ -333,8 +333,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDatabaseColumnWidth(database: LoadedCompareDatabase): string {
-    const displayNameLength = database.display_name?.length ?? 0;
-    return `max(10.5rem, ${displayNameLength + 3}ch)`;
+    return this.compareSpecs.columnWidth(database.display_name);
   }
 
   baselineIndex(): number {

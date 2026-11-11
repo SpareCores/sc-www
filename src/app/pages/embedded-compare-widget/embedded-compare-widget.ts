@@ -20,6 +20,7 @@ import { ServerCompareCharts } from "../../components/server-compare-charts/serv
 import { Analytics } from "../../services/analytics";
 import { CompareEmbedData } from "../../services/compare-embed-data";
 import { CompareEmbedModel } from "../../services/compare-embed.types";
+import { DatabaseCompareSpecs } from "../../services/database-compare-specs";
 import { DATABASE_COMPARE_SPECS_WIDGET_ID } from "../../services/database-embed.constants";
 import { hasPgbenchScores } from "../../services/database-pgbench";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
@@ -43,6 +44,7 @@ export class EmbeddedCompareWidget {
   private platformId = inject(PLATFORM_ID);
   private chartTooltip = inject(ChartTooltip);
   private embedData = inject(CompareEmbedData);
+  private compareSpecs = inject(DatabaseCompareSpecs);
 
   readonly specsWidgetId = DATABASE_COMPARE_SPECS_WIDGET_ID;
   readonly resource = signal<EmbedResource>("server");
@@ -75,7 +77,7 @@ export class EmbeddedCompareWidget {
   }
 
   columnWidth(displayName: string | undefined): string {
-    return `max(10.5rem, ${(displayName?.length ?? 0) + 3}ch)`;
+    return this.compareSpecs.columnWidth(displayName);
   }
 
   showTooltip(event: MouseEvent, content: string) {

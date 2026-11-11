@@ -91,6 +91,10 @@ export class DatabaseCompareSpecs {
     );
   }
 
+  columnWidth(displayName: string | undefined): string {
+    return `max(10.5rem, ${(displayName?.length ?? 0) + 3}ch)`;
+  }
+
   bestCellStyle(row: ComparePropertyRow, databaseIndex: number): string {
     return getBestNumericCompareCellStyle(
       row.rawValues[databaseIndex],
