@@ -241,8 +241,9 @@ export function ensureClerkTestSession(user: ClerkTestUser): void {
   cy.session(["clerk-test-user", user.email], () => signInClerkTestUser(user), {
     validate() {
       bypassClerkBotProtection();
-      visitWithClerk("/");
-      cy.window().its("Clerk.user").should("exist");
+      cy.getCookie("__client_uat").should((cookie) => {
+        expect(Number(cookie?.value)).to.be.greaterThan(0);
+      });
     },
   });
 }
