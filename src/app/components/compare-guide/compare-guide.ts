@@ -26,13 +26,15 @@ export class CompareGuide {
   instanceKey = input.required<string>();
 
   constructor() {
-    afterRenderEffect(() => {
-      if (
-        this.compares().some((compare) => compare.query) &&
-        this.host.nativeElement.querySelector("code")
-      ) {
-        this.prismService.highlightAll();
-      }
+    afterRenderEffect({
+      write: () => {
+        if (
+          this.compares().some((compare) => compare.query) &&
+          this.host.nativeElement.querySelector("code")
+        ) {
+          this.prismService.highlightAll();
+        }
+      },
     });
   }
 }
