@@ -1,9 +1,12 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
+  computed,
   inject,
   input,
   output,
+  signal,
   viewChild,
 } from "@angular/core";
 import {
@@ -15,6 +18,7 @@ import {
 } from "@lucide/angular";
 import { Button, ScButtonVariant } from "../button/button";
 import { FEATURE_REGISTER_HINT } from "../../collections/collections.utils";
+import { ShareLink } from "../../services/share-link";
 import { UiTooltip } from "../../services/ui-tooltip";
 
 @Component({
@@ -32,7 +36,10 @@ import { UiTooltip } from "../../services/ui-tooltip";
 })
 export class PageHeader {
   private uiTooltip = inject(UiTooltip);
+  private shareLink = inject(ShareLink);
   private tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
+  private copiedTimeout?: ReturnType<typeof setTimeout>;
+  private readonly linkCopied = signal(false);
 
   icon = input.required<string>();
   title = input.required<string>();
@@ -47,11 +54,32 @@ export class PageHeader {
   shareIcon = input("clipboard");
   shareVariant = input<ScButtonVariant>("outline");
   shareButtonId = input<string | null>(null);
+  copyLink = input(false);
   shareClick = output<MouseEvent>();
   bookmarkClick = output<MouseEvent>();
   editClick = output<MouseEvent>();
 
   protected readonly registerHint = FEATURE_REGISTER_HINT;
+  protected readonly resolvedShareIcon = computed(() =>
+    this.copyLink()
+      ? this.linkCopied()
+        ? "check"
+        : "clipboard"
+      : this.shareIcon(),
+  );
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.copiedTimeout));
+  }
+
+  protected onShareClick(event: MouseEvent): void {
+    if (this.copyLink() && this.shareLink.copyCurrentUrl()) {
+      this.linkCopied.set(true);
+      clearTimeout(this.copiedTimeout);
+      this.copiedTimeout = setTimeout(() => this.linkCopied.set(false), 3000);
+    }
+    this.shareClick.emit(event);
+  }
 
   protected onBookmarkMouseEnter(event: MouseEvent): void {
     if (!this.bookmarkGuestLocked()) {

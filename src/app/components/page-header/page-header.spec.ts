@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import { FEATURE_REGISTER_HINT } from "../../collections/collections.utils";
+import { ShareLink } from "../../services/share-link";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { PageHeader } from "./page-header";
 
@@ -53,5 +54,24 @@ describe("PageHeader", () => {
     button.triggerEventHandler("click", new MouseEvent("click"));
 
     expect(emitted.length).toBe(1);
+  });
+
+  it("copies the link and swaps the share icon when copyLink is set", () => {
+    const copy = spyOn(
+      TestBed.inject(ShareLink),
+      "copyCurrentUrl",
+    ).and.returnValue(true);
+    fixture.componentRef.setInput("showShare", true);
+    fixture.componentRef.setInput("copyLink", true);
+    fixture.detectChanges();
+
+    const share = fixture.debugElement
+      .queryAll(By.css("sc-button"))
+      .find((button) => button.componentInstance.label() === "Share");
+    share?.triggerEventHandler("buttonClick", new MouseEvent("click"));
+    fixture.detectChanges();
+
+    expect(copy).toHaveBeenCalled();
+    expect(share?.componentInstance.icon()).toBe("check");
   });
 });
