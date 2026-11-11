@@ -73,10 +73,15 @@ export class PageHeader {
   }
 
   protected onShareClick(event: MouseEvent): void {
-    if (this.copyLink() && this.shareLink.copyCurrentUrl()) {
-      this.linkCopied.set(true);
-      clearTimeout(this.copiedTimeout);
-      this.copiedTimeout = setTimeout(() => this.linkCopied.set(false), 3000);
+    if (this.copyLink()) {
+      void this.shareLink.copyCurrentUrl().then((copied) => {
+        if (!copied) {
+          return;
+        }
+        this.linkCopied.set(true);
+        clearTimeout(this.copiedTimeout);
+        this.copiedTimeout = setTimeout(() => this.linkCopied.set(false), 3000);
+      });
     }
     this.shareClick.emit(event);
   }

@@ -8,12 +8,22 @@ export class ShareLink {
   private platformId = inject(PLATFORM_ID);
   private toastService = inject(Toast);
 
-  copyCurrentUrl(): boolean {
+  async copyCurrentUrl(): Promise<boolean> {
     if (!isPlatformBrowser(this.platformId)) {
       return false;
     }
 
-    void navigator.clipboard.writeText(this.document.location.href);
+    try {
+      await navigator.clipboard.writeText(this.document.location.href);
+    } catch {
+      this.toastService.show({
+        title: "Could not copy the link.",
+        type: "error",
+        duration: 2000,
+      });
+      return false;
+    }
+
     this.toastService.show({
       title: "Link copied to clipboard!",
       type: "success",

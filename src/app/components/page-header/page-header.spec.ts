@@ -56,11 +56,11 @@ describe("PageHeader", () => {
     expect(emitted.length).toBe(1);
   });
 
-  it("copies the link and swaps the share icon when copyLink is set", () => {
+  it("copies the link and swaps the share icon when copyLink is set", async () => {
     const copy = spyOn(
       TestBed.inject(ShareLink),
       "copyCurrentUrl",
-    ).and.returnValue(true);
+    ).and.resolveTo(true);
     fixture.componentRef.setInput("showShare", true);
     fixture.componentRef.setInput("copyLink", true);
     fixture.detectChanges();
@@ -69,6 +69,7 @@ describe("PageHeader", () => {
       .queryAll(By.css("sc-button"))
       .find((button) => button.componentInstance.label() === "Share");
     share?.triggerEventHandler("buttonClick", new MouseEvent("click"));
+    await fixture.whenStable();
     fixture.detectChanges();
 
     expect(copy).toHaveBeenCalled();
