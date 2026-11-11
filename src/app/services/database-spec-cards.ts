@@ -43,9 +43,13 @@ export class DatabaseSpecCards {
         columns: ["Region / ID", "HA", "HA Strategy", "Price"],
         emptyText: "No prices available for this database.",
         rows: prices.map((price) => ({
-          id: [price.region_id, price.ha, price.ha_strategy, price.unit].join(
-            "_",
-          ),
+          id: [
+            price.region_id,
+            price.ha,
+            price.ha_strategy,
+            price.unit,
+            price.allocation,
+          ].join("_"),
           name: price.region?.display_name || price.region_id,
           detail: price.region?.api_reference || price.region_id,
           values: [
