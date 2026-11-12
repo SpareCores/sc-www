@@ -107,13 +107,13 @@ function snap(name: string, prefix: VisualSizePrefix): void {
 
 function snapViewport(name: string, prefix: VisualSizePrefix): void {
   waitForHeaderLogo();
-  cy.scrollTo(0, 0, { ensureScrollable: false });
   cy.document().then((doc) => {
     const root = doc.documentElement;
-    if (root.classList.contains("cdk-global-scrollblock")) {
-      root.style.top = "0px";
-    }
+    root.classList.remove("cdk-global-scrollblock");
+    root.style.removeProperty("top");
+    root.style.removeProperty("left");
   });
+  cy.scrollTo(0, 0, { ensureScrollable: false });
   E2EEvent.hideScrollbarsForScreenshot({ lockOverflow: true });
   cy.compareSnapshot({
     name: visualSnapshotName(name, prefix),
