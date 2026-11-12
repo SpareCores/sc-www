@@ -1,13 +1,4 @@
-import { DialogRef } from "@angular/cdk/dialog";
-import {
-  Component,
-  DestroyRef,
-  TemplateRef,
-  effect,
-  inject,
-  untracked,
-  viewChild,
-} from "@angular/core";
+import { Component, TemplateRef, inject, viewChild } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
@@ -34,10 +25,8 @@ const STEP_TITLES: Record<LoginStep, string> = {
 })
 export class LoginModal {
   protected readonly auth = inject(AuthState);
-  private readonly modalDialog = inject(ModalDialog);
   private readonly modalTemplate =
     viewChild<TemplateRef<unknown>>("modalTemplate");
-  private dialogRef: DialogRef | null = null;
 
   protected step: LoginStep = "login";
   protected emailAddress = "";
@@ -62,48 +51,14 @@ export class LoginModal {
   }
 
   constructor() {
-    effect(() => {
-      const open = this.auth.signInModalOpen();
-      const template = this.modalTemplate();
-      untracked(() => {
-        if (!open) {
-          this.dialogRef?.close();
-          this.reset();
-        } else if (template) {
-          this.openDialog(template);
-        }
-      });
+    inject(ModalDialog).bind({
+      open: this.auth.signInModalOpen,
+      template: this.modalTemplate,
+      canClose: () => !this.busy,
+      closed: () => this.auth.closeSignIn(),
+      reset: () => this.reset(),
+      closeOnNavigation: false,
     });
-
-    inject(DestroyRef).onDestroy(() => this.dialogRef?.close());
-  }
-
-  private openDialog(template: TemplateRef<unknown>): void {
-    if (this.dialogRef) {
-      return;
-    }
-    const dialogRef = this.modalDialog.open(template, { disableClose: true });
-    dialogRef.backdropClick.subscribe(() => this.close());
-    dialogRef.keydownEvents.subscribe((event) => {
-      if (event.key === "Escape") {
-        this.close();
-      }
-    });
-    dialogRef.closed.subscribe(() => {
-      this.dialogRef = null;
-      if (this.auth.signInModalOpen()) {
-        this.auth.closeSignIn();
-      }
-    });
-    this.dialogRef = dialogRef;
-  }
-
-  protected close(): void {
-    if (this.busy) {
-      return;
-    }
-
-    this.auth.closeSignIn();
   }
 
   protected canSubmitSecondFactor(): boolean {

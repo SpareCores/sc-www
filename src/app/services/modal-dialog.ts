@@ -1,5 +1,13 @@
 import { Dialog, DialogRef } from "@angular/cdk/dialog";
-import { Injectable, TemplateRef, inject } from "@angular/core";
+import {
+  DestroyRef,
+  Injectable,
+  Signal,
+  TemplateRef,
+  effect,
+  inject,
+  untracked,
+} from "@angular/core";
 import { modalTitleId } from "../components/modals/modal/modal";
 import { DROPDOWN_LAYER } from "./overlay/dropdown-layer";
 
@@ -8,7 +16,17 @@ export interface ModalDialogOptions<D> {
   ariaLabel?: string;
   autoFocus?: string;
   disableClose?: boolean;
+  closeOnNavigation?: boolean;
   panelClass?: string;
+}
+
+export interface ModalDialogBinding {
+  open: Signal<boolean>;
+  template: Signal<TemplateRef<unknown> | undefined>;
+  canClose: () => boolean;
+  closed: () => void;
+  reset?: () => void;
+  closeOnNavigation?: boolean;
 }
 
 let nextModalId = 0;
@@ -29,6 +47,7 @@ export class ModalDialog {
       id,
       data: options.data,
       disableClose: options.disableClose ?? false,
+      closeOnNavigation: options.closeOnNavigation ?? true,
       hasBackdrop: true,
       backdropClass: "sc-modal-backdrop",
       panelClass: options.panelClass ?? "",
@@ -38,5 +57,49 @@ export class ModalDialog {
       restoreFocus: true,
       providers: [{ provide: DROPDOWN_LAYER, useValue: "top" }],
     });
+  }
+
+  bind(binding: ModalDialogBinding): void {
+    let dialogRef: DialogRef | null = null;
+
+    const requestClose = () => {
+      if (binding.canClose()) {
+        dialogRef?.close();
+      }
+    };
+
+    effect(() => {
+      const open = binding.open();
+      const template = binding.template();
+      untracked(() => {
+        if (!open) {
+          dialogRef?.close();
+          binding.reset?.();
+          return;
+        }
+        if (!template || dialogRef) {
+          return;
+        }
+        const ref = this.open(template, {
+          disableClose: true,
+          closeOnNavigation: binding.closeOnNavigation,
+        });
+        ref.backdropClick.subscribe(requestClose);
+        ref.keydownEvents.subscribe((event) => {
+          if (event.key === "Escape") {
+            requestClose();
+          }
+        });
+        ref.closed.subscribe(() => {
+          dialogRef = null;
+          if (binding.open()) {
+            binding.closed();
+          }
+        });
+        dialogRef = ref;
+      });
+    });
+
+    inject(DestroyRef).onDestroy(() => dialogRef?.close());
   }
 }

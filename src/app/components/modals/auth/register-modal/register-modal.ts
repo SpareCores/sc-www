@@ -1,11 +1,8 @@
-import { DialogRef } from "@angular/cdk/dialog";
 import {
   Component,
-  DestroyRef,
   TemplateRef,
   effect,
   inject,
-  untracked,
   viewChild,
 } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
@@ -44,10 +41,8 @@ const STEP_TITLES: Record<RegisterStep, string> = {
 })
 export class RegisterModal {
   protected readonly auth = inject(AuthState);
-  private readonly modalDialog = inject(ModalDialog);
   private readonly modalTemplate =
     viewChild<TemplateRef<unknown>>("modalTemplate");
-  private dialogRef: DialogRef | null = null;
 
   protected step: RegisterStep = "details";
   protected method: RegisterMethod = "email";
@@ -77,21 +72,20 @@ export class RegisterModal {
   }
 
   constructor() {
-    effect(() => {
-      const open = this.auth.signUpModalOpen();
-      const template = this.modalTemplate();
-      untracked(() => {
-        if (!open) {
-          this.dialogRef?.close();
-        } else if (template) {
-          this.openDialog(template);
-        }
-      });
+    inject(ModalDialog).bind({
+      open: this.auth.signUpModalOpen,
+      template: this.modalTemplate,
+      canClose: () =>
+        !this.isAuthPending &&
+        this.step !== "consent" &&
+        this.step !== "verify",
+      closed: () => this.auth.closeSignUp(),
+      reset: () => this.reset(),
+      closeOnNavigation: false,
     });
 
     effect(() => {
       if (!this.auth.signUpModalOpen()) {
-        this.reset();
         return;
       }
 
@@ -109,41 +103,6 @@ export class RegisterModal {
         this.infoMessage = "";
       }
     });
-
-    inject(DestroyRef).onDestroy(() => this.dialogRef?.close());
-  }
-
-  private openDialog(template: TemplateRef<unknown>): void {
-    if (this.dialogRef) {
-      return;
-    }
-    const dialogRef = this.modalDialog.open(template, { disableClose: true });
-    dialogRef.backdropClick.subscribe(() => this.close());
-    dialogRef.keydownEvents.subscribe((event) => {
-      if (event.key === "Escape") {
-        this.close();
-      }
-    });
-    dialogRef.closed.subscribe(() => {
-      this.dialogRef = null;
-      if (this.auth.signUpModalOpen()) {
-        this.auth.closeSignUp();
-      }
-    });
-    this.dialogRef = dialogRef;
-  }
-
-  protected close(): void {
-    if (
-      this.isAuthPending ||
-      this.step === "consent" ||
-      this.step === "verify"
-    ) {
-      return;
-    }
-
-    this.busy = null;
-    this.auth.closeSignUp();
   }
 
   protected cancelConsent(): void {
