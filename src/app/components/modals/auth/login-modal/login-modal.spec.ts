@@ -1,8 +1,8 @@
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NgForm } from "@angular/forms";
-import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import { AUTH_MESSAGES, AuthState } from "../../core/auth";
+import { sharedTestingProviders } from "../../../../../testing/testbed.providers";
+import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
 import { LoginModal } from "./login-modal";
 
 type LoginModalInternals = {

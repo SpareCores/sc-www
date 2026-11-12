@@ -1,6 +1,6 @@
 import { DialogRef } from "@angular/cdk/dialog";
 import { Component, computed, inject, input } from "@angular/core";
-import { Button } from "../button/button";
+import { Button } from "../../button/button";
 
 export type ModalSize = "lg" | "xl" | "3xl" | "4xl" | "wide" | "full";
 

@@ -7,7 +7,7 @@ import {
   fakeAsync,
   flush,
 } from "@angular/core/testing";
-import { Modal } from "../components/modal/modal";
+import { Modal } from "../components/modals/modal/modal";
 import { ModalDialog } from "./modal-dialog";
 import { sharedTestingProviders } from "../../testing/testbed.providers";
 

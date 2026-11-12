@@ -25,7 +25,7 @@ import { LstopoSvg } from "../../services/lstopo-svg";
 import { ModalDialog } from "../../services/modal-dialog";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { Button } from "../button/button";
-import { Modal } from "../modal/modal";
+import { Modal } from "../modals/modal/modal";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";

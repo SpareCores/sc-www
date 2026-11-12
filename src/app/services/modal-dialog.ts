@@ -1,6 +1,6 @@
 import { Dialog, DialogRef } from "@angular/cdk/dialog";
 import { Injectable, TemplateRef, inject } from "@angular/core";
-import { modalTitleId } from "../components/modal/modal";
+import { modalTitleId } from "../components/modals/modal/modal";
 import { DROPDOWN_LAYER } from "./overlay/dropdown-layer";
 
 export interface ModalDialogOptions<D> {

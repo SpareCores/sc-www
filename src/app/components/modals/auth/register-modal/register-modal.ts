@@ -1,9 +1,9 @@
 import { Component, effect, inject } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
-import { AUTH_MESSAGES, AuthState } from "../../core/auth";
-import { Button } from "../button/button";
-import { LoadingSpinner } from "../loading-spinner/loading-spinner";
+import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
+import { Button } from "../../../button/button";
+import { LoadingSpinner } from "../../../loading-spinner/loading-spinner";
 
 type RegisterBusy = "submit" | "verify" | "resend" | "github";
 type RegisterStep = "details" | "consent" | "verify";

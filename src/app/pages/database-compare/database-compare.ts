@@ -82,7 +82,7 @@ import {
   INVALID_DATABASE_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
 } from "../../services/url-toast-content";
 import { CompareCollections } from "../../collections/compare-collections";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import { AuthState } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";

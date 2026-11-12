@@ -27,10 +27,10 @@ import {
   Profile,
   type ProfileResult,
   type ProfileSession,
-} from "../../core/auth";
-import { ModalDialog } from "../../services/modal-dialog";
-import { Button } from "../button/button";
-import { LoadingSpinner } from "../loading-spinner/loading-spinner";
+} from "../../../core/auth";
+import { ModalDialog } from "../../../services/modal-dialog";
+import { Button } from "../../button/button";
+import { LoadingSpinner } from "../../loading-spinner/loading-spinner";
 import { Modal } from "../modal/modal";
 
 type ProfileTab = "account" | "security";
@@ -85,7 +85,7 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     Modal,
   ],
   templateUrl: "./profile-modal.html",
-  styleUrls: ["../auth-modal.css", "./profile-modal.css"],
+  styleUrls: ["../auth/auth-modal.css", "./profile-modal.css"],
 })
 export class ProfileModal {
   private readonly auth = inject(AuthState);
