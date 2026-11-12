@@ -26,7 +26,7 @@
         [class.right-4]="centerTitle()"
         variant="close"
         icon="x"
-        ariaLabel="Close modal"
+        [ariaLabel]="closeLabel()"
         [disabled]="closeDisabled()"
         [attr.data-ph-capture-attribute-sc-event]="closeCaptureEvent()"
         [attr.data-ph-capture-attribute-server-listing-search-prompt-action]="

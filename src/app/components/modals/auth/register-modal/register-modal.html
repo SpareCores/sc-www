@@ -4,6 +4,7 @@
     data-testid="auth-modal"
     [title]="title"
     [centerTitle]="true"
+    closeLabel="Close register modal"
     [showClose]="!isAuthPending && step === 'details'"
   >
     @if (step === "details") {

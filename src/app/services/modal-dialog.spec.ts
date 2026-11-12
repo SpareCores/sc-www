@@ -82,7 +82,7 @@ describe("ModalDialog", () => {
 
     (
       container.querySelector(
-        'sc-button[ariaLabel="Close modal"] button',
+        'button[aria-label="Close modal"]',
       ) as HTMLButtonElement
     ).click();
     fixture.detectChanges();
