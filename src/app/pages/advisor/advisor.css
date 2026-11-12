@@ -198,7 +198,6 @@
       }
 
       &.advisor-empty-state-row {
-        background: var(--color-yellow-500);
         cursor: default;
       }
 
@@ -214,10 +213,6 @@
           padding-right: 0.5rem;
           padding-left: 0.75rem;
         }
-      }
-
-      &.advisor-empty-state-row td.advisor-empty-state-cell {
-        color: var(--color-black);
       }
     }
   }
