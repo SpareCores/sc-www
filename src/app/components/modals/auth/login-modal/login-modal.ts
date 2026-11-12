@@ -11,10 +11,10 @@ type LoginBusy = "submit" | "github" | "reset" | "resend" | "verify";
 type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
 
 const STEP_TITLES: Record<LoginStep, string> = {
-  login: "Sign in to Spare Cores",
-  "second-factor": "Verify this device",
-  "reset-request": "Reset your password",
-  "reset-verify": "Set a new password",
+  login: AUTH_MESSAGES.signInTitle,
+  "second-factor": AUTH_MESSAGES.verifyDeviceTitle,
+  "reset-request": AUTH_MESSAGES.resetPasswordTitle,
+  "reset-verify": AUTH_MESSAGES.setNewPasswordTitle,
 };
 
 @Component({
@@ -25,6 +25,7 @@ const STEP_TITLES: Record<LoginStep, string> = {
 })
 export class LoginModal {
   protected readonly auth = inject(AuthState);
+  protected readonly messages = AUTH_MESSAGES;
   private readonly modalTemplate =
     viewChild<TemplateRef<unknown>>("modalTemplate");
 
@@ -46,7 +47,7 @@ export class LoginModal {
 
   protected get title(): string {
     return this.isAuthPending
-      ? "Signing in to your account"
+      ? AUTH_MESSAGES.signingInTitle
       : STEP_TITLES[this.step];
   }
 

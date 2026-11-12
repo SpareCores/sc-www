@@ -4,7 +4,7 @@
     data-testid="auth-modal"
     [title]="title"
     [centerTitle]="true"
-    closeLabel="Close register modal"
+    [closeLabel]="messages.closeRegisterModal"
     [showClose]="!isAuthPending && step === 'details'"
   >
     @if (step === "details") {
@@ -24,24 +24,24 @@
             >
               <div class="auth-modal__grid">
                 <label class="auth-modal__field">
-                  <span>First name</span>
+                  <span>{{ messages.firstNameLabel }}</span>
                   <input
                     type="text"
                     name="firstName"
                     class="sc-input"
-                    placeholder="First name"
+                    [placeholder]="messages.firstNamePlaceholder"
                     autocomplete="given-name"
                     required
                     [(ngModel)]="firstName"
                   />
                 </label>
                 <label class="auth-modal__field">
-                  <span>Last name</span>
+                  <span>{{ messages.lastNameLabel }}</span>
                   <input
                     type="text"
                     name="lastName"
                     class="sc-input"
-                    placeholder="Last name"
+                    [placeholder]="messages.lastNamePlaceholder"
                     autocomplete="family-name"
                     required
                     [(ngModel)]="lastName"
@@ -50,13 +50,13 @@
               </div>
 
               <label class="auth-modal__field">
-                <span>Email address</span>
+                <span>{{ messages.emailAddressLabel }}</span>
                 <div class="auth-modal__field-control">
                   <input
                     type="email"
                     name="emailAddress"
                     class="sc-input"
-                    placeholder="Enter your email address"
+                    [placeholder]="messages.emailAddressPlaceholder"
                     autocomplete="username"
                     required
                     email
@@ -82,19 +82,19 @@
                 </div>
                 @if (emailCtrl.invalid && emailCtrl.touched) {
                   <p class="auth-modal__field-error" id="register-email-error">
-                    Email address must be a valid email address.
+                    {{ messages.emailAddressInvalid }}
                   </p>
                 }
               </label>
 
               <label class="auth-modal__field">
-                <span>Password</span>
+                <span>{{ messages.passwordLabel }}</span>
                 <div class="auth-modal__password">
                   <input
                     [type]="showPassword ? 'text' : 'password'"
                     name="password"
                     class="sc-input"
-                    placeholder="Create a password"
+                    [placeholder]="messages.createPasswordPlaceholder"
                     autocomplete="new-password"
                     required
                     minlength="8"
@@ -121,7 +121,9 @@
                     type="button"
                     class="auth-modal__password-toggle"
                     [attr.aria-label]="
-                      showPassword ? 'Hide password' : 'Show password'
+                      showPassword
+                        ? messages.hidePassword
+                        : messages.showPassword
                     "
                     (click)="showPassword = !showPassword"
                   >
@@ -136,7 +138,7 @@
                     class="auth-modal__field-error"
                     id="register-password-error"
                   >
-                    Password must be at least 8 characters.
+                    {{ messages.passwordTooShort }}
                   </p>
                 }
               </label>
@@ -147,7 +149,7 @@
 
               <sc-button
                 type="submit"
-                label="Continue"
+                [label]="messages.continueButton"
                 icon="chevron-right"
                 size="small"
                 buttonClass="w-full"
@@ -157,11 +159,11 @@
             </form>
 
             <div class="auth-modal__divider">
-              <span>or</span>
+              <span>{{ messages.orDivider }}</span>
             </div>
 
             <sc-button
-              label="Continue with GitHub"
+              [label]="messages.continueWithGitHub"
               icon="github"
               iconPosition="start"
               size="small"
@@ -184,7 +186,7 @@
                 <p
                   class="auth-modal__pending-text auth-modal__pending-text--verify"
                 >
-                  Verifying...
+                  {{ messages.verifying }}
                 </p>
               </div>
             }
@@ -200,9 +202,7 @@
     } @else if (step === "consent") {
       <div class="auth-modal__body">
         <p class="auth-modal__subtitle">
-          Accept the Terms of Service and Privacy Policy to finish signing up.
-          Stay in the loop with the Spare Cores newsletter — optional, but
-          recommended.
+          {{ messages.consentSubtitle }}
         </p>
 
         <form class="auth-modal__form" (ngSubmit)="submitConsent()">
@@ -214,14 +214,17 @@
               [disabled]="!!busy"
             />
             <span>
-              I agree to the
-              <a href="/legal/terms-of-service" target="_blank" rel="noopener"
-                >Terms of Service</a
+              {{ messages.agreeToPrefix }}
+              <a
+                href="/legal/terms-of-service"
+                target="_blank"
+                rel="noopener"
+                >{{ messages.termsOfService }}</a
               >
-              and
-              <a href="/legal/privacy-policy" target="_blank" rel="noopener"
-                >Privacy Policy</a
-              >
+              {{ messages.andConjunction }}
+              <a href="/legal/privacy-policy" target="_blank" rel="noopener">{{
+                messages.privacyPolicy
+              }}</a>
             </span>
           </label>
 
@@ -232,7 +235,7 @@
               [(ngModel)]="newsletterOptIn"
               [disabled]="!!busy"
             />
-            <span>Subscribe me to the Spare Cores newsletter</span>
+            <span>{{ messages.subscribeNewsletter }}</span>
           </label>
 
           @if (errorMessage) {
@@ -249,7 +252,7 @@
           <div class="auth-modal__consent-actions">
             <sc-button
               type="button"
-              label="Cancel"
+              [label]="messages.cancelButton"
               variant="outline"
               color="brand"
               size="small"
@@ -259,7 +262,7 @@
             ></sc-button>
             <sc-button
               type="submit"
-              label="Continue"
+              [label]="messages.continueButton"
               icon="chevron-right"
               size="small"
               buttonClass="w-full"
@@ -272,19 +275,19 @@
     } @else {
       <div class="auth-modal__body">
         <p class="auth-modal__subtitle">
-          Enter the verification code sent to {{ emailAddress.trim() }}.
+          {{ messages.codeSentToSubtitle(emailAddress.trim()) }}
         </p>
 
         <form class="auth-modal__form" (ngSubmit)="verifyEmail()">
           <label class="auth-modal__field">
-            <span>Verification code</span>
+            <span>{{ messages.verificationCodeLabel }}</span>
             <input
               type="text"
               name="verificationCode"
               class="sc-input"
               inputmode="numeric"
               autocomplete="one-time-code"
-              placeholder="Enter verification code"
+              [placeholder]="messages.verificationCodePlaceholder"
               [(ngModel)]="verificationCode"
             />
           </label>
@@ -299,7 +302,7 @@
           <div class="auth-modal__actions">
             <sc-button
               type="button"
-              label="Resend code"
+              [label]="messages.resendCodeButton"
               variant="outline"
               color="brand"
               size="small"
@@ -310,7 +313,7 @@
             ></sc-button>
             <sc-button
               type="submit"
-              label="Verify email"
+              [label]="messages.verifyEmailButton"
               size="small"
               buttonClass="w-full"
               [loading]="busy === 'verify'"
@@ -327,13 +330,13 @@
         class="auth-modal__footer"
         [class.invisible]="isAuthPending"
       >
-        Already have an account?
+        {{ messages.alreadyHaveAccountPrompt }}
         <button
           type="button"
           class="auth-modal__footer-link"
           (click)="openSignIn()"
         >
-          Log in
+          {{ messages.logInLink }}
         </button>
       </p>
     }

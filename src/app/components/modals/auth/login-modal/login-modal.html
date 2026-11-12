@@ -4,7 +4,7 @@
     data-testid="auth-modal"
     [title]="title"
     [centerTitle]="true"
-    closeLabel="Close login modal"
+    [closeLabel]="messages.closeLoginModal"
     [showClose]="!isAuthPending"
     [closeDisabled]="!!busy"
   >
@@ -13,7 +13,7 @@
         class="auth-modal__body"
         [class.auth-modal__body--pending]="isAuthPending"
       >
-        <p class="auth-modal__subtitle">Welcome back!</p>
+        <p class="auth-modal__subtitle">{{ messages.welcomeBack }}</p>
 
         <div class="auth-modal__main">
           <div class="auth-modal__content">
@@ -24,13 +24,13 @@
               (ngSubmit)="submitLogin(loginForm)"
             >
               <label class="auth-modal__field">
-                <span>Email address</span>
+                <span>{{ messages.emailAddressLabel }}</span>
                 <div class="auth-modal__field-control">
                   <input
                     type="email"
                     name="emailAddress"
                     class="sc-input"
-                    placeholder="Enter your email address"
+                    [placeholder]="messages.emailAddressPlaceholder"
                     autocomplete="username"
                     required
                     email
@@ -56,19 +56,19 @@
                 </div>
                 @if (emailCtrl.invalid && emailCtrl.touched) {
                   <p class="auth-modal__field-error" id="login-email-error">
-                    Email address must be a valid email address.
+                    {{ messages.emailAddressInvalid }}
                   </p>
                 }
               </label>
 
               <label class="auth-modal__field">
-                <span>Password</span>
+                <span>{{ messages.passwordLabel }}</span>
                 <div class="auth-modal__password">
                   <input
                     [type]="showPassword ? 'text' : 'password'"
                     name="password"
                     class="sc-input"
-                    placeholder="Enter your password"
+                    [placeholder]="messages.enterPasswordPlaceholder"
                     autocomplete="current-password"
                     required
                     minlength="8"
@@ -95,7 +95,9 @@
                     type="button"
                     class="auth-modal__password-toggle"
                     [attr.aria-label]="
-                      showPassword ? 'Hide password' : 'Show password'
+                      showPassword
+                        ? messages.hidePassword
+                        : messages.showPassword
                     "
                     (click)="showPassword = !showPassword"
                   >
@@ -107,7 +109,7 @@
                 </div>
                 @if (passwordCtrl.invalid && passwordCtrl.touched) {
                   <p class="auth-modal__field-error" id="login-password-error">
-                    Password must be at least 8 characters.
+                    {{ messages.passwordTooShort }}
                   </p>
                 }
               </label>
@@ -118,7 +120,7 @@
                   class="auth-modal__footer-link"
                   (click)="openResetRequest()"
                 >
-                  Forgot password?
+                  {{ messages.forgotPassword }}
                 </button>
               </div>
 
@@ -128,7 +130,7 @@
 
               <sc-button
                 type="submit"
-                label="Continue"
+                [label]="messages.continueButton"
                 icon="chevron-right"
                 size="small"
                 buttonClass="w-full"
@@ -138,11 +140,11 @@
             </form>
 
             <div class="auth-modal__divider">
-              <span>or</span>
+              <span>{{ messages.orDivider }}</span>
             </div>
 
             <sc-button
-              label="Continue with GitHub"
+              [label]="messages.continueWithGitHub"
               icon="github"
               iconPosition="start"
               size="small"
@@ -165,7 +167,7 @@
                 <p
                   class="auth-modal__pending-text auth-modal__pending-text--verify"
                 >
-                  Verifying...
+                  {{ messages.verifying }}
                 </p>
               </div>
             }
@@ -181,19 +183,19 @@
     } @else if (step === "second-factor") {
       <div class="auth-modal__body">
         <p class="auth-modal__subtitle">
-          Enter the verification code sent to {{ emailAddress.trim() }}.
+          {{ messages.codeSentToSubtitle(emailAddress.trim()) }}
         </p>
 
         <form class="auth-modal__form" (ngSubmit)="submitSecondFactor()">
           <label class="auth-modal__field">
-            <span>Verification code</span>
+            <span>{{ messages.verificationCodeLabel }}</span>
             <input
               type="text"
               name="secondFactorCode"
               class="sc-input"
               inputmode="numeric"
               autocomplete="one-time-code"
-              placeholder="Enter verification code"
+              [placeholder]="messages.verificationCodePlaceholder"
               [(ngModel)]="verificationCode"
             />
           </label>
@@ -208,7 +210,7 @@
           <div class="auth-modal__actions">
             <sc-button
               type="button"
-              label="Resend code"
+              [label]="messages.resendCodeButton"
               variant="outline"
               color="brand"
               size="small"
@@ -219,7 +221,7 @@
             ></sc-button>
             <sc-button
               type="submit"
-              label="Verify"
+              [label]="messages.verifyButton"
               icon="chevron-right"
               size="small"
               buttonClass="w-full"
@@ -232,7 +234,7 @@
     } @else if (step === "reset-request") {
       <div class="auth-modal__body">
         <p class="auth-modal__subtitle">
-          Enter your email address and we'll send you a verification code.
+          {{ messages.resetRequestSubtitle }}
         </p>
 
         <form
@@ -242,12 +244,12 @@
           (ngSubmit)="submitResetRequest(resetRequestForm)"
         >
           <label class="auth-modal__field">
-            <span>Email address</span>
+            <span>{{ messages.emailAddressLabel }}</span>
             <input
               type="email"
               name="resetEmailAddress"
               class="sc-input"
-              placeholder="Enter your email address"
+              [placeholder]="messages.emailAddressPlaceholder"
               autocomplete="email"
               required
               email
@@ -262,7 +264,7 @@
           <div class="auth-modal__actions">
             <sc-button
               type="button"
-              label="Back"
+              [label]="messages.backButton"
               icon="chevron-left"
               iconPosition="start"
               variant="outline"
@@ -274,7 +276,7 @@
             ></sc-button>
             <sc-button
               type="submit"
-              label="Send code"
+              [label]="messages.sendCodeButton"
               icon="chevron-right"
               size="small"
               buttonClass="w-full"
@@ -287,8 +289,7 @@
     } @else {
       <div class="auth-modal__body">
         <p class="auth-modal__subtitle">
-          Enter the verification code sent to {{ emailAddress.trim() }} and
-          choose a new password.
+          {{ messages.resetCodeSentToSubtitle(emailAddress.trim()) }}
         </p>
 
         <form
@@ -298,27 +299,27 @@
           (ngSubmit)="submitResetVerify(resetVerifyForm)"
         >
           <label class="auth-modal__field">
-            <span>Verification code</span>
+            <span>{{ messages.verificationCodeLabel }}</span>
             <input
               type="text"
               name="verificationCode"
               class="sc-input"
               inputmode="numeric"
               autocomplete="one-time-code"
-              placeholder="Enter verification code"
+              [placeholder]="messages.verificationCodePlaceholder"
               required
               [(ngModel)]="verificationCode"
             />
           </label>
 
           <label class="auth-modal__field">
-            <span>New password</span>
+            <span>{{ messages.newPasswordLabel }}</span>
             <div class="auth-modal__password">
               <input
                 [type]="showPassword ? 'text' : 'password'"
                 name="newPassword"
                 class="sc-input"
-                placeholder="Create a new password"
+                [placeholder]="messages.createNewPasswordPlaceholder"
                 autocomplete="new-password"
                 required
                 minlength="8"
@@ -328,7 +329,7 @@
                 type="button"
                 class="auth-modal__password-toggle"
                 [attr.aria-label]="
-                  showPassword ? 'Hide password' : 'Show password'
+                  showPassword ? messages.hidePassword : messages.showPassword
                 "
                 (click)="showPassword = !showPassword"
               >
@@ -347,7 +348,7 @@
           <div class="auth-modal__actions">
             <sc-button
               type="button"
-              label="Resend code"
+              [label]="messages.resendCodeButton"
               variant="outline"
               color="brand"
               size="small"
@@ -358,7 +359,7 @@
             ></sc-button>
             <sc-button
               type="submit"
-              label="Reset password"
+              [label]="messages.resetPasswordButton"
               size="small"
               buttonClass="w-full"
               [loading]="busy === 'reset'"
@@ -377,13 +378,13 @@
         class="auth-modal__footer"
         [class.invisible]="isAuthPending"
       >
-        Don't have an account?
+        {{ messages.noAccountPrompt }}
         <button
           type="button"
           class="auth-modal__footer-link"
           (click)="openSignUp()"
         >
-          Register!
+          {{ messages.registerLink }}
         </button>
       </p>
     } @else if (step !== "reset-request") {
@@ -393,7 +394,7 @@
           class="auth-modal__footer-link"
           (click)="backToLogin()"
         >
-          Back to sign in
+          {{ messages.backToSignIn }}
         </button>
       </p>
     }

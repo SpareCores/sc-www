@@ -28,9 +28,9 @@ const DETAILS_PARAMS = new Set([
 ]);
 
 const STEP_TITLES: Record<RegisterStep, string> = {
-  details: "Create your account",
-  consent: "One last step",
-  verify: "Verify your email",
+  details: AUTH_MESSAGES.createAccountTitle,
+  consent: AUTH_MESSAGES.oneLastStepTitle,
+  verify: AUTH_MESSAGES.verifyEmailTitle,
 };
 
 @Component({
@@ -41,6 +41,7 @@ const STEP_TITLES: Record<RegisterStep, string> = {
 })
 export class RegisterModal {
   protected readonly auth = inject(AuthState);
+  protected readonly messages = AUTH_MESSAGES;
   private readonly modalTemplate =
     viewChild<TemplateRef<unknown>>("modalTemplate");
 
@@ -67,7 +68,7 @@ export class RegisterModal {
 
   protected get title(): string {
     return this.isAuthPending
-      ? "Creating your account"
+      ? AUTH_MESSAGES.creatingAccountTitle
       : STEP_TITLES[this.step];
   }
 
