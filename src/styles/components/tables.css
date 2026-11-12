@@ -59,6 +59,10 @@
   margin-top: clamp(3rem, 50cqh - 1.5rem, 4rem);
 }
 
+.sc-table-empty-cell {
+  @apply h-16 text-gray-400;
+}
+
 .sc-kv-table {
   @apply text-white;
 }

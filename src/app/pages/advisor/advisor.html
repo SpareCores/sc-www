@@ -205,12 +205,7 @@
 
         <div>
           <div class="relative">
-            <div
-              class="advisor-table-wrap w-full overflow-x-auto"
-              [class.min-h-80]="
-                isLoadingRecommendations() && !recommendations().length
-              "
-            >
+            <div class="advisor-table-wrap w-full overflow-x-auto">
               <table class="advisor-results-table" id="advisor_results_table">
                 <thead>
                   <tr>
@@ -1290,13 +1285,12 @@
                     </tr>
                   }
 
-                  @if (
-                    !recommendations().length && !isLoadingRecommendations()
-                  ) {
+                  @if (!recommendations().length) {
                     <tr class="advisor-empty-state-row">
                       <td
                         [attr.colspan]="tableColumns().length + 2"
-                        class="advisor-empty-state-cell"
+                        class="advisor-empty-state-cell sc-table-empty-cell"
+                        [class.invisible]="isLoadingRecommendations()"
                       >
                         @let missingInputs = missingRequiredInputs();
 

@@ -190,6 +190,17 @@
                       }
                     </tr>
                   }
+                  @if (!traffic_prices.length) {
+                    <tr>
+                      <td
+                        [attr.colspan]="tableColumns.length"
+                        class="sc-table-empty-cell"
+                        [class.invisible]="isLoading"
+                      >
+                        No traffic prices match the selected filters.
+                      </td>
+                    </tr>
+                  }
                 </tbody>
               </table>
             </div>

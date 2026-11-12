@@ -506,6 +506,17 @@
                       </td>
                     </tr>
                   }
+                  @if (!servers.length) {
+                    <tr>
+                      <td
+                        [attr.colspan]="tableColumns.length + 2"
+                        class="sc-table-empty-cell"
+                        [class.invisible]="isLoading"
+                      >
+                        No server prices match the selected filters.
+                      </td>
+                    </tr>
+                  }
                 </tbody>
               </table>
             </div>

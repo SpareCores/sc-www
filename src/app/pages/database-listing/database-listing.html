@@ -111,10 +111,7 @@
         </div>
         <div>
           <div class="relative">
-            <div
-              class="w-full overflow-x-auto pl-px"
-              [class.min-h-80]="isLoading && !databases.length"
-            >
+            <div class="w-full overflow-x-auto pl-px">
               <table
                 class="sc-table sc-table--compact sc-table--interactive w-full"
                 id="databases_table"
@@ -406,11 +403,12 @@
                       </td>
                     </tr>
                   }
-                  @if (!databases.length && !isLoading) {
+                  @if (!databases.length) {
                     <tr>
                       <td
                         [attr.colspan]="tableColumns.length + 2"
-                        class="text-gray-400"
+                        class="sc-table-empty-cell"
+                        [class.invisible]="isLoading"
                       >
                         No databases match the selected filters.
                       </td>
