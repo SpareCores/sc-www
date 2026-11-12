@@ -15,9 +15,9 @@ import {
 import {
   CollectionsUi,
   type BookmarkEntityKind,
-} from "../../../collections/collections-ui";
-import { FEATURE_REGISTER_HINT } from "../../../collections/collections.utils";
-import { UiTooltip } from "../../../services/ui-tooltip";
+} from "../../collections/collections-ui";
+import { FEATURE_REGISTER_HINT } from "../../collections/collections.utils";
+import { UiTooltip } from "../../services/ui-tooltip";
 
 @Component({
   selector: "sc-bookmark-button",
