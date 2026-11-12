@@ -85,7 +85,7 @@ export function expectAuthModalStep(title: string): void {
   cy.get('[data-testid="auth-modal"] h2', { timeout: 30000 }).should(
     ($title) => {
       const text = $title.text().replace(/\s+/g, " ").trim();
-      const error = Cypress.$(".auth-modal__error").text().trim();
+      const error = Cypress.$(".modal-form__error").text().trim();
       expect(text, error || "auth modal step").to.eq(title);
     },
   );
@@ -107,7 +107,7 @@ export function openLoginModal(): void {
 }
 
 function submitAuthForm(): void {
-  cy.get('.auth-modal__form button[type="submit"]')
+  cy.get('.modal-form__form button[type="submit"]')
     .first()
     .should("not.be.disabled")
     .click();

@@ -1,0 +1,167 @@
+@reference "../../../styles/tailwind.css";
+
+.modal-form__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.modal-form__subtitle {
+  margin: 0;
+  color: var(--color-gray-400);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.modal-form__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modal-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.modal-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modal-form__field span {
+  color: var(--color-white);
+  font-size: 0.875rem;
+}
+
+.modal-form__password {
+  position: relative;
+}
+
+.modal-form__password input {
+  padding-inline-end: 2.75rem;
+}
+
+.modal-form__password-toggle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: color-mix(in oklab, var(--color-sky-800) 70%, transparent);
+  cursor: pointer;
+}
+
+.modal-form__password-toggle:hover,
+.modal-form__password-toggle:focus-visible {
+  color: var(--color-primary);
+}
+
+.modal-form__password-toggle:focus-visible {
+  outline: none;
+}
+
+.modal-form__password-toggle svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.modal-form__checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  color: var(--color-white);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.modal-form__checkbox input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  border: 1px solid var(--color-emerald-400);
+  border-radius: 0.25rem;
+  background-color: var(--color-secondary);
+  color: var(--color-emerald-400);
+  cursor: pointer;
+}
+
+.modal-form__checkbox input:checked {
+  background-color: var(--color-emerald-400);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 4.5' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.65rem 0.65rem;
+}
+
+.modal-form__checkbox input:focus-visible {
+  outline: 2px solid var(--color-emerald-400);
+  outline-offset: 2px;
+}
+
+.modal-form__actions {
+  display: flex;
+  gap: 0.625rem;
+}
+
+.modal-form__actions > * {
+  flex: 1 1 0;
+}
+
+.modal-form__checkbox a,
+.modal-form__footer-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-emerald-400);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-form__checkbox a:hover,
+.modal-form__footer-link:hover {
+  color: color-mix(in oklab, var(--color-emerald-400) 80%, transparent);
+}
+
+.modal-form__footer-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-form__error,
+.modal-form__info {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.modal-form__error {
+  color: var(--color-red-500);
+}
+
+.modal-form__info {
+  color: var(--color-emerald-400);
+}
+
+@media (width < theme(--breakpoint-sm)) {
+  .modal-form__grid {
+    grid-template-columns: 1fr;
+  }
+}

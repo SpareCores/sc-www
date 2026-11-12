@@ -82,7 +82,7 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     Modal,
   ],
   templateUrl: "./profile-modal.html",
-  styleUrls: ["../auth/auth-modal.css", "./profile-modal.css"],
+  styleUrls: ["../modal-form.css", "./profile-modal.css"],
 })
 export class ProfileModal {
   private readonly auth = inject(AuthState);

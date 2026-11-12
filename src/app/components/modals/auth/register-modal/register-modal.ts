@@ -37,7 +37,7 @@ const STEP_TITLES: Record<RegisterStep, string> = {
   selector: "sc-register-modal",
   imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner, Modal],
   templateUrl: "./register-modal.html",
-  styleUrl: "../auth-modal.css",
+  styleUrls: ["../../modal-form.css", "../auth-modal.css"],
 })
 export class RegisterModal {
   protected readonly auth = inject(AuthState);

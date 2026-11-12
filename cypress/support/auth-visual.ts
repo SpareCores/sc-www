@@ -175,7 +175,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
         "contain.text",
         "Create your account",
       );
-      cy.get(".auth-modal__subtitle").should(
+      cy.get(".modal-form__subtitle").should(
         "contain.text",
         "Welcome! Please fill in the details to get started.",
       );
@@ -194,7 +194,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
         "contain.text",
         "Create your account",
       );
-      cy.get(".auth-modal__subtitle").should(
+      cy.get(".modal-form__subtitle").should(
         "contain.text",
         "This feature needs a free registration!",
       );
@@ -219,7 +219,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       openRegisterModal();
       fillRegisterDetails(pendingEmail, randomClerkTestPassword());
       acceptRegisterConsent();
-      cy.contains(".auth-modal__subtitle", pendingEmail).invoke(
+      cy.contains(".modal-form__subtitle", pendingEmail).invoke(
         "text",
         "Enter the verification code sent to sc-www+clerk_test@example.com.",
       );

@@ -8,22 +8,19 @@
     [showClose]="!isAuthPending && step === 'details'"
   >
     @if (step === "details") {
-      <div
-        class="auth-modal__body"
-        [class.auth-modal__body--pending]="isAuthPending"
-      >
-        <p class="auth-modal__subtitle">{{ auth.signUpSubtitle() }}</p>
+      <div class="modal-form__body" [class.auth-modal--pending]="isAuthPending">
+        <p class="modal-form__subtitle">{{ auth.signUpSubtitle() }}</p>
 
         <div class="auth-modal__main">
           <div class="auth-modal__content">
             <form
-              class="auth-modal__form"
+              class="modal-form__form"
               #detailsForm="ngForm"
               novalidate
               (ngSubmit)="submitDetails(detailsForm)"
             >
-              <div class="auth-modal__grid">
-                <label class="auth-modal__field">
+              <div class="modal-form__grid">
+                <label class="modal-form__field">
                   <span>{{ messages.firstNameLabel }}</span>
                   <input
                     type="text"
@@ -35,7 +32,7 @@
                     [(ngModel)]="firstName"
                   />
                 </label>
-                <label class="auth-modal__field">
+                <label class="modal-form__field">
                   <span>{{ messages.lastNameLabel }}</span>
                   <input
                     type="text"
@@ -49,7 +46,7 @@
                 </label>
               </div>
 
-              <label class="auth-modal__field">
+              <label class="modal-form__field">
                 <span>{{ messages.emailAddressLabel }}</span>
                 <div class="auth-modal__field-control">
                   <input
@@ -87,9 +84,9 @@
                 }
               </label>
 
-              <label class="auth-modal__field">
+              <label class="modal-form__field">
                 <span>{{ messages.passwordLabel }}</span>
-                <div class="auth-modal__password">
+                <div class="modal-form__password">
                   <input
                     [type]="showPassword ? 'text' : 'password'"
                     name="password"
@@ -119,7 +116,7 @@
                   }
                   <button
                     type="button"
-                    class="auth-modal__password-toggle"
+                    class="modal-form__password-toggle"
                     [attr.aria-label]="
                       showPassword
                         ? messages.hidePassword
@@ -144,7 +141,7 @@
               </label>
 
               @if (errorMessage) {
-                <p class="auth-modal__error">{{ errorMessage }}</p>
+                <p class="modal-form__error">{{ errorMessage }}</p>
               }
 
               <sc-button
@@ -183,9 +180,7 @@
             @if (isAuthPending) {
               <div class="auth-modal__pending" role="status" aria-live="polite">
                 <sc-loading-spinner size="lg"></sc-loading-spinner>
-                <p
-                  class="auth-modal__pending-text auth-modal__pending-text--verify"
-                >
+                <p class="auth-modal__pending-text">
                   {{ messages.verifying }}
                 </p>
               </div>
@@ -200,13 +195,13 @@
         </div>
       </div>
     } @else if (step === "consent") {
-      <div class="auth-modal__body">
-        <p class="auth-modal__subtitle">
+      <div class="modal-form__body">
+        <p class="modal-form__subtitle">
           {{ messages.consentSubtitle }}
         </p>
 
-        <form class="auth-modal__form" (ngSubmit)="submitConsent()">
-          <label class="auth-modal__checkbox">
+        <form class="modal-form__form" (ngSubmit)="submitConsent()">
+          <label class="modal-form__checkbox">
             <input
               type="checkbox"
               name="legalAccepted"
@@ -228,7 +223,7 @@
             </span>
           </label>
 
-          <label class="auth-modal__checkbox">
+          <label class="modal-form__checkbox">
             <input
               type="checkbox"
               name="newsletterOptIn"
@@ -239,7 +234,7 @@
           </label>
 
           @if (errorMessage) {
-            <p class="auth-modal__error">{{ errorMessage }}</p>
+            <p class="modal-form__error">{{ errorMessage }}</p>
           }
 
           <div
@@ -249,7 +244,7 @@
             data-cl-size="flexible"
           ></div>
 
-          <div class="auth-modal__consent-actions">
+          <div class="modal-form__actions">
             <sc-button
               type="button"
               [label]="messages.cancelButton"
@@ -273,13 +268,13 @@
         </form>
       </div>
     } @else {
-      <div class="auth-modal__body">
-        <p class="auth-modal__subtitle">
+      <div class="modal-form__body">
+        <p class="modal-form__subtitle">
           {{ messages.codeSentToSubtitle(emailAddress.trim()) }}
         </p>
 
-        <form class="auth-modal__form" (ngSubmit)="verifyEmail()">
-          <label class="auth-modal__field">
+        <form class="modal-form__form" (ngSubmit)="verifyEmail()">
+          <label class="modal-form__field">
             <span>{{ messages.verificationCodeLabel }}</span>
             <input
               type="text"
@@ -293,13 +288,13 @@
           </label>
 
           @if (errorMessage) {
-            <p class="auth-modal__error">{{ errorMessage }}</p>
+            <p class="modal-form__error">{{ errorMessage }}</p>
           }
           @if (infoMessage) {
-            <p class="auth-modal__info">{{ infoMessage }}</p>
+            <p class="modal-form__info">{{ infoMessage }}</p>
           }
 
-          <div class="auth-modal__actions">
+          <div class="modal-form__actions">
             <sc-button
               type="button"
               [label]="messages.resendCodeButton"
@@ -333,7 +328,7 @@
         {{ messages.alreadyHaveAccountPrompt }}
         <button
           type="button"
-          class="auth-modal__footer-link"
+          class="modal-form__footer-link"
           (click)="openSignIn()"
         >
           {{ messages.logInLink }}

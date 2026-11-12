@@ -39,7 +39,7 @@ function expectBookmarkCount(count: number): void {
 
 function expectLoginRejected(email: string, password: string): void {
   submitLoginForm(email, password);
-  cy.get(".auth-modal__error", { timeout: 30000 }).should("be.visible");
+  cy.get(".modal-form__error", { timeout: 30000 }).should("be.visible");
 }
 
 function expectRedirectedFromBookmarks(): void {

@@ -66,7 +66,7 @@ describe("LoginModal", () => {
 
   function errorText(): string {
     return (
-      container.querySelector(".auth-modal__error")?.textContent?.trim() ?? ""
+      container.querySelector(".modal-form__error")?.textContent?.trim() ?? ""
     );
   }
 

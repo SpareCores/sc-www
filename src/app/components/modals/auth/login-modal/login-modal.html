@@ -9,21 +9,18 @@
     [closeDisabled]="!!busy"
   >
     @if (step === "login") {
-      <div
-        class="auth-modal__body"
-        [class.auth-modal__body--pending]="isAuthPending"
-      >
-        <p class="auth-modal__subtitle">{{ messages.welcomeBack }}</p>
+      <div class="modal-form__body" [class.auth-modal--pending]="isAuthPending">
+        <p class="modal-form__subtitle">{{ messages.welcomeBack }}</p>
 
         <div class="auth-modal__main">
           <div class="auth-modal__content">
             <form
-              class="auth-modal__form"
+              class="modal-form__form"
               #loginForm="ngForm"
               novalidate
               (ngSubmit)="submitLogin(loginForm)"
             >
-              <label class="auth-modal__field">
+              <label class="modal-form__field">
                 <span>{{ messages.emailAddressLabel }}</span>
                 <div class="auth-modal__field-control">
                   <input
@@ -61,9 +58,9 @@
                 }
               </label>
 
-              <label class="auth-modal__field">
+              <label class="modal-form__field">
                 <span>{{ messages.passwordLabel }}</span>
-                <div class="auth-modal__password">
+                <div class="modal-form__password">
                   <input
                     [type]="showPassword ? 'text' : 'password'"
                     name="password"
@@ -93,7 +90,7 @@
                   }
                   <button
                     type="button"
-                    class="auth-modal__password-toggle"
+                    class="modal-form__password-toggle"
                     [attr.aria-label]="
                       showPassword
                         ? messages.hidePassword
@@ -117,7 +114,7 @@
               <div class="auth-modal__forgot">
                 <button
                   type="button"
-                  class="auth-modal__footer-link"
+                  class="modal-form__footer-link"
                   (click)="openResetRequest()"
                 >
                   {{ messages.forgotPassword }}
@@ -125,7 +122,7 @@
               </div>
 
               @if (errorMessage) {
-                <p class="auth-modal__error">{{ errorMessage }}</p>
+                <p class="modal-form__error">{{ errorMessage }}</p>
               }
 
               <sc-button
@@ -164,9 +161,7 @@
             @if (isAuthPending) {
               <div class="auth-modal__pending" role="status" aria-live="polite">
                 <sc-loading-spinner size="lg"></sc-loading-spinner>
-                <p
-                  class="auth-modal__pending-text auth-modal__pending-text--verify"
-                >
+                <p class="auth-modal__pending-text">
                   {{ messages.verifying }}
                 </p>
               </div>
@@ -181,13 +176,13 @@
         </div>
       </div>
     } @else if (step === "second-factor") {
-      <div class="auth-modal__body">
-        <p class="auth-modal__subtitle">
+      <div class="modal-form__body">
+        <p class="modal-form__subtitle">
           {{ messages.codeSentToSubtitle(emailAddress.trim()) }}
         </p>
 
-        <form class="auth-modal__form" (ngSubmit)="submitSecondFactor()">
-          <label class="auth-modal__field">
+        <form class="modal-form__form" (ngSubmit)="submitSecondFactor()">
+          <label class="modal-form__field">
             <span>{{ messages.verificationCodeLabel }}</span>
             <input
               type="text"
@@ -201,13 +196,13 @@
           </label>
 
           @if (infoMessage) {
-            <p class="auth-modal__subtitle">{{ infoMessage }}</p>
+            <p class="modal-form__subtitle">{{ infoMessage }}</p>
           }
           @if (errorMessage) {
-            <p class="auth-modal__error">{{ errorMessage }}</p>
+            <p class="modal-form__error">{{ errorMessage }}</p>
           }
 
-          <div class="auth-modal__actions">
+          <div class="modal-form__actions">
             <sc-button
               type="button"
               [label]="messages.resendCodeButton"
@@ -232,18 +227,18 @@
         </form>
       </div>
     } @else if (step === "reset-request") {
-      <div class="auth-modal__body">
-        <p class="auth-modal__subtitle">
+      <div class="modal-form__body">
+        <p class="modal-form__subtitle">
           {{ messages.resetRequestSubtitle }}
         </p>
 
         <form
-          class="auth-modal__form"
+          class="modal-form__form"
           #resetRequestForm="ngForm"
           novalidate
           (ngSubmit)="submitResetRequest(resetRequestForm)"
         >
-          <label class="auth-modal__field">
+          <label class="modal-form__field">
             <span>{{ messages.emailAddressLabel }}</span>
             <input
               type="email"
@@ -258,10 +253,10 @@
           </label>
 
           @if (errorMessage) {
-            <p class="auth-modal__error">{{ errorMessage }}</p>
+            <p class="modal-form__error">{{ errorMessage }}</p>
           }
 
-          <div class="auth-modal__actions">
+          <div class="modal-form__actions">
             <sc-button
               type="button"
               [label]="messages.backButton"
@@ -287,18 +282,18 @@
         </form>
       </div>
     } @else {
-      <div class="auth-modal__body">
-        <p class="auth-modal__subtitle">
+      <div class="modal-form__body">
+        <p class="modal-form__subtitle">
           {{ messages.resetCodeSentToSubtitle(emailAddress.trim()) }}
         </p>
 
         <form
-          class="auth-modal__form"
+          class="modal-form__form"
           #resetVerifyForm="ngForm"
           novalidate
           (ngSubmit)="submitResetVerify(resetVerifyForm)"
         >
-          <label class="auth-modal__field">
+          <label class="modal-form__field">
             <span>{{ messages.verificationCodeLabel }}</span>
             <input
               type="text"
@@ -312,9 +307,9 @@
             />
           </label>
 
-          <label class="auth-modal__field">
+          <label class="modal-form__field">
             <span>{{ messages.newPasswordLabel }}</span>
-            <div class="auth-modal__password">
+            <div class="modal-form__password">
               <input
                 [type]="showPassword ? 'text' : 'password'"
                 name="newPassword"
@@ -327,7 +322,7 @@
               />
               <button
                 type="button"
-                class="auth-modal__password-toggle"
+                class="modal-form__password-toggle"
                 [attr.aria-label]="
                   showPassword ? messages.hidePassword : messages.showPassword
                 "
@@ -342,10 +337,10 @@
           </label>
 
           @if (errorMessage) {
-            <p class="auth-modal__error">{{ errorMessage }}</p>
+            <p class="modal-form__error">{{ errorMessage }}</p>
           }
 
-          <div class="auth-modal__actions">
+          <div class="modal-form__actions">
             <sc-button
               type="button"
               [label]="messages.resendCodeButton"
@@ -381,7 +376,7 @@
         {{ messages.noAccountPrompt }}
         <button
           type="button"
-          class="auth-modal__footer-link"
+          class="modal-form__footer-link"
           (click)="openSignUp()"
         >
           {{ messages.registerLink }}
@@ -391,7 +386,7 @@
       <p modalFooter class="auth-modal__footer">
         <button
           type="button"
-          class="auth-modal__footer-link"
+          class="modal-form__footer-link"
           (click)="backToLogin()"
         >
           {{ messages.backToSignIn }}
