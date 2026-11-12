@@ -160,7 +160,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
     it("compares sign-in modal", () => {
       visitWithClerk("/");
       openGuestAuthButton("Log in");
-      cy.get(".auth-modal__title").should(
+      cy.get('[data-testid="auth-modal"] h2').should(
         "contain.text",
         "Sign in to Spare Cores",
       );
@@ -171,7 +171,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
     it("compares default registration subtitle", () => {
       visitWithClerk("/");
       openGuestAuthButton("Register");
-      cy.get(".auth-modal__title").should(
+      cy.get('[data-testid="auth-modal"] h2').should(
         "contain.text",
         "Create your account",
       );
@@ -190,7 +190,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
         .first()
         .should("be.visible")
         .click();
-      cy.get(".auth-modal__title").should(
+      cy.get('[data-testid="auth-modal"] h2').should(
         "contain.text",
         "Create your account",
       );

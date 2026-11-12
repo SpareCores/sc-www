@@ -3,11 +3,18 @@
   [class]="sizeClass()"
 >
   <div
-    class="flex justify-between gap-4 p-4 border-b border-gray-600"
+    class="relative flex gap-4 p-4 border-b border-gray-600"
     [class.items-center]="!!title()"
     [class.items-start]="!title()"
+    [class.justify-between]="!centerTitle()"
+    [class.justify-center]="centerTitle()"
   >
-    <div class="min-w-0" [attr.id]="titleId">
+    <div
+      class="min-w-0"
+      [class.px-10]="centerTitle()"
+      [class.text-center]="centerTitle()"
+      [attr.id]="titleId"
+    >
       @if (title()) {
         <h2 class="text-xl font-medium text-white">{{ title() }}</h2>
       }
@@ -15,6 +22,8 @@
     </div>
     @if (showClose()) {
       <sc-button
+        [class.absolute]="centerTitle()"
+        [class.right-4]="centerTitle()"
         variant="close"
         icon="x"
         ariaLabel="Close modal"

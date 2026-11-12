@@ -1,21 +1,43 @@
-import { Component, effect, inject } from "@angular/core";
+import { DialogRef } from "@angular/cdk/dialog";
+import {
+  Component,
+  DestroyRef,
+  TemplateRef,
+  effect,
+  inject,
+  untracked,
+  viewChild,
+} from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
+import { ModalDialog } from "../../../../services/modal-dialog";
 import { Button } from "../../../button/button";
 import { LoadingSpinner } from "../../../loading-spinner/loading-spinner";
+import { Modal } from "../../modal/modal";
 
 type LoginBusy = "submit" | "github" | "reset" | "resend" | "verify";
 type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
 
+const STEP_TITLES: Record<LoginStep, string> = {
+  login: "Sign in to Spare Cores",
+  "second-factor": "Verify this device",
+  "reset-request": "Reset your password",
+  "reset-verify": "Set a new password",
+};
+
 @Component({
   selector: "sc-login-modal",
-  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner],
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner, Modal],
   templateUrl: "./login-modal.html",
   styleUrl: "../auth-modal.css",
 })
 export class LoginModal {
   protected readonly auth = inject(AuthState);
+  private readonly modalDialog = inject(ModalDialog);
+  private readonly modalTemplate =
+    viewChild<TemplateRef<unknown>>("modalTemplate");
+  private dialogRef: DialogRef | null = null;
 
   protected step: LoginStep = "login";
   protected emailAddress = "";
@@ -33,12 +55,47 @@ export class LoginModal {
     );
   }
 
+  protected get title(): string {
+    return this.isAuthPending
+      ? "Signing in to your account"
+      : STEP_TITLES[this.step];
+  }
+
   constructor() {
     effect(() => {
-      if (!this.auth.signInModalOpen()) {
-        this.reset();
+      const open = this.auth.signInModalOpen();
+      const template = this.modalTemplate();
+      untracked(() => {
+        if (!open) {
+          this.dialogRef?.close();
+          this.reset();
+        } else if (template) {
+          this.openDialog(template);
+        }
+      });
+    });
+
+    inject(DestroyRef).onDestroy(() => this.dialogRef?.close());
+  }
+
+  private openDialog(template: TemplateRef<unknown>): void {
+    if (this.dialogRef) {
+      return;
+    }
+    const dialogRef = this.modalDialog.open(template, { disableClose: true });
+    dialogRef.backdropClick.subscribe(() => this.close());
+    dialogRef.keydownEvents.subscribe((event) => {
+      if (event.key === "Escape") {
+        this.close();
       }
     });
+    dialogRef.closed.subscribe(() => {
+      this.dialogRef = null;
+      if (this.auth.signInModalOpen()) {
+        this.auth.closeSignIn();
+      }
+    });
+    this.dialogRef = dialogRef;
   }
 
   protected close(): void {

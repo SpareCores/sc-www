@@ -82,11 +82,13 @@ export function openGuestAuthButton(label: "Register" | "Log in"): void {
 }
 
 export function expectAuthModalStep(title: string): void {
-  cy.get(".auth-modal__title", { timeout: 30000 }).should(($title) => {
-    const text = $title.text().replace(/\s+/g, " ").trim();
-    const error = Cypress.$(".auth-modal__error").text().trim();
-    expect(text, error || "auth modal step").to.eq(title);
-  });
+  cy.get('[data-testid="auth-modal"] h2', { timeout: 30000 }).should(
+    ($title) => {
+      const text = $title.text().replace(/\s+/g, " ").trim();
+      const error = Cypress.$(".auth-modal__error").text().trim();
+      expect(text, error || "auth modal step").to.eq(title);
+    },
+  );
 }
 
 function openGuestAuthModal(label: "Register" | "Log in", title: string): void {
@@ -127,7 +129,7 @@ export function acceptRegisterConsent(): void {
 }
 
 export function expectSignedIn(): void {
-  cy.get(".auth-modal", { timeout: 30000 }).should("not.exist");
+  cy.get('[data-testid="auth-modal"]', { timeout: 30000 }).should("not.exist");
   cy.get("#auth_button", { timeout: 30000 }).should("be.visible");
 }
 
@@ -149,12 +151,14 @@ export function submitLoginForm(email: string, password: string): void {
 
 export function completeDeviceVerificationIfAsked(): void {
   const isDeviceVerification = ($body: JQuery<HTMLElement>) =>
-    $body.find(".auth-modal__title").text().trim() === "Verify this device";
+    $body.find('[data-testid="auth-modal"] h2').text().trim() ===
+    "Verify this device";
 
   cy.get("body", { timeout: 30000 })
     .should(($body) => {
       expect(
-        $body.find(".auth-modal").length === 0 || isDeviceVerification($body),
+        $body.find('[data-testid="auth-modal"]').length === 0 ||
+          isDeviceVerification($body),
         "sign-in finished or device verification requested",
       ).to.eq(true);
     })
@@ -163,7 +167,7 @@ export function completeDeviceVerificationIfAsked(): void {
         return;
       }
       cy.get('input[name="secondFactorCode"]').clear().type(CLERK_TEST_CODE);
-      cy.contains(".auth-modal button", "Verify")
+      cy.contains('[data-testid="auth-modal"] button', "Verify")
         .should("not.be.disabled")
         .click();
     });

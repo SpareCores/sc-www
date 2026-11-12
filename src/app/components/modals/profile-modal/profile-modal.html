@@ -74,6 +74,7 @@
                   <input
                     [type]="showPassword() ? 'text' : 'password'"
                     name="reverifyPassword"
+                    class="sc-input"
                     placeholder="Enter your password"
                     autocomplete="current-password"
                     required
@@ -100,6 +101,7 @@
                 <input
                   type="text"
                   name="reverifyCode"
+                  class="sc-input"
                   inputmode="numeric"
                   autocomplete="one-time-code"
                   placeholder="Enter verification code"
@@ -198,6 +200,7 @@
                       <input
                         type="text"
                         name="firstName"
+                        class="sc-input"
                         autocomplete="given-name"
                         placeholder="First name"
                         [(ngModel)]="firstName"
@@ -208,6 +211,7 @@
                       <input
                         type="text"
                         name="lastName"
+                        class="sc-input"
                         autocomplete="family-name"
                         placeholder="Last name"
                         [(ngModel)]="lastName"
@@ -355,6 +359,7 @@
                     <input
                       type="email"
                       name="newEmail"
+                      class="sc-input"
                       placeholder="Enter your email address"
                       autocomplete="email"
                       required
@@ -391,6 +396,7 @@
                     <input
                       type="text"
                       name="emailCode"
+                      class="sc-input"
                       inputmode="numeric"
                       autocomplete="one-time-code"
                       placeholder="Enter verification code"
@@ -503,6 +509,7 @@
                 }
               } @else {
                 <sc-button
+                  class="self-start"
                   label="Connect GitHub"
                   icon="github"
                   iconPosition="start"
@@ -540,6 +547,7 @@
                         <input
                           [type]="showPassword() ? 'text' : 'password'"
                           name="currentPassword"
+                          class="sc-input"
                           placeholder="Enter your current password"
                           autocomplete="current-password"
                           required
@@ -553,6 +561,7 @@
                         <input
                           [type]="showPassword() ? 'text' : 'password'"
                           name="newPassword"
+                          class="sc-input"
                           placeholder="Create a new password"
                           autocomplete="new-password"
                           required
@@ -579,6 +588,7 @@
                       <input
                         [type]="showPassword() ? 'text' : 'password'"
                         name="confirmPassword"
+                        class="sc-input"
                         placeholder="Repeat the new password"
                         autocomplete="new-password"
                         required
@@ -741,6 +751,7 @@
                       <input
                         type="text"
                         name="deleteConfirmation"
+                        class="sc-input"
                         autocomplete="off"
                         [placeholder]="deleteConfirmationText"
                         [(ngModel)]="deleteConfirmation"

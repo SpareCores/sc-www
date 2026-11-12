@@ -1,9 +1,20 @@
-import { Component, effect, inject } from "@angular/core";
+import { DialogRef } from "@angular/cdk/dialog";
+import {
+  Component,
+  DestroyRef,
+  TemplateRef,
+  effect,
+  inject,
+  untracked,
+  viewChild,
+} from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
+import { ModalDialog } from "../../../../services/modal-dialog";
 import { Button } from "../../../button/button";
 import { LoadingSpinner } from "../../../loading-spinner/loading-spinner";
+import { Modal } from "../../modal/modal";
 
 type RegisterBusy = "submit" | "verify" | "resend" | "github";
 type RegisterStep = "details" | "consent" | "verify";
@@ -19,14 +30,24 @@ const DETAILS_PARAMS = new Set([
   "password",
 ]);
 
+const STEP_TITLES: Record<RegisterStep, string> = {
+  details: "Create your account",
+  consent: "One last step",
+  verify: "Verify your email",
+};
+
 @Component({
   selector: "sc-register-modal",
-  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner],
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner, Modal],
   templateUrl: "./register-modal.html",
   styleUrl: "../auth-modal.css",
 })
 export class RegisterModal {
   protected readonly auth = inject(AuthState);
+  private readonly modalDialog = inject(ModalDialog);
+  private readonly modalTemplate =
+    viewChild<TemplateRef<unknown>>("modalTemplate");
+  private dialogRef: DialogRef | null = null;
 
   protected step: RegisterStep = "details";
   protected method: RegisterMethod = "email";
@@ -49,7 +70,25 @@ export class RegisterModal {
     );
   }
 
+  protected get title(): string {
+    return this.isAuthPending
+      ? "Creating your account"
+      : STEP_TITLES[this.step];
+  }
+
   constructor() {
+    effect(() => {
+      const open = this.auth.signUpModalOpen();
+      const template = this.modalTemplate();
+      untracked(() => {
+        if (!open) {
+          this.dialogRef?.close();
+        } else if (template) {
+          this.openDialog(template);
+        }
+      });
+    });
+
     effect(() => {
       if (!this.auth.signUpModalOpen()) {
         this.reset();
@@ -70,6 +109,28 @@ export class RegisterModal {
         this.infoMessage = "";
       }
     });
+
+    inject(DestroyRef).onDestroy(() => this.dialogRef?.close());
+  }
+
+  private openDialog(template: TemplateRef<unknown>): void {
+    if (this.dialogRef) {
+      return;
+    }
+    const dialogRef = this.modalDialog.open(template, { disableClose: true });
+    dialogRef.backdropClick.subscribe(() => this.close());
+    dialogRef.keydownEvents.subscribe((event) => {
+      if (event.key === "Escape") {
+        this.close();
+      }
+    });
+    dialogRef.closed.subscribe(() => {
+      this.dialogRef = null;
+      if (this.auth.signUpModalOpen()) {
+        this.auth.closeSignUp();
+      }
+    });
+    this.dialogRef = dialogRef;
   }
 
   protected close(): void {
