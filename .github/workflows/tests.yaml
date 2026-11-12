@@ -193,12 +193,36 @@ jobs:
         with:
           pattern: cypress-shard-*
           merge-multiple: true
+      - name: Collect failed and new screenshots
+        run: |
+          src=cypress-image-diff-screenshots
+          out=cypress-screenshots-artifact
+          mkdir -p "$out"
+          if [ -d cypress/screenshots ]; then
+            cp -R cypress/screenshots "$out/screenshots"
+          fi
+          for diff in "$src"/diff/*.png; do
+            [ -e "$diff" ] || continue
+            name=$(basename "$diff")
+            for dir in baseline comparison diff; do
+              if [ -f "$src/$dir/$name" ]; then
+                mkdir -p "$out/$dir"
+                cp "$src/$dir/$name" "$out/$dir/"
+              fi
+            done
+          done
+          for comparison in "$src"/comparison/*.png; do
+            [ -e "$comparison" ] || continue
+            name=$(basename "$comparison")
+            if [ ! -f "$src/baseline/$name" ]; then
+              mkdir -p "$out/new"
+              cp "$comparison" "$out/new/"
+            fi
+          done
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: cypress-screenshots
-          path: |
-            cypress/screenshots
-            cypress-image-diff-screenshots
+          path: cypress-screenshots-artifact
           retention-days: 7
           if-no-files-found: ignore
           overwrite: true
