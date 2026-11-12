@@ -219,6 +219,16 @@ jobs:
               cp "$comparison" "$out/new/"
             fi
           done
+      - name: Delete stale screenshots artifact (e.g. when re-running failed jobs)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate \
+            "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
+            --jq '.artifacts[] | select(.name == "cypress-screenshots") | .id' \
+            | xargs -r -I{} gh api -X DELETE \
+              "repos/${GITHUB_REPOSITORY}/actions/artifacts/{}"
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: cypress-screenshots
