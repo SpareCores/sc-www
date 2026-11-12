@@ -27,7 +27,7 @@
           class="sc-filter-sidebar__collapser bg-secondary"
           (click)="toggleCollapse()"
           tabindex="0"
-          data-ph-capture-attribute-sc-event="server listing toggle sidebar"
+          data-ph-capture-attribute-sc-event="traffic prices toggle sidebar"
         >
           <svg lucideChevronLeft class="h-6 w-6 text-emerald-400"></svg>
         </div>
@@ -58,7 +58,7 @@
           ></sc-button>
           <sc-button
             id="column_button"
-            data-ph-capture-attribute-sc-event="server listing columns select"
+            data-ph-capture-attribute-sc-event="traffic prices columns select"
             [scDropdown]="columnPanel"
             label="Columns"
             icon="columns-3-cog"
@@ -99,21 +99,9 @@
                       "_" +
                       price.region_id +
                       "_" +
-                      price.direction;
-                    let i = $index
+                      price.direction
                   ) {
-                    <tr
-                      data-ph-capture-attribute-sc-event="server listing route to server details"
-                      [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                        price.vendor_id
-                      "
-                      [attr.data-ph-capture-attribute-server-listing-row-index]="
-                        i + 1
-                      "
-                      [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                        limit
-                      "
-                    >
+                    <tr>
                       @for (column of tableColumns; track column.name) {
                         @if (column.type === "vendor") {
                           <td>
@@ -217,7 +205,7 @@
               <div class="flex items-center gap-2">
                 <sc-button
                   id="pagesize_button"
-                  data-ph-capture-attribute-sc-event="server listing page size select"
+                  data-ph-capture-attribute-sc-event="traffic prices page size select"
                   [scDropdown]="pageSizePanel"
                   [dropdownFlip]="true"
                   [dropdownPlacement]="'bottom-start'"
