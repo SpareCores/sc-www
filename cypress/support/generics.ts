@@ -28,6 +28,7 @@ export abstract class E2EEvent {
     cy.visit(url);
     this.waitForPageReady();
     this.hideAnnouncementForTests();
+    this.hideCaretsForTests();
   }
 
   public static waitForPageReady() {
@@ -88,6 +89,22 @@ export abstract class E2EEvent {
       style.textContent = `
         app-announcement-ticker {
           display: none !important;
+        }
+      `;
+
+      doc.head.appendChild(style);
+    });
+  }
+
+  public static hideCaretsForTests() {
+    cy.document().then((doc) => {
+      doc.getElementById("e2e-hide-carets")?.remove();
+
+      const style = doc.createElement("style");
+      style.id = "e2e-hide-carets";
+      style.textContent = `
+        * {
+          caret-color: transparent !important;
         }
       `;
 
