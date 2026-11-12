@@ -47,6 +47,18 @@
   padding-left: 0.75rem;
 }
 
+.sc-table-loading-overlay {
+  @apply absolute inset-0 bg-black/20;
+  container-type: size;
+  overflow: clip;
+}
+
+.sc-table-loading-overlay__spinner {
+  @apply sticky mb-2 flex justify-center;
+  top: calc(50vh - 1.5rem);
+  margin-top: clamp(3rem, 50cqh - 1.5rem, 4rem);
+}
+
 .sc-kv-table {
   @apply text-white;
 }

@@ -206,7 +206,7 @@
         <div>
           <div class="relative">
             <div
-              class="advisor-table-wrap w-full overflow-x-auto relative"
+              class="advisor-table-wrap w-full overflow-x-auto"
               [class.min-h-80]="
                 isLoadingRecommendations() && !recommendations().length
               "
@@ -1331,8 +1331,8 @@
               </table>
             </div>
             @if (isLoadingRecommendations()) {
-              <div class="advisor-table-loading-overlay">
-                <div class="flex justify-center mt-16 opacity-100">
+              <div class="sc-table-loading-overlay">
+                <div class="sc-table-loading-overlay__spinner">
                   <sc-loading-spinner size="lg"></sc-loading-spinner>
                 </div>
               </div>

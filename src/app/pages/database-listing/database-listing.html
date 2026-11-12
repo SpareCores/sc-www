@@ -112,7 +112,7 @@
         <div>
           <div class="relative">
             <div
-              class="w-full overflow-x-auto relative pl-px"
+              class="w-full overflow-x-auto pl-px"
               [class.min-h-80]="isLoading && !databases.length"
             >
               <table
@@ -420,8 +420,8 @@
               </table>
             </div>
             @if (isLoading) {
-              <div class="absolute top-0 left-0 w-full h-full bg-black/20">
-                <div class="flex justify-center mt-16 opacity-100">
+              <div class="sc-table-loading-overlay">
+                <div class="sc-table-loading-overlay__spinner">
                   <sc-loading-spinner size="lg"></sc-loading-spinner>
                 </div>
               </div>

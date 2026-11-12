@@ -168,11 +168,6 @@
   padding-left: 1px;
 }
 
-.advisor-table-loading-overlay {
-  @apply absolute top-0 left-0 w-full h-full;
-  background-color: color-mix(in oklab, var(--color-black) 20%, transparent);
-}
-
 .advisor-results-table {
   @apply w-full text-white;
 

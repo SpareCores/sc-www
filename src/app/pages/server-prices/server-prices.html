@@ -86,7 +86,7 @@
         </div>
         <div>
           <div class="relative">
-            <div class="w-full overflow-x-auto relative pl-px">
+            <div class="w-full overflow-x-auto pl-px">
               <table
                 class="sc-table sc-table--compact sc-table--interactive w-full"
                 id="server_prices_table"
@@ -510,10 +510,10 @@
               </table>
             </div>
             @if (isLoading) {
-              <div
-                class="absolute top-0 left-0 w-full h-full pt-16 bg-black/20"
-              >
-                <sc-loading-spinner size="lg"></sc-loading-spinner>
+              <div class="sc-table-loading-overlay">
+                <div class="sc-table-loading-overlay__spinner">
+                  <sc-loading-spinner size="lg"></sc-loading-spinner>
+                </div>
               </div>
             }
           </div>
