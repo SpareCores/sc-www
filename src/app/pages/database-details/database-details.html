@@ -127,12 +127,19 @@
 
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
         <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold">Specifications</h2>
+          <h2 class="text-3xl font-bold sc-header-anchor-host">
+            Specifications
+            <sc-header-anchor
+              anchorId="specifications"
+              label="Specifications"
+            ></sc-header-anchor>
+          </h2>
         </div>
 
         <sc-server-property-card
           cardTitle="Database Metadata"
           cardId="details"
+          anchorId="metadata"
           [sections]="metadataSections"
           [showSectionHeaders]="false"
           [isOpen]="expandedCards.details"
@@ -145,7 +152,14 @@
           #availabilityCard
           [class.sc-chart-block--open]="expandedCards.availability"
         >
-          <h3 class="text-2xl">Availability & Pricing</h3>
+          <h3 class="text-2xl sc-header-anchor-host">
+            Availability & Pricing
+            <sc-header-anchor
+              anchorId="availability"
+              label="Availability & Pricing"
+              [withTarget]="false"
+            ></sc-header-anchor>
+          </h3>
           <table class="sc-kv-table w-full">
             <thead>
               <tr>
@@ -223,6 +237,7 @@
         <sc-server-property-card
           cardTitle="Engine"
           cardId="engine"
+          anchorId="engine"
           [sections]="engineSections"
           [showSectionHeaders]="false"
           [isOpen]="expandedCards.engine"
@@ -232,6 +247,7 @@
         <sc-server-property-card
           cardTitle="Capacity"
           cardId="capacity"
+          anchorId="capacity"
           [sections]="capacitySections"
           [showSectionHeaders]="false"
           [isOpen]="expandedCards.capacity"
@@ -241,6 +257,7 @@
         <sc-server-property-card
           cardTitle="Features"
           cardId="features"
+          anchorId="features"
           [sections]="featureSections"
           [showSectionHeaders]="false"
           [isOpen]="expandedCards.features"
@@ -250,6 +267,7 @@
         <sc-server-property-card
           cardTitle="Security"
           cardId="security"
+          anchorId="security"
           [sections]="securitySections"
           [showSectionHeaders]="false"
           [isOpen]="expandedCards.security"
@@ -258,13 +276,20 @@
 
         @if (pgbenchChart) {
           <div class="my-2 w-full">
-            <h2 class="text-3xl font-bold">Performance</h2>
+            <h2 class="text-3xl font-bold sc-header-anchor-host">
+              Performance
+              <sc-header-anchor
+                anchorId="performance"
+                label="Performance"
+              ></sc-header-anchor>
+            </h2>
           </div>
           <sc-benchmark-line-chart
             benchmarkKey="pgbench"
             [title]="pgbenchTitle"
             blockClass="sc-chart-block sc-chart-block--full"
             elementId="pgbench_chart"
+            anchorId="pgbench"
             canvasId="pgbench_canvas"
             chartType="line"
             [chartData]="pgbenchChart.data"
@@ -277,7 +302,13 @@
           <div
             class="my-2 w-full flex justify-between items-center gap-4 flex-wrap"
           >
-            <h2 class="text-3xl font-bold">Underlying Server's Performance</h2>
+            <h2 class="text-3xl font-bold sc-header-anchor-host">
+              Underlying Server's Performance
+              <sc-header-anchor
+                anchorId="underlying_server_performance"
+                label="Underlying Server's Performance"
+              ></sc-header-anchor>
+            </h2>
             <sc-button
               label="More details"
               icon="square-arrow-up-right"
@@ -290,6 +321,7 @@
             [title]="pgbenchTitle"
             blockClass="sc-chart-block sc-chart-block--full"
             elementId="underlying_server_pgbench_chart"
+            anchorId="underlying_server_pgbench"
             canvasId="underlying_server_pgbench_canvas"
             chartType="line"
             [chartData]="underlyingServerPgbenchChart.data"

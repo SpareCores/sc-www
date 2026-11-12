@@ -35,6 +35,7 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import {
@@ -97,6 +98,7 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     LucideCheck,
     ReduceUnitNamePipe,
     BookmarkButton,
+    HeaderAnchor,
   ],
   templateUrl: "./database-details.html",
   styleUrl: "./database-details.css",
