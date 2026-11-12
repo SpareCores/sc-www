@@ -58,7 +58,7 @@ describe("Server Details", () => {
     E2EEvent.isVisibleAndNotEmpty(`[id="availability"]`);
     E2EEvent.doesNotExist(`.availability_line`);
 
-    E2EEvent.isNotFound("details_more_button");
+    E2EEvent.isVisible(`[id="details_more_button"]`);
     E2EEvent.isNotFound("processor_more_button");
 
     E2EEvent.isNotFound("availability_more_button");
