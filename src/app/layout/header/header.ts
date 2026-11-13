@@ -9,6 +9,7 @@ import { NgTemplateOutlet } from "@angular/common";
 import { Component, inject, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Button } from "../../components/button/button";
+import { ThemeText } from "../../components/theme-text/theme-text";
 import {
   LucideActivity,
   LucideArrowUpDown,
@@ -47,6 +48,7 @@ import { AuthState } from "../../core/auth";
   selector: "sc-header",
   imports: [
     Button,
+    ThemeText,
     LucideActivity,
     LucideArrowUpDown,
     LucideBookText,

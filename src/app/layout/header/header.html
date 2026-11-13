@@ -1,8 +1,22 @@
 <nav class="bg-custom shell-gutter py-2.5 w-full">
   <div class="content flex justify-between items-center w-full">
-    <a routerLink="/" class="h-12 w-71 min-w-0 shrink">
+    <a
+      routerLink="/"
+      class="flex h-12 min-w-0 shrink items-center gap-3 lg:w-71"
+      aria-label="Spare Cores"
+    >
       <img
-        class="h-12 w-full object-contain object-left"
+        class="h-9 w-auto lg:hidden"
+        src="./assets/images/logos/logo.png"
+        alt=""
+      />
+      <sc-theme-text
+        class="lg:hidden"
+        text="spare_cores"
+        classes="text-xl"
+      ></sc-theme-text>
+      <img
+        class="hidden h-12 w-full object-contain object-left lg:block"
         src="./assets/images/logos/logo_header.png"
         alt="Spare Cores Logo"
       />
