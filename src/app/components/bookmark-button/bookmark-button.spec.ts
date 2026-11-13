@@ -50,7 +50,9 @@ describe("BookmarkButton", () => {
   it("prompts registration with the favorite payload for guests", () => {
     const button = fixture.debugElement.query(By.css("button"));
     button.triggerEventHandler("click", {
-      preventDefault: () => undefined,
+      preventDefault: () => {
+        throw new Error("`preventDefault` called during event replay.");
+      },
       stopPropagation: () => undefined,
     });
 
@@ -68,7 +70,9 @@ describe("BookmarkButton", () => {
     fixture.detectChanges();
     const button = fixture.debugElement.query(By.css("button"));
     button.triggerEventHandler("click", {
-      preventDefault: () => undefined,
+      preventDefault: () => {
+        throw new Error("`preventDefault` called during event replay.");
+      },
       stopPropagation: () => undefined,
     });
 
