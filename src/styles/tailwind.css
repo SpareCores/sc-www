@@ -83,8 +83,29 @@
   margin: auto;
 }
 
-@utility content_gutter {
-  @apply px-2 xl:px-0;
+@utility shell-gutter {
+  padding-left: max(--spacing(4), env(safe-area-inset-left));
+  padding-right: max(--spacing(4), env(safe-area-inset-right));
+
+  @media (width >= theme(--breakpoint-lg)) {
+    padding-left: max(--spacing(6), env(safe-area-inset-left));
+    padding-right: max(--spacing(6), env(safe-area-inset-right));
+  }
+}
+
+@utility content-gutter {
+  padding-left: max(--spacing(4), env(safe-area-inset-left));
+  padding-right: max(--spacing(4), env(safe-area-inset-right));
+
+  @media (width >= theme(--breakpoint-lg)) {
+    padding-left: max(--spacing(6), env(safe-area-inset-left));
+    padding-right: max(--spacing(6), env(safe-area-inset-right));
+  }
+
+  @media (width >= theme(--breakpoint-xl)) {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }
 
 @utility scrollbar-hidden {
