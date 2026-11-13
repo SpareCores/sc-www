@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .footer_icon {
   display: block;
   flex-shrink: 0;
@@ -6,4 +8,14 @@
 
 .footer_icon > svg {
   display: block;
+}
+
+.footer_shell {
+  padding-bottom: max(3rem, calc(env(safe-area-inset-bottom) + 1rem));
+}
+
+@media (width >= theme(--breakpoint-lg)) {
+  .footer_shell {
+    padding-bottom: max(4rem, calc(env(safe-area-inset-bottom) + 2rem));
+  }
 }

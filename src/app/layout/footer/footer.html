@@ -1,41 +1,53 @@
 <div
-  class="border-t border-solid border-emerald-400 bg-secondary shell-gutter pt-12 pb-16 w-full"
+  class="border-t border-solid border-emerald-400 bg-secondary footer_shell shell-gutter pt-8 lg:pt-12 w-full"
 >
-  <div class="content flex flex-wrap justify-between items-center gap-6 w-full">
-    <div class="flex gap-6 items-center">
+  <div
+    class="content grid grid-cols-1 justify-items-center items-center w-full lg:flex lg:flex-wrap lg:justify-between lg:gap-6"
+  >
+    <div
+      class="order-1 flex min-h-11 items-center justify-center gap-3 lg:order-none lg:min-h-0 lg:justify-start lg:gap-6"
+    >
       <img
-        class="max-w-[140px] max-h-[70px]"
+        class="h-9 w-auto max-w-[140px] lg:h-auto lg:max-h-[70px]"
         src="./assets/images/logos/logo.png"
         alt="Spare Cores Small Logo"
       />
       <div class="flex flex-col gap-2">
         <sc-theme-text text="spare_cores" classes="text-xl"></sc-theme-text>
-        <div class="text-white flex gap-1 text-sm font-light">
+        <div class="hidden text-white gap-1 text-sm font-light lg:flex">
           © 2023-{{ currentYear }} Spare Cores
           <div class="text-emerald-400">|</div>
           Some rights reserved.
         </div>
       </div>
     </div>
-    <div class="w-full lg:w-auto flex gap-6 items-center justify-end">
-      <div class="flex flex-col gap-2">
-        <div class="text-white text-md font-bold text-right">
+    <div class="contents lg:flex lg:gap-6 lg:items-center lg:justify-end">
+      <div class="order-3 w-full lg:order-none lg:w-auto flex flex-col gap-2">
+        <div class="hidden text-white text-md font-bold lg:block lg:text-right">
           Company & Legal
         </div>
-        <div class="text-white flex gap-1 text-sm font-light">
-          <a routerLink="/legal/terms-of-service" class="hover:text-gray-500"
+        <div
+          class="text-white grid grid-cols-[1fr_auto_1fr] items-center gap-4 text-sm font-light lg:flex lg:gap-1"
+        >
+          <a
+            routerLink="/legal/terms-of-service"
+            class="flex items-center justify-end min-h-11 hover:text-gray-500 lg:min-h-0"
             >Terms of Service</a
           >
           <div class="text-emerald-400">|</div>
-          <a routerLink="/legal/privacy-policy" class="hover:text-gray-500"
+          <a
+            routerLink="/legal/privacy-policy"
+            class="flex items-center min-h-11 hover:text-gray-500 lg:min-h-0"
             >Privacy Policy</a
           >
         </div>
       </div>
-      <div class="flex gap-3 text-white">
+      <div
+        class="order-2 grid w-full max-w-sm grid-cols-8 text-white lg:order-none lg:flex lg:w-auto lg:max-w-none lg:justify-start lg:gap-3"
+      >
         <a
           routerLink="/contact"
-          class="hover:text-gray-500"
+          class="flex items-center justify-center min-h-11 hover:text-gray-500 lg:min-h-0"
           aria-label="Contact us"
         >
           <span class="footer_icon">
@@ -46,7 +58,7 @@
           href="https://github.com/SpareCores"
           target="_blank"
           rel="noopener"
-          class="hover:text-gray-500"
+          class="flex items-center justify-center min-h-11 hover:text-gray-500 lg:min-h-0"
           aria-label="GitHub repository"
         >
           <span class="footer_icon">
@@ -57,7 +69,7 @@
           href="https://dbdocs.io/spare-cores/sc-crawler"
           target="_blank"
           rel="noopener"
-          class="hover:text-gray-500"
+          class="flex items-center justify-center min-h-11 hover:text-gray-500 lg:min-h-0"
           aria-label="Database documentation"
         >
           <span class="footer_icon">
@@ -68,7 +80,7 @@
           href="https://status.sparecores.com"
           target="_blank"
           rel="noopener"
-          class="hover:text-gray-500"
+          class="flex items-center justify-center min-h-11 hover:text-gray-500 lg:min-h-0"
           aria-label="Status page"
         >
           <span class="footer_icon">
@@ -93,7 +105,7 @@
           href="https://linkedin.com/company/SpareCores"
           target="_blank"
           rel="noopener"
-          class="hover:text-gray-500"
+          class="flex items-center justify-center min-h-11 hover:text-gray-500 lg:min-h-0"
           aria-label="LinkedIn profile"
         >
           <span class="footer_icon">
@@ -104,7 +116,7 @@
           href="https://www.youtube.com/@SpareCores"
           target="_blank"
           rel="noopener"
-          class="hover:text-gray-500"
+          class="flex items-center justify-center min-h-11 hover:text-gray-500 lg:min-h-0"
           aria-label="YouTube channel"
         >
           <span class="footer_icon">
@@ -115,7 +127,7 @@
           rel="me noopener"
           href="https://fosstodon.org/@sparecores"
           target="_blank"
-          class="hover:text-gray-500"
+          class="flex items-center justify-center min-h-11 hover:text-gray-500 lg:min-h-0"
           aria-label="Fosstodon/Mastodon profile"
         >
           <!-- TODO how to reference the SVG file in the icons folder while keeping CSS>currentColor interactivity? -->
@@ -146,7 +158,7 @@
           href="https://twitter.com/SpareCores"
           target="_blank"
           rel="noopener"
-          class="hover:text-gray-500"
+          class="flex items-center justify-center min-h-11 hover:text-gray-500 lg:min-h-0"
           aria-label="Twitter profile"
         >
           <span class="footer_icon">
@@ -154,6 +166,13 @@
           </span>
         </a>
       </div>
+    </div>
+    <div
+      class="order-4 grid min-h-11 w-full grid-cols-[1fr_auto_1fr] items-center gap-4 text-white text-xs font-light whitespace-nowrap sm:text-sm lg:hidden"
+    >
+      <span class="text-right">© 2023-{{ currentYear }} Spare Cores</span>
+      <div class="text-emerald-400">|</div>
+      <span>Some rights reserved.</span>
     </div>
   </div>
 </div>
