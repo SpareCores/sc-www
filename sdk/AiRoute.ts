@@ -21,7 +21,7 @@ import {
 export namespace Ai {
   /**
    * @description Extract Server JSON filters from freetext.
-   * @tags AI
+   * @tags AI Helpers
    * @name AssistServerFiltersAiAssistServerFiltersGet
    * @summary Assist Server Filters
    * @request GET:/ai/assist_server_filters
@@ -39,7 +39,7 @@ export namespace Ai {
 
   /**
    * @description Extract Database JSON filters from freetext.
-   * @tags AI
+   * @tags AI Helpers
    * @name AssistDatabaseFiltersAiAssistDatabaseFiltersGet
    * @summary Assist Database Filters
    * @request GET:/ai/assist_database_filters
@@ -58,7 +58,7 @@ export namespace Ai {
 
   /**
    * @description Extract ServerPrice JSON filters from freetext.
-   * @tags AI
+   * @tags AI Helpers
    * @name AssistServerPriceFiltersAiAssistServerPriceFiltersGet
    * @summary Assist Server Price Filters
    * @request GET:/ai/assist_server_price_filters
@@ -77,7 +77,7 @@ export namespace Ai {
 
   /**
    * @description Extract StoragePrice JSON filters from freetext.
-   * @tags AI
+   * @tags AI Helpers
    * @name AssistStoragePriceFiltersAiAssistStoragePriceFiltersGet
    * @summary Assist Storage Price Filters
    * @request GET:/ai/assist_storage_price_filters
@@ -96,7 +96,7 @@ export namespace Ai {
 
   /**
    * @description Extract TrafficPrice JSON filters from freetext.
-   * @tags AI
+   * @tags AI Helpers
    * @name AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGet
    * @summary Assist Traffic Price Filters
    * @request GET:/ai/assist_traffic_price_filters

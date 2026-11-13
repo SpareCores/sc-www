@@ -86,7 +86,7 @@ export class Storages implements OnInit, OnDestroy {
   ];
 
   isCollapsed = false;
-  isLoading = false;
+  isLoading = true;
 
   filterCategories = [
     {

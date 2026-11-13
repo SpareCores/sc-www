@@ -215,7 +215,7 @@ export class ServerPrices implements OnInit, OnDestroy {
 
   modalSearch: any;
 
-  isLoading = false;
+  isLoading = true;
 
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
