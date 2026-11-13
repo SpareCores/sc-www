@@ -101,7 +101,7 @@ We ran `llama.cpp` on 2,106 out of 2,343 tracked servers, benchmarking six model
   </tbody>
 </table>
 
-The infrastructure challenge was real -- a single Docker image that works across CPU-only servers, NVIDIA GPUs, ARM64, and x86_64, with adaptive early termination to keep costs under control.
+The infrastructure challenge was real -- a single Docker image that works across CPU-only servers, NVIDIA GPUs, Arm64, and x86_64, with adaptive early termination to keep costs under control.
 
 Honestly, we spent well over $10k on this project. Unexpected Azure termination issues pushed the Azure bill to over $8k alone, though vendor cloud credits covered it. The results are available on the [Server Navigator](/servers), or embedded in any HTML page, see e.g. the below LLM inference speed chart for the prompt processing of the `g2-standard-4` server:
 
