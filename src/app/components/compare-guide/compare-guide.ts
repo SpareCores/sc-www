@@ -15,7 +15,6 @@ import { CompareGuideItem } from "./compare-guide.types";
   selector: "sc-compare-guide",
   imports: [LucideChevronRight, RouterLink, HeaderAnchor],
   templateUrl: "./compare-guide.html",
-  styleUrl: "./compare-guide.css",
   host: { class: "block" },
 })
 export class CompareGuide {

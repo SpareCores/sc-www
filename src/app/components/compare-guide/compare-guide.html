@@ -5,9 +5,7 @@
       [class]="compare.type === 'card' ? 'bg-secondary rounded-lg px-6' : ''"
     >
       @if (compare.type === "section") {
-        <h2
-          class="section_heading sc-header-anchor-host text-2xl font-semibold"
-        >
+        <h2 class="sc-header-anchor-host text-2xl font-semibold">
           <span>{{ compare.title }}</span>
           @if (compare.id; as id) {
             <sc-header-anchor
