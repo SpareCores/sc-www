@@ -45,7 +45,7 @@ export class DetailsCard {
   anchorId = input<string | null>(null);
   sections = input<DetailsCardSection[]>([]);
   fixedRows = input(true);
-  fullWidthBelowWide = input(false);
+  halfFromXl = input(false);
   rowClass = input("");
   moreLabel = input("View more details");
   lessLabel = input("Show less");

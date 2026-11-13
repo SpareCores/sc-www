@@ -8,11 +8,11 @@
 }
 
 .pagination_controls {
-  @apply flex justify-between items-center mt-12 gap-4 pb-4;
+  @apply flex flex-wrap justify-between items-center mt-12 gap-4 pb-4;
 }
 
 .pagination_nav {
-  @apply flex items-center gap-2;
+  @apply flex items-center gap-2 ml-auto;
 }
 .debug_servers_table {
   tbody {
@@ -35,8 +35,6 @@
     th {
       @apply text-center px-2 py-3 bg-secondary;
 
-      position: sticky;
-      top: 4rem;
       z-index: 40;
       vertical-align: bottom;
       box-shadow: inset 0 -1px 0 var(--color-gray-600);
@@ -63,11 +61,11 @@
     }
   }
 
-  @media (width < theme(--breakpoint-wide)) {
+  @media (width >= theme(--breakpoint-xl)) {
     thead {
       th {
-        position: static;
-        top: auto;
+        position: sticky;
+        top: 4rem;
       }
     }
   }
@@ -87,21 +85,21 @@
 }
 
 .table_scroll_wrapper {
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
-@media (width < theme(--breakpoint-wide)) {
+@media (width >= theme(--breakpoint-xl)) {
   .pagination_controls {
-    @apply flex-wrap;
+    @apply flex-nowrap;
   }
 
   .pagination_nav {
-    @apply ml-auto;
+    @apply ml-0;
   }
 
   .table_scroll_wrapper {
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow: visible;
   }
 }
 
