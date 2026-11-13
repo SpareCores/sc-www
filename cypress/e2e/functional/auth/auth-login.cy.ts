@@ -39,7 +39,7 @@ function expectBookmarkCount(count: number): void {
 
 function expectLoginRejected(email: string, password: string): void {
   submitLoginForm(email, password);
-  cy.get(".auth-modal__error", { timeout: 30000 }).should("be.visible");
+  cy.get(".modal-form__error", { timeout: 30000 }).should("be.visible");
 }
 
 function expectRedirectedFromBookmarks(): void {
@@ -111,10 +111,13 @@ describe("Clerk email login", () => {
     const newPassword = randomClerkTestPassword();
 
     openLoginModal();
-    cy.contains(".auth-modal button", "Forgot password?").click();
+    cy.contains(
+      '[data-testid="auth-modal"] button',
+      "Forgot password?",
+    ).click();
     expectAuthModalStep("Reset your password");
     cy.get('input[name="resetEmailAddress"]').clear().type(user.email);
-    cy.contains(".auth-modal button", "Send code")
+    cy.contains('[data-testid="auth-modal"] button', "Send code")
       .should("not.be.disabled")
       .click();
 
@@ -123,7 +126,7 @@ describe("Clerk email login", () => {
     cy.get('input[name="newPassword"]')
       .clear()
       .type(newPassword, { log: false });
-    cy.contains(".auth-modal button", "Reset password")
+    cy.contains('[data-testid="auth-modal"] button', "Reset password")
       .should("not.be.disabled")
       .click();
     completeDeviceVerificationIfAsked();

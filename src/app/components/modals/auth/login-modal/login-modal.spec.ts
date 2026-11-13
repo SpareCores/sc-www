@@ -1,8 +1,10 @@
+import { Dialog } from "@angular/cdk/dialog";
+import { OverlayContainer } from "@angular/cdk/overlay";
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NgForm } from "@angular/forms";
-import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import { AUTH_MESSAGES, AuthState } from "../../core/auth";
+import { sharedTestingProviders } from "../../../../../testing/testbed.providers";
+import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
 import { LoginModal } from "./login-modal";
 
 type LoginModalInternals = {
@@ -20,6 +22,7 @@ describe("LoginModal", () => {
   let fixture: ComponentFixture<LoginModal>;
   let modal: LoginModalInternals;
   let auth: jasmine.SpyObj<AuthState>;
+  let container: HTMLElement;
   const validForm = { invalid: false } as NgForm;
 
   beforeEach(async () => {
@@ -28,6 +31,7 @@ describe("LoginModal", () => {
       "startPasswordReset",
       "completePasswordReset",
       "abandonLoginAttempt",
+      "closeSignIn",
     ]);
     auth.abandonLoginAttempt.and.resolveTo();
 
@@ -45,19 +49,24 @@ describe("LoginModal", () => {
     fixture = TestBed.createComponent(LoginModal);
     modal = fixture.componentInstance as unknown as LoginModalInternals;
     fixture.detectChanges();
+    container = TestBed.inject(OverlayContainer).getContainerElement();
+  });
+
+  afterEach(() => {
+    TestBed.inject(Dialog).closeAll();
   });
 
   function title(): string {
-    const element: HTMLElement = fixture.nativeElement;
     return (
-      element.querySelector(".auth-modal__title")?.textContent?.trim() ?? ""
+      container
+        .querySelector('[data-testid="auth-modal"] h2')
+        ?.textContent?.trim() ?? ""
     ).replace(/\s+/g, " ");
   }
 
   function errorText(): string {
-    const element: HTMLElement = fixture.nativeElement;
     return (
-      element.querySelector(".auth-modal__error")?.textContent?.trim() ?? ""
+      container.querySelector(".modal-form__error")?.textContent?.trim() ?? ""
     );
   }
 

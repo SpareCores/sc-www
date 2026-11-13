@@ -35,7 +35,7 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
-import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
+import { BookmarkButton } from "../../components/bookmark-button/bookmark-button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import {
   ServerPropertyCard,

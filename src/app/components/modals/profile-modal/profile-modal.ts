@@ -1,13 +1,10 @@
-import { DialogRef } from "@angular/cdk/dialog";
 import { DatePipe, NgTemplateOutlet } from "@angular/common";
 import {
   Component,
-  DestroyRef,
   TemplateRef,
-  effect,
+  computed,
   inject,
   signal,
-  untracked,
   viewChild,
 } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
@@ -27,10 +24,10 @@ import {
   Profile,
   type ProfileResult,
   type ProfileSession,
-} from "../../core/auth";
-import { ModalDialog } from "../../services/modal-dialog";
-import { Button } from "../button/button";
-import { LoadingSpinner } from "../loading-spinner/loading-spinner";
+} from "../../../core/auth";
+import { ModalDialog } from "../../../services/modal-dialog";
+import { Button } from "../../button/button";
+import { LoadingSpinner } from "../../loading-spinner/loading-spinner";
 import { Modal } from "../modal/modal";
 
 type ProfileTab = "account" | "security";
@@ -85,16 +82,14 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     Modal,
   ],
   templateUrl: "./profile-modal.html",
-  styleUrls: ["../auth-modal.css", "./profile-modal.css"],
+  styleUrls: ["../modal-form.css", "./profile-modal.css"],
 })
 export class ProfileModal {
   private readonly auth = inject(AuthState);
   private readonly profileService = inject(Profile);
-  private readonly modalDialog = inject(ModalDialog);
   private readonly modalTemplate = viewChild<TemplateRef<unknown>>(
     "profileModalTemplate",
   );
-  private dialogRef: DialogRef | null = null;
 
   protected readonly profile = this.profileService.profile;
   protected readonly deleteConfirmationText = PROFILE_DELETE_CONFIRMATION;
@@ -127,45 +122,15 @@ export class ProfileModal {
   private pendingReverify: PendingReverify | null = null;
 
   constructor() {
-    effect(() => {
-      const open = this.auth.profileModalOpen();
-      const hasProfile = !!this.profile();
-      const template = this.modalTemplate();
-      untracked(() => {
-        if (!open) {
-          this.closeDialog();
-          this.reset();
-        } else if (hasProfile && template) {
-          this.openDialog(template);
-        }
-      });
+    inject(ModalDialog).bind({
+      open: this.auth.profileModalOpen,
+      template: computed(() =>
+        this.profile() ? this.modalTemplate() : undefined,
+      ),
+      canClose: () => !this.busy(),
+      closed: () => this.auth.closeUserProfile(),
+      reset: () => this.reset(),
     });
-
-    effect(() => {
-      const busy = !!this.busy();
-      if (this.dialogRef) {
-        this.dialogRef.disableClose = busy;
-      }
-    });
-
-    inject(DestroyRef).onDestroy(() => this.closeDialog());
-  }
-
-  private openDialog(template: TemplateRef<unknown>): void {
-    if (this.dialogRef) {
-      return;
-    }
-    const dialogRef = this.modalDialog.open(template);
-    dialogRef.disableClose = !!this.busy();
-    dialogRef.closed.subscribe(() => {
-      this.dialogRef = null;
-      this.auth.closeUserProfile();
-    });
-    this.dialogRef = dialogRef;
-  }
-
-  private closeDialog(): void {
-    this.dialogRef?.close();
   }
 
   protected selectTab(tab: ProfileTab): void {

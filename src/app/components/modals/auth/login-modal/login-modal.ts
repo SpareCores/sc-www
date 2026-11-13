@@ -1,21 +1,33 @@
-import { Component, effect, inject } from "@angular/core";
+import { Component, TemplateRef, inject, viewChild } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
-import { AUTH_MESSAGES, AuthState } from "../../core/auth";
-import { Button } from "../button/button";
-import { LoadingSpinner } from "../loading-spinner/loading-spinner";
+import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
+import { ModalDialog } from "../../../../services/modal-dialog";
+import { Button } from "../../../button/button";
+import { LoadingSpinner } from "../../../loading-spinner/loading-spinner";
+import { Modal } from "../../modal/modal";
 
 type LoginBusy = "submit" | "github" | "reset" | "resend" | "verify";
 type LoginStep = "login" | "second-factor" | "reset-request" | "reset-verify";
 
+const STEP_TITLES: Record<LoginStep, string> = {
+  login: AUTH_MESSAGES.signInTitle,
+  "second-factor": AUTH_MESSAGES.verifyDeviceTitle,
+  "reset-request": AUTH_MESSAGES.resetPasswordTitle,
+  "reset-verify": AUTH_MESSAGES.setNewPasswordTitle,
+};
+
 @Component({
   selector: "sc-login-modal",
-  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner],
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner, Modal],
   templateUrl: "./login-modal.html",
-  styleUrl: "../auth-modal.css",
+  styleUrls: ["../../modal-form.css", "../auth-modal.css"],
 })
 export class LoginModal {
   protected readonly auth = inject(AuthState);
+  protected readonly messages = AUTH_MESSAGES;
+  private readonly modalTemplate =
+    viewChild<TemplateRef<unknown>>("modalTemplate");
 
   protected step: LoginStep = "login";
   protected emailAddress = "";
@@ -33,20 +45,21 @@ export class LoginModal {
     );
   }
 
-  constructor() {
-    effect(() => {
-      if (!this.auth.signInModalOpen()) {
-        this.reset();
-      }
-    });
+  protected get title(): string {
+    return this.isAuthPending
+      ? AUTH_MESSAGES.signingInTitle
+      : STEP_TITLES[this.step];
   }
 
-  protected close(): void {
-    if (this.busy) {
-      return;
-    }
-
-    this.auth.closeSignIn();
+  constructor() {
+    inject(ModalDialog).bind({
+      open: this.auth.signInModalOpen,
+      template: this.modalTemplate,
+      canClose: () => !this.busy,
+      closed: () => this.auth.closeSignIn(),
+      reset: () => this.reset(),
+      closeOnNavigation: false,
+    });
   }
 
   protected canSubmitSecondFactor(): boolean {
