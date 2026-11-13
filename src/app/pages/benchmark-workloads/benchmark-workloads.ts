@@ -39,6 +39,7 @@ import {
 } from "../../../../sdk/data-contracts";
 import { BenchmarkWorkload } from "../../components/benchmark-workload/benchmark-workload";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { ScrollSpy } from "../../directives/scroll-spy";
 import { BenchmarkWorkloadsSidebar } from "../../components/benchmark-workloads-sidebar/benchmark-workloads-sidebar";
 import {
@@ -60,6 +61,7 @@ type RawBenchmarkWorkloadConfig = {
   selector: "sc-benchmark-workloads",
   imports: [
     Breadcrumbs,
+    HeaderAnchor,
     LucideBot,
     LucideBoxes,
     LucideCpu,
