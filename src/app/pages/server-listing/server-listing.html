@@ -165,501 +165,515 @@
           </div>
         </div>
         <div>
-          <div
-            class="w-full overflow-x-auto relative pl-px"
-            [class.min-h-80]="isLoading && !servers.length"
-          >
-            @if (isLoading) {
-              <div class="absolute top-0 left-0 w-full h-full bg-black/20">
-                <div class="flex justify-center mt-16 opacity-100">
-                  <sc-loading-spinner size="lg"></sc-loading-spinner>
-                </div>
-              </div>
-            }
-            <table
-              class="sc-table sc-table--compact sc-table--interactive w-full"
-              id="servers_table"
-            >
-              <thead>
-                <tr>
-                  <th class="sc-table__checkbox">
-                    <div class="text-white">
-                      <svg lucideScale class="h-4 w-4"></svg>
-                    </div>
-                  </th>
-                  <th class="favorite_column"></th>
-                  @for (column of tableColumns; track column.name) {
-                    <th
-                      [class.cursor-pointer]="column.orderField"
-                      (click)="toggleOrdering(column)"
-                    >
-                      <div class="flex gap-1 whitespace-nowrap">
-                        {{ column.name }}
-                        @if (column.info) {
-                          <svg
-                            lucideInfo
-                            (mouseenter)="showTooltip($event, column.info)"
-                            (mouseleave)="hideTooltip()"
-                            class="h-4 w-4 text-gray-200"
-                          ></svg>
-                        }
-                        @if (getOrderingIcon(column)) {
-                          <svg
-                            [lucideIcon]="getOrderingIcon(column)"
-                            class="h-4 w-4 text-white"
-                          ></svg>
-                        }
+          <div class="relative">
+            <div class="w-full overflow-x-auto pl-px">
+              <table
+                class="sc-table sc-table--compact sc-table--interactive w-full"
+                id="servers_table"
+              >
+                <thead>
+                  <tr>
+                    <th class="sc-table__checkbox">
+                      <div class="text-white">
+                        <svg lucideScale class="h-4 w-4"></svg>
                       </div>
                     </th>
-                  }
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (
-                  item of servers;
-                  track item.vendor_id + "_" + item.server_id;
-                  let i = $index
-                ) {
-                  <tr
-                    (click)="openServerDetails(item)"
-                    data-ph-capture-attribute-sc-event="server listing route to server details"
-                    [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                      item.vendor_id
-                    "
-                    [attr.data-ph-capture-attribute-server-listing-row-index]="
-                      i + 1
-                    "
-                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                      limit
-                    "
-                    class="server_table_data_line"
-                  >
-                    <td
-                      (click)="toggleCompare2($event, item)"
-                      class="sc-table__checkbox"
-                    >
-                      <div class="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="server_compare_checkbox_{{ item.server_id }}"
-                          [(ngModel)]="item.selected"
-                          (ngModelChange)="toggleCompare($event, item)"
-                          (click)="$event.stopPropagation()"
-                          [disabled]="
-                            isCompareCheckboxDisabled(!!item.selected, item)
-                          "
-                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-                        />
-                      </div>
-                    </td>
-                    <td
-                      class="favorite_column"
-                      (click)="$event.stopPropagation()"
-                    >
-                      <sc-bookmark-button
-                        kind="server"
-                        [vendorId]="item.vendor_id"
-                        [entityId]="item.api_reference"
-                      ></sc-bookmark-button>
-                    </td>
+                    <th class="favorite_column"></th>
                     @for (column of tableColumns; track column.name) {
-                      @if (column.type === "name") {
-                        <td>
-                          <div (click)="$event.stopPropagation()">
-                            <a
-                              routerLink="/server/{{ item.vendor.vendor_id }}/{{
-                                item.api_reference
-                              }}"
-                              data-ph-capture-attribute-sc-event="server listing route to server details"
-                              [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                                item.vendor_id
-                              "
-                              [attr.data-ph-capture-attribute-server-listing-row-index]="
-                                i + 1
-                              "
-                              [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                                limit
-                              "
-                            >
-                              <div class="text-sm text-white flex gap-1">
-                                <span class="whitespace-nowrap"
-                                  >{{ item.display_name }}
-                                </span>
-                                @if (showAPIReference(item)) {
-                                  <span class="text-emerald-400">|</span>
+                      <th
+                        [class.cursor-pointer]="column.orderField"
+                        (click)="toggleOrdering(column)"
+                      >
+                        <div class="flex gap-1 whitespace-nowrap">
+                          {{ column.name }}
+                          @if (column.info) {
+                            <svg
+                              lucideInfo
+                              (mouseenter)="showTooltip($event, column.info)"
+                              (mouseleave)="hideTooltip()"
+                              class="h-4 w-4 text-gray-200"
+                            ></svg>
+                          }
+                          @if (getOrderingIcon(column)) {
+                            <svg
+                              [lucideIcon]="getOrderingIcon(column)"
+                              class="h-4 w-4 text-white"
+                            ></svg>
+                          }
+                        </div>
+                      </th>
+                    }
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (
+                    item of servers;
+                    track item.vendor_id + "_" + item.server_id;
+                    let i = $index
+                  ) {
+                    <tr
+                      (click)="openServerDetails(item)"
+                      data-ph-capture-attribute-sc-event="server listing route to server details"
+                      [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                        item.vendor_id
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-row-index]="
+                        i + 1
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                        limit
+                      "
+                      class="server_table_data_line"
+                    >
+                      <td
+                        (click)="toggleCompare2($event, item)"
+                        class="sc-table__checkbox"
+                      >
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="server_compare_checkbox_{{ item.server_id }}"
+                            [(ngModel)]="item.selected"
+                            (ngModelChange)="toggleCompare($event, item)"
+                            (click)="$event.stopPropagation()"
+                            [disabled]="
+                              isCompareCheckboxDisabled(!!item.selected, item)
+                            "
+                            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                          />
+                        </div>
+                      </td>
+                      <td
+                        class="favorite_column"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <sc-bookmark-button
+                          kind="server"
+                          [vendorId]="item.vendor_id"
+                          [entityId]="item.api_reference"
+                        ></sc-bookmark-button>
+                      </td>
+                      @for (column of tableColumns; track column.name) {
+                        @if (column.type === "name") {
+                          <td>
+                            <div (click)="$event.stopPropagation()">
+                              <a
+                                routerLink="/server/{{
+                                  item.vendor.vendor_id
+                                }}/{{ item.api_reference }}"
+                                data-ph-capture-attribute-sc-event="server listing route to server details"
+                                [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                                  item.vendor_id
+                                "
+                                [attr.data-ph-capture-attribute-server-listing-row-index]="
+                                  i + 1
+                                "
+                                [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                                  limit
+                                "
+                              >
+                                <div class="text-sm text-white flex gap-1">
                                   <span class="whitespace-nowrap"
-                                    >{{ item.api_reference }}
+                                    >{{ item.display_name }}
                                   </span>
-                                }
+                                  @if (showAPIReference(item)) {
+                                    <span class="text-emerald-400">|</span>
+                                    <span class="whitespace-nowrap"
+                                      >{{ item.api_reference }}
+                                    </span>
+                                  }
+                                </div>
+                                <div class="text-xs text-white flex gap-1">
+                                  <span>{{ item.vendor_id }}</span>
+                                </div>
+                              </a>
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "processor") {
+                          <td>
+                            <div class="text-sm text-white whitespace-nowrap">
+                              {{ item.vcpus }} vCPUs ({{
+                                item.cpu_architecture
+                              }})
+                            </div>
+                            <div class="flex gap-1">
+                              @if (item.cpu_cores && item.cpu_speed) {
+                                <div class="text-xs text-white flex gap-1">
+                                  <span class="whitespace-nowrap"
+                                    >{{ item.cpu_cores }} cores &#64;
+                                    {{ item.cpu_speed }} GHz</span
+                                  >
+                                </div>
+                              }
+                              @if (
+                                item.cpu_allocation &&
+                                item.cpu_allocation !== "Dedicated"
+                              ) {
+                                <div class="text-xs text-white flex gap-1">
+                                  <span>({{ item.cpu_allocation }})</span>
+                                </div>
+                              }
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "price") {
+                          <td>
+                            @let priceValue = item[column.key || "price"];
+                            @if (
+                              priceValue !== null && priceValue !== undefined
+                            ) {
+                              <div class="text-sm text-white whitespace-nowrap">
+                                {{ priceValue }}
+                                {{ displayedCurrency.slug }}
                               </div>
-                              <div class="text-xs text-white flex gap-1">
-                                <span>{{ item.vendor_id }}</span>
-                              </div>
-                            </a>
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "processor") {
-                        <td>
-                          <div class="text-sm text-white whitespace-nowrap">
-                            {{ item.vcpus }} vCPUs ({{ item.cpu_architecture }})
-                          </div>
-                          <div class="flex gap-1">
-                            @if (item.cpu_cores && item.cpu_speed) {
+                            } @else {
+                              <div class="text-sm text-white">-</div>
+                            }
+                          </td>
+                        }
+                        @if (column.type === "score") {
+                          <td>
+                            <div class="text-sm text-white whitespace-nowrap">
+                              {{ getScore(item.score) }}
+                            </div>
+                            @if (item.score_per_price) {
                               <div class="text-xs text-white flex gap-1">
                                 <span class="whitespace-nowrap"
-                                  >{{ item.cpu_cores }} cores &#64;
-                                  {{ item.cpu_speed }} GHz</span
+                                  >{{ getScore(item.score_per_price) }} /
+                                  USD</span
                                 >
                               </div>
                             }
-                            @if (
-                              item.cpu_allocation &&
-                              item.cpu_allocation !== "Dedicated"
-                            ) {
+                          </td>
+                        }
+                        @if (column.type === "benchmark") {
+                          <td>
+                            <div class="text-sm text-white whitespace-nowrap">
+                              {{ getScore(item.selected_benchmark_score) }}
+                            </div>
+                            @if (item.selected_benchmark_score) {
                               <div class="text-xs text-white flex gap-1">
-                                <span>({{ item.cpu_allocation }})</span>
+                                <span class="whitespace-nowrap">{{
+                                  selectedBenchmarkConfig.short_unit
+                                }}</span>
                               </div>
                             }
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "price") {
-                        <td>
-                          @let priceValue = item[column.key || "price"];
-                          @if (
-                            priceValue !== null && priceValue !== undefined
-                          ) {
-                            <div class="text-sm text-white whitespace-nowrap">
-                              {{ priceValue }}
-                              {{ displayedCurrency.slug }}
-                            </div>
-                          } @else {
-                            <div class="text-sm text-white">-</div>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "score") {
-                        <td>
-                          <div class="text-sm text-white whitespace-nowrap">
-                            {{ getScore(item.score) }}
-                          </div>
-                          @if (item.score_per_price) {
-                            <div class="text-xs text-white flex gap-1">
+                          </td>
+                        }
+                        @if (column.type === "score_per_price") {
+                          <td>
+                            @if (item.score_per_price) {
                               <span class="whitespace-nowrap"
                                 >{{ getScore(item.score_per_price) }} /
                                 USD</span
                               >
-                            </div>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "benchmark") {
-                        <td>
-                          <div class="text-sm text-white whitespace-nowrap">
-                            {{ getScore(item.selected_benchmark_score) }}
-                          </div>
-                          @if (item.selected_benchmark_score) {
-                            <div class="text-xs text-white flex gap-1">
-                              <span class="whitespace-nowrap">{{
-                                selectedBenchmarkConfig.short_unit
-                              }}</span>
-                            </div>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "score_per_price") {
-                        <td>
-                          @if (item.score_per_price) {
-                            <span class="whitespace-nowrap"
-                              >{{ getScore(item.score_per_price) }} / USD</span
-                            >
-                          }
-                          @if (!item.score_per_price) {
-                            <span>-</span>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "benchmark_score_per_price") {
-                        <td>
-                          @if (item.selected_benchmark_score_per_price) {
-                            <span class="whitespace-nowrap"
-                              >{{
-                                getScore(
-                                  item.selected_benchmark_score_per_price
-                                )
-                              }}
-                              {{
-                                selectedBenchmarkConfig.unit_abbreviation
-                              }}</span
-                            >
-                            <div class="text-xs text-white flex gap-1">
-                              <span class="whitespace-nowrap">for $1/hour</span>
-                            </div>
-                          } @else {
-                            <span>-</span>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "memory") {
-                        <td>
-                          <div class="text-sm text-white">
-                            {{ getMemory(item) }}
-                          </div>
-                          @if (item.memory_speed) {
-                            <div class="text-xs text-white flex gap-1">
-                              @if (!item.memory_generation) {
+                            }
+                            @if (!item.score_per_price) {
+                              <span>-</span>
+                            }
+                          </td>
+                        }
+                        @if (column.type === "benchmark_score_per_price") {
+                          <td>
+                            @if (item.selected_benchmark_score_per_price) {
+                              <span class="whitespace-nowrap"
+                                >{{
+                                  getScore(
+                                    item.selected_benchmark_score_per_price
+                                  )
+                                }}
+                                {{
+                                  selectedBenchmarkConfig.unit_abbreviation
+                                }}</span
+                              >
+                              <div class="text-xs text-white flex gap-1">
                                 <span class="whitespace-nowrap"
-                                  >{{ item.memory_speed }} MHz</span
+                                  >for $1/hour</span
                                 >
-                              }
-                              @if (item.memory_generation) {
-                                <span class="whitespace-nowrap"
-                                  >{{ item.memory_speed }} MHz ({{
-                                    item.memory_generation
-                                  }})</span
-                                >
-                              }
-                            </div>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "accelerator_memory_min") {
-                        <td>
-                          {{ item.accelerator_memory_min | acceleratorMemory }}
-                        </td>
-                      }
-                      @if (column.type === "accelerator_memory_total") {
-                        <td>
-                          {{
-                            item.accelerator_memory_total | acceleratorMemory
-                          }}
-                        </td>
-                      }
-                      @if (column.type === "storage") {
-                        <td>
-                          <div class="text-sm text-white">
-                            {{ item.storage_size | storage }}
-                          </div>
-                          @if (item.storage_type) {
-                            <div class="text-xs text-white">
-                              <span>{{ item.storage_type }}</span>
-                            </div>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "accelerator") {
-                        <td>
-                          <div class="text-sm text-white">
-                            {{ item.accelerator_count | acceleratorCount }}
-                          </div>
-                          @if (item.accelerator_model) {
-                            <div class="text-xs text-white flex gap-1">
-                              <span>{{ item.accelerator_model }}</span>
-                            </div>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "cpu_cache") {
-                        <td>
-                          @if (
-                            item.cpu_l1d_cache ||
-                            item.cpu_l2_cache ||
-                            item.cpu_l3_cache
-                          ) {
-                            <div class="text-xs text-white whitespace-nowrap">
-                              L1: {{ item.cpu_l1d_cache | cpuCacheSize }}
-                            </div>
-                            <div class="text-xs text-white whitespace-nowrap">
-                              L2: {{ item.cpu_l2_cache | cpuCacheSize }}
-                            </div>
-                            <div class="text-xs text-white whitespace-nowrap">
-                              L3: {{ item.cpu_l3_cache | cpuCacheSize }}
-                            </div>
-                          } @else {
-                            <div class="text-sm text-white">-</div>
-                          }
-                        </td>
-                      }
-                      @if (column.type === "cpu_model") {
-                        <td>
-                          @if (item.cpu_model) {
-                            <div class="text-sm text-white flex gap-1">
-                              <span>{{ item.cpu_model }}</span>
-                            </div>
-                          }
-                          <div class="text-xs text-white">
-                            @if (item.cpu_manufacturer) {
-                              <span>{{ item.cpu_manufacturer }} </span>
-                            }
-                            @if (item.cpu_family) {
-                              <span>{{ item.cpu_family }} </span>
-                            }
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "accelerator_model") {
-                        <td>
-                          @if (item.accelerator_model) {
-                            <div class="text-sm text-white flex gap-1">
-                              <span>{{ item.accelerator_model }}</span>
-                            </div>
-                          }
-                          <div class="text-xs text-white">
-                            @if (item.accelerator_manufacturer) {
-                              <span>{{ item.accelerator_manufacturer }} </span>
-                            }
-                            @if (item.accelerator_family) {
-                              <span>{{ item.accelerator_family }} </span>
-                            }
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "network_speed") {
-                        <td>
-                          <div class="flex flex-col text-white">
-                            <span class="whitespace-nowrap">
-                              Base {{ formatGbps(item.network_speed_baseline) }}
-                            </span>
-                            <span class="whitespace-nowrap text-xs">
-                              Max {{ formatGbps(item.network_speed_max) }}
-                            </span>
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "storage_speed") {
-                        <td>
-                          <div class="flex flex-col text-white">
-                            <span class="whitespace-nowrap">
-                              Base
-                              {{
-                                formatGbps(item.network_storage_speed_baseline)
-                              }}
-                            </span>
-                            <span class="whitespace-nowrap text-xs">
-                              Max
-                              {{ formatGbps(item.network_storage_speed_max) }}
-                            </span>
-                          </div>
-                        </td>
-                      }
-                      @if (
-                        column.type === "text" &&
-                        column.key === "inbound_traffic"
-                      ) {
-                        <td>
-                          <span class="whitespace-nowrap">
-                            {{ item.inbound_traffic | monthlyTraffic }}
-                          </span>
-                        </td>
-                      }
-                      @if (
-                        column.type === "text" &&
-                        column.key === "outbound_traffic"
-                      ) {
-                        <td>
-                          <span class="whitespace-nowrap">
-                            {{ item.outbound_traffic | monthlyTraffic }}
-                          </span>
-                        </td>
-                      }
-                      @if (column.type === "text" && column.key === "ipv4") {
-                        <td>
-                          <span class="whitespace-nowrap">
-                            {{ item.ipv4 | ipv4Count }}
-                          </span>
-                        </td>
-                      }
-                      @if (
-                        column.type === "text" &&
-                        column.key &&
-                        column.key !== "inbound_traffic" &&
-                        column.key !== "outbound_traffic" &&
-                        column.key !== "ipv4"
-                      ) {
-                        <td>
-                          <div class="flex items-center justify-center">
-                            @let fieldValue = getField(item, column.key);
-                            @if (fieldValue === true) {
-                              <svg
-                                lucideCheck
-                                class="h-4 w-4 shrink-0 text-emerald-400"
-                              ></svg>
-                            } @else if (fieldValue === false) {
-                              <svg
-                                lucideX
-                                class="h-4 w-4 shrink-0 text-white"
-                              ></svg>
-                            } @else if (
-                              fieldValue === null ||
-                              fieldValue === undefined ||
-                              (typeof fieldValue === "string" &&
-                                fieldValue.trim().toLowerCase() === "none")
-                            ) {
-                              -
+                              </div>
                             } @else {
-                              {{ fieldValue }}
+                              <span>-</span>
                             }
-                          </div>
-                        </td>
-                      }
-                      @if (column.type === "vendor") {
-                        <td>
-                          @if (item.vendor.logo) {
-                            <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-                              <img
-                                [src]="item.vendor.logo"
-                                alt="{{ item.vendor.name }} logo"
-                              />
+                          </td>
+                        }
+                        @if (column.type === "memory") {
+                          <td>
+                            <div class="text-sm text-white">
+                              {{ getMemory(item) }}
                             </div>
-                          }
-                          @if (!item.vendor.logo) {
-                            <div class="text-white text-sm">
-                              {{ item.vendor.name }}
+                            @if (item.memory_speed) {
+                              <div class="text-xs text-white flex gap-1">
+                                @if (!item.memory_generation) {
+                                  <span class="whitespace-nowrap"
+                                    >{{ item.memory_speed }} MHz</span
+                                  >
+                                }
+                                @if (item.memory_generation) {
+                                  <span class="whitespace-nowrap"
+                                    >{{ item.memory_speed }} MHz ({{
+                                      item.memory_generation
+                                    }})</span
+                                  >
+                                }
+                              </div>
+                            }
+                          </td>
+                        }
+                        @if (column.type === "accelerator_memory_min") {
+                          <td>
+                            {{
+                              item.accelerator_memory_min | acceleratorMemory
+                            }}
+                          </td>
+                        }
+                        @if (column.type === "accelerator_memory_total") {
+                          <td>
+                            {{
+                              item.accelerator_memory_total | acceleratorMemory
+                            }}
+                          </td>
+                        }
+                        @if (column.type === "storage") {
+                          <td>
+                            <div class="text-sm text-white">
+                              {{ item.storage_size | storage }}
                             </div>
-                          }
-                        </td>
+                            @if (item.storage_type) {
+                              <div class="text-xs text-white">
+                                <span>{{ item.storage_type }}</span>
+                              </div>
+                            }
+                          </td>
+                        }
+                        @if (column.type === "accelerator") {
+                          <td>
+                            <div class="text-sm text-white">
+                              {{ item.accelerator_count | acceleratorCount }}
+                            </div>
+                            @if (item.accelerator_model) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span>{{ item.accelerator_model }}</span>
+                              </div>
+                            }
+                          </td>
+                        }
+                        @if (column.type === "cpu_cache") {
+                          <td>
+                            @if (
+                              item.cpu_l1d_cache ||
+                              item.cpu_l2_cache ||
+                              item.cpu_l3_cache
+                            ) {
+                              <div class="text-xs text-white whitespace-nowrap">
+                                L1: {{ item.cpu_l1d_cache | cpuCacheSize }}
+                              </div>
+                              <div class="text-xs text-white whitespace-nowrap">
+                                L2: {{ item.cpu_l2_cache | cpuCacheSize }}
+                              </div>
+                              <div class="text-xs text-white whitespace-nowrap">
+                                L3: {{ item.cpu_l3_cache | cpuCacheSize }}
+                              </div>
+                            } @else {
+                              <div class="text-sm text-white">-</div>
+                            }
+                          </td>
+                        }
+                        @if (column.type === "cpu_model") {
+                          <td>
+                            @if (item.cpu_model) {
+                              <div class="text-sm text-white flex gap-1">
+                                <span>{{ item.cpu_model }}</span>
+                              </div>
+                            }
+                            <div class="text-xs text-white">
+                              @if (item.cpu_manufacturer) {
+                                <span>{{ item.cpu_manufacturer }} </span>
+                              }
+                              @if (item.cpu_family) {
+                                <span>{{ item.cpu_family }} </span>
+                              }
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "accelerator_model") {
+                          <td>
+                            @if (item.accelerator_model) {
+                              <div class="text-sm text-white flex gap-1">
+                                <span>{{ item.accelerator_model }}</span>
+                              </div>
+                            }
+                            <div class="text-xs text-white">
+                              @if (item.accelerator_manufacturer) {
+                                <span
+                                  >{{ item.accelerator_manufacturer }}
+                                </span>
+                              }
+                              @if (item.accelerator_family) {
+                                <span>{{ item.accelerator_family }} </span>
+                              }
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "network_speed") {
+                          <td>
+                            <div class="flex flex-col text-white">
+                              <span class="whitespace-nowrap">
+                                Base
+                                {{ formatGbps(item.network_speed_baseline) }}
+                              </span>
+                              <span class="whitespace-nowrap text-xs">
+                                Max {{ formatGbps(item.network_speed_max) }}
+                              </span>
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "storage_speed") {
+                          <td>
+                            <div class="flex flex-col text-white">
+                              <span class="whitespace-nowrap">
+                                Base
+                                {{
+                                  formatGbps(
+                                    item.network_storage_speed_baseline
+                                  )
+                                }}
+                              </span>
+                              <span class="whitespace-nowrap text-xs">
+                                Max
+                                {{ formatGbps(item.network_storage_speed_max) }}
+                              </span>
+                            </div>
+                          </td>
+                        }
+                        @if (
+                          column.type === "text" &&
+                          column.key === "inbound_traffic"
+                        ) {
+                          <td>
+                            <span class="whitespace-nowrap">
+                              {{ item.inbound_traffic | monthlyTraffic }}
+                            </span>
+                          </td>
+                        }
+                        @if (
+                          column.type === "text" &&
+                          column.key === "outbound_traffic"
+                        ) {
+                          <td>
+                            <span class="whitespace-nowrap">
+                              {{ item.outbound_traffic | monthlyTraffic }}
+                            </span>
+                          </td>
+                        }
+                        @if (column.type === "text" && column.key === "ipv4") {
+                          <td>
+                            <span class="whitespace-nowrap">
+                              {{ item.ipv4 | ipv4Count }}
+                            </span>
+                          </td>
+                        }
+                        @if (
+                          column.type === "text" &&
+                          column.key &&
+                          column.key !== "inbound_traffic" &&
+                          column.key !== "outbound_traffic" &&
+                          column.key !== "ipv4"
+                        ) {
+                          <td>
+                            <div class="flex items-center justify-center">
+                              @let fieldValue = getField(item, column.key);
+                              @if (fieldValue === true) {
+                                <svg
+                                  lucideCheck
+                                  class="h-4 w-4 shrink-0 text-emerald-400"
+                                ></svg>
+                              } @else if (fieldValue === false) {
+                                <svg
+                                  lucideX
+                                  class="h-4 w-4 shrink-0 text-white"
+                                ></svg>
+                              } @else if (
+                                fieldValue === null ||
+                                fieldValue === undefined ||
+                                (typeof fieldValue === "string" &&
+                                  fieldValue.trim().toLowerCase() === "none")
+                              ) {
+                                -
+                              } @else {
+                                {{ fieldValue }}
+                              }
+                            </div>
+                          </td>
+                        }
+                        @if (column.type === "vendor") {
+                          <td>
+                            @if (item.vendor.logo) {
+                              <div
+                                class="w-9 h-9 px-1 py-1 bg-white rounded-lg"
+                              >
+                                <img
+                                  [src]="item.vendor.logo"
+                                  alt="{{ item.vendor.name }} logo"
+                                />
+                              </div>
+                            }
+                            @if (!item.vendor.logo) {
+                              <div class="text-white text-sm">
+                                {{ item.vendor.name }}
+                              </div>
+                            }
+                          </td>
+                        }
                       }
-                    }
-                    <td>
-                      <div (click)="$event.stopPropagation()">
-                        <a
-                          routerLink="/server/{{ item.vendor.vendor_id }}/{{
-                            item.api_reference
-                          }}"
-                          data-ph-capture-attribute-sc-event="server listing route to server details"
-                          [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                            item.vendor_id
-                          "
-                          [attr.data-ph-capture-attribute-server-listing-row-index]="
-                            i + 1
-                          "
-                          [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                            limit
-                          "
-                        >
-                          <svg
-                            lucideChevronRight
-                            class="h-6 w-6 text-emerald-400"
-                          ></svg>
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                }
-                @if (!servers.length && !isLoading) {
-                  <tr>
-                    <td
-                      [attr.colspan]="tableColumns.length + 2"
-                      class="text-gray-400"
-                    >
-                      No servers match the selected filters.
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+                      <td>
+                        <div (click)="$event.stopPropagation()">
+                          <a
+                            routerLink="/server/{{ item.vendor.vendor_id }}/{{
+                              item.api_reference
+                            }}"
+                            data-ph-capture-attribute-sc-event="server listing route to server details"
+                            [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                              item.vendor_id
+                            "
+                            [attr.data-ph-capture-attribute-server-listing-row-index]="
+                              i + 1
+                            "
+                            [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                              limit
+                            "
+                          >
+                            <svg
+                              lucideChevronRight
+                              class="h-6 w-6 text-emerald-400"
+                            ></svg>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                  @if (!servers.length) {
+                    <tr>
+                      <td
+                        [attr.colspan]="tableColumns.length + 2"
+                        class="sc-table-empty-cell"
+                        [class.invisible]="isLoading"
+                      >
+                        No servers match the selected filters.
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            @if (isLoading) {
+              <div class="sc-table-loading-overlay">
+                <div class="sc-table-loading-overlay__spinner">
+                  <sc-loading-spinner size="lg"></sc-loading-spinner>
+                </div>
+              </div>
+            }
           </div>
           <div>
             <div class="flex justify-between mt-4 flex-wrap gap-4">

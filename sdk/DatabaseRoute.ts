@@ -215,6 +215,7 @@ export namespace Database {
         | "azure~koreasouth"
         | "azure~malaysiawest"
         | "azure~mexicocentral"
+        | "azure~newzealandnorth"
         | "azure~northcentralus"
         | "azure~northeurope"
         | "azure~norwayeast"

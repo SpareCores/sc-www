@@ -26,7 +26,7 @@ export function loadAdvisorExample(): void {
   cy.get(
     "#advisor_results_table tbody tr:not(.advisor-empty-state-row)",
   ).should("have.length.greaterThan", 0);
-  cy.get(".advisor-table-loading-overlay").should("not.exist");
+  cy.get(".sc-table-loading-overlay").should("not.exist");
 }
 
 export function openPageHeaderSaveModal(modalId: string): void {

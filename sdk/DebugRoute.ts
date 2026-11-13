@@ -15,7 +15,7 @@ import { GetDebugInfoDebugGetData } from "./data-contracts";
 export namespace Debug {
   /**
    * @description Return debug information about the availability of benchmark scores for servers. Returns vendor-level statistics (active priced servers split into evaluated vs missing), per-server details, and a list of all benchmark families.
-   * @tags Administrative endpoints
+   * @tags Administrative Endpoints
    * @name GetDebugInfoDebugGet
    * @summary Get Debug Info
    * @request GET:/debug
