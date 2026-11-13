@@ -27,3 +27,8 @@
 .property_value ::ng-deep ul li {
   margin-bottom: 0.25rem;
 }
+
+.sc-kv-table thead th,
+.sc-kv-table tbody td {
+  @apply px-0 md:px-5;
+}
