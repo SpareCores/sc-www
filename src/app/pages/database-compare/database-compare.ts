@@ -159,6 +159,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
       comparisonTitle: DATABASE_COMPARISON_TITLE,
       baselineIdParam: "baseline_database",
       keywords: DATABASE_COMPARE_KEYWORDS,
+      premadeComparisons: databaseComparesData,
     },
     {
       instances: () => this.getCompareInstancesForSave(),
@@ -541,19 +542,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
         this.applyBaselineFromQuery();
         const specialId = this.route.snapshot.paramMap.get("id");
         if (specialId && !this.comparePage.exactSavedComparison()) {
-          const specialCompare = this.databaseCompares.find(
-            (x: any) => x.id === specialId,
-          );
-          if (specialCompare) {
-            this.comparePage.applyComparisonChrome(
-              specialCompare.title,
-              specialCompare.description,
-            );
-            this.comparePage.setPremadeBreadcrumb(
-              specialCompare.title,
-              specialCompare.id,
-            );
-          }
+          this.comparePage.applyPremadeComparisonPageInfo(specialId);
         }
         this.compareDataReady = true;
         this.comparePage.finishLoadIfReady();

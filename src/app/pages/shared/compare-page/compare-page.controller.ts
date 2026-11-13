@@ -245,11 +245,22 @@ export class ComparePageController {
     ];
   }
 
-  setPremadeBreadcrumb(title: string, id: string): void {
+  applyPremadeComparisonPageInfo(id: string): void {
+    const premade = this.config.premadeComparisons.find(
+      (item) => item.id === id,
+    );
+    if (!premade) {
+      return;
+    }
+
+    this.title = premade.title;
+    this.description = premade.description || this.config.guideDescription;
+    this.bookmarkSource = null;
     this.breadcrumbs = [
       ...this.baseBreadcrumbs(),
-      { name: title, url: `${this.config.comparePath}/${id}` },
+      { name: premade.title, url: `${this.config.comparePath}/${id}` },
     ];
+    this.updateSeo();
   }
 
   setCustomBreadcrumb(count: number): void {
@@ -268,13 +279,6 @@ export class ComparePageController {
 
   applyGuideChrome(): void {
     this.applyChrome(this.config.guideTitle, this.config.guideDescription);
-  }
-
-  applyComparisonChrome(title?: string, description?: string): void {
-    this.applyChrome(
-      title || this.config.comparisonTitle,
-      description || this.config.guideDescription,
-    );
   }
 
   updateSeo(): void {
@@ -309,7 +313,9 @@ export class ComparePageController {
       return;
     }
 
-    if (this.route.snapshot.paramMap.get("id")) {
+    const premadeId = this.route.snapshot.paramMap.get("id");
+    if (premadeId) {
+      this.applyPremadeComparisonPageInfo(premadeId);
       return;
     }
 

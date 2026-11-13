@@ -3,6 +3,8 @@ import { ActivatedRoute, convertToParamMap } from "@angular/router";
 import { of } from "rxjs";
 
 import { ComparePageController } from "./compare-page.controller";
+import { CompareCollections } from "../../../collections/compare-collections";
+import type { SavedComparisonItem } from "../../../collections/collections.types";
 import { ComparePageHost } from "./compare-page.types";
 import { availableCurrencies } from "../../../tools/shared_data";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
@@ -10,15 +12,20 @@ import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 describe("ComparePageController", () => {
   let controller: ComparePageController;
   let host: ComparePageHost;
+  let routeSnapshot: {
+    paramMap: ReturnType<typeof convertToParamMap>;
+    queryParams: Record<string, string>;
+  };
 
   beforeEach(() => {
+    routeSnapshot = { paramMap: convertToParamMap({}), queryParams: {} };
     TestBed.configureTestingModule({
       providers: [
         ...sharedTestingProviders,
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { paramMap: convertToParamMap({}), queryParams: {} },
+            snapshot: routeSnapshot,
             paramMap: of(convertToParamMap({})),
             queryParamMap: of(convertToParamMap({})),
           },
@@ -51,6 +58,13 @@ describe("ComparePageController", () => {
             comparisonTitle: "Comparison",
             baselineIdParam: "baseline_database",
             keywords: "databases",
+            premadeComparisons: [
+              {
+                id: "premade-1",
+                title: "Premade",
+                description: "Premade description",
+              },
+            ],
           },
           host,
         ),
@@ -84,5 +98,30 @@ describe("ComparePageController", () => {
         queryParams: { instances: "abc" },
       }),
     );
+  });
+
+  it("restores the premade chrome after its bookmark is deleted", () => {
+    routeSnapshot.paramMap = convertToParamMap({ id: "premade-1" });
+    const savedComparisonByUrls = spyOn(
+      TestBed.inject(CompareCollections),
+      "savedComparisonByUrls",
+    ).and.returnValue({
+      id: "saved-1",
+      name: "My comparison",
+      compare_url: "/databases/compare/premade-1",
+    } as SavedComparisonItem);
+
+    controller.syncSavedComparisonChrome();
+    expect(controller.title).toBe("My comparison");
+
+    savedComparisonByUrls.and.returnValue(null);
+    controller.syncSavedComparisonChrome();
+
+    expect(controller.title).toBe("Premade");
+    expect(controller.description).toBe("Premade description");
+    expect(controller.breadcrumbs.at(-1)).toEqual({
+      name: "Premade",
+      url: "/databases/compare/premade-1",
+    });
   });
 });

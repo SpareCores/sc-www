@@ -133,6 +133,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
       comparisonTitle: SERVER_COMPARISON_TITLE,
       baselineIdParam: "baseline_server",
       keywords: SERVER_COMPARE_KEYWORDS,
+      premadeComparisons: serverComparesData,
     },
     {
       instances: () => this.getCompareInstancesForSave(),
@@ -701,19 +702,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
           this.restoreBaselineFromUrl();
           const specialId = this.route.snapshot.paramMap.get("id");
           if (specialId && !this.comparePage.exactSavedComparison()) {
-            const serverCompare = this.serverCompares.find(
-              (x: any) => x.id === specialId,
-            );
-            if (serverCompare) {
-              this.comparePage.applyComparisonChrome(
-                serverCompare.title,
-                serverCompare.description,
-              );
-              this.comparePage.setPremadeBreadcrumb(
-                serverCompare.title,
-                serverCompare.id,
-              );
-            }
+            this.comparePage.applyPremadeComparisonPageInfo(specialId);
           }
           this.compareDataReady = true;
           this.comparePage.finishLoadIfReady();
