@@ -2,8 +2,16 @@
 
 .content_section {
   @apply text-white;
-  padding: 4rem 2rem;
+  padding-block: 3rem;
+  padding-inline: max(1rem, env(safe-area-inset-left))
+    max(1rem, env(safe-area-inset-right));
   border-top: 1px solid var(--color-emerald-400);
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-block: 4rem;
+    padding-inline: max(2rem, env(safe-area-inset-left))
+      max(2rem, env(safe-area-inset-right));
+  }
 }
 
 .content_section--flush {
@@ -46,6 +54,24 @@
 .animated_slot_machine {
   position: relative;
   width: 560px;
+  zoom: 0.5;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    zoom: 0.75;
+  }
+
+  @media (width >= theme(--breakpoint-md)) {
+    zoom: 1;
+  }
+
+  @media (width >= theme(--breakpoint-lg)) {
+    zoom: 0.75;
+  }
+
+  @media (width >= theme(--breakpoint-xl)) {
+    zoom: 1;
+  }
+
   .outer_border {
     position: absolute;
     left: 0;

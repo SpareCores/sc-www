@@ -2,12 +2,12 @@
   <div class="content_section content_section--flush" id="hero">
     <div class="content">
       <div class="flex gap-8 flex-col lg:flex-row">
-        <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
-          <div class="text-4xl font-bold leading-12">
+        <div class="flex flex-col gap-8 md:gap-12 w-full lg:w-1/2 my-auto">
+          <div class="text-3xl leading-10 font-bold sm:text-4xl sm:leading-12">
             Don't gamble with your cloud costs.
             <span class="text-emerald-400">Use Spare Cores!</span>
           </div>
-          <div class="text-3xl">
+          <div class="text-xl md:text-3xl">
             <p class="py-2">
               Right-size AI/ML compute with vendor-neutral cloud intelligence
               and real workload telemetry.
@@ -19,13 +19,13 @@
           </div>
           <div class="pb-12 lg:pb-0">
             <div
-              class="mx-auto grid max-w-xl grid-cols-2 grid-rows-2 gap-y-2 gap-x-8 lg:mx-0"
+              class="mx-auto grid max-w-xl grid-cols-1 gap-y-4 sm:grid-cols-2 sm:grid-rows-2 sm:gap-y-2 sm:gap-x-8 lg:mx-0"
             >
               <sc-button
                 [label]="'Compare cloud servers\nfor free'"
                 size="large"
                 [routerLink]="'/servers'"
-                class="row-span-2 w-full self-center"
+                class="w-full self-center sm:row-span-2"
                 buttonClass="min-h-23 text-center"
               ></sc-button>
               <sc-button
@@ -33,6 +33,7 @@
                 variant="link"
                 size="small"
                 color="accent"
+                buttonClass="min-h-11 lg:min-h-0"
                 (click)="scrollTo('resource-tracker')"
               ></sc-button>
               <sc-button
@@ -40,13 +41,14 @@
                 variant="link"
                 size="small"
                 color="accent"
+                buttonClass="min-h-11 lg:min-h-0"
                 (click)="scrollTo('sentinel')"
               ></sc-button>
             </div>
           </div>
         </div>
         <div
-          class="w-full lg:w-1/2 justify-center flex min-h-[600px]"
+          class="w-full lg:w-1/2 justify-center flex min-h-80 sm:min-h-120 md:min-h-150 lg:min-h-120 xl:min-h-150"
           id="slot-machine"
         >
           <div class="animated_slot_machine">
@@ -314,7 +316,7 @@
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
         <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+          class="logo_text text-2xl justify-center font-light text-center sm:text-4xl sc-header-anchor-host"
         >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">why </span>
@@ -329,14 +331,16 @@
             [withTarget]="false"
           ></sc-header-anchor>
         </div>
-        <div class="w-4/5 lg:w-2/3 mx-auto my-auto text-2xl text-center">
+        <div
+          class="w-full sm:w-4/5 lg:w-2/3 mx-auto my-auto text-lg sm:text-2xl text-center"
+        >
           AI/ML cloud waste starts with guesswork. Spare Cores helps teams
           compare infrastructure, measure real workload usage, turn telemetry
           into recommendations, and govern cloud usage across jobs, projects,
           and teams.
         </div>
         <div
-          class="grid gap-x-8 gap-y-24 pt-20 px-4 md:grid-cols-2 xl:grid-cols-4"
+          class="grid gap-x-8 gap-y-24 pt-20 sm:px-4 md:grid-cols-2 xl:grid-cols-4"
         >
           <div
             class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
@@ -362,7 +366,7 @@
             <div class="absolute bottom-4 right-4">
               <a
                 routerLink="/servers"
-                class="text-emerald-400"
+                class="-m-2 inline-flex p-2 text-emerald-400"
                 aria-label="Explore Navigator"
               >
                 <svg
@@ -398,7 +402,7 @@
               <button
                 type="button"
                 (click)="scrollTo('resource-tracker')"
-                class="text-emerald-400 cursor-pointer"
+                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
                 aria-label="Explore Resource Tracker"
               >
                 <svg
@@ -433,7 +437,7 @@
             <div class="absolute bottom-4 right-4">
               <a
                 routerLink="/advisor"
-                class="text-emerald-400"
+                class="-m-2 inline-flex p-2 text-emerald-400"
                 aria-label="Explore Advisor"
               >
                 <svg
@@ -469,7 +473,7 @@
               <button
                 type="button"
                 (click)="scrollTo('sentinel')"
-                class="text-emerald-400 cursor-pointer"
+                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
                 aria-label="Explore Sentinel"
               >
                 <svg
@@ -489,7 +493,7 @@
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
         <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+          class="logo_text text-2xl justify-center font-light text-center sm:text-4xl sc-header-anchor-host"
         >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">product </span>
@@ -505,14 +509,16 @@
           ></sc-header-anchor>
         </div>
         <div
-          class="w-full mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
+          class="w-full mx-auto my-auto font-bold text-2xl sm:text-4xl text-center text-emerald-400"
         >
           For Data Scientists, ML engineers and AI practitioners
         </div>
         <div class="grid gap-8 pt-4 xl:grid-cols-2 xl:gap-12">
-          <div class="flex flex-col justify-center max-lg:px-20">
+          <div class="flex flex-col justify-center md:max-lg:px-12">
             <div>
-              <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div
+                class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+              >
                 <div
                   class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
                 >
@@ -523,7 +529,9 @@
               <div
                 class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
               ></div>
-              <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div
+                class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+              >
                 <div
                   class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
                 >
@@ -534,7 +542,9 @@
               <div
                 class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
               ></div>
-              <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div
+                class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+              >
                 <div
                   class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
                 >
@@ -547,7 +557,9 @@
               <div
                 class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
               ></div>
-              <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div
+                class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+              >
                 <div
                   class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
                 >
@@ -557,7 +569,7 @@
               </div>
             </div>
             <div
-              class="w-4/5 lg:w-full text-2xl font-bold pt-12 text-center lg:text-left mx-auto"
+              class="w-full text-xl sm:text-2xl font-bold pt-12 text-center lg:text-left mx-auto"
             >
               <a
                 href="https://sparecores.github.io/resource-tracker/"
@@ -592,7 +604,9 @@
           </div>
         </div>
         <div class="w-full lg:w-4/5 mx-auto my-auto text-2xl pt-8">
-          <div class="quote-container flex gap-8 items-center px-2 pb-2">
+          <div
+            class="quote-container flex flex-col items-center gap-4 px-2 pb-2 sm:flex-row sm:gap-8"
+          >
             <div>
               <span
                 class="inline-flex justify-center items-center size-[90px] text-emerald-400"
@@ -602,7 +616,7 @@
             </div>
             <div class="w-full">
               <button
-                class="quote-preview text-2xl cursor-zoom-in"
+                class="quote-preview text-lg sm:text-2xl cursor-zoom-in"
                 (click)="toggleQuote($event)"
               >
                 The Resource Tracker has become an essential part of our
@@ -612,7 +626,7 @@
                   >— Data Engineer, Too Good To Go</span
                 >
               </button>
-              <div class="quote-full text-2xl hidden">
+              <div class="quote-full text-lg sm:text-2xl hidden">
                 <p class="pb-4">
                   We run several ML pipelines that process high volumes of data
                   daily. Initially, we over-provisioned CPU and memory to avoid
@@ -657,7 +671,7 @@
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
         <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+          class="logo_text text-2xl justify-center font-light text-center sm:text-4xl sc-header-anchor-host"
         >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">product </span>
@@ -673,23 +687,25 @@
           ></sc-header-anchor>
         </div>
         <div
-          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
+          class="w-full sm:w-2/3 mx-auto my-auto font-bold text-2xl sm:text-4xl text-center text-emerald-400"
         >
           For DS/AI/ML platform and FinOps leads
         </div>
         <div
-          class="w-4/5 mx-auto my-auto text-4xl font-light italic text-center pt-8"
+          class="w-full sm:w-4/5 mx-auto my-auto text-xl sm:text-4xl font-light italic text-center pt-8"
         >
           Sentinel gives teams a live view of telemetry and cost signals across
           their jobs to spot over-provisioning, catch drift, and turn
           infrastructure guesswork into measurable optimization.
         </div>
         <div
-          class="flex gap-24 flex-col max-lg:px-20 lg:flex-row lg:gap-24 pt-8"
+          class="flex flex-col gap-12 md:max-lg:px-12 lg:flex-row lg:gap-24 pt-8"
         >
           <div class="flex flex-col w-full lg:w-1/2">
             <div class="flex flex-row gap-4 items-center pb-8">
-              <div class="rounded-full border-2 border-emerald-400 p-6">
+              <div
+                class="shrink-0 rounded-full border-2 border-emerald-400 p-6"
+              >
                 <svg lucideScanEye class="h-12 w-12 text-emerald-400"></svg>
               </div>
               <div>
@@ -707,7 +723,9 @@
                 </div>
               </div>
             </div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -716,7 +734,9 @@
             <div
               class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
             ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -725,7 +745,9 @@
             <div
               class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
             ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -734,7 +756,9 @@
             <div
               class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
             ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -743,7 +767,9 @@
           </div>
           <div class="flex flex-col w-full lg:w-1/2">
             <div class="flex flex-row gap-4 items-center pb-8">
-              <div class="rounded-full border-2 border-emerald-400 p-6">
+              <div
+                class="shrink-0 rounded-full border-2 border-emerald-400 p-6"
+              >
                 <svg lucideRocket class="h-12 w-12 text-emerald-400"></svg>
               </div>
               <div>
@@ -761,7 +787,9 @@
                 </div>
               </div>
             </div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -770,7 +798,9 @@
             <div
               class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
             ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -779,7 +809,9 @@
             <div
               class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
             ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -788,7 +820,9 @@
             <div
               class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
             ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -797,7 +831,9 @@
             <div
               class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
             ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
+            <div
+              class="flex gap-2 text-lg font-light text-gray-200 sm:text-2xl"
+            >
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <svg lucideCheck class="h-4 w-4"></svg>
               </div>
@@ -806,8 +842,10 @@
           </div>
         </div>
       </div>
-      <div class="w-4/5 mx-auto my-auto text-2xl pt-16">
-        <div class="quote-container flex gap-8 items-center px-2 pb-2">
+      <div class="w-full sm:w-4/5 mx-auto my-auto text-2xl pt-16">
+        <div
+          class="quote-container flex flex-col items-center gap-4 px-2 pb-2 sm:flex-row sm:gap-8"
+        >
           <div>
             <span
               class="inline-flex justify-center items-center size-[90px] text-emerald-400"
@@ -817,7 +855,7 @@
           </div>
           <div class="w-full">
             <button
-              class="quote-preview text-2xl cursor-zoom-in"
+              class="quote-preview text-lg sm:text-2xl cursor-zoom-in"
               (click)="toggleQuote($event)"
             >
               They brought stability and scalability to the platform,
@@ -825,7 +863,7 @@
               costs [...]
               <span class="text-gray-400">— Chief Data Officer, System1</span>
             </button>
-            <div class="quote-full text-2xl hidden">
+            <div class="quote-full text-lg sm:text-2xl hidden">
               <p class="pb-4">
                 Gergely and his team played a key role in building and
                 productionizing the infrastructure for our data science
@@ -858,7 +896,7 @@
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
         <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+          class="logo_text text-2xl justify-center font-light text-center sm:text-4xl sc-header-anchor-host"
         >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">init </span>
@@ -872,15 +910,17 @@
           ></sc-header-anchor>
         </div>
         <div
-          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
+          class="w-full sm:w-2/3 mx-auto my-auto font-bold text-2xl sm:text-4xl text-center text-emerald-400"
         >
           Ready to right‑size your workflows?
         </div>
         <div
-          class="w-4/5 lg:w-full mx-auto flex gap-8 lg:gap-24 flex-col lg:flex-row pt-4 px-4"
+          class="w-full sm:w-4/5 lg:w-full mx-auto flex gap-8 lg:gap-24 flex-col lg:flex-row pt-4 sm:px-4"
         >
           <div class="flex flex-col w-full lg:w-1/2 justify-center">
-            <ol class="list-decimal list-outside text-2xl leading-[42px]">
+            <ol
+              class="list-decimal list-outside text-lg leading-8 sm:text-2xl sm:leading-10.5"
+            >
               <li class="pb-4">
                 <a routerLink="/servers" class="sc-link font-bold">
                   Compare cloud servers for free
@@ -926,7 +966,7 @@
               </li>
             </ol>
           </div>
-          <div class="flex flex-col w-full lg:w-1/2 justify-center">
+          <div class="flex min-w-0 flex-col w-full lg:w-1/2 justify-center">
             @if (showResourceTrackerCode) {
               <pre class="language-python line-numbers" data-line="4"><code>
                                           from resource_tracker import ResourceTracker
@@ -953,7 +993,7 @@
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
         <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+          class="logo_text text-2xl justify-center font-light text-center sm:text-4xl sc-header-anchor-host"
         >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">services </span>
@@ -969,18 +1009,18 @@
           ></sc-header-anchor>
         </div>
         <div
-          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
+          class="w-full sm:w-2/3 mx-auto my-auto font-bold text-2xl sm:text-4xl text-center text-emerald-400"
         >
           More ways Spare Cores helps
         </div>
         <div
-          class="w-4/5 mx-auto my-auto text-4xl font-light italic text-center pt-8"
+          class="w-full sm:w-4/5 mx-auto my-auto text-xl sm:text-4xl font-light italic text-center pt-8"
         >
           Assess, implement, and operate AI/ML cloud optimization with the team
           that built the tools.
         </div>
         <div
-          class="grid gap-8 justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-4 pt-8 px-4"
+          class="grid gap-8 justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-4 pt-8 sm:px-4"
         >
           <div
             class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
@@ -996,7 +1036,7 @@
             <div class="absolute bottom-4 right-4">
               <a
                 routerLink="/about/navigator"
-                class="text-emerald-400"
+                class="-m-2 inline-flex p-2 text-emerald-400"
                 aria-label="Learn about Navigator"
               >
                 <svg
@@ -1021,7 +1061,7 @@
               <button
                 type="button"
                 id="meeting-services-consulting"
-                class="text-emerald-400 cursor-pointer"
+                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
                 aria-label="Contact sales about Cloud Optimization Assessment"
               >
                 <svg
@@ -1046,7 +1086,7 @@
               <button
                 type="button"
                 id="meeting-services-shiny"
-                class="text-emerald-400 cursor-pointer"
+                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
                 aria-label="Contact sales about Shiny and Streamlit hosting"
               >
                 <svg
@@ -1071,7 +1111,7 @@
               <button
                 type="button"
                 id="meeting-services-llms"
-                class="text-emerald-400 cursor-pointer"
+                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
                 aria-label="Contact sales about AI workload sizing"
               >
                 <svg
@@ -1091,7 +1131,7 @@
     <div class="content flex flex-col gap-12">
       <sc-theme-text
         text="release_notes"
-        classes="text-4xl justify-center font-light sc-header-anchor-host"
+        classes="text-2xl sm:text-4xl justify-center font-light sc-header-anchor-host"
       >
         <sc-header-anchor
           anchorId="articles"
@@ -1099,19 +1139,23 @@
           [withTarget]="false"
         ></sc-header-anchor>
       </sc-theme-text>
-      <div class="text-xl text-center font-medium w-3/5 mx-auto">
+      <div
+        class="text-xl text-center font-medium w-full md:w-4/5 lg:w-3/5 mx-auto"
+      >
         We publish case studies, learnings from implementing Spare Cores
         components, and other project updates from time to time. Find some of
         our featured articles below:
       </div>
       <div class="articles_holder flex mt-4 flex-wrap">
         @for (article of featuredArticles; track article.title) {
-          <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4">
+          <div
+            class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-0 sm:px-6 py-4"
+          >
             <sc-article-card [article]="article"></sc-article-card>
           </div>
         }
       </div>
-      <div class="flex justify-center gap-2 items-center">
+      <div class="flex flex-col justify-center gap-2 items-center sm:flex-row">
         <sc-button
           label="Read more articles"
           icon="notebook-text"
