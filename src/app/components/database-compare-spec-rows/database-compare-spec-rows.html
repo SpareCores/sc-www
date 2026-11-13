@@ -44,13 +44,14 @@
               <svg
                 lucideInfo
                 class="h-4 w-4 shrink-0 text-gray-200"
-                (mouseenter)="
+                scTooltipTrigger
+                (tooltipOpen)="
                   descriptionEnter.emit({
                     event: $event,
                     content: row.description,
                   })
                 "
-                (mouseleave)="descriptionLeave.emit()"
+                (tooltipClose)="descriptionLeave.emit()"
               ></svg>
             }
           </div>
@@ -164,13 +165,14 @@
                 <svg
                   lucideInfo
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     descriptionEnter.emit({
                       event: $event,
                       content: row.description,
                     })
                   "
-                  (mouseleave)="descriptionLeave.emit()"
+                  (tooltipClose)="descriptionLeave.emit()"
                 ></svg>
               }
             </div>

@@ -107,8 +107,9 @@
                           @if (column.info) {
                             <svg
                               lucideInfo
-                              (mouseenter)="showTooltip($event, column.info)"
-                              (mouseleave)="hideTooltip()"
+                              scTooltipTrigger
+                              (tooltipOpen)="showTooltip($event, column.info)"
+                              (tooltipClose)="hideTooltip()"
                               class="h-4 w-4 text-gray-200"
                             ></svg>
                           }

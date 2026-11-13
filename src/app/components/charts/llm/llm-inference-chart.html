@@ -15,21 +15,24 @@
               <svg
                 lucideCircleArrowUp
                 class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, orderTooltip)"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, orderTooltip)"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               <svg
                 lucideInfo
                 class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, promptInfoTooltip())"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, promptInfoTooltip())"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               @if (promptMetaNote()) {
                 <svg
                   lucideTriangleAlert
                   class="benchmark-note-icon"
-                  (mouseenter)="showWarningTooltip($event, promptMetaNote())"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showWarningTooltip($event, promptMetaNote())"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (promptAnchorId(); as id) {
@@ -74,23 +77,26 @@
               <svg
                 lucideCircleArrowUp
                 class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, orderTooltip)"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, orderTooltip)"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               <svg
                 lucideInfo
                 class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, generationInfoTooltip())"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, generationInfoTooltip())"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               @if (generationMetaNote()) {
                 <svg
                   lucideTriangleAlert
                   class="benchmark-note-icon"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     showWarningTooltip($event, generationMetaNote())
                   "
-                  (mouseleave)="hideTooltip()"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (generationAnchorId(); as id) {

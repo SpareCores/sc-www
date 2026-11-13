@@ -22,10 +22,12 @@ import { Button } from "../button/button";
 import { HeaderAnchor } from "../header-anchor/header-anchor";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { DetailsCardSection } from "./details-card.types";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-details-card",
   imports: [
+    TooltipTrigger,
     LucideDynamicIcon,
     LucideInfo,
     LucideTriangleAlert,
@@ -98,10 +100,10 @@ export class DetailsCard {
     return prefix ? `${prefix} show ${action} ${this.cardId()}` : null;
   }
 
-  showTooltip(event: Event, content: string | undefined) {
+  showTooltip(event: Element | Event, content: string | undefined) {
     this.uiTooltip.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event,
+      anchor: event,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -113,10 +115,10 @@ export class DetailsCard {
     this.uiTooltip.hide(this.tooltip()?.nativeElement);
   }
 
-  showWarningTooltip(event: Event, content: string) {
+  showWarningTooltip(event: Element | Event, content: string) {
     this.uiTooltip.showIfPresent({
       tooltipElement: this.warningTooltip()?.nativeElement,
-      event,
+      anchor: event,
       content,
       variant: "warning",
       onShow: (tooltipContent) => {

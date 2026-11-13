@@ -14,10 +14,11 @@ import { LucideDynamicIcon } from "@lucide/angular";
 import { BenchmarkFamily } from "../../pages/benchmark-workloads/benchmark-workloads.models";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { UiTooltip } from "../../services/ui-tooltip";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-benchmark-workloads-sidebar",
-  imports: [LucideDynamicIcon, BenchmarkIconPipe],
+  imports: [TooltipTrigger, LucideDynamicIcon, BenchmarkIconPipe],
   templateUrl: "./benchmark-workloads-sidebar.html",
   styleUrl: "./benchmark-workloads-sidebar.css",
 })
@@ -79,7 +80,7 @@ export class BenchmarkWorkloadsSidebar {
     this.benchmarkClick.emit(id);
   }
 
-  showSidebarTooltip(event: MouseEvent | FocusEvent, content: string): void {
+  showSidebarTooltip(event: Element | Event, content: string): void {
     if (!this.isCollapsed() || !isPlatformBrowser(this.platformId)) {
       return;
     }

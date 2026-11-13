@@ -163,6 +163,7 @@ import {
   restoreAdvisorColumnsFromQuery,
   stableStringify,
 } from "./advisor.utils";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 const ADVISOR_RECOMMENDATION_DEBOUNCE_MS = 350;
 
@@ -386,6 +387,7 @@ type AdvisorComparableResourceKey =
 @Component({
   selector: "sc-advisor",
   imports: [
+    TooltipTrigger,
     Button,
     Breadcrumbs,
     Dropdown,
@@ -1677,7 +1679,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
       : "arrow-down-narrow-wide";
   }
 
-  showTooltip(event: Event, content: string): void {
+  showTooltip(event: Element | Event, content: string): void {
     const tooltipElement = this.tooltipDefault()?.nativeElement;
 
     if (!tooltipElement) {

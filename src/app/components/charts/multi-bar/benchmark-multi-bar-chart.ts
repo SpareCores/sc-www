@@ -42,11 +42,13 @@ import {
   MultiBarBenchmarkMeta,
   MultiBarServer,
 } from "./benchmark-multi-bar-chart.types";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-benchmark-multi-bar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideInfo,
@@ -228,10 +230,10 @@ export class BenchmarkMultiBarChart {
     this.secondaryOptionSelected.emit(index);
     this.secondaryDropdown()?.hide();
   }
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -239,10 +241,10 @@ export class BenchmarkMultiBarChart {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {

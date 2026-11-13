@@ -134,8 +134,9 @@
                 (out of
                 <span
                   class="underline decoration-dotted cursor-pointer"
-                  (mouseenter)="showTooltip($event)"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showTooltip($event)"
+                  (tooltipClose)="hideTooltip()"
                   >10 planned</span
                 >) vendors
               </span>

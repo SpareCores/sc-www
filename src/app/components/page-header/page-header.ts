@@ -20,10 +20,12 @@ import { Button, ScButtonVariant } from "../button/button";
 import { FEATURE_REGISTER_HINT } from "../../collections/collections.utils";
 import { ShareLink } from "../../services/share-link";
 import { UiTooltip } from "../../services/ui-tooltip";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-page-header",
   imports: [
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideBookmark,
@@ -86,7 +88,7 @@ export class PageHeader {
     this.shareClick.emit(event);
   }
 
-  protected onBookmarkMouseEnter(event: MouseEvent): void {
+  protected onBookmarkMouseEnter(event: Element | Event): void {
     if (!this.bookmarkGuestLocked()) {
       return;
     }
@@ -100,7 +102,7 @@ export class PageHeader {
     this.bookmarkClick.emit(event);
   }
 
-  protected showTooltip(event: MouseEvent): void {
+  protected showTooltip(event: Element | Event): void {
     const tooltip = this.tooltip()?.nativeElement;
     if (!tooltip) {
       return;

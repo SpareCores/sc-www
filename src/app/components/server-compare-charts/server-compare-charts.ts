@@ -125,10 +125,12 @@ import {
   isWorkloadProfileBenchmark,
   WORKLOAD_PROFILE_INFO_TOOLTIP,
 } from "../charts/workload-profile/workload-profile.utils";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-server-compare-charts",
   imports: [
+    TooltipTrigger,
     LucideDynamicIcon,
     LucideCircleArrowDown,
     LucideCircleArrowUp,
@@ -559,11 +561,11 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
   readonly formatWorkloadProfileLabel = formatWorkloadProfileLabel;
 
-  showTooltip(el: MouseEvent, content?: string, autoHide = false) {
+  showTooltip(el: Element | Event, content?: string, autoHide = false) {
     this.tooltipHtml = "";
     const didShow = this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
@@ -577,11 +579,11 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string) {
+  showWarningTooltip(el: Element | Event, content?: string) {
     this.tooltipHtml = "";
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning",
       onShow: (tooltipContent) => {
@@ -590,11 +592,11 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     });
   }
 
-  showWarningSectionTooltip(el: MouseEvent, content?: string) {
+  showWarningSectionTooltip(el: Element | Event, content?: string) {
     this.tooltipHtml = "";
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {
@@ -603,7 +605,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     });
   }
 
-  showTooltipChart(el: MouseEvent, type: string) {
+  showTooltipChart(el: Element | Event, type: string) {
     this.tooltipHtml = "";
     const content = this.benchmarkMeta.find(
       (b: any) => b.benchmark_id === type,
@@ -611,7 +613,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
 
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
@@ -619,7 +621,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     });
   }
 
-  showGeekbenchInfoTooltip(el: MouseEvent): void {
+  showGeekbenchInfoTooltip(el: Element | Event): void {
     const geekbenchMeta = this.geekbenchBenchmarkMeta.filter((b) =>
       b.benchmark_id?.includes("geekbench"),
     );

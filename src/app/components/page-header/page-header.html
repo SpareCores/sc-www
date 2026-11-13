@@ -34,8 +34,10 @@
                 : 'Add bookmark'
           "
           [attr.aria-pressed]="bookmarkActive()"
-          (mouseenter)="onBookmarkMouseEnter($event)"
-          (mouseleave)="hideTooltip()"
+          scTooltipTrigger
+          tooltipMode="action"
+          (tooltipOpen)="onBookmarkMouseEnter($event)"
+          (tooltipClose)="hideTooltip()"
           (click)="onBookmarkClick($event)"
         >
           <svg

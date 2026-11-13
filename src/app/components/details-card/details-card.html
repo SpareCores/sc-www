@@ -49,8 +49,9 @@
                     <svg
                       lucideInfo
                       class="h-4 w-4 text-gray-200 shrink-0"
-                      (mouseenter)="showTooltip($event, tooltip.content)"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showTooltip($event, tooltip.content)"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                   @if (row.warning) {
@@ -58,10 +59,9 @@
                       type="button"
                       class="inline-flex"
                       [attr.aria-label]="row.warning"
-                      (mouseenter)="showWarningTooltip($event, row.warning)"
-                      (mouseleave)="hideWarningTooltip()"
-                      (focus)="showWarningTooltip($event, row.warning)"
-                      (blur)="hideWarningTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showWarningTooltip($event, row.warning)"
+                      (tooltipClose)="hideWarningTooltip()"
                     >
                       <svg
                         lucideTriangleAlert

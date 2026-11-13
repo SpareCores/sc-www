@@ -262,35 +262,38 @@
                             <svg
                               lucideCircleArrowUp
                               class="h-4 w-4 text-gray-200 shrink-0"
-                              (mouseenter)="
+                              scTooltipTrigger
+                              (tooltipOpen)="
                                 showChartTooltip($event, 'Higher is better.')
                               "
-                              (mouseleave)="hideChartTooltip()"
+                              (tooltipClose)="hideChartTooltip()"
                             ></svg>
                             @if (pgbenchMeta.infoTooltip) {
                               <svg
                                 lucideInfo
                                 class="h-4 w-4 text-gray-200 shrink-0"
-                                (mouseenter)="
+                                scTooltipTrigger
+                                (tooltipOpen)="
                                   showChartTooltip(
                                     $event,
                                     pgbenchMeta.infoTooltip
                                   )
                                 "
-                                (mouseleave)="hideChartTooltip()"
+                                (tooltipClose)="hideChartTooltip()"
                               ></svg>
                             }
                             @if (pgbenchMeta.noteTooltip) {
                               <svg
                                 lucideTriangleAlert
                                 class="benchmark-note-icon"
-                                (mouseenter)="
+                                scTooltipTrigger
+                                (tooltipOpen)="
                                   showChartWarningTooltip(
                                     $event,
                                     pgbenchMeta.noteTooltip
                                   )
                                 "
-                                (mouseleave)="hideChartTooltip()"
+                                (tooltipClose)="hideChartTooltip()"
                               ></svg>
                             }
                           </span>

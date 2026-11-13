@@ -17,23 +17,26 @@
           <svg
             lucideCircleArrowUp
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, 'Higher is better.')"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+            (tooltipClose)="hideTooltip()"
           ></svg>
           <svg
             lucideInfo
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, workloadProfileInfoTooltip)"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, workloadProfileInfoTooltip)"
+            (tooltipClose)="hideTooltip()"
           ></svg>
           @if (workloadProfileMetaNote()) {
             <svg
               lucideTriangleAlert
               class="benchmark-note-icon"
-              (mouseenter)="
+              scTooltipTrigger
+              (tooltipOpen)="
                 showWarningTooltip($event, workloadProfileMetaNote())
               "
-              (mouseleave)="hideTooltip()"
+              (tooltipClose)="hideTooltip()"
             ></svg>
           }
           @if (anchorId(); as id) {
@@ -180,13 +183,11 @@
                           type="button"
                           class="workload-profile-tooltip-trigger"
                           aria-label="Show impact formula"
-                          (mouseenter)="
+                          scTooltipTrigger
+                          (tooltipOpen)="
                             showTooltip($event, breakdown.impactFormula)
                           "
-                          (mouseleave)="hideTooltip()"
-                          (focus)="showTooltip($event, breakdown.impactFormula)"
-                          (blur)="hideTooltip()"
-                          (click)="showTooltip($event, breakdown.impactFormula)"
+                          (tooltipClose)="hideTooltip()"
                         >
                           <svg
                             lucideInfo
@@ -243,17 +244,11 @@
                             type="button"
                             class="workload-profile-tooltip-trigger"
                             aria-label="Show component description"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltip($event, row.componentDescription)
                             "
-                            (mouseleave)="hideTooltip()"
-                            (focus)="
-                              showTooltip($event, row.componentDescription)
-                            "
-                            (blur)="hideTooltip()"
-                            (click)="
-                              showTooltip($event, row.componentDescription)
-                            "
+                            (tooltipClose)="hideTooltip()"
                           >
                             <svg
                               lucideInfo
@@ -267,17 +262,11 @@
                             type="button"
                             class="workload-profile-tooltip-trigger"
                             aria-label="Show benchmark note"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showWarningTooltip($event, row.benchmarkNote)
                             "
-                            (mouseleave)="hideTooltip()"
-                            (focus)="
-                              showWarningTooltip($event, row.benchmarkNote)
-                            "
-                            (blur)="hideTooltip()"
-                            (click)="
-                              showWarningTooltip($event, row.benchmarkNote)
-                            "
+                            (tooltipClose)="hideTooltip()"
                           >
                             <svg
                               lucideTriangleAlert

@@ -15,24 +15,27 @@
           <svg
             lucideCircleArrowUp
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, orderTooltip())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, orderTooltip())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (infoTooltip()) {
           <svg
             lucideInfo
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, infoTooltip())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, infoTooltip())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (noteTooltip()) {
           <svg
             lucideTriangleAlert
             class="benchmark-note-icon"
-            (mouseenter)="showWarningTooltip($event, noteTooltip())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showWarningTooltip($event, noteTooltip())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (anchorId(); as id) {

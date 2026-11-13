@@ -107,22 +107,24 @@
                 <svg
                   lucideInfo
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     showTooltipChart($event, cpuBenchmark.benchmark_id)
                   "
-                  (mouseleave)="hideTooltip()"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
                 @if (benchmarkRowNote(cpuBenchmark.benchmark_id)) {
                   <svg
                     lucideTriangleAlert
                     class="benchmark-note-icon"
-                    (mouseenter)="
+                    scTooltipTrigger
+                    (tooltipOpen)="
                       showWarningTooltip(
                         $event,
                         benchmarkRowNote(cpuBenchmark.benchmark_id)
                       )
                     "
-                    (mouseleave)="hideTooltip()"
+                    (tooltipClose)="hideTooltip()"
                   ></svg>
                 }
               </div>
@@ -196,22 +198,24 @@
                 <svg
                   lucideInfo
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     showTooltipChart($event, otherBenchmark.benchmark_id)
                   "
-                  (mouseleave)="hideTooltip()"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
                 @if (benchmarkRowNote(otherBenchmark.benchmark_id)) {
                   <svg
                     lucideTriangleAlert
                     class="benchmark-note-icon"
-                    (mouseenter)="
+                    scTooltipTrigger
+                    (tooltipOpen)="
                       showWarningTooltip(
                         $event,
                         benchmarkRowNote(otherBenchmark.benchmark_id)
                       )
                     "
-                    (mouseleave)="hideTooltip()"
+                    (tooltipClose)="hideTooltip()"
                   ></svg>
                 }
               </div>

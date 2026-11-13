@@ -9,21 +9,24 @@
         <svg
           [lucideIcon]="currentMemoryChartIcon()"
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, currentMemoryChartOrderTooltip())"
-          (mouseleave)="hideTooltip()"
+          scTooltipTrigger
+          (tooltipOpen)="showTooltip($event, currentMemoryChartOrderTooltip())"
+          (tooltipClose)="hideTooltip()"
         ></svg>
         <svg
           lucideInfo
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, currentMemoryChartInfo())"
-          (mouseleave)="hideTooltip()"
+          scTooltipTrigger
+          (tooltipOpen)="showTooltip($event, currentMemoryChartInfo())"
+          (tooltipClose)="hideTooltip()"
         ></svg>
         @if (currentMemoryChartNote()) {
           <svg
             lucideTriangleAlert
             class="benchmark-note-icon"
-            (mouseenter)="showWarningTooltip($event, currentMemoryChartNote())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showWarningTooltip($event, currentMemoryChartNote())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (anchorId(); as id) {

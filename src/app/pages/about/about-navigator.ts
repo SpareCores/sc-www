@@ -34,6 +34,7 @@ import { SeoHandler } from "../../services/seo-handler";
 import { isPlatformBrowser } from "@angular/common";
 import { NeetoCal } from "../../services/neeto-cal";
 import { UiTooltip } from "../../services/ui-tooltip";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 interface Quote {
   quote: string;
@@ -47,6 +48,7 @@ interface Quote {
   selector: "sc-about-navigator",
   imports: [
     HeaderAnchor,
+    TooltipTrigger,
     Breadcrumbs,
     LucideBookText,
     LucideBuilding2,
@@ -286,7 +288,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
     }
   }
 
-  showTooltip(el: any) {
+  showTooltip(el: Element | Event) {
     const tooltip = this.tooltip.nativeElement;
     this.uiTooltip.show(tooltip, el, {
       left: "anchor-right",

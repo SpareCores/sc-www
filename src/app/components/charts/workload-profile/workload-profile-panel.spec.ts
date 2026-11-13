@@ -280,10 +280,7 @@ describe("WorkloadProfilePanel", () => {
       By.css("td button[aria-label='Show benchmark note']"),
     );
     expect(warningButton).toBeTruthy();
-    warningButton.triggerEventHandler(
-      "mouseenter",
-      new MouseEvent("mouseenter"),
-    );
+    (warningButton.nativeElement as HTMLButtonElement).click();
     fixture.detectChanges();
     expect(fixture.componentInstance.tooltipContent()).toBe(
       "Limited scaling above 32 vCPUs.",

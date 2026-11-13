@@ -64,6 +64,7 @@ import {
   buildServerPricesColumns,
   TableColumn,
 } from "../../tools/table-columns";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 export type CountryMetadata = {
   continent: string;
@@ -96,6 +97,7 @@ export type RegionVendorMetadata = {
 @Component({
   selector: "sc-server-prices",
   imports: [
+    TooltipTrigger,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,
@@ -726,7 +728,7 @@ export class ServerPrices implements OnInit, OnDestroy {
     this.modalSearch?.hide();
   }
 
-  showTooltip(el: any, content: string, autoHide = false) {
+  showTooltip(el: Element | Event, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
     this.uiTooltip.show(tooltip, el, {

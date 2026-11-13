@@ -718,10 +718,10 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  showTooltip(el: any, content?: string, autoHide = false) {
+  showTooltip(el: Element | Event, content?: string, autoHide = false) {
     const didShow = this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
@@ -735,14 +735,14 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  showTooltipChart(el: any, type: string) {
+  showTooltipChart(el: Element | Event, type: string) {
     const content = this.benchmarkMeta.find(
       (b: any) => b.benchmark_id === type,
     )?.description;
 
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;

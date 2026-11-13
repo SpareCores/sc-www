@@ -44,11 +44,13 @@ import {
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
 import { Dropdown } from "../../../directives/dropdown";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-compression-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideInfo,
@@ -286,10 +288,10 @@ export class CompressionChart {
     this.coresDropdown()?.hide();
   }
 
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -297,10 +299,10 @@ export class CompressionChart {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {

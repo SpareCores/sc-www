@@ -79,6 +79,7 @@ import {
   TableColumn,
   buildDatabaseListingColumns,
 } from "../../tools/table-columns";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 type OpenApiParameterSource = {
   name: string;
@@ -107,6 +108,7 @@ type DatabaseListingQuery = Params &
 @Component({
   selector: "sc-database-listing",
   imports: [
+    TooltipTrigger,
     CommonModule,
     FormsModule,
     Breadcrumbs,
@@ -779,7 +781,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
     );
   }
 
-  showTooltip(el: Event, content: string, autoHide = false) {
+  showTooltip(el: Element | Event, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
     this.uiTooltip.show(tooltip, el, {

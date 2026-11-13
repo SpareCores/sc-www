@@ -13,10 +13,11 @@ function showCompareTooltip() {
   ).then(($icon) => {
     cy.window().then((win) => {
       $icon[0].dispatchEvent(
-        new win.MouseEvent("mouseenter", {
+        new win.PointerEvent("pointerenter", {
           bubbles: false,
           cancelable: true,
           view: win,
+          pointerType: "mouse",
         }),
       );
     });

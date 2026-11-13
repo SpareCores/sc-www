@@ -11,8 +11,9 @@
         <svg
           lucideCircleArrowUp
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
+          scTooltipTrigger
+          (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+          (tooltipClose)="hideTooltip()"
         ></svg>
         @if (anchored()) {
           <sc-header-anchor
@@ -87,39 +88,44 @@
                 <svg
                   lucideCircleArrowDown
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="showTooltip($event, 'Lower is better.')"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showTooltip($event, 'Lower is better.')"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (row.benchmark.description) {
                 <svg
                   lucideInfo
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="showTooltip($event, row.benchmark.description)"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showTooltip($event, row.benchmark.description)"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (rowNote(row.benchmark.benchmark_id); as note) {
                 <svg
                   lucideTriangleAlert
                   class="benchmark-note-icon"
-                  (mouseenter)="showTooltip($event, note, 'warning')"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showTooltip($event, note, 'warning')"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
             </div>
           </td>
           <td
             class="stress_ng_value"
-            (mouseenter)="showTooltip($event, row.single.exact)"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, row.single.exact)"
+            (tooltipClose)="hideTooltip()"
           >
             {{ row.single.text }}
           </td>
           <td
             class="stress_ng_value"
-            (mouseenter)="showTooltip($event, row.multi.exact)"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, row.multi.exact)"
+            (tooltipClose)="hideTooltip()"
           >
             {{ row.multi.text }}
           </td>

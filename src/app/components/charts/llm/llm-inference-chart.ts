@@ -42,11 +42,13 @@ import {
   syncCompareLegendData,
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-llm-inference-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TooltipTrigger,
     LucideDynamicIcon,
     LucideChevronDown,
     LucideCircleArrowUp,
@@ -261,10 +263,10 @@ export class LlmInferenceChart {
     this.modelDropdown()?.hide();
   }
 
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -272,10 +274,10 @@ export class LlmInferenceChart {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {

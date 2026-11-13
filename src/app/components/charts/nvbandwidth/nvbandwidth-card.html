@@ -45,8 +45,9 @@
                         <svg
                           lucideInfo
                           class="h-4 w-4 shrink-0 text-gray-200"
-                          (mouseenter)="showTooltip($event, row.description)"
-                          (mouseleave)="hideTooltip()"
+                          scTooltipTrigger
+                          (tooltipOpen)="showTooltip($event, row.description)"
+                          (tooltipClose)="hideTooltip()"
                         ></svg>
                       }
                     </div>
@@ -105,24 +106,27 @@
                 <svg
                   lucideCircleArrowDown
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="showTooltip($event, 'Lower is better.')"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showTooltip($event, 'Lower is better.')"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (row.benchmark.description) {
                 <svg
                   lucideInfo
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="showTooltip($event, row.benchmark.description)"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showTooltip($event, row.benchmark.description)"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (rowNote(row.benchmark.benchmark_id); as note) {
                 <svg
                   lucideTriangleAlert
                   class="benchmark-note-icon"
-                  (mouseenter)="showTooltip($event, note, 'warning')"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showTooltip($event, note, 'warning')"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
             </div>

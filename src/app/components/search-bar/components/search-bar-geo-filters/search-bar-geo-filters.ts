@@ -25,10 +25,12 @@ import type {
   VendorMetadata,
 } from "../../types/search-bar.types";
 import { getParameterType } from "../../utils/search-bar.utils";
+import { TooltipTrigger } from "../../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-search-bar-geo-filters",
   imports: [
+    TooltipTrigger,
     FormsModule,
     LucideChevronDown,
     LucideDynamicIcon,
@@ -365,7 +367,7 @@ export class SearchBarGeoFilters {
     return this.vendorRegionCollapsedVendors()[vendorId] !== false;
   }
 
-  emitTooltip(event: MouseEvent | FocusEvent, content: string | undefined) {
+  emitTooltip(event: Element | Event, content: string | undefined) {
     if (content) {
       this.showTooltip.emit({ event, content });
     }

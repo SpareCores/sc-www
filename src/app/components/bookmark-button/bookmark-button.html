@@ -14,8 +14,10 @@
     [attr.aria-disabled]="!isAuthenticated() || disabled() || isLoading()"
     [attr.aria-label]="ariaLabel()"
     [attr.aria-pressed]="isBookmarked()"
-    (mouseenter)="onMouseEnter($event)"
-    (mouseleave)="hideTooltip()"
+    scTooltipTrigger
+    tooltipMode="action"
+    (tooltipOpen)="onMouseEnter($event)"
+    (tooltipClose)="hideTooltip()"
     (click)="toggle($event)"
   >
     <svg

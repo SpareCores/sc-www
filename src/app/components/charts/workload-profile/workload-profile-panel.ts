@@ -51,6 +51,7 @@ import {
 } from "./workload-profile.utils";
 
 import { chartColors } from "../shared/chart-colors.constants";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 const SCORE_GAUGE_MAX = 2;
 const SCORE_GAUGE_TRACK_COLOR = chartColors["sky-900"];
@@ -160,6 +161,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
   selector: "sc-workload-profile-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideCircleArrowUp,
@@ -350,19 +352,19 @@ export class WorkloadProfilePanel {
     }
   }
 
-  showTooltip(el: Event, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (text) => this.tooltipContent.set(text),
     });
   }
 
-  showWarningTooltip(el: Event, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (text) => this.tooltipContent.set(text),

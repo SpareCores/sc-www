@@ -223,10 +223,11 @@
                           <tr>
                             <td
                               class="bookmarks-card__table-filter"
-                              (mouseenter)="
+                              scTooltipTrigger
+                              (tooltipOpen)="
                                 showDetailTooltip($event, row.field)
                               "
-                              (mouseleave)="hideDetailTooltip()"
+                              (tooltipClose)="hideDetailTooltip()"
                             >
                               @if (row.fieldHref) {
                                 <a
@@ -240,10 +241,11 @@
                             </td>
                             <td
                               class="bookmarks-card__table-value"
-                              (mouseenter)="
+                              scTooltipTrigger
+                              (tooltipOpen)="
                                 showDetailTooltip($event, row.value)
                               "
-                              (mouseleave)="hideDetailTooltip()"
+                              (tooltipClose)="hideDetailTooltip()"
                             >
                               <span class="bookmarks-card__table-value-inner">
                                 @if (row.isBaseline) {

@@ -101,10 +101,12 @@ import {
   buildServerListingColumns,
   TableColumn,
 } from "../../tools/table-columns";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-server-listing",
   imports: [
+    TooltipTrigger,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,
@@ -1322,7 +1324,7 @@ export class ServerListing implements OnInit, OnDestroy {
     });
   }
 
-  showTooltip(el: any, content: string, autoHide = false) {
+  showTooltip(el: Element | Event, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
     this.uiTooltip.show(tooltip, el, {
