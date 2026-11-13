@@ -67,9 +67,21 @@ export class ArticlesApi {
           .toLowerCase()
           .replace(/[^\w\s-]/g, "")
           .replace(/\s+/g, "-");
-        return `<div id="${id}"></div>\n\n${hashes} ${headerText} <a class="sc-header-anchor" href="/article/${slug}#${id}">#</a>`;
+        const label = `Copy link to ${this.anchorLabel(headerText)}`;
+        return `<div id="${id}"></div>\n\n${hashes} ${headerText} <a class="sc-header-anchor" href="/article/${slug}#${id}" aria-label="${label}" title="${label}" data-ph-capture-attribute-sc-event="header anchor copy" data-ph-capture-attribute-anchor-id="${id}">#</a>`;
       },
     );
+  }
+
+  private anchorLabel(headerText: string): string {
+    return headerText
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+      .replace(/[`*_]/g, "")
+      .trim()
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   async getSlides(): Promise<SlidesMeta[]> {
