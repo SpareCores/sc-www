@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DetailsHeader } from "./details-header";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { ShareLink } from "../../services/share-link";
 
 describe("DetailsHeader", () => {
   let fixture: ComponentFixture<DetailsHeader>;
@@ -41,5 +42,19 @@ describe("DetailsHeader", () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain("Peak TPM");
+  });
+
+  it("copies the current url from the share button", () => {
+    const copy = spyOn(
+      TestBed.inject(ShareLink),
+      "copyCurrentUrl",
+    ).and.resolveTo(true);
+    const shareButton = Array.from<HTMLButtonElement>(
+      fixture.nativeElement.querySelectorAll("button"),
+    ).find((button) => button.textContent?.includes("Share"));
+
+    shareButton?.click();
+
+    expect(copy).toHaveBeenCalled();
   });
 });

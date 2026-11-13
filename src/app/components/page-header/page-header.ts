@@ -51,7 +51,7 @@ export class PageHeader {
   showEdit = input(false);
   editAriaLabel = input("Edit bookmark");
   showShare = input(false);
-  shareIcon = input("clipboard");
+  shareIcon = input("share-2");
   shareVariant = input<ScButtonVariant>("outline");
   shareButtonId = input<string | null>(null);
   copyLink = input(false);
@@ -64,7 +64,7 @@ export class PageHeader {
     this.copyLink()
       ? this.linkCopied()
         ? "check"
-        : "clipboard"
+        : "share-2"
       : this.shareIcon(),
   );
 

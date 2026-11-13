@@ -16,6 +16,7 @@ import { SAVED_ITEM_FALLBACK_NOTE } from "../../../collections/collections.utils
 import { CompareCollections } from "../../../collections/compare-collections";
 import { BreadcrumbSegment } from "../../../components/breadcrumbs/breadcrumbs";
 import { AuthState } from "../../../core/auth";
+import { HeaderAnchorLink } from "../../../services/header-anchor-link";
 import { SeoHandler } from "../../../services/seo-handler";
 import { navigateListingQuery } from "../../../tools/listing-query-navigate";
 import { encodeQueryParams } from "../../../tools/queryParamFunctions";
@@ -38,7 +39,9 @@ export class ComparePageController {
   private auth = inject(AuthState);
   private compareCollections = inject(CompareCollections);
   private collectionsUi = inject(CollectionsUi);
+  private headerAnchorLink = inject(HeaderAnchorLink);
 
+  private fragmentScrollDone = false;
   private readonly pendingSaveClose = signal(false);
   private readonly editingComparisonId = signal<string | null>(null);
   private bookmarkSource: SavedComparisonItem | null = null;
@@ -279,6 +282,7 @@ export class ComparePageController {
 
   applyGuideChrome(): void {
     this.applyChrome(this.config.guideTitle, this.config.guideDescription);
+    this.scrollToFragmentOnce();
   }
 
   updateSeo(): void {
@@ -345,6 +349,7 @@ export class ComparePageController {
 
     this.syncSavedComparisonChrome();
     this.host.onLoadFinished();
+    this.scrollToFragmentOnce();
   }
 
   urlQueryParams(): Record<string, string> {
@@ -426,6 +431,15 @@ export class ComparePageController {
     this.bookmarkSource = null;
     this.breadcrumbs = this.baseBreadcrumbs();
     this.updateSeo();
+  }
+
+  private scrollToFragmentOnce(): void {
+    if (this.fragmentScrollDone) {
+      return;
+    }
+
+    this.fragmentScrollDone = true;
+    this.headerAnchorLink.scrollToCurrentFragment();
   }
 
   private collectionsReadyForChrome(): boolean {

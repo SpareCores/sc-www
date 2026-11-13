@@ -8,13 +8,13 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideChevronRight } from "@lucide/angular";
 import { PrismHighlighter } from "../../services/prism-highlighter";
+import { HeaderAnchor } from "../header-anchor/header-anchor";
 import { CompareGuideItem } from "./compare-guide.types";
 
 @Component({
   selector: "sc-compare-guide",
-  imports: [LucideChevronRight, RouterLink],
+  imports: [LucideChevronRight, RouterLink, HeaderAnchor],
   templateUrl: "./compare-guide.html",
-  styleUrl: "./compare-guide.css",
   host: { class: "block" },
 })
 export class CompareGuide {

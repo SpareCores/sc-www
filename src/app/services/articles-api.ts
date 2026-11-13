@@ -67,10 +67,21 @@ export class ArticlesApi {
           .toLowerCase()
           .replace(/[^\w\s-]/g, "")
           .replace(/\s+/g, "-");
-        // add a hidden element before the header to offset the scroll position due to the sticky navbar
-        return `<div id="${id}" class="invisible relative -top-20"></div>\n\n${hashes} ${headerText} <a class="sc-header-anchor" href="/article/${slug}#${id}">#</a>`;
+        const label = `Copy link to ${this.anchorLabel(headerText)}`;
+        return `<div id="${id}"></div>\n\n${hashes} ${headerText} <a class="sc-header-anchor" href="/article/${slug}#${id}" aria-label="${label}" title="${label}" data-ph-capture-attribute-sc-event="header anchor copy" data-ph-capture-attribute-anchor-id="${id}">#</a>`;
       },
     );
+  }
+
+  private anchorLabel(headerText: string): string {
+    return headerText
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+      .replace(/[`*_]/g, "")
+      .trim()
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   async getSlides(): Promise<SlidesMeta[]> {

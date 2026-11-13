@@ -103,12 +103,19 @@
 
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
         <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold">Details</h2>
+          <h2 class="text-3xl font-bold sc-header-anchor-host">
+            Details
+            <sc-header-anchor
+              anchorId="vendor-details"
+              label="Details"
+            ></sc-header-anchor>
+          </h2>
         </div>
 
         <sc-details-card
           cardTitle="Vendor Metadata"
           cardId="details"
+          anchorId="metadata"
           [sections]="metadataSections"
           [isOpen]="expandedCards.details"
           (toggleRequested)="toggleCard('details')"
@@ -117,13 +124,20 @@
         <sc-details-card
           cardTitle="Billing"
           cardId="billing"
+          anchorId="billing"
           [sections]="billingSections"
           [isOpen]="expandedCards.billing"
           (toggleRequested)="toggleCard('billing')"
         ></sc-details-card>
 
         <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold">Regions</h2>
+          <h2 class="text-3xl font-bold sc-header-anchor-host">
+            Regions
+            <sc-header-anchor
+              anchorId="regions"
+              label="Regions"
+            ></sc-header-anchor>
+          </h2>
         </div>
 
         <div

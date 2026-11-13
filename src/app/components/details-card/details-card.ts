@@ -19,6 +19,7 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { Button } from "../button/button";
+import { HeaderAnchor } from "../header-anchor/header-anchor";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { DetailsCardSection } from "./details-card.types";
 
@@ -30,6 +31,7 @@ import { DetailsCardSection } from "./details-card.types";
     LucideTriangleAlert,
     Button,
     RouterLink,
+    HeaderAnchor,
   ],
   templateUrl: "./details-card.html",
   styleUrl: "./details-card.css",
@@ -40,6 +42,7 @@ export class DetailsCard {
 
   cardTitle = input.required<string>();
   cardId = input.required<string>();
+  anchorId = input<string | null>(null);
   sections = input<DetailsCardSection[]>([]);
   fixedRows = input(true);
   fullWidthBelowWide = input(false);

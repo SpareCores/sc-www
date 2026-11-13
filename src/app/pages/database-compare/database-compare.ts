@@ -3,6 +3,7 @@ import { ComparePageController } from "../shared/compare-page/compare-page.contr
 import { CompareGuide } from "../../components/compare-guide/compare-guide";
 import { CompareToolbar } from "../../components/compare-toolbar/compare-toolbar";
 import { ScrollbarMirror } from "../../components/scrollbar-mirror/scrollbar-mirror";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import {
   AfterViewInit,
   Component,
@@ -125,6 +126,7 @@ import databaseComparesData from "./database-compares.js";
     CompareGuide,
     CompareToolbar,
     ScrollbarMirror,
+    HeaderAnchor,
   ],
   templateUrl: "./database-compare.html",
   styleUrl: "./database-compare.css",

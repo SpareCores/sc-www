@@ -21,6 +21,7 @@ import {
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { DecimalPipe } from "@angular/common";
 import { Button } from "../button/button";
+import { HeaderAnchor } from "../header-anchor/header-anchor";
 import { CompressionChart } from "../charts/compression/compression-chart";
 import { GeekbenchRadarChart } from "../charts/geekbench/geekbench-radar-chart";
 import { GeekbenchBenchmarkMeta } from "../charts/geekbench/geekbench-radar-chart.types";
@@ -66,6 +67,7 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
     NvbandwidthCard,
     StressNgFullCard,
     WorkloadProfilePanel,
+    HeaderAnchor,
   ],
   templateUrl: "./server-charts.html",
   styleUrl: "./server-charts.css",

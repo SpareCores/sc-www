@@ -88,7 +88,13 @@
     @if (serverDetails) {
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
         <div class="my-2 w-full flex justify-between items-center">
-          <h2 class="text-3xl font-bold">Specifications</h2>
+          <h2 class="text-3xl font-bold sc-header-anchor-host">
+            Specifications
+            <sc-header-anchor
+              anchorId="specifications"
+              label="Specifications"
+            ></sc-header-anchor>
+          </h2>
           <sc-embed-widget-button
             [target]="{
               kind: 'details',
@@ -104,6 +110,7 @@
         <sc-details-card
           cardTitle="Server Metadata"
           cardId="details"
+          anchorId="metadata"
           [sections]="metadataSections"
           [isOpen]="expandedCards.details"
           (toggleRequested)="toggleCard('details')"
@@ -116,12 +123,14 @@
           rowClass="availability_line"
           moreLabel="Show more"
           captureEventPrefix="server details"
+          anchorId="availability"
           [isOpen]="expandedCards.availability"
           (toggleRequested)="toggleCard('availability', false)"
         ></sc-details-card>
         <sc-details-card
           cardTitle="Processor"
           cardId="processor"
+          anchorId="processor"
           [sections]="processorSections"
           [isOpen]="expandedCards.processor"
           (toggleRequested)="toggleCard('processor', false)"
@@ -129,6 +138,7 @@
         <sc-details-card
           cardTitle="System Resources and Accelerators"
           cardId="system_resources"
+          anchorId="system_resources"
           [sections]="resourceSections"
           [isOpen]="expandedCards.system_resources"
           (toggleRequested)="toggleCard('system_resources', false)"
@@ -147,6 +157,7 @@
               ngSkipHydration
               [vendorId]="serverDetails.vendor_id"
               [apiReference]="serverDetails.api_reference"
+              [anchored]="true"
               (svgExists)="onLstopoSvgExists($event)"
               (svgWidth)="lstopoSvgWidth = $event"
             ></sc-server-lstopo>
@@ -158,7 +169,15 @@
             [class.sc-chart-block--full]="descriptionCardIsFullWidth()"
           >
             <div class="flex justify-between items-center gap-4">
-              <h3 class="text-2xl">Server Description</h3>
+              <h3
+                class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
+              >
+                Server Description
+                <sc-header-anchor
+                  anchorId="description"
+                  label="Server Description"
+                ></sc-header-anchor>
+              </h3>
               <sc-button
                 label="More details"
                 size="small"
@@ -195,13 +214,27 @@
           </div>
         }
         <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold">Economics</h2>
+          <h2 class="text-3xl font-bold sc-header-anchor-host">
+            Economics
+            <sc-header-anchor
+              anchorId="economics"
+              label="Economics"
+            ></sc-header-anchor>
+          </h2>
         </div>
         <div
           class="sc-chart-block sc-chart-block--full price-sections-to-hide-for-test"
         >
           <div class="flex justify-between items-center">
-            <h3 class="text-2xl">Average Price per Region</h3>
+            <h3
+              class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
+            >
+              Average Price per Region
+              <sc-header-anchor
+                anchorId="price_per_region"
+                label="Average Price per Region"
+              ></sc-header-anchor>
+            </h3>
           </div>
           @if (isBrowser()) {
             <div>
@@ -222,7 +255,15 @@
           class="sc-chart-block sc-chart-block--half price-sections-to-hide-for-test"
         >
           <div class="flex justify-between items-center">
-            <h3 class="text-2xl">Prices per Zone</h3>
+            <h3
+              class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
+            >
+              Prices per Zone
+              <sc-header-anchor
+                anchorId="prices_per_zone"
+                label="Prices per Zone"
+              ></sc-header-anchor>
+            </h3>
             <div class="flex gap-4">
               <sc-button
                 id="region_button"
@@ -254,7 +295,15 @@
         <div
           class="sc-chart-block sc-chart-block--half price-sections-to-hide-for-test"
         >
-          <h3 class="text-2xl">Lowest Prices</h3>
+          <h3
+            class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
+          >
+            Lowest Prices
+            <sc-header-anchor
+              anchorId="lowest_prices"
+              label="Lowest Prices"
+            ></sc-header-anchor>
+          </h3>
           @if (isBrowser()) {
             <div>
               <div chartType="bar">
@@ -272,7 +321,13 @@
         </div>
         @if (serverDetails.benchmark_scores.length) {
           <div class="my-2 w-full">
-            <h2 class="text-3xl font-bold">Performance</h2>
+            <h2 class="text-3xl font-bold sc-header-anchor-host">
+              Performance
+              <sc-header-anchor
+                anchorId="performance"
+                label="Performance"
+              ></sc-header-anchor>
+            </h2>
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
@@ -296,11 +351,25 @@
           [benchmarkMeta]="benchmarkMeta"
         ></sc-server-charts>
         <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold">Alternatives</h2>
+          <h2 class="text-3xl font-bold sc-header-anchor-host">
+            Alternatives
+            <sc-header-anchor
+              anchorId="alternatives"
+              label="Alternatives"
+            ></sc-header-anchor>
+          </h2>
         </div>
         <div class="sc-chart-block sc-chart-block--half">
           <div class="flex items-center min-h-[42px]">
-            <h3 class="text-2xl">Servers of the Same Family</h3>
+            <h3
+              class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
+            >
+              Servers of the Same Family
+              <sc-header-anchor
+                anchorId="same_family"
+                label="Servers of the Same Family"
+              ></sc-header-anchor>
+            </h3>
           </div>
           <table class="items_table_similar similar_family_table">
             <thead>
@@ -339,7 +408,14 @@
         </div>
         <div class="sc-chart-block sc-chart-block--half" id="similar_servers">
           <div class="flex justify-between items-center">
-            <h3 class="text-2xl">Similar Servers</h3>
+            <h3 class="text-2xl sc-header-anchor-host">
+              Similar Servers
+              <sc-header-anchor
+                anchorId="similar_servers"
+                label="Similar Servers"
+                [withTarget]="false"
+              ></sc-header-anchor>
+            </h3>
             <div class="flex gap-4">
               <sc-button
                 id="similar_type_button"
@@ -420,6 +496,7 @@
         <sc-accordion
           [useFaqSchema]="true"
           [showHeading]="true"
+          anchorId="faqs"
           [heading]="serverDetails.display_name"
           [items]="faqs"
           [activeIndex]="activeFAQ"

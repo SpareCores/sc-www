@@ -98,20 +98,3 @@
 
   border-color: color-mix(in oklab, var(--color-emerald-400) 40%, transparent);
 }
-
-.partners-anchor-target {
-  position: relative;
-  top: -80px;
-  visibility: hidden;
-}
-
-.sc-header-anchor:focus,
-.sc-header-anchor:focus-visible,
-.partners-heading:focus-within .sc-header-anchor,
-.partners-heading:hover .sc-header-anchor {
-  opacity: 1;
-}
-
-a.sc-header-anchor:hover {
-  color: inherit;
-}

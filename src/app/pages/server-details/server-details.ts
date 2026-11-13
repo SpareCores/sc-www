@@ -39,6 +39,7 @@ import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner
 import { Modal } from "../../components/modals/modal/modal";
 import { ServerCharts } from "../../components/server-charts/server-charts";
 import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { ServerDescriptionSummary } from "../../components/server-description-summary/server-description-summary";
 import { DetailsCard } from "../../components/details-card/details-card";
 import { DetailsHeader } from "../../components/details-header/details-header";
@@ -48,6 +49,7 @@ import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { formatStorageSize } from "../../pipes/pipe-utils";
 import { Analytics } from "../../services/analytics";
+import { HeaderAnchorLink } from "../../services/header-anchor-link";
 import { KeeperAPI } from "../../services/keeper-api";
 import { ModalDialog } from "../../services/modal-dialog";
 import { SeoHandler } from "../../services/seo-handler";
@@ -112,6 +114,7 @@ function createEmptyBarChartData(): ChartData<"bar"> {
     Dropdown,
     Modal,
     DetailsHeader,
+    HeaderAnchor,
   ],
   templateUrl: "./server-details.html",
   styleUrl: "./server-details.css",
@@ -132,6 +135,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   private multiBarChartBuilder = inject(BenchmarkMultiBarChartBuilder);
   private modalDialog = inject(ModalDialog);
   private serverSpecCards = inject(ServerSpecCards);
+  private headerAnchorLink = inject(HeaderAnchorLink);
   private serverLoadId = 0;
   private loadAbortController: AbortController | null = null;
   private similarAbortController: AbortController | null = null;
@@ -703,6 +707,8 @@ export class ServerDetails implements OnInit, OnDestroy {
                       (o) => o.key === similarCategory,
                     );
                   }
+
+                  this.headerAnchorLink.scrollToCurrentFragment();
                 }, 100);
 
                 // https://github.com/chartjs/Chart.js/issues/5387

@@ -1,9 +1,19 @@
 <tbody>
   @for (section of sections(); track section.name; let sectionIndex = $index) {
     @if (section.name) {
-      <tr class="section_header">
+      @let sectionId = sectionAnchorId(section);
+      <tr class="section_header" [id]="sectionId">
         <td>
-          <h2 class="text-xl font-semibold">{{ section.name }}</h2>
+          <h2 class="text-xl font-semibold sc-header-anchor-host">
+            {{ section.name }}
+            @if (showAnchors()) {
+              <sc-header-anchor
+                [anchorId]="sectionId"
+                [label]="section.name"
+                [withTarget]="false"
+              ></sc-header-anchor>
+            }
+          </h2>
         </td>
         <td [attr.colspan]="databases().length"></td>
       </tr>
@@ -118,9 +128,18 @@
       <td [attr.colspan]="databases().length"></td>
     </tr>
     @if (sectionIndex === 0 && priceRows().length) {
-      <tr class="section_header">
+      <tr class="section_header" id="spec_line_pricing">
         <td>
-          <h2 class="text-xl font-semibold">Pricing</h2>
+          <h2 class="text-xl font-semibold sc-header-anchor-host">
+            Pricing
+            @if (showAnchors()) {
+              <sc-header-anchor
+                anchorId="spec_line_pricing"
+                label="Pricing"
+                [withTarget]="false"
+              ></sc-header-anchor>
+            }
+          </h2>
         </td>
         <td [attr.colspan]="databases().length"></td>
       </tr>

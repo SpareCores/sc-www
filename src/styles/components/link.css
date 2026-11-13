@@ -3,5 +3,30 @@
 }
 
 .sc-header-anchor {
-  @apply ml-2 no-underline opacity-0 transition-opacity duration-200 hover:text-emerald-400;
+  @apply relative left-2 inline-block w-0 whitespace-nowrap no-underline opacity-0 transition-opacity duration-200 hover:text-emerald-400;
+}
+
+.flex:not(:last-child) > sc-header-anchor > .sc-header-anchor {
+  @apply left-0 ml-2 w-auto;
+}
+
+@media (width < theme(--breakpoint-sm)) {
+  .sc-header-anchor {
+    @apply left-0 ml-2 w-auto;
+  }
+}
+
+.sc-header-anchor:focus-visible,
+.sc-header-anchor-host:hover .sc-header-anchor,
+.sc-header-anchor-host:focus-within .sc-header-anchor {
+  opacity: 1;
+}
+
+.sc-header-anchor-target {
+  position: absolute;
+}
+
+.sc-header-anchor-host--card .sc-header-anchor-target {
+  top: 0;
+  left: 0;
 }

@@ -133,6 +133,10 @@
   @apply bg-primary;
 }
 
+.sc-compare-table tbody tr.section_header {
+  @apply scroll-mt-6;
+}
+
 .sc-compare-table tbody tr td {
   @apply px-5 py-3 text-left text-sm;
 }

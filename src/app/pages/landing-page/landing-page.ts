@@ -20,6 +20,7 @@ import { spinner_initial_data } from "../../tools/spinner_initial_data";
 import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import { ThemeText } from "../../components/theme-text/theme-text";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { Button } from "../../components/button/button";
 import { RouterLink } from "@angular/router";
 import {
@@ -50,6 +51,7 @@ import {
 @Component({
   selector: "sc-landingpage",
   imports: [
+    HeaderAnchor,
     FormsModule,
     ThemeText,
     Button,

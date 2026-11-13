@@ -20,6 +20,7 @@ import { BaseChartDirective } from "ng2-charts";
 import { ChartData, ChartOptions } from "chart.js";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
+import { HeaderAnchor } from "../../header-anchor/header-anchor";
 import { CompressionChartBuilder } from "./compression-chart-builder";
 import {
   CompareCompressionOption,
@@ -55,6 +56,7 @@ import { Dropdown } from "../../../directives/dropdown";
     BaseChartDirective,
     Dropdown,
     BenchmarkIconPipe,
+    HeaderAnchor,
   ],
   templateUrl: "./compression-chart.html",
   styles: [
@@ -81,6 +83,7 @@ export class CompressionChart {
   benchmarksByCategory = input<CompressionBenchmarkGroup[]>([]);
   benchmarkMeta = input<CompressionBenchmarkMeta[]>([]);
   servers = input<CompressionServer[]>([]);
+  anchorId = input<string | null>(null);
 
   readonly isBrowser = isPlatformBrowser(this.platformId);
   readonly lineChartType = "line" as const;

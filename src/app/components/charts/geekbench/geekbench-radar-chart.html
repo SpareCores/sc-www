@@ -2,7 +2,9 @@
   @if (hasDetailsChart()) {
     <div [class]="blockClass()" [id]="elementId()">
       <div class="flex justify-between items-center">
-        <h3 class="text-2xl flex items-center gap-2">
+        <h3
+          class="text-2xl flex items-center gap-2 sc-header-anchor-host sc-header-anchor-host--card"
+        >
           <svg [lucideIcon]="'geekbench' | benchmarkIcon" class="h-6 w-6"></svg>
           {{ title() }}
           <svg
@@ -24,6 +26,12 @@
               (mouseenter)="showWarningTextTooltip($event, geekbenchMetaNote())"
               (mouseleave)="hideTooltip()"
             ></svg>
+          }
+          @if (anchorId(); as id) {
+            <sc-header-anchor
+              [anchorId]="id"
+              [label]="title()"
+            ></sc-header-anchor>
           }
         </h3>
         <div

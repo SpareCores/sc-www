@@ -23,6 +23,7 @@ import { BaseChartDirective } from "ng2-charts";
 import { ChartConfiguration, Plugin, ArcElement } from "chart.js";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
+import { HeaderAnchor } from "../../header-anchor/header-anchor";
 import { Accordion } from "../../accordion/accordion";
 import { Dropdown } from "../../../directives/dropdown";
 import { ChartTooltip } from "../shared/chart-tooltip";
@@ -169,6 +170,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
     WorkloadProfileRadarChart,
     BaseChartDirective,
     Dropdown,
+    HeaderAnchor,
   ],
   templateUrl: "./workload-profile-panel.html",
   styleUrls: ["./workload-profile-panel.css"],
@@ -194,6 +196,7 @@ export class WorkloadProfilePanel {
   serverDetails = input<WorkloadProfileDetailsServer | undefined>(undefined);
   showHeader = input(true);
   isEmbedded = input(false);
+  anchorId = input<string | null>(null);
 
   readonly layoutChanged = output<void>();
   readonly activeAccordionIndex = signal(-1);

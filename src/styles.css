@@ -55,6 +55,12 @@
 }
 
 @layer base {
+  html:has(.sc-shell-chrome) {
+    scroll-padding-top: 5.5rem;
+  }
+}
+
+@layer base {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;

@@ -715,28 +715,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.stickyLayout.init();
-      this.adjustScrollForFragment();
-    }
-  }
-
-  private adjustScrollForFragment() {
-    const fragment = window.location.hash;
-    if (fragment) {
-      const interval = setInterval(() => {
-        const element = this.document.querySelector(fragment);
-        if (element) {
-          const headerOffset = 6.75 * 16;
-          const elementPosition =
-            element.getBoundingClientRect().top + window.pageYOffset;
-          const offsetPosition = elementPosition - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-          clearInterval(interval);
-        }
-      }, 50);
     }
   }
 

@@ -309,11 +309,13 @@
       </div>
     </div>
   </div>
-  <div id="why" class="invisible relative -top-[65px] h-0"></div>
+  <div id="why" class="h-0"></div>
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center">
+        <div
+          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+        >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">why </span>
           <span class="text-gray-400">use="</span>spare_cores<span
@@ -321,6 +323,11 @@
             >"</span
           >
           <span class="text-emerald-400">></span>
+          <sc-header-anchor
+            anchorId="why"
+            label="Why use Spare Cores"
+            [withTarget]="false"
+          ></sc-header-anchor>
         </div>
         <div class="w-4/5 lg:w-2/3 mx-auto my-auto text-2xl text-center">
           AI/ML cloud waste starts with guesswork. Spare Cores helps teams
@@ -477,11 +484,13 @@
       </div>
     </div>
   </div>
-  <div id="resource-tracker" class="invisible relative -top-[65px] h-0"></div>
+  <div id="resource-tracker" class="h-0"></div>
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center">
+        <div
+          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+        >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">product </span>
           <span class="text-gray-400">id="</span>resource_tracker<span
@@ -489,6 +498,11 @@
             >"</span
           >
           <span class="text-emerald-400">></span>
+          <sc-header-anchor
+            anchorId="resource-tracker"
+            label="Resource Tracker"
+            [withTarget]="false"
+          ></sc-header-anchor>
         </div>
         <div
           class="w-full mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
@@ -638,11 +652,13 @@
       </div>
     </div>
   </div>
-  <div id="sentinel" class="invisible relative -top-[65px] h-0"></div>
+  <div id="sentinel" class="h-0"></div>
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center">
+        <div
+          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+        >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">product </span>
           <span class="text-gray-400">id="</span>sentinel<span
@@ -650,6 +666,11 @@
             >"</span
           >
           <span class="text-emerald-400">></span>
+          <sc-header-anchor
+            anchorId="sentinel"
+            label="Sentinel"
+            [withTarget]="false"
+          ></sc-header-anchor>
         </div>
         <div
           class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
@@ -832,16 +853,23 @@
       </div>
     </div>
   </div>
-  <div id="get-started" class="invisible relative -top-[65px] h-0"></div>
+  <div id="get-started" class="h-0"></div>
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center">
+        <div
+          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+        >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">init </span>
           <span class="text-gray-400">products="</span>resource_tracker
           sentinel<span class="text-gray-400">"</span>
           <span class="text-emerald-400">></span>
+          <sc-header-anchor
+            anchorId="get-started"
+            label="Get started"
+            [withTarget]="false"
+          ></sc-header-anchor>
         </div>
         <div
           class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
@@ -920,11 +948,13 @@
       </div>
     </div>
   </div>
-  <div id="services" class="invisible relative -top-[65px] h-0"></div>
+  <div id="services" class="h-0"></div>
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center">
+        <div
+          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+        >
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">services </span>
           <span class="text-gray-400">from="</span>spare_cores<span
@@ -932,6 +962,11 @@
             >"</span
           >
           <span class="text-emerald-400">></span>
+          <sc-header-anchor
+            anchorId="services"
+            label="Services"
+            [withTarget]="false"
+          ></sc-header-anchor>
         </div>
         <div
           class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
@@ -1051,13 +1086,19 @@
       </div>
     </div>
   </div>
-  <div id="articles" class="invisible relative -top-[65px] h-0"></div>
+  <div id="articles" class="h-0"></div>
   <div class="content_section">
     <div class="content flex flex-col gap-12">
       <sc-theme-text
         text="release_notes"
-        classes="text-4xl justify-center font-light"
-      ></sc-theme-text>
+        classes="text-4xl justify-center font-light sc-header-anchor-host"
+      >
+        <sc-header-anchor
+          anchorId="articles"
+          label="Release notes"
+          [withTarget]="false"
+        ></sc-header-anchor>
+      </sc-theme-text>
       <div class="text-xl text-center font-medium w-3/5 mx-auto">
         We publish case studies, learnings from implementing Spare Cores
         components, and other project updates from time to time. Find some of

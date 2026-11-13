@@ -231,7 +231,6 @@ export class ServerPrices implements OnInit, OnDestroy {
   vendorMetadata: any[] = [];
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
-  clipboardIcon = "clipboard";
   tooltipContent = "";
 
   selectedCountries: string[] = [];
@@ -725,23 +724,6 @@ export class ServerPrices implements OnInit, OnDestroy {
     }
 
     this.modalSearch?.hide();
-  }
-
-  clipboardURL() {
-    let url = window.location.href;
-    navigator.clipboard.writeText(url);
-
-    this.clipboardIcon = "check";
-
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 
   showTooltip(el: any, content: string, autoHide = false) {
