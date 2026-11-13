@@ -69,6 +69,7 @@ export class Article implements OnInit, OnDestroy {
   articleBody: any;
   readingTime: number = 0;
   private checkExistInterval: any;
+  private unlistenArticleClick?: () => void;
 
   ngOnInit() {
     this.subscription.add(
@@ -119,7 +120,8 @@ export class Article implements OnInit, OnDestroy {
               this.checkExistInterval = setInterval(() => {
                 if (this.articleDiv) {
                   // attach zoom images on click
-                  this.renderer.listen(
+                  this.unlistenArticleClick?.();
+                  this.unlistenArticleClick = this.renderer.listen(
                     this.articleDiv.nativeElement,
                     "click",
                     (event) => {
