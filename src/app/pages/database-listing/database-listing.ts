@@ -59,8 +59,8 @@ import {
   areSearchParamsEqual,
   toSearchParams,
 } from "../../tools/listing-search-params";
-import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { BookmarkButton } from "../../components/bookmark-button/bookmark-button";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import {
   isDefaultListingQuery,

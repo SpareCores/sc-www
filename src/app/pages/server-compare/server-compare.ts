@@ -55,7 +55,7 @@ import {
   SERVER_COMPARE_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { Modal } from "../../components/modal/modal";
+import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
 import { PrismHighlighter } from "../../services/prism-highlighter";
 import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
@@ -82,7 +82,7 @@ import {
   type MemoryBenchmarkMeta,
 } from "../../components/charts/memory/memory-chart.types";
 import { CompareCollections } from "../../collections/compare-collections";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import { AuthState } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";

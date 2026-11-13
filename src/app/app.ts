@@ -18,9 +18,9 @@ import {
 import { Subscription } from "rxjs";
 import { register } from "swiper/element/bundle";
 import { PromoBanner } from "./components/promo-banner/promo-banner";
-import { LoginModal } from "./components/login-modal/login-modal";
-import { RegisterModal } from "./components/register-modal/register-modal";
-import { ProfileModal } from "./components/profile-modal/profile-modal";
+import { LoginModal } from "./components/modals/auth/login-modal/login-modal";
+import { RegisterModal } from "./components/modals/auth/register-modal/register-modal";
+import { ProfileModal } from "./components/modals/profile-modal/profile-modal";
 import {
   PROMO_BANNER_BY_PATH,
   type PromoBannerDismissalGroup,

@@ -7,8 +7,8 @@ import {
   fakeAsync,
   flush,
 } from "@angular/core/testing";
-import { sharedTestingProviders } from "../../../testing/testbed.providers";
-import { AuthState, Profile, type ProfileView } from "../../core/auth";
+import { sharedTestingProviders } from "../../../../testing/testbed.providers";
+import { AuthState, Profile, type ProfileView } from "../../../core/auth";
 import { ProfileModal } from "./profile-modal";
 
 describe("ProfileModal", () => {

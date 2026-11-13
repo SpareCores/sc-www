@@ -4,8 +4,11 @@ import {
 } from "../../../support/clerk-testing";
 
 function assertRegisterModalOpened(): void {
-  cy.get(".auth-modal__title").should("contain.text", "Create your account");
-  cy.contains(".auth-modal__title", "Sign in to Spare Cores").should(
+  cy.get('[data-testid="auth-modal"] h2').should(
+    "contain.text",
+    "Create your account",
+  );
+  cy.contains('[data-testid="auth-modal"] h2', "Sign in to Spare Cores").should(
     "not.exist",
   );
 }
