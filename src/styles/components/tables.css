@@ -36,6 +36,15 @@
   @apply cursor-pointer;
 }
 
+.sc-table--hoverable tbody tr:has(> .sc-table-empty-cell):hover,
+.sc-table--interactive tbody tr:has(> .sc-table-empty-cell):hover {
+  outline-style: none;
+}
+
+.sc-table--interactive tbody tr:has(> .sc-table-empty-cell) {
+  cursor: default;
+}
+
 .sc-table--links tbody td a {
   @apply underline decoration-dotted;
 }
@@ -45,6 +54,22 @@
   width: 2rem;
   padding-right: 0.5rem;
   padding-left: 0.75rem;
+}
+
+.sc-table-loading-overlay {
+  @apply absolute inset-0 bg-black/20;
+  container-type: size;
+  overflow: clip;
+}
+
+.sc-table-loading-overlay__spinner {
+  @apply sticky mb-2 flex justify-center;
+  top: calc(50vh - 1.5rem);
+  margin-top: clamp(3rem, 50cqh - 1.5rem, 4rem);
+}
+
+.sc-table-empty-cell {
+  @apply h-16 text-gray-400;
 }
 
 .sc-kv-table {

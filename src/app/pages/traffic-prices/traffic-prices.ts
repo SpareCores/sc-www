@@ -84,7 +84,7 @@ export class TrafficPrices implements OnInit, OnDestroy {
   ];
 
   isCollapsed = false;
-  isLoading = false;
+  isLoading = true;
 
   filterCategories = [
     {

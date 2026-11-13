@@ -68,7 +68,7 @@ import {
   SERVER_COMPARE_TABLE_ID,
 } from "./server-compare.constants";
 import { type MemoryBenchmarkConfig } from "../../components/charts/memory/memory-chart.types";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CompareTableBenchmarkMeta } from "./server-compare.types";
 import {
   SERVER_COMPARE_EMBEDDABLE_WIDGETS,

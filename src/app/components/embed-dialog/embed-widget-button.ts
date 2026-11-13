@@ -14,7 +14,7 @@ import {
 import { ModalDialog } from "../../services/modal-dialog";
 import { SeoHandler } from "../../services/seo-handler";
 import { Button } from "../button/button";
-import { Modal } from "../modal/modal";
+import { Modal } from "../modals/modal/modal";
 import { EmbedDialog } from "./embed-dialog";
 import { EmbedTarget, EmbedWidgetOption } from "./embed-dialog.types";
 import { buildEmbedPreset, embedTargetKey } from "./embed-dialog.utils";

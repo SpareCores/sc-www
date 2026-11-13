@@ -1,10 +1,11 @@
 import { DialogRef } from "@angular/cdk/dialog";
 import { Component, computed, inject, input } from "@angular/core";
-import { Button } from "../button/button";
+import { Button } from "../../button/button";
 
-export type ModalSize = "lg" | "xl" | "3xl" | "4xl" | "wide" | "full";
+export type ModalSize = "sm" | "lg" | "xl" | "3xl" | "4xl" | "wide" | "full";
 
 const SIZE_CLASSES: Record<ModalSize, string> = {
+  sm: "max-w-100",
   lg: "max-w-lg",
   xl: "max-w-xl",
   "3xl": "max-w-3xl",
@@ -30,7 +31,9 @@ export class Modal {
 
   title = input("");
   size = input<ModalSize>("xl");
+  centerTitle = input(false);
   showClose = input(true);
+  closeLabel = input("Close modal");
   closeDisabled = input(false);
   closeCaptureEvent = input<string | null>(null);
   closeCaptureAction = input<string | null>(null);

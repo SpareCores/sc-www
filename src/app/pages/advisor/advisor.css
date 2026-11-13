@@ -133,10 +133,6 @@
   @apply hidden;
 }
 
-.advisor-empty-state-cell {
-  @apply text-gray-400;
-}
-
 .advisor-results {
   flex: 1 1 0%;
   min-width: 0;
@@ -166,11 +162,6 @@
   @apply overflow-x-auto;
   overflow-y: visible;
   padding-left: 1px;
-}
-
-.advisor-table-loading-overlay {
-  @apply absolute top-0 left-0 w-full h-full;
-  background-color: color-mix(in oklab, var(--color-black) 20%, transparent);
 }
 
 .advisor-results-table {
@@ -207,7 +198,6 @@
       }
 
       &.advisor-empty-state-row {
-        background: var(--color-yellow-500);
         cursor: default;
       }
 
@@ -223,10 +213,6 @@
           padding-right: 0.5rem;
           padding-left: 0.75rem;
         }
-      }
-
-      &.advisor-empty-state-row td.advisor-empty-state-cell {
-        color: var(--color-black);
       }
     }
   }

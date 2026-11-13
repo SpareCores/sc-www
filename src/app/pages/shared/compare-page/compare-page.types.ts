@@ -1,7 +1,7 @@
 import { PendingOpenSaveTarget } from "../../../collections/collections-ui";
 import type { SavedComparisonInstance } from "../../../collections/collections.types";
 import { BreadcrumbSegment } from "../../../components/breadcrumbs/breadcrumbs";
-import { CollectionSaveModal } from "../../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionSaveModal } from "../../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CompareGuideItem } from "../../../components/compare-guide/compare-guide.types";
 import { CurrencyOption } from "../../../tools/shared_data";
 

@@ -1,9 +1,17 @@
-import { Component, effect, inject } from "@angular/core";
+import {
+  Component,
+  TemplateRef,
+  effect,
+  inject,
+  viewChild,
+} from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import { LucideDynamicIcon } from "@lucide/angular";
-import { AUTH_MESSAGES, AuthState } from "../../core/auth";
-import { Button } from "../button/button";
-import { LoadingSpinner } from "../loading-spinner/loading-spinner";
+import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
+import { ModalDialog } from "../../../../services/modal-dialog";
+import { Button } from "../../../button/button";
+import { LoadingSpinner } from "../../../loading-spinner/loading-spinner";
+import { Modal } from "../../modal/modal";
 
 type RegisterBusy = "submit" | "verify" | "resend" | "github";
 type RegisterStep = "details" | "consent" | "verify";
@@ -19,14 +27,23 @@ const DETAILS_PARAMS = new Set([
   "password",
 ]);
 
+const STEP_TITLES: Record<RegisterStep, string> = {
+  details: AUTH_MESSAGES.createAccountTitle,
+  consent: AUTH_MESSAGES.oneLastStepTitle,
+  verify: AUTH_MESSAGES.verifyEmailTitle,
+};
+
 @Component({
   selector: "sc-register-modal",
-  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner],
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner, Modal],
   templateUrl: "./register-modal.html",
-  styleUrl: "../auth-modal.css",
+  styleUrls: ["../../modal-form.css", "../auth-modal.css"],
 })
 export class RegisterModal {
   protected readonly auth = inject(AuthState);
+  protected readonly messages = AUTH_MESSAGES;
+  private readonly modalTemplate =
+    viewChild<TemplateRef<unknown>>("modalTemplate");
 
   protected step: RegisterStep = "details";
   protected method: RegisterMethod = "email";
@@ -49,10 +66,27 @@ export class RegisterModal {
     );
   }
 
+  protected get title(): string {
+    return this.isAuthPending
+      ? AUTH_MESSAGES.creatingAccountTitle
+      : STEP_TITLES[this.step];
+  }
+
   constructor() {
+    inject(ModalDialog).bind({
+      open: this.auth.signUpModalOpen,
+      template: this.modalTemplate,
+      canClose: () =>
+        !this.isAuthPending &&
+        this.step !== "consent" &&
+        this.step !== "verify",
+      closed: () => this.auth.closeSignUp(),
+      reset: () => this.reset(),
+      closeOnNavigation: false,
+    });
+
     effect(() => {
       if (!this.auth.signUpModalOpen()) {
-        this.reset();
         return;
       }
 
@@ -70,19 +104,6 @@ export class RegisterModal {
         this.infoMessage = "";
       }
     });
-  }
-
-  protected close(): void {
-    if (
-      this.isAuthPending ||
-      this.step === "consent" ||
-      this.step === "verify"
-    ) {
-      return;
-    }
-
-    this.busy = null;
-    this.auth.closeSignUp();
   }
 
   protected cancelConsent(): void {

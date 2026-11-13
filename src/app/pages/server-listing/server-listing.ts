@@ -59,7 +59,7 @@ import {
 } from "../../services/compare-selection";
 import { Dropdown } from "../../directives/dropdown";
 import { Analytics } from "../../services/analytics";
-import { Modal } from "../../components/modal/modal";
+import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { Toast } from "../../services/toast";
@@ -81,8 +81,8 @@ import { StoragePipe } from "../../pipes/storage-pipe";
 import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
 import { formatNumberInputValue } from "../../pipes/pipe-utils";
-import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { BookmarkButton } from "../../components/bookmark-button/bookmark-button";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import {
   isDefaultListingQuery,

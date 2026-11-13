@@ -78,7 +78,7 @@ import {
   INVALID_DATABASE_COMPARE_URL_TOAST_ACTION_LABEL as INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
   INVALID_DATABASE_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
 } from "../../services/url-toast-content";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import {
   decodeBase64JsonUrlState,
   isDatabaseCompareUrlState,

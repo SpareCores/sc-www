@@ -2,7 +2,7 @@ import { DialogRef } from "@angular/cdk/dialog";
 import { Component, signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Modal } from "./modal";
-import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 
 @Component({
   template: `

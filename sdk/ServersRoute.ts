@@ -676,6 +676,7 @@ export namespace Servers {
         | "AP-SOUTHEAST-SYD-2"
         | "AP-SOUTH-MUM"
         | "AP-SOUTH-MUM-1"
+        | "ash"
         | "atl"
         | "australiacentral"
         | "australiacentral2"
@@ -743,12 +744,15 @@ export namespace Servers {
         | "fra"
         | "francecentral"
         | "francesouth"
+        | "fsn1"
         | "germanynorth"
         | "germanywestcentral"
         | "GRA"
         | "GRA11"
         | "GRA7"
         | "GRA9"
+        | "hel1"
+        | "hil"
         | "hnl"
         | "icn"
         | "il-central-1"
@@ -778,6 +782,8 @@ export namespace Servers {
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
+        | "nbg1"
+        | "newzealandnorth"
         | "nl-ams1"
         | "northcentralus"
         | "northeurope"
@@ -803,6 +809,7 @@ export namespace Servers {
         | "SGP"
         | "SGP1"
         | "sg-sin1"
+        | "sin"
         | "sjc"
         | "southafricanorth"
         | "southafricawest"
@@ -841,13 +848,7 @@ export namespace Servers {
         | "westus"
         | "westus2"
         | "westus3"
-        | "yto"
-        | "fsn1"
-        | "nbg1"
-        | "hel1"
-        | "ash"
-        | "hil"
-        | "sin";
+        | "yto";
       /**
        * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
@@ -954,6 +955,7 @@ export namespace Servers {
         | "azure~koreasouth"
         | "azure~malaysiawest"
         | "azure~mexicocentral"
+        | "azure~newzealandnorth"
         | "azure~northcentralus"
         | "azure~northeurope"
         | "azure~norwayeast"
@@ -1251,16 +1253,14 @@ export namespace Servers {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
         | "Ampere"
         | "Blackwell"
-        | "Gaudi"
         | "Hopper"
         | "Pascal"
-        | "Radeon Pro Navi"
         | "Turing"
         | "Volta";
       /** GPU model */
@@ -1270,14 +1270,16 @@ export namespace Servers {
         | "A10G"
         | "B200"
         | "B300"
+        | "G59"
         | "GB200"
         | "GB300"
         | "H100"
         | "H200"
-        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
+        | "M60"
+        | "MI300X"
         | "P100"
         | "P4"
         | "RTX 5000"
@@ -1287,7 +1289,6 @@ export namespace Servers {
         | "T4G"
         | "V100"
         | "V100S"
-        | "V520"
         | "V620"
         | "V710";
       /**
@@ -1329,7 +1330,7 @@ export namespace Servers {
        * Accelerator type
        * Type of the accelerator, e.g. GPU or TPU.
        */
-      accelerator_type?: "GPU" | "TPU";
+      accelerator_type?: "GPU" | "TPU" | "NPU" | "FPGA" | "VPU";
       /**
        * Accelerator count
        * Required number of accelerators (e.g. GPUs or TPUs).

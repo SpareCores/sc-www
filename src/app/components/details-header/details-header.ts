@@ -1,7 +1,7 @@
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideCheck } from "@lucide/angular";
-import { BookmarkButton } from "../collections/bookmark-button/bookmark-button";
+import { BookmarkButton } from "../bookmark-button/bookmark-button";
 import { CompareToggleButton } from "../compare-toggle-button/compare-toggle-button";
 import {
   DetailsHeaderFeature,
