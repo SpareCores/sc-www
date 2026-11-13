@@ -1,5 +1,8 @@
-<div class="flex justify-between items-center mb-4 gap-8 sc-header-anchor-host">
-  <h3 class="text-lg sm:text-2xl">
+<div
+  class="lstopo-header relative mb-4 flex min-h-9.5 items-center sc-header-anchor-host"
+  [style.--lstopo-svg-width.px]="svgIntrinsicWidth || null"
+>
+  <h3 class="text-lg pr-12 sm:text-2xl sm:pr-40">
     CPU and System Topology
     @if (anchored) {
       <sc-header-anchor
@@ -9,18 +12,20 @@
       ></sc-header-anchor>
     }
   </h3>
-  @if (fullscreenEnabled && inlineSvg && lstopoUrl && showFullscreen) {
-    <sc-button
-      class="shrink-0"
-      label="Open fullscreen"
-      [compact]="true"
-      ariaLabel="Open fullscreen"
-      icon="maximize-2"
-      iconPosition="start"
-      [attr.aria-haspopup]="'dialog'"
-      ariaControls="lstopo-modal"
-      (click)="openLstopoModal()"
-    ></sc-button>
+  @if (fullscreenEnabled && inlineSvg && lstopoUrl) {
+    <div class="lstopo-fullscreen-probe">
+      <sc-button
+        class="lstopo-fullscreen-button"
+        label="Open fullscreen"
+        [compact]="true"
+        ariaLabel="Open fullscreen"
+        icon="maximize-2"
+        iconPosition="start"
+        [attr.aria-haspopup]="'dialog'"
+        ariaControls="lstopo-modal"
+        (click)="openLstopoModal()"
+      ></sc-button>
+    </div>
   }
 </div>
 

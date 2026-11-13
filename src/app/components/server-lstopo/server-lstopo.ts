@@ -71,7 +71,7 @@ export class ServerLstopo implements OnChanges {
   inlineSvg: SafeHtml | null = null;
   modalSvg: SafeHtml | null = null;
   isLoading: boolean = false;
-  showFullscreen = false;
+  svgIntrinsicWidth = 0;
 
   @ViewChild("lstopoModalTemplate")
   private lstopoModalTemplate?: TemplateRef<unknown>;
@@ -81,7 +81,6 @@ export class ServerLstopo implements OnChanges {
 
   private dialogRef: DialogRef | null = null;
   private svgSub?: Subscription;
-  private resizeObserver?: ResizeObserver;
   private renderTimeout?: ReturnType<typeof setTimeout>;
   private tooltipListeners: TooltipListener[] = [];
   private modalTooltipListeners: TooltipListener[] = [];
@@ -122,6 +121,7 @@ export class ServerLstopo implements OnChanges {
             }
             try {
               const { w, normalizedSvg } = this.svgService.processSvg(svg);
+              this.svgIntrinsicWidth = w;
               if (w) setTimeout(() => this.svgWidth.emit(w), 0);
               const trustedSvg =
                 this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
@@ -133,7 +133,6 @@ export class ServerLstopo implements OnChanges {
                 this.renderTimeout = undefined;
                 if (!this.inlineSvg) return;
                 this.addSvgTooltips();
-                this.setupFullscreenCheck();
               }, 0);
             } catch (e) {
               console.warn("[lstopo] SVG processing failed", e);
@@ -248,52 +247,13 @@ export class ServerLstopo implements OnChanges {
     });
   }
 
-  private setupFullscreenCheck(): void {
-    this.teardownFullscreenCheck();
-    if (!isPlatformBrowser(this.platformId)) return;
-    this.updateFullscreenVisibility();
-    this.resizeObserver = new ResizeObserver(() =>
-      this.updateFullscreenVisibility(),
-    );
-    this.resizeObserver.observe(this.elRef.nativeElement);
-  }
-
-  private teardownFullscreenCheck(): void {
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = undefined;
-  }
-
-  private updateFullscreenVisibility(): void {
-    const svg = this.elRef.nativeElement.querySelector(
-      ".lstopo-inline-svg svg",
-    ) as SVGSVGElement | null;
-    if (!svg) {
-      if (this.showFullscreen) {
-        this.showFullscreen = false;
-        this.cdr.markForCheck();
-      }
-      return;
-    }
-    const intrinsicW = parseFloat(svg.getAttribute("width") ?? "0");
-    const intrinsicH = parseFloat(svg.getAttribute("height") ?? "0");
-    const needsFullscreen =
-      !intrinsicW || !intrinsicH
-        ? true
-        : svg.clientWidth < intrinsicW - 1 || svg.clientHeight < intrinsicH - 1;
-    if (needsFullscreen !== this.showFullscreen) {
-      this.showFullscreen = needsFullscreen;
-      this.cdr.markForCheck();
-    }
-  }
-
   private resetRenderedSvg(): void {
     if (this.renderTimeout !== undefined) {
       clearTimeout(this.renderTimeout);
       this.renderTimeout = undefined;
     }
     this.removeSvgTooltips();
-    this.teardownFullscreenCheck();
-    this.showFullscreen = false;
+    this.svgIntrinsicWidth = 0;
     this.dialogRef?.close();
     this.inlineSvg = null;
     this.modalSvg = null;
