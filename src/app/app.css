@@ -29,7 +29,7 @@
 }
 
 .sc-shell-banner {
-  @apply bg-primary pt-8 content-gutter;
+  @apply bg-primary pt-4 lg:pt-6 content-gutter;
 }
 
 .sc-main {
