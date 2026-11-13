@@ -33,7 +33,7 @@
 }
 
 .server-description-tagline {
-  @apply text-emerald-400 text-lg;
+  @apply text-emerald-400 text-base leading-6 sm:text-lg sm:leading-7;
 }
 
 .server-description-categories {

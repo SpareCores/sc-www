@@ -40,7 +40,7 @@
         <span detailsScoreTitle>Performance</span>
       </sc-details-header>
 
-      <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
+      <div class="mx-2 xl:mx-0 flex flex-wrap gap-4 md:gap-8 mt-8">
         <div
           class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
         >
@@ -159,6 +159,8 @@
             </h2>
             <sc-button
               label="More details"
+              [compact]="true"
+              ariaLabel="More details"
               icon="square-arrow-up-right"
               [routerLink]="underlyingServerLink"
               data-ph-capture-attribute-sc-event="database details underlying server"

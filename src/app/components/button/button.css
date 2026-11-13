@@ -441,3 +441,76 @@
   text-overflow: clip;
   min-width: max-content;
 }
+
+.sc-button.sc-button--compact {
+  @apply size-9.5 shrink-0 p-0;
+}
+
+.sc-button.sc-button--compact.sc-button--dropdown {
+  @apply overflow-hidden;
+}
+
+.sc-button--compact .sc-button__square {
+  @apply w-full rounded-lg bg-emerald-400;
+}
+
+.sc-button--compact .sc-button__icon,
+.sc-button--compact .sc-button__compact-icon {
+  @apply size-4;
+}
+
+.sc-button--compact .sc-button__compact-icon {
+  @apply text-white;
+}
+
+.sc-button--compact .sc-button__label,
+.sc-button--compact .sc-button__extension-label,
+.sc-button--compact .sc-button__square-icon:not(.sc-button__compact-icon) {
+  @apply hidden;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-button.sc-button--compact {
+    @apply h-auto w-full shrink;
+  }
+
+  .sc-button--compact:not(.sc-button--dropdown).sc-button--small {
+    @apply px-3 py-2;
+  }
+
+  .sc-button--compact:not(.sc-button--dropdown).sc-button--default {
+    @apply px-4 py-3;
+  }
+
+  .sc-button--compact:not(.sc-button--dropdown).sc-button--large {
+    @apply p-5;
+  }
+
+  .sc-button--compact .sc-button__label {
+    @apply inline;
+  }
+
+  .sc-button--compact .sc-button__extension-label {
+    @apply flex;
+  }
+
+  .sc-button--compact .sc-button__square-icon:not(.sc-button__compact-icon) {
+    @apply block;
+  }
+
+  .sc-button--compact .sc-button__square {
+    @apply w-11 rounded-l-none rounded-r-lg bg-sky-950;
+  }
+
+  .sc-button--small.sc-button--compact .sc-button__square {
+    @apply w-[38px];
+  }
+
+  .sc-button--large.sc-button--compact .sc-button__square {
+    @apply w-[62px];
+  }
+
+  .sc-button--compact .sc-button__compact-icon {
+    @apply hidden;
+  }
+}

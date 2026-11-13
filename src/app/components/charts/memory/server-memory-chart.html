@@ -1,11 +1,11 @@
 @if (chartData() && currentMemoryChartOption()) {
   <div class="sc-chart-block sc-chart-block--half" id="bw_mem_chart">
     <div
-      class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between sc-header-anchor-host sc-header-anchor-host--card"
+      class="flex items-center justify-between gap-4 sm:flex-col sm:items-start md:flex-row md:items-center sc-header-anchor-host sc-header-anchor-host--card"
     >
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3 class="sc-chart-title">
         <svg [lucideIcon]="'bwmem' | benchmarkIcon" class="h-6 w-6"></svg>
-        <span class="whitespace-nowrap">Memory Bandwidth</span>
+        <span class="sm:whitespace-nowrap">Memory Bandwidth</span>
         <svg
           [lucideIcon]="currentMemoryChartIcon()"
           class="h-4 w-4 text-gray-200"
@@ -44,6 +44,7 @@
         [dropdownEnabled]="availableMemoryChartOptions().length > 0"
         [label]="currentMemoryChartOption().name"
         icon="chevron-down"
+        [compactIcon]="'bwmem' | benchmarkIcon"
         variant="dropdown"
         size="small"
       ></sc-button>

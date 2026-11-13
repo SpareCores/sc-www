@@ -27,6 +27,13 @@
           class="sc-button__square-icon"
           aria-hidden="true"
         ></svg>
+        @if (compactIcon()) {
+          <svg
+            [lucideIcon]="compactIcon()!"
+            class="sc-button__square-icon sc-button__compact-icon"
+            aria-hidden="true"
+          ></svg>
+        }
       </div>
     }
   } @else if (variant() === "benchmark") {
@@ -125,7 +132,7 @@
     [queryParams]="queryParams() || undefined"
     [attr.target]="target()"
     [attr.rel]="rel()"
-    [attr.aria-label]="ariaLabel()"
+    [attr.aria-label]="resolvedAriaLabel()"
     [attr.aria-expanded]="ariaExpanded()"
     [attr.aria-controls]="ariaControls()"
     [attr.title]="title()"
@@ -136,6 +143,7 @@
       variant()
     }} sc-button--{{ color() }} {{ buttonClass() }}"
     [class.sc-button--icon-only]="isIconOnly()"
+    [class.sc-button--compact]="isCompact()"
     [class.sc-button--multiline]="isMultilineLabel()"
     [class.sc-button--disabled]="isDisabled()"
     (click)="onClick($event)"
@@ -147,7 +155,7 @@
     [href]="href()!"
     [attr.target]="target()"
     [attr.rel]="rel()"
-    [attr.aria-label]="ariaLabel()"
+    [attr.aria-label]="resolvedAriaLabel()"
     [attr.aria-expanded]="ariaExpanded()"
     [attr.aria-controls]="ariaControls()"
     [attr.title]="title()"
@@ -158,6 +166,7 @@
       variant()
     }} sc-button--{{ color() }} {{ buttonClass() }}"
     [class.sc-button--icon-only]="isIconOnly()"
+    [class.sc-button--compact]="isCompact()"
     [class.sc-button--multiline]="isMultilineLabel()"
     [class.sc-button--disabled]="isDisabled()"
     (click)="onClick($event)"
@@ -168,7 +177,7 @@
   <button
     [type]="type()"
     [disabled]="isDisabled()"
-    [attr.aria-label]="ariaLabel()"
+    [attr.aria-label]="resolvedAriaLabel()"
     [attr.aria-expanded]="ariaExpanded()"
     [attr.aria-controls]="ariaControls()"
     [attr.aria-pressed]="ariaPressed()"
@@ -178,6 +187,7 @@
       variant()
     }} sc-button--{{ color() }} {{ buttonClass() }}"
     [class.sc-button--icon-only]="isIconOnly()"
+    [class.sc-button--compact]="isCompact()"
     [class.sc-button--multiline]="isMultilineLabel()"
     (click)="onClick($event)"
   >

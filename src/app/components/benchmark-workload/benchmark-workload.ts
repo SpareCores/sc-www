@@ -148,14 +148,14 @@ export class BenchmarkWorkload {
             ticks: {
               color: chartColors.white,
               maxRotation: 45,
-              font: { size: 10 },
+              font: { size: 12 },
             },
             grid: { color: chartColor("gray-600", 0.4) },
             title: {
               display: true,
               text: xLabel,
               color: chartColors.white,
-              font: { size: 11 },
+              font: { size: 12 },
             },
           },
           y: {
@@ -165,7 +165,7 @@ export class BenchmarkWorkload {
               display: true,
               text: yLabel,
               color: chartColors.white,
-              font: { size: 11 },
+              font: { size: 12 },
             },
           },
         },
