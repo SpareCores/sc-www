@@ -234,6 +234,7 @@
               [priceRows]="priceRows"
               [databases]="databases"
               [baselineIndex]="baselineIndex()"
+              [showAnchors]="true"
               (descriptionEnter)="
                 showChartTooltip($event.event, $event.content)
               "
@@ -248,7 +249,9 @@
                 >
                   <td [attr.colspan]="pinnedRow.contentColSpan">
                     <div class="compare-section-header-row">
-                      <h3 class="text-xl font-semibold m-0 flex items-center">
+                      <h3
+                        class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
+                      >
                         <span class="compare-section-header-title">
                           <svg
                             [lucideIcon]="'pgbench' | benchmarkIcon"
@@ -294,6 +297,11 @@
                             }
                           </span>
                         </span>
+                        <sc-header-anchor
+                          anchorId="database_compare_pgbench_section"
+                          [label]="pgbenchMeta.title"
+                          [withTarget]="false"
+                        ></sc-header-anchor>
                       </h3>
                     </div>
                   </td>
@@ -328,9 +336,16 @@
                   }
                 </tr>
               }
-              <tr class="section_header">
+              <tr class="section_header" id="spec_line_more_details">
                 <td>
-                  <h2 class="text-xl font-semibold">More Details</h2>
+                  <h2 class="text-xl font-semibold sc-header-anchor-host">
+                    More Details
+                    <sc-header-anchor
+                      anchorId="spec_line_more_details"
+                      label="More Details"
+                      [withTarget]="false"
+                    ></sc-header-anchor>
+                  </h2>
                 </td>
                 <td [attr.colspan]="databases.length"></td>
               </tr>
