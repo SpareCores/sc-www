@@ -21,6 +21,7 @@ src/sitemap.xml
 
 # Custom patterns
 src/assets/slides/render.sh
+src/assets/slides/*.md
 
 # Environment files
 .env
