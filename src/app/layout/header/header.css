@@ -62,6 +62,19 @@ li {
   max-width: calc(100vw - 2rem);
 }
 
+.mobile_menu_panel li {
+  @apply py-0;
+}
+
+.mobile_menu_panel a.navbar_link,
+.mobile_menu_panel button.navbar_link {
+  @apply min-h-11;
+}
+
+.mobile_menu_panel span.navbar_link {
+  @apply min-h-9;
+}
+
 .compare_dropdown_panel {
   width: max-content;
   max-width: calc(100vw - 2rem);
