@@ -181,3 +181,5 @@ export function createBenchmarkCategories(): CompareEmbedBenchmarkCategory[] {
     },
   ];
 }
+
+export const SPEC_TABLE_WIDGET_IDS = ["all", "generic"];

@@ -40,7 +40,7 @@ export class CompareEmbedData {
       return {
         path,
         database: decoded.value.length
-          ? await this.databaseEmbedData.loadCompare(decoded.value)
+          ? await this.databaseEmbedData.loadCompare(decoded.value, widgetId)
           : undefined,
       };
     }

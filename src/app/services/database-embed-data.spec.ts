@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { DatabaseEmbedData } from "./database-embed-data";
+import { DATABASE_COMPARE_SPECS_WIDGET_ID } from "./database-embed.constants";
 import { KeeperAPI } from "./keeper-api";
 import { sharedTestingProviders } from "../../testing/testbed.providers";
 
@@ -103,10 +104,22 @@ describe("DatabaseEmbedData", () => {
     expect(keeperAPI.getServerV2).not.toHaveBeenCalled();
   });
 
-  it("builds the compare specs and chart servers", async () => {
-    const details = await service.loadCompare([
-      { vendor: "aws", database: "db.m5.large", display_name: "db.m5.large" },
-    ]);
+  it("builds the compare specs without benchmark metadata", async () => {
+    const details = await service.loadCompare(
+      [{ vendor: "aws", database: "db.m5.large", display_name: "db.m5.large" }],
+      DATABASE_COMPARE_SPECS_WIDGET_ID,
+    );
+
+    expect(details.propertySections.length).toBeGreaterThan(0);
+    expect(details.priceRows.map((row) => row.id)).toContain("best_hour");
+    expect(keeperAPI.getServerBenchmarkMeta).not.toHaveBeenCalled();
+  });
+
+  it("builds the compare chart servers without prices", async () => {
+    const details = await service.loadCompare(
+      [{ vendor: "aws", database: "db.m5.large", display_name: "db.m5.large" }],
+      "pgbench",
+    );
 
     expect(details.servers).toEqual([
       {
@@ -117,7 +130,9 @@ describe("DatabaseEmbedData", () => {
         benchmark_scores: [],
       },
     ]);
-    expect(details.propertySections.length).toBeGreaterThan(0);
-    expect(details.priceRows.map((row) => row.id)).toContain("best_hour");
+    expect(details.propertySections).toEqual([]);
+    expect(details.priceRows).toEqual([]);
+    expect(keeperAPI.getDatabasePrices).not.toHaveBeenCalled();
+    expect(keeperAPI.getRegions).not.toHaveBeenCalled();
   });
 });

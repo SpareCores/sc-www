@@ -15,6 +15,7 @@ import { ComparedServer } from "./compare-selection";
 import { KeeperAPI } from "./keeper-api";
 import { ServerCompareEmbedDetails } from "./server-compare-embed.types";
 import {
+  SPEC_TABLE_WIDGET_IDS,
   createBenchmarkCategories,
   createInstancePropertyCategories,
 } from "./server-compare-embed.constants";
@@ -38,6 +39,8 @@ export class ServerCompareEmbedData {
       category.hidden = !(widgetId === category.id || widgetId === "all");
     });
 
+    const needsSpecs = SPEC_TABLE_WIDGET_IDS.includes(widgetId);
+    const skipped = Promise.resolve({ body: [] });
     const [
       metaResponse,
       benchmarkMetaResponse,
@@ -46,19 +49,23 @@ export class ServerCompareEmbedData {
       zonesResponse,
       ...serverResponses
     ] = await Promise.all([
-      this.keeperAPI.getServerMeta(),
+      needsSpecs
+        ? this.keeperAPI.getServerMeta()
+        : Promise.resolve({ body: { fields: [] } }),
       this.keeperAPI.getServerBenchmarkMeta(),
       this.keeperAPI.getVendors(),
-      this.keeperAPI.getRegions(),
-      this.keeperAPI.getZones(),
+      needsSpecs ? this.keeperAPI.getRegions() : skipped,
+      needsSpecs ? this.keeperAPI.getZones() : skipped,
       ...instances.map((instance) =>
         Promise.all([
           this.keeperAPI.getServerV2(instance.vendor, instance.server),
-          this.keeperAPI.getServerPrices(
-            instance.vendor,
-            instance.server,
-            "USD",
-          ),
+          needsSpecs
+            ? this.keeperAPI.getServerPrices(
+                instance.vendor,
+                instance.server,
+                "USD",
+              )
+            : skipped,
           this.keeperAPI.getServerBenchmark(instance.vendor, instance.server),
         ]),
       ),

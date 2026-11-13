@@ -26,6 +26,7 @@ import { KeeperAPI } from "./keeper-api";
 import {
   ComparePropertyRow,
   ComparePropertySection,
+  DatabaseCompareInclude,
   LoadedCompareDatabase,
   LoadedDatabaseCompare,
 } from "./database-compare-specs.types";
@@ -48,17 +49,23 @@ export class DatabaseCompareSpecs {
   async load(
     instances: ComparedDatabase[],
     currency: string,
+    include: DatabaseCompareInclude = { specs: true, pgbench: true },
   ): Promise<LoadedDatabaseCompare> {
+    const skipped = Promise.resolve({ body: [] });
     const [benchmarkMeta, vendors, regions, ...databases] = await Promise.all([
-      this.keeperAPI.getServerBenchmarkMeta(),
+      include.pgbench ? this.keeperAPI.getServerBenchmarkMeta() : skipped,
       this.keeperAPI.getVendors(),
-      this.keeperAPI.getRegions(),
+      include.specs ? this.keeperAPI.getRegions() : skipped,
       ...instances.map((instance) =>
         Promise.all([
           this.keeperAPI.getDatabase(instance.vendor, instance.database),
-          this.keeperAPI.getDatabasePrices(instance.vendor, instance.database, {
-            currency,
-          }),
+          include.specs
+            ? this.keeperAPI.getDatabasePrices(
+                instance.vendor,
+                instance.database,
+                { currency },
+              )
+            : skipped,
           this.keeperAPI.getDatabaseBenchmarks(
             instance.vendor,
             instance.database,

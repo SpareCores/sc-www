@@ -37,3 +37,8 @@ export interface LoadedDatabaseCompare {
   benchmarkMeta: Benchmark[];
   databases: LoadedCompareDatabase[];
 }
+
+export interface DatabaseCompareInclude {
+  specs: boolean;
+  pgbench: boolean;
+}

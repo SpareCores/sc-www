@@ -24,6 +24,7 @@ import { KeeperAPI } from "./keeper-api";
 import { DatabaseCompareEmbedDetails } from "./database-embed.types";
 import {
   DATABASE_CARDS,
+  DATABASE_COMPARE_SPECS_WIDGET_ID,
   DATABASE_PGBENCH_WIDGET_ID,
   UNDERLYING_SERVER_PGBENCH_WIDGET_ID,
 } from "./database-embed.constants";
@@ -118,10 +119,13 @@ export class DatabaseEmbedData {
 
   async loadCompare(
     instances: ComparedDatabase[],
+    widgetId: string,
   ): Promise<DatabaseCompareEmbedDetails> {
+    const specs = widgetId === DATABASE_COMPARE_SPECS_WIDGET_ID;
     const { benchmarkMeta, databases } = await this.compareSpecs.load(
       instances,
       "USD",
+      { specs, pgbench: !specs },
     );
 
     return {
@@ -129,8 +133,10 @@ export class DatabaseEmbedData {
       databases,
       servers: this.pgbench.lineServers(databases),
       benchmarkMeta: benchmarkMeta as LineBenchmarkMeta[],
-      propertySections: this.compareSpecs.buildPropertySections(databases),
-      priceRows: this.compareSpecs.buildPriceRows(databases),
+      propertySections: specs
+        ? this.compareSpecs.buildPropertySections(databases)
+        : [],
+      priceRows: specs ? this.compareSpecs.buildPriceRows(databases) : [],
     };
   }
 
