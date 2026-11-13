@@ -13,7 +13,6 @@ tags: [benchmark, performance, score, compute power, scalability, vcpu]
 
 <!--
 EDITOR NOTES (remove before publishing):
-- Charts are placeholders; see the HTML comment specs next to each image.
 - Source data: Linear DEV-297 (copied from Slack, June 2024).
 -->
 
@@ -159,20 +158,6 @@ are the two SMT threads of a single physical AMD core. Running two workers
 instead of one should not double the performance, as there's only one core
 doing the work. Still, the scaling factors were all over the place:
 
-<div class="text-center m-2.5 mt-8 mb-6">
-  <!--
-  CHART SPEC (placeholder): horizontal bar chart, one bar per method (78 bars),
-  sorted by the c6a.large scaling factor (second appendix table, c6a.large
-  column), from 0.97 (ln2, int128float) to 2.02 (crc16). Reference lines at
-  1.0x ("one core") and 2.0x ("two cores"). Highlight div16 and jmp.
-  -->
-  <img class="zoomin w-full"
-    title="Scaling factor of stress-ng CPU methods on c6a.large"
-    alt="Bar chart of the two-worker vs one-worker scaling factor of 78 stress-ng CPU methods on a single AMD core with SMT, ranging from 0.97x to 2.02x."
-    src="/assets/images/blog/stress-ng-cpu-methods/c6a-large-smt-scaling.webp"/>
-  <p>Throughput of two workers relative to one worker on a single core with SMT (<code>c6a.large</code>)<br />(data collected and visualized by Spare Cores)</p>
-</div>
-
 - The integer divisions (`div8`, `div16`, `div32`, `div64`), `jmp`, `gray`,
   `hanoi`, `fibonacci`, `floatconversion`, `sqrt`, `ln2`, and `int128float`
   did not gain anything from the second SMT thread (0.97x to 1.01x).
@@ -199,20 +184,6 @@ Things get more interesting with lots of cores. We compared two 128-vCPU
 servers: `c7a.32xlarge` with 128 physical AMD Genoa cores and no SMT, and
 `c6i.metal` with 64 physical Intel cores in two sockets, each running two
 SMT threads.
-
-<div class="text-center m-2.5 mt-8 mb-6">
-  <!--
-  CHART SPEC (placeholder): dot plot, one row per method, sorted by the
-  c6i.metal scaling factor. Two dots per row: c7a.32xlarge and c6i.metal
-  (second appendix table). Vertical reference lines at 64x (c6i.metal
-  physical cores) and 128x (vCPUs). Highlight div16, jmp, and all.
-  -->
-  <img class="zoomin w-full"
-    title="Scaling factor of stress-ng CPU methods on c7a.32xlarge and c6i.metal"
-    alt="Dot plot comparing the scaling factor of 78 stress-ng CPU methods on c7a.32xlarge (110x to 136x) and c6i.metal (52x to 126x)."
-    src="/assets/images/blog/stress-ng-cpu-methods/many-core-scaling.webp"/>
-  <p>Throughput of 128 workers relative to one worker on <code>c7a.32xlarge</code> and <code>c6i.metal</code><br />(data collected and visualized by Spare Cores)</p>
-</div>
 
 On `c7a.32xlarge`, most methods scaled close to the core count: the median
 was 125x, with a range of 110x (`stats`) to 136x (`gray`). Yes, a few methods
@@ -255,20 +226,6 @@ throughput, but a handful of methods were dramatically slower:
 | `trig` | 5319 | 178 | 30x |
 | `matrixprod` | 1161 | 46 | 25x |
 | `longdouble` | 1644 | 117 | 14x |
-
-<div class="text-center m-2.5 mt-8 mb-6">
-  <!--
-  CHART SPEC (placeholder): grouped horizontal bars on a log-scale x axis,
-  one group per method, two bars each: m7a.xlarge and c6g.xlarge single-worker
-  bogo-ops/s (first appendix table). Sort by the c6g/m7a ratio. Color the
-  methods using long double differently from the rest.
-  -->
-  <img class="zoomin w-full"
-    title="Single-core stress-ng results on AMD Genoa vs Graviton2"
-    alt="Log-scale bar chart of single-worker bogo-ops per second on m7a.xlarge and c6g.xlarge, showing slowdowns of up to 151x on Graviton2, mostly for methods using long double."
-    src="/assets/images/blog/stress-ng-cpu-methods/arm-long-double.webp"/>
-  <p>Single-worker throughput of <code>m7a.xlarge</code> (AMD Genoa) and <code>c6g.xlarge</code> (Graviton2), log scale<br />(data collected and visualized by Spare Cores)</p>
-</div>
 
 Looking at the source code, all of these methods except `hanoi` do their math
 on the `long double` type. On x86, `long double` is an 80-bit extended
