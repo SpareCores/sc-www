@@ -365,10 +365,20 @@
           @let visibleProperties =
             getVisibleInstanceProperties(propertyCategory);
           @if (visibleProperties.length) {
-            <tr class="section_header">
+            <tr
+              class="section_header"
+              [id]="'spec_line_' + propertyCategory.category"
+            >
               <td>
-                <h2 class="text-xl font-semibold">
+                <h2 class="text-xl font-semibold sc-header-anchor-host">
                   {{ propertyCategory.name }}
+                  @if (!isEmbedded) {
+                    <sc-header-anchor
+                      [anchorId]="'spec_line_' + propertyCategory.category"
+                      [label]="propertyCategory.name"
+                      [withTarget]="false"
+                    ></sc-header-anchor>
+                  }
                 </h2>
               </td>
               <td [colSpan]="servers.length"></td>
@@ -480,7 +490,9 @@
         <tr class="section_header" id="benchmark_line_workload_profile">
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+              <h3
+                class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'workload_profile' | benchmarkIcon"
@@ -519,6 +531,13 @@
                     }
                   </span>
                 </span>
+                @if (!isEmbedded) {
+                  <sc-header-anchor
+                    anchorId="benchmark_line_workload_profile"
+                    label="Workload Profiles"
+                    [withTarget]="false"
+                  ></sc-header-anchor>
+                }
               </h3>
               @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                 <div class="flex items-stretch gap-4 shrink-0">
@@ -530,15 +549,6 @@
                     iconPosition="start"
                     size="small"
                     (click)="toggleWorkloadProfileDetails()"
-                  ></sc-button>
-                  <sc-button
-                    [icon]="clipboardIcon"
-                    ariaLabel="Copy benchmark section link"
-                    size="small"
-                    buttonClass="shrink-0"
-                    (click)="
-                      clipboardURL($event, 'benchmark_line_workload_profile')
-                    "
                   ></sc-button>
                 </div>
               }
@@ -559,15 +569,6 @@
                     iconPosition="start"
                     size="small"
                     (click)="toggleWorkloadProfileDetails()"
-                  ></sc-button>
-                  <sc-button
-                    [icon]="clipboardIcon"
-                    ariaLabel="Copy benchmark section link"
-                    size="small"
-                    buttonClass="shrink-0"
-                    (click)="
-                      clipboardURL($event, 'benchmark_line_workload_profile')
-                    "
                   ></sc-button>
                 </div>
               }
@@ -707,7 +708,9 @@
         <tr class="section_header" id="benchmark_line_nvbandwidth">
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+              <h3
+                class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'nvbandwidth' | benchmarkIcon"
@@ -717,37 +720,21 @@
                     {{ nvbandwidthTitle }}
                   </span>
                 </span>
+                @if (!isEmbedded) {
+                  <sc-header-anchor
+                    anchorId="benchmark_line_nvbandwidth"
+                    [label]="nvbandwidthTitle"
+                    [withTarget]="false"
+                  ></sc-header-anchor>
+                }
               </h3>
-              @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                <div class="flex items-stretch gap-4 shrink-0">
-                  <sc-button
-                    [icon]="clipboardIcon"
-                    ariaLabel="Copy benchmark section link"
-                    size="small"
-                    buttonClass="shrink-0"
-                    (click)="clipboardURL($event, 'benchmark_line_nvbandwidth')"
-                  ></sc-button>
-                </div>
-              }
             </div>
           </td>
           @if (pinnedRow.actionSpacerColSpan) {
             <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
           }
           @if (pinnedRow.trailingColSpan) {
-            <td [colSpan]="1" class="compare-section-header-action-cell">
-              @if (!isEmbedded) {
-                <div class="flex justify-end items-stretch gap-4">
-                  <sc-button
-                    [icon]="clipboardIcon"
-                    ariaLabel="Copy benchmark section link"
-                    size="small"
-                    buttonClass="shrink-0"
-                    (click)="clipboardURL($event, 'benchmark_line_nvbandwidth')"
-                  ></sc-button>
-                </div>
-              }
-            </td>
+            <td [colSpan]="1" class="compare-section-header-action-cell"></td>
           }
         </tr>
         @for (section of nvbandwidthSections; track section.name) {
@@ -923,7 +910,9 @@
           >
             <td [colSpan]="pinnedRow.contentColSpan">
               <div class="compare-section-header-row">
-                <h3 class="text-xl font-semibold m-0 flex items-center">
+                <h3
+                  class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
+                >
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="'stress_ng' | benchmarkIcon"
@@ -941,6 +930,13 @@
                       ></svg>
                     </span>
                   </span>
+                  @if (!isEmbedded) {
+                    <sc-header-anchor
+                      anchorId="benchmark_line_stress_ng_full"
+                      [label]="stressNgTitle"
+                      [withTarget]="false"
+                    ></sc-header-anchor>
+                  }
                 </h3>
                 <div class="flex items-stretch gap-4 shrink-0">
                   <sc-button
@@ -965,17 +961,6 @@
                     size="small"
                     [title]="stressNgMetricName()"
                   ></sc-button>
-                  @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                    <sc-button
-                      [icon]="clipboardIcon"
-                      ariaLabel="Copy benchmark section link"
-                      size="small"
-                      buttonClass="shrink-0"
-                      (click)="
-                        clipboardURL($event, 'benchmark_line_stress_ng_full')
-                      "
-                    ></sc-button>
-                  }
                 </div>
               </div>
               <ng-template #stressNgSubcategoryPanel>
@@ -1041,21 +1026,7 @@
               <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
             }
             @if (pinnedRow.trailingColSpan) {
-              <td [colSpan]="1" class="compare-section-header-action-cell">
-                @if (!isEmbedded) {
-                  <div class="flex justify-end items-stretch gap-4">
-                    <sc-button
-                      [icon]="clipboardIcon"
-                      ariaLabel="Copy benchmark section link"
-                      size="small"
-                      buttonClass="shrink-0"
-                      (click)="
-                        clipboardURL($event, 'benchmark_line_stress_ng_full')
-                      "
-                    ></sc-button>
-                  </div>
-                }
-              </td>
+              <td [colSpan]="1" class="compare-section-header-action-cell"></td>
             }
           </tr>
           @for (
@@ -1171,7 +1142,9 @@
             >
               <td [colSpan]="pinnedRow.contentColSpan">
                 <div class="compare-section-header-row">
-                  <h3 class="text-xl font-semibold m-0 flex items-center">
+                  <h3
+                    class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
+                  >
                     <span class="compare-section-header-title">
                       <svg
                         [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
@@ -1330,6 +1303,13 @@
                         }
                       </span>
                     </span>
+                    @if (!isEmbedded) {
+                      <sc-header-anchor
+                        [anchorId]="'benchmark_line_' + benchmarkCategory.id"
+                        [label]="benchmarkCategory.name"
+                        [withTarget]="false"
+                      ></sc-header-anchor>
+                    }
                   </h3>
                   @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                     <div class="flex items-stretch gap-4 shrink-0">
@@ -1347,18 +1327,6 @@
                           (click)="toggleBenchmarkCategory(benchmarkCategory)"
                         ></sc-button>
                       }
-                      <sc-button
-                        [icon]="clipboardIcon"
-                        ariaLabel="Copy benchmark section link"
-                        size="small"
-                        buttonClass="shrink-0"
-                        (click)="
-                          clipboardURL(
-                            $event,
-                            'benchmark_line_' + benchmarkCategory.id
-                          )
-                        "
-                      ></sc-button>
                     </div>
                   }
                 </div>
@@ -1384,18 +1352,6 @@
                           (click)="toggleBenchmarkCategory(benchmarkCategory)"
                         ></sc-button>
                       }
-                      <sc-button
-                        [icon]="clipboardIcon"
-                        ariaLabel="Copy benchmark section link"
-                        size="small"
-                        buttonClass="shrink-0"
-                        (click)="
-                          clipboardURL(
-                            $event,
-                            'benchmark_line_' + benchmarkCategory.id
-                          )
-                        "
-                      ></sc-button>
                     </div>
                   }
                 </td>
@@ -1770,7 +1726,9 @@
           >
             <td [colSpan]="pinnedRow.contentColSpan">
               <div class="compare-section-header-row">
-                <h3 class="text-xl font-semibold m-0 flex items-center min-w-0">
+                <h3
+                  class="text-xl font-semibold m-0 flex items-center min-w-0 sc-header-anchor-host"
+                >
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="chartItem.chart.name | benchmarkIcon"
@@ -1843,6 +1801,13 @@
                       }
                     </span>
                   </span>
+                  @if (!isEmbedded) {
+                    <sc-header-anchor
+                      [anchorId]="'benchmark_line_' + chartItem.chart.id"
+                      [label]="chartItem.chart.name"
+                      [withTarget]="false"
+                    ></sc-header-anchor>
+                  }
                 </h3>
                 @if (!isEmbedded && !pinnedRow.trailingColSpan) {
                   <div class="flex items-stretch gap-4 shrink-0">
@@ -1854,18 +1819,6 @@
                       iconPosition="start"
                       size="small"
                       (click)="toggleBenchmarkCategory(chartItem)"
-                    ></sc-button>
-                    <sc-button
-                      [icon]="clipboardIcon"
-                      ariaLabel="Copy benchmark section link"
-                      size="small"
-                      buttonClass="shrink-0"
-                      (click)="
-                        clipboardURL(
-                          $event,
-                          'benchmark_line_' + chartItem.chart.id
-                        )
-                      "
                     ></sc-button>
                   </div>
                 }
@@ -1886,18 +1839,6 @@
                       iconPosition="start"
                       size="small"
                       (click)="toggleBenchmarkCategory(chartItem)"
-                    ></sc-button>
-                    <sc-button
-                      [icon]="clipboardIcon"
-                      ariaLabel="Copy benchmark section link"
-                      size="small"
-                      buttonClass="shrink-0"
-                      (click)="
-                        clipboardURL(
-                          $event,
-                          'benchmark_line_' + chartItem.chart.id
-                        )
-                      "
                     ></sc-button>
                   </div>
                 }
@@ -2061,7 +2002,9 @@
         <tr class="section_header" id="benchmark_line_pgbench">
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+              <h3
+                class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'pgbench' | benchmarkIcon"
@@ -2097,37 +2040,21 @@
                     }
                   </span>
                 </span>
+                @if (!isEmbedded) {
+                  <sc-header-anchor
+                    anchorId="benchmark_line_pgbench"
+                    [label]="pgbenchTitle"
+                    [withTarget]="false"
+                  ></sc-header-anchor>
+                }
               </h3>
-              @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                <div class="flex items-stretch gap-4 shrink-0">
-                  <sc-button
-                    [icon]="clipboardIcon"
-                    ariaLabel="Copy benchmark section link"
-                    size="small"
-                    buttonClass="shrink-0"
-                    (click)="clipboardURL($event, 'benchmark_line_pgbench')"
-                  ></sc-button>
-                </div>
-              }
             </div>
           </td>
           @if (pinnedRow.actionSpacerColSpan) {
             <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
           }
           @if (pinnedRow.trailingColSpan) {
-            <td [colSpan]="1" class="compare-section-header-action-cell">
-              @if (!isEmbedded) {
-                <div class="flex justify-end items-stretch gap-4">
-                  <sc-button
-                    [icon]="clipboardIcon"
-                    ariaLabel="Copy benchmark section link"
-                    size="small"
-                    buttonClass="shrink-0"
-                    (click)="clipboardURL($event, 'benchmark_line_pgbench')"
-                  ></sc-button>
-                </div>
-              }
-            </td>
+            <td [colSpan]="1" class="compare-section-header-action-cell"></td>
           }
         </tr>
         <tr class="compare-fixed-chart-row">
@@ -2159,9 +2086,16 @@
       }
 
       @if (getUncategorizedBenchmarksCategories()?.length && !isEmbedded) {
-        <tr class="section_header">
+        <tr class="section_header" id="benchmark_line_further_benchmarks">
           <td [colSpan]="2">
-            <h3 class="pl-3 text-xl font-semibold">Further Benchmarks</h3>
+            <h3 class="pl-3 text-xl font-semibold sc-header-anchor-host">
+              Further Benchmarks
+              <sc-header-anchor
+                anchorId="benchmark_line_further_benchmarks"
+                label="Further Benchmarks"
+                [withTarget]="false"
+              ></sc-header-anchor>
+            </h3>
           </td>
           <td [colSpan]="servers.length - 1"></td>
         </tr>
