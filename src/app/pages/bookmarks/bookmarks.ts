@@ -30,8 +30,8 @@ import {
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { Modal } from "../../components/modal/modal";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { Modal } from "../../components/modals/modal/modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsStore } from "../../collections/collections-store";
 import type {
   BookmarksCardViewModel,
@@ -309,7 +309,7 @@ export class Bookmarks implements OnDestroy {
   }
 
   private async revealBookmarks(): Promise<void> {
-    await this.auth.init();
+    await this.auth.init().catch(() => undefined);
 
     if (!this.auth.isAuthenticated()) {
       await this.router.navigateByUrl("/");

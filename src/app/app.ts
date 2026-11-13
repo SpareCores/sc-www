@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
 import {
-  AfterViewInit,
   Component,
   DOCUMENT,
   inject,
@@ -19,9 +18,9 @@ import {
 import { Subscription } from "rxjs";
 import { register } from "swiper/element/bundle";
 import { PromoBanner } from "./components/promo-banner/promo-banner";
-import { LoginModal } from "./components/login-modal/login-modal";
-import { RegisterModal } from "./components/register-modal/register-modal";
-import { ProfileModal } from "./components/profile-modal/profile-modal";
+import { LoginModal } from "./components/modals/auth/login-modal/login-modal";
+import { RegisterModal } from "./components/modals/auth/register-modal/register-modal";
+import { ProfileModal } from "./components/modals/profile-modal/profile-modal";
 import {
   PROMO_BANNER_BY_PATH,
   type PromoBannerDismissalGroup,
@@ -49,7 +48,7 @@ const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
   templateUrl: "./app.html",
   styleUrl: "./app.css",
 })
-export class App implements OnInit, AfterViewInit, OnDestroy {
+export class App implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
   private router = inject(Router);
@@ -119,12 +118,6 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.auth.signUp();
-  }
-
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.analytics.initializeTracking();
-    }
   }
 
   ngOnDestroy(): void {

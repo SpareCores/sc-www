@@ -15,9 +15,6 @@ import type { PromoBannerMessage } from "./promo-banner.constants";
   templateUrl: "./promo-banner.html",
   styleUrl: "./promo-banner.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    class: "block",
-  },
 })
 export class PromoBanner {
   readonly message = input.required<PromoBannerMessage>();

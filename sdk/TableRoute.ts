@@ -31,7 +31,7 @@ import {
 export namespace Table {
   /**
    * @description Return the Benchmark table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableBenchmarkTableBenchmarkGet
    * @summary Table Benchmark
    * @request GET:/table/benchmark
@@ -46,7 +46,7 @@ export namespace Table {
 
   /**
    * @description Return the Country table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableCountryTableCountryGet
    * @summary Table Country
    * @request GET:/table/country
@@ -61,7 +61,7 @@ export namespace Table {
 
   /**
    * @description Return the ComplianceFramework table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableComplianceFrameworksTableComplianceFrameworkGet
    * @summary Table Compliance Frameworks
    * @request GET:/table/compliance_framework
@@ -77,7 +77,7 @@ export namespace Table {
 
   /**
    * @description Return the VendorComplianceLink table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableVendorComplianceLinkTableVendorComplianceLinkGet
    * @summary Table Vendor Compliance Link
    * @request GET:/table/vendor_compliance_link
@@ -93,7 +93,7 @@ export namespace Table {
 
   /**
    * @description Return the Vendor table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableVendorTableVendorGet
    * @summary Table Vendor
    * @request GET:/table/vendor
@@ -108,7 +108,7 @@ export namespace Table {
 
   /**
    * @description Return the Region table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableRegionTableRegionGet
    * @summary Table Region
    * @request GET:/table/region
@@ -123,7 +123,7 @@ export namespace Table {
 
   /**
    * @description Return the Zone table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableZoneTableZoneGet
    * @summary Table Zone
    * @request GET:/table/zone
@@ -138,7 +138,7 @@ export namespace Table {
 
   /**
    * @description Return the Server table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableServerTableServerGet
    * @summary Table Server
    * @request GET:/table/server
@@ -153,7 +153,7 @@ export namespace Table {
 
   /**
    * @description Return the Server table with column selection.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableServerSelectTableServerSelectGet
    * @summary Table Server Select
    * @request GET:/table/server/select
@@ -232,7 +232,7 @@ export namespace Table {
 
   /**
    * @description Query ServerPrices records without relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableServerPricesTableServerPricesGet
    * @summary Table Server Prices
    * @request GET:/table/server_prices
@@ -322,6 +322,7 @@ export namespace Table {
         | "AP-SOUTHEAST-SYD-2"
         | "AP-SOUTH-MUM"
         | "AP-SOUTH-MUM-1"
+        | "ash"
         | "atl"
         | "australiacentral"
         | "australiacentral2"
@@ -389,12 +390,15 @@ export namespace Table {
         | "fra"
         | "francecentral"
         | "francesouth"
+        | "fsn1"
         | "germanynorth"
         | "germanywestcentral"
         | "GRA"
         | "GRA11"
         | "GRA7"
         | "GRA9"
+        | "hel1"
+        | "hil"
         | "hnl"
         | "icn"
         | "il-central-1"
@@ -424,6 +428,8 @@ export namespace Table {
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
+        | "nbg1"
+        | "newzealandnorth"
         | "nl-ams1"
         | "northcentralus"
         | "northeurope"
@@ -449,6 +455,7 @@ export namespace Table {
         | "SGP"
         | "SGP1"
         | "sg-sin1"
+        | "sin"
         | "sjc"
         | "southafricanorth"
         | "southafricawest"
@@ -487,13 +494,7 @@ export namespace Table {
         | "westus"
         | "westus2"
         | "westus3"
-        | "yto"
-        | "fsn1"
-        | "nbg1"
-        | "hel1"
-        | "ash"
-        | "hil"
-        | "sin";
+        | "yto";
       /**
        * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
@@ -600,6 +601,7 @@ export namespace Table {
         | "azure~koreasouth"
         | "azure~malaysiawest"
         | "azure~mexicocentral"
+        | "azure~newzealandnorth"
         | "azure~northcentralus"
         | "azure~northeurope"
         | "azure~norwayeast"
@@ -772,7 +774,7 @@ export namespace Table {
 
   /**
    * @description Return the Storage table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableStorageTableStorageGet
    * @summary Table Storage
    * @request GET:/table/storage
@@ -787,7 +789,7 @@ export namespace Table {
 
   /**
    * @description Return the Database table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableDatabaseTableDatabaseGet
    * @summary Table Database
    * @request GET:/table/database
@@ -802,7 +804,7 @@ export namespace Table {
 
   /**
    * @description Query DatabasePrice records without relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableDatabasePriceTableDatabasePriceGet
    * @summary Table Database Price
    * @request GET:/table/database_price
@@ -892,6 +894,7 @@ export namespace Table {
         | "AP-SOUTHEAST-SYD-2"
         | "AP-SOUTH-MUM"
         | "AP-SOUTH-MUM-1"
+        | "ash"
         | "atl"
         | "australiacentral"
         | "australiacentral2"
@@ -959,12 +962,15 @@ export namespace Table {
         | "fra"
         | "francecentral"
         | "francesouth"
+        | "fsn1"
         | "germanynorth"
         | "germanywestcentral"
         | "GRA"
         | "GRA11"
         | "GRA7"
         | "GRA9"
+        | "hel1"
+        | "hil"
         | "hnl"
         | "icn"
         | "il-central-1"
@@ -994,6 +1000,8 @@ export namespace Table {
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
+        | "nbg1"
+        | "newzealandnorth"
         | "nl-ams1"
         | "northcentralus"
         | "northeurope"
@@ -1019,6 +1027,7 @@ export namespace Table {
         | "SGP"
         | "SGP1"
         | "sg-sin1"
+        | "sin"
         | "sjc"
         | "southafricanorth"
         | "southafricawest"
@@ -1057,13 +1066,7 @@ export namespace Table {
         | "westus"
         | "westus2"
         | "westus3"
-        | "yto"
-        | "fsn1"
-        | "nbg1"
-        | "hel1"
-        | "ash"
-        | "hil"
-        | "sin";
+        | "yto";
       /**
        * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
@@ -1170,6 +1173,7 @@ export namespace Table {
         | "azure~koreasouth"
         | "azure~malaysiawest"
         | "azure~mexicocentral"
+        | "azure~newzealandnorth"
         | "azure~northcentralus"
         | "azure~northeurope"
         | "azure~norwayeast"
@@ -1342,7 +1346,7 @@ export namespace Table {
 
   /**
    * @description Return the DatabaseStorage table as-is, without filtering options or relationships resolved.
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableDatabaseStorageTableDatabaseStorageGet
    * @summary Table Database Storage
    * @request GET:/table/database_storage
@@ -1357,7 +1361,7 @@ export namespace Table {
 
   /**
    * @description Server table and column names and comments.
-   * @tags Table metadata
+   * @tags Table Metadata
    * @name TableMetadataServerTableServerMetaGet
    * @summary Table Metadata Server
    * @request GET:/table/server/meta

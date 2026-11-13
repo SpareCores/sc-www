@@ -1,0 +1,155 @@
+@if (isBrowser) {
+  <div class="bg-primary p-4 w-full gap-4 flex flex-col">
+    <div
+      class="sticky top-0 z-10 -mx-4 -mt-4 flex flex-col gap-4 border-b border-gray-600 bg-primary p-4"
+    >
+      <h3 class="text-white text-xl">Iframe Options</h3>
+      <div class="flex flex-wrap items-center justify-between gap-4 text-white">
+        <div
+          class="flex w-full flex-wrap items-center justify-between gap-4 sm:w-auto sm:justify-start"
+        >
+          @for (stepper of steppers(); track stepper.id) {
+            @let inputId = idPrefix() + "_" + stepper.id;
+            @let value = stepper.value();
+            <div class="flex items-center gap-2">
+              <label [attr.for]="inputId">{{ stepper.label }}</label>
+              <sc-stepper
+                [controls]="inputId"
+                [canDecrement]="value > stepper.min"
+                [canIncrement]="value < stepper.max"
+                [decreaseLabel]="'Decrease iframe ' + stepper.id"
+                [increaseLabel]="'Increase iframe ' + stepper.id"
+                [captureEvent]="captureEventPrefix() + ' ' + stepper.id"
+                (decrement)="stepBy(stepper, -1)"
+                (increment)="stepBy(stepper, 1)"
+              >
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  spellcheck="false"
+                  scNumbersOnly
+                  [allowDecimal]="false"
+                  class="sc-stepper__input"
+                  [style.width.ch]="stepperInputWidth(stepper)"
+                  [attr.maxlength]="stepperMaxDigits(stepper)"
+                  [id]="inputId"
+                  [value]="value"
+                  [attr.aria-label]="'iframe ' + stepper.id"
+                  (input)="onStepperInput(stepper, $event)"
+                  (blur)="commitStepper(stepper, $event)"
+                  (keydown.enter)="commitStepper(stepper, $event)"
+                />
+                <span class="sc-stepper__unit">{{ stepper.unit }}</span>
+              </sc-stepper>
+            </div>
+          }
+        </div>
+        <div class="flex w-full min-w-0 items-center sm:w-72">
+          <sc-button
+            #widgetDropdown="scDropdown"
+            class="min-w-0 flex-1"
+            [id]="idPrefix() + '_widget_button'"
+            [scDropdown]="widgetPanel"
+            [dropdownMinHeight]="160"
+            [dropdownPlacement]="'bottom-end'"
+            [label]="selectedWidgetName()"
+            icon="chevron-down"
+            variant="dropdown"
+            size="small"
+            [attr.data-ph-capture-attribute-sc-event]="
+              captureEventPrefix() + ' widget select'
+            "
+          ></sc-button>
+          <ng-template #widgetPanel>
+            <div
+              class="w-max min-w-64 max-w-[calc(100vw-2rem)] overflow-y-auto sc-dropdown"
+            >
+              <ul
+                class="sc-dropdown__list"
+                [attr.aria-labelledby]="idPrefix() + '_widget_button'"
+              >
+                @for (widget of widgets(); track widget.id) {
+                  <li>
+                    <button
+                      type="button"
+                      class="sc-dropdown__option"
+                      [attr.data-ph-capture-attribute-sc-event]="
+                        captureEventPrefix() + ' widget option'
+                      "
+                      [attr.data-ph-capture-attribute-widget-id]="widget.id"
+                      (click)="widgetId.set(widget.id); widgetDropdown.hide()"
+                    >
+                      <div class="text-white text-sm">{{ widget.name }}</div>
+                    </button>
+                  </li>
+                }
+              </ul>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    @if (safeSrc()) {
+      <div class="relative isolate">
+        <pre><code #codeBlock class="language-html"></code></pre>
+      </div>
+      <h3 class="flex flex-wrap items-center gap-2 text-white text-xl">
+        <span>Iframe Preview simulated on a</span>
+        <sc-button
+          #previewDropdown="scDropdown"
+          [id]="idPrefix() + '_preview_button'"
+          [scDropdown]="previewPanel"
+          [dropdownPlacement]="'bottom-start'"
+          [label]="previewSize().name"
+          icon="chevron-down"
+          variant="dropdown"
+          size="small"
+          [attr.data-ph-capture-attribute-sc-event]="
+            captureEventPrefix() + ' preview size select'
+          "
+        ></sc-button>
+        <ng-template #previewPanel>
+          <div class="w-max min-w-48 sc-dropdown">
+            <ul
+              class="sc-dropdown__list"
+              [attr.aria-labelledby]="idPrefix() + '_preview_button'"
+            >
+              @for (size of previewSizes; track size.id) {
+                <li>
+                  <button
+                    type="button"
+                    class="sc-dropdown__option"
+                    [attr.data-ph-capture-attribute-sc-event]="
+                      captureEventPrefix() + ' preview size option'
+                    "
+                    [attr.data-ph-capture-attribute-preview-size]="size.id"
+                    (click)="selectPreviewSize(size); previewDropdown.hide()"
+                  >
+                    <div class="text-white text-sm">{{ size.name }}</div>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        </ng-template>
+        <span>device</span>
+      </h3>
+      <div class="overflow-x-auto" data-modal-fill>
+        <div [class]="previewSize().widthClass">
+          <iframe
+            #previewFrame
+            class="block"
+            [title]="selectedWidgetName()"
+            [src]="safeSrc()"
+            [style]="iframeStyle()"
+          ></iframe>
+        </div>
+      </div>
+    } @else {
+      <p class="text-white">
+        Use the dropdown to select an embed widget to show.
+      </p>
+    }
+  </div>
+}

@@ -5,7 +5,6 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
-  ViewEncapsulation,
   afterNextRender,
   inject,
   viewChild,
@@ -36,7 +35,7 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
-import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
+import { BookmarkButton } from "../../components/bookmark-button/bookmark-button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import {
   ServerPropertyCard,
@@ -101,7 +100,6 @@ const DATABASE_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
   ],
   templateUrl: "./database-details.html",
   styleUrl: "./database-details.css",
-  encapsulation: ViewEncapsulation.None,
 })
 export class DatabaseDetails implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -931,16 +929,16 @@ export class DatabaseDetails implements OnInit, OnDestroy {
       return;
     }
 
-    const hadOpenClass = cardElement.classList.contains("open");
+    const hadOpenClass = cardElement.classList.contains("sc-chart-block--open");
     if (hadOpenClass) {
-      cardElement.classList.remove("open");
+      cardElement.classList.remove("sc-chart-block--open");
     }
 
     this.availabilityCanExpand =
       cardElement.scrollHeight > cardElement.clientHeight + 1;
 
     if (hadOpenClass) {
-      cardElement.classList.add("open");
+      cardElement.classList.add("sc-chart-block--open");
     }
   }
 }

@@ -52,6 +52,7 @@ export class ServerPropertyCard {
   moreLabel = input("View more details");
   lessLabel = input("Show less");
   isOpen = input(false);
+  expandable = input(true);
 
   toggleRequested = output<void>();
 
@@ -63,7 +64,7 @@ export class ServerPropertyCard {
   private overflowCheckTimeout?: ReturnType<typeof setTimeout>;
   private destroyRef = inject(DestroyRef);
 
-  hasExpandableContent = computed(() => this.canExpand());
+  hasExpandableContent = computed(() => this.expandable() && this.canExpand());
 
   visibleSections = computed(() =>
     this.sections().filter((section) => section.properties.length > 0),
@@ -135,15 +136,15 @@ export class ServerPropertyCard {
       return;
     }
 
-    const hadOpenClass = cardElement.classList.contains("open");
+    const hadOpenClass = cardElement.classList.contains("sc-chart-block--open");
     if (hadOpenClass) {
-      cardElement.classList.remove("open");
+      cardElement.classList.remove("sc-chart-block--open");
     }
 
     this.canExpand.set(cardElement.scrollHeight > cardElement.clientHeight + 1);
 
     if (hadOpenClass) {
-      cardElement.classList.add("open");
+      cardElement.classList.add("sc-chart-block--open");
     }
   }
 }

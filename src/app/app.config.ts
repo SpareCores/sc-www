@@ -28,6 +28,8 @@ import * as Sentry from "@sentry/angular";
 import { provideAppCharts } from "./components/charts/shared/chart-providers";
 import { AuthState, authInterceptor, provideAuthFeature } from "./core/auth";
 import { provideCollectionsFeature } from "./collections/collections-feature.providers";
+import { provideE2eReadiness } from "./core/e2e/e2e-readiness-providers";
+import { Analytics } from "./services/analytics";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   return req.method === "GET";
@@ -90,6 +92,7 @@ export const appConfig: ApplicationConfig = {
     provideAuthFeature(),
     provideCollectionsFeature(),
     provideAppCharts(),
+    provideE2eReadiness(),
     { provide: OVERLAY_DEFAULT_CONFIG, useValue: { usePopover: false } },
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),
@@ -101,8 +104,9 @@ export const appConfig: ApplicationConfig = {
       inject(Sentry.TraceService);
     }),
     provideAppInitializer(() => {
-      return inject(AuthState)
-        .init()
+      inject(Analytics).initializeTracking();
+      inject(AuthState)
+        .bootstrap()
         .catch((error) => {
           console.error("Clerk initialization failed:", error);
         });

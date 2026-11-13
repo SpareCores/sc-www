@@ -92,9 +92,11 @@ export class CollectionsUi {
         return;
       }
 
-      untracked(() =>
-        this.toggleFavorite(action.kind, action.vendorId, action.entityId),
-      );
+      untracked(() => {
+        if (!this.isFavorite(action.kind, action.vendorId, action.entityId)) {
+          this.toggleFavorite(action.kind, action.vendorId, action.entityId);
+        }
+      });
     });
   }
 

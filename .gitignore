@@ -21,12 +21,12 @@ src/sitemap.xml
 
 # Custom patterns
 src/assets/slides/render.sh
+src/assets/slides/*.md
 
 # Environment files
 .env
 
 # Visual testing temporary files
-cypress-image-diff-html-report
 cypress-image-diff-screenshots/comparison
 cypress-image-diff-screenshots/diff
 cypress/screenshots

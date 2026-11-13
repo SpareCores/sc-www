@@ -1,0 +1,38 @@
+<div class="content_embed sc-chart-embed">
+  <sc-server-compare-charts
+    class="h-[calc(100%-64px)]"
+    [servers]="servers"
+    [instanceProperties]="instanceProperties"
+    [benchmarkMeta]="benchmarkMeta"
+    [benchmarkCategories]="benchmarkCategories"
+    [instancePropertyCategories]="instancePropertyCategories"
+    [isEmbedded]="true"
+    [showChart]="widgetId"
+  >
+  </sc-server-compare-charts>
+  @if (instancesRaw) {
+    <a
+      class="w-full flex flex-col justify-center items-center text-white bg-secondary px-6 py-4 hover:text-gray-200"
+      target="_blank"
+      rel="noopener noreferrer"
+      href="{{ getBaseURL() }}/servers/compare?instances={{ instancesRaw }}"
+    >
+      <div class="w-full flex gap-2 items-center justify-between">
+        <img
+          src="./assets/images/logos/logo_embed_footer.png"
+          alt="Spare Cores Logo"
+          class="h-8"
+        />
+        <div class="flex gap-2 items-center">
+          <svg lucideExternalLink class="text-emerald-400 h-4 w-4"></svg>
+          <span class="text-sm underline"
+            >Learn more about
+            <i class="text-emerald-400 underline decoration-emerald-400"
+              >this comparison</i
+            ></span
+          >
+        </div>
+      </div>
+    </a>
+  }
+</div>

@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
@@ -82,7 +82,7 @@ import {
   INVALID_DATABASE_COMPARE_URL_TOAST_BODY as INVALID_COMPARE_URL_TOAST_BODY,
 } from "../../services/url-toast-content";
 import { CompareCollections } from "../../collections/compare-collections";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import { AuthState } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";
@@ -167,7 +167,6 @@ const LOWER_IS_BETTER_ROW_IDS = new Set(["best_hour", "best_month"]);
 @Component({
   selector: "sc-database-compare",
   imports: [
-    CommonModule,
     RouterModule,
     Breadcrumbs,
     Button,
@@ -256,7 +255,7 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
   readonly stickyMainTableStyle = signal("");
   readonly stickyFirstColStyle = signal<{ width?: string }>({});
   readonly stickyColumnStyles = signal<string[]>([]);
-  readonly bestCellStyle = "font-weight: 600; color: #34D399";
+  readonly bestCellStyle = "font-weight: 600; color: var(--color-emerald-400)";
 
   private subscription = new Subscription();
   private compareLoadId = 0;

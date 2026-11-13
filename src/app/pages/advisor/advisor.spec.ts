@@ -2336,8 +2336,9 @@ describe("Advisor", () => {
     expect(searchServers).not.toHaveBeenCalled();
     expect(component.isLoadingRecommendations()).toBeTrue();
     expect(
-      fixture.nativeElement.querySelector(".advisor-empty-state-row"),
-    ).toBeNull();
+      fixture.nativeElement.querySelector(".advisor-empty-state-cell")
+        ?.classList,
+    ).toContain("invisible");
 
     tick(250);
     flushMicrotasks();

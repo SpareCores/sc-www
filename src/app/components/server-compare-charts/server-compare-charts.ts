@@ -189,7 +189,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     compareTableLayout.resolveCompareUnpinnedRowLayout(0);
   private pinnedRowLayoutFrameId: number | null = null;
 
-  bestCellStyle = "font-weight: 600; color: #34D399";
+  bestCellStyle = "font-weight: 600; color: var(--color-emerald-400)";
   SSCoreTooltip =
     "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour -- when otherwise not noted, using the best (usually spot) price of all zones.";
 
@@ -937,8 +937,8 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
   }
 
-  hasEmbeddableChart(chartId: string): boolean {
-    switch (chartId) {
+  hasEmbeddableWidget(widgetId: string): boolean {
+    switch (widgetId) {
       case "generic":
         return true;
       case "workload_profile":
@@ -952,16 +952,16 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
 
     const multiBarChart = this.multiBarCharts.find(
-      (chartItem) => chartItem.chart.id === chartId,
+      (chartItem) => chartItem.chart.id === widgetId,
     );
     if (multiBarChart) {
       return this.hasMultiBarCompareChart(multiBarChart);
     }
 
     const categoryId =
-      chartId === "geekbench_single" || chartId === "geekbench_multi"
+      widgetId === "geekbench_single" || widgetId === "geekbench_multi"
         ? "geekbench"
-        : chartId;
+        : widgetId;
     const category = this.benchmarkCategories.find(
       (benchmarkCategory) => benchmarkCategory.id === categoryId,
     );
@@ -970,7 +970,8 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
 
     return (
-      this.isPassmarkBenchmarkCategory(chartId) || this.hasCompareChart(chartId)
+      this.isPassmarkBenchmarkCategory(widgetId) ||
+      this.hasCompareChart(widgetId)
     );
   }
 

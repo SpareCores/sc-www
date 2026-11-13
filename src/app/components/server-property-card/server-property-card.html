@@ -1,11 +1,17 @@
-<div class="block_half" [class.open]="isOpen()" [attr.id]="cardId()" #cardRoot>
+<div
+  class="sc-chart-block sc-chart-block--half"
+  [class.sc-chart-block--open]="isOpen()"
+  [class.sc-chart-block--scrollable]="!expandable()"
+  [attr.id]="cardId()"
+  #cardRoot
+>
   <h3 class="text-2xl">{{ cardTitle() }}</h3>
   <div class="card_sections">
     @for (section of visibleSections(); track section.name; let i = $index) {
       @if (showSectionHeaders() && i > 0) {
         <div class="items_table_spacer_row" aria-hidden="true"></div>
       }
-      <table class="items_table">
+      <table class="sc-kv-table sc-kv-table--fixed-rows w-full">
         @if (showSectionHeaders()) {
           <thead>
             <tr>
@@ -23,7 +29,7 @@
         <tbody>
           @for (property of section.properties; track property.id) {
             <tr>
-              <td class="fixed_width">
+              <td class="sc-kv-table__label">
                 <div class="flex gap-2 items-center">
                   <b>{{ property.name }}</b>
                   @for (tooltip of property.tooltips || []; track tooltip.key) {
@@ -50,10 +56,7 @@
                   </div>
                 } @else if (property.routerLink) {
                   <div class="property_value">
-                    <a
-                      class="underline decoration-dotted hover:text-gray-500"
-                      [routerLink]="property.routerLink"
-                    >
+                    <a class="sc-link" [routerLink]="property.routerLink">
                       {{ property.value }}
                     </a>
                   </div>
@@ -73,15 +76,8 @@
   @if (hasExpandableContent()) {
     @if (!isOpen()) {
       <div
-        class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
+        class="absolute bottom-0 left-0 w-full py-3 flex justify-center bg-linear-to-t from-sky-975 from-[23.44%] to-transparent"
         [attr.id]="cardId() + '_more'"
-        style="
-          background: linear-gradient(
-            360deg,
-            #06263a 23.44%,
-            rgba(6, 38, 58, 0) 100%
-          );
-        "
       >
         <sc-button
           [label]="moreLabel()"
@@ -114,8 +110,7 @@
 <div
   [attr.id]="cardId() + '_tooltip'"
   #tooltip
-  style="opacity: 0; display: none"
-  class="tooltip-panel max-w-225 fixed z-100 pointer-events-none"
+  class="tooltip-panel max-w-[225px] fixed z-100 pointer-events-none opacity-0 hidden"
 >
   {{ tooltipContent() }}
 </div>

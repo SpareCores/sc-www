@@ -9,8 +9,6 @@ Cypress.Commands.overwrite("log", function (log, ...args) {
   }
 });
 
-const baseUrl = "http://localhost:4200";
-
 export type VisualSizePrefix = "mobile" | "tablet" | "desktop";
 
 export function visualSnapshotName(
@@ -23,13 +21,62 @@ export function visualSnapshotName(
 export abstract class E2EEvent {
   // special events
   public static buildAbsoluteURL(url: string) {
-    return baseUrl + url;
+    return `${Cypress.config("baseUrl")}${url}`;
   }
 
-  public static visitURL(url: string, wait: number = 2000) {
-    cy.visit(this.buildAbsoluteURL(url));
+  public static visitURL(url: string) {
+    cy.visit(url);
+    this.waitForPageReady();
     this.hideAnnouncementForTests();
-    cy.wait(wait);
+  }
+
+  public static waitForPageReady() {
+    cy.get("html[data-sc-hydrated='true']", { timeout: 30000 });
+    cy.document().its("fonts.status").should("eq", "loaded");
+  }
+
+  public static waitForCharts(scope: string) {
+    cy.get(`${scope} canvas`).should(($canvases) => {
+      expect($canvases.length, "chart canvases").to.be.greaterThan(0);
+      $canvases.each((_, canvas) => {
+        expect(canvas.dataset["chartRendered"], "chart rendered").to.eq("true");
+        expect(canvas.dataset["chartHasData"], "chart has data").to.eq("true");
+      });
+    });
+  }
+
+  public static waitForTableRows(selector: string) {
+    cy.get(`${selector} tbody tr`).should("have.length.at.least", 1);
+  }
+
+  public static waitForListingLoaded(tableId: string) {
+    this.waitForTableRows(`#${tableId}`);
+    cy.get(".list_holder sc-loading-spinner").should("not.exist");
+  }
+
+  public static waitForListingResults(tableId: string) {
+    this.waitForListingLoaded(tableId);
+    cy.get(`#${tableId} tbody tr:not(:has(> td[colspan]))`).should(
+      "have.length.at.least",
+      1,
+    );
+  }
+
+  public static waitForServerDetails() {
+    cy.get("#details .property_value").should("have.length.at.least", 1);
+  }
+
+  public static waitForServerCompare() {
+    cy.get("#main-table tr.rows-to-hide-for-test").should(
+      "have.length.at.least",
+      1,
+    );
+    cy.get("#main-table").should(($table) => {
+      expect(
+        $table[0].style.getPropertyValue("--compare-first-column-width"),
+        "compare first column width",
+      ).not.to.equal("");
+    });
   }
 
   public static hideAnnouncementForTests() {
@@ -145,11 +192,7 @@ export abstract class E2EEvent {
   }
 
   public static countElements(parent: string, child: string, count: number) {
-    cy.get(parent)
-      .find(child)
-      .then((value) => {
-        expect(value).have.lengthOf(count);
-      });
+    cy.get(parent).find(child).should("have.length", count);
   }
 
   // user input
@@ -181,18 +224,14 @@ export abstract class E2EEvent {
     cy.get(`[id="${ID}"]`).first().clear();
   }
 
-  public static click(ID: string, forced: boolean = false, wait: number = 0) {
+  public static click(ID: string, forced: boolean = false) {
     cy.get(`[id="${ID}"]`).click({ force: forced });
-    if (wait) {
-      cy.wait(wait);
-    }
   }
 
   public static clickAny(
     selector: string,
     forced: boolean = false,
     idx: number = 0,
-    wait: number = 0,
   ) {
     if (idx < 0) {
       cy.get(selector).last().click({ force: forced });
@@ -200,9 +239,6 @@ export abstract class E2EEvent {
       cy.get(selector).first().click({ force: forced });
     } else if (idx >= 0) {
       cy.get(selector).eq(idx).click({ force: forced });
-    }
-    if (wait) {
-      cy.wait(wait);
     }
   }
 
@@ -220,15 +256,21 @@ export abstract class E2EEvent {
     }
   }
 
-  // other
-  public static wait(wait: number) {
-    cy.wait(wait);
-  }
-
   // Prepare header position for a consistent visual regression snapshot
   public static prepareHeaderForScreenshot() {
     cy.get(".sc-shell-chrome").invoke("css", "position", "static");
     cy.get("header").invoke("css", "position", "static");
+  }
+
+  public static loadImagesForScreenshot(selector: string) {
+    cy.get(selector).each(($img) => {
+      const img = $img[0] as HTMLImageElement;
+      img.loading = "eager";
+      cy.wrap(img.decode(), { log: false });
+      cy.wrap($img)
+        .should("have.prop", "naturalWidth")
+        .and("be.greaterThan", 0);
+    });
   }
 
   public static openMobileMenuForScreenshot() {
@@ -337,6 +379,7 @@ export abstract class E2EEvent {
 
   public static hideListingTableResultsForScreenshot(tableId: string) {
     cy.get(`#${tableId} tbody`).invoke("css", "display", "none");
+    cy.get("sc-pagination").invoke("css", "visibility", "hidden");
   }
 
   public static hideWorkloadProfileChartsForScreenshot() {

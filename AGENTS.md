@@ -28,12 +28,14 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 - Read and edit only files explicitly referenced by the task or tagged by the user, unless the user approved a plan for a multi-file change; list those files in the plan.
 - Do not perform blind repository-wide scans. Use targeted search or symbol lookup only when a missing import, type interface, or dependency blocks immediate execution.
 - Ignore structural config files unless directly required. You are explicitly allowed to inspect `src/app/services/keeper-api.ts` to resolve server endpoints.
+- Store plans in `.claude/plans/` with a descriptive kebab-case file name prefixed by the Linear ID from the branch name and stating the plan's subject (e.g. `dev-1045-clerk-posthog-lazy-load-review-fixes.md`); never use random or generated names.
 
 ### Testing
 
 - Keep tests in sync: update existing unit specs and Cypress specs or selectors affected by your change.
 - Generate minimal `.spec.ts` files (component creation and core triggers only) when creating a new element or when explicitly requested.
 - Never regenerate visual regression baselines locally unless explicitly asked; they are regenerated in CI.
+- Put Cypress specs in the folders that the CI shards run: functional specs in `cypress/e2e/functional/auth/`, `http/` or `pages/`, visual specs in `cypress/e2e/visual/desktop/`, `mobile/` or `tablet/`. A spec outside these folders never runs in CI.
 
 ### Formatting
 
@@ -78,12 +80,19 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 - Ensure SSR safety using browser guards (`isPlatformBrowser`) or the Angular 21 `afterNextRender()` / `afterEveryRender()` hooks.
 - Never access global browser primitives (`window`, `document`, `localStorage`) directly in the main component lifecycle execution path without an SSR safety guard.
 
+### Overlays
+
+- Dropdowns use the `[scDropdown]` directive (`src/app/directives/dropdown.ts`); modals use `<sc-modal>` opened through the `ModalDialog` service (`src/app/services/modal-dialog.ts`). Both run on Angular CDK; never reintroduce Flowbite, Popper or hand-rolled show/hide overlays.
+- Keep `OVERLAY_DEFAULT_CONFIG` set to `{ usePopover: false }` in `app.config.ts`; the overlay z-index layers (page dropdowns 40, header dropdowns and dialogs 60) depend on it.
+
 ## HTML Templates (`*.html`)
 
 ### Angular 21 Template Standards
 
 - Always use modern control flow (`@if`, `@else`, `@for`, `@switch`); never legacy `*ngIf` or `*ngFor` directives.
 - For template local variables, use the `@let` syntax (e.g., `@let user = userSignal()`).
+- Bind classes and styles with `[class.name]`, `[class]` and `[style]`; never `[ngClass]` or `[ngStyle]`. Object keys in `[class]` must be single class names.
+- No static `style=""` attributes; use utilities. Exceptions: Chart.js canvases and the embed snippet strings in `src/app/components/embed-dialog`, which are pasted into third-party sites.
 
 ### UI Components & Analytics
 
@@ -96,5 +105,12 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 ## Styling (`*.html`, `*.css`)
 
-- Prefer Tailwind CSS v3 utilities. Mirror nearby design patterns (margins, padding, components) from currently opened or referenced files.
+- Prefer Tailwind CSS v4 utilities. Mirror nearby design patterns (margins, padding, components) from currently opened or referenced files.
 - When extending a component that already has its own stylesheet (e.g. the auth modals' `auth-modal.css`), follow that stylesheet's conventions instead.
+- Tailwind CSS v4 is configured in CSS: tokens in `src/styles/theme.css`, the entry and global `@utility` classes in `src/styles/tailwind.css`. There is no `tailwind.config.js`.
+- Stylesheets are plain `.css`; never add SCSS. Component stylesheets that use `@apply` or `theme()` start with `@reference "<relative path>/styles/tailwind.css";`.
+- Shared classes use the `sc-` prefix with BEM modifiers (`sc-card`, `sc-card--primary`) and live in `src/styles/components/*.css`, imported from `src/styles.css` with `layer(components)`. Layered rules lose to utilities and to unlayered component CSS; only the embedded chart overflow rule in `src/styles.css` is unlayered on purpose. Page-specific `innerHTML` styles (e.g. `src/styles/prose.css`) load through the pages' `styleUrls`, not the global stylesheet.
+- Colors come from theme tokens (utilities or `var(--color-*)`). Never add hex or `rgb()` literals outside `src/styles/theme.css` and `src/app/components/charts/shared/chart-colors.constants.ts`, except inside data-URI SVG images, which cannot read CSS variables; add new colors as OKLCH tokens in `theme.css`.
+- Use the theme breakpoints (`sm` to `2xl` and `wide`) through variants or `@media (width < theme(--breakpoint-*))`; never raw pixel media queries.
+- Use `::ng-deep` only for third-party markup (e.g. SurveyJS) and `innerHTML` content. Style child components through inputs, host classes or shared classes, and do not add `ViewEncapsulation.None`.
+- There is no dark mode; never add `dark:` variants.

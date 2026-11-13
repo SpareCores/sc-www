@@ -1,0 +1,326 @@
+import {
+  Component,
+  TemplateRef,
+  effect,
+  inject,
+  viewChild,
+} from "@angular/core";
+import { FormsModule, NgForm } from "@angular/forms";
+import { LucideDynamicIcon } from "@lucide/angular";
+import { AUTH_MESSAGES, AuthState } from "../../../../core/auth";
+import { ModalDialog } from "../../../../services/modal-dialog";
+import { Button } from "../../../button/button";
+import { LoadingSpinner } from "../../../loading-spinner/loading-spinner";
+import { Modal } from "../../modal/modal";
+
+type RegisterBusy = "submit" | "verify" | "resend" | "github";
+type RegisterStep = "details" | "consent" | "verify";
+type RegisterMethod = "email" | "github";
+
+const DETAILS_PARAMS = new Set([
+  "email_address",
+  "emailAddress",
+  "first_name",
+  "firstName",
+  "last_name",
+  "lastName",
+  "password",
+]);
+
+const STEP_TITLES: Record<RegisterStep, string> = {
+  details: AUTH_MESSAGES.createAccountTitle,
+  consent: AUTH_MESSAGES.oneLastStepTitle,
+  verify: AUTH_MESSAGES.verifyEmailTitle,
+};
+
+@Component({
+  selector: "sc-register-modal",
+  imports: [FormsModule, Button, LucideDynamicIcon, LoadingSpinner, Modal],
+  templateUrl: "./register-modal.html",
+  styleUrls: ["../../modal-form.css", "../auth-modal.css"],
+})
+export class RegisterModal {
+  protected readonly auth = inject(AuthState);
+  protected readonly messages = AUTH_MESSAGES;
+  private readonly modalTemplate =
+    viewChild<TemplateRef<unknown>>("modalTemplate");
+
+  protected step: RegisterStep = "details";
+  protected method: RegisterMethod = "email";
+  protected firstName = "";
+  protected lastName = "";
+  protected emailAddress = "";
+  protected password = "";
+  protected showPassword = false;
+  protected legalAccepted = false;
+  protected newsletterOptIn = false;
+  protected verificationCode = "";
+  protected errorMessage = "";
+  protected infoMessage = "";
+  protected busy: RegisterBusy | null = null;
+
+  protected get isAuthPending(): boolean {
+    return (
+      this.step === "details" &&
+      (this.busy === "submit" || this.busy === "github")
+    );
+  }
+
+  protected get title(): string {
+    return this.isAuthPending
+      ? AUTH_MESSAGES.creatingAccountTitle
+      : STEP_TITLES[this.step];
+  }
+
+  constructor() {
+    inject(ModalDialog).bind({
+      open: this.auth.signUpModalOpen,
+      template: this.modalTemplate,
+      canClose: () =>
+        !this.isAuthPending &&
+        this.step !== "consent" &&
+        this.step !== "verify",
+      closed: () => this.auth.closeSignUp(),
+      reset: () => this.reset(),
+      closeOnNavigation: false,
+    });
+
+    effect(() => {
+      if (!this.auth.signUpModalOpen()) {
+        return;
+      }
+
+      if (this.auth.githubConsentActive()) {
+        this.method = "github";
+        this.step = "consent";
+        this.errorMessage = "";
+        this.infoMessage = "";
+        return;
+      }
+
+      if (this.step === "consent" && this.method === "github") {
+        this.step = "details";
+        this.method = "email";
+        this.infoMessage = "";
+      }
+    });
+  }
+
+  protected cancelConsent(): void {
+    if (this.busy) {
+      return;
+    }
+
+    this.busy = null;
+    this.auth.cancelSignUp();
+  }
+
+  protected canSubmitDetails(form: NgForm): boolean {
+    return !!form.valid && !!this.firstName.trim() && !!this.lastName.trim();
+  }
+
+  protected canSubmitConsent(): boolean {
+    return this.legalAccepted;
+  }
+
+  protected canVerify(): boolean {
+    return !!this.verificationCode.trim();
+  }
+
+  protected continueWithGitHub(): void {
+    if (this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+    this.method = "github";
+    void this.submitGitHub();
+  }
+
+  protected backToDetails(): void {
+    if (this.busy) {
+      return;
+    }
+
+    if (this.auth.githubConsentActive()) {
+      this.auth.signIn();
+      return;
+    }
+
+    this.errorMessage = "";
+    this.step = "details";
+  }
+
+  protected async submitConsent(): Promise<void> {
+    if (!this.canSubmitConsent() || this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+
+    if (this.method === "github") {
+      await this.submitGitHub();
+      return;
+    }
+
+    await this.finishRegister();
+  }
+
+  protected async verifyEmail(): Promise<void> {
+    if (!this.canVerify() || this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+    this.infoMessage = "";
+    this.busy = "verify";
+
+    const result = await this.auth.verifyRegister(this.verificationCode);
+
+    this.busy = null;
+
+    if (result.status === "error") {
+      this.applyRegisterError(result.message, result.param);
+    }
+  }
+
+  protected async resendCode(): Promise<void> {
+    if (this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+    this.infoMessage = "";
+    this.busy = "resend";
+
+    const result = await this.auth.resendRegisterCode();
+
+    this.busy = null;
+
+    if (result.status === "error") {
+      this.applyRegisterError(result.message, result.param);
+      return;
+    }
+
+    this.infoMessage = AUTH_MESSAGES.verificationCodeSent;
+  }
+
+  protected openSignIn(): void {
+    if (this.busy) {
+      return;
+    }
+
+    this.auth.signIn();
+  }
+
+  protected async submitDetails(form: NgForm): Promise<void> {
+    if (!this.canSubmitDetails(form) || this.busy) {
+      return;
+    }
+
+    this.errorMessage = "";
+    this.method = "email";
+    this.busy = "submit";
+
+    const result = await this.auth.startRegister({
+      firstName: this.firstName,
+      lastName: this.lastName,
+      emailAddress: this.emailAddress,
+      password: this.password,
+    });
+
+    this.busy = null;
+
+    if (result.status === "consent") {
+      this.step = "consent";
+      return;
+    }
+
+    if (result.status === "verify") {
+      this.step = "verify";
+      return;
+    }
+
+    if (result.status === "error") {
+      this.applyRegisterError(result.message, result.param);
+    }
+  }
+
+  private async finishRegister(): Promise<void> {
+    this.busy = "submit";
+
+    const result = await this.auth.completeRegister({
+      legalAccepted: this.legalAccepted,
+      newsletterOptIn: this.newsletterOptIn,
+    });
+
+    this.busy = null;
+
+    if (result.status === "verify") {
+      this.step = "verify";
+      return;
+    }
+
+    if (result.status === "error") {
+      this.applyRegisterError(result.message, result.param);
+    }
+  }
+
+  private applyRegisterError(message: string, param?: string): void {
+    this.errorMessage = message;
+    this.infoMessage = "";
+
+    if (param === "password") {
+      this.password = "";
+      this.showPassword = false;
+    }
+
+    if (param && DETAILS_PARAMS.has(param)) {
+      this.step = "details";
+    }
+  }
+
+  private async submitGitHub(): Promise<void> {
+    this.busy = "github";
+
+    const result = await this.auth.submitGitHubConsent(
+      this.newsletterOptIn,
+      this.auth.githubConsentActive() ? this.legalAccepted : false,
+    );
+
+    if (
+      result.status === "complete" &&
+      this.method === "github" &&
+      !this.auth.githubConsentActive() &&
+      !this.auth.isAuthenticated()
+    ) {
+      return;
+    }
+
+    this.busy = null;
+
+    if (result.status === "error") {
+      this.errorMessage = result.message;
+      if (!this.auth.githubConsentActive()) {
+        this.step = "details";
+        this.method = "email";
+      }
+    }
+  }
+
+  private reset(): void {
+    this.step = "details";
+    this.method = "email";
+    this.firstName = "";
+    this.lastName = "";
+    this.emailAddress = "";
+    this.password = "";
+    this.showPassword = false;
+    this.legalAccepted = false;
+    this.newsletterOptIn = false;
+    this.verificationCode = "";
+    this.errorMessage = "";
+    this.infoMessage = "";
+    this.busy = null;
+  }
+}

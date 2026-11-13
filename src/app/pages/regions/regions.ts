@@ -27,26 +27,18 @@ import {
 import { Button } from "../../components/button/button";
 import { Router, RouterModule } from "@angular/router";
 
+import {
+  chartColors,
+  chartSeriesTokens,
+} from "../../components/charts/shared/chart-colors.constants";
+
 declare let Datamap: any;
 
 const SCRIPT_PATH = "assets/datamaps/d3.min.js";
 const SCRIPT_PATH2 = "assets/datamaps/topojson.js";
 const SCRIPT_PATH3 = "assets/datamaps/datamaps.world.min.js";
 
-const colors = [
-  "#3B82F6",
-  "#F87171",
-  "#FBBF24",
-  "#F472B6",
-  "#34D399",
-  "#E5E7EB",
-  "#38BDF8",
-  "#FACC15",
-  "#F87171",
-  "#A3E635",
-  "#818CF8",
-  "#94A3B8",
-];
+const colors = chartSeriesTokens.map((token) => chartColors[token]);
 
 @Component({
   selector: "sc-regions",
@@ -102,60 +94,59 @@ export class Regions implements OnInit {
       "AWS regions, Google Cloud regions",
     );
 
-    this.API.getRegions().then((regions) => {
+    const regionsLoaded = this.API.getRegions().then((regions) => {
       this.regions = regions.body;
+      this.sortRegions();
     });
 
-    this.API.getVendors().then((vendors) => {
-      this.vendors = vendors.body;
-    });
+    const vendorsLoaded = this.API.getVendors()
+      .then((vendors) => {
+        this.vendors = vendors.body;
+
+        this.vendors = this.vendors.map((vendor, index) => {
+          return {
+            ...vendor,
+            selected: true,
+            color: colors[index % colors.length],
+          };
+        });
+
+        this.sortRegions();
+      })
+      .catch(() => undefined);
 
     if (isPlatformBrowser(this.platformId)) {
       this.loadJsScript(SCRIPT_PATH)
         .then(() => this.loadJsScript(SCRIPT_PATH2))
         .then(() => this.loadJsScript(SCRIPT_PATH3))
+        .then(() => Promise.all([regionsLoaded, vendorsLoaded]))
         .then(() => {
-          Promise.all([this.API.getRegions(), this.API.getVendors()]).then(
-            ([regions, vendors]) => {
-              this.regions = regions.body;
-              this.vendors = vendors.body;
+          let element = this.document.getElementById("datamapdiv");
 
-              this.vendors = this.vendors.map((vendor, index) => {
-                return {
-                  ...vendor,
-                  selected: true,
-                  color: colors[index % colors.length],
-                };
-              });
+          let fills: any = {
+            defaultFill: chartColors["sky-975"],
+          };
 
-              let element = this.document.getElementById("datamapdiv");
+          this.vendors.forEach((vendor) => {
+            fills[vendor.vendor_id] = vendor.color;
+          });
 
-              let fills: any = {
-                defaultFill: "#06263a",
-              };
-
-              this.vendors.forEach((vendor, index) => {
-                fills[vendor.vendor_id] = colors[index % colors.length];
-              });
-
-              this.bubble_map = new Datamap({
-                element: element,
-                geographyConfig: {
-                  popupOnHover: false,
-                  highlightOnHover: false,
-                },
-                bubblesConfig: {
-                  fillOpacity: 1,
-                  borderOpacity: 0,
-                  highlightFillColor: "#34d399",
-                  highlightBorderOpacity: 0,
-                },
-                fills: fills,
-              });
-
-              this.generateBubbles();
+          this.bubble_map = new Datamap({
+            element: element,
+            geographyConfig: {
+              popupOnHover: false,
+              highlightOnHover: false,
             },
-          );
+            bubblesConfig: {
+              fillOpacity: 1,
+              borderOpacity: 0,
+              highlightFillColor: chartColors["emerald-400"],
+              highlightBorderOpacity: 0,
+            },
+            fills: fills,
+          });
+
+          this.generateBubbles();
         });
     }
   }
@@ -171,9 +162,13 @@ export class Regions implements OnInit {
   }
 
   generateBubbles() {
+    if (!this.bubble_map) {
+      return;
+    }
+
     this.bubble_map.bubbles(
       this.regions
-        .filter((region) => this.isVendorSelected(region.vendor_id))
+        .filter((region) => !this.isVendorHidden(region.vendor_id))
         .map((region) => {
           return {
             name: region.name,
@@ -232,6 +227,10 @@ export class Regions implements OnInit {
       this.orderDir = OrderDir.Desc;
     }
 
+    this.sortRegions();
+  }
+
+  private sortRegions() {
     if (this.orderBy === "region") {
       this.regions.sort((a, b) => {
         return this.orderDir === OrderDir.Desc
@@ -281,5 +280,15 @@ export class Regions implements OnInit {
   isVendorSelected(vendorId: string) {
     return this.vendors?.find((vendor) => vendor.vendor_id === vendorId)
       ?.selected;
+  }
+
+  isVendorHidden(vendorId: string) {
+    return this.isVendorSelected(vendorId) === false;
+  }
+
+  get hasVisibleRegions() {
+    return this.regions.some(
+      (region) => !this.isVendorHidden(region.vendor_id),
+    );
   }
 }

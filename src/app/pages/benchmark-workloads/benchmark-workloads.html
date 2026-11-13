@@ -38,6 +38,7 @@
     >
       <!-- Sticky TOC sidebar -->
       <sc-benchmark-workloads-sidebar
+        [class.workloads-sidebar--static]="disableLayoutTransitions()"
         [benchmarkFamilies]="benchmarkFamilies()"
         [isCollapsed]="isCollapsed()"
         [activeBenchmarkId]="activeBenchmarkId()"
@@ -137,7 +138,7 @@
             <!-- Benchmark cards grid -->
             <div class="flex flex-col gap-8">
               @for (bm of family.benchmarks; track bm.benchmark_id) {
-                <div [id]="bm.benchmark_id" class="scroll-mt-[6.5rem]">
+                <div [id]="bm.benchmark_id" class="scroll-mt-26">
                   <sc-benchmark-workload
                     [workload]="bm"
                   ></sc-benchmark-workload>

@@ -27,7 +27,7 @@ export class Stats<SecurityDataType = unknown> {
   /**
    * @description Return counts of records in each table, optionally filtered by vendor and status.
    *
-   * @tags Administrative endpoints
+   * @tags Administrative Endpoints
    * @name GetStatsStatsGet
    * @summary Get Stats
    * @request GET:/stats

@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
@@ -80,8 +80,8 @@ import {
 } from "../../services/toast-ids";
 import { AuthState } from "../../core/auth";
 import { AssessmentCollections } from "../../collections/assessment-collections";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
-import { Modal } from "../../components/modal/modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
+import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
 import { CollectionsUi } from "../../collections/collections-ui";
 import type { SavedAssessmentItem } from "../../collections/collections.types";
@@ -386,7 +386,6 @@ type AdvisorComparableResourceKey =
 @Component({
   selector: "sc-advisor",
   imports: [
-    CommonModule,
     Button,
     Breadcrumbs,
     Dropdown,

@@ -11,6 +11,7 @@ import {
   viewChild,
   OnDestroy,
   DOCUMENT,
+  afterRenderEffect,
   effect,
   inject,
   signal,
@@ -45,7 +46,7 @@ import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details";
 import { ServerCompareCharts } from "../../components/server-compare-charts/server-compare-charts";
 import { CompareEmbedDialog } from "../../components/embed-dialog/compare-embed-dialog";
-import { EmbedChartOption } from "../../components/embed-dialog/embed-dialog.types";
+import { EmbedWidgetOption } from "../../components/embed-dialog/embed-dialog.types";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { Toast } from "../../services/toast";
@@ -54,7 +55,7 @@ import {
   SERVER_COMPARE_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { Modal } from "../../components/modal/modal";
+import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
 import { PrismHighlighter } from "../../services/prism-highlighter";
 import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
@@ -81,13 +82,13 @@ import {
   type MemoryBenchmarkMeta,
 } from "../../components/charts/memory/memory-chart.types";
 import { CompareCollections } from "../../collections/compare-collections";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import { AuthState } from "../../core/auth";
 import type { SavedComparisonItem } from "../../collections/collections.types";
 import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
 
-const EMBEDDABLE_CHARTS: EmbedChartOption[] = [
+const EMBEDDABLE_WIDGETS: EmbedWidgetOption[] = [
   { id: "generic", name: "Server Specs and Prices" },
   { id: "workload_profile", name: "Workload Profiles" },
   { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
@@ -186,7 +187,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
-  @ViewChild("comparesDiv") comparesDiv!: ElementRef;
+  private comparesDiv = viewChild<ElementRef>("comparesDiv");
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
@@ -393,7 +394,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   instances: any[] = [];
   instancesRaw!: string;
 
-  embeddableCharts: EmbedChartOption[] = EMBEDDABLE_CHARTS;
+  embeddableWidgets: EmbedWidgetOption[] = EMBEDDABLE_WIDGETS;
 
   private embedModalTemplate =
     viewChild.required<TemplateRef<unknown>>("embedModalTemplate");
@@ -404,7 +405,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   showZoneIds = false;
 
   private subscription = new Subscription();
-  private checkExistInterval: ReturnType<typeof setInterval> | null = null;
   private readonly pendingSaveComparisonClose = signal(false);
   private readonly editingComparisonId = signal<string | null>(null);
 
@@ -465,6 +465,14 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
         this.saveComparisonModal()?.close();
       }
     });
+
+    afterRenderEffect({
+      write: () => {
+        if (this.comparesDiv()) {
+          this.prismService.highlightAll();
+        }
+      },
+    });
   }
 
   ngOnInit() {
@@ -503,11 +511,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-
-    if (this.checkExistInterval !== null) {
-      clearInterval(this.checkExistInterval);
-      this.checkExistInterval = null;
-    }
 
     this.embedDialogRef?.close();
     this.stickyLayout.destroy();
@@ -853,18 +856,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
         });
     } else {
       this.isLoading = false;
-    }
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.checkExistInterval = setInterval(() => {
-        if (this.comparesDiv) {
-          this.prismService.highlightAll();
-          if (this.checkExistInterval !== null) {
-            clearInterval(this.checkExistInterval);
-            this.checkExistInterval = null;
-          }
-        }
-      }, 100);
     }
   }
 
@@ -1678,11 +1669,11 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const compareCharts = this.compareCharts();
-    this.embeddableCharts = compareCharts
-      ? EMBEDDABLE_CHARTS.filter((chart) =>
-          compareCharts.hasEmbeddableChart(chart.id),
+    this.embeddableWidgets = compareCharts
+      ? EMBEDDABLE_WIDGETS.filter((widget) =>
+          compareCharts.hasEmbeddableWidget(widget.id),
         )
-      : EMBEDDABLE_CHARTS;
+      : EMBEDDABLE_WIDGETS;
     this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
     this.embedDialogRef.closed.subscribe(() => {
       this.embedDialogRef = null;

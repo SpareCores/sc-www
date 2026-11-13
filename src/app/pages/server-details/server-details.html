@@ -20,9 +20,9 @@
     @if (serverDetails) {
       <div
         id="server_base_info_box"
-        class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+        class="mx-2 xl:mx-0 flex flex-wrap justify-between sc-card gap-8 px-6 py-6 mt-12"
       >
-        <div class="flex gap-6 flex-grow lg:w-1/2 w-full">
+        <div class="flex gap-6 grow lg:w-1/2 w-full">
           <div class="flex gap-4 flex-col shrink-0">
             <div
               class="vendor-logo w-28 h-28 min-w-28 xl:w-20 xl:h-20 xl:min-w-20 bg-white rounded-lg"
@@ -39,6 +39,7 @@
             <h1 class="text-2xl flex items-center gap-x-2 flex-wrap">
               <sc-bookmark-button
                 kind="server"
+                size="large"
                 [vendorId]="serverDetails.vendor_id"
                 [entityId]="serverDetails.api_reference"
                 data-ph-capture-attribute-sc-event="server details favorite"
@@ -52,7 +53,7 @@
                 by
                 <a
                   [routerLink]="['/vendors', serverDetails.vendor.vendor_id]"
-                  class="underline decoration-dotted hover:text-gray-500"
+                  class="sc-link"
                 >
                   {{ serverDetails.vendor.name }}
                 </a>
@@ -168,8 +169,16 @@
 
     @if (serverDetails) {
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
-        <div class="my-2 w-full">
+        <div class="my-2 w-full flex justify-between items-center">
           <h2 class="text-3xl font-bold">Specifications</h2>
+          <sc-button
+            label="Embed Widget"
+            icon="copy"
+            iconPosition="end"
+            variant="outline"
+            data-ph-capture-attribute-sc-event="server details embed widget open"
+            (click)="openModal()"
+          ></sc-button>
         </div>
         <sc-server-property-card
           cardTitle="Server Metadata"
@@ -179,119 +188,11 @@
           [isOpen]="expandedCards.details"
           (toggleRequested)="toggleCard('details')"
         ></sc-server-property-card>
-        <div
-          class="block_half"
-          id="availability"
-          [class.open]="expandedCards.availability"
-        >
-          <h3 class="text-2xl">Availability</h3>
-          <table class="items_table">
-            <thead>
-              <tr>
-                <th>REGION / ID</th>
-                <th>SPOT</th>
-                <th>ONDEMAND</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (
-                region of availabilityRegions;
-                track region.vendor_id + "_" + region.region_id
-              ) {
-                <tr
-                  class="availability_line"
-                  [class.opacity-60]="region.inactive"
-                >
-                  <td>
-                    <div class="flex items-center gap-1">
-                      <span>
-                        <b>{{ region.display_name }}</b> /
-                        {{ region.api_reference }}
-                      </span>
-                      @if (region.inactive) {
-                        @let inactivePriceNote =
-                          getInactivePriceNote(region.inactiveObservedAt);
-                        <button
-                          type="button"
-                          class="inline-flex"
-                          [attr.aria-label]="inactivePriceNote"
-                          (mouseenter)="
-                            showWarningTooltip($event, inactivePriceNote)
-                          "
-                          (mouseleave)="hideWarningTooltip()"
-                          (focus)="
-                            showWarningTooltip($event, inactivePriceNote)
-                          "
-                          (blur)="hideWarningTooltip()"
-                        >
-                          <svg
-                            lucideTriangleAlert
-                            class="benchmark-note-icon"
-                          ></svg>
-                        </button>
-                      }
-                    </div>
-                  </td>
-                  @if (region["spot"].price) {
-                    <td>
-                      {{ region["spot"].price }}
-                      {{ region["spot"].currency }}/{{
-                        region["spot"].unit | reduceUnitName
-                      }}
-                    </td>
-                  }
-                  @if (!region["spot"].price) {
-                    <td>-</td>
-                  }
-                  @if (region["ondemand"].price) {
-                    <td>
-                      {{ region["ondemand"].price }}
-                      {{ region["ondemand"].currency }}/{{
-                        region["ondemand"].unit | reduceUnitName
-                      }}
-                    </td>
-                  }
-                  @if (!region["ondemand"].price) {
-                    <td>-</td>
-                  }
-                </tr>
-              }
-            </tbody>
-          </table>
-          @if (availabilityRegions.length > 7 && !expandedCards.availability) {
-            <div
-              class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
-              id="availability_more"
-              style="
-                background: linear-gradient(
-                  360deg,
-                  #06263a 23.44%,
-                  rgba(6, 38, 58, 0) 100%
-                );
-              "
-            >
-              <sc-button
-                label="Show more"
-                size="small"
-                id="availability_more_button"
-                [ariaExpanded]="false"
-                data-ph-capture-attribute-sc-event="server details show more availability"
-                (click)="toggleCard('availability', false)"
-              ></sc-button>
-            </div>
-          }
-          @if (availabilityRegions.length > 7 && expandedCards.availability) {
-            <div class="w-full pt-3 flex justify-center" id="availability_less">
-              <sc-button
-                label="Show less"
-                size="small"
-                [ariaExpanded]="true"
-                data-ph-capture-attribute-sc-event="server details show less availability"
-                (click)="toggleCard('availability', false)"
-              ></sc-button>
-            </div>
-          }
-        </div>
+        <sc-server-availability-card
+          [regions]="availabilityRegions"
+          [isOpen]="expandedCards.availability"
+          (toggleRequested)="toggleCard('availability', false)"
+        ></sc-server-availability-card>
         <sc-server-property-card
           cardTitle="Processor"
           cardId="processor"
@@ -311,7 +212,7 @@
         ></sc-server-property-card>
         @if (lstopoSvgExists !== false) {
           <div
-            class="block_full"
+            class="sc-chart-block sc-chart-block--full"
             id="lstopo"
             [style.width]="
               !isSmallScreen && lstopoSvgWidth > 0 && lstopoSvgWidth <= 600
@@ -323,16 +224,15 @@
               ngSkipHydration
               [vendorId]="serverDetails.vendor_id"
               [apiReference]="serverDetails.api_reference"
-              (svgExists)="lstopoSvgExists = $event"
+              (svgExists)="onLstopoSvgExists($event)"
               (svgWidth)="lstopoSvgWidth = $event"
             ></sc-server-lstopo>
           </div>
         }
         @if (descriptionsAvailable && serverDescription) {
           <div
-            class="block_half server-description-card"
-            [class.block_full]="descriptionCardIsFullWidth()"
-            [class.open]="true"
+            class="sc-chart-block sc-chart-block--half sc-chart-block--open server-description-card"
+            [class.sc-chart-block--full]="descriptionCardIsFullWidth()"
           >
             <div class="flex justify-between items-center gap-4">
               <h3 class="text-2xl">Server Description</h3>
@@ -357,9 +257,12 @@
                   category of serverDescription.categories;
                   track category
                 ) {
-                  <span class="server-description-category-pill">{{
-                    category
-                  }}</span>
+                  <sc-button
+                    variant="outline"
+                    size="small"
+                    [label]="category"
+                    [disabled]="true"
+                  ></sc-button>
                 }
               </div>
             }
@@ -371,7 +274,9 @@
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Economics</h2>
         </div>
-        <div class="block_full price-sections-to-hide-for-test">
+        <div
+          class="sc-chart-block sc-chart-block--full price-sections-to-hide-for-test"
+        >
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Average Price per Region</h3>
           </div>
@@ -390,7 +295,9 @@
             </div>
           }
         </div>
-        <div class="block_half price-sections-to-hide-for-test">
+        <div
+          class="sc-chart-block sc-chart-block--half price-sections-to-hide-for-test"
+        >
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Prices per Zone</h3>
             <div class="flex gap-4">
@@ -421,7 +328,9 @@
             </div>
           }
         </div>
-        <div class="block_half price-sections-to-hide-for-test">
+        <div
+          class="sc-chart-block sc-chart-block--half price-sections-to-hide-for-test"
+        >
           <h3 class="text-2xl">Lowest Prices</h3>
           @if (isBrowser()) {
             <div>
@@ -439,19 +348,12 @@
           }
         </div>
         @if (serverDetails.benchmark_scores.length) {
-          <div class="my-2 w-full flex justify-between items-center">
+          <div class="my-2 w-full">
             <h2 class="text-3xl font-bold">Performance</h2>
-            <sc-button
-              label="Embed chart"
-              icon="copy"
-              iconPosition="end"
-              variant="outline"
-              (click)="openModal()"
-            ></sc-button>
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
-              class="mx-2 xl:mx-0 mb-4 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-[100%]"
+              class="mx-2 xl:mx-0 mb-4 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-full"
               role="alert"
             >
               <svg lucideTriangleAlert class="h-6 w-6 bounce-3"></svg>
@@ -473,8 +375,8 @@
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Alternatives</h2>
         </div>
-        <div class="block_half">
-          <div class="flex items-center" style="min-height: 42px">
+        <div class="sc-chart-block sc-chart-block--half">
+          <div class="flex items-center min-h-[42px]">
             <h3 class="text-2xl">Servers of the Same Family</h3>
           </div>
           <table class="items_table_similar similar_family_table">
@@ -494,7 +396,7 @@
                 <tr>
                   <td>
                     <a
-                      class="underline decoration-dotted hover:text-gray-500"
+                      class="sc-link"
                       [routerLink]="[
                         '/server',
                         server.vendor_id,
@@ -512,7 +414,7 @@
             </tbody>
           </table>
         </div>
-        <div class="block_half" id="similar_servers">
+        <div class="sc-chart-block sc-chart-block--half" id="similar_servers">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Similar Servers</h3>
             <div class="flex gap-4">
@@ -554,7 +456,7 @@
                 <tr class="similar_line">
                   <td>
                     <a
-                      class="underline decoration-dotted hover:text-gray-500"
+                      class="sc-link"
                       [routerLink]="[
                         '/server',
                         server.vendor_id,
@@ -608,14 +510,8 @@
 
 <!-- Dropdown menu -->
 <ng-template #regionPanel>
-  <div
-    id="region_options"
-    class="bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
+  <div id="region_options" class="sc-dropdown w-44">
+    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
       @for (filter of regionFilters; track filter.name; let i = $index) {
         <li class="flex py-1 gap-2 items-center">
           <input
@@ -623,7 +519,7 @@
             id="filter_region"
             [(ngModel)]="filter.selected"
             (ngModelChange)="refreshPricesGraphs()"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
           />
           <div class="text-white text-sm">{{ filter.name }}</div>
         </li>
@@ -635,17 +531,14 @@
 <ng-template #similarPanel>
   <div
     id="similar_server_options"
-    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="similar_type_button"
-    >
+    <ul class="sc-dropdown__list" aria-labelledby="similar_type_button">
       @for (option of similarOptions; track option.key) {
         <li>
           <button
             type="button"
-            class="flex w-full items-center rounded-sm border-0 bg-transparent px-2 py-1 text-left text-sm text-white hover:bg-emerald-500"
+            class="sc-dropdown__option text-white"
             (click)="selectSimilarServerOption(option)"
           >
             {{ option.name }}
@@ -658,10 +551,10 @@
 
 <ng-template #embedModalTemplate>
   <sc-modal
-    id="embed-charts-modal"
-    title="Embed Chart"
-    size="4xl"
-    closeCaptureEvent="embed chart modal close"
+    id="embed-widgets-modal"
+    title="Embed Widget"
+    size="wide"
+    closeCaptureEvent="embed widget modal close"
     closeCaptureAction="close"
   >
     <div class="space-y-4 flex flex-col">
@@ -669,7 +562,7 @@
         <sc-server-embed-dialog
           [id]="serverDetails.api_reference"
           [vendor]="serverDetails.vendor_id"
-          [charts]="embeddableCharts"
+          [widgets]="visibleEmbeddableWidgets"
         >
         </sc-server-embed-dialog>
       }
@@ -680,6 +573,7 @@
 @if (serverDetails && !isLoading) {
   <sc-button
     class="summarize-fab summarize-fab-to-hide-for-test"
+    buttonClass="sc-button--round"
     icon="sparkles"
     ariaLabel="Summarize server"
     [disabled]="!descriptionsAvailable"
@@ -697,55 +591,39 @@
   <sc-modal
     id="server-summarize-modal"
     size="3xl"
+    [title]="serverDetails ? serverDetails.display_name : ''"
     closeCaptureEvent="server details summarize close"
   >
-    <div modalHeader class="flex flex-col gap-2 min-w-0">
-      @if (serverDetails) {
-        <h2 class="text-xl md:text-2xl font-semibold text-white">
-          {{ serverDetails.display_name }}
-        </h2>
-      }
-      @if (serverDescription?.tagline) {
-        <p class="text-emerald-400 text-sm md:text-base">
-          {{ serverDescription!.tagline }}
-        </p>
-      }
-      @if (serverDescription?.categories?.length) {
-        <div class="server-description-categories mt-4">
-          @for (category of serverDescription!.categories; track category) {
-            <span class="server-description-category-pill">{{ category }}</span>
-          }
-        </div>
-      }
-    </div>
     @if (serverDescription && isSummarizeModalOpen) {
-      <div
-        class="summarize-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
-      >
-        @if (serverDescription.bullet_points.length) {
-          <div class="summarize-modal-highlights">
-            <h3 class="text-lg font-semibold text-white mb-3">
-              Key highlights
-            </h3>
-            <ul class="summarize-modal-bullets">
-              @for (point of serverDescription.bullet_points; track point) {
-                <li>{{ point }}</li>
-              }
-            </ul>
+      <div class="flex flex-col gap-4 p-4 md:p-6 max-h-[70vh] overflow-y-auto">
+        @if (serverDescription.tagline || serverDescription.categories.length) {
+          <div class="flex flex-col gap-4 pb-4 border-b border-gray-600">
+            @if (serverDescription.tagline) {
+              <p class="text-emerald-400 text-sm md:text-base">
+                {{ serverDescription.tagline }}
+              </p>
+            }
+            @if (serverDescription.categories.length) {
+              <div class="server-description-categories">
+                @for (
+                  category of serverDescription.categories;
+                  track category
+                ) {
+                  <sc-button
+                    variant="outline"
+                    size="small"
+                    [label]="category"
+                    [disabled]="true"
+                  ></sc-button>
+                }
+              </div>
+            }
           </div>
         }
-        @for (paragraph of serverDescription.page; track $index) {
-          <p class="summarize-modal-paragraph">{{ paragraph }}</p>
-        }
+        <sc-server-description-summary
+          [description]="serverDescription"
+        ></sc-server-description-summary>
       </div>
     }
   </sc-modal>
 </ng-template>
-
-<div
-  #warningTooltip
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none"
->
-  {{ warningTooltipContent() }}
-</div>

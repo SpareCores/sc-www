@@ -1,0 +1,190 @@
+.sc-chart-block {
+  @apply flex flex-col;
+}
+
+.sc-chart-block--half,
+.sc-chart-block--full {
+  @apply relative gap-4 overflow-hidden rounded-lg border border-solid border-emerald-400 bg-secondary px-6 py-6;
+  min-height: 460px;
+  height: 460px;
+}
+
+.sc-chart-block--half {
+  width: calc(50% - 1rem);
+}
+
+.sc-chart-block--full {
+  width: 100%;
+}
+
+.sc-chart-block--half .chart_div,
+.sc-chart-block--full .chart_div {
+  max-height: 350px;
+  height: 350px;
+  max-width: 100%;
+}
+
+.sc-chart-block--taller {
+  @apply relative overflow-hidden rounded-lg border border-solid border-emerald-400 bg-secondary px-6 py-6;
+  width: calc(50% - 1rem);
+  min-height: 530px;
+  margin: auto;
+}
+
+.sc-chart-block--taller .chart_div {
+  max-height: 530px;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.sc-chart-block--half.sc-chart-block--open {
+  height: unset;
+}
+
+@media (width <= theme(--breakpoint-tablet)) {
+  .sc-chart-block--half,
+  .sc-chart-block--taller {
+    width: 100%;
+    margin: auto;
+  }
+}
+
+@media (width < theme(--breakpoint-wide)) {
+  .sc-chart-block--full-below-wide {
+    width: 100%;
+  }
+}
+
+.sc-chart-block--inline {
+  @apply relative gap-4 overflow-hidden bg-transparent px-6 py-6;
+  width: 100%;
+  min-height: 460px;
+  height: 460px;
+}
+
+.sc-chart-block--inline .chart_div {
+  height: 100%;
+  min-height: 0;
+}
+
+.sc-chart-block--inline.memory-compare-chart--cache-markers {
+  min-height: 508px;
+  height: 508px;
+}
+
+.sc-chart-block--split {
+  @apply relative gap-4 overflow-visible bg-transparent px-6 py-4;
+  width: 100%;
+  min-height: 460px;
+  height: 460px;
+}
+
+.sc-chart-block--split-tall {
+  @apply relative gap-4 overflow-hidden bg-transparent px-4 py-4;
+  width: 100%;
+  min-height: 460px;
+  height: 500px;
+}
+
+.sc-chart-block--split .charts_div,
+.sc-chart-block--split-tall .charts_div {
+  @apply flex gap-4;
+}
+
+.sc-chart-block--split .charts_div .chart_div {
+  @apply w-1/2;
+  height: 380px;
+}
+
+.sc-chart-block--split-tall .charts_div .chart_div {
+  @apply w-1/2;
+  height: 460px;
+}
+
+@media (width < theme(--breakpoint-lg)) {
+  .sc-chart-block--split {
+    min-height: 860px;
+    height: 860px;
+  }
+
+  .sc-chart-block--split-tall {
+    min-height: 940px;
+    height: 940px;
+  }
+
+  .sc-chart-block--split .charts_div,
+  .sc-chart-block--split-tall .charts_div {
+    flex-direction: column;
+  }
+
+  .sc-chart-block--split .charts_div .chart_div,
+  .sc-chart-block--split-tall .charts_div .chart_div {
+    width: 100%;
+  }
+}
+
+.sc-chart-block--card {
+  @apply w-full gap-4 rounded-lg border border-solid border-emerald-400 bg-secondary px-6 py-6;
+}
+
+.sc-chart-embed .sc-chart-block--half,
+.sc-chart-embed .sc-chart-block--taller,
+.sc-chart-embed .sc-chart-block--full {
+  width: 100%;
+  min-height: auto;
+  max-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  border-width: 0;
+  border-radius: 0;
+}
+
+.sc-chart-embed .sc-chart-block--card {
+  @apply relative overflow-hidden;
+  max-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  border-width: 0;
+  border-radius: 0;
+}
+
+.sc-chart-embed .sc-chart-block--half .chart_div,
+.sc-chart-embed .sc-chart-block--full .chart_div,
+.sc-chart-embed .sc-chart-block--taller .chart_div {
+  max-height: none;
+  max-width: none;
+  height: 100%;
+}
+
+.sc-chart-embed .sc-chart-block--inline,
+.sc-chart-embed .sc-chart-block--split,
+.sc-chart-embed .sc-chart-block--split-tall {
+  min-height: auto;
+  max-height: calc(100vh - 140px);
+  height: calc(100vh - 140px);
+}
+
+.sc-chart-embed .sc-chart-block--inline .chart_div {
+  height: 100%;
+  min-height: auto;
+}
+
+.sc-chart-embed .sc-chart-block--split {
+  @apply overflow-hidden px-4;
+}
+
+.sc-chart-embed .sc-chart-block--split .charts_div,
+.sc-chart-embed .sc-chart-block--split-tall .charts_div,
+.sc-chart-embed .sc-chart-block--split .charts_div .chart_div,
+.sc-chart-embed .sc-chart-block--split-tall .charts_div .chart_div {
+  height: 100%;
+}
+
+@media (width < theme(--breakpoint-lg)) {
+  .sc-chart-embed .sc-chart-block--split-tall {
+    overflow-y: auto;
+  }
+
+  .sc-chart-embed .sc-chart-block--split-tall .charts_div {
+    height: unset;
+  }
+}

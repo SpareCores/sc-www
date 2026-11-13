@@ -1,8 +1,10 @@
+@reference "../../../styles/tailwind.css";
+
 .content_section {
   @apply bg-primary;
   @apply text-white;
   padding: 4rem 2rem;
-  border-top: 1px solid #34d399;
+  border-top: 1px solid var(--color-emerald-400);
 }
 
 .content_section.even {

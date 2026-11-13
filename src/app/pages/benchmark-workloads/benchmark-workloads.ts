@@ -49,6 +49,7 @@ import {
   BenchmarkWorkloadItem,
 } from "./benchmark-workloads.models";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
+import { isBelowBreakpoint } from "../../tools/breakpoints";
 
 type RawBenchmarkWorkloadConfig = {
   description?: unknown;
@@ -84,7 +85,6 @@ export class BenchmarkWorkloads implements OnInit {
   private static readonly SCROLL_LOCK_TIMEOUT_MS = 1500;
   private static readonly SIDEBAR_TRANSITION_MS = 300;
   private static readonly DEFAULT_FAMILY_INDEX = 0;
-  private static readonly MOBILE_BREAKPOINT_PX = 1024;
 
   private document = inject(DOCUMENT);
   private keeperAPI = inject(KeeperAPI);
@@ -334,13 +334,12 @@ export class BenchmarkWorkloads implements OnInit {
       return;
     }
 
-    const viewportWidth = this.document.defaultView?.innerWidth;
-    if (typeof viewportWidth !== "number") {
+    const view = this.document.defaultView;
+    if (!view) {
       return;
     }
 
-    const isMobileViewport =
-      viewportWidth <= BenchmarkWorkloads.MOBILE_BREAKPOINT_PX;
+    const isMobileViewport = isBelowBreakpoint(view, "lg");
     const wasMobileViewport = this.isMobileViewport();
 
     this.isMobileViewport.set(isMobileViewport);

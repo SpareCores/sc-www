@@ -1,0 +1,52 @@
+<div
+  class="flex w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] flex-col overflow-hidden has-[[data-modal-fill]]:h-[calc(100dvh-2rem)] bg-secondary rounded-lg shadow-sm border border-solid border-emerald-400"
+  [class]="sizeClass()"
+>
+  <div
+    class="relative flex gap-4 p-4 border-b border-gray-600"
+    [class.items-center]="!!title()"
+    [class.items-start]="!title()"
+    [class.justify-between]="!centerTitle()"
+    [class.justify-center]="centerTitle()"
+  >
+    <div
+      class="min-w-0"
+      [class.px-10]="centerTitle()"
+      [class.text-center]="centerTitle()"
+      [attr.id]="titleId"
+    >
+      @if (title()) {
+        <h2 class="text-xl font-medium text-white">{{ title() }}</h2>
+      }
+      <ng-content select="[modalHeader]"></ng-content>
+    </div>
+    @if (showClose()) {
+      <sc-button
+        [class.absolute]="centerTitle()"
+        [class.right-4]="centerTitle()"
+        variant="close"
+        icon="x"
+        [ariaLabel]="closeLabel()"
+        [disabled]="closeDisabled()"
+        [attr.data-ph-capture-attribute-sc-event]="closeCaptureEvent()"
+        [attr.data-ph-capture-attribute-server-listing-search-prompt-action]="
+          closeCaptureAction()
+        "
+        (buttonClick)="close()"
+      ></sc-button>
+    }
+  </div>
+  <div class="flex min-h-0 flex-1 flex-col bg-primary sm:flex-row">
+    <div
+      class="shrink-0 overflow-y-auto border-b border-gray-600 empty:hidden sm:border-b-0"
+    >
+      <ng-content select="[modalSidebar]"></ng-content>
+    </div>
+    <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+      <ng-content></ng-content>
+    </div>
+  </div>
+  <div class="bg-secondary border-t border-gray-600 empty:hidden">
+    <ng-content select="[modalFooter]"></ng-content>
+  </div>
+</div>

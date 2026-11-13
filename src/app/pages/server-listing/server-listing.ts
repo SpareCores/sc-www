@@ -34,7 +34,7 @@ import {
   toSearchParams,
 } from "../../tools/listing-search-params";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import {
@@ -59,7 +59,7 @@ import {
 } from "../../services/compare-selection";
 import { Dropdown } from "../../directives/dropdown";
 import { Analytics } from "../../services/analytics";
-import { Modal } from "../../components/modal/modal";
+import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { Toast } from "../../services/toast";
@@ -81,9 +81,8 @@ import { StoragePipe } from "../../pipes/storage-pipe";
 import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
 import { formatNumberInputValue } from "../../pipes/pipe-utils";
-import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { BookmarkButton } from "../../components/bookmark-button/bookmark-button";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import {
   isDefaultListingQuery,
@@ -106,7 +105,6 @@ import {
 @Component({
   selector: "sc-server-listing",
   imports: [
-    CommonModule,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,
@@ -132,7 +130,6 @@ import {
     Ipv4CountPipe,
     Dropdown,
     BookmarkButton,
-    InstanceFavoriteContextMenu,
     CollectionSaveModal,
     Modal,
   ],
@@ -573,6 +570,7 @@ export class ServerListing implements OnInit, OnDestroy {
         this.benchmarkCategories = [];
         this.benchmarksConfigs.forEach((config: any) => {
           if (
+            config.category &&
             !this.benchmarkCategories.find(
               (category: any) => category === config.category,
             )
