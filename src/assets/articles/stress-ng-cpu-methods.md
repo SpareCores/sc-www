@@ -25,11 +25,10 @@ fancier, like matrix products or FFTs.
 
 So we dug up the raw results of the experiments we ran in June 2024 while
 designing the SCore, cleaned them up, and looked at them again with fresh eyes.
-This is a look back at past research: we did not rerun the tests for this
-post, so the numbers reflect the servers and the `stress-ng` release we used
-back then. It turns out the choice of the CPU
-burning method matters a lot more than one would expect from a "simple" stress
-test.
+Spare Cores Navigator has kept running `stress-ng` on these servers since, so
+we also show the live results next to the 2024 numbers. It turns out the
+choice of the CPU burning method matters a lot more than one would expect from
+a "simple" stress test.
 
 If you're here for the numbers, some highlights:
 
@@ -38,7 +37,8 @@ If you're here for the numbers, some highlights:
   anywhere between 0.97x and 2.02x the throughput, depending on the method.
 - **Divisions track physical cores**: the `div8`, `div16`, `div32`, and
   `div64` methods scaled almost exactly with the number of physical cores on
-  every server we tested.
+  every server we tested. This is why we picked `div16` for the SCore, our
+  default CPU performance metric.
 - **Arm lags behind in `long double` math**: on a Graviton2 core, most
   methods doing `long double` math ran 5x to 69x slower than on an AMD core,
   while the median method was only ~2x slower. Note that CPU architectures
@@ -135,7 +135,9 @@ results:
 
 This leaves us with 78 methods per server, including `all`.
 
-All numbers in this post come from these 2024 experiments. Since then, the
+All numbers in this post come from these 2024 experiments, and the full
+results are in the [Appendix](/article/stress-ng-cpu-methods#appendix-raw-data).
+Since then, the
 Spare Cores Navigator has started running a wider range of `stress-ng`
 stressors, and the live results for these six servers are
 embedded below. Select "Scaling (multi/single)" in the dropdown to see how
