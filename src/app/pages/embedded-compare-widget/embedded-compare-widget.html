@@ -65,22 +65,61 @@
           </table>
         </div>
       } @else if (hasPgbenchChart()) {
-        @defer (on immediate) {
-          <sc-benchmark-line-chart
-            class="w-full"
-            benchmarkKey="pgbench"
-            chartSource="compare-pgbench"
-            [title]="database.pgbench.title"
-            chartType="line"
-            elementId="embedded_database_compare_pgbench_chart"
-            canvasId="embedded_database_compare_pgbench_canvas"
-            blockClass="sc-chart-block sc-chart-block--full"
-            [servers]="database.servers"
-            [benchmarkMeta]="database.benchmarkMeta"
-            [infoTooltip]="database.pgbench.infoTooltip"
-            [noteTooltip]="database.pgbench.noteTooltip"
-          ></sc-benchmark-line-chart>
-        }
+        <div class="w-full flex flex-col overflow-y-auto">
+          <div class="bg-secondary text-white px-5 py-3">
+            <h3 class="text-xl font-semibold m-0 flex items-center gap-2">
+              <svg
+                [lucideIcon]="'pgbench' | benchmarkIcon"
+                class="h-6 w-6 shrink-0"
+              ></svg>
+              <span class="whitespace-nowrap leading-tight">
+                {{ database.pgbench.title }}
+              </span>
+              <svg
+                lucideCircleArrowUp
+                class="h-4 w-4 text-gray-200 shrink-0"
+                (mouseenter)="showTooltip($event, 'Higher is better.')"
+                (mouseleave)="hideTooltip()"
+              ></svg>
+              @if (database.pgbench.infoTooltip) {
+                <svg
+                  lucideInfo
+                  class="h-4 w-4 text-gray-200 shrink-0"
+                  (mouseenter)="
+                    showTooltip($event, database.pgbench.infoTooltip)
+                  "
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
+              @if (database.pgbench.noteTooltip) {
+                <svg
+                  lucideTriangleAlert
+                  class="benchmark-note-icon"
+                  (mouseenter)="
+                    showWarningTooltip($event, database.pgbench.noteTooltip)
+                  "
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
+            </h3>
+          </div>
+          @defer (on immediate) {
+            <sc-benchmark-line-chart
+              benchmarkKey="pgbench"
+              chartSource="compare-pgbench"
+              layout="compare"
+              [title]="database.pgbench.title"
+              chartType="line"
+              elementId="embedded_database_compare_pgbench_chart"
+              canvasId="embedded_database_compare_pgbench_canvas"
+              blockClass="sc-chart-block sc-chart-block--inline"
+              [servers]="database.servers"
+              [benchmarkMeta]="database.benchmarkMeta"
+              [infoTooltip]="database.pgbench.infoTooltip"
+              [noteTooltip]="database.pgbench.noteTooltip"
+            ></sc-benchmark-line-chart>
+          }
+        </div>
       } @else {
         <p class="m-auto text-white">No benchmark data available.</p>
       }

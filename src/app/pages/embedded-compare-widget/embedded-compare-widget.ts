@@ -10,6 +10,12 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router } from "@angular/router";
+import {
+  LucideCircleArrowUp,
+  LucideDynamicIcon,
+  LucideInfo,
+  LucideTriangleAlert,
+} from "@lucide/angular";
 import { combineLatest } from "rxjs";
 import { BenchmarkLineChart } from "../../components/charts/line/benchmark-line-chart";
 import { ChartTooltip } from "../../components/charts/shared/chart-tooltip";
@@ -17,6 +23,7 @@ import { DatabaseCompareSpecRows } from "../../components/database-compare-spec-
 import { EmbedResource } from "../../components/embed-dialog/embed-dialog.types";
 import { EmbedFrame } from "../../components/embed-frame/embed-frame";
 import { ServerCompareCharts } from "../../components/server-compare-charts/server-compare-charts";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { Analytics } from "../../services/analytics";
 import { CompareEmbedData } from "../../services/compare-embed-data";
 import { CompareEmbedModel } from "../../services/compare-embed.types";
@@ -29,9 +36,14 @@ import { Toast } from "../../services/toast";
 @Component({
   selector: "sc-embedded-compare-widget",
   imports: [
+    BenchmarkIconPipe,
     BenchmarkLineChart,
     DatabaseCompareSpecRows,
     EmbedFrame,
+    LucideCircleArrowUp,
+    LucideDynamicIcon,
+    LucideInfo,
+    LucideTriangleAlert,
     ServerCompareCharts,
   ],
   templateUrl: "./embedded-compare-widget.html",
@@ -88,6 +100,18 @@ export class EmbeddedCompareWidget {
       tooltipElement: this.tooltip()?.nativeElement,
       event,
       content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent.set(tooltipContent);
+      },
+    });
+  }
+
+  showWarningTooltip(event: MouseEvent, content: string) {
+    this.chartTooltip.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event,
+      content,
+      variant: "warning-wide",
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
       },
