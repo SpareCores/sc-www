@@ -621,7 +621,7 @@ export class Bookmarks implements OnDestroy {
   }
 
   protected shareIcon(card: BookmarksCardViewModel): string {
-    return this.shareIcons()[this.cardKey(card)] ?? "clipboard";
+    return this.shareIcons()[this.cardKey(card)] ?? "share-2";
   }
 
   protected shareCard(card: BookmarksCardViewModel): void {
