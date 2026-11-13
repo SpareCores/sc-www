@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
- * Pixel-diff the branch baseline images against the main baseline images.
+ * Pixel-diff comparison screenshots against the main baseline images.
  * Uses the same library and options as cypress-image-diff-js
  * (pixelmatch with threshold 0.1, canvas padding via PNG.bitblt).
  *
- * Usage: node .github/scripts/visual-diff-vs-baseline.js <mainDir> <branchDir> <outputDir>
+ * Usage: node .github/scripts/visual-diff-vs-baseline.js <mainDir> <comparisonDir> <outputDir>
  *
- * For every changed, added or removed snapshot, copies the main image to
- * <outputDir>/main, the branch image to <outputDir>/branch and, for changed
- * snapshots, writes a red-highlighted diff PNG to <outputDir>/diff. Appends
- * the result to the GitHub job summary when available and always exits 0
- * (informational only).
+ * For every changed, new or missing snapshot, copies the main baseline to
+ * <outputDir>/main, the comparison screenshot to <outputDir>/comparison and,
+ * for changed snapshots, writes a red-highlighted diff PNG to
+ * <outputDir>/diff. Appends the result to the GitHub job summary when
+ * available and always exits 0 (informational only).
  */
 const fs = require("fs");
 const path = require("path");
@@ -21,7 +21,7 @@ const COMPARISON_OPTIONS = { threshold: 0.1 };
 
 function usage() {
   console.error(
-    "Usage: node .github/scripts/visual-diff-vs-baseline.js <mainDir> <branchDir> <outputDir>",
+    "Usage: node .github/scripts/visual-diff-vs-baseline.js <mainDir> <comparisonDir> <outputDir>",
   );
   process.exit(1);
 }
@@ -61,11 +61,11 @@ function writeJobSummary(rows, summary) {
   if (!summaryFile) {
     return;
   }
-  const lines = ["### Branch baselines against main baselines", "", summary];
+  const lines = ["### Visual regression against main baselines", "", summary];
   if (rows.length > 0) {
     lines.push(
       "",
-      "Main, branch and diff images are in the `visual-regression-vs-main` artifact.",
+      "Main, comparison and diff images are in the `visual-regression-vs-main` artifact.",
       "",
       "| Status | Snapshot | Details |",
       "| --- | --- | --- |",
@@ -79,45 +79,45 @@ function writeJobSummary(rows, summary) {
 }
 
 function main() {
-  const [mainDir, branchDir, outputDir] = process.argv.slice(2);
-  if (!mainDir || !branchDir || !outputDir) {
+  const [mainDir, comparisonDir, outputDir] = process.argv.slice(2);
+  if (!mainDir || !comparisonDir || !outputDir) {
     usage();
   }
 
   fs.mkdirSync(outputDir, { recursive: true });
 
-  const branchFiles = listPngs(branchDir);
+  const comparisonFiles = listPngs(comparisonDir);
   const mainFiles = new Set(listPngs(mainDir));
   const rows = [];
   let diffs = 0;
-  let added = 0;
+  let news = 0;
   let matches = 0;
 
-  for (const file of branchFiles) {
-    const branchPath = path.join(branchDir, file);
+  for (const file of comparisonFiles) {
+    const comparisonPath = path.join(comparisonDir, file);
     const mainPath = path.join(mainDir, file);
 
     if (!mainFiles.has(file)) {
-      copyTo(branchPath, outputDir, "branch", file);
-      console.log(`ADDED: ${file} (not on main)`);
-      rows.push({ status: "ADDED", file, details: "not on main" });
-      added += 1;
+      copyTo(comparisonPath, outputDir, "comparison", file);
+      console.log(`NEW: ${file} (no main baseline)`);
+      rows.push({ status: "NEW", file, details: "no main baseline" });
+      news += 1;
       continue;
     }
 
     mainFiles.delete(file);
 
     const mainImg = PNG.sync.read(fs.readFileSync(mainPath));
-    const branchImg = PNG.sync.read(fs.readFileSync(branchPath));
-    const width = Math.max(mainImg.width, branchImg.width);
-    const height = Math.max(mainImg.height, branchImg.height);
+    const comparisonImg = PNG.sync.read(fs.readFileSync(comparisonPath));
+    const width = Math.max(mainImg.width, comparisonImg.width);
+    const height = Math.max(mainImg.height, comparisonImg.height);
     const mainFull = adjustCanvas(mainImg, width, height);
-    const branchFull = adjustCanvas(branchImg, width, height);
+    const comparisonFull = adjustCanvas(comparisonImg, width, height);
     const diff = new PNG({ width, height });
 
     const mismatch = pixelmatch(
       mainFull.data,
-      branchFull.data,
+      comparisonFull.data,
       diff.data,
       width,
       height,
@@ -127,7 +127,7 @@ function main() {
 
     if (mismatch > 0) {
       copyTo(mainPath, outputDir, "main", file);
-      copyTo(branchPath, outputDir, "branch", file);
+      copyTo(comparisonPath, outputDir, "comparison", file);
       fs.mkdirSync(path.join(outputDir, "diff"), { recursive: true });
       fs.writeFileSync(
         path.join(outputDir, "diff", file),
@@ -144,11 +144,13 @@ function main() {
 
   for (const file of [...mainFiles].sort()) {
     copyTo(path.join(mainDir, file), outputDir, "main", file);
-    console.log(`REMOVED: ${file} (on main, not on branch)`);
-    rows.push({ status: "REMOVED", file, details: "not on branch" });
+    console.log(
+      `MISSING: ${file} (main baseline present, no comparison image)`,
+    );
+    rows.push({ status: "MISSING", file, details: "no comparison image" });
   }
 
-  const summary = `${matches} match, ${diffs} differ, ${added} added, ${mainFiles.size} removed`;
+  const summary = `${matches} match, ${diffs} differ, ${news} new, ${mainFiles.size} missing`;
   console.log(`\nSummary: ${summary}`);
   writeJobSummary(rows, summary);
   process.exit(0);

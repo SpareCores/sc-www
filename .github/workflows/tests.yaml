@@ -247,7 +247,7 @@ jobs:
         run: npm ci --no-audit --no-fund
         env:
           CYPRESS_INSTALL_BINARY: 0
-      - name: Diff branch baselines against main baselines
+      - name: Diff visual regression tests against main baselines
         if: steps.baselines.outputs.changed == 'true'
         run: |
           mkdir -p .visual-diff-vs-main/baseline
@@ -255,7 +255,7 @@ jobs:
             | tar -x --strip-components=2 -C .visual-diff-vs-main/baseline
           node .github/scripts/visual-diff-vs-baseline.js \
             .visual-diff-vs-main/baseline \
-            cypress-image-diff-screenshots/baseline \
+            cypress-image-diff-screenshots/comparison \
             .visual-diff-vs-main/report
       - uses: actions/upload-artifact@v7.0.1
         if: steps.baselines.outputs.changed == 'true'
