@@ -3,7 +3,6 @@ import { E2EEvent } from "../../../support/generics";
 describe("Advisor page", () => {
   it("Loads the advisor shell and verification panels", () => {
     E2EEvent.visitURL("/advisor");
-    E2EEvent.hideBaselineServerCaretForScreenshot();
 
     E2EEvent.checkBreadcrumbs();
     E2EEvent.isVisible(`[id="serverSearchBar"]`);
@@ -19,7 +18,6 @@ describe("Advisor page", () => {
 
   it("Filters baseline servers after two characters", () => {
     E2EEvent.visitURL("/advisor");
-    E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.get('input[placeholder="Search for server..."]').as(
       "baselineServerInput",
@@ -37,7 +35,6 @@ describe("Advisor page", () => {
 
   it("Matches baseline servers across multiple search terms", () => {
     E2EEvent.visitURL("/advisor");
-    E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.get('input[placeholder="Search for server..."]')
       .should("be.visible")
@@ -51,7 +48,6 @@ describe("Advisor page", () => {
 
   it("shows the summary alert with empty minimum memory and no baseline placeholders", () => {
     E2EEvent.visitURL("/advisor");
-    E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.contains("No matches yet").should("be.visible");
     cy.get('[id="custom_control_numeric_minimum_memory"]').should(
@@ -69,7 +65,6 @@ describe("Advisor page", () => {
 
   it("keeps top actions working and guides focus from baseline server to workload", () => {
     E2EEvent.visitURL("/advisor");
-    E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.get('[id="advisor_example_button"] a')
       .should("be.visible")

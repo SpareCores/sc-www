@@ -6,31 +6,26 @@ import {
   HostBinding,
   OnInit,
   PLATFORM_ID,
-  TemplateRef,
   ViewChild,
   viewChild,
   OnDestroy,
   DOCUMENT,
-  afterRenderEffect,
-  effect,
+  computed,
   inject,
   signal,
-  untracked,
 } from "@angular/core";
-import { DialogRef } from "@angular/cdk/dialog";
+import { ComparePageController } from "../shared/compare-page/compare-page.controller";
+import { CompareGuide } from "../../components/compare-guide/compare-guide";
+import { CompareToolbar } from "../../components/compare-toolbar/compare-toolbar";
+import { ScrollbarMirror } from "../../components/scrollbar-mirror/scrollbar-mirror";
 import {
   INITIAL_SCROLLBAR_MIRROR_STATE,
-  ScrollbarMirrorController,
   ScrollbarMirrorState,
 } from "../shared/compare-table/scrollbar-mirror.controller";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import { KeeperAPI } from "../../services/keeper-api";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import {
-  BreadcrumbSegment,
-  Breadcrumbs,
-} from "../../components/breadcrumbs/breadcrumbs";
-import { Button } from "../../components/button/button";
+import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 import { PageHeader } from "../../components/page-header/page-header";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -40,100 +35,49 @@ import {
   CompareSelection,
   ZoneAndRegion,
 } from "../../services/compare-selection";
-import { Dropdown } from "../../directives/dropdown";
 import { Analytics } from "../../services/analytics";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
-import { ExtendedServerDetails } from "../server-details/server-details";
+import { ExtendedServerDetails } from "../server-details/server-details.types";
 import { ServerCompareCharts } from "../../components/server-compare-charts/server-compare-charts";
-import { CompareEmbedDialog } from "../../components/embed-dialog/compare-embed-dialog";
+import { EmbedWidgetButton } from "../../components/embed-dialog/embed-widget-button";
 import { EmbedWidgetOption } from "../../components/embed-dialog/embed-dialog.types";
 import { Allocation } from "../../../../sdk/data-contracts";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { Toast } from "../../services/toast";
 import {
+  INVALID_SERVER_COMPARE_URL_TOAST_ACTION_LABEL,
+  INVALID_SERVER_COMPARE_URL_TOAST_BODY,
+} from "../../services/url-toast-content";
+import {
   BAD_SERVER_COMPARE_URL_TOAST_ID,
   SERVER_COMPARE_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { Modal } from "../../components/modals/modal/modal";
-import { ModalDialog } from "../../services/modal-dialog";
-import { PrismHighlighter } from "../../services/prism-highlighter";
-import { distinctUntilChanged, map, merge, Subscription } from "rxjs";
+import { Subscription } from "rxjs";
 import serverComparesData from "./server-compares.js";
 import { ChartTooltip } from "../../components/charts/shared/chart-tooltip";
 import {
   decodeBase64JsonUrlState,
   isServerCompareUrlState,
 } from "../../tools/encoded-url-state";
-import { navigateListingQuery } from "../../tools/listing-query-navigate";
-import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { isCompareBaselineServer } from "../../components/charts/shared/server-compare-table.utils";
-import {
-  getCompareMemoryChartOption,
-  type CompareMemoryChartOption,
-} from "../../components/charts/shared/memory-chart.types";
+import { getCompareMemoryChartOption } from "../../components/charts/shared/memory-chart.types";
 import {
   SERVER_COMPARE_FIRST_COL_ID,
   SERVER_COMPARE_TABLE_HOLDER_ID,
   SERVER_COMPARE_TABLE_ID,
 } from "./server-compare.constants";
-import {
-  type MemoryBenchmarkConfig,
-  type MemoryBenchmarkMeta,
-} from "../../components/charts/memory/memory-chart.types";
-import { CompareCollections } from "../../collections/compare-collections";
+import { type MemoryBenchmarkConfig } from "../../components/charts/memory/memory-chart.types";
 import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
-import { CollectionsUi } from "../../collections/collections-ui";
-import { AuthState } from "../../core/auth";
-import type { SavedComparisonItem } from "../../collections/collections.types";
-import { SAVED_ITEM_FALLBACK_NOTE } from "../../collections/collections.utils";
-
-const EMBEDDABLE_WIDGETS: EmbedWidgetOption[] = [
-  { id: "generic", name: "Server Specs and Prices" },
-  { id: "workload_profile", name: "Workload Profiles" },
-  { id: "nvbandwidth", name: "GPU Bandwidth and Latency" },
-  { id: "bw_mem", name: "Memory Bandwidth" },
-  { id: "compress", name: "Compression" },
-  { id: "openssl", name: "OpenSSL" },
-  { id: "geekbench", name: "Geekbench Single- and Multi-core" },
-  { id: "geekbench_single", name: "Geekbench Single-core" },
-  { id: "geekbench_multi", name: "Geekbench Multi-core" },
-  { id: "passmark_cpu", name: "PassMark CPU" },
-  { id: "passmark_other", name: "PassMark Memory" },
-  { id: "stress_ng_full", name: "Stress-ng Stressors" },
-  { id: "stress_ng", name: "Stress-ng div16" },
-  { id: "stress_ng_pct", name: "Stress-ng Relative" },
-  { id: "llm_inference", name: "LLM Inference" },
-  { id: "static_web", name: "Static Web Server" },
-  { id: "redis", name: "Redis" },
-  { id: "pgbench", name: "PostgreSQL heavy read-only throughput" },
-];
-
-const INVALID_COMPARE_URL_TOAST_BODY = "Select servers to compare.";
-const INVALID_COMPARE_URL_TOAST_ACTION_LABEL = "Server Navigator page";
-const SERVER_COMPARE_GUIDE_TITLE = "Server Compare Guide";
-const SERVER_COMPARISON_TITLE = "Server Comparison";
-const SERVER_COMPARE_BREADCRUMB = "Compare";
-const SERVER_COMPARE_PARENT_BREADCRUMB = "Servers";
-const SERVER_CUSTOM_COMPARISON_BREADCRUMB = "Custom Comparison";
-const SERVER_COMPARE_GUIDE_DESCRIPTION =
-  "Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.";
-
-type CompareTableBenchmarkConfig = {
-  config: MemoryBenchmarkConfig;
-  values: Array<number | "-">;
-};
-
-type CompareTableBenchmarkMeta = Omit<
-  MemoryBenchmarkMeta,
-  "configs" | "name"
-> & {
-  name: string;
-  collapsed: boolean;
-  configs: CompareTableBenchmarkConfig[];
-  benchmark_key?: string;
-  legacyOperation?: CompareMemoryChartOption["legacyOperation"];
-};
+import { CompareTableBenchmarkMeta } from "./server-compare.types";
+import {
+  SERVER_COMPARE_EMBEDDABLE_WIDGETS,
+  SERVER_COMPARE_GUIDE_DESCRIPTION,
+  SERVER_COMPARE_GUIDE_TITLE,
+  SERVER_COMPARE_KEYWORDS,
+  SERVER_COMPARE_PARENT_BREADCRUMB,
+  SERVER_COMPARISON_TITLE,
+} from "./server-compare.constants";
 
 function hasMeaningfulCompareTableValue(value: unknown): boolean {
   if (value === "-" || value == null || value === "") {
@@ -147,53 +91,68 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
 @Component({
   selector: "sc-server-compare",
   imports: [
-    Button,
     PageHeader,
     Breadcrumbs,
     CommonModule,
     FormsModule,
     RouterModule,
     ServerCompareCharts,
-    CompareEmbedDialog,
+    EmbedWidgetButton,
     LoadingSpinner,
-    Dropdown,
     CollectionSaveModal,
-    Modal,
+    CompareGuide,
+    CompareToolbar,
+    ScrollbarMirror,
   ],
   templateUrl: "./server-compare.html",
   styleUrl: "./server-compare.css",
 })
 export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
-  private prismService = inject(PrismHighlighter);
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
   private keeperAPI = inject(KeeperAPI);
   private seoHandler = inject(SeoHandler);
   private serverCompare = inject(CompareSelection);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  baselineDropdown = viewChild<Dropdown>("baselineDropdown");
   private analytics = inject(Analytics);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
   private tooltipService = inject(ChartTooltip);
-  private compareCollections = inject(CompareCollections);
-  private auth = inject(AuthState);
-  private collectionsUi = inject(CollectionsUi);
-  private modalDialog = inject(ModalDialog);
   saveComparisonModal = viewChild(CollectionSaveModal);
+  readonly comparePage = new ComparePageController(
+    {
+      collectionTarget: "compare-servers",
+      comparePath: "/servers/compare",
+      parentBreadcrumb: {
+        name: SERVER_COMPARE_PARENT_BREADCRUMB,
+        url: "/servers",
+      },
+      guideTitle: SERVER_COMPARE_GUIDE_TITLE,
+      guideDescription: SERVER_COMPARE_GUIDE_DESCRIPTION,
+      comparisonTitle: SERVER_COMPARISON_TITLE,
+      baselineIdParam: "baseline_server",
+      keywords: SERVER_COMPARE_KEYWORDS,
+      premadeComparisons: serverComparesData,
+    },
+    {
+      instances: () => this.getCompareInstancesForSave(),
+      instancesRaw: () => this.instancesRaw,
+      baseline: () => this.selectedBaselineServer,
+      currency: () => this.selectedCurrency,
+      isLoading: () => this.isLoading,
+      compareDataReady: () => this.compareDataReady,
+      saveModal: () => this.saveComparisonModal(),
+      onLoadFinished: () => {
+        this.isLoading = false;
+        this.stickyLayout.scheduleDeferredUpdate();
+      },
+    },
+  );
   compareCharts = viewChild(ServerCompareCharts);
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
-  private comparesDiv = viewChild<ElementRef>("comparesDiv");
-
-  breadcrumbs: BreadcrumbSegment[] = [
-    { name: "Home", url: "/" },
-    { name: SERVER_COMPARE_PARENT_BREADCRUMB, url: "/servers" },
-    { name: SERVER_COMPARE_BREADCRUMB, url: "/servers/compare" },
-  ];
 
   isLoading = true;
 
@@ -201,8 +160,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
   zones: any[] = [];
   regions: any[] = [];
-
-  clipboardIcon = "clipboard";
 
   instanceProperties: any[] = [];
 
@@ -221,11 +178,9 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     { name: "Network", category: "network", properties: [] },
   ];
 
-  availableCurrencies: CurrencyOption[] = availableCurrencies;
-  selectedCurrency = this.availableCurrencies[0];
+  selectedCurrency: CurrencyOption = availableCurrencies[0];
   selectedBaselineServer: ExtendedServerDetails | null = null;
 
-  private lastEncodedCompareQuery: string | null = null;
   private compareLoadId = 0;
   private compareDataReady = false;
 
@@ -354,8 +309,10 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
-  scrollbarMirrorBottomEl = viewChild<ElementRef>("scrollbarMirrorBottomRef");
-  readonly scrollbarMirrorController = ScrollbarMirrorController;
+  private scrollbarMirrorComponent = viewChild(ScrollbarMirror);
+  scrollbarMirrorBottomEl = computed(() =>
+    this.scrollbarMirrorComponent()?.element(),
+  );
   readonly isTableOutsideViewport = signal(false);
   readonly scrollbarMirror = signal<ScrollbarMirrorState>({
     ...INITIAL_SCROLLBAR_MIRROR_STATE,
@@ -385,116 +342,25 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     itemCount: () => this.servers.length,
   });
 
-  title = SERVER_COMPARE_GUIDE_TITLE;
-  description = SERVER_COMPARE_GUIDE_DESCRIPTION;
-  private bookmarkSource: SavedComparisonItem | null = null;
-  keywords =
-    "compare, servers, server, hosting, cloud, vps, dedicated, comparison";
-
   instances: any[] = [];
   instancesRaw!: string;
 
-  embeddableWidgets: EmbedWidgetOption[] = EMBEDDABLE_WIDGETS;
-
-  private embedModalTemplate =
-    viewChild.required<TemplateRef<unknown>>("embedModalTemplate");
-  private embedDialogRef: DialogRef | null = null;
+  embeddableWidgets: EmbedWidgetOption[] = SERVER_COMPARE_EMBEDDABLE_WIDGETS;
 
   serverCompares: any[] = serverComparesData;
 
   showZoneIds = false;
 
   private subscription = new Subscription();
-  private readonly pendingSaveComparisonClose = signal(false);
-  private readonly editingComparisonId = signal<string | null>(null);
-
-  constructor() {
-    effect(() => {
-      this.compareCollections.store.savedComparisons();
-      this.compareCollections.store.requestStatus();
-      if (this.compareDataReady && this.isLoading) {
-        this.finishCompareLoadIfReady();
-        return;
-      }
-      if (!this.isLoading) {
-        this.syncSavedComparisonChrome();
-      }
-    });
-
-    effect(() => {
-      if (!this.isAuthenticated()) {
-        return;
-      }
-      const modal = this.saveComparisonModal();
-      if (!modal) {
-        return;
-      }
-      if (!this.collectionsUi.takePendingOpenSave("compare-servers")) {
-        return;
-      }
-      untracked(() => this.openSaveComparisonModal());
-    });
-
-    effect(() => {
-      if (!this.pendingSaveComparisonClose()) {
-        return;
-      }
-
-      this.compareCollections.store.savedComparisons();
-      const editingId = this.editingComparisonId();
-      const saved = this.activeSavedComparison();
-      const id =
-        editingId ??
-        this.compareCollections.buildComparisonId(
-          this.getCompareInstancesForSave(),
-          this.buildCanonicalCompareUrl(),
-        );
-      const saving = this.compareCollections.isSavingComparison(id);
-      const updating = editingId
-        ? this.compareCollections.isUpdatingComparison(editingId)
-        : saved
-          ? this.compareCollections.isUpdatingComparison(saved.id)
-          : false;
-
-      if (saving || updating) {
-        return;
-      }
-
-      this.pendingSaveComparisonClose.set(false);
-      if (editingId || saved) {
-        this.saveComparisonModal()?.close();
-      }
-    });
-
-    afterRenderEffect({
-      write: () => {
-        if (this.comparesDiv()) {
-          this.prismService.highlightAll();
-        }
-      },
-    });
-  }
 
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
-      this.title,
-      this.description,
-      this.keywords,
+      this.comparePage.title,
+      this.comparePage.description,
+      this.comparePage.keywords,
     );
 
-    this.subscription.add(
-      merge(this.route.paramMap, this.route.queryParamMap)
-        .pipe(
-          map(() => this.compareRouteKey()),
-          distinctUntilChanged(),
-        )
-        .subscribe(() => {
-          if (this.isOwnCompareUrlWrite()) {
-            return;
-          }
-          this.setup();
-        }),
-    );
+    this.comparePage.watchRoute(() => this.setup());
 
     this.subscription.add(
       this.serverCompare.baselineChanged.subscribe((baseline) => {
@@ -512,7 +378,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.subscription.unsubscribe();
 
-    this.embedDialogRef?.close();
     this.stickyLayout.destroy();
     this.toastService.removeToast(SERVER_COMPARE_ERROR_TOAST_ID);
     this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
@@ -534,11 +399,11 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
       category.data = [];
     });
     this.stickyLayout.reset();
-    this.restoreCurrencyFromUrl();
+    this.selectedCurrency = this.comparePage.currencyFromUrl();
 
     if (id || param) {
       this.isLoading = true;
-      this.breadcrumbs = this.baseCompareBreadcrumbs();
+      this.comparePage.breadcrumbs = this.comparePage.baseBreadcrumbs();
     }
 
     if (id) {
@@ -548,12 +413,12 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
         this.instancesRaw = btoa(JSON.stringify(this.instances));
         this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
       } else {
-        this.applyGuideChrome();
+        this.comparePage.applyGuideChrome();
         showInvalidUrlParamToast(this.toastService, this.platformId, {
           id: BAD_SERVER_COMPARE_URL_TOAST_ID,
-          body: INVALID_COMPARE_URL_TOAST_BODY,
+          body: INVALID_SERVER_COMPARE_URL_TOAST_BODY,
           action: {
-            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            label: INVALID_SERVER_COMPARE_URL_TOAST_ACTION_LABEL,
             onClick: () => this.router.navigate(["/servers"]),
           },
         });
@@ -567,12 +432,12 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
       if (!decodedInstances.value) {
         console.warn("Invalid instances data in URL:", decodedInstances.error);
-        this.applyGuideChrome();
+        this.comparePage.applyGuideChrome();
         showInvalidUrlParamToast(this.toastService, this.platformId, {
           id: BAD_SERVER_COMPARE_URL_TOAST_ID,
-          body: INVALID_COMPARE_URL_TOAST_BODY,
+          body: INVALID_SERVER_COMPARE_URL_TOAST_BODY,
           action: {
-            label: INVALID_COMPARE_URL_TOAST_ACTION_LABEL,
+            label: INVALID_SERVER_COMPARE_URL_TOAST_ACTION_LABEL,
             onClick: () => this.router.navigate(["/servers"]),
           },
         });
@@ -583,13 +448,13 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
         this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
 
         if (!this.instances?.length) {
-          this.applyGuideChrome();
+          this.comparePage.applyGuideChrome();
           this.isLoading = false;
         }
       }
     } else {
       this.toastService.removeToast(BAD_SERVER_COMPARE_URL_TOAST_ID);
-      this.applyGuideChrome();
+      this.comparePage.applyGuideChrome();
       this.isLoading = false;
     }
 
@@ -836,23 +701,11 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
           this.restoreBaselineFromUrl();
           const specialId = this.route.snapshot.paramMap.get("id");
-          if (specialId && !this.exactSavedComparison()) {
-            const serverCompare = this.serverCompares.find(
-              (x: any) => x.id === specialId,
-            );
-            if (serverCompare) {
-              this.applyComparisonChrome(
-                serverCompare.title,
-                serverCompare.description,
-              );
-              this.setPremadeCompareBreadcrumb(
-                serverCompare.title,
-                serverCompare.id,
-              );
-            }
+          if (specialId && !this.comparePage.exactSavedComparison()) {
+            this.comparePage.applyPremadeComparisonPageInfo(specialId);
           }
           this.compareDataReady = true;
-          this.finishCompareLoadIfReady();
+          this.comparePage.finishLoadIfReady();
         });
     } else {
       this.isLoading = false;
@@ -885,28 +738,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
         }
       }, 50);
     }
-  }
-
-  clipboardURL(event: any, fragment?: string) {
-    let url = window.location.href;
-
-    if (fragment) {
-      // replace url fragment
-      url = url.replace(/#.*$/, "") + "#" + fragment;
-    }
-
-    navigator.clipboard.writeText(url);
-    this.clipboardIcon = "check";
-
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 
   showTooltip(el: any, content?: string, autoHide = false) {
@@ -1013,7 +844,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
   selectCurrency(currency: any) {
     this.selectedCurrency = currency;
-    this.syncCompareUrlState();
+    this.comparePage.syncUrlState();
 
     let promises: Promise<any>[] = [];
     this.servers?.forEach((instance: any) => {
@@ -1061,12 +892,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
             : server.score || 0;
       }
     });
-
-    this.currencyDropdown()?.hide();
-  }
-
-  getBaselineServerLabel(): string {
-    return this.selectedBaselineServer?.display_name || "Baseline server";
   }
 
   isBaselineServer(server: ExtendedServerDetails): boolean {
@@ -1076,90 +901,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   selectBaselineServer(server: ExtendedServerDetails | null): void {
     this.selectedBaselineServer = server;
     this.syncBaselineToCompareService();
-    this.syncCompareUrlState();
-    this.baselineDropdown()?.hide();
-  }
-
-  getCompareUrlQueryParams(): Record<string, string> {
-    const params: Record<string, string> = {};
-
-    if (this.instancesRaw) {
-      params.instances = this.instancesRaw;
-    }
-
-    if (this.selectedBaselineServer) {
-      params.baseline_vendor = this.selectedBaselineServer.vendor_id;
-      params.baseline_server = this.selectedBaselineServer.api_reference;
-    }
-
-    if (this.selectedCurrency.slug !== "USD") {
-      params.currency = this.selectedCurrency.slug;
-    }
-
-    return params;
-  }
-
-  private restoreCurrencyFromUrl(): void {
-    const currencySlug = isPlatformBrowser(this.platformId)
-      ? new URLSearchParams(window.location.search).get("currency")
-      : this.route.snapshot.queryParams["currency"];
-
-    this.selectedCurrency =
-      this.availableCurrencies.find(
-        (currency) => currency.slug === currencySlug,
-      ) || this.availableCurrencies[0];
-  }
-
-  private compareRouteKey(): string {
-    const snapshot = this.route.snapshot;
-    return [
-      snapshot.paramMap.get("id") ?? "",
-      snapshot.queryParams["instances"] ?? "",
-      snapshot.queryParams["currency"] ?? "",
-      snapshot.queryParams["baseline_vendor"] ?? "",
-      snapshot.queryParams["baseline_server"] ?? "",
-    ].join("|");
-  }
-
-  private isOwnCompareUrlWrite(): boolean {
-    const snapshot = this.route.snapshot;
-    if (!this.compareDataReady || snapshot.paramMap.get("id")) {
-      return false;
-    }
-    const q = snapshot.queryParams;
-    return (
-      encodeQueryParams({
-        instances: q["instances"],
-        baseline_vendor: q["baseline_vendor"],
-        baseline_server: q["baseline_server"],
-        currency: q["currency"],
-      }) === this.lastEncodedCompareQuery
-    );
-  }
-
-  private collectionsReadyForChrome(): boolean {
-    if (!isPlatformBrowser(this.platformId) || !this.auth.isAuthenticated()) {
-      return true;
-    }
-
-    return (
-      this.compareCollections.store.isLoaded() ||
-      !!this.compareCollections.store.error()
-    );
-  }
-
-  private finishCompareLoadIfReady(): void {
-    if (!this.compareDataReady || !this.collectionsReadyForChrome()) {
-      return;
-    }
-
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    this.syncSavedComparisonChrome();
-    this.isLoading = false;
-    this.stickyLayout.scheduleDeferredUpdate();
+    this.comparePage.syncUrlState();
   }
 
   private restoreBaselineFromUrl(): void {
@@ -1181,10 +923,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.syncBaselineToCompareService();
-    this.lastEncodedCompareQuery = encodeQueryParams(
-      this.getCompareUrlQueryParams(),
-    );
-    this.syncSavedComparisonChrome();
+    this.comparePage.rememberUrlState();
   }
 
   private syncBaselineToCompareService(): void {
@@ -1221,7 +960,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
 
     this.selectedBaselineServer = nextBaseline;
     if (this.servers.length) {
-      this.syncCompareUrlState();
+      this.comparePage.syncUrlState();
     }
   }
 
@@ -1243,11 +982,11 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
         category.data = [];
       });
       this.selectedBaselineServer = null;
-      this.syncSavedComparisonChrome();
+      this.comparePage.syncSavedComparisonChrome();
       if (this.route.snapshot.paramMap.get("id")) {
         this.serverCompare.syncCompareRoute();
       } else {
-        this.syncCompareUrlState();
+        this.comparePage.syncUrlState();
       }
       return;
     }
@@ -1293,7 +1032,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
       zonesRegions: item.zonesRegions ? [...item.zonesRegions] : [],
     }));
     this.instancesRaw = btoa(JSON.stringify(this.instances));
-    this.syncSavedComparisonChrome();
+    this.comparePage.syncSavedComparisonChrome();
 
     if (
       this.selectedBaselineServer &&
@@ -1305,7 +1044,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (!this.route.snapshot.paramMap.get("id")) {
-      this.syncCompareUrlState();
+      this.comparePage.syncUrlState();
     }
     this.onCompareTableLayoutChange();
   }
@@ -1364,201 +1103,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private applyGuideChrome(): void {
-    this.title = SERVER_COMPARE_GUIDE_TITLE;
-    this.description = SERVER_COMPARE_GUIDE_DESCRIPTION;
-    this.bookmarkSource = null;
-    this.breadcrumbs = this.baseCompareBreadcrumbs();
-    this.seoHandler.updateTitleAndMetaTags(
-      this.title,
-      this.description,
-      this.keywords,
-    );
-  }
-
-  private applyComparisonChrome(title?: string, description?: string): void {
-    this.title = title || SERVER_COMPARISON_TITLE;
-    this.description = description || SERVER_COMPARE_GUIDE_DESCRIPTION;
-    this.bookmarkSource = null;
-    this.breadcrumbs = this.baseCompareBreadcrumbs();
-    this.seoHandler.updateTitleAndMetaTags(
-      this.title,
-      this.description,
-      this.keywords,
-    );
-  }
-
-  private baseCompareBreadcrumbs(): BreadcrumbSegment[] {
-    return [
-      { name: "Home", url: "/" },
-      { name: SERVER_COMPARE_PARENT_BREADCRUMB, url: "/servers" },
-      { name: SERVER_COMPARE_BREADCRUMB, url: "/servers/compare" },
-    ];
-  }
-
-  private setPremadeCompareBreadcrumb(title: string, id: string): void {
-    this.breadcrumbs = [
-      ...this.baseCompareBreadcrumbs(),
-      { name: title, url: `/servers/compare/${id}` },
-    ];
-  }
-
-  private syncSavedComparisonChrome(): void {
-    const exact = this.exactSavedComparison();
-    if (exact) {
-      this.bookmarkSource = exact;
-    } else if (!this.instances.length) {
-      this.bookmarkSource = null;
-    }
-
-    if (exact && this.instances.length) {
-      this.title = exact.name;
-      this.description = exact.note?.trim() || SAVED_ITEM_FALLBACK_NOTE;
-      this.breadcrumbs = [
-        ...this.baseCompareBreadcrumbs(),
-        { name: exact.name, url: exact.compare_url },
-      ];
-      this.seoHandler.updateTitleAndMetaTags(
-        `${exact.name} - Spare Cores`,
-        this.description,
-        this.keywords,
-      );
-      return;
-    }
-
-    if (this.route.snapshot.paramMap.get("id")) {
-      return;
-    }
-
-    if (this.instances.length) {
-      this.title = SERVER_COMPARISON_TITLE;
-      this.description = SERVER_COMPARE_GUIDE_DESCRIPTION;
-      this.breadcrumbs = [
-        ...this.baseCompareBreadcrumbs(),
-        {
-          name: `${SERVER_CUSTOM_COMPARISON_BREADCRUMB} (${this.instances.length})`,
-          url: `/servers/compare`,
-          queryParams: this.instancesRaw
-            ? { instances: this.instancesRaw }
-            : undefined,
-        },
-      ];
-      this.seoHandler.updateTitleAndMetaTags(
-        `${this.title} - Spare Cores`,
-        this.description,
-        this.keywords,
-      );
-      return;
-    }
-
-    this.applyGuideChrome();
-  }
-
-  isAuthenticated(): boolean {
-    return this.auth.isAuthenticated();
-  }
-
-  exactSavedComparison() {
-    const specialId = this.route.snapshot.paramMap.get("id");
-    return this.compareCollections.savedComparisonByUrls(
-      this.buildCanonicalCompareUrl(),
-      specialId ? `/servers/compare/${specialId}` : null,
-    );
-  }
-
-  activeSavedComparison() {
-    return this.exactSavedComparison();
-  }
-
-  canSaveComparison(): boolean {
-    return this.isAuthenticated() && this.instances.length >= 2;
-  }
-
-  openSaveComparisonModal(): void {
-    if (!this.isAuthenticated()) {
-      this.collectionsUi.promptRegisterForFeature({
-        type: "open-save",
-        target: "compare-servers",
-      });
-      return;
-    }
-
-    const exact = this.exactSavedComparison();
-    const draft = exact ?? this.bookmarkSource;
-    this.editingComparisonId.set(exact?.id ?? null);
-    this.saveComparisonModal()?.open(draft?.name ?? "", draft?.note ?? "");
-  }
-
-  isSaveComparisonPending(): boolean {
-    const editingId = this.editingComparisonId();
-    if (editingId) {
-      return this.compareCollections.isUpdatingComparison(editingId);
-    }
-
-    const saved = this.activeSavedComparison();
-    const id = this.compareCollections.buildComparisonId(
-      this.getCompareInstancesForSave(),
-      this.buildCanonicalCompareUrl(),
-    );
-
-    if (saved) {
-      return this.compareCollections.isUpdatingComparison(saved.id);
-    }
-
-    return this.compareCollections.isSavingComparison(id);
-  }
-
-  confirmSaveComparison(payload: { name: string; note?: string }): void {
-    this.syncCompareUrlState();
-    const instances = this.getCompareInstancesForSave();
-    const compareUrl = this.buildCanonicalCompareUrl();
-    const editingId = this.editingComparisonId();
-    this.pendingSaveComparisonClose.set(true);
-
-    if (editingId) {
-      this.compareCollections.updateComparison(
-        editingId,
-        instances,
-        payload.name,
-        payload.note,
-        compareUrl,
-      );
-      return;
-    }
-
-    this.compareCollections.saveComparison(
-      this.compareCollections.buildComparisonId(instances, compareUrl),
-      instances,
-      payload.name,
-      payload.note,
-      compareUrl,
-    );
-  }
-
-  deleteSavedComparison(): void {
-    const saved = this.exactSavedComparison();
-    if (!saved) {
-      return;
-    }
-
-    this.compareCollections.deleteComparison(saved.id);
-    this.bookmarkSource = null;
-  }
-
-  toggleSavedComparison(): void {
-    if (this.exactSavedComparison()) {
-      this.deleteSavedComparison();
-      return;
-    }
-
-    this.openSaveComparisonModal();
-  }
-
-  isDeleteComparisonPending(): boolean {
-    const saved = this.exactSavedComparison();
-    return !!saved && this.compareCollections.isDeletingComparison(saved.id);
-  }
-
   private getCompareInstancesForSave(): ComparedServer[] {
     return this.instances.map((instance) => ({
       display_name: instance.display_name,
@@ -1613,44 +1157,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     return selection;
   }
 
-  private buildCanonicalCompareUrl(): string {
-    const encodedQuery = encodeQueryParams(this.getCompareUrlQueryParams());
-    return encodedQuery
-      ? `/servers/compare?${encodedQuery}`
-      : "/servers/compare";
-  }
-
-  private syncCompareUrlState(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    const queryParams = this.getCompareUrlQueryParams();
-    const encodedQuery = encodeQueryParams(queryParams);
-    const canonicalUrl = encodedQuery
-      ? `/servers/compare?${encodedQuery}`
-      : "/servers/compare";
-
-    if (this.route.snapshot.paramMap.get("id")) {
-      this.lastEncodedCompareQuery = encodedQuery;
-      void this.router.navigateByUrl(canonicalUrl, { replaceUrl: true });
-      this.syncSavedComparisonChrome();
-      return;
-    }
-
-    if (encodedQuery === this.lastEncodedCompareQuery) {
-      return;
-    }
-
-    this.lastEncodedCompareQuery = encodedQuery;
-    navigateListingQuery(this.router, this.route, queryParams, {
-      params: "replace",
-      history: "push",
-      preserveFragment: true,
-    });
-    this.syncSavedComparisonChrome();
-  }
-
   onMirrorScroll(event: Event) {
     this.stickyLayout.syncFromMirror(event.target as HTMLElement);
   }
@@ -1663,20 +1169,12 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
     this.stickyLayout.scheduleUpdate();
   }
 
-  openModal() {
-    if (this.embedDialogRef) {
-      return;
-    }
-
+  updateEmbeddableWidgets() {
     const compareCharts = this.compareCharts();
     this.embeddableWidgets = compareCharts
-      ? EMBEDDABLE_WIDGETS.filter((widget) =>
+      ? SERVER_COMPARE_EMBEDDABLE_WIDGETS.filter((widget) =>
           compareCharts.hasEmbeddableWidget(widget.id),
         )
-      : EMBEDDABLE_WIDGETS;
-    this.embedDialogRef = this.modalDialog.open(this.embedModalTemplate());
-    this.embedDialogRef.closed.subscribe(() => {
-      this.embedDialogRef = null;
-    });
+      : SERVER_COMPARE_EMBEDDABLE_WIDGETS;
   }
 }
