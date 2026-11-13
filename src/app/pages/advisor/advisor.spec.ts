@@ -52,6 +52,7 @@ import {
 } from "../../tools/column-tooltips";
 
 describe("Advisor", () => {
+  let filterBarStyle: HTMLStyleElement;
   const queryParams$ = new BehaviorSubject({});
   const getServersSelect = jasmine.createSpy("getServersSelect");
   const getServerBenchmarkMeta = jasmine.createSpy("getServerBenchmarkMeta");
@@ -354,6 +355,11 @@ describe("Advisor", () => {
       ],
     }).compileComponents();
 
+    filterBarStyle = document.createElement("style");
+    filterBarStyle.textContent =
+      ".advisor-filter-bar { display: block !important; }";
+    document.head.appendChild(filterBarStyle);
+
     fixture = TestBed.createComponent(Advisor);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -362,6 +368,7 @@ describe("Advisor", () => {
   });
 
   afterEach(() => {
+    filterBarStyle.remove();
     queryParams$.next({});
   });
 

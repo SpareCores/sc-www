@@ -2,14 +2,14 @@
   <div class="content pt-16 pb-16">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+    <div class="flex flex-col gap-4 my-8 content-gutter">
       <sc-page-header
         icon="dollar-sign"
         title="Real-time Cloud Server Prices"
         [showShare]="true"
         [copyLink]="true"
       ></sc-page-header>
-      <div class="text-white text-xl pr-16">
+      <div class="text-white text-base sm:text-xl sm:pr-16">
         Explore, search, and evaluate cloud compute resources and their pricing
         in the table below. This comprehensive comparison includes diverse
         attributes such as CPU count, detailed processor information, memory,
@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <div class="flex gap-8 mx-2 xl:mx-0">
+    <div class="flex gap-8 content-gutter">
       <div
         class="sc-filter-sidebar bg-primary"
         [class.sc-filter-sidebar--collapsed]="isCollapsed"

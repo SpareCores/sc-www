@@ -7,7 +7,7 @@
   <div class="content pt-16 pb-16">
     <sc-breadcrumbs [segments]="displayBreadcrumbs()"></sc-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+    <div class="flex flex-col gap-4 my-8 content-gutter">
       <sc-page-header
         icon="bot"
         [title]="displayTitle()"
@@ -42,7 +42,7 @@
           (click)="openIntroductionModal()"
         ></sc-button>
       </sc-page-header>
-      <div class="text-white text-xl lg:pr-16">
+      <div class="text-white text-base sm:text-xl lg:pr-16">
         {{ displayDescription() }}
       </div>
     </div>
@@ -87,7 +87,7 @@
       </sc-modal>
     </ng-template>
 
-    <div class="advisor-page-body mx-2 xl:mx-0">
+    <div class="advisor-page-body content-gutter">
       <div
         class="advisor-filter-bar bg-primary"
         [class.advisor-filter-bar-collapsed]="isCollapsed()"
