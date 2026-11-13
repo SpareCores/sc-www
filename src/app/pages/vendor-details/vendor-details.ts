@@ -34,6 +34,7 @@ import {
 import { buildDetailsRows } from "../../components/details-card/details-card.utils";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { Analytics } from "../../services/analytics";
+import { HeaderAnchorLink } from "../../services/header-anchor-link";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { Toast } from "../../services/toast";
@@ -94,6 +95,7 @@ export class VendorDetails implements OnInit, OnDestroy {
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
   private renderer = inject(Renderer2);
+  private headerAnchorLink = inject(HeaderAnchorLink);
   private countryNamePipe = new CountryIdtoNamePipe();
   private vendorLoadId = 0;
 
@@ -266,6 +268,7 @@ export class VendorDetails implements OnInit, OnDestroy {
         this.isLoading = false;
         if (isPlatformBrowser(this.platformId) && this.vendor) {
           setTimeout(() => this.initMap());
+          this.headerAnchorLink.scrollToCurrentFragment();
         }
       });
   }

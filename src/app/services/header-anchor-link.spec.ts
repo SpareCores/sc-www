@@ -2,6 +2,7 @@ import { ViewportScroller } from "@angular/common";
 import { TestBed } from "@angular/core/testing";
 
 import { HeaderAnchorLink } from "./header-anchor-link";
+import { ShareLink } from "./share-link";
 import { sharedTestingProviders } from "../../testing/testbed.providers";
 
 describe("HeaderAnchorLink", () => {
@@ -50,5 +51,35 @@ describe("HeaderAnchorLink", () => {
     expect(scrollToAnchor).toHaveBeenCalledWith("anchor_spec_target", {
       behavior: "smooth",
     });
+  });
+
+  it("stops waiting for the fragment target after user input", () => {
+    jasmine.clock().install();
+    const scrollToAnchor = spyOn(
+      TestBed.inject(ViewportScroller),
+      "scrollToAnchor",
+    );
+    target.remove();
+    history.replaceState(history.state, "", "#anchor_spec_target");
+
+    service.scrollToCurrentFragment();
+    window.dispatchEvent(new Event("wheel"));
+    document.body.appendChild(target);
+    jasmine.clock().tick(100);
+    jasmine.clock().uninstall();
+
+    expect(scrollToAnchor).not.toHaveBeenCalled();
+  });
+
+  it("copies the anchor link through ShareLink", () => {
+    const copyUrl = spyOn(TestBed.inject(ShareLink), "copyUrl").and.resolveTo(
+      true,
+    );
+
+    service.copy("anchor_spec_target");
+
+    expect(copyUrl).toHaveBeenCalledWith(
+      jasmine.stringMatching(/#anchor_spec_target$/),
+    );
   });
 });

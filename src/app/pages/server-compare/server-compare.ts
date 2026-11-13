@@ -24,7 +24,6 @@ import {
 } from "../shared/compare-table/scrollbar-mirror.controller";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import { KeeperAPI } from "../../services/keeper-api";
-import { HeaderAnchorLink } from "../../services/header-anchor-link";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 import { PageHeader } from "../../components/page-header/page-header";
@@ -111,7 +110,6 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
 export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
-  private headerAnchorLink = inject(HeaderAnchorLink);
   private keeperAPI = inject(KeeperAPI);
   private seoHandler = inject(SeoHandler);
   private serverCompare = inject(CompareSelection);
@@ -717,7 +715,6 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.stickyLayout.init();
-      this.headerAnchorLink.scrollToCurrentFragment();
     }
   }
 
