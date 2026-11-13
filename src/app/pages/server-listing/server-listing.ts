@@ -301,7 +301,6 @@ export class ServerListing implements OnInit, OnDestroy {
   );
   private introductionDialogRef: DialogRef | null = null;
   showIntroductionVideo = false;
-  clipboardIcon = "clipboard";
   tooltipContent = "";
 
   sub: any;
@@ -1306,23 +1305,6 @@ export class ServerListing implements OnInit, OnDestroy {
 
   openCompare() {
     this.serverCompare.openCompare();
-  }
-
-  clipboardURL() {
-    let url = window.location.href;
-    navigator.clipboard.writeText(url);
-
-    this.clipboardIcon = "check";
-
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 
   openIntroductionModal(): void {

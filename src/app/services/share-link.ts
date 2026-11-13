@@ -13,8 +13,16 @@ export class ShareLink {
       return false;
     }
 
+    return this.copyUrl(this.document.location.href);
+  }
+
+  async copyUrl(url: string): Promise<boolean> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
     try {
-      await navigator.clipboard.writeText(this.document.location.href);
+      await navigator.clipboard.writeText(url);
     } catch {
       this.toastService.show({
         title: "Could not copy the link.",

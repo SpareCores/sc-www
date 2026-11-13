@@ -27,6 +27,15 @@ describe("ShareLink", () => {
     );
   });
 
+  it("copies a given URL", async () => {
+    const writeText = spyOn(navigator.clipboard, "writeText").and.resolveTo();
+
+    expect(
+      await TestBed.inject(ShareLink).copyUrl("https://example.com/a"),
+    ).toBeTrue();
+    expect(writeText).toHaveBeenCalledWith("https://example.com/a");
+  });
+
   it("reports a failed copy", async () => {
     spyOn(navigator.clipboard, "writeText").and.rejectWith(new Error("denied"));
 
