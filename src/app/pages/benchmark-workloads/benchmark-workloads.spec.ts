@@ -87,9 +87,13 @@ describe("BenchmarkWorkloads", () => {
   });
 
   it("should collapse the sidebar by default on mobile viewports", async () => {
-    spyOn(window, "matchMedia").and.returnValue({
-      matches: true,
-    } as MediaQueryList);
+    spyOn(window, "matchMedia").and.returnValue(
+      jasmine.createSpyObj<MediaQueryList>(
+        "MediaQueryList",
+        ["addEventListener", "removeEventListener"],
+        { matches: true },
+      ),
+    );
 
     const mobileFixture = TestBed.createComponent(BenchmarkWorkloads);
     const mobileComponent = mobileFixture.componentInstance;

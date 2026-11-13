@@ -34,13 +34,13 @@
     <div
       class="flex gap-8 page_layout page_layout_spacing"
       [class.layout_static]="disableLayoutTransitions()"
-      [class.page_layout_mobile]="isMobileViewport()"
     >
       <!-- Sticky TOC sidebar -->
       <sc-benchmark-workloads-sidebar
         [class.workloads-sidebar--static]="disableLayoutTransitions()"
         [benchmarkFamilies]="benchmarkFamilies()"
         [isCollapsed]="isCollapsed()"
+        [autoCollapse]="isSidebarAuto()"
         [activeBenchmarkId]="activeBenchmarkId()"
         [expandedFamily]="expandedFamily()"
         [activeFamily]="activeFamily()"

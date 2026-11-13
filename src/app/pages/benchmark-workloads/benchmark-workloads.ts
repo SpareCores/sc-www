@@ -1,12 +1,13 @@
 import {
   Component,
-  HostListener,
   OnInit,
   PLATFORM_ID,
   computed,
+  effect,
   inject,
   signal,
   resource,
+  untracked,
   DestroyRef,
 } from "@angular/core";
 import { DOCUMENT, isPlatformBrowser } from "@angular/common";
@@ -50,12 +51,14 @@ import {
   BenchmarkWorkloadItem,
 } from "./benchmark-workloads.models";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
-import { isBelowBreakpoint } from "../../tools/breakpoints";
+import { watchBelowBreakpoint } from "../../tools/breakpoints";
 
 type RawBenchmarkWorkloadConfig = {
   description?: unknown;
   examples?: unknown;
 };
+
+type SidebarPreference = "auto" | "expanded" | "collapsed";
 
 @Component({
   selector: "sc-benchmark-workloads",
@@ -94,6 +97,11 @@ export class BenchmarkWorkloads implements OnInit {
   private seoHandler = inject(SeoHandler);
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
+  private readonly isBelowLg = watchBelowBreakpoint(
+    isPlatformBrowser(this.platformId) ? this.document.defaultView : null,
+    "lg",
+    this.destroyRef,
+  );
 
   readonly pageTitle = "Benchmark Workloads";
   readonly pageDescription =
@@ -111,6 +119,11 @@ export class BenchmarkWorkloads implements OnInit {
   private hasInitializedViewportState = false;
   private desktopCollapsedState = false;
   constructor() {
+    effect(() => {
+      const isMobileViewport = this.isBelowLg();
+      untracked(() => this.syncSidebarStateForViewport(isMobileViewport));
+    });
+
     this.destroyRef.onDestroy(() => {
       this.clearPendingScrollTarget();
       this.clearDeferredScroll();
@@ -179,7 +192,14 @@ export class BenchmarkWorkloads implements OnInit {
     () => this.benchmarksResource.value() ?? [],
   );
 
-  readonly isCollapsed = signal(false);
+  readonly sidebarPreference = signal<SidebarPreference>("auto");
+  readonly isSidebarAuto = computed(() => this.sidebarPreference() === "auto");
+  readonly isCollapsed = computed(() => {
+    const preference = this.sidebarPreference();
+    return preference === "auto"
+      ? this.isBelowLg()
+      : preference === "collapsed";
+  });
   readonly isMobileViewport = signal(false);
   readonly disableLayoutTransitions = signal(false);
   readonly activeBenchmarkId = signal<string>("");
@@ -198,18 +218,11 @@ export class BenchmarkWorkloads implements OnInit {
   );
 
   ngOnInit(): void {
-    this.syncSidebarStateForViewport();
-
     this.seoHandler.updateTitleAndMetaTags(
       "Spare Cores - Benchmark Workloads",
       "Descriptions of all benchmark families and workloads used by Spare Cores, including units of measurement, configuration options, and score distributions.",
       "benchmark workloads, cloud benchmarks, performance testing, CPU benchmarks",
     );
-  }
-
-  @HostListener("window:resize")
-  onWindowResize(): void {
-    this.syncSidebarStateForViewport();
   }
 
   private buildBenchmarkNoteMap(
@@ -331,29 +344,17 @@ export class BenchmarkWorkloads implements OnInit {
     );
   }
 
-  private syncSidebarStateForViewport(): void {
+  private syncSidebarStateForViewport(isMobileViewport: boolean): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    const view = this.document.defaultView;
-    if (!view) {
-      return;
-    }
-
-    const isMobileViewport = isBelowBreakpoint(view, "lg");
     const wasMobileViewport = this.isMobileViewport();
 
     this.isMobileViewport.set(isMobileViewport);
 
     if (!this.hasInitializedViewportState) {
       this.hasInitializedViewportState = true;
-      this.desktopCollapsedState = this.isCollapsed();
-
-      if (isMobileViewport) {
-        this.isCollapsed.set(true);
-      }
-
       return;
     }
 
@@ -362,14 +363,16 @@ export class BenchmarkWorkloads implements OnInit {
     }
 
     if (isMobileViewport) {
-      this.desktopCollapsedState = this.isCollapsed();
+      this.desktopCollapsedState = this.sidebarPreference() === "collapsed";
       this.autoCollapseAfterSelection.set(false);
       this.clearDeferredScroll();
-      this.isCollapsed.set(true);
+      this.sidebarPreference.set("auto");
       return;
     }
 
-    this.isCollapsed.set(this.desktopCollapsedState);
+    this.sidebarPreference.set(
+      this.desktopCollapsedState ? "collapsed" : "auto",
+    );
 
     if (!this.isCollapsed() && !this.expandedFamily()) {
       this.expandedFamily.set(
@@ -378,26 +381,30 @@ export class BenchmarkWorkloads implements OnInit {
     }
   }
 
+  private setCollapsed(collapsed: boolean): void {
+    this.sidebarPreference.set(collapsed ? "collapsed" : "expanded");
+  }
+
   private setCollapsedStatePreservingViewport(
     nextCollapsed: boolean,
     benchmarkId?: string | null,
   ): void {
     if (!isPlatformBrowser(this.platformId) || !benchmarkId) {
-      this.isCollapsed.set(nextCollapsed);
+      this.setCollapsed(nextCollapsed);
       return;
     }
 
     const anchorElement = this.document.getElementById(benchmarkId);
 
     if (!anchorElement) {
-      this.isCollapsed.set(nextCollapsed);
+      this.setCollapsed(nextCollapsed);
       return;
     }
 
     const anchorTopBeforeToggle = anchorElement.getBoundingClientRect().top;
 
     this.disableLayoutTransitions.set(true);
-    this.isCollapsed.set(nextCollapsed);
+    this.setCollapsed(nextCollapsed);
 
     requestAnimationFrame(() => {
       const anchorTopAfterToggle = anchorElement.getBoundingClientRect().top;
@@ -544,7 +551,7 @@ export class BenchmarkWorkloads implements OnInit {
 
     if (shouldCollapseAfterSelection) {
       this.clearPendingScrollTarget();
-      this.isCollapsed.set(true);
+      this.setCollapsed(true);
       this.scheduleScrollAfterCollapse(id);
       return;
     }

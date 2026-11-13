@@ -5,7 +5,6 @@ import {
   DestroyRef,
   DOCUMENT,
   ElementRef,
-  HostListener,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
@@ -79,7 +78,6 @@ import {
 } from "./server-details.constants";
 
 import { chartColors } from "../../components/charts/shared/chart-colors.constants";
-import { isBelowBreakpoint } from "../../tools/breakpoints";
 import {
   ExtendedServerDetails,
   ExtendedServerPrice,
@@ -147,7 +145,6 @@ export class ServerDetails implements OnInit, OnDestroy {
   serverDetails!: ExtendedServerDetails;
   lstopoSvgExists: boolean | null = null;
   lstopoSvgWidth: number = 0;
-  isSmallScreen = false;
   serverZones: string[] = [];
   serverRegions: string[] = [];
 
@@ -235,15 +232,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   private giscusInterval: ReturnType<typeof setInterval> | null = null;
   private visibilityChangeHandler: (() => void) | null = null;
 
-  @HostListener("window:resize")
-  onResize() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.isSmallScreen = isBelowBreakpoint(window, "wide");
-    }
-  }
-
   ngOnInit() {
-    this.onResize();
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.subscription.add(
       this.route.params.subscribe((params) => {
@@ -1371,11 +1360,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   }
 
   descriptionCardIsFullWidth(): boolean {
-    return (
-      this.lstopoSvgExists === false ||
-      this.isSmallScreen ||
-      this.lstopoSvgWidth > 600
-    );
+    return this.lstopoSvgExists === false || this.lstopoSvgWidth > 600;
   }
 
   openSummarizeModal(): void {

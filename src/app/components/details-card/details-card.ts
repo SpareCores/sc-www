@@ -2,7 +2,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  HostListener,
+  NgZone,
   afterNextRender,
   computed,
   effect,
@@ -39,6 +39,7 @@ import { DetailsCardSection } from "./details-card.types";
 export class DetailsCard {
   private uiTooltip = inject(UiTooltip);
   private destroyRef = inject(DestroyRef);
+  private ngZone = inject(NgZone);
 
   cardTitle = input.required<string>();
   cardId = input.required<string>();
@@ -82,6 +83,7 @@ export class DetailsCard {
 
     afterNextRender(() => {
       this.scheduleOverflowCheck();
+      this.observeCardResize();
     });
 
     this.destroyRef.onDestroy(() => {
@@ -89,11 +91,6 @@ export class DetailsCard {
         clearTimeout(this.overflowCheckTimeout);
       }
     });
-  }
-
-  @HostListener("window:resize")
-  onResize() {
-    this.scheduleOverflowCheck();
   }
 
   captureEvent(action: "more" | "less"): string | null {
@@ -146,6 +143,19 @@ export class DetailsCard {
     }, 0);
   }
 
+  private observeCardResize() {
+    const cardElement = this.cardRoot()?.nativeElement;
+    if (!cardElement || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    this.ngZone.runOutsideAngular(() => {
+      const observer = new ResizeObserver(() => this.updateOverflowState());
+      observer.observe(cardElement);
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    });
+  }
+
   private updateOverflowState() {
     const cardElement = this.cardRoot()?.nativeElement;
     if (!cardElement) {
@@ -157,10 +167,14 @@ export class DetailsCard {
       cardElement.classList.remove("sc-chart-block--open");
     }
 
-    this.canExpand.set(cardElement.scrollHeight > cardElement.clientHeight + 1);
+    const canExpand = cardElement.scrollHeight > cardElement.clientHeight + 1;
 
     if (hadOpenClass) {
       cardElement.classList.add("sc-chart-block--open");
+    }
+
+    if (canExpand !== this.canExpand()) {
+      this.ngZone.run(() => this.canExpand.set(canExpand));
     }
   }
 }

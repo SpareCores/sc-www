@@ -27,6 +27,7 @@ export class BenchmarkWorkloadsSidebar {
 
   benchmarkFamilies = input.required<BenchmarkFamily[]>();
   isCollapsed = input.required<boolean>();
+  autoCollapse = input(false);
   activeBenchmarkId = input.required<string>();
   expandedFamily = input.required<string | null>();
   activeFamily = input.required<string>();

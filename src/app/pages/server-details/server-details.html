@@ -147,12 +147,10 @@
         ></sc-details-card>
         @if (lstopoSvgExists !== false) {
           <div
-            class="sc-chart-block sc-chart-block--full"
+            class="sc-chart-block sc-chart-block--half sc-chart-block--half-from-xl"
             id="lstopo"
-            [style.width]="
-              !isSmallScreen && lstopoSvgWidth > 0 && lstopoSvgWidth <= 600
-                ? 'calc(50% - 1rem)'
-                : '100%'
+            [class.sc-chart-block--full]="
+              !(lstopoSvgWidth > 0 && lstopoSvgWidth <= 600)
             "
           >
             <sc-server-lstopo
@@ -167,7 +165,7 @@
         }
         @if (descriptionsAvailable && serverDescription) {
           <div
-            class="sc-chart-block sc-chart-block--half sc-chart-block--open server-description-card"
+            class="sc-chart-block sc-chart-block--half sc-chart-block--half-from-xl sc-chart-block--open server-description-card"
             [class.sc-chart-block--full]="descriptionCardIsFullWidth()"
           >
             <div
