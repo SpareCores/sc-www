@@ -1,5 +1,5 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 text-white">
+  <div class="content pt-8 text-white">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     @if (isLoading) {
@@ -60,7 +60,10 @@
         class="mx-2 xl:mx-0 mt-8 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
         role="alert"
       >
-        <svg lucideTriangleAlert class="h-6 w-6 bounce-3"></svg>
+        <svg
+          lucideTriangleAlert
+          class="h-4 w-4 shrink-0 bounce-3 sm:h-6 sm:w-6"
+        ></svg>
         <div>
           <span class="font-bold"
             >Benchmark data is currently unavailable for this server.
@@ -334,10 +337,13 @@
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
-              class="mx-2 xl:mx-0 mb-4 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-full"
+              class="xl:mx-0 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-full"
               role="alert"
             >
-              <svg lucideTriangleAlert class="h-6 w-6 bounce-3"></svg>
+              <svg
+                lucideTriangleAlert
+                class="h-4 w-4 shrink-0 bounce-3 sm:h-6 sm:w-6"
+              ></svg>
               <div>
                 <span class="font-bold">{{
                   burstableInstanceWarningTitle
