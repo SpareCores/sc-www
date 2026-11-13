@@ -19,7 +19,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
-import { Subscription, of, switchMap } from "rxjs";
+import { Subscription } from "rxjs";
 import { DragToPan } from "../../directives/drag-to-pan";
 import { LstopoSvg } from "../../services/lstopo-svg";
 import { ModalDialog } from "../../services/modal-dialog";
@@ -30,9 +30,6 @@ import { Modal } from "../modals/modal/modal";
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
 const LSTOPO_PATH_SUFFIX = "0/lstopo/lstopo.svg";
-// TODO: drop the legacy fallback once the sc-inspector-data backend rollout
-// moving lstopo under the "0" variant folder has completed (~2026-10-23)
-const LSTOPO_LEGACY_PATH_SUFFIX = "lstopo/lstopo.svg";
 
 type TooltipListener = {
   el: Element;
@@ -101,23 +98,13 @@ export class ServerLstopo implements OnChanges {
     this.isLoading = true;
     this.resetRenderedSvg();
     this.svgWidth.emit(0);
-    const serverBase = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}`;
-    const url = `${serverBase}/${LSTOPO_PATH_SUFFIX}`;
-    const legacyUrl = `${serverBase}/${LSTOPO_LEGACY_PATH_SUFFIX}`;
+    const url = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}/${LSTOPO_PATH_SUFFIX}`;
     this.lstopoUrl = url;
 
     this.svgSub?.unsubscribe();
     this.svgSub = this.svgService
       .getSvg(url)
-      .pipe(
-        // getSvg maps 404 and other errors to null, so retry the legacy path
-        switchMap((svg) => {
-          if (svg) return of(svg);
-          this.lstopoUrl = legacyUrl;
-          return this.svgService.getSvg(legacyUrl);
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (svg) => {
           try {
