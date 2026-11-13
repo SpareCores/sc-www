@@ -1,9 +1,9 @@
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
-import { CollectionsUi } from "../../../collections/collections-ui";
-import { FEATURE_REGISTER_HINT } from "../../../collections/collections.utils";
-import { UiTooltip } from "../../../services/ui-tooltip";
+import { CollectionsUi } from "../../collections/collections-ui";
+import { FEATURE_REGISTER_HINT } from "../../collections/collections.utils";
+import { UiTooltip } from "../../services/ui-tooltip";
 import { BookmarkButton } from "./bookmark-button";
 
 describe("BookmarkButton", () => {

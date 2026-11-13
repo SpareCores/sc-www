@@ -25,7 +25,7 @@ import { Toast } from "../../services/toast";
 import { SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { TooltipVariant, UiTooltip } from "../../services/ui-tooltip";
 import { Button } from "../button/button";
-import { Modal } from "../modal/modal";
+import { Modal } from "../modals/modal/modal";
 import {
   SearchBarCustomControls,
   SearchBarGeoFilters,

@@ -107,6 +107,12 @@ function snap(name: string, prefix: VisualSizePrefix): void {
 
 function snapViewport(name: string, prefix: VisualSizePrefix): void {
   waitForHeaderLogo();
+  cy.document().then((doc) => {
+    const root = doc.documentElement;
+    root.classList.remove("cdk-global-scrollblock");
+    root.style.removeProperty("top");
+    root.style.removeProperty("left");
+  });
   cy.scrollTo(0, 0, { ensureScrollable: false });
   E2EEvent.hideScrollbarsForScreenshot({ lockOverflow: true });
   cy.compareSnapshot({
@@ -160,7 +166,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
     it("compares sign-in modal", () => {
       visitWithClerk("/");
       openGuestAuthButton("Log in");
-      cy.get(".auth-modal__title").should(
+      cy.get('[data-testid="auth-modal"] h2').should(
         "contain.text",
         "Sign in to Spare Cores",
       );
@@ -171,11 +177,11 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
     it("compares default registration subtitle", () => {
       visitWithClerk("/");
       openGuestAuthButton("Register");
-      cy.get(".auth-modal__title").should(
+      cy.get('[data-testid="auth-modal"] h2').should(
         "contain.text",
         "Create your account",
       );
-      cy.get(".auth-modal__subtitle").should(
+      cy.get(".modal-form__subtitle").should(
         "contain.text",
         "Welcome! Please fill in the details to get started.",
       );
@@ -190,11 +196,11 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
         .first()
         .should("be.visible")
         .click();
-      cy.get(".auth-modal__title").should(
+      cy.get('[data-testid="auth-modal"] h2').should(
         "contain.text",
         "Create your account",
       );
-      cy.get(".auth-modal__subtitle").should(
+      cy.get(".modal-form__subtitle").should(
         "contain.text",
         "This feature needs a free registration!",
       );
@@ -219,7 +225,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       openRegisterModal();
       fillRegisterDetails(pendingEmail, randomClerkTestPassword());
       acceptRegisterConsent();
-      cy.contains(".auth-modal__subtitle", pendingEmail).invoke(
+      cy.contains(".modal-form__subtitle", pendingEmail).invoke(
         "text",
         "Enter the verification code sent to sc-www+clerk_test@example.com.",
       );

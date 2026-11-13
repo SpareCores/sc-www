@@ -17,17 +17,17 @@ import {
 
 import { FormsModule } from "@angular/forms";
 
-import { Button } from "../../button/button";
+import { Button } from "../../../button/button";
 
 import { Modal } from "../../modal/modal";
 
-import { ModalDialog } from "../../../services/modal-dialog";
+import { ModalDialog } from "../../../../services/modal-dialog";
 
 import {
   SAVED_NAME_MIN_LENGTH,
   SAVED_NOTE_MAX_LENGTH,
   isValidSavedName,
-} from "../../../collections/collections.utils";
+} from "../../../../collections/collections.utils";
 
 export type CollectionSaveModalMode = "create" | "edit";
 

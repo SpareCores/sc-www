@@ -1,0 +1,339 @@
+<ng-template #modalTemplate>
+  <sc-modal
+    size="sm"
+    data-testid="auth-modal"
+    [title]="title"
+    [centerTitle]="true"
+    [closeLabel]="messages.closeRegisterModal"
+    [showClose]="!isAuthPending && step === 'details'"
+  >
+    @if (step === "details") {
+      <div class="modal-form__body" [class.auth-modal--pending]="isAuthPending">
+        <p class="modal-form__subtitle">{{ auth.signUpSubtitle() }}</p>
+
+        <div class="auth-modal__main">
+          <div class="auth-modal__content">
+            <form
+              class="modal-form__form"
+              #detailsForm="ngForm"
+              novalidate
+              (ngSubmit)="submitDetails(detailsForm)"
+            >
+              <div class="modal-form__grid">
+                <label class="modal-form__field">
+                  <span>{{ messages.firstNameLabel }}</span>
+                  <input
+                    type="text"
+                    name="firstName"
+                    class="sc-input"
+                    [placeholder]="messages.firstNamePlaceholder"
+                    autocomplete="given-name"
+                    required
+                    [(ngModel)]="firstName"
+                  />
+                </label>
+                <label class="modal-form__field">
+                  <span>{{ messages.lastNameLabel }}</span>
+                  <input
+                    type="text"
+                    name="lastName"
+                    class="sc-input"
+                    [placeholder]="messages.lastNamePlaceholder"
+                    autocomplete="family-name"
+                    required
+                    [(ngModel)]="lastName"
+                  />
+                </label>
+              </div>
+
+              <label class="modal-form__field">
+                <span>{{ messages.emailAddressLabel }}</span>
+                <div class="auth-modal__field-control">
+                  <input
+                    type="email"
+                    name="emailAddress"
+                    class="sc-input"
+                    [placeholder]="messages.emailAddressPlaceholder"
+                    autocomplete="username"
+                    required
+                    email
+                    #emailCtrl="ngModel"
+                    [(ngModel)]="emailAddress"
+                    [class.auth-modal__input--invalid]="
+                      emailCtrl.invalid && emailCtrl.touched
+                    "
+                    [attr.aria-invalid]="
+                      emailCtrl.invalid && emailCtrl.touched ? true : null
+                    "
+                    [attr.aria-describedby]="
+                      emailCtrl.invalid && emailCtrl.touched
+                        ? 'register-email-error'
+                        : null
+                    "
+                  />
+                  @if (emailCtrl.invalid && emailCtrl.touched) {
+                    <div class="auth-modal__validation-icon" aria-hidden="true">
+                      <svg lucideIcon="circle-alert"></svg>
+                    </div>
+                  }
+                </div>
+                @if (emailCtrl.invalid && emailCtrl.touched) {
+                  <p class="auth-modal__field-error" id="register-email-error">
+                    {{ messages.emailAddressInvalid }}
+                  </p>
+                }
+              </label>
+
+              <label class="modal-form__field">
+                <span>{{ messages.passwordLabel }}</span>
+                <div class="modal-form__password">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    name="password"
+                    class="sc-input"
+                    [placeholder]="messages.createPasswordPlaceholder"
+                    autocomplete="new-password"
+                    required
+                    minlength="8"
+                    #passwordCtrl="ngModel"
+                    [(ngModel)]="password"
+                    [class.auth-modal__input--invalid]="
+                      passwordCtrl.invalid && passwordCtrl.touched
+                    "
+                    [attr.aria-invalid]="
+                      passwordCtrl.invalid && passwordCtrl.touched ? true : null
+                    "
+                    [attr.aria-describedby]="
+                      passwordCtrl.invalid && passwordCtrl.touched
+                        ? 'register-password-error'
+                        : null
+                    "
+                  />
+                  @if (passwordCtrl.invalid && passwordCtrl.touched) {
+                    <div class="auth-modal__validation-icon" aria-hidden="true">
+                      <svg lucideIcon="circle-alert"></svg>
+                    </div>
+                  }
+                  <button
+                    type="button"
+                    class="modal-form__password-toggle"
+                    [attr.aria-label]="
+                      showPassword
+                        ? messages.hidePassword
+                        : messages.showPassword
+                    "
+                    (click)="showPassword = !showPassword"
+                  >
+                    <svg
+                      [lucideIcon]="showPassword ? 'eye-off' : 'eye'"
+                      aria-hidden="true"
+                    ></svg>
+                  </button>
+                </div>
+                @if (passwordCtrl.invalid && passwordCtrl.touched) {
+                  <p
+                    class="auth-modal__field-error"
+                    id="register-password-error"
+                  >
+                    {{ messages.passwordTooShort }}
+                  </p>
+                }
+              </label>
+
+              @if (errorMessage) {
+                <p class="modal-form__error">{{ errorMessage }}</p>
+              }
+
+              <sc-button
+                type="submit"
+                [label]="messages.continueButton"
+                icon="chevron-right"
+                size="small"
+                buttonClass="w-full"
+                [loading]="busy === 'submit'"
+                [disabled]="!canSubmitDetails(detailsForm) || !!busy"
+              ></sc-button>
+            </form>
+
+            <div class="auth-modal__divider">
+              <span>{{ messages.orDivider }}</span>
+            </div>
+
+            <sc-button
+              [label]="messages.continueWithGitHub"
+              icon="github"
+              iconPosition="start"
+              size="small"
+              variant="outline"
+              color="brand"
+              buttonClass="w-full"
+              [loading]="busy === 'github'"
+              [disabled]="!!busy"
+              (buttonClick)="continueWithGitHub()"
+            ></sc-button>
+          </div>
+
+          <div
+            class="auth-modal__challenge"
+            [class.auth-modal__challenge--pending]="isAuthPending"
+          >
+            @if (isAuthPending) {
+              <div class="auth-modal__pending" role="status" aria-live="polite">
+                <sc-loading-spinner size="lg"></sc-loading-spinner>
+                <p class="auth-modal__pending-text">
+                  {{ messages.verifying }}
+                </p>
+              </div>
+            }
+            <div
+              id="clerk-captcha"
+              class="auth-modal__captcha"
+              data-cl-theme="dark"
+              data-cl-size="flexible"
+            ></div>
+          </div>
+        </div>
+      </div>
+    } @else if (step === "consent") {
+      <div class="modal-form__body">
+        <p class="modal-form__subtitle">
+          {{ messages.consentSubtitle }}
+        </p>
+
+        <form class="modal-form__form" (ngSubmit)="submitConsent()">
+          <label class="modal-form__checkbox">
+            <input
+              type="checkbox"
+              name="legalAccepted"
+              [(ngModel)]="legalAccepted"
+              [disabled]="!!busy"
+            />
+            <span>
+              {{ messages.agreeToPrefix }}
+              <a
+                href="/legal/terms-of-service"
+                target="_blank"
+                rel="noopener"
+                >{{ messages.termsOfService }}</a
+              >
+              {{ messages.andConjunction }}
+              <a href="/legal/privacy-policy" target="_blank" rel="noopener">{{
+                messages.privacyPolicy
+              }}</a>
+            </span>
+          </label>
+
+          <label class="modal-form__checkbox">
+            <input
+              type="checkbox"
+              name="newsletterOptIn"
+              [(ngModel)]="newsletterOptIn"
+              [disabled]="!!busy"
+            />
+            <span>{{ messages.subscribeNewsletter }}</span>
+          </label>
+
+          @if (errorMessage) {
+            <p class="modal-form__error">{{ errorMessage }}</p>
+          }
+
+          <div
+            id="clerk-captcha"
+            class="auth-modal__captcha"
+            data-cl-theme="dark"
+            data-cl-size="flexible"
+          ></div>
+
+          <div class="modal-form__actions">
+            <sc-button
+              type="button"
+              [label]="messages.cancelButton"
+              variant="outline"
+              color="brand"
+              size="small"
+              buttonClass="w-full"
+              [disabled]="!!busy"
+              (buttonClick)="cancelConsent()"
+            ></sc-button>
+            <sc-button
+              type="submit"
+              [label]="messages.continueButton"
+              icon="chevron-right"
+              size="small"
+              buttonClass="w-full"
+              [loading]="busy === 'submit' || busy === 'github'"
+              [disabled]="!canSubmitConsent() || !!busy"
+            ></sc-button>
+          </div>
+        </form>
+      </div>
+    } @else {
+      <div class="modal-form__body">
+        <p class="modal-form__subtitle">
+          {{ messages.codeSentToSubtitle(emailAddress.trim()) }}
+        </p>
+
+        <form class="modal-form__form" (ngSubmit)="verifyEmail()">
+          <label class="modal-form__field">
+            <span>{{ messages.verificationCodeLabel }}</span>
+            <input
+              type="text"
+              name="verificationCode"
+              class="sc-input"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              [placeholder]="messages.verificationCodePlaceholder"
+              [(ngModel)]="verificationCode"
+            />
+          </label>
+
+          @if (errorMessage) {
+            <p class="modal-form__error">{{ errorMessage }}</p>
+          }
+          @if (infoMessage) {
+            <p class="modal-form__info">{{ infoMessage }}</p>
+          }
+
+          <div class="modal-form__actions">
+            <sc-button
+              type="button"
+              [label]="messages.resendCodeButton"
+              variant="outline"
+              color="brand"
+              size="small"
+              buttonClass="w-full"
+              [loading]="busy === 'resend'"
+              [disabled]="!!busy"
+              (buttonClick)="resendCode()"
+            ></sc-button>
+            <sc-button
+              type="submit"
+              [label]="messages.verifyEmailButton"
+              size="small"
+              buttonClass="w-full"
+              [loading]="busy === 'verify'"
+              [disabled]="!canVerify() || !!busy"
+            ></sc-button>
+          </div>
+        </form>
+      </div>
+    }
+
+    @if (step === "details") {
+      <p
+        modalFooter
+        class="auth-modal__footer"
+        [class.invisible]="isAuthPending"
+      >
+        {{ messages.alreadyHaveAccountPrompt }}
+        <button
+          type="button"
+          class="modal-form__footer-link"
+          (click)="openSignIn()"
+        >
+          {{ messages.logInLink }}
+        </button>
+      </p>
+    }
+  </sc-modal>
+</ng-template>

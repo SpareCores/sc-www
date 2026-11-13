@@ -48,10 +48,10 @@
       }
 
       @if (reverifyState) {
-        <div class="auth-modal__body profile-modal__pane">
-          <div class="auth-modal__header">
-            <h3 class="auth-modal__title">Verify it's you</h3>
-            <p class="auth-modal__subtitle">
+        <div class="modal-form__body profile-modal__pane">
+          <div class="profile-modal__header">
+            <h3 class="profile-modal__title">Verify it's you</h3>
+            <p class="modal-form__subtitle">
               @if (reverifyState.mode === "password") {
                 Enter your current password to continue.
               } @else {
@@ -62,18 +62,19 @@
           </div>
 
           <form
-            class="auth-modal__form"
+            class="modal-form__form"
             #reverifyForm="ngForm"
             novalidate
             (ngSubmit)="submitReverify(reverifyForm)"
           >
             @if (reverifyState.mode === "password") {
-              <label class="auth-modal__field">
+              <label class="modal-form__field">
                 <span>Password</span>
-                <div class="auth-modal__password">
+                <div class="modal-form__password">
                   <input
                     [type]="showPassword() ? 'text' : 'password'"
                     name="reverifyPassword"
+                    class="sc-input"
                     placeholder="Enter your password"
                     autocomplete="current-password"
                     required
@@ -81,7 +82,7 @@
                   />
                   <button
                     type="button"
-                    class="auth-modal__password-toggle"
+                    class="modal-form__password-toggle"
                     [attr.aria-label]="
                       showPassword() ? 'Hide password' : 'Show password'
                     "
@@ -95,11 +96,12 @@
                 </div>
               </label>
             } @else {
-              <label class="auth-modal__field">
+              <label class="modal-form__field">
                 <span>Verification code</span>
                 <input
                   type="text"
                   name="reverifyCode"
+                  class="sc-input"
                   inputmode="numeric"
                   autocomplete="one-time-code"
                   placeholder="Enter verification code"
@@ -109,10 +111,10 @@
               </label>
             }
             @if (reverifyError()) {
-              <p class="auth-modal__error">{{ reverifyError() }}</p>
+              <p class="modal-form__error">{{ reverifyError() }}</p>
             }
 
-            <div class="auth-modal__actions">
+            <div class="modal-form__actions">
               <sc-button
                 type="button"
                 label="Back"
@@ -192,22 +194,24 @@
                       }
                     </div>
                   </div>
-                  <div class="auth-modal__grid">
-                    <label class="auth-modal__field">
+                  <div class="modal-form__grid">
+                    <label class="modal-form__field">
                       <span>First name</span>
                       <input
                         type="text"
                         name="firstName"
+                        class="sc-input"
                         autocomplete="given-name"
                         placeholder="First name"
                         [(ngModel)]="firstName"
                       />
                     </label>
-                    <label class="auth-modal__field">
+                    <label class="modal-form__field">
                       <span>Last name</span>
                       <input
                         type="text"
                         name="lastName"
+                        class="sc-input"
                         autocomplete="family-name"
                         placeholder="Last name"
                         [(ngModel)]="lastName"
@@ -249,7 +253,7 @@
                   </div>
                   <button
                     type="button"
-                    class="auth-modal__footer-link"
+                    class="modal-form__footer-link"
                     data-testid="profile-edit"
                     data-ph-capture-attribute-sc-event="profile name edit"
                     [disabled]="!!busy()"
@@ -296,7 +300,7 @@
                           @if (email.isVerified) {
                             <button
                               type="button"
-                              class="auth-modal__footer-link"
+                              class="modal-form__footer-link"
                               data-ph-capture-attribute-sc-event="profile email primary"
                               [disabled]="!!busy()"
                               (click)="setPrimaryEmail(email.id)"
@@ -306,7 +310,7 @@
                           } @else {
                             <button
                               type="button"
-                              class="auth-modal__footer-link"
+                              class="modal-form__footer-link"
                               data-ph-capture-attribute-sc-event="profile email verify"
                               [disabled]="!!busy()"
                               (click)="verifyExistingEmail(email.id)"
@@ -316,7 +320,7 @@
                           }
                           <button
                             type="button"
-                            class="auth-modal__footer-link profile-modal__danger-link"
+                            class="modal-form__footer-link profile-modal__danger-link"
                             data-ph-capture-attribute-sc-event="profile email remove open"
                             [disabled]="!!busy()"
                             (click)="askConfirm('email', email.id)"
@@ -350,11 +354,12 @@
                   novalidate
                   (ngSubmit)="addEmail(emailForm)"
                 >
-                  <label class="auth-modal__field">
+                  <label class="modal-form__field">
                     <span>Email address</span>
                     <input
                       type="email"
                       name="newEmail"
+                      class="sc-input"
                       placeholder="Enter your email address"
                       autocomplete="email"
                       required
@@ -386,11 +391,12 @@
                   class="profile-modal__editor"
                   (ngSubmit)="submitEmailCode()"
                 >
-                  <label class="auth-modal__field">
+                  <label class="modal-form__field">
                     <span>Verification code</span>
                     <input
                       type="text"
                       name="emailCode"
+                      class="sc-input"
                       inputmode="numeric"
                       autocomplete="one-time-code"
                       placeholder="Enter verification code"
@@ -428,7 +434,7 @@
               } @else {
                 <button
                   type="button"
-                  class="auth-modal__footer-link profile-modal__add"
+                  class="modal-form__footer-link profile-modal__add"
                   data-ph-capture-attribute-sc-event="profile email add open"
                   [disabled]="!!busy()"
                   (click)="openEditor('email-add')"
@@ -468,7 +474,7 @@
                       @if (!github.isVerified) {
                         <button
                           type="button"
-                          class="auth-modal__footer-link"
+                          class="modal-form__footer-link"
                           data-ph-capture-attribute-sc-event="profile github reconnect"
                           [disabled]="!!busy()"
                           (click)="connectGitHub()"
@@ -478,7 +484,7 @@
                       }
                       <button
                         type="button"
-                        class="auth-modal__footer-link profile-modal__danger-link"
+                        class="modal-form__footer-link profile-modal__danger-link"
                         data-ph-capture-attribute-sc-event="profile github disconnect open"
                         [disabled]="!!busy()"
                         (click)="askConfirm('github')"
@@ -489,7 +495,7 @@
                   }
                 </div>
                 @if (!github.isVerified && github.error) {
-                  <p class="auth-modal__error">{{ github.error }}</p>
+                  <p class="modal-form__error">{{ github.error }}</p>
                 }
                 @if (isConfirming("github")) {
                   <ng-container
@@ -503,6 +509,7 @@
                 }
               } @else {
                 <sc-button
+                  class="self-start"
                   label="Connect GitHub"
                   icon="github"
                   iconPosition="start"
@@ -535,11 +542,12 @@
                     (ngSubmit)="savePassword(passwordForm)"
                   >
                     @if (profileData.passwordEnabled) {
-                      <label class="auth-modal__field">
+                      <label class="modal-form__field">
                         <span>Current password</span>
                         <input
                           [type]="showPassword() ? 'text' : 'password'"
                           name="currentPassword"
+                          class="sc-input"
                           placeholder="Enter your current password"
                           autocomplete="current-password"
                           required
@@ -547,12 +555,13 @@
                         />
                       </label>
                     }
-                    <label class="auth-modal__field">
+                    <label class="modal-form__field">
                       <span>New password</span>
-                      <div class="auth-modal__password">
+                      <div class="modal-form__password">
                         <input
                           [type]="showPassword() ? 'text' : 'password'"
                           name="newPassword"
+                          class="sc-input"
                           placeholder="Create a new password"
                           autocomplete="new-password"
                           required
@@ -561,7 +570,7 @@
                         />
                         <button
                           type="button"
-                          class="auth-modal__password-toggle"
+                          class="modal-form__password-toggle"
                           [attr.aria-label]="
                             showPassword() ? 'Hide password' : 'Show password'
                           "
@@ -574,11 +583,12 @@
                         </button>
                       </div>
                     </label>
-                    <label class="auth-modal__field">
+                    <label class="modal-form__field">
                       <span>Confirm password</span>
                       <input
                         [type]="showPassword() ? 'text' : 'password'"
                         name="confirmPassword"
+                        class="sc-input"
                         placeholder="Repeat the new password"
                         autocomplete="new-password"
                         required
@@ -586,7 +596,7 @@
                         [(ngModel)]="confirmPassword"
                       />
                     </label>
-                    <label class="auth-modal__checkbox">
+                    <label class="modal-form__checkbox">
                       <input
                         type="checkbox"
                         name="signOutOtherSessions"
@@ -622,7 +632,7 @@
                     </span>
                     <button
                       type="button"
-                      class="auth-modal__footer-link"
+                      class="modal-form__footer-link"
                       data-ph-capture-attribute-sc-event="profile password edit"
                       [disabled]="!!busy()"
                       (click)="openEditor('password')"
@@ -689,7 +699,7 @@
                         ) {
                           <button
                             type="button"
-                            class="auth-modal__footer-link profile-modal__danger-link"
+                            class="modal-form__footer-link profile-modal__danger-link"
                             data-ph-capture-attribute-sc-event="profile session revoke open"
                             [disabled]="!!busy()"
                             (click)="askConfirm('session', session.id)"
@@ -729,11 +739,11 @@
                     class="profile-modal__editor"
                     (ngSubmit)="deleteAccount()"
                   >
-                    <p class="auth-modal__subtitle">
+                    <p class="modal-form__subtitle">
                       Are you sure you want to delete your account? This action
                       is permanent and irreversible.
                     </p>
-                    <label class="auth-modal__field">
+                    <label class="modal-form__field">
                       <span
                         >Type "{{ deleteConfirmationText }}" below to
                         continue.</span
@@ -741,6 +751,7 @@
                       <input
                         type="text"
                         name="deleteConfirmation"
+                        class="sc-input"
                         autocomplete="off"
                         [placeholder]="deleteConfirmationText"
                         [(ngModel)]="deleteConfirmation"
@@ -801,8 +812,8 @@
   @let message = feedbackFor(section);
   @if (message) {
     <p
-      [class.auth-modal__error]="message.type === 'error'"
-      [class.auth-modal__info]="message.type === 'info'"
+      [class.modal-form__error]="message.type === 'error'"
+      [class.modal-form__info]="message.type === 'info'"
     >
       {{ message.message }}
     </p>
