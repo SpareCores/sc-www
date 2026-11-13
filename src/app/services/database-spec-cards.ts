@@ -15,6 +15,11 @@ import {
   LoadedDatabase,
 } from "./database-spec-cards.types";
 import { DATABASE_IDENTITY_ROW_IDS } from "./database-spec-cards.constants";
+import {
+  attachDatabasePrices,
+  formatSpecBoolean,
+  formatSpecList,
+} from "./database-spec.utils";
 
 @Injectable({ providedIn: "root" })
 export class DatabaseSpecCards {
@@ -22,16 +27,7 @@ export class DatabaseSpecCards {
     prices: DatabasePrice[],
     regions: Region[],
   ): (DatabasePrice & { region?: Region })[] {
-    return prices
-      .map((price) => ({
-        ...price,
-        region: regions.find(
-          (region) =>
-            region.vendor_id === price.vendor_id &&
-            region.region_id === price.region_id,
-        ),
-      }))
-      .sort((a, b) => a.price - b.price);
+    return attachDatabasePrices(prices, regions);
   }
 
   buildAvailabilitySections(
@@ -117,22 +113,22 @@ export class DatabaseSpecCards {
             {
               id: "engine_versions",
               name: "Engine Versions",
-              value: this.formatList(database.engine_versions),
+              value: formatSpecList(database.engine_versions),
             },
             {
               id: "auto_upgrade_versions",
               name: "Auto Upgrade Versions",
-              value: this.formatBoolean(database.auto_upgrade_versions),
+              value: formatSpecBoolean(database.auto_upgrade_versions),
             },
             {
               id: "custom_config",
               name: "Custom Config",
-              value: this.formatBoolean(database.custom_config),
+              value: formatSpecBoolean(database.custom_config),
             },
             {
               id: "custom_extensions",
               name: "Custom Extensions",
-              value: this.formatBoolean(database.custom_extensions),
+              value: formatSpecBoolean(database.custom_extensions),
             },
           ]),
         },
@@ -169,7 +165,7 @@ export class DatabaseSpecCards {
             {
               id: "storage_extra_autosize",
               name: "Storage Autosize",
-              value: this.formatBoolean(database.storage_extra_autosize),
+              value: formatSpecBoolean(database.storage_extra_autosize),
             },
             {
               id: "max_read_replicas",
@@ -194,17 +190,17 @@ export class DatabaseSpecCards {
             {
               id: "ha",
               name: "High Availability",
-              value: this.formatList(database.ha),
+              value: formatSpecList(database.ha),
             },
             {
               id: "ha_strategy",
               name: "HA Strategy",
-              value: this.formatList(database.ha_strategy),
+              value: formatSpecList(database.ha_strategy),
             },
             {
               id: "scheduled_backups",
               name: "Scheduled Backups",
-              value: this.formatBoolean(database.scheduled_backups),
+              value: formatSpecBoolean(database.scheduled_backups),
             },
             {
               id: "continuous_backups",
@@ -214,27 +210,27 @@ export class DatabaseSpecCards {
             {
               id: "connection_pool",
               name: "Connection Pool",
-              value: this.formatBoolean(database.connection_pool),
+              value: formatSpecBoolean(database.connection_pool),
             },
             {
               id: "system_monitoring",
               name: "System Monitoring",
-              value: this.formatBoolean(database.system_monitoring),
+              value: formatSpecBoolean(database.system_monitoring),
             },
             {
               id: "database_monitoring",
               name: "Database Monitoring",
-              value: this.formatBoolean(database.database_monitoring),
+              value: formatSpecBoolean(database.database_monitoring),
             },
             {
               id: "autotuning_advice",
               name: "Autotuning Advice",
-              value: this.formatBoolean(database.autotuning_advice),
+              value: formatSpecBoolean(database.autotuning_advice),
             },
             {
               id: "autotuning_apply",
               name: "Autotuning Apply",
-              value: this.formatBoolean(database.autotuning_apply),
+              value: formatSpecBoolean(database.autotuning_apply),
             },
           ]),
         },
@@ -246,7 +242,7 @@ export class DatabaseSpecCards {
             {
               id: "disk_encryption",
               name: "Disk Encryption",
-              value: this.formatBoolean(database.disk_encryption),
+              value: formatSpecBoolean(database.disk_encryption),
             },
             ...(database.security_features || []).map((feature) => ({
               id: feature,
@@ -284,19 +280,5 @@ export class DatabaseSpecCards {
 
   private formatGigabytes(value: number | null | undefined): string | null {
     return value === null || value === undefined ? null : `${value} GB`;
-  }
-
-  private formatBoolean(value: boolean | null | undefined): string | null {
-    if (value === null || value === undefined) {
-      return null;
-    }
-    return value ? "check" : "x";
-  }
-
-  private formatList(value: unknown): string | null {
-    if (!Array.isArray(value) || !value.length) {
-      return null;
-    }
-    return value.join(", ");
   }
 }

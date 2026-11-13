@@ -26,7 +26,7 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { Subscription } from "rxjs";
-import { DatabasePrice, PriceUnit } from "../../../../sdk/data-contracts";
+import { DatabasePrice } from "../../../../sdk/data-contracts";
 import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { BenchmarkLineChart } from "../../components/charts/line/benchmark-line-chart";
@@ -381,27 +381,10 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
       ),
     ).then((responses) => {
       responses.forEach((response, index) => {
-        const database = this.databases[index];
-        const prices = ((response.body || []) as DatabasePrice[])
-          .map((price) => ({
-            ...price,
-            region: database.prices?.find(
-              (existing) =>
-                existing.vendor_id === price.vendor_id &&
-                existing.region_id === price.region_id,
-            )?.region,
-          }))
-          .sort((a, b) => a.price - b.price);
-
-        database.prices = prices;
-        const hourPrices = prices.filter(
-          (price) => price.unit === PriceUnit.Hour,
+        this.compareSpecs.updatePrices(
+          this.databases[index],
+          (response.body || []) as DatabasePrice[],
         );
-        const monthPrices = prices.filter(
-          (price) => price.unit === PriceUnit.Month,
-        );
-        database.bestHourPrice = hourPrices[0];
-        database.bestMonthPrice = monthPrices[0];
       });
 
       this.priceRows = this.compareSpecs.buildPriceRows(this.databases);

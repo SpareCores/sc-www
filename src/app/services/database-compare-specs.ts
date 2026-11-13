@@ -33,6 +33,11 @@ import {
   BEST_COMPARE_CELL_STYLE,
   LOWER_IS_BETTER_ROW_IDS,
 } from "./database-compare-specs.constants";
+import {
+  attachDatabasePrices,
+  formatSpecBoolean,
+  formatSpecList,
+} from "./database-spec.utils";
 
 @Injectable({ providedIn: "root" })
 export class DatabaseCompareSpecs {
@@ -159,26 +164,34 @@ export class DatabaseCompareSpecs {
     const loaded: LoadedCompareDatabase = {
       ...database,
       vendor: vendors.find((vendor) => vendor.vendor_id === database.vendor_id),
-      prices: prices
-        .map((price) => ({
-          ...price,
-          region: regions.find(
-            (region) =>
-              region.vendor_id === price.vendor_id &&
-              region.region_id === price.region_id,
-          ),
-        }))
-        .sort((a, b) => a.price - b.price),
       benchmark_scores: scores,
     };
+    this.applyPrices(loaded, prices, regions);
+    return loaded;
+  }
 
-    loaded.bestHourPrice = loaded.prices?.find(
+  updatePrices(database: LoadedCompareDatabase, prices: DatabasePrice[]): void {
+    this.applyPrices(
+      database,
+      prices,
+      (database.prices ?? []).flatMap((price) =>
+        price.region ? [price.region] : [],
+      ),
+    );
+  }
+
+  private applyPrices(
+    database: LoadedCompareDatabase,
+    prices: DatabasePrice[],
+    regions: Region[],
+  ): void {
+    database.prices = attachDatabasePrices(prices, regions);
+    database.bestHourPrice = database.prices.find(
       (price) => price.unit === PriceUnit.Hour,
     );
-    loaded.bestMonthPrice = loaded.prices?.find(
+    database.bestMonthPrice = database.prices.find(
       (price) => price.unit === PriceUnit.Month,
     );
-    return loaded;
   }
 
   buildPropertySections(
@@ -229,22 +242,22 @@ export class DatabaseCompareSpecs {
           {
             id: "engine_versions",
             name: "Engine Versions",
-            value: (d) => this.formatList(d.engine_versions),
+            value: (d) => formatSpecList(d.engine_versions),
           },
           {
             id: "auto_upgrade_versions",
             name: "Auto Upgrade Versions",
-            value: (d) => this.formatBoolean(d.auto_upgrade_versions),
+            value: (d) => formatSpecBoolean(d.auto_upgrade_versions),
           },
           {
             id: "custom_config",
             name: "Custom Config",
-            value: (d) => this.formatBoolean(d.custom_config),
+            value: (d) => formatSpecBoolean(d.custom_config),
           },
           {
             id: "custom_extensions",
             name: "Custom Extensions",
-            value: (d) => this.formatBoolean(d.custom_extensions),
+            value: (d) => formatSpecBoolean(d.custom_extensions),
           },
         ],
       },
@@ -296,7 +309,7 @@ export class DatabaseCompareSpecs {
           {
             id: "storage_extra_autosize",
             name: "Storage Autosize",
-            value: (d) => this.formatBoolean(d.storage_extra_autosize),
+            value: (d) => formatSpecBoolean(d.storage_extra_autosize),
           },
           {
             id: "max_read_replicas",
@@ -319,17 +332,17 @@ export class DatabaseCompareSpecs {
           {
             id: "ha",
             name: "High Availability",
-            value: (d) => this.formatList(d.ha),
+            value: (d) => formatSpecList(d.ha),
           },
           {
             id: "ha_strategy",
             name: "HA Strategy",
-            value: (d) => this.formatList(d.ha_strategy),
+            value: (d) => formatSpecList(d.ha_strategy),
           },
           {
             id: "scheduled_backups",
             name: "Scheduled Backups",
-            value: (d) => this.formatBoolean(d.scheduled_backups),
+            value: (d) => formatSpecBoolean(d.scheduled_backups),
           },
           {
             id: "continuous_backups",
@@ -340,27 +353,27 @@ export class DatabaseCompareSpecs {
           {
             id: "connection_pool",
             name: "Connection Pool",
-            value: (d) => this.formatBoolean(d.connection_pool),
+            value: (d) => formatSpecBoolean(d.connection_pool),
           },
           {
             id: "system_monitoring",
             name: "System Monitoring",
-            value: (d) => this.formatBoolean(d.system_monitoring),
+            value: (d) => formatSpecBoolean(d.system_monitoring),
           },
           {
             id: "database_monitoring",
             name: "Database Monitoring",
-            value: (d) => this.formatBoolean(d.database_monitoring),
+            value: (d) => formatSpecBoolean(d.database_monitoring),
           },
           {
             id: "autotuning_advice",
             name: "Autotuning Advice",
-            value: (d) => this.formatBoolean(d.autotuning_advice),
+            value: (d) => formatSpecBoolean(d.autotuning_advice),
           },
           {
             id: "autotuning_apply",
             name: "Autotuning Apply",
-            value: (d) => this.formatBoolean(d.autotuning_apply),
+            value: (d) => formatSpecBoolean(d.autotuning_apply),
           },
         ],
       },
@@ -370,7 +383,7 @@ export class DatabaseCompareSpecs {
           {
             id: "disk_encryption",
             name: "Disk Encryption",
-            value: (d) => this.formatBoolean(d.disk_encryption),
+            value: (d) => formatSpecBoolean(d.disk_encryption),
           },
           ...this.buildSecurityFeatureFields(databases),
         ],
@@ -512,20 +525,6 @@ export class DatabaseCompareSpecs {
     const rounded =
       price.price < 1 ? price.price.toPrecision(2) : price.price.toFixed(2);
     return `${rounded} ${price.currency}/${price.unit}`;
-  }
-
-  private formatBoolean(value: boolean | null | undefined): string | null {
-    if (value === null || value === undefined) {
-      return null;
-    }
-    return value ? "check" : "x";
-  }
-
-  private formatList(value: unknown): string | null {
-    if (!Array.isArray(value) || !value.length) {
-      return null;
-    }
-    return value.join(", ");
   }
 
   private toDisplayValue(value: unknown): string {
