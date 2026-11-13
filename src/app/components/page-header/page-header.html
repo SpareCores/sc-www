@@ -79,9 +79,9 @@
       <sc-button
         [attr.id]="shareButtonId()"
         label="Share"
-        [icon]="shareIcon()"
+        [icon]="resolvedShareIcon()"
         [variant]="shareVariant()"
-        (buttonClick)="shareClick.emit($event)"
+        (buttonClick)="onShareClick($event)"
       ></sc-button>
     }
   </div>

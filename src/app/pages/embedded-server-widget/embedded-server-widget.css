@@ -1,7 +1,0 @@
-@reference "../../../styles/tailwind.css";
-
-.content_embed {
-  color: var(--color-white);
-  background: transparent;
-  height: 100vh;
-}

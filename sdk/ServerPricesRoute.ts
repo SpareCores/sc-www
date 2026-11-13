@@ -194,6 +194,7 @@ export namespace ServerPrices {
         | "AP-SOUTHEAST-SYD-2"
         | "AP-SOUTH-MUM"
         | "AP-SOUTH-MUM-1"
+        | "ash"
         | "atl"
         | "australiacentral"
         | "australiacentral2"
@@ -261,12 +262,15 @@ export namespace ServerPrices {
         | "fra"
         | "francecentral"
         | "francesouth"
+        | "fsn1"
         | "germanynorth"
         | "germanywestcentral"
         | "GRA"
         | "GRA11"
         | "GRA7"
         | "GRA9"
+        | "hel1"
+        | "hil"
         | "hnl"
         | "icn"
         | "il-central-1"
@@ -296,6 +300,8 @@ export namespace ServerPrices {
         | "mx-central-1"
         | "mxp"
         | "na-south-1"
+        | "nbg1"
+        | "newzealandnorth"
         | "nl-ams1"
         | "northcentralus"
         | "northeurope"
@@ -321,6 +327,7 @@ export namespace ServerPrices {
         | "SGP"
         | "SGP1"
         | "sg-sin1"
+        | "sin"
         | "sjc"
         | "southafricanorth"
         | "southafricawest"
@@ -359,13 +366,7 @@ export namespace ServerPrices {
         | "westus"
         | "westus2"
         | "westus3"
-        | "yto"
-        | "fsn1"
-        | "nbg1"
-        | "hel1"
-        | "ash"
-        | "hil"
-        | "sin";
+        | "yto";
       /**
        * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
@@ -472,6 +473,7 @@ export namespace ServerPrices {
         | "azure~koreasouth"
         | "azure~malaysiawest"
         | "azure~mexicocentral"
+        | "azure~newzealandnorth"
         | "azure~northcentralus"
         | "azure~northeurope"
         | "azure~norwayeast"
@@ -695,16 +697,14 @@ export namespace ServerPrices {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
         | "Ampere"
         | "Blackwell"
-        | "Gaudi"
         | "Hopper"
         | "Pascal"
-        | "Radeon Pro Navi"
         | "Turing"
         | "Volta";
       /** GPU model */
@@ -714,14 +714,16 @@ export namespace ServerPrices {
         | "A10G"
         | "B200"
         | "B300"
+        | "G59"
         | "GB200"
         | "GB300"
         | "H100"
         | "H200"
-        | "HL-205"
         | "L20"
         | "L4"
         | "L40S"
+        | "M60"
+        | "MI300X"
         | "P100"
         | "P4"
         | "RTX 5000"
@@ -731,7 +733,6 @@ export namespace ServerPrices {
         | "T4G"
         | "V100"
         | "V100S"
-        | "V520"
         | "V620"
         | "V710";
       /**

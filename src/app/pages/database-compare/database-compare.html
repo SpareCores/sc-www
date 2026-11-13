@@ -1,13 +1,13 @@
 <div class="w-full bg-primary min-h-screen">
   <div class="content pt-16 pb-16">
-    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
+    <sc-breadcrumbs [segments]="comparePage.breadcrumbs"></sc-breadcrumbs>
 
     <sc-collection-save-modal
       modalId="database-compare-save-modal"
       title="Bookmark this comparison"
       confirmLabel="Confirm"
-      [saving]="isSaveComparisonPending()"
-      (confirmed)="confirmSaveComparison($event)"
+      [saving]="comparePage.isSaveComparisonPending()"
+      (confirmed)="comparePage.confirmSaveComparison($event)"
     ></sc-collection-save-modal>
 
     @if (isLoading) {
@@ -21,41 +21,48 @@
       <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
         <sc-page-header
           icon="scale"
-          [title]="title"
+          [title]="comparePage.title"
           [showBookmark]="!!instances.length"
-          [bookmarkGuestLocked]="!isAuthenticated()"
-          [bookmarkActive]="!!exactSavedComparison()"
-          [bookmarkDisabled]="!exactSavedComparison() && !canSaveComparison()"
-          [bookmarkLoading]="isDeleteComparisonPending()"
-          [showEdit]="!!exactSavedComparison()"
+          [bookmarkGuestLocked]="!comparePage.isAuthenticated()"
+          [bookmarkActive]="!!comparePage.exactSavedComparison()"
+          [bookmarkDisabled]="
+            !comparePage.exactSavedComparison() &&
+            !comparePage.canSaveComparison()
+          "
+          [bookmarkLoading]="comparePage.isDeleteComparisonPending()"
+          [showEdit]="!!comparePage.exactSavedComparison()"
           editAriaLabel="Edit comparison"
           [showShare]="!!instances.length"
-          [shareIcon]="clipboardIcon"
-          (shareClick)="clipboardURL()"
-          (bookmarkClick)="toggleSavedComparison()"
-          (editClick)="openSaveComparisonModal()"
+          [copyLink]="true"
+          (bookmarkClick)="comparePage.toggleSavedComparison()"
+          (editClick)="comparePage.openSaveComparisonModal()"
         >
+          @if (instances.length) {
+            <sc-embed-widget-button
+              [target]="{
+                kind: 'compare',
+                resource: 'database',
+                instances: instancesRaw,
+              }"
+              [widgets]="embeddableWidgets"
+              captureEvent="database compare embed widget open"
+              (opening)="updateEmbeddableWidgets()"
+            ></sc-embed-widget-button>
+          }
         </sc-page-header>
         @if (instances.length) {
-          <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
-          <div class="flex flex-wrap gap-4 items-center justify-end w-full">
-            <sc-button
-              id="baseline_database_button"
-              [scDropdown]="baselinePanel"
-              #baselineDropdown="scDropdown"
-              [label]="getBaselineDatabaseLabel()"
-              icon="target"
-              variant="dropdown"
-            ></sc-button>
-            <sc-button
-              id="currency_button"
-              [scDropdown]="currencyPanel"
-              #currencyDropdown="scDropdown"
-              [label]="selectedCurrency.slug"
-              icon="credit-card"
-              variant="dropdown"
-            ></sc-button>
-          </div>
+          <div
+            class="text-white text-xl pr-16"
+            [innerHTML]="comparePage.description"
+          ></div>
+          <sc-compare-toolbar
+            resource="database"
+            [items]="databases"
+            [baseline]="baselineDatabase"
+            [currency]="selectedCurrency"
+            (baselineSelected)="selectBaselineDatabase($event)"
+            (currencySelected)="selectCurrency($event)"
+          ></sc-compare-toolbar>
         }
       </div>
 
@@ -78,68 +85,12 @@
             pages using the "Compare" button. You can also explore our curated
             comparison sets below.
           </div>
-          <div class="flex flex-col gap-4 mt-4">
-            @for (compare of databaseCompares; track compare.title) {
-              <div
-                class="flex flex-col py-6 gap-2 text-white"
-                [class]="
-                  compare.type === 'card' ? 'bg-secondary rounded-lg px-6' : ''
-                "
-              >
-                @if (compare.type === "section") {
-                  <h2
-                    class="section_heading sc-header-anchor-host text-2xl font-semibold"
-                  >
-                    <span>{{ compare.title }}</span>
-                    <sc-header-anchor
-                      [anchorId]="compare.id"
-                      [label]="compare.title"
-                    ></sc-header-anchor>
-                  </h2>
-                }
-                @if (compare.type === "card") {
-                  <h3>
-                    <a
-                      routerLink="/databases/compare/{{ compare.id }}"
-                      class="text-emerald-400 text-xl font-semibold"
-                    >
-                      {{ compare.title }}
-                    </a>
-                  </h3>
-                }
-                @if (
-                  compare.description &&
-                  compare.hide_description_in_index !== true
-                ) {
-                  <div
-                    class="description_inner_html"
-                    [class]="
-                      compare.type === 'section' ? 'text-lg space-y-4' : ''
-                    "
-                    [innerHTML]="compare.description"
-                  ></div>
-                }
-                @if (compare.instances) {
-                  <div class="text-sm flex flex-wrap gap-2">
-                    Instances:
-                    @for (
-                      instance of compare.instances;
-                      track instance.vendor + "_" + instance.database
-                    ) {
-                      <a
-                        class="underline decoration-dotted whitespace-nowrap"
-                        routerLink="/database/{{ instance.vendor }}/{{
-                          instance.database
-                        }}"
-                      >
-                        {{ instance.database }} ({{ instance.vendor }})
-                      </a>
-                    }
-                  </div>
-                }
-              </div>
-            }
-          </div>
+          <sc-compare-guide
+            [compares]="databaseCompares"
+            comparePath="/databases/compare"
+            detailPath="/database"
+            instanceKey="database"
+          ></sc-compare-guide>
           <hr class="mt-6" />
           <div class="text-white text-xl pr-16 mt-3">
             <p>
@@ -278,216 +229,17 @@
                 }
               </tr>
             </thead>
+            <sc-database-compare-spec-rows
+              [sections]="propertySections"
+              [priceRows]="priceRows"
+              [databases]="databases"
+              [baselineIndex]="baselineIndex()"
+              (descriptionEnter)="
+                showChartTooltip($event.event, $event.content)
+              "
+              (descriptionLeave)="hideChartTooltip()"
+            ></sc-database-compare-spec-rows>
             <tbody>
-              @for (
-                section of propertySections;
-                track section.name;
-                let sectionIndex = $index
-              ) {
-                @if (section.name) {
-                  <tr class="section_header">
-                    <td>
-                      <h2 class="text-xl font-semibold">{{ section.name }}</h2>
-                    </td>
-                    <td [attr.colspan]="databases.length"></td>
-                  </tr>
-                  <tr class="compare-instance-section-gap" aria-hidden="true">
-                    <td></td>
-                    <td [attr.colspan]="databases.length"></td>
-                  </tr>
-                } @else {
-                  <tr class="compare-instance-section-gap" aria-hidden="true">
-                    <td></td>
-                    <td [attr.colspan]="databases.length"></td>
-                  </tr>
-                }
-                @for (
-                  row of section.rows;
-                  track row.id;
-                  let first = $first;
-                  let last = $last
-                ) {
-                  <tr
-                    [class.compare-instance-section-first-row]="first"
-                    [class.compare-instance-section-last-row]="last"
-                  >
-                    <td class="whitespace-nowrap">
-                      <div class="flex gap-2 items-center">
-                        {{ row.name }}
-                        @if (row.description) {
-                          <svg
-                            lucideInfo
-                            class="h-4 w-4 shrink-0 text-gray-200"
-                            (mouseenter)="
-                              showChartTooltip($event, row.description)
-                            "
-                            (mouseleave)="hideChartTooltip()"
-                          ></svg>
-                        }
-                      </div>
-                    </td>
-                    @for (value of row.values; track $index) {
-                      <td>
-                        <div class="compare-table-metric-cell">
-                          @if (
-                            row.id === "vendor" && value.startsWith("logo:")
-                          ) {
-                            <a
-                              class="block w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto"
-                              [routerLink]="[
-                                '/vendors',
-                                databases[$index].vendor_id,
-                              ]"
-                            >
-                              <img
-                                [src]="value.slice(5)"
-                                [alt]="
-                                  (databases[$index].vendor?.name ||
-                                    databases[$index].vendor_id) + ' logo'
-                                "
-                              />
-                            </a>
-                          } @else if (row.id === "vendor") {
-                            <a
-                              class="text-white text-sm ml-auto underline decoration-dotted"
-                              [routerLink]="[
-                                '/vendors',
-                                databases[$index].vendor_id,
-                              ]"
-                            >
-                              {{ value }}
-                            </a>
-                          } @else if (value === "check" || value === "x") {
-                            @if (value === "check") {
-                              <svg
-                                lucideCheck
-                                class="h-4 w-4 shrink-0 text-emerald-400"
-                              ></svg>
-                            } @else {
-                              <svg
-                                lucideX
-                                class="h-4 w-4 shrink-0 text-white"
-                              ></svg>
-                            }
-                          } @else {
-                            <span [style]="getBestCellStyle(row, $index)">{{
-                              value
-                            }}</span>
-                          }
-                          @if (shouldShowDeltaRow(row)) {
-                            <div class="compare-table-delta-row">
-                              @if (getRowDelta(row, $index); as rowDelta) {
-                                <span
-                                  class="compare-table-delta"
-                                  [class.compare-table-delta--positive]="
-                                    rowDelta.tone === 'positive'
-                                  "
-                                  [class.compare-table-delta--negative]="
-                                    rowDelta.tone === 'negative'
-                                  "
-                                  [class.compare-table-delta--neutral]="
-                                    rowDelta.tone === 'neutral'
-                                  "
-                                >
-                                  {{ rowDelta.label }}
-                                </span>
-                              } @else {
-                                <span
-                                  class="compare-table-delta-placeholder"
-                                  aria-hidden="true"
-                                  >&nbsp;</span
-                                >
-                              }
-                            </div>
-                          }
-                        </div>
-                      </td>
-                    }
-                  </tr>
-                }
-                <tr class="compare-instance-section-gap" aria-hidden="true">
-                  <td></td>
-                  <td [attr.colspan]="databases.length"></td>
-                </tr>
-                @if (sectionIndex === 0 && priceRows.length) {
-                  <tr class="section_header">
-                    <td>
-                      <h2 class="text-xl font-semibold">Pricing</h2>
-                    </td>
-                    <td [attr.colspan]="databases.length"></td>
-                  </tr>
-                  <tr class="compare-instance-section-gap" aria-hidden="true">
-                    <td></td>
-                    <td [attr.colspan]="databases.length"></td>
-                  </tr>
-                  @for (
-                    row of priceRows;
-                    track row.id;
-                    let first = $first;
-                    let last = $last
-                  ) {
-                    <tr
-                      [class.compare-instance-section-first-row]="first"
-                      [class.compare-instance-section-last-row]="last"
-                    >
-                      <td class="whitespace-nowrap">
-                        <div class="flex gap-2 items-center">
-                          {{ row.name }}
-                          @if (row.description) {
-                            <svg
-                              lucideInfo
-                              class="h-4 w-4 shrink-0 text-gray-200"
-                              (mouseenter)="
-                                showChartTooltip($event, row.description)
-                              "
-                              (mouseleave)="hideChartTooltip()"
-                            ></svg>
-                          }
-                        </div>
-                      </td>
-                      @for (value of row.values; track $index) {
-                        <td>
-                          <div class="compare-table-metric-cell">
-                            <span [style]="getBestCellStyle(row, $index)">{{
-                              value
-                            }}</span>
-                            @if (shouldShowDeltaRow(row)) {
-                              <div class="compare-table-delta-row">
-                                @if (getRowDelta(row, $index); as rowDelta) {
-                                  <span
-                                    class="compare-table-delta"
-                                    [class.compare-table-delta--positive]="
-                                      rowDelta.tone === 'positive'
-                                    "
-                                    [class.compare-table-delta--negative]="
-                                      rowDelta.tone === 'negative'
-                                    "
-                                    [class.compare-table-delta--neutral]="
-                                      rowDelta.tone === 'neutral'
-                                    "
-                                  >
-                                    {{ rowDelta.label }}
-                                  </span>
-                                } @else {
-                                  <span
-                                    class="compare-table-delta-placeholder"
-                                    aria-hidden="true"
-                                    >&nbsp;</span
-                                  >
-                                }
-                              </div>
-                            }
-                          </div>
-                        </td>
-                      }
-                    </tr>
-                  }
-                  <tr class="compare-instance-section-gap" aria-hidden="true">
-                    <td></td>
-                    <td [attr.colspan]="databases.length"></td>
-                  </tr>
-                }
-              }
               @if (hasPgbenchCompareChart()) {
                 @let pinnedRow = getComparePinnedRowLayout();
                 <tr
@@ -503,7 +255,7 @@
                             class="h-6 w-6 shrink-0"
                           ></svg>
                           <span class="compare-section-header-title__text">
-                            {{ pgbenchTitle }}
+                            {{ pgbenchMeta.title }}
                           </span>
                           <span class="compare-section-header-title__icons">
                             <svg
@@ -514,24 +266,27 @@
                               "
                               (mouseleave)="hideChartTooltip()"
                             ></svg>
-                            @if (pgbenchInfoTooltip) {
+                            @if (pgbenchMeta.infoTooltip) {
                               <svg
                                 lucideInfo
                                 class="h-4 w-4 text-gray-200 shrink-0"
                                 (mouseenter)="
-                                  showChartTooltip($event, pgbenchInfoTooltip)
+                                  showChartTooltip(
+                                    $event,
+                                    pgbenchMeta.infoTooltip
+                                  )
                                 "
                                 (mouseleave)="hideChartTooltip()"
                               ></svg>
                             }
-                            @if (pgbenchNoteTooltip) {
+                            @if (pgbenchMeta.noteTooltip) {
                               <svg
                                 lucideTriangleAlert
                                 class="benchmark-note-icon"
                                 (mouseenter)="
                                   showChartWarningTooltip(
                                     $event,
-                                    pgbenchNoteTooltip
+                                    pgbenchMeta.noteTooltip
                                   )
                                 "
                                 (mouseleave)="hideChartTooltip()"
@@ -556,15 +311,15 @@
                         benchmarkKey="pgbench"
                         chartSource="compare-pgbench"
                         layout="compare"
-                        [title]="pgbenchTitle"
+                        [title]="pgbenchMeta.title"
                         chartType="line"
                         elementId="database_compare_pgbench_chart"
                         canvasId="database_compare_pgbench_canvas"
                         blockClass="sc-chart-block sc-chart-block--inline"
                         [servers]="lineCompareServers"
                         [benchmarkMeta]="benchmarkMeta"
-                        [infoTooltip]="pgbenchInfoTooltip"
-                        [noteTooltip]="pgbenchNoteTooltip"
+                        [infoTooltip]="pgbenchMeta.infoTooltip"
+                        [noteTooltip]="pgbenchMeta.noteTooltip"
                       ></sc-benchmark-line-chart>
                     </div>
                   </td>
@@ -644,23 +399,10 @@
           </table>
         </div>
         @if (isBrowser()) {
-          @if (scrollbarMirror(); as mirror) {
-            @if (mirror.bottomPosition) {
-              <div
-                #scrollbarMirrorBottomRef
-                class="scrollbar_mirror_outer"
-                [style]="
-                  scrollbarMirrorController.toStyle(mirror.bottomPosition)
-                "
-                (scroll)="onMirrorScroll($event)"
-              >
-                <div
-                  class="scrollbar_mirror_inner"
-                  [style.width.px]="mirror.innerWidth"
-                ></div>
-              </div>
-            }
-          }
+          <sc-scrollbar-mirror
+            [state]="scrollbarMirror()"
+            (scrolled)="onMirrorScroll($event)"
+          ></sc-scrollbar-mirror>
         }
       }
     }
@@ -673,40 +415,3 @@
 >
   {{ chartTooltipContent }}
 </div>
-
-<ng-template #baselinePanel>
-  <div id="baseline_database_options" class="sc-dropdown w-64">
-    <ul class="sc-dropdown__list" aria-labelledby="baseline_database_button">
-      <li class="sc-dropdown__option" (click)="selectBaselineDatabase(null)">
-        <div class="text-white text-sm">No baseline</div>
-      </li>
-      @for (
-        database of databases;
-        track database.vendor_id + "_" + database.database_id
-      ) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectBaselineDatabase(database)"
-        >
-          <div class="text-white text-sm">
-            {{ database.display_name }} ({{ database.vendor_id }})
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #currencyPanel>
-  <div id="currency_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list" aria-labelledby="currency_button">
-      @for (currency of availableCurrencies; track currency.name) {
-        <li class="sc-dropdown__option" (click)="selectCurrency(currency)">
-          <div class="text-white text-sm">
-            {{ currency.name }} ({{ currency.symbol }})
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>

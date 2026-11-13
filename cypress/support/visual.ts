@@ -222,7 +222,6 @@ export function registerVisualSuites(prefix: VisualSizePrefix): void {
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
-    E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.contains("No matches yet").should("be.visible");
     cy.get("#serverSearchBar").should("be.visible");

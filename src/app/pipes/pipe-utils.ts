@@ -230,3 +230,17 @@ export function formatKebabTitle(value: string): string {
     })
     .join(" ");
 }
+
+export function reduceUnitName(value: string): string | null {
+  if (!value) return null;
+  switch (value) {
+    case "hour":
+      return "h";
+    case "year":
+      return "y";
+    case "month":
+      return "m";
+    default:
+      return value;
+  }
+}

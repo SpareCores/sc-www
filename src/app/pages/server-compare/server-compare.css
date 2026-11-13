@@ -1,28 +1,9 @@
 @reference "../../../styles/tailwind.css";
 
-.section_heading {
-  scroll-margin-top: 10rem;
-}
-
 .fixed_thead {
   position: fixed;
   top: 68px;
   z-index: 40;
-}
-
-.scrollbar_mirror_outer {
-  background: var(--color-gray-700);
-  overflow-y: hidden;
-}
-
-.scrollbar_mirror_inner {
-  height: 1px;
-  margin: 0;
-  padding: 0;
-}
-
-.align-baseline {
-  vertical-align: baseline;
 }
 
 .compare-table-header-cell {

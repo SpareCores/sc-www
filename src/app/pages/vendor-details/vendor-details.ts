@@ -25,11 +25,12 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { DetailsCard } from "../../components/details-card/details-card";
 import {
-  ServerPropertyCard,
-  ServerPropertyRow,
-  ServerPropertySection,
-} from "../../components/server-property-card/server-property-card";
+  DetailsCardRow,
+  DetailsCardSection,
+} from "../../components/details-card/details-card.types";
+import { buildDetailsRows } from "../../components/details-card/details-card.utils";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
@@ -71,7 +72,7 @@ const VENDOR_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     Breadcrumbs,
     Button,
     LoadingSpinner,
-    ServerPropertyCard,
+    DetailsCard,
     LucideCheck,
     LucideChevronRight,
     LucideX,
@@ -108,8 +109,8 @@ export class VendorDetails implements OnInit, OnDestroy {
   features: { name: string; value: string }[] = [];
   description = "";
 
-  metadataSections: ServerPropertySection[] = [];
-  billingSections: ServerPropertySection[] = [];
+  metadataSections: DetailsCardSection[] = [];
+  billingSections: DetailsCardSection[] = [];
   expandedCards: Record<string, boolean> = {
     details: false,
     billing: true,
@@ -308,7 +309,7 @@ export class VendorDetails implements OnInit, OnDestroy {
     this.metadataSections = [
       {
         name: "Vendor Metadata",
-        properties: this.rows([
+        rows: this.rows([
           { id: "vendor_id", name: "Vendor ID", value: vendor.vendor_id },
           { id: "name", name: "Full Name", value: vendor.name },
           {
@@ -358,7 +359,7 @@ export class VendorDetails implements OnInit, OnDestroy {
     this.billingSections = [
       {
         name: "Billing",
-        properties: this.rows([
+        rows: this.rows([
           {
             id: "stopped_server_charged",
             name: "Stopped Server Charged",
@@ -399,32 +400,12 @@ export class VendorDetails implements OnInit, OnDestroy {
   }
 
   private rows(
-    items: {
-      id: string;
-      name: string;
-      value: unknown;
-    }[],
-  ): ServerPropertyRow[] {
-    return items
-      .map((item) => {
-        const description = VENDOR_SCHEMA_PROPERTIES[item.id]?.description;
-        return {
-          id: item.id,
-          name: item.name,
-          value: this.toDisplayValue(item.value),
-          tooltips: description
-            ? [{ key: item.id, content: description }]
-            : undefined,
-        };
-      })
-      .filter((item) => item.value !== "");
-  }
-
-  private toDisplayValue(value: unknown): string {
-    if (value === null || value === undefined || value === "") {
-      return "";
-    }
-    return String(value);
+    items: { id: string; name: string; value: unknown }[],
+  ): DetailsCardRow[] {
+    return buildDetailsRows(
+      items,
+      (id) => VENDOR_SCHEMA_PROPERTIES[id]?.description,
+    );
   }
 
   private updateSeo(vendor: Vendor) {

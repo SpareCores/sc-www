@@ -28,6 +28,7 @@ export abstract class E2EEvent {
     cy.visit(url);
     this.waitForPageReady();
     this.hideAnnouncementForTests();
+    this.hideCaretsForTests();
   }
 
   public static waitForPageReady() {
@@ -95,14 +96,14 @@ export abstract class E2EEvent {
     });
   }
 
-  public static hideBaselineServerCaretForScreenshot() {
+  public static hideCaretsForTests() {
     cy.document().then((doc) => {
-      doc.getElementById("e2e-hide-baseline-server-caret")?.remove();
+      doc.getElementById("e2e-hide-carets")?.remove();
 
       const style = doc.createElement("style");
-      style.id = "e2e-hide-baseline-server-caret";
+      style.id = "e2e-hide-carets";
       style.textContent = `
-        #custom_control_input_baseline_server {
+        * {
           caret-color: transparent !important;
         }
       `;

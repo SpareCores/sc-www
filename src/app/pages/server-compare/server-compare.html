@@ -1,13 +1,13 @@
 <div class="w-full bg-primary min-h-screen">
   <div class="content pt-16 pb-16">
-    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
+    <sc-breadcrumbs [segments]="comparePage.breadcrumbs"></sc-breadcrumbs>
 
     <sc-collection-save-modal
       modalId="server-compare-save-modal"
       title="Bookmark this comparison"
       confirmLabel="Confirm"
-      [saving]="isSaveComparisonPending()"
-      (confirmed)="confirmSaveComparison($event)"
+      [saving]="comparePage.isSaveComparisonPending()"
+      (confirmed)="comparePage.confirmSaveComparison($event)"
     ></sc-collection-save-modal>
 
     @if (isLoading) {
@@ -21,59 +21,52 @@
       <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
         <sc-page-header
           icon="scale"
-          [title]="title"
+          [title]="comparePage.title"
           [showBookmark]="!!instances.length"
-          [bookmarkGuestLocked]="!isAuthenticated()"
-          [bookmarkActive]="!!exactSavedComparison()"
-          [bookmarkDisabled]="!exactSavedComparison() && !canSaveComparison()"
-          [bookmarkLoading]="isDeleteComparisonPending()"
-          [showEdit]="!!exactSavedComparison()"
+          [bookmarkGuestLocked]="!comparePage.isAuthenticated()"
+          [bookmarkActive]="!!comparePage.exactSavedComparison()"
+          [bookmarkDisabled]="
+            !comparePage.exactSavedComparison() &&
+            !comparePage.canSaveComparison()
+          "
+          [bookmarkLoading]="comparePage.isDeleteComparisonPending()"
+          [showEdit]="!!comparePage.exactSavedComparison()"
           editAriaLabel="Edit comparison"
           [showShare]="!!instances.length"
-          [shareIcon]="clipboardIcon"
-          (shareClick)="clipboardURL($event)"
-          (bookmarkClick)="toggleSavedComparison()"
-          (editClick)="openSaveComparisonModal()"
+          [copyLink]="true"
+          (bookmarkClick)="comparePage.toggleSavedComparison()"
+          (editClick)="comparePage.openSaveComparisonModal()"
         >
           @if (instances.length) {
-            <sc-button
-              label="Embed Widget"
-              icon="copy"
-              iconPosition="end"
-              variant="outline"
-              (buttonClick)="openModal()"
-            ></sc-button>
+            <sc-embed-widget-button
+              [target]="{
+                kind: 'compare',
+                resource: 'server',
+                instances: instancesRaw,
+              }"
+              [widgets]="embeddableWidgets"
+              (opening)="updateEmbeddableWidgets()"
+            ></sc-embed-widget-button>
           }
         </sc-page-header>
         @if (instances.length) {
-          <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
-          <div class="flex flex-wrap gap-4 items-center justify-end w-full">
-            <sc-button
-              id="baseline_server_button"
-              [scDropdown]="baselinePanel"
-              #baselineDropdown="scDropdown"
-              [label]="getBaselineServerLabel()"
-              icon="target"
-              variant="dropdown"
-            ></sc-button>
-            <sc-button
-              id="currency_button"
-              [scDropdown]="currencyPanel"
-              #currencyDropdown="scDropdown"
-              [label]="selectedCurrency.slug"
-              icon="credit-card"
-              variant="dropdown"
-            ></sc-button>
-          </div>
+          <div
+            class="text-white text-xl pr-16"
+            [innerHTML]="comparePage.description"
+          ></div>
+          <sc-compare-toolbar
+            resource="server"
+            [items]="servers"
+            [baseline]="selectedBaselineServer"
+            [currency]="selectedCurrency"
+            (baselineSelected)="selectBaselineServer($event)"
+            (currencySelected)="selectCurrency($event)"
+          ></sc-compare-toolbar>
         }
       </div>
 
       @if (!instances.length) {
-        <div
-          class="flex flex-col gap-4 mx-2 xl:mx-0"
-          id="comparesDiv"
-          #comparesDiv
-        >
+        <div class="flex flex-col gap-4 mx-2 xl:mx-0">
           <div class="text-white text-xl pr-16">
             Compare cloud servers and their characteristics, such as CPU, GPU,
             memory, and storage details, and the performance of the instances by
@@ -89,90 +82,12 @@
             details pages as well via the "Compare" button, or find below a
             curated list of server comparison sets.
           </div>
-          <div class="flex flex-col gap-4 mt-4">
-            @for (compare of serverCompares; track compare.title) {
-              <div
-                class="flex flex-col py-6 gap-2 text-white"
-                [class]="
-                  compare.type === 'card' ? 'bg-secondary rounded-lg px-6' : ''
-                "
-              >
-                @if (compare.type === "section") {
-                  <h2
-                    class="section_heading sc-header-anchor-host text-2xl font-semibold"
-                  >
-                    <span>{{ compare.title }}</span>
-                    <sc-header-anchor
-                      [anchorId]="compare.id"
-                      [label]="compare.title"
-                    ></sc-header-anchor>
-                  </h2>
-                }
-                @if (compare.type === "card") {
-                  <h3>
-                    <a
-                      routerLink="/servers/compare/{{ compare.id }}"
-                      class="text-emerald-400 text-xl font-semibold"
-                    >
-                      {{ compare.title }}
-                    </a>
-                  </h3>
-                }
-                @if (
-                  compare.description &&
-                  compare.hide_description_in_index !== true
-                ) {
-                  <div
-                    class="description_inner_html"
-                    [class]="
-                      compare.type === 'section' ? 'text-lg space-y-4' : ''
-                    "
-                    [innerHTML]="compare.description"
-                  ></div>
-                }
-                @if (compare.query) {
-                  <details
-                    class="flex flex-col gap-2 open:[&_svg]:-rotate-90"
-                    [class.mt-4]="compare.type === 'section'"
-                  >
-                    <summary class="text-sm list-none cursor-pointer">
-                      SQL query used to select instances
-                      <svg
-                        class="inline fill-current opacity-75 w-4 h-4 -mr-1 rotate-90"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"
-                        />
-                      </svg>
-                    </summary>
-                    <pre
-                      class="language-sql"
-                    ><code>{{compare.query}}</code></pre>
-                  </details>
-                }
-                @if (compare.instances) {
-                  <div class="text-sm flex flex-wrap gap-2">
-                    Instances:
-                    @for (
-                      instance of compare.instances;
-                      track instance.vendor + "_" + instance.server
-                    ) {
-                      <a
-                        class="underline decoration-dotted whitespace-nowrap"
-                        routerLink="/server/{{ instance.vendor }}/{{
-                          instance.server
-                        }}"
-                      >
-                        {{ instance.server }} ({{ instance.vendor }})
-                      </a>
-                    }
-                  </div>
-                }
-              </div>
-            }
-          </div>
+          <sc-compare-guide
+            [compares]="serverCompares"
+            comparePath="/servers/compare"
+            detailPath="/server"
+            instanceKey="server"
+          ></sc-compare-guide>
           <hr class="mt-6" />
           <div class="text-white text-xl pr-16 mt-3">
             <p>
@@ -275,23 +190,10 @@
           </div>
         </div>
         @if (isBrowser()) {
-          @if (scrollbarMirror(); as mirror) {
-            @if (mirror.bottomPosition) {
-              <div
-                #scrollbarMirrorBottomRef
-                class="scrollbar_mirror_outer"
-                [style]="
-                  scrollbarMirrorController.toStyle(mirror.bottomPosition)
-                "
-                (scroll)="onMirrorScroll($event)"
-              >
-                <div
-                  class="scrollbar_mirror_inner"
-                  [style.width.px]="mirror.innerWidth"
-                ></div>
-              </div>
-            }
-          }
+          <sc-scrollbar-mirror
+            [state]="scrollbarMirror()"
+            (scrolled)="onMirrorScroll($event)"
+          ></sc-scrollbar-mirror>
         }
       }
     }
@@ -305,57 +207,3 @@
 >
   {{ tooltipContent }}
 </div>
-
-<ng-template #baselinePanel>
-  <div id="baseline_server_options" class="sc-dropdown w-64">
-    <ul class="sc-dropdown__list" aria-labelledby="baseline_server_button">
-      <li class="sc-dropdown__option" (click)="selectBaselineServer(null)">
-        <div class="text-white text-sm">No baseline</div>
-      </li>
-      @for (
-        server of servers;
-        track server.vendor_id + "_" + server.server_id
-      ) {
-        <li class="sc-dropdown__option" (click)="selectBaselineServer(server)">
-          <div class="text-white text-sm">
-            {{ server.display_name }} ({{ server.vendor_id }})
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #currencyPanel>
-  <div id="currency_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
-      @for (currency of availableCurrencies; track currency.name) {
-        <li class="sc-dropdown__option" (click)="selectCurrency(currency)">
-          <div class="text-white text-sm">
-            {{ currency.name }} ({{ currency.symbol }})
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #embedModalTemplate>
-  <sc-modal
-    id="embed-compare-modal"
-    title="Embed Widget"
-    size="wide"
-    closeCaptureEvent="embed widget modal close"
-    closeCaptureAction="close"
-  >
-    @if (instancesRaw) {
-      <div class="space-y-4 flex flex-col">
-        <sc-compare-embed-dialog
-          [instances]="instancesRaw"
-          [widgets]="embeddableWidgets"
-        >
-        </sc-compare-embed-dialog>
-      </div>
-    }
-  </sc-modal>
-</ng-template>

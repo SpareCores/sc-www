@@ -1,0 +1,86 @@
+@let data = model();
+<sc-embed-frame [path]="data?.path ?? null" [linkLabel]="data?.linkLabel ?? ''">
+  @if (data) {
+    @if (data.card; as card) {
+      <div class="w-full flex bg-secondary h-[calc(100%-64px)]">
+        <sc-details-card
+          [cardTitle]="card.cardTitle"
+          [cardId]="card.cardId"
+          [sections]="card.sections"
+          [fixedRows]="card.fixedRows"
+          [expandable]="false"
+          [rowClass]="card.cardId === 'availability' ? 'availability_line' : ''"
+          linkTarget="_blank"
+        ></sc-details-card>
+      </div>
+    } @else if (data.serverCharts; as charts) {
+      @defer (on immediate) {
+        <sc-server-charts
+          class="w-full flex flex-wrap gap-8 bg-secondary h-[calc(100%-64px)]"
+          [serverDetails]="charts.serverDetails"
+          [benchmarksByCategory]="charts.benchmarksByCategory"
+          [benchmarkMeta]="charts.benchmarkMeta"
+          [showChart]="widgetId()"
+          [isEmbedded]="true"
+        ></sc-server-charts>
+      }
+    } @else if (data.lstopo; as lstopo) {
+      <div class="w-full flex bg-secondary h-[calc(100%-64px)]">
+        @defer (on immediate) {
+          <div
+            class="sc-chart-block sc-chart-block--full sc-chart-block--scrollable"
+            id="lstopo"
+          >
+            <sc-server-lstopo
+              ngSkipHydration
+              [vendorId]="lstopo.vendorId"
+              [apiReference]="lstopo.apiReference"
+              [fullscreenEnabled]="false"
+            ></sc-server-lstopo>
+          </div>
+        }
+      </div>
+    } @else if (data.description; as description) {
+      <div class="w-full flex bg-secondary h-[calc(100%-64px)]">
+        @defer (on immediate) {
+          <div
+            class="sc-chart-block sc-chart-block--full sc-chart-block--scrollable"
+            id="description"
+          >
+            <h3 class="text-2xl">Server Description</h3>
+            <sc-server-description-summary
+              [description]="description"
+              [showHeader]="true"
+            ></sc-server-description-summary>
+          </div>
+        }
+      </div>
+    } @else if (data.pgbench; as pgbench) {
+      <div class="w-full flex bg-secondary h-[calc(100%-64px)]">
+        @if (pgbench.chart; as chart) {
+          @defer (on immediate) {
+            <sc-benchmark-line-chart
+              class="w-full"
+              benchmarkKey="pgbench"
+              [title]="pgbench.meta.title"
+              blockClass="sc-chart-block sc-chart-block--full"
+              elementId="embedded_database_pgbench_chart"
+              canvasId="embedded_database_pgbench_canvas"
+              chartType="line"
+              [chartData]="chart.data"
+              [chartOptions]="chart.options"
+              [infoTooltip]="pgbench.meta.infoTooltip"
+              [noteTooltip]="pgbench.meta.noteTooltip"
+            ></sc-benchmark-line-chart>
+          }
+        } @else {
+          <p class="m-auto text-white">No benchmark data available.</p>
+        }
+      </div>
+    }
+  } @else if (failed()) {
+    <div class="w-full flex bg-secondary h-full">
+      <p class="m-auto text-white">This widget could not be loaded.</p>
+    </div>
+  }
+</sc-embed-frame>

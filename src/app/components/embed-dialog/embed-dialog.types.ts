@@ -20,3 +20,19 @@ export interface EmbedStepper {
   step: number;
   value: WritableSignal<number>;
 }
+
+export type EmbedResource = "server" | "database";
+
+export type EmbedTarget =
+  | { kind: "details"; resource: EmbedResource; vendor: string; id: string }
+  | { kind: "compare"; resource: EmbedResource; instances: string };
+
+export interface EmbedPreset {
+  modalId: string;
+  idPrefix: string;
+  captureEventPrefix: string;
+  minHeight: number;
+  defaultHeight: number;
+  aspectRatio: number | null;
+  srcFor: (widgetId: string) => string;
+}

@@ -23,7 +23,7 @@ export class Me<SecurityDataType = unknown> {
   /**
    * @description Return the current user after authentication.
    *
-   * @tags Administrative endpoints
+   * @tags Administrative Endpoints
    * @name MeMeGet
    * @summary Me
    * @request GET:/me

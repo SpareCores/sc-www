@@ -1,0 +1,33 @@
+<div class="content_embed sc-chart-embed">
+  <ng-content></ng-content>
+  @if (href(); as link) {
+    <a
+      class="w-full flex flex-col justify-center items-center text-white px-6 py-4 hover:text-gray-200"
+      [class.bg-primary]="footerTone() === 'primary'"
+      [class.bg-secondary]="footerTone() === 'secondary'"
+      target="_blank"
+      rel="noopener noreferrer"
+      [href]="link"
+    >
+      <div class="w-full flex gap-2 items-center justify-between">
+        <img
+          src="./assets/images/logos/logo_embed_footer.png"
+          alt="Spare Cores Logo"
+          class="h-8 shrink-0"
+        />
+        <div class="flex min-w-0 items-center gap-2">
+          <svg
+            lucideExternalLink
+            class="text-emerald-400 h-5 w-5 shrink-0"
+          ></svg>
+          <span class="min-w-0 truncate text-sm underline"
+            >Learn more about
+            <i class="text-emerald-400 underline decoration-emerald-400">{{
+              linkLabel()
+            }}</i></span
+          >
+        </div>
+      </div>
+    </a>
+  }
+</div>
