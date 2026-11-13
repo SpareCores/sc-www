@@ -24,6 +24,7 @@ import {
 } from "../shared/compare-table/scrollbar-mirror.controller";
 import { CompareStickyLayoutController } from "../shared/compare-table/compare-sticky-layout.controller";
 import { KeeperAPI } from "../../services/keeper-api";
+import { HeaderAnchorLink } from "../../services/header-anchor-link";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Breadcrumbs } from "../../components/breadcrumbs/breadcrumbs";
 import { PageHeader } from "../../components/page-header/page-header";
@@ -110,6 +111,7 @@ function hasMeaningfulCompareTableValue(value: unknown): boolean {
 export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
+  private headerAnchorLink = inject(HeaderAnchorLink);
   private keeperAPI = inject(KeeperAPI);
   private seoHandler = inject(SeoHandler);
   private serverCompare = inject(CompareSelection);
@@ -715,28 +717,7 @@ export class ServerCompare implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.stickyLayout.init();
-      this.adjustScrollForFragment();
-    }
-  }
-
-  private adjustScrollForFragment() {
-    const fragment = window.location.hash;
-    if (fragment) {
-      const interval = setInterval(() => {
-        const element = this.document.querySelector(fragment);
-        if (element) {
-          const headerOffset = 6.75 * 16;
-          const elementPosition =
-            element.getBoundingClientRect().top + window.pageYOffset;
-          const offsetPosition = elementPosition - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-          clearInterval(interval);
-        }
-      }, 50);
+      this.headerAnchorLink.scrollToCurrentFragment();
     }
   }
 
