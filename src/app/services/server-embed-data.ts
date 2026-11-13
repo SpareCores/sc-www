@@ -74,7 +74,9 @@ export class ServerEmbedData {
       linkLabel: server.display_name,
     };
 
-    const card = SERVER_CARD_WIDGETS[widgetId];
+    const card = Object.hasOwn(SERVER_CARD_WIDGETS, widgetId)
+      ? SERVER_CARD_WIDGETS[widgetId]
+      : undefined;
     if (card) {
       model.card = this.buildCard(
         card,
