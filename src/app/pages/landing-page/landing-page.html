@@ -2,12 +2,12 @@
   <div class="content_section content_section--flush" id="hero">
     <div class="content">
       <div class="flex gap-8 flex-col lg:flex-row">
-        <div class="flex flex-col gap-8 md:gap-12 w-full lg:w-1/2 my-auto">
+        <div class="flex flex-col gap-4 md:gap-12 w-full lg:w-1/2 my-auto">
           <div class="text-3xl leading-10 font-bold sm:text-4xl sm:leading-12">
             Don't gamble with your cloud costs.
             <span class="text-emerald-400">Use Spare Cores!</span>
           </div>
-          <div class="text-xl md:text-3xl">
+          <div class="text-lg md:text-3xl">
             <p class="py-2">
               Right-size AI/ML compute with vendor-neutral cloud intelligence
               and real workload telemetry.
@@ -17,16 +17,16 @@
               recommendations before over-provisioning becomes the default.
             </p>
           </div>
-          <div class="pb-12 lg:pb-0">
+          <div>
             <div
-              class="mx-auto grid max-w-xl grid-cols-1 gap-y-4 sm:grid-cols-2 sm:grid-rows-2 sm:gap-y-2 sm:gap-x-8 lg:mx-0"
+              class="mx-auto grid max-w-xl grid-cols-2 gap-x-4 gap-y-2 sm:grid-rows-2 sm:gap-x-8 lg:mx-0"
             >
               <sc-button
-                [label]="'Compare cloud servers\nfor free'"
-                size="large"
+                label="Compare cloud servers for free"
+                size="small"
                 [routerLink]="'/servers'"
-                class="w-full self-center sm:row-span-2"
-                buttonClass="min-h-23 text-center"
+                class="col-span-2 w-full self-center sm:col-span-1 sm:row-span-2"
+                buttonClass="text-center"
               ></sc-button>
               <sc-button
                 label="Measure AI/ML jobs >"
