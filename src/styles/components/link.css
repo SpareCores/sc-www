@@ -3,7 +3,11 @@
 }
 
 .sc-header-anchor {
-  @apply ml-2 no-underline opacity-0 transition-opacity duration-200 hover:text-emerald-400;
+  @apply absolute ml-2 no-underline opacity-0 transition-opacity duration-200 hover:text-emerald-400;
+}
+
+.flex > sc-header-anchor > .sc-header-anchor {
+  position: static;
 }
 
 .sc-header-anchor:focus-visible,
