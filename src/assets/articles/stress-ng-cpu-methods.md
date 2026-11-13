@@ -11,11 +11,6 @@ author: Adam Toth
 tags: [benchmark, performance, score, compute power, scalability, vcpu]
 ---
 
-<!--
-EDITOR NOTES (remove before publishing):
-- Source data: Linear DEV-297 (copied from Slack, June 2024).
--->
-
 When we introduced the SCore, our default CPU performance metric, we wrote in
 the [Unlocking Cloud Compute Performance](/article/cloud-compute-performance-benchmarks)
 article that we evaluated "approximately 50 CPU stress methods" of `stress-ng`
