@@ -51,6 +51,8 @@ export class EmbeddedCompareWidget {
   readonly resource = signal<EmbedResource>("server");
   readonly widgetId = signal("all");
   readonly model = signal<CompareEmbedModel | null>(null);
+  readonly failed = signal(false);
+  readonly failedPath = signal<string | null>(null);
   readonly hasPgbenchChart = computed(
     () =>
       this.model()?.database?.servers.some((server) =>
@@ -104,6 +106,8 @@ export class EmbeddedCompareWidget {
     const loadId = ++this.loadId;
     const config = this.config();
     this.model.set(null);
+    this.failed.set(false);
+    this.failedPath.set(null);
 
     if (!encodedInstances) {
       this.toastService.removeToast(config.toastId);
@@ -132,6 +136,12 @@ export class EmbeddedCompareWidget {
         this.model.set(model);
       })
       .catch((err) => {
+        if (loadId === this.loadId) {
+          this.failed.set(true);
+          this.failedPath.set(
+            this.embedData.path(this.resource(), encodedInstances),
+          );
+        }
         console.error(err);
         this.analytics.SentryException(err, {
           tags: { location: this.constructor.name, function: "load" },

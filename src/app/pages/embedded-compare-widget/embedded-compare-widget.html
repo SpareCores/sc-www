@@ -1,6 +1,6 @@
 @let data = model();
 <sc-embed-frame
-  [path]="data?.path ?? null"
+  [path]="data?.path ?? failedPath()"
   linkLabel="this comparison"
   footerTone="secondary"
 >
@@ -84,6 +84,10 @@
       } @else {
         <p class="m-auto text-white">No benchmark data available.</p>
       }
+    </div>
+  } @else if (failed()) {
+    <div class="w-full flex h-[calc(100%-64px)]">
+      <p class="m-auto text-white">This widget could not be loaded.</p>
     </div>
   }
 </sc-embed-frame>

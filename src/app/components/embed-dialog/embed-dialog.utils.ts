@@ -33,6 +33,7 @@ export function buildEmbedPreset(
     minHeight: 600,
     defaultHeight: 710,
     aspectRatio: null,
-    srcFor: (widgetId) => `${base}/${widgetId}?instances=${target.instances}`,
+    srcFor: (widgetId) =>
+      `${base}/${widgetId}?instances=${encodeURIComponent(target.instances)}`,
   };
 }

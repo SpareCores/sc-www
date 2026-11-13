@@ -44,6 +44,17 @@ describe("embed dialog utils", () => {
     expect(database.idPrefix).toBe("database_compare_embed");
   });
 
+  it("escapes base64 characters in compare embed urls", () => {
+    const preset = buildEmbedPreset(
+      { kind: "compare", resource: "server", instances: "a+b/c=" },
+      baseUrl,
+    );
+
+    expect(preset.srcFor("generic")).toBe(
+      `${baseUrl}/embed/compare/generic?instances=a%2Bb%2Fc%3D`,
+    );
+  });
+
   it("keys targets by what they embed", () => {
     expect(
       embedTargetKey({

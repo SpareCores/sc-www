@@ -22,12 +22,16 @@ export class CompareEmbedData {
     return COMPARE_EMBED_RESOURCES[resource];
   }
 
+  path(resource: EmbedResource, encodedInstances: string): string {
+    return `${this.config(resource).comparePath}?instances=${encodeURIComponent(encodedInstances)}`;
+  }
+
   async load(
     resource: EmbedResource,
     encodedInstances: string,
     widgetId: string,
   ): Promise<CompareEmbedModel | null> {
-    const path = `${this.config(resource).comparePath}?instances=${encodedInstances}`;
+    const path = this.path(resource, encodedInstances);
 
     if (resource === "database") {
       const decoded = decodeBase64JsonUrlState(

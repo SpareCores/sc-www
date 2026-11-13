@@ -121,6 +121,26 @@ describe("EmbeddedCompareWidget", () => {
     expect(TestBed.inject(CompareEmbedData)).toBeTruthy();
   });
 
+  it("shows a message when the widget fails to load", async () => {
+    spyOn(console, "error");
+    serverLoad.and.rejectWith(new Error("failed"));
+    queryParams.next({
+      instances: btoa(
+        JSON.stringify([
+          { display_name: "a", vendor: "aws", server: "a", zonesRegions: [] },
+        ]),
+      ),
+    });
+    await flushPromises();
+    fixture.detectChanges();
+
+    expect(component.failed()).toBeTrue();
+    expect(component.failedPath()).toContain("/servers/compare?instances=");
+    expect(fixture.nativeElement.textContent).toContain(
+      "This widget could not be loaded.",
+    );
+  });
+
   it("removes the invalid URL toast on destroy", () => {
     removeToast.calls.reset();
     fixture.destroy();
