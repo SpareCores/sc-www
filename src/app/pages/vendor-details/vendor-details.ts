@@ -26,6 +26,7 @@ import {
 import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { DetailsCard } from "../../components/details-card/details-card";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import {
   DetailsCardRow,
   DetailsCardSection,
@@ -77,6 +78,7 @@ const VENDOR_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     LucideChevronRight,
     LucideX,
     CountryIdtoNamePipe,
+    HeaderAnchor,
   ],
   templateUrl: "./vendor-details.html",
   styleUrl: "./vendor-details.css",
