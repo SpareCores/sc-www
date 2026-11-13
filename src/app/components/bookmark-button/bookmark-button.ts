@@ -86,7 +86,6 @@ export class BookmarkButton {
   });
 
   protected toggle(event: MouseEvent): void {
-    event.preventDefault();
     event.stopPropagation();
 
     if (!this.isAuthenticated()) {
