@@ -65,8 +65,14 @@
 
 .fixed_thead {
   position: fixed;
-  top: 68px;
+  top: 4rem;
   z-index: 40;
+}
+
+@media (width >= theme(--breakpoint-lg)) {
+  .fixed_thead {
+    top: 4.25rem;
+  }
 }
 
 .compare-chart-content {
