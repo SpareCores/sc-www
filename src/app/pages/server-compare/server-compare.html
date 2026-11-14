@@ -1,5 +1,5 @@
-<div class="w-full bg-primary min-h-screen">
-  <div class="content pt-16 pb-16">
+<div class="w-full bg-primary min-h-dvh">
+  <div class="content pt-8 pb-8">
     <sc-breadcrumbs [segments]="comparePage.breadcrumbs"></sc-breadcrumbs>
 
     <sc-collection-save-modal
@@ -51,7 +51,7 @@
         </sc-page-header>
         @if (instances.length) {
           <div
-            class="text-white text-xl pr-16"
+            class="text-white text-base sm:text-xl sm:pr-16"
             [innerHTML]="comparePage.description"
           ></div>
           <sc-compare-toolbar
@@ -67,13 +67,13 @@
 
       @if (!instances.length) {
         <div class="flex flex-col gap-4 mx-2 xl:mx-0">
-          <div class="text-white text-xl pr-16">
+          <div class="text-white text-base sm:text-xl sm:pr-16">
             Compare cloud servers and their characteristics, such as CPU, GPU,
             memory, and storage details, and the performance of the instances by
             various benchmarking workloads to find the optimal compute resource
             for your needs.
           </div>
-          <div class="text-white text-xl pr-16">
+          <div class="text-white text-base sm:text-xl sm:pr-16">
             To get started, select at least two servers using the checkboxes in
             the left column of our
             <a class="text-emerald-400" routerLink="/servers"
@@ -89,7 +89,7 @@
             instanceKey="server"
           ></sc-compare-guide>
           <hr class="mt-6" />
-          <div class="text-white text-xl pr-16 mt-3">
+          <div class="text-white text-base sm:text-xl sm:pr-16 mt-3">
             <p>
               <i
                 >You made it to the bottom of the page and still missing the
@@ -128,7 +128,7 @@
         <div
           id="table_holder"
           #tableHolder
-          class="compare_table_holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
+          class="compare_table_holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative min-h-dvh mx-2 xl:mx-0"
           (scroll)="updateMirrorLayout()"
         >
           @if (isBrowser() && isTableOutsideViewport()) {
