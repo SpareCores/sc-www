@@ -15,7 +15,7 @@ describe("placePanel", () => {
   it("places bottom-end below the trigger, aligned to its end", () => {
     expect(
       placePanel(trigger(100, 500), panel, viewport, "bottom-end", false),
-    ).toEqual({ top: 150, left: 400 });
+    ).toEqual({ top: 150, left: 400, maxHeight: 642 });
   });
 
   it("aligns bottom-start to the trigger start and bottom to its center", () => {
