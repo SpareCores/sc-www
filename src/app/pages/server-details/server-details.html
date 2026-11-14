@@ -30,8 +30,10 @@
         [features]="features"
         [score]="{
           primary: getBenchmark(true),
+          primaryValue: getBenchmarkValue(true),
           primaryLabel: 'All-cores',
           secondary: getBenchmark(false),
+          secondaryValue: getBenchmarkValue(false),
           secondaryLabel: 'Single-core',
         }"
       >

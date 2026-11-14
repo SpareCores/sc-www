@@ -30,8 +30,10 @@
           hasPgbenchHeaderScores
             ? {
                 primary: pgbenchPeakScore ?? '',
+                primaryValue: pgbenchPeakValue,
                 primaryLabel: 'Peak TPM',
                 secondary: pgbenchSingleScore ?? '',
+                secondaryValue: pgbenchSingleValue,
                 secondaryLabel: 'Single-client baseline',
               }
             : null

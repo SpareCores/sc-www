@@ -35,13 +35,19 @@ describe("DetailsHeader", () => {
 
     fixture.componentRef.setInput("score", {
       primary: "8,324",
+      primaryValue: 8324,
       primaryLabel: "Peak TPM",
       secondary: "171",
+      secondaryValue: 171,
       secondaryLabel: "Single-client baseline",
     });
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain("Peak TPM");
+    expect(
+      fixture.nativeElement.querySelectorAll("sc-score-gauge").length,
+    ).toBe(2);
+    expect(fixture.componentInstance.gaugeMax()).toBe(8324);
   });
 
   it("copies the current url from the share button", () => {

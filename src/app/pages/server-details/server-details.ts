@@ -1133,14 +1133,20 @@ export class ServerDetails implements OnInit, OnDestroy {
   }
 
   getBenchmark(isMulti: boolean) {
-    const score = this.serverDetails.benchmark_scores?.find(
-      (b: any) =>
-        b.benchmark_id === (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
-    )?.score;
-    if (score == null) {
+    const score = this.getBenchmarkValue(isMulti);
+    if (score === null) {
       return "-";
     }
     return formatNumberWithCommas(Math.round(score));
+  }
+
+  getBenchmarkValue(isMulti: boolean): number | null {
+    return (
+      this.serverDetails.benchmark_scores?.find(
+        (b: any) =>
+          b.benchmark_id === (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
+      )?.score ?? null
+    );
   }
 
   formatScore(value: number | undefined | null) {
