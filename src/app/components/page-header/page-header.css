@@ -1,21 +1,23 @@
 @reference "../../../styles/tailwind.css";
 
 .page-header {
-  @apply flex gap-4 justify-between items-center;
+  @apply flex gap-3 justify-between items-start sm:gap-4 sm:items-center;
 }
 
 .page-header__title {
-  @apply text-white font-bold text-3xl flex items-center;
+  @apply text-white font-bold text-2xl flex items-start min-w-0 sm:text-3xl sm:items-center;
+}
+
+.page-header__icon {
+  @apply size-9.5 shrink-0 mr-2 sm:size-8;
 }
 
 .page-header__title-text {
-  @apply mr-2;
+  @apply mr-2 min-w-0 leading-9.5 sm:leading-9;
 }
 
 .page-header__icon-btn {
-  @apply inline-flex items-center justify-center shrink-0 mr-2 rounded-md;
-  width: 2rem;
-  height: 2rem;
+  @apply inline-flex items-center justify-center shrink-0 mr-2 rounded-md size-9.5 sm:size-8;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -63,16 +65,11 @@
   cursor: pointer;
 }
 
-.page-header__icon-btn-svg {
-  width: 2rem;
-  height: 2rem;
-}
-
+.page-header__icon-btn-svg,
 .page-header__bookmark-icon {
-  width: 2rem;
-  height: 2rem;
+  @apply size-full;
 }
 
 .page-header__actions {
-  @apply flex flex-wrap items-center gap-4 lg:justify-end;
+  @apply flex shrink-0 items-center gap-2 sm:shrink sm:flex-wrap sm:gap-4 lg:justify-end;
 }

@@ -1,6 +1,10 @@
 <div class="page-header">
   <h1 class="page-header__title">
-    <svg [lucideIcon]="icon()" class="h-8 w-8 mr-2" aria-hidden="true"></svg>
+    <svg
+      [lucideIcon]="icon()"
+      class="page-header__icon"
+      aria-hidden="true"
+    ></svg>
     @if (showBookmark()) {
       <span
         class="page-header__bookmark-wrap"
@@ -81,6 +85,7 @@
       <sc-button
         [attr.id]="shareButtonId()"
         label="Share"
+        [compact]="true"
         [icon]="resolvedShareIcon()"
         [variant]="shareVariant()"
         (buttonClick)="onShareClick($event)"
