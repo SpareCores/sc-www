@@ -15,6 +15,7 @@ import { Button } from "../../button/button";
 import { CompareMemoryChartOption } from "../shared/memory-chart.types";
 import { MemoryChartBuilder } from "./memory-chart-builder";
 import { Dropdown } from "../../../directives/dropdown";
+import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import {
   bindCompareLegendChart,
   injectCompareLegendVisibility,
@@ -24,7 +25,7 @@ import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 @Component({
   selector: "sc-server-compare-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Button, BaseChartDirective, Dropdown],
+  imports: [Button, BaseChartDirective, Dropdown, BenchmarkIconPipe],
   templateUrl: "./server-compare-memory-chart.html",
   styles: [
     `

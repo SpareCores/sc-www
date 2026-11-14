@@ -88,7 +88,7 @@
   <div class="relative z-30">
     <div class="sc-chart-block sc-chart-block--split">
       <div class="flex justify-end items-center">
-        <div class="flex gap-4">
+        <div class="flex gap-2 sm:gap-4">
           <sc-button
             class="min-w-0"
             #selectorDropdown="scDropdown"
@@ -97,6 +97,7 @@
             [dropdownEnabled]="hasOptions()"
             [label]="currentCompareOptionName()"
             icon="chevron-down"
+            [compactIcon]="'compression' | benchmarkIcon"
             variant="dropdown"
             size="small"
           ></sc-button>

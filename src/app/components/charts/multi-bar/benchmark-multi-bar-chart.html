@@ -70,7 +70,7 @@
 } @else {
   <div class="sc-chart-block sc-chart-block--inline">
     <div
-      class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-4"
+      class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-2 sm:gap-4"
     >
       @if (hasSecondaryOptions()) {
         <sc-button
@@ -81,6 +81,7 @@
           [dropdownEnabled]="!!chartData() && hasSecondaryOptions()"
           [label]="currentSecondaryOption()?.name || ''"
           icon="chevron-down"
+          compactIcon="layers"
           variant="dropdown"
           size="small"
           [title]="currentSecondaryOption()?.name || null"
@@ -94,6 +95,7 @@
         [dropdownEnabled]="!!chartData()"
         [label]="currentOption().name || ''"
         icon="chevron-down"
+        [compactIcon]="chart().id | benchmarkIcon"
         variant="dropdown"
         size="small"
         [title]="currentOption().name || null"

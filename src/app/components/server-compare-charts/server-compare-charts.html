@@ -376,7 +376,7 @@
               [id]="'spec_line_' + propertyCategory.category"
             >
               <td>
-                <h2 class="text-xl font-semibold">
+                <h2 class="text-lg sm:text-xl font-semibold">
                   {{ propertyCategory.name }}
                   @if (!isEmbedded) {
                     <sc-header-anchor
@@ -503,7 +503,9 @@
         >
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+              <h3
+                class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'workload_profile' | benchmarkIcon"
@@ -554,13 +556,14 @@
                 }
               </h3>
               @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                <div class="flex items-stretch gap-4 shrink-0">
+                <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
                   <sc-button
                     [label]="
                       (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
                     "
                     [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
                     iconPosition="start"
+                    [compact]="true"
                     size="small"
                     (click)="toggleWorkloadProfileDetails()"
                   ></sc-button>
@@ -574,13 +577,14 @@
           @if (pinnedRow.trailingColSpan) {
             <td [colSpan]="1" class="compare-section-header-action-cell">
               @if (!isEmbedded) {
-                <div class="flex justify-end items-stretch gap-4">
+                <div class="flex justify-end items-stretch gap-2 sm:gap-4">
                   <sc-button
                     [label]="
                       (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
                     "
                     [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
                     iconPosition="start"
+                    [compact]="true"
                     size="small"
                     (click)="toggleWorkloadProfileDetails()"
                   ></sc-button>
@@ -728,7 +732,9 @@
         >
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+              <h3
+                class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'nvbandwidth' | benchmarkIcon"
@@ -932,7 +938,9 @@
           >
             <td [colSpan]="pinnedRow.contentColSpan">
               <div class="compare-section-header-row">
-                <h3 class="text-xl font-semibold m-0 flex items-center">
+                <h3
+                  class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+                >
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="'stress_ng' | benchmarkIcon"
@@ -960,7 +968,7 @@
                   }
                 </h3>
                 @if (!pinnedRow.trailingColSpan) {
-                  <div class="flex items-stretch gap-4 shrink-0">
+                  <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
                     <sc-button
                       class="min-w-0"
                       #stressNgSubcategoryDropdown="scDropdown"
@@ -968,6 +976,7 @@
                       [scDropdown]="stressNgSubcategoryPanel"
                       [label]="stressNgActiveSection.name"
                       icon="chevron-down"
+                      [compactIcon]="'stress_ng' | benchmarkIcon"
                       variant="dropdown"
                       size="small"
                       [title]="stressNgActiveSection.name"
@@ -979,6 +988,7 @@
                       [scDropdown]="stressNgMetricPanel"
                       [label]="stressNgMetricName()"
                       icon="chevron-down"
+                      compactIcon="gauge"
                       variant="dropdown"
                       size="small"
                       [title]="stressNgMetricName()"
@@ -1050,7 +1060,7 @@
             }
             @if (pinnedRow.trailingColSpan) {
               <td [colSpan]="1" class="compare-section-header-action-cell">
-                <div class="flex justify-end items-stretch gap-4">
+                <div class="flex justify-end items-stretch gap-2 sm:gap-4">
                   <sc-button
                     class="min-w-0"
                     #stressNgSubcategoryDropdown="scDropdown"
@@ -1058,6 +1068,7 @@
                     [scDropdown]="stressNgSubcategoryPanel"
                     [label]="stressNgActiveSection.name"
                     icon="chevron-down"
+                    [compactIcon]="'stress_ng' | benchmarkIcon"
                     variant="dropdown"
                     size="small"
                     [title]="stressNgActiveSection.name"
@@ -1069,6 +1080,7 @@
                     [scDropdown]="stressNgMetricPanel"
                     [label]="stressNgMetricName()"
                     icon="chevron-down"
+                    compactIcon="gauge"
                     variant="dropdown"
                     size="small"
                     [title]="stressNgMetricName()"
@@ -1194,7 +1206,9 @@
             >
               <td [colSpan]="pinnedRow.contentColSpan">
                 <div class="compare-section-header-row">
-                  <h3 class="text-xl font-semibold m-0 flex items-center">
+                  <h3
+                    class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+                  >
                     <span class="compare-section-header-title">
                       <svg
                         [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
@@ -1374,7 +1388,7 @@
                     }
                   </h3>
                   @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                    <div class="flex items-stretch gap-4 shrink-0">
+                    <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
                       @if (canToggleDetails) {
                         <sc-button
                           [label]="
@@ -1385,6 +1399,7 @@
                             benchmarkCategory.show_more ? 'eye-off' : 'eye'
                           "
                           iconPosition="start"
+                          [compact]="true"
                           size="small"
                           (click)="toggleBenchmarkCategory(benchmarkCategory)"
                         ></sc-button>
@@ -1399,7 +1414,7 @@
               @if (pinnedRow.trailingColSpan) {
                 <td [colSpan]="1" class="compare-section-header-action-cell">
                   @if (!isEmbedded) {
-                    <div class="flex justify-end items-stretch gap-4">
+                    <div class="flex justify-end items-stretch gap-2 sm:gap-4">
                       @if (canToggleDetails) {
                         <sc-button
                           [label]="
@@ -1410,6 +1425,7 @@
                             benchmarkCategory.show_more ? 'eye-off' : 'eye'
                           "
                           iconPosition="start"
+                          [compact]="true"
                           size="small"
                           (click)="toggleBenchmarkCategory(benchmarkCategory)"
                         ></sc-button>
@@ -1794,7 +1810,9 @@
           >
             <td [colSpan]="pinnedRow.contentColSpan">
               <div class="compare-section-header-row">
-                <h3 class="text-xl font-semibold m-0 flex items-center min-w-0">
+                <h3
+                  class="text-lg sm:text-xl font-semibold m-0 flex items-center min-w-0"
+                >
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="chartItem.chart.name | benchmarkIcon"
@@ -1879,13 +1897,14 @@
                   }
                 </h3>
                 @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                  <div class="flex items-stretch gap-4 shrink-0">
+                  <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
                     <sc-button
                       [label]="
                         (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
                       "
                       [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
                       iconPosition="start"
+                      [compact]="true"
                       size="small"
                       (click)="toggleBenchmarkCategory(chartItem)"
                     ></sc-button>
@@ -1899,13 +1918,14 @@
             @if (pinnedRow.trailingColSpan) {
               <td [colSpan]="1" class="compare-section-header-action-cell">
                 @if (!isEmbedded) {
-                  <div class="flex justify-end items-stretch gap-4">
+                  <div class="flex justify-end items-stretch gap-2 sm:gap-4">
                     <sc-button
                       [label]="
                         (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
                       "
                       [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
                       iconPosition="start"
+                      [compact]="true"
                       size="small"
                       (click)="toggleBenchmarkCategory(chartItem)"
                     ></sc-button>
@@ -2077,7 +2097,9 @@
         >
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+              <h3
+                class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'pgbench' | benchmarkIcon"
@@ -2167,7 +2189,7 @@
           id="benchmark_line_further_benchmarks"
         >
           <td [colSpan]="2">
-            <h3 class="pl-3 text-xl font-semibold">
+            <h3 class="pl-3 text-lg sm:text-xl font-semibold">
               Further Benchmarks
               <sc-header-anchor
                 anchorId="benchmark_line_further_benchmarks"

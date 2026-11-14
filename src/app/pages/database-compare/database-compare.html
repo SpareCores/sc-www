@@ -249,7 +249,9 @@
                 >
                   <td [attr.colspan]="pinnedRow.contentColSpan">
                     <div class="compare-section-header-row">
-                      <h3 class="text-xl font-semibold m-0 flex items-center">
+                      <h3
+                        class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+                      >
                         <span class="compare-section-header-title">
                           <svg
                             [lucideIcon]="'pgbench' | benchmarkIcon"
@@ -342,7 +344,7 @@
                 id="spec_line_more_details"
               >
                 <td>
-                  <h2 class="text-xl font-semibold">
+                  <h2 class="text-lg sm:text-xl font-semibold">
                     More Details
                     <sc-header-anchor
                       anchorId="spec_line_more_details"
