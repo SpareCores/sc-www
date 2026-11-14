@@ -28,7 +28,7 @@
 
 .promo-banner__lead {
   color: var(--color-gray-900);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.5rem;
   flex: 0 0 auto;
@@ -36,7 +36,7 @@
 
 .promo-banner__copy {
   color: var(--color-white);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   line-height: 1.5rem;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
