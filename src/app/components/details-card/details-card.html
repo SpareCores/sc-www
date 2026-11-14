@@ -26,6 +26,7 @@
       <table
         class="sc-kv-table w-full"
         [class.sc-kv-table--fixed-rows]="fixedRows()"
+        [class.details_card_columns]="!!section.columns"
       >
         @if (section.columns) {
           <thead>
@@ -44,7 +45,10 @@
                   <span>
                     <b>{{ row.name }}</b>
                     @if (row.detail) {
-                      / {{ row.detail }}
+                      <span class="max-md:block"
+                        ><span class="max-md:hidden">&nbsp;/ </span
+                        >{{ row.detail }}</span
+                      >
                     }
                   </span>
                   @for (tooltip of row.tooltips || []; track tooltip.key) {

@@ -24,6 +24,10 @@
   list-style-position: inside;
 }
 
+.property_value ::ng-deep .property_unit {
+  @apply max-md:block;
+}
+
 .property_value ::ng-deep ul li {
   margin-bottom: 0.25rem;
 }
@@ -31,4 +35,17 @@
 .sc-kv-table thead th,
 .sc-kv-table tbody td {
   @apply px-0 md:px-5;
+}
+
+.details_card_columns thead th:not(:first-child),
+.details_card_columns tbody td:not(:first-child) {
+  @apply max-md:pl-2 max-md:text-right;
+}
+
+.sc-kv-table--fixed-rows {
+  @apply max-md:table-auto;
+}
+
+.sc-kv-table tbody td.sc-kv-table__label {
+  @apply max-md:w-px max-md:pr-4 max-md:whitespace-nowrap;
 }
