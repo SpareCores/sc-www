@@ -205,32 +205,38 @@
       aria-labelledby="dropdownDefaultButton"
       (click)="closeMenu()"
     >
-      <li class="px-2 py-2" [class.hidden]="auth.isAuthenticated()">
-        <div class="flex flex-col gap-2">
-          <sc-button
-            label="Log in"
-            size="small"
-            icon="key-square"
-            iconPosition="start"
-            variant="outline"
-            color="brand"
-            class="w-full"
-            buttonClass="min-h-11"
-            (buttonClick)="signIn()"
-          ></sc-button>
-          <sc-button
-            label="Register"
-            size="small"
-            icon="user-plus"
-            iconPosition="start"
-            class="w-full"
-            buttonClass="min-h-11"
-            (buttonClick)="signUp()"
-          ></sc-button>
-        </div>
+      <li
+        class="mobile_menu_panel__auth"
+        [class.hidden]="auth.isAuthenticated()"
+      >
+        <sc-button
+          label="Log in"
+          size="small"
+          icon="key-square"
+          iconPosition="start"
+          variant="outline"
+          color="brand"
+          class="w-full"
+          buttonClass="h-9.5"
+          (buttonClick)="signIn()"
+        ></sc-button>
       </li>
       <li
-        class="mx-3 my-1 border-b border-emerald-400/30"
+        class="mobile_menu_panel__auth"
+        [class.hidden]="auth.isAuthenticated()"
+      >
+        <sc-button
+          label="Register"
+          size="small"
+          icon="user-plus"
+          iconPosition="start"
+          class="w-full"
+          buttonClass="h-9.5"
+          (buttonClick)="signUp()"
+        ></sc-button>
+      </li>
+      <li
+        class="mx-3 my-4 border-b border-emerald-400/30"
         [class.hidden]="auth.isAuthenticated()"
       ></li>
       @if (auth.isAuthenticated()) {

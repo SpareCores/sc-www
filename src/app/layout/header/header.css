@@ -58,7 +58,7 @@ li {
 }
 
 .mobile_menu_panel {
-  width: min(12rem, calc(100vw - 2rem));
+  width: max-content;
   max-width: calc(100vw - 2rem);
 }
 
@@ -66,13 +66,16 @@ li {
   @apply py-0;
 }
 
-.mobile_menu_panel a.navbar_link,
-.mobile_menu_panel button.navbar_link {
-  @apply min-h-11;
+.mobile_menu_panel li.mobile_menu_panel__auth {
+  @apply pt-4;
 }
 
-.mobile_menu_panel span.navbar_link {
-  @apply min-h-9;
+.mobile_menu_panel li.mobile_menu_panel__auth:first-child {
+  @apply pt-2;
+}
+
+.mobile_menu_panel .navbar_link {
+  @apply h-9.5;
 }
 
 .compare_dropdown_panel {
@@ -131,8 +134,10 @@ li {
 }
 
 .mobile_menu_panel__list {
-  max-height: calc(100vh - 6rem);
-  max-height: calc(100dvh - 6rem);
+  @apply grid gap-x-2;
+  max-height: calc(100vh - 5.125rem);
+  max-height: calc(100dvh - 5.125rem);
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
