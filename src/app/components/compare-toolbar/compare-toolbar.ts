@@ -8,7 +8,9 @@ import { CompareToolbarItem } from "./compare-toolbar.types";
   selector: "sc-compare-toolbar",
   imports: [Button, Dropdown],
   templateUrl: "./compare-toolbar.html",
-  host: { class: "flex flex-wrap gap-4 items-center justify-end w-full" },
+  host: {
+    class: "flex flex-wrap gap-2 sm:gap-4 items-center justify-end w-full",
+  },
 })
 export class CompareToolbar<T extends CompareToolbarItem> {
   resource = input.required<"server" | "database">();
