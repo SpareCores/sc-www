@@ -3,10 +3,14 @@
   [attr.id]="resource() + '_base_info_box'"
   class="mx-2 xl:mx-0 flex flex-wrap justify-between sc-card gap-8 p-4 md:p-6 mt-8"
 >
-  <div class="flex gap-6 w-full lg:w-auto lg:flex-1 lg:min-w-0">
-    <div class="flex gap-4 flex-col shrink-0">
+  <div
+    class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-start gap-x-0 gap-y-0 w-full sm:flex sm:gap-6 lg:w-auto lg:flex-1 lg:min-w-0"
+  >
+    <div
+      class="col-start-2 row-start-1 mr-2 flex gap-4 flex-col shrink-0 sm:mr-0"
+    >
       <div
-        class="vendor-logo w-28 h-28 min-w-28 xl:w-20 xl:h-20 xl:min-w-20 bg-white rounded-lg"
+        class="vendor-logo size-9.5 min-w-9.5 sm:w-28 sm:h-28 sm:min-w-28 xl:w-20 xl:h-20 xl:min-w-20 bg-white rounded-lg"
       >
         @if (vendorLogo(); as logo) {
           <a [routerLink]="['/vendors', vendorId()]" class="block h-full">
@@ -15,32 +19,45 @@
         }
       </div>
     </div>
-    <div class="flex flex-col gap-3 min-w-0">
-      <h1 class="text-2xl flex items-center gap-x-2 flex-wrap">
-        <sc-bookmark-button
-          [kind]="resource()"
-          size="large"
-          [vendorId]="vendorId()"
-          [entityId]="entityId()"
-          [attr.data-ph-capture-attribute-sc-event]="
-            resource() + ' details favorite'
-          "
-        ></sc-bookmark-button>
-        <span class="text-emerald-400 font-bold">{{ displayName() }}</span>
-        <span class="inline-flex items-center gap-x-2 basis-full xl:basis-auto">
+    <div class="contents sm:flex sm:flex-col sm:gap-3 sm:min-w-0">
+      <h1
+        class="contents text-2xl sm:flex sm:items-center sm:gap-x-2 sm:flex-wrap"
+      >
+        <span
+          class="col-start-1 row-start-1 flex items-center gap-x-2 min-w-0 pr-3 sm:pr-0 sm:contents"
+        >
+          <sc-bookmark-button
+            class="-ml-2 sm:ml-0"
+            [kind]="resource()"
+            size="large"
+            [vendorId]="vendorId()"
+            [entityId]="entityId()"
+            [attr.data-ph-capture-attribute-sc-event]="
+              resource() + ' details favorite'
+            "
+          ></sc-bookmark-button>
+          <span class="self-end text-emerald-400 font-bold">{{
+            displayName()
+          }}</span>
+        </span>
+        <span
+          class="col-span-3 row-start-2 mt-2 mb-8 inline-flex items-center gap-x-2 text-base sm:m-0 sm:col-auto sm:row-auto sm:text-2xl sm:basis-full xl:basis-auto"
+        >
           by
           <a [routerLink]="['/vendors', vendorId()]" class="sc-link">
             {{ vendorName() }}
           </a>
         </span>
       </h1>
-      <div>
+      <div class="col-span-3">
         {{ description()
         }}<span [class]="resource() + '-card-price-to-hide-for-test'">{{
           priceDescription()
         }}</span>
       </div>
-      <div class="flex gap-4 flex-wrap lg:flex-nowrap mt-2">
+      <div
+        class="col-start-3 row-start-1 flex gap-2 sm:col-auto sm:row-auto sm:gap-4 sm:flex-wrap lg:flex-nowrap sm:mt-2"
+      >
         <ng-content select="[detailsActions]"></ng-content>
         <sc-compare-toggle-button
           [resource]="resource()"

@@ -368,7 +368,7 @@
             ></sc-header-anchor>
           </h2>
         </div>
-        <div class="sc-chart-block sc-chart-block--half">
+        <div class="sc-chart-block sc-chart-block--half h-auto">
           <div
             class="flex items-center min-h-[42px] sc-header-anchor-host sc-header-anchor-host--card"
           >
@@ -380,42 +380,47 @@
               ></sc-header-anchor>
             </h3>
           </div>
-          <table class="items_table_similar similar_family_table">
-            <thead>
-              <tr>
-                <th>INSTANCE</th>
-                <th>vCPUs</th>
-                <th>MEMORY</th>
-                <th>Accelerators</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (
-                server of similarByFamily;
-                track server.vendor_id + "_" + server.server_id
-              ) {
+          <div class="overflow-x-auto">
+            <table class="items_table_similar similar_family_table">
+              <thead>
                 <tr>
-                  <td>
-                    <a
-                      class="sc-link"
-                      [routerLink]="[
-                        '/server',
-                        server.vendor_id,
-                        server.api_reference,
-                      ]"
-                    >
-                      {{ server.display_name }}
-                    </a>
-                  </td>
-                  <td>{{ server.vcpus }}</td>
-                  <td>{{ getMemory(server.memory_amount) }}</td>
-                  <td>{{ server.accelerator_count | acceleratorCount }}</td>
+                  <th>INSTANCE</th>
+                  <th>vCPUs</th>
+                  <th>MEMORY</th>
+                  <th>Accelerators</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (
+                  server of similarByFamily;
+                  track server.vendor_id + "_" + server.server_id
+                ) {
+                  <tr>
+                    <td>
+                      <a
+                        class="sc-link"
+                        [routerLink]="[
+                          '/server',
+                          server.vendor_id,
+                          server.api_reference,
+                        ]"
+                      >
+                        {{ server.display_name }}
+                      </a>
+                    </td>
+                    <td>{{ server.vcpus }}</td>
+                    <td>{{ getMemory(server.memory_amount) }}</td>
+                    <td>{{ server.accelerator_count | acceleratorCount }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="sc-chart-block sc-chart-block--half" id="similar_servers">
+        <div
+          class="sc-chart-block sc-chart-block--half h-auto"
+          id="similar_servers"
+        >
           <div class="flex justify-between items-center sc-header-anchor-host">
             <h3 class="text-lg sm:text-2xl">
               Similar Servers
@@ -439,64 +444,68 @@
               ></sc-button>
             </div>
           </div>
-          <table class="items_table_similar" id="similar_table">
-            <thead>
-              <tr>
-                <th>INSTANCE</th>
-                <th>VENDOR</th>
-                <th>vCPUs</th>
-                <th>MEMORY</th>
-                @if (selectedSimilarOption.key === "bySpecs") {
-                  <th>Accelerators</th>
-                }
-                @if (selectedSimilarOption.key === "byScore") {
-                  <th>SCORE</th>
-                }
-                @if (selectedSimilarOption.key === "byPerformancePerPrice") {
-                  <th>$CORE</th>
-                }
-              </tr>
-            </thead>
-            <tbody>
-              @for (
-                server of similarServers;
-                track server.vendor_id + "_" + server.server_id
-              ) {
-                <tr class="similar_line">
-                  <td>
-                    <a
-                      class="sc-link"
-                      [routerLink]="[
-                        '/server',
-                        server.vendor_id,
-                        server.api_reference,
-                      ]"
-                    >
-                      {{ server.display_name }}
-                    </a>
-                  </td>
-                  <td>{{ server.vendor_id }}</td>
-                  <td>{{ server.vcpus }}</td>
-                  <td>{{ getMemory(server.memory_amount) }}</td>
+          <div class="overflow-x-auto">
+            <table class="items_table_similar" id="similar_table">
+              <thead>
+                <tr>
+                  <th>INSTANCE</th>
+                  <th>VENDOR</th>
+                  <th>vCPUs</th>
+                  <th>MEMORY</th>
                   @if (selectedSimilarOption.key === "bySpecs") {
-                    <td>
-                      {{ server.accelerator_count | acceleratorCount }}
-                    </td>
+                    <th>Accelerators</th>
                   }
                   @if (selectedSimilarOption.key === "byScore") {
-                    <td>
-                      {{ formatScore(server.score) }}
-                    </td>
+                    <th>SCORE</th>
                   }
                   @if (selectedSimilarOption.key === "byPerformancePerPrice") {
-                    <td>
-                      {{ formatScore(server.score_per_price) }}
-                    </td>
+                    <th>$CORE</th>
                   }
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (
+                  server of similarServers;
+                  track server.vendor_id + "_" + server.server_id
+                ) {
+                  <tr class="similar_line">
+                    <td>
+                      <a
+                        class="sc-link"
+                        [routerLink]="[
+                          '/server',
+                          server.vendor_id,
+                          server.api_reference,
+                        ]"
+                      >
+                        {{ server.display_name }}
+                      </a>
+                    </td>
+                    <td>{{ server.vendor_id }}</td>
+                    <td>{{ server.vcpus }}</td>
+                    <td>{{ getMemory(server.memory_amount) }}</td>
+                    @if (selectedSimilarOption.key === "bySpecs") {
+                      <td>
+                        {{ server.accelerator_count | acceleratorCount }}
+                      </td>
+                    }
+                    @if (selectedSimilarOption.key === "byScore") {
+                      <td>
+                        {{ formatScore(server.score) }}
+                      </td>
+                    }
+                    @if (
+                      selectedSimilarOption.key === "byPerformancePerPrice"
+                    ) {
+                      <td>
+                        {{ formatScore(server.score_per_price) }}
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     }
