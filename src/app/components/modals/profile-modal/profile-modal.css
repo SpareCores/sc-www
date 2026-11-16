@@ -1,8 +1,8 @@
 @reference "../../../../styles/tailwind.css";
 
 .profile-modal__pane {
-  flex-shrink: 0;
-  min-height: min(38rem, calc(100dvh - 6rem));
+  height: min(38rem, calc(100dvh - 6rem));
+  overflow-y: auto;
 }
 
 .profile-modal__header {
