@@ -56,7 +56,7 @@ keep the CPU busy. Each of these is a "CPU method", selected with the
 `apery`), some do integer or floating point arithmetic on a given data type
 (`int64`, `float32`, `decimal128`), and some run small classic algorithms
 (`hanoi`, `queens`, `sieve`, `matrixprod`). The
-<a href="https://manpages.ubuntu.com/manpages/focal/man1/stress-ng.1.html" target="_blank" rel="noopener">manual page</a>
+<a href="https://manpages.ubuntu.com/manpages/noble/man1/stress-ng.1.html" target="_blank" rel="noopener">manual page</a>
 lists all of them with a short description, and the implementation lives in
 `stress-cpu.c` in the
 <a href="https://github.com/ColinIanKing/stress-ng" target="_blank" rel="noopener">stress-ng GitHub repository</a>.
@@ -97,11 +97,6 @@ for i in $(cat /tmp/tests); do \
 done
 </code></pre>
 
-The metric reported below is the bogo-ops per second based on wall clock time,
-and the "scaling factor" is the multi-worker result divided by the
-single-worker result. In an ideal world, it equals the number of physical
-cores.
-
 We picked six AWS servers to cover the most interesting combinations of CPU
 vendor, architecture, SMT, and core count (see them
 <a href="/servers/compare?instances=W3siZGlzcGxheV9uYW1lIjoiYzZhLmxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZhLmxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJjNmEuMnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4yeGxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJjNmcueGxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZnLnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoibTdhLnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6Im03YS54bGFyZ2UiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6ImM3YS4zMnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3YS4zMnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzZpLm1ldGFsIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZpLm1ldGFsIiwiem9uZXNSZWdpb25zIjpbXX1d" target="_blank" rel="noopener">side by side</a>
@@ -120,23 +115,27 @@ Out of the 84 method names (including `all`), a few did not return any
 results:
 
 - `cdouble`, `cfloat`, `clongdouble`, `fft`, and `zeta` rely on C99 complex
-  number support, which was apparently not compiled into the Docker image we
-  used.
+  number support. The Docker image we used is based on Alpine Linux and
+  its `musl` C library, which does not declare full complex number support,
+  so `stress-ng` leaves these methods out at build time.
 - `float16` is only available on Arm (it uses the `__fp16` type), while
   `float80` is x86-only (it uses the `__float80` type).
-- `float128` showed up twice in the method list. This is not a typo on our
-  end: two different compiler feature checks in `stress-cpu.c` both register
-  the method, and both runs returned the same numbers.
 
 This leaves us with 78 methods per server, including `all`.
+
+The metric reported below is the bogo-ops per second based on wall clock time,
+and the "scaling factor" is the multi-worker result divided by the
+single-worker result. In an ideal world, it equals the number of physical
+cores.
 
 All numbers in this post come from these 2024 experiments, and the full
 results are in the [Appendix](/article/stress-ng-cpu-methods#appendix-raw-data).
 Since then, the
 Spare Cores Navigator has started running a wider range of `stress-ng`
 stressors, and the live results for these six servers are
-embedded below. Select "Scaling (multi/single)" in the dropdown to see how
-each stressor scales with the number of workers. Note that these are whole
+embedded below. Select "Scaling (multi/single)" in the dropdown (you may need
+to scroll the chart to the right to reach it) to see how each stressor scales
+with the number of workers. Note that these are whole
 stressors, not the methods of the `cpu` stressor compared in this post, and
 both our methodology and the `stress-ng` version have changed since 2024, so
 the live numbers are not directly comparable with ours.
@@ -229,16 +228,27 @@ on the `long double` type. On x86, `long double` is an 80-bit extended
 precision float handled by the x87 floating point unit in hardware. On 64-bit
 Arm, `long double` is a 128-bit quad precision float, which has no hardware
 support, so every operation is emulated in software. This also explains why
-`float128` and the `int*longdouble` conversion methods ran at ~13% to 16% of
+the `int*longdouble` conversion methods ran at ~13% to 16% of
 the AMD speed on Graviton2.
 
-Honestly, we don't know why `hanoi` is so slow on Graviton2. It's a plain
-recursive integer function, and other recursion-heavy methods like `ackermann`
-ran at 44% of the AMD speed. If you have an idea, please let us know in the
-comments!
+The `hanoi` slowdown (151x), however, was rather odd:
+it's a plain recursive integer function, and other recursion-heavy
+methods like `ackermann` ran at 44% of the AMD speed.
+But after a closer look, the function's three extra arguments
+are actually never used, so its two recursive calls do exactly
+the same thing, and an optimizing compiler can reuse results
+instead of making ~2 million calls.
+In our quick test with GCC 14 on x86, this made `hanoi` ~300x
+faster than without such cross-function optimizations.
+So the x86 build most likely skipped most of the work,
+and the Arm build did not.
 
-And to make things even more confusing: `factorial`, which also uses
+And to make things even more surprising: `factorial`, which also uses
 `long double` math, was 3.1x *faster* on Graviton2 than on AMD Genoa.
+The reason might be again the `musl` C library mentioned above:
+on 64-bit Arm, it implements `expl`, `powl`, and `lgammal` by simply
+calling their `double` versions. So the Graviton2 core computed
+in double precision, while the x86 cores did the real 80-bit math.
 
 Either way, a CPU score based on any of these methods would tell you more
 about the compiler and the C library than about the CPU, and would heavily
@@ -321,11 +331,12 @@ the experiments in this post:
 - These are historical results from June 2024, collected with `stress-ng`
   0.17.08. The methods, their implementation, and their reference rates change between
   releases, so the exact numbers will differ with a recent version.
-- We used the official Docker image, so the compiler and C library choices of
-  that image (for example, the missing complex number support) affect the
-  results.
-- Six servers are a tiny sample of the server types we track, and we did not
-  test Graviton3 or newer Arm cores, or any Intel CPUs other than Ice Lake.
+- We used the official Alpine-based Docker image with `musl`,
+  so the compiler and C library choices of that image affect the results.
+- The method comparison covered only six servers, without Graviton3 or newer
+  Arm cores, or Intel CPUs other than Ice Lake. Since 2024, Navigator has run
+  `stress-ng` on thousands of server types, but with `div16` and whole
+  stressors rather than every CPU method.
 - The `callfunc` method reports millions of bogo-ops per second, far outside
   the range of the other methods, so its absolute numbers should not be
   compared with the others.
@@ -333,7 +344,7 @@ the experiments in this post:
 ## Summary
 
 The CPU method of `stress-ng` matters a lot: the same server can look like a
-52-core or a 126-core machine, and an Arm core can look 2x or 150x slower
+52-core or a 126-core machine, and an Arm core can look 2x or 69x slower
 than an x86 core, depending on the method. We picked `div16` for the SCore
 because it scales with physical cores across vendors, architectures, and SMT
 settings, and because it measures something simple enough to explain.
