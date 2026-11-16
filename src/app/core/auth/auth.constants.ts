@@ -12,6 +12,13 @@ export const PROFILE_RETURN_PARAM = "profile";
 export const PROFILE_RETURN_VALUE = "connected";
 export const PROFILE_AVATAR_MAX_BYTES = 10 * 1024 * 1024;
 export const PROFILE_DELETE_CONFIRMATION = "Delete account";
+export const API_TOKEN_NAME_MAX_LENGTH = 256;
+export const API_TOKEN_EXPIRATION_OPTIONS = [
+  { label: "Never", seconds: null },
+  { label: "30 days", seconds: 30 * 24 * 60 * 60 },
+  { label: "90 days", seconds: 90 * 24 * 60 * 60 },
+  { label: "1 year", seconds: 365 * 24 * 60 * 60 },
+] as const;
 
 export const AUTH_MESSAGES = {
   signInTitle: "Sign in to Spare Cores",
@@ -125,6 +132,19 @@ export const AUTH_MESSAGES = {
   githubDisconnectWarning:
     "Your GitHub account will be disconnected and can no longer be used to sign in.",
   sessionRevokeWarning: "This device will be signed out of your account.",
+  noOrganizationsHint:
+    "Join an organization to share API tokens with your team.",
+  unableToSwitchOrganization: "Unable to switch the active organization.",
+  organizationSwitched: "Your active organization has been updated.",
+  unableToLoadApiTokens: "Unable to load your API tokens.",
+  organizationTokensUnavailable:
+    "Organization API tokens are not available for your role.",
+  unableToCreateApiToken: "Unable to create the API token.",
+  unableToRevokeApiToken: "Unable to revoke the API token.",
+  apiTokenRevokeWarning:
+    "Applications using this token will no longer be able to access the API.",
+  apiTokenCopyNotice: "Copy this token now. It cannot be shown again.",
+  unableToCopyApiToken: "Unable to copy the token. Copy it manually.",
   unknownBrowser: "Unknown browser",
   mobileDevice: "Mobile",
   desktopDevice: "Desktop",
