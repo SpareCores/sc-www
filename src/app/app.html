@@ -28,4 +28,8 @@
 </div>
 <sc-login-modal></sc-login-modal>
 <sc-register-modal></sc-register-modal>
-<sc-profile-modal></sc-profile-modal>
+@if (auth.isAuthenticated()) {
+  @defer (when auth.profileModalOpen(); prefetch on idle) {
+    <sc-profile-modal></sc-profile-modal>
+  }
+}
