@@ -1098,8 +1098,8 @@
                 <ul class="profile-modal__list">
                   @for (session of sessions(); track session.id) {
                     <li class="profile-modal__item">
-                      <div class="profile-modal__row">
-                        <div class="profile-modal__device">
+                      <div class="profile-modal__device">
+                        <div class="profile-modal__token-header">
                           <div class="profile-modal__identity">
                             @if (session.isMobile) {
                               <svg lucideSmartphone aria-hidden="true"></svg>
@@ -1115,30 +1115,35 @@
                               >
                             }
                           </div>
-                          <span class="profile-modal__meta">
-                            @if (session.location) {
-                              {{ session.location }} ·
-                            }
-                            @if (session.ipAddress) {
-                              {{ session.ipAddress }} ·
-                            }
-                            {{ session.lastActiveAt | date: "medium" }}
-                          </span>
+                          @if (
+                            !session.isCurrent &&
+                            !isConfirming("session", session.id)
+                          ) {
+                            <button
+                              type="button"
+                              class="modal-form__footer-link profile-modal__danger-link"
+                              data-ph-capture-attribute-sc-event="profile session revoke open"
+                              [disabled]="!!busy()"
+                              (click)="askConfirm('session', session.id)"
+                            >
+                              Sign out
+                            </button>
+                          }
                         </div>
-                        @if (
-                          !session.isCurrent &&
-                          !isConfirming("session", session.id)
-                        ) {
-                          <button
-                            type="button"
-                            class="modal-form__footer-link profile-modal__danger-link"
-                            data-ph-capture-attribute-sc-event="profile session revoke open"
-                            [disabled]="!!busy()"
-                            (click)="askConfirm('session', session.id)"
-                          >
-                            Sign out
-                          </button>
+                        @if (session.location) {
+                          <span class="profile-modal__meta">{{
+                            session.location
+                          }}</span>
                         }
+                        @if (session.ipAddress) {
+                          <span class="profile-modal__meta">{{
+                            session.ipAddress
+                          }}</span>
+                        }
+                        <span class="profile-modal__meta">
+                          Last active
+                          {{ session.lastActiveAt | date: "medium" }}
+                        </span>
                       </div>
                       @if (isConfirming("session", session.id)) {
                         <ng-container
