@@ -8,13 +8,15 @@ import { BookmarkButton } from "./bookmark-button";
 
 describe("BookmarkButton", () => {
   let fixture: ComponentFixture<BookmarkButton>;
-  let promptRegisterForFeature: jasmine.Spy;
+  let addFavoriteOrPromptRegister: jasmine.Spy;
   let toggleFavorite: jasmine.Spy;
   let isAuthenticated: ReturnType<typeof signal<boolean>>;
 
   beforeEach(async () => {
     isAuthenticated = signal(false);
-    promptRegisterForFeature = jasmine.createSpy("promptRegisterForFeature");
+    addFavoriteOrPromptRegister = jasmine
+      .createSpy("addFavoriteOrPromptRegister")
+      .and.resolveTo();
     toggleFavorite = jasmine.createSpy("toggleFavorite");
 
     await TestBed.configureTestingModule({
@@ -26,7 +28,7 @@ describe("BookmarkButton", () => {
             isAuthenticated: () => isAuthenticated(),
             isFavorite: () => false,
             isFavoriteLoading: () => false,
-            promptRegisterForFeature,
+            addFavoriteOrPromptRegister,
             toggleFavorite,
           },
         },
@@ -47,7 +49,7 @@ describe("BookmarkButton", () => {
     fixture.detectChanges();
   });
 
-  it("prompts registration with the favorite payload for guests", () => {
+  it("defers guest clicks until auth resolves", () => {
     const button = fixture.debugElement.query(By.css("button"));
     button.triggerEventHandler("click", {
       preventDefault: () => {
@@ -56,12 +58,11 @@ describe("BookmarkButton", () => {
       stopPropagation: () => undefined,
     });
 
-    expect(promptRegisterForFeature).toHaveBeenCalledOnceWith({
-      type: "favorite",
-      kind: "server",
-      vendorId: "aws",
-      entityId: "t3.nano",
-    });
+    expect(addFavoriteOrPromptRegister).toHaveBeenCalledOnceWith(
+      "server",
+      "aws",
+      "t3.nano",
+    );
     expect(toggleFavorite).not.toHaveBeenCalled();
   });
 
@@ -77,7 +78,7 @@ describe("BookmarkButton", () => {
     });
 
     expect(toggleFavorite).toHaveBeenCalledOnceWith("server", "aws", "t3.nano");
-    expect(promptRegisterForFeature).not.toHaveBeenCalled();
+    expect(addFavoriteOrPromptRegister).not.toHaveBeenCalled();
   });
 
   it("uses the guest register hint for tooltip and ARIA", () => {

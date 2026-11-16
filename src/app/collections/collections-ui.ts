@@ -116,6 +116,35 @@ export class CollectionsUi {
     });
   }
 
+  async addFavoriteOrPromptRegister(
+    kind: BookmarkEntityKind,
+    vendorId: string,
+    entityId: string,
+  ): Promise<void> {
+    await this.auth.init().catch(() => undefined);
+
+    const action: PendingFeatureAction = {
+      type: "favorite",
+      kind,
+      vendorId,
+      entityId,
+    };
+
+    if (!this.auth.isAuthenticated()) {
+      this.promptRegisterForFeature(action);
+      return;
+    }
+
+    if (!this.store.isLoaded()) {
+      this.setPendingFeatureAction(action);
+      return;
+    }
+
+    if (!this.isFavorite(kind, vendorId, entityId)) {
+      this.toggleFavorite(kind, vendorId, entityId);
+    }
+  }
+
   takePendingFeatureAction(): PendingFeatureAction | null {
     if (this.pendingConsumed) {
       return null;
