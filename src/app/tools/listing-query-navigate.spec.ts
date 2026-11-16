@@ -60,4 +60,30 @@ describe("navigateListingQuery", () => {
       preserveFragment: true,
     });
   });
+
+  it("passes the scroll behavior when requested", () => {
+    const navigate = jasmine.createSpy("navigate").and.resolveTo(true);
+    const router = { navigate } as unknown as Router;
+    const route = {} as ActivatedRoute;
+
+    navigateListingQuery(
+      router,
+      route,
+      { instances: "abc" },
+      {
+        params: "replace",
+        history: "push",
+        preserveFragment: true,
+        scroll: "manual",
+      },
+    );
+
+    expect(navigate).toHaveBeenCalledOnceWith([], {
+      relativeTo: route,
+      queryParams: { instances: "abc" },
+      replaceUrl: false,
+      preserveFragment: true,
+      scroll: "manual",
+    });
+  });
 });
