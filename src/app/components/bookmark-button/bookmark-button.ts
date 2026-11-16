@@ -86,17 +86,15 @@ export class BookmarkButton {
   });
 
   protected toggle(event: MouseEvent): void {
-    event.preventDefault();
     event.stopPropagation();
 
     if (!this.isAuthenticated()) {
       this.hideTooltip();
-      this.collectionsUi.promptRegisterForFeature({
-        type: "favorite",
-        kind: this.kind(),
-        vendorId: this.vendorId(),
-        entityId: this.entityId(),
-      });
+      void this.collectionsUi.addFavoriteOrPromptRegister(
+        this.kind(),
+        this.vendorId(),
+        this.entityId(),
+      );
       return;
     }
 
