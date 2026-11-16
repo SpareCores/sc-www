@@ -22,7 +22,6 @@ export class PromoBanner {
   readonly dismissed = output<void>();
 
   protected dismiss(event: MouseEvent): void {
-    event.preventDefault();
     event.stopPropagation();
     this.dismissed.emit();
   }

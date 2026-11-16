@@ -1,0 +1,200 @@
+<tbody>
+  @for (section of sections(); track section.name; let sectionIndex = $index) {
+    @if (section.name) {
+      <tr class="section_header">
+        <td>
+          <h2 class="text-xl font-semibold">{{ section.name }}</h2>
+        </td>
+        <td [attr.colspan]="databases().length"></td>
+      </tr>
+      <tr class="compare-instance-section-gap" aria-hidden="true">
+        <td></td>
+        <td [attr.colspan]="databases().length"></td>
+      </tr>
+    } @else {
+      <tr class="compare-instance-section-gap" aria-hidden="true">
+        <td></td>
+        <td [attr.colspan]="databases().length"></td>
+      </tr>
+    }
+    @for (
+      row of section.rows;
+      track row.id;
+      let first = $first;
+      let last = $last
+    ) {
+      <tr
+        [class.compare-instance-section-first-row]="first"
+        [class.compare-instance-section-last-row]="last"
+      >
+        <td class="whitespace-nowrap">
+          <div class="flex gap-2 items-center">
+            {{ row.name }}
+            @if (row.description) {
+              <svg
+                lucideInfo
+                class="h-4 w-4 shrink-0 text-gray-200"
+                (mouseenter)="
+                  descriptionEnter.emit({
+                    event: $event,
+                    content: row.description,
+                  })
+                "
+                (mouseleave)="descriptionLeave.emit()"
+              ></svg>
+            }
+          </div>
+        </td>
+        @for (value of row.values; track $index) {
+          <td>
+            <div class="compare-table-metric-cell">
+              @if (row.id === "vendor" && value.startsWith("logo:")) {
+                <a
+                  class="block w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto"
+                  [target]="linkTarget()"
+                  [routerLink]="['/vendors', databases()[$index].vendor_id]"
+                >
+                  <img
+                    [src]="value.slice(5)"
+                    [alt]="
+                      (databases()[$index].vendor?.name ||
+                        databases()[$index].vendor_id) + ' logo'
+                    "
+                  />
+                </a>
+              } @else if (row.id === "vendor") {
+                <a
+                  class="text-white text-sm ml-auto underline decoration-dotted"
+                  [target]="linkTarget()"
+                  [routerLink]="['/vendors', databases()[$index].vendor_id]"
+                >
+                  {{ value }}
+                </a>
+              } @else if (value === "check" || value === "x") {
+                @if (value === "check") {
+                  <svg
+                    lucideCheck
+                    class="h-4 w-4 shrink-0 text-emerald-400"
+                  ></svg>
+                } @else {
+                  <svg lucideX class="h-4 w-4 shrink-0 text-white"></svg>
+                }
+              } @else {
+                <span [style]="bestCellStyle(row, $index)">{{ value }}</span>
+              }
+              @if (showDelta(row)) {
+                <div class="compare-table-delta-row">
+                  @if (rowDelta(row, $index); as rowDelta) {
+                    <span
+                      class="compare-table-delta"
+                      [class.compare-table-delta--positive]="
+                        rowDelta.tone === 'positive'
+                      "
+                      [class.compare-table-delta--negative]="
+                        rowDelta.tone === 'negative'
+                      "
+                      [class.compare-table-delta--neutral]="
+                        rowDelta.tone === 'neutral'
+                      "
+                    >
+                      {{ rowDelta.label }}
+                    </span>
+                  } @else {
+                    <span
+                      class="compare-table-delta-placeholder"
+                      aria-hidden="true"
+                      >&nbsp;</span
+                    >
+                  }
+                </div>
+              }
+            </div>
+          </td>
+        }
+      </tr>
+    }
+    <tr class="compare-instance-section-gap" aria-hidden="true">
+      <td></td>
+      <td [attr.colspan]="databases().length"></td>
+    </tr>
+    @if (sectionIndex === 0 && priceRows().length) {
+      <tr class="section_header">
+        <td>
+          <h2 class="text-xl font-semibold">Pricing</h2>
+        </td>
+        <td [attr.colspan]="databases().length"></td>
+      </tr>
+      <tr class="compare-instance-section-gap" aria-hidden="true">
+        <td></td>
+        <td [attr.colspan]="databases().length"></td>
+      </tr>
+      @for (
+        row of priceRows();
+        track row.id;
+        let first = $first;
+        let last = $last
+      ) {
+        <tr
+          [class.compare-instance-section-first-row]="first"
+          [class.compare-instance-section-last-row]="last"
+        >
+          <td class="whitespace-nowrap">
+            <div class="flex gap-2 items-center">
+              {{ row.name }}
+              @if (row.description) {
+                <svg
+                  lucideInfo
+                  class="h-4 w-4 shrink-0 text-gray-200"
+                  (mouseenter)="
+                    descriptionEnter.emit({
+                      event: $event,
+                      content: row.description,
+                    })
+                  "
+                  (mouseleave)="descriptionLeave.emit()"
+                ></svg>
+              }
+            </div>
+          </td>
+          @for (value of row.values; track $index) {
+            <td>
+              <div class="compare-table-metric-cell">
+                <span [style]="bestCellStyle(row, $index)">{{ value }}</span>
+                @if (showDelta(row)) {
+                  <div class="compare-table-delta-row">
+                    @if (rowDelta(row, $index); as rowDelta) {
+                      <span
+                        class="compare-table-delta"
+                        [class.compare-table-delta--positive]="
+                          rowDelta.tone === 'positive'
+                        "
+                        [class.compare-table-delta--negative]="
+                          rowDelta.tone === 'negative'
+                        "
+                        [class.compare-table-delta--neutral]="
+                          rowDelta.tone === 'neutral'
+                        "
+                      >
+                        {{ rowDelta.label }}
+                      </span>
+                    } @else {
+                      <span
+                        class="compare-table-delta-placeholder"
+                        aria-hidden="true"
+                        >&nbsp;</span
+                      >
+                    }
+                  </div>
+                }
+              </div>
+            </td>
+          }
+        </tr>
+      }
+      <tr class="compare-instance-section-gap" aria-hidden="true">
+        <td></td>
+        <td [attr.colspan]="databases().length"></td>
+      </tr>
+    }
+  }
+</tbody>

@@ -1,0 +1,154 @@
+<div
+  class="sc-chart-block sc-chart-block--half"
+  [class.sc-chart-block--full-below-wide]="fullWidthBelowWide()"
+  [class.sc-chart-block--open]="isOpen()"
+  [class.sc-chart-block--scrollable]="!expandable()"
+  [attr.id]="cardId()"
+  #cardRoot
+>
+  <h3 class="text-2xl">{{ cardTitle() }}</h3>
+  <div class="card_sections">
+    @for (section of visibleSections(); track section.name; let i = $index) {
+      @if (section.columns && i > 0) {
+        <div class="items_table_spacer_row" aria-hidden="true"></div>
+      }
+      <table
+        class="sc-kv-table w-full"
+        [class.sc-kv-table--fixed-rows]="fixedRows()"
+      >
+        @if (section.columns) {
+          <thead>
+            <tr>
+              @for (column of section.columns; track $index) {
+                <th class="details_card_header">{{ column }}</th>
+              }
+            </tr>
+          </thead>
+        }
+        <tbody>
+          @for (row of section.rows; track row.id) {
+            <tr [class]="rowClass()" [class.opacity-60]="!!row.warning">
+              <td [class.sc-kv-table__label]="fixedRows()">
+                <div class="flex gap-2 items-center">
+                  <span>
+                    <b>{{ row.name }}</b>
+                    @if (row.detail) {
+                      / {{ row.detail }}
+                    }
+                  </span>
+                  @for (tooltip of row.tooltips || []; track tooltip.key) {
+                    <svg
+                      lucideInfo
+                      class="h-4 w-4 text-gray-200 shrink-0"
+                      (mouseenter)="showTooltip($event, tooltip.content)"
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                  @if (row.warning) {
+                    <button
+                      type="button"
+                      class="inline-flex"
+                      [attr.aria-label]="row.warning"
+                      (mouseenter)="showWarningTooltip($event, row.warning)"
+                      (mouseleave)="hideWarningTooltip()"
+                      (focus)="showWarningTooltip($event, row.warning)"
+                      (blur)="hideWarningTooltip()"
+                    >
+                      <svg
+                        lucideTriangleAlert
+                        class="benchmark-note-icon"
+                      ></svg>
+                    </button>
+                  }
+                </div>
+              </td>
+              @for (value of row.values; track $index; let first = $first) {
+                <td>
+                  @if (value === "check" || value === "x") {
+                    <div
+                      class="property_value"
+                      [class.text-emerald-400]="value === 'check'"
+                      [class.text-white]="value === 'x'"
+                    >
+                      <svg [lucideIcon]="value" class="h-4 w-4 shrink-0"></svg>
+                    </div>
+                  } @else if (first && row.routerLink) {
+                    <div class="property_value">
+                      <a
+                        class="sc-link"
+                        [routerLink]="row.routerLink"
+                        [target]="linkTarget()"
+                      >
+                        {{ value }}
+                      </a>
+                    </div>
+                  } @else {
+                    <div class="property_value" [innerHTML]="value"></div>
+                  }
+                </td>
+              }
+            </tr>
+          }
+          @if (!section.rows.length && section.emptyText) {
+            <tr>
+              <td
+                class="text-gray-400"
+                [attr.colspan]="section.columns?.length || 2"
+              >
+                {{ section.emptyText }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+  @if (hasExpandableContent()) {
+    @if (!isOpen()) {
+      <div
+        class="absolute bottom-0 left-0 w-full py-3 flex justify-center bg-linear-to-t from-sky-975 from-[23.44%] to-transparent"
+        [attr.id]="cardId() + '_more'"
+      >
+        <sc-button
+          [label]="moreLabel()"
+          size="small"
+          [attr.id]="cardId() + '_more_button'"
+          [ariaControls]="cardId()"
+          [ariaExpanded]="false"
+          [attr.data-ph-capture-attribute-sc-event]="captureEvent('more')"
+          (click)="requestToggle()"
+        ></sc-button>
+      </div>
+    } @else {
+      <div
+        class="w-full pt-3 flex justify-center"
+        [attr.id]="cardId() + '_less'"
+      >
+        <sc-button
+          [label]="lessLabel()"
+          size="small"
+          [attr.id]="cardId() + '_less_button'"
+          [ariaControls]="cardId()"
+          [ariaExpanded]="true"
+          [attr.data-ph-capture-attribute-sc-event]="captureEvent('less')"
+          (click)="requestToggle()"
+        ></sc-button>
+      </div>
+    }
+  }
+</div>
+
+<div
+  [attr.id]="cardId() + '_tooltip'"
+  #tooltip
+  class="tooltip-panel max-w-[225px] fixed z-100 pointer-events-none opacity-0 hidden"
+>
+  {{ tooltipContent() }}
+</div>
+
+<div
+  #warningTooltip
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+>
+  {{ warningTooltipContent() }}
+</div>

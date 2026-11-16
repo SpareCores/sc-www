@@ -106,23 +106,21 @@
           <h2 class="text-3xl font-bold">Details</h2>
         </div>
 
-        <sc-server-property-card
+        <sc-details-card
           cardTitle="Vendor Metadata"
           cardId="details"
           [sections]="metadataSections"
-          [showSectionHeaders]="false"
           [isOpen]="expandedCards.details"
           (toggleRequested)="toggleCard('details')"
-        ></sc-server-property-card>
+        ></sc-details-card>
 
-        <sc-server-property-card
+        <sc-details-card
           cardTitle="Billing"
           cardId="billing"
           [sections]="billingSections"
-          [showSectionHeaders]="false"
           [isOpen]="expandedCards.billing"
           (toggleRequested)="toggleCard('billing')"
-        ></sc-server-property-card>
+        ></sc-details-card>
 
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Regions</h2>

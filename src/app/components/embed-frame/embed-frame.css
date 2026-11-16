@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.content_embed {
+  color: var(--color-white);
+  background: transparent;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

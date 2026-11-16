@@ -19,50 +19,6 @@
   background-color: var(--color-emerald-400);
 }
 
-.compare-table-metric-cell {
-  @apply ml-auto flex flex-col items-end gap-1;
-
-  width: fit-content;
-}
-
-.compare-table-delta-row {
-  @apply text-xs leading-none;
-}
-
-.compare-table-delta {
-  @apply whitespace-nowrap font-medium;
-}
-
-.compare-table-delta-placeholder {
-  @apply inline-block whitespace-nowrap;
-}
-
-.compare-table-delta--positive {
-  color: var(--color-emerald-400);
-}
-
-.compare-table-delta--negative {
-  color: var(--color-red-500);
-}
-
-.compare-table-delta--neutral {
-  @apply text-slate-300;
-}
-
-.section_heading {
-  scroll-margin-top: 10rem;
-}
-
-.section-anchor-target {
-  position: relative;
-  top: -80px;
-  visibility: hidden;
-}
-
-.section_heading:hover .sc-header-anchor {
-  opacity: 1;
-}
-
 .compare-section-header-title {
   @apply inline-flex max-w-none flex-nowrap items-center gap-2 whitespace-nowrap;
 }
@@ -93,15 +49,4 @@
   position: fixed;
   top: 68px;
   z-index: 40;
-}
-
-.scrollbar_mirror_outer {
-  background: var(--color-gray-700);
-  overflow-y: hidden;
-}
-
-.scrollbar_mirror_inner {
-  height: 1px;
-  margin: 0;
-  padding: 0;
 }

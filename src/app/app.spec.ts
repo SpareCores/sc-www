@@ -160,6 +160,11 @@ describe("App", () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
+    expect(
+      window.sessionStorage.getItem(
+        `sc-promo-banner-dismissed-v1:${SITE_PROMO_BANNER.dismissalGroup}`,
+      ),
+    ).toBe("true");
 
     await router.navigateByUrl("/storages");
     fixture.detectChanges();
@@ -193,6 +198,20 @@ describe("App", () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
+
+    await router.navigateByUrl("/");
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("sc-promo-banner")).toBeNull();
+  });
+
+  it("should hide promo banners dismissed earlier in the session", async () => {
+    window.sessionStorage.setItem(
+      `sc-promo-banner-dismissed-v1:${SITE_PROMO_BANNER.dismissalGroup}`,
+      "true",
+    );
+    const router = TestBed.inject(Router);
+    const fixture = TestBed.createComponent(App);
 
     await router.navigateByUrl("/");
     fixture.detectChanges();

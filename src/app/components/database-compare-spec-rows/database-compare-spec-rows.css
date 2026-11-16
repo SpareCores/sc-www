@@ -1,0 +1,35 @@
+@reference "../../../styles/tailwind.css";
+
+:host {
+  display: contents;
+}
+
+.compare-table-metric-cell {
+  @apply ml-auto flex flex-col items-end gap-1;
+
+  width: fit-content;
+}
+
+.compare-table-delta-row {
+  @apply text-xs leading-none;
+}
+
+.compare-table-delta {
+  @apply whitespace-nowrap font-medium;
+}
+
+.compare-table-delta-placeholder {
+  @apply inline-block whitespace-nowrap;
+}
+
+.compare-table-delta--positive {
+  color: var(--color-emerald-400);
+}
+
+.compare-table-delta--negative {
+  color: var(--color-red-500);
+}
+
+.compare-table-delta--neutral {
+  @apply text-slate-300;
+}

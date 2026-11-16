@@ -426,6 +426,43 @@ export class CompareSelection implements OnDestroy {
     );
   }
 
+  isResourceSelected(
+    resource: "server" | "database",
+    vendor: string,
+    id: string,
+  ): boolean {
+    return resource === "database"
+      ? this.selectedDatabases.some(
+          (item) => item.vendor === vendor && item.database === id,
+        )
+      : this.selectedForCompare.some(
+          (item) => item.vendor === vendor && item.server === id,
+        );
+  }
+
+  toggleResourceCompare(
+    resource: "server" | "database",
+    vendor: string,
+    id: string,
+    displayName: string,
+  ): void {
+    const selected = !this.isResourceSelected(resource, vendor, id);
+    if (resource === "database") {
+      this.toggleDatabaseCompare(selected, {
+        vendor,
+        database: id,
+        display_name: displayName,
+      });
+      return;
+    }
+
+    this.toggleCompare(selected, {
+      vendor,
+      server: id,
+      display_name: displayName,
+    });
+  }
+
   openCompare() {
     if (this.selectedForCompare.length < 2) {
       alert("Please select at least two servers to compare");

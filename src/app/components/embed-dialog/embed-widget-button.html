@@ -1,0 +1,31 @@
+<sc-button
+  label="Embed Widget"
+  icon="copy"
+  iconPosition="end"
+  variant="outline"
+  [attr.data-ph-capture-attribute-sc-event]="captureEvent()"
+  (buttonClick)="open()"
+></sc-button>
+
+<ng-template #modalTemplate>
+  @let embed = preset();
+  <sc-modal
+    [id]="embed.modalId"
+    title="Embed Widget"
+    size="wide"
+    closeCaptureEvent="embed widget modal close"
+    closeCaptureAction="close"
+  >
+    <div class="space-y-4 flex flex-col">
+      <sc-embed-dialog
+        [idPrefix]="embed.idPrefix"
+        [captureEventPrefix]="embed.captureEventPrefix"
+        [widgets]="widgets()"
+        [srcFor]="embed.srcFor"
+        [minHeight]="embed.minHeight"
+        [defaultHeight]="embed.defaultHeight"
+        [aspectRatio]="embed.aspectRatio"
+      ></sc-embed-dialog>
+    </div>
+  </sc-modal>
+</ng-template>

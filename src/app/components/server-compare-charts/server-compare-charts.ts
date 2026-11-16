@@ -32,7 +32,7 @@ import {
   redisChartTemplate,
   staticWebChartCompareTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
-import { ExtendedServerDetails } from "../../pages/server-details/server-details";
+import { ExtendedServerDetails } from "../../pages/server-details/server-details.types";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { CompactNumberPipe } from "../../pipes/compact-number-pipe";
 import { Toast } from "../../services/toast";

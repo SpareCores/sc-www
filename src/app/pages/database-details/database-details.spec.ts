@@ -109,14 +109,14 @@ describe("DatabaseDetails", () => {
 
     expect(keeperAPI.getDatabase).toHaveBeenCalledWith("aws", "db.m1.large");
     expect(component.databaseDetails?.display_name).toBe("db.m1.large");
-    expect(component.availabilityRows.length).toBe(1);
-    expect(component.availabilityRows[0].display_name).toBe("US East");
-    expect(component.engineSections[0].properties.length).toBeGreaterThan(0);
+    expect(component.availabilitySections[0].rows.length).toBe(1);
+    expect(component.availabilitySections[0].rows[0].name).toBe("US East");
+    expect(component.engineSections[0].rows.length).toBeGreaterThan(0);
     expect(component.pgbenchChart).toBeUndefined();
     expect(component.hasPgbenchHeaderScores).toBeFalse();
     expect(
-      component.metadataSections[0].properties
-        .find((property) => property.id === "name")
+      component.metadataSections[0].rows
+        .find((row) => row.id === "name")
         ?.tooltips?.map((tooltip) => tooltip.content),
     ).toEqual([
       "Human-friendly name.",
@@ -188,10 +188,21 @@ describe("DatabaseDetails", () => {
     fixture.detectChanges();
 
     expect(component.pgbenchChart).toBeTruthy();
-    expect(component.pgbenchTitle).toBe("pgbench Heavy Read-Only");
+    expect(component.pgbenchMeta.title).toBe("pgbench Heavy Read-Only");
     expect(component.pgbenchChart?.data.datasets[0].yAxisID).toBe("y");
     expect(component.pgbenchChart?.data.datasets[1].yAxisID).toBe("y1");
     expect(component.hasPgbenchHeaderScores).toBeFalse();
+    component.updateEmbeddableWidgets();
+
+    expect(component.embeddableWidgets.map((widget) => widget.id)).toEqual([
+      "metadata",
+      "availability",
+      "engine",
+      "capacity",
+      "features",
+      "security",
+      "pgbench",
+    ]);
   });
 
   it("fills the header SCore when peak and single pgbench scores exist", async () => {

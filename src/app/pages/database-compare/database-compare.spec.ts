@@ -195,6 +195,14 @@ describe("DatabaseCompare", () => {
     expect(component.databases.length).toBe(2);
     expect(component.propertySections.length).toBeGreaterThan(0);
     expect(component.priceRows.length).toBeGreaterThan(0);
+    expect(component.hasPgbenchCompareChart()).toBeTrue();
+
+    component.updateEmbeddableWidgets();
+
+    expect(component.embeddableWidgets.map((widget) => widget.id)).toEqual([
+      "generic",
+      "pgbench",
+    ]);
   });
 
   it("omits the chart servers when there are no pgbench scores", async () => {
@@ -237,5 +245,13 @@ describe("DatabaseCompare", () => {
         (server) => !server.benchmark_scores.length,
       ),
     ).toBeTrue();
+
+    fixture.detectChanges();
+    const headerButtons: string[] = Array.from(
+      fixture.nativeElement.querySelectorAll("sc-page-header sc-button"),
+      (button: Element) => button.textContent?.trim() ?? "",
+    );
+
+    expect(headerButtons).toContain("Embed Widget");
   });
 });
