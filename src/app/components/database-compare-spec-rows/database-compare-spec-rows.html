@@ -2,9 +2,9 @@
   @for (section of sections(); track section.name; let sectionIndex = $index) {
     @if (section.name) {
       @let sectionId = sectionAnchorId(section);
-      <tr class="section_header" [id]="sectionId">
+      <tr class="section_header sc-header-anchor-host" [id]="sectionId">
         <td>
-          <h2 class="text-xl font-semibold sc-header-anchor-host">
+          <h2 class="text-xl font-semibold">
             {{ section.name }}
             @if (showAnchors()) {
               <sc-header-anchor
@@ -128,9 +128,9 @@
       <td [attr.colspan]="databases().length"></td>
     </tr>
     @if (sectionIndex === 0 && priceRows().length) {
-      <tr class="section_header" id="spec_line_pricing">
+      <tr class="section_header sc-header-anchor-host" id="spec_line_pricing">
         <td>
-          <h2 class="text-xl font-semibold sc-header-anchor-host">
+          <h2 class="text-xl font-semibold">
             Pricing
             @if (showAnchors()) {
               <sc-header-anchor

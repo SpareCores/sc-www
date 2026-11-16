@@ -1,9 +1,9 @@
 @if (layout() === "details") {
   <div [class]="blockClass()" [id]="elementId()">
-    <div class="flex justify-between items-center">
-      <h3
-        class="text-2xl flex items-center gap-2 sc-header-anchor-host sc-header-anchor-host--card"
-      >
+    <div
+      class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
+    >
+      <h3 class="text-2xl flex items-center gap-2">
         @if (benchmarkKey()) {
           <svg
             [lucideIcon]="benchmarkKey() | benchmarkIcon"

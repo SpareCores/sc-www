@@ -366,11 +366,11 @@
             getVisibleInstanceProperties(propertyCategory);
           @if (visibleProperties.length) {
             <tr
-              class="section_header"
+              class="section_header sc-header-anchor-host"
               [id]="'spec_line_' + propertyCategory.category"
             >
               <td>
-                <h2 class="text-xl font-semibold sc-header-anchor-host">
+                <h2 class="text-xl font-semibold">
                   {{ propertyCategory.name }}
                   @if (!isEmbedded) {
                     <sc-header-anchor
@@ -487,12 +487,13 @@
       @if (
         hasVisibleWorkloadProfileChart() && isChartShown("workload_profile")
       ) {
-        <tr class="section_header" id="benchmark_line_workload_profile">
+        <tr
+          class="section_header sc-header-anchor-host"
+          id="benchmark_line_workload_profile"
+        >
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3
-                class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
-              >
+              <h3 class="text-xl font-semibold m-0 flex items-center">
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'workload_profile' | benchmarkIcon"
@@ -705,12 +706,13 @@
         }
       }
       @if (nvbandwidthSections.length && isChartShown("nvbandwidth")) {
-        <tr class="section_header" id="benchmark_line_nvbandwidth">
+        <tr
+          class="section_header sc-header-anchor-host"
+          id="benchmark_line_nvbandwidth"
+        >
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3
-                class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
-              >
+              <h3 class="text-xl font-semibold m-0 flex items-center">
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'nvbandwidth' | benchmarkIcon"
@@ -905,14 +907,12 @@
         ) {
           @let stressNgActiveSection = stressNgSection()!;
           <tr
-            class="section_header compare-dropdown-header-row"
+            class="section_header compare-dropdown-header-row sc-header-anchor-host"
             id="benchmark_line_stress_ng_full"
           >
             <td [colSpan]="pinnedRow.contentColSpan">
               <div class="compare-section-header-row">
-                <h3
-                  class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
-                >
+                <h3 class="text-xl font-semibold m-0 flex items-center">
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="'stress_ng' | benchmarkIcon"
@@ -1134,7 +1134,7 @@
           @let showCompareChart = hasCompareChart(benchmarkCategory.id);
           @if (isPassmark || showCompareChart) {
             <tr
-              class="section_header"
+              class="section_header sc-header-anchor-host"
               id="benchmark_line_{{ benchmarkCategory.id }}"
               [class.compare-section-header]="
                 benchmarkCategory.id === 'openssl'
@@ -1142,9 +1142,7 @@
             >
               <td [colSpan]="pinnedRow.contentColSpan">
                 <div class="compare-section-header-row">
-                  <h3
-                    class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
-                  >
+                  <h3 class="text-xl font-semibold m-0 flex items-center">
                     <span class="compare-section-header-title">
                       <svg
                         [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
@@ -1721,14 +1719,12 @@
       @for (chartItem of multiBarCharts; track chartItem) {
         @if (!chartItem.hidden && hasMultiBarCompareChart(chartItem)) {
           <tr
-            class="section_header"
+            class="section_header sc-header-anchor-host"
             [id]="'benchmark_line_' + chartItem.chart.id"
           >
             <td [colSpan]="pinnedRow.contentColSpan">
               <div class="compare-section-header-row">
-                <h3
-                  class="text-xl font-semibold m-0 flex items-center min-w-0 sc-header-anchor-host"
-                >
+                <h3 class="text-xl font-semibold m-0 flex items-center min-w-0">
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="chartItem.chart.name | benchmarkIcon"
@@ -1999,12 +1995,13 @@
       }
 
       @if (hasPgbenchCompareChart()) {
-        <tr class="section_header" id="benchmark_line_pgbench">
+        <tr
+          class="section_header sc-header-anchor-host"
+          id="benchmark_line_pgbench"
+        >
           <td [colSpan]="pinnedRow.contentColSpan">
             <div class="compare-section-header-row">
-              <h3
-                class="text-xl font-semibold m-0 flex items-center sc-header-anchor-host"
-              >
+              <h3 class="text-xl font-semibold m-0 flex items-center">
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'pgbench' | benchmarkIcon"
@@ -2086,9 +2083,12 @@
       }
 
       @if (getUncategorizedBenchmarksCategories()?.length && !isEmbedded) {
-        <tr class="section_header" id="benchmark_line_further_benchmarks">
+        <tr
+          class="section_header sc-header-anchor-host"
+          id="benchmark_line_further_benchmarks"
+        >
           <td [colSpan]="2">
-            <h3 class="pl-3 text-xl font-semibold sc-header-anchor-host">
+            <h3 class="pl-3 text-xl font-semibold">
               Further Benchmarks
               <sc-header-anchor
                 anchorId="benchmark_line_further_benchmarks"

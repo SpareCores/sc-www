@@ -3,10 +3,10 @@
     <div class="contents">
       @if (showPrompt() && detailsPromptData()) {
         <div class="sc-chart-block sc-chart-block--half" id="llm_prompt_chart">
-          <div class="flex justify-between items-center">
-            <h3
-              class="text-2xl flex items-center gap-2 sc-header-anchor-host sc-header-anchor-host--card"
-            >
+          <div
+            class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
+          >
+            <h3 class="text-2xl flex items-center gap-2">
               <svg
                 [lucideIcon]="'llm_speed' | benchmarkIcon"
                 class="h-6 w-6"
@@ -62,10 +62,10 @@
           class="sc-chart-block sc-chart-block--half"
           id="llm_generation_chart"
         >
-          <div class="flex justify-between items-center">
-            <h3
-              class="text-2xl flex items-center gap-2 sc-header-anchor-host sc-header-anchor-host--card"
-            >
+          <div
+            class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
+          >
+            <h3 class="text-2xl flex items-center gap-2">
               <svg
                 [lucideIcon]="'llm_speed' | benchmarkIcon"
                 class="h-6 w-6"
