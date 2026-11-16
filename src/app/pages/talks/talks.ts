@@ -7,6 +7,8 @@ import {
 import { ArticlesApi, SlidesMeta } from "../../services/articles-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
+import { AuthorAvatars } from "../../components/author-avatars/author-avatars";
+import { authorNames } from "../../services/team-members";
 import {
   LucideDynamicIcon,
   LucideHourglass,
@@ -19,6 +21,7 @@ import {
     Breadcrumbs,
     RouterModule,
     TimeToShortDatePipe,
+    AuthorAvatars,
     LucideDynamicIcon,
     LucideHourglass,
     LucideScrollText,
@@ -39,11 +42,7 @@ export class Talks implements OnInit {
   talks: SlidesMeta[] = [];
 
   authorsOf(talk: SlidesMeta): string[] {
-    const author = talk.author;
-    if (Array.isArray(author)) {
-      return author.filter((name) => !!name);
-    }
-    return author ? [author] : [];
+    return authorNames(talk.author);
   }
 
   ngOnInit() {

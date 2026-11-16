@@ -45,16 +45,10 @@
                   <td class="hidden lg:table-cell">
                     @let authors = authorsOf(talk);
                     <div class="flex gap-2 items-center">
-                      <div class="speaker-avatars">
-                        @for (author of authors; track author; let i = $index) {
-                          <span class="speaker-avatar" [style.z-index]="i + 1">
-                            <img
-                              src="assets/images/team/{{ author }}.webp"
-                              alt="{{ author }} profile picture"
-                            />
-                          </span>
-                        }
-                      </div>
+                      <sc-author-avatars
+                        [authors]="authors"
+                        direction="vertical"
+                      ></sc-author-avatars>
                       <div class="flex flex-col">
                         @for (author of authors; track author) {
                           <span>{{ author }}</span>

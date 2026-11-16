@@ -7,7 +7,7 @@ teaser: "Learn how ~80 stress-ng CPU methods scale based on physical core count,
 # 320x220
 image: /assets/images/blog/thumbnails/stress-ng-cpu-methods.webp
 image_alt: Spare Cores benchmark page of the stress-ng div16 multi-core workload, with the score distribution across 3,625 server types.
-author: Adam Toth
+author: [Adam Toth, Gergely Daroczi]
 tags: [benchmark, performance, score, compute power, scalability, vcpu]
 ---
 
