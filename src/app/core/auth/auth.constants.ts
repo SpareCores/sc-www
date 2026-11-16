@@ -136,6 +136,9 @@ export const AUTH_MESSAGES = {
     "Join an organization to share API tokens with your team.",
   unableToSwitchOrganization: "Unable to switch the active organization.",
   organizationSwitched: "Your active organization has been updated.",
+  personalTokensTitle: "Personal tokens",
+  organizationTokensTitle: (organization: string) => `${organization} tokens`,
+  noApiTokens: "No API tokens yet.",
   unableToLoadApiTokens: "Unable to load your API tokens.",
   organizationTokensUnavailable:
     "Organization API tokens are not available for your role.",

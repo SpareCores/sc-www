@@ -15,6 +15,7 @@ import type {
 import { authErrorMessage } from "../auth.utils";
 import { AuthState } from "./auth-state";
 import { ClerkClient } from "./clerk-client";
+import { Organizations } from "./organizations";
 
 const API_TOKENS_PAGE_SIZE = 100;
 
@@ -32,6 +33,11 @@ export class ApiTokens {
   private readonly http = inject(HttpClient);
   private readonly clerk = inject(ClerkClient);
   private readonly auth = inject(AuthState);
+  private readonly organizations = inject(Organizations);
+
+  canManage(owner: ApiTokenOwner): boolean {
+    return owner === "user" || this.organizations.isActiveAdmin();
+  }
 
   async list(organizationId: string | null): Promise<ApiTokensListResult> {
     const apiKeys = this.clerk.apiKeys;
@@ -81,7 +87,7 @@ export class ApiTokens {
       const response = await firstValueFrom(
         this.http.post<TokenCreateResponse>(`${WWW_API_BASE_URI}/tokens`, {
           name: payload.name.trim(),
-          owner: payload.owner,
+          owner: this.canManage(payload.owner) ? payload.owner : "user",
           ...(payload.secondsUntilExpiration
             ? { seconds_until_expiration: payload.secondsUntilExpiration }
             : {}),

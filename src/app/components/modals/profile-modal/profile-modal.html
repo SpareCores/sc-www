@@ -493,7 +493,7 @@
                 } @else if (group.notice) {
                   <p class="profile-modal__meta">{{ group.notice }}</p>
                 } @else if (group.tokens.length === 0) {
-                  <p class="profile-modal__meta">No API tokens yet.</p>
+                  <p class="profile-modal__meta">{{ messages.noApiTokens }}</p>
                 } @else {
                   <ul class="profile-modal__list">
                     @for (item of group.tokens; track item.id) {

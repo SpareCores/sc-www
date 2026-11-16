@@ -191,22 +191,22 @@ export class ProfileModal {
     const groups: TokenGroup[] = [
       {
         owner: "user",
-        title: "Personal tokens",
+        title: AUTH_MESSAGES.personalTokensTitle,
         tokens: this.userTokens(),
         notice: error,
         pending: false,
-        canRevoke: true,
+        canRevoke: this.apiTokens.canManage("user"),
       },
     ];
     if (organization) {
       const loaded = this.tokensOrganizationId() === organization.id;
       groups.push({
         owner: "organization",
-        title: `${organization.name} tokens`,
+        title: AUTH_MESSAGES.organizationTokensTitle(organization.name),
         tokens: loaded ? (this.organizationTokens() ?? []) : [],
         notice: error || (loaded ? this.organizationTokensError() : ""),
         pending: !loaded && !error,
-        canRevoke: loaded && organization.isAdmin,
+        canRevoke: loaded && this.apiTokens.canManage("organization"),
       });
     }
     return groups;
@@ -507,7 +507,7 @@ export class ProfileModal {
         name,
         secondsUntilExpiration:
           this.expirationOptions[this.tokenExpirationIndex()]?.seconds ?? null,
-        owner: this.isActiveAdmin() ? this.tokenOwner() : "user",
+        owner: this.tokenOwner(),
       }),
     );
     if (result?.status !== "complete") {

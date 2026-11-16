@@ -69,7 +69,11 @@ describe("ProfileModal", () => {
       "list",
       "create",
       "revoke",
+      "canManage",
     ]);
+    apiTokens.canManage.and.callFake(
+      (owner) => owner === "user" || isActiveAdmin(),
+    );
     apiTokens.list.and.resolveTo({
       status: "complete",
       user: [
@@ -367,6 +371,34 @@ describe("ProfileModal", () => {
 
     expect(query("profile-api-token-owner")?.textContent).toContain("Acme");
     expect(query("profile-api-tokens-organization")).not.toBeNull();
+  });
+
+  it("hides revoke on organization tokens for non-admins", async () => {
+    apiTokens.list.and.resolveTo({
+      status: "complete",
+      user: [],
+      organizationId: "org_1",
+      organization: [
+        {
+          id: "ak_org",
+          name: "shared",
+          owner: "organization",
+          createdAt: new Date("2026-11-01T00:00:00Z"),
+          lastUsedAt: null,
+          expiration: null,
+          expired: false,
+        },
+      ],
+      organizationError: "",
+    });
+    activeOrganization.set({ ...acme, isAdmin: false });
+    await openTab("profile-tab-tokens");
+
+    const organization = query("profile-api-tokens-organization");
+    expect(organization?.textContent).toContain("shared");
+    expect(
+      organization?.querySelector('[data-testid="profile-api-token-revoke"]'),
+    ).toBeNull();
   });
 
   it("saves the updated name", async () => {

@@ -138,8 +138,51 @@ describe("ApiTokens", () => {
     expect(result.status === "complete" && result.user.length).toBe(101);
   });
 
+  function member(role: string) {
+    return {
+      role,
+      roleName: role,
+      organization: { id: "org_1", name: "Acme", imageUrl: "" },
+    };
+  }
+
+  it("allows organization tokens only for admins of the active organization", () => {
+    const admin = createService({
+      user: { id: "user_1", organizationMemberships: [member("org:admin")] },
+      organization: { id: "org_1" },
+    });
+
+    expect(admin.canManage("user")).toBeTrue();
+    expect(admin.canManage("organization")).toBeTrue();
+  });
+
+  it("creates a user token when a non-admin asks for an organization token", async () => {
+    const service = createService({
+      user: { id: "user_1", organizationMemberships: [member("org:member")] },
+      organization: { id: "org_1" },
+    });
+    const http = TestBed.inject(HttpTestingController);
+
+    expect(service.canManage("organization")).toBeFalse();
+    const pending = service.create({
+      name: "ci",
+      secondsUntilExpiration: null,
+      owner: "organization",
+    });
+    const request = http.expectOne(`${WWW_API_BASE_URI}/tokens`);
+    expect(request.request.body).toEqual({ name: "ci", owner: "user" });
+    request.flush({ name: "ci", secret: "ak_secret", owner: "user" });
+
+    expect(await pending).toEqual(
+      jasmine.objectContaining({ status: "complete" }),
+    );
+  });
+
   it("creates an organization token through the www API", async () => {
-    const service = createService({ user: { id: "user_1" } });
+    const service = createService({
+      user: { id: "user_1", organizationMemberships: [member("org:admin")] },
+      organization: { id: "org_1" },
+    });
     const http = TestBed.inject(HttpTestingController);
 
     const pending = service.create({
