@@ -7,6 +7,13 @@ import {
   createClerkTestUser,
   deleteClerkUserByEmail,
 } from "./cypress/support/clerk-users";
+import {
+  ClerkTestApiKeyRequest,
+  ClerkTestOrganizationRequest,
+  createClerkTestApiKey,
+  createClerkTestOrganization,
+  deleteClerkTestOrganization,
+} from "./cypress/support/clerk-organizations";
 
 const customizeChromeHeadless = (
   browser: Cypress.Browser,
@@ -44,6 +51,15 @@ export default defineConfig({
         },
         deleteClerkUserByEmail(email: string) {
           return deleteClerkUserByEmail(email);
+        },
+        createClerkTestOrganization(request: ClerkTestOrganizationRequest) {
+          return createClerkTestOrganization(request);
+        },
+        deleteClerkTestOrganization(organizationId: string) {
+          return deleteClerkTestOrganization(organizationId);
+        },
+        createClerkTestApiKey(request: ClerkTestApiKeyRequest) {
+          return createClerkTestApiKey(request);
         },
       });
       getCompareSnapshotPlugin(on, config);
