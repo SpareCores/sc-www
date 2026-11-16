@@ -102,6 +102,10 @@ export class ServerLstopo implements OnChanges {
     this.lstopoUrl = url;
 
     this.svgSub?.unsubscribe();
+    this.svgSub = undefined;
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     this.svgSub = this.svgService
       .getSvg(url)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -114,30 +118,26 @@ export class ServerLstopo implements OnChanges {
               this.svgWidth.emit(0);
               return;
             }
-            if (isPlatformBrowser(this.platformId)) {
-              try {
-                const { w, normalizedSvg } = this.svgService.processSvg(svg);
-                if (w) setTimeout(() => this.svgWidth.emit(w), 0);
-                const trustedSvg =
-                  this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
-                this.inlineSvg = trustedSvg;
-                this.modalSvg = trustedSvg;
-                this.svgExists.emit(true);
-                this.cdr.markForCheck();
-                this.renderTimeout = setTimeout(() => {
-                  this.renderTimeout = undefined;
-                  if (!this.inlineSvg) return;
-                  this.addSvgTooltips();
-                  this.setupFullscreenCheck();
-                }, 0);
-              } catch (e) {
-                console.warn("[lstopo] SVG processing failed", e);
-                this.resetRenderedSvg();
-                this.svgExists.emit(false);
-                this.cdr.markForCheck();
-              }
-            } else {
-              // Skip inline SVG on server to avoid bloating SSR response
+            try {
+              const { w, normalizedSvg } = this.svgService.processSvg(svg);
+              if (w) setTimeout(() => this.svgWidth.emit(w), 0);
+              const trustedSvg =
+                this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
+              this.inlineSvg = trustedSvg;
+              this.modalSvg = trustedSvg;
+              this.svgExists.emit(true);
+              this.cdr.markForCheck();
+              this.renderTimeout = setTimeout(() => {
+                this.renderTimeout = undefined;
+                if (!this.inlineSvg) return;
+                this.addSvgTooltips();
+                this.setupFullscreenCheck();
+              }, 0);
+            } catch (e) {
+              console.warn("[lstopo] SVG processing failed", e);
+              this.resetRenderedSvg();
+              this.svgExists.emit(false);
+              this.cdr.markForCheck();
             }
           } finally {
             this.isLoading = false;
