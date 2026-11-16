@@ -15,6 +15,7 @@
 # Ignore prebuild files
 src/assets/articles/all.json
 src/assets/slides/slides.json
+src/assets/images/team/team.json
 prerender_routes.txt
 src/assets/legal/legal-documents.json
 src/sitemap.xml

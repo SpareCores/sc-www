@@ -84,7 +84,7 @@ C++, offers several key advantages:
 - It benefits from a very active development community, is constantly improving,
   and is widely adopted.
 - It features a robust CI/CD pipeline that builds container images for multiple
-  architectures, including `x86_64` and `ARM64`, along with a CUDA-enabled build.
+  architectures, including `x86_64` and `Arm64`, along with a CUDA-enabled build.
 - It utilizes GGML, providing optimized builds for a wide range of CPU
   microarchitectures (e.g., from Intel Sandy Bridge to Sapphire Rapids).
 - It includes a configurable benchmarking script (`llama-bench`) for measuring

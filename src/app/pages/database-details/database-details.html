@@ -41,8 +41,10 @@
       </sc-details-header>
 
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
-        <div class="my-2 w-full flex justify-between items-center">
-          <h2 class="text-3xl font-bold sc-header-anchor-host">
+        <div
+          class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
+        >
+          <h2 class="text-3xl font-bold">
             Specifications
             <sc-header-anchor
               anchorId="specifications"
@@ -146,9 +148,9 @@
         }
         @if (showUnderlyingServerPerformance && underlyingServerPgbenchChart) {
           <div
-            class="my-2 w-full flex justify-between items-center gap-4 flex-wrap"
+            class="my-2 w-full flex justify-between items-center gap-4 flex-wrap sc-header-anchor-host"
           >
-            <h2 class="text-3xl font-bold sc-header-anchor-host">
+            <h2 class="text-3xl font-bold">
               Underlying Server's Performance
               <sc-header-anchor
                 anchorId="underlying_server_performance"

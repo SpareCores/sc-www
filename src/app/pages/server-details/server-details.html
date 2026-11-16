@@ -87,8 +87,10 @@
 
     @if (serverDetails) {
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
-        <div class="my-2 w-full flex justify-between items-center">
-          <h2 class="text-3xl font-bold sc-header-anchor-host">
+        <div
+          class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
+        >
+          <h2 class="text-3xl font-bold">
             Specifications
             <sc-header-anchor
               anchorId="specifications"
@@ -168,10 +170,10 @@
             class="sc-chart-block sc-chart-block--half sc-chart-block--open server-description-card"
             [class.sc-chart-block--full]="descriptionCardIsFullWidth()"
           >
-            <div class="flex justify-between items-center gap-4">
-              <h3
-                class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
-              >
+            <div
+              class="flex justify-between items-center gap-4 sc-header-anchor-host sc-header-anchor-host--card"
+            >
+              <h3 class="text-2xl">
                 Server Description
                 <sc-header-anchor
                   anchorId="description"
@@ -225,10 +227,10 @@
         <div
           class="sc-chart-block sc-chart-block--full price-sections-to-hide-for-test"
         >
-          <div class="flex justify-between items-center">
-            <h3
-              class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
-            >
+          <div
+            class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
+          >
+            <h3 class="text-2xl">
               Average Price per Region
               <sc-header-anchor
                 anchorId="price_per_region"
@@ -254,10 +256,10 @@
         <div
           class="sc-chart-block sc-chart-block--half price-sections-to-hide-for-test"
         >
-          <div class="flex justify-between items-center">
-            <h3
-              class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
-            >
+          <div
+            class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
+          >
+            <h3 class="text-2xl">
               Prices per Zone
               <sc-header-anchor
                 anchorId="prices_per_zone"
@@ -360,10 +362,10 @@
           </h2>
         </div>
         <div class="sc-chart-block sc-chart-block--half">
-          <div class="flex items-center min-h-[42px]">
-            <h3
-              class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
-            >
+          <div
+            class="flex items-center min-h-[42px] sc-header-anchor-host sc-header-anchor-host--card"
+          >
+            <h3 class="text-2xl">
               Servers of the Same Family
               <sc-header-anchor
                 anchorId="same_family"
@@ -407,8 +409,8 @@
           </table>
         </div>
         <div class="sc-chart-block sc-chart-block--half" id="similar_servers">
-          <div class="flex justify-between items-center">
-            <h3 class="text-2xl sc-header-anchor-host">
+          <div class="flex justify-between items-center sc-header-anchor-host">
+            <h3 class="text-2xl">
               Similar Servers
               <sc-header-anchor
                 anchorId="similar_servers"

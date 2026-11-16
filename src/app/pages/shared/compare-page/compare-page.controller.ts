@@ -410,6 +410,7 @@ export class ComparePageController {
       params: "replace",
       history: "push",
       preserveFragment: true,
+      scroll: this.hasUrlFragment() ? "manual" : undefined,
     });
     this.syncSavedComparisonChrome();
   }
@@ -431,6 +432,12 @@ export class ComparePageController {
     this.bookmarkSource = null;
     this.breadcrumbs = this.baseBreadcrumbs();
     this.updateSeo();
+  }
+
+  private hasUrlFragment(): boolean {
+    return (
+      isPlatformBrowser(this.platformId) && window.location.hash.length > 1
+    );
   }
 
   private scrollToFragmentOnce(): void {

@@ -12,19 +12,9 @@ const NVBANDWIDTH_GROUP_LABELS: Record<string, string> = {
   efficiency: "Efficiency",
 };
 
-// `legacyKey` is read when `key` is missing, e.g. on scores recorded by an
-// older crawler release before the field was renamed
-const NVBANDWIDTH_ENVIRONMENT_FIELDS: {
-  key: string;
-  name: string;
-  legacyKey?: string;
-}[] = [
+const NVBANDWIDTH_ENVIRONMENT_FIELDS: { key: string; name: string }[] = [
   { key: "driver_version", name: "Driver Version" },
-  {
-    key: "cuda_version",
-    name: "CUDA Version (driver)",
-    legacyKey: "cuda_runtime_version",
-  },
+  { key: "cuda_version", name: "CUDA Version (driver)" },
   { key: "nvbandwidth_version", name: "nvbandwidth Version" },
   { key: "gpu_count", name: "GPU Count" },
   { key: "p2p_supported", name: "P2P Supported" },
@@ -132,17 +122,9 @@ export function buildNvbandwidthEnvironmentRows(
   return NVBANDWIDTH_ENVIRONMENT_FIELDS.map((field) => ({
     key: field.key,
     name: field.name,
-    description: String(
-      fieldDescriptions[field.key] ??
-        (field.legacyKey ? fieldDescriptions[field.legacyKey] : undefined) ??
-        "",
-    ),
+    description: String(fieldDescriptions[field.key] ?? ""),
     values: environments.map((environment) =>
-      formatEnvironmentValue(
-        field.key,
-        environment?.[field.key] ??
-          (field.legacyKey ? environment?.[field.legacyKey] : undefined),
-      ),
+      formatEnvironmentValue(field.key, environment?.[field.key]),
     ),
   })).filter((row) => row.values.some((value) => value !== "-"));
 }
