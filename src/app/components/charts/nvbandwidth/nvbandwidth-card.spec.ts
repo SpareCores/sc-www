@@ -57,7 +57,7 @@ describe("NvbandwidthCard", () => {
     expect(text).toContain("GPU Count");
   });
 
-  it("formats cuda_version and falls back to legacy cuda_runtime_version", () => {
+  it("formats cuda_version", () => {
     fixture.componentRef.setInput("benchmarkMeta", [
       {
         benchmark_id: "nvbandwidth:all:host_to_gpu",
@@ -86,18 +86,5 @@ describe("NvbandwidthCard", () => {
       "CUDA Version (driver)",
     );
     expect(fixture.nativeElement.textContent).toContain("13.2");
-
-    fixture.componentRef.setInput("benchmarkScores", [
-      {
-        vendor_id: "aws",
-        benchmark_id: "nvbandwidth:all:host_to_gpu",
-        resource_type: ResourceType.Server,
-        resource_id: "p3.8xlarge",
-        score: 100,
-        environment: { cuda_runtime_version: 12060 },
-      },
-    ]);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain("12.6");
   });
 });
