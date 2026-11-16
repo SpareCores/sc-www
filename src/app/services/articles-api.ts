@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
+import { authorNames } from "./team-members";
 
 export type ArticleMeta = {
   title: string;
@@ -9,7 +10,7 @@ export type ArticleMeta = {
   image: string;
   image_alt: string;
   filename: string;
-  author: string;
+  author: string | string[];
   tags?: string[];
   glossary?: string[];
 };
@@ -41,12 +42,18 @@ export type LegalMeta = {
 export class ArticlesApi {
   private http = inject(HttpClient);
 
-  async getArticlesByType(category?: string): Promise<ArticleMeta[]> {
+  async getArticlesByType(
+    category?: string,
+    author?: string,
+  ): Promise<ArticleMeta[]> {
     let files = await firstValueFrom(
       this.http.get(`./assets/articles/all.json`),
     );
     files = (files as ArticleMeta[]).filter((article: ArticleMeta) => {
-      return category ? article.tags?.includes(category) : true;
+      return (
+        (category ? article.tags?.includes(category) : true) &&
+        (author ? authorNames(article.author).includes(author) : true)
+      );
     });
     return files as ArticleMeta[];
   }
