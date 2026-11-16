@@ -12,7 +12,7 @@ tags: [user-experience, web-application, charts]
 ---
 
 Our server and database pages are long. A server details page can include
-hardware specs, prices, and a long series of benchmark charts, so a comparison
+hardware specs, prices, and a long series of benchmark charts, and a comparison
 page is even longer. If you wanted to point someone at a specific chart or
 section, you used to send the page link and say, "scroll down to Memory
 Bandwidth."
@@ -62,11 +62,11 @@ You can find these links on the following pages:
 - database details pages: sections and benchmark charts
 - server and database comparisons: every section of the comparison table,
   replacing the separate link buttons of the server comparison page
-- [vendor pages](/vendors): the details, metadata, billing, and regions
+- [vendor pages](/vendors/aws): the details, metadata, billing, and regions
   sections
 - [benchmark workloads](/navigator/benchmark-workloads): each benchmark
   framework, such as `bogomips` or `bw_mem`
-- blog articles, including this one: every heading
+- blog articles, including this one: every section heading
 - the landing page and the [about](/about/spare-cores) and
   [partners](/about/partners) pages
 
