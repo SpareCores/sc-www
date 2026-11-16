@@ -14,9 +14,8 @@
         [showEdit]="!!activeSavedSearch()"
         editAriaLabel="Edit search"
         [showShare]="true"
-        [shareIcon]="clipboardIcon"
+        [copyLink]="true"
         shareButtonId="server_listing_share_button"
-        (shareClick)="clipboardURL()"
         (bookmarkClick)="toggleSavedSearch()"
         (editClick)="openSaveSearchModal()"
       >

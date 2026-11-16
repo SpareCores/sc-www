@@ -78,3 +78,15 @@ div.giscus {
 :host ::ng-deep .sc-prose h6:hover .sc-header-anchor {
   opacity: 1;
 }
+
+.authors-label .sc-header-anchor {
+  @apply no-underline;
+}
+
+.authors-label .sc-header-anchor:hover {
+  @apply text-emerald-400;
+}
+
+.authors-label:hover .sc-header-anchor {
+  opacity: 1;
+}

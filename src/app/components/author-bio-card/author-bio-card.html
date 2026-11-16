@@ -1,0 +1,85 @@
+@let m = member();
+<div class="sc-card flex gap-4 p-4 md:p-6">
+  <img
+    src="assets/images/team/{{ m.name }}.webp"
+    alt="{{ m.name }} profile picture"
+    class="h-12 w-12 shrink-0 rounded-full object-cover"
+  />
+  <div class="flex min-w-0 flex-col gap-2">
+    <div class="flex flex-wrap items-baseline gap-x-2">
+      <span class="text-lg font-semibold text-white">{{ m.name }}</span>
+      <span class="text-emerald-400" aria-hidden="true">|</span>
+      <span class="text-sm font-light text-white">{{ m.role }}</span>
+    </div>
+    <p class="bio text-gray-200" [innerHTML]="m.bioHtml"></p>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+      @if (m.linkedin) {
+        <a
+          [href]="m.linkedin"
+          target="_blank"
+          rel="noopener"
+          title="LinkedIn"
+          [attr.aria-label]="m.name + ' on LinkedIn'"
+          data-ph-capture-attribute-sc-event="article author link"
+          data-ph-capture-attribute-author-link="linkedin"
+          [attr.data-ph-capture-attribute-author]="m.name"
+        >
+          <svg lucideIcon="linkedin"></svg>
+        </a>
+      }
+      @if (m.github) {
+        <a
+          [href]="m.github"
+          target="_blank"
+          rel="noopener"
+          title="GitHub"
+          [attr.aria-label]="m.name + ' on GitHub'"
+          data-ph-capture-attribute-sc-event="article author link"
+          data-ph-capture-attribute-author-link="github"
+          [attr.data-ph-capture-attribute-author]="m.name"
+        >
+          <svg lucideIcon="github"></svg>
+        </a>
+      }
+      @if (m.x) {
+        <a
+          [href]="m.x"
+          target="_blank"
+          rel="noopener"
+          title="X"
+          [attr.aria-label]="m.name + ' on X'"
+          data-ph-capture-attribute-sc-event="article author link"
+          data-ph-capture-attribute-author-link="x"
+          [attr.data-ph-capture-attribute-author]="m.name"
+        >
+          <svg lucideIcon="twitter"></svg>
+        </a>
+      }
+      @if (m.homepage) {
+        <a
+          [href]="m.homepage"
+          target="_blank"
+          rel="noopener"
+          title="Homepage"
+          [attr.aria-label]="m.name + ' homepage'"
+          data-ph-capture-attribute-sc-event="article author link"
+          data-ph-capture-attribute-author-link="homepage"
+          [attr.data-ph-capture-attribute-author]="m.name"
+        >
+          <svg lucideGlobe></svg>
+        </a>
+      }
+      <a
+        routerLink="/articles"
+        [queryParams]="{ author: m.name }"
+        class="posts-link ml-auto inline-flex items-center gap-1"
+        data-ph-capture-attribute-sc-event="article author link"
+        data-ph-capture-attribute-author-link="all posts"
+        [attr.data-ph-capture-attribute-author]="m.name"
+      >
+        All posts by {{ firstName() }}
+        <svg lucideArrowRight></svg>
+      </a>
+    </div>
+  </div>
+</div>

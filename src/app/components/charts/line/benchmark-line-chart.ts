@@ -20,6 +20,7 @@ import {
 import { BaseChartDirective } from "ng2-charts";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
+import { HeaderAnchor } from "../../header-anchor/header-anchor";
 import {
   barChartOptionsSSL,
   barChartOptionsSSLCompare,
@@ -66,6 +67,7 @@ import {
     BaseChartDirective,
     Dropdown,
     BenchmarkIconPipe,
+    HeaderAnchor,
   ],
   templateUrl: "./benchmark-line-chart.html",
   styles: [
@@ -101,6 +103,7 @@ export class BenchmarkLineChart {
   blockClass = input("sc-chart-block sc-chart-block--half");
   elementId = input("");
   canvasId = input("");
+  anchorId = input<string | null>(null);
   detailsServer = input<LineChartDetailsServer | undefined>(undefined);
   benchmarksByCategory = input<LineBenchmarkGroup[]>([]);
   benchmarkMeta = input<LineBenchmarkMeta[]>([]);

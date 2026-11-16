@@ -103,6 +103,13 @@ export class DatabaseCompareSpecs {
     );
   }
 
+  sectionAnchorId(sectionName: string): string {
+    return `spec_line_${sectionName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "")}`;
+  }
+
   columnWidth(displayName: string | undefined): string {
     return `max(10.5rem, ${(displayName?.length ?? 0) + 3}ch)`;
   }

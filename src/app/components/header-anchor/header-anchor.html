@@ -1,0 +1,13 @@
+@if (withTarget()) {
+  <span class="sc-header-anchor-target" [attr.id]="anchorId()"></span>
+}
+<a
+  class="sc-header-anchor"
+  [href]="anchorLink.href(anchorId())"
+  [attr.aria-label]="'Copy link to ' + label()"
+  [attr.title]="'Copy link to ' + label()"
+  data-ph-capture-attribute-sc-event="header anchor copy"
+  [attr.data-ph-capture-attribute-anchor-id]="anchorId()"
+  (click)="anchorLink.copy(anchorId())"
+  >#</a
+>

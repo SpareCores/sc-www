@@ -1,5 +1,6 @@
 import { Component, input, output } from "@angular/core";
 import { LucideChevronDown, LucideChevronUp } from "@lucide/angular";
+import { HeaderAnchor } from "../header-anchor/header-anchor";
 
 export type AccordionItem = {
   title: string;
@@ -10,7 +11,7 @@ export type AccordionItem = {
 
 @Component({
   selector: "sc-accordion",
-  imports: [LucideChevronDown, LucideChevronUp],
+  imports: [LucideChevronDown, LucideChevronUp, HeaderAnchor],
   templateUrl: "./accordion.html",
 })
 export class Accordion {
@@ -19,6 +20,7 @@ export class Accordion {
   activeIndex = input(-1);
   showHeading = input(true);
   useFaqSchema = input(false);
+  anchorId = input<string | null>(null);
 
   activeIndexChange = output<number>();
 

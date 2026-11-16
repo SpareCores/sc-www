@@ -16,6 +16,12 @@ describe("DatabaseCompareSpecs", () => {
     expect(service).toBeTruthy();
   });
 
+  it("builds section anchor ids from section names", () => {
+    expect(service.sectionAnchorId("Engine & Storage")).toBe(
+      "spec_line_engine_storage",
+    );
+  });
+
   it("highlights the lowest hourly price", () => {
     const rows = service.buildPriceRows([
       {

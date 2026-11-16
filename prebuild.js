@@ -14,11 +14,65 @@ const specialServerLists = require("./src/app/pages/server-listing/special-lists
 fs.copyFileSync("prerender_routes_static.txt", "prerender_routes.txt");
 
 ////////////////////////////////////////////////////////////////////////////////
+// compile list of team members from the bios next to the profile pictures
+////////////////////////////////////////////////////////////////////////////////
+
+let dirPath = path.join(__dirname, "./src/assets/images/team");
+let files = fs.readdirSync(dirPath);
+
+const teamPictures = files
+  .filter((file) => file.endsWith(".webp"))
+  .map((file) => path.parse(file).name);
+const teamBios = files
+  .filter((file) => file.endsWith(".md"))
+  .map((file) => path.parse(file).name);
+const missingBios = teamPictures.filter((name) => !teamBios.includes(name));
+const missingPictures = teamBios.filter((name) => !teamPictures.includes(name));
+if (missingBios.length || missingPictures.length) {
+  throw new Error(
+    `Team members need both a .webp picture and a .md bio in ${dirPath}. ` +
+      `Missing bio: [${missingBios.join(", ")}]. ` +
+      `Missing picture: [${missingPictures.join(", ")}].`,
+  );
+}
+
+const team = teamBios
+  .map((name) => {
+    const content = fs.readFileSync(path.join(dirPath, name + ".md"), "utf-8");
+    const { data, content: bio } = matter(content);
+    if (!data.role || !bio.trim()) {
+      throw new Error(`Team member "${name}" needs a role and a bio.`);
+    }
+    return {
+      ...data,
+      name: name,
+      bio: bio.trim().replace(/\s+/g, " "),
+    };
+  })
+  .sort((a, b) => a.name.localeCompare(b.name));
+fs.writeFileSync("./src/assets/images/team/team.json", JSON.stringify(team));
+
+const authorsOf = (item) =>
+  (Array.isArray(item.author) ? item.author : [item.author]).filter(Boolean);
+const assertTeamAuthors = (items, kind) => {
+  items.forEach((item) => {
+    authorsOf(item).forEach((author) => {
+      if (!teamBios.includes(author)) {
+        throw new Error(
+          `Unknown author "${author}" in ${kind} "${item.filename}": ` +
+            `add a picture and bio to ${dirPath}.`,
+        );
+      }
+    });
+  });
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // compile list of articles and append to prerender list
 ////////////////////////////////////////////////////////////////////////////////
 
-let dirPath = path.join(__dirname, "./src/assets/articles");
-let files = fs.readdirSync(dirPath);
+dirPath = path.join(__dirname, "./src/assets/articles");
+files = fs.readdirSync(dirPath);
 files = files.filter((file) => file.endsWith(".md"));
 
 let allArticles = files.map((file) => {
@@ -33,6 +87,7 @@ let allArticles = files.map((file) => {
     filename: filename,
   };
 });
+assertTeamAuthors(allArticles, "article");
 allArticles = allArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
 fs.writeFileSync("./src/assets/articles/all.json", JSON.stringify(allArticles));
 
@@ -57,6 +112,7 @@ data = files
     };
   });
 
+assertTeamAuthors(data, "talk");
 data = data.sort((a, b) => new Date(b.date) - new Date(a.date));
 
 fs.writeFileSync("./src/assets/slides/slides.json", JSON.stringify(data));

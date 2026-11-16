@@ -26,7 +26,16 @@ import { initGiscus } from "../../tools/initGiscus";
 import { Toast } from "../../services/toast";
 import { PrismHighlighter } from "../../services/prism-highlighter";
 import { Glossary } from "../../services/glossary";
+import { HeaderAnchorLink } from "../../services/header-anchor-link";
 import { Subscription } from "rxjs";
+import {
+  TeamMember,
+  TeamMembers,
+  authorNames,
+  joinAuthorNames,
+} from "../../services/team-members";
+import { AuthorAvatars } from "../../components/author-avatars/author-avatars";
+import { AuthorBioCard } from "../../components/author-bio-card/author-bio-card";
 
 @Component({
   selector: "sc-article",
@@ -36,6 +45,8 @@ import { Subscription } from "rxjs";
     MarkdownModule,
     TimeToShortDatePipe,
     LightboxModule,
+    AuthorAvatars,
+    AuthorBioCard,
   ],
   templateUrl: "./article.html",
   styleUrls: ["../../../styles/prose.css", "./article.css"],
@@ -53,6 +64,8 @@ export class Article implements OnInit, OnDestroy {
   private toastService = inject(Toast);
   private prismService = inject(PrismHighlighter);
   private glossaryService = inject(Glossary);
+  private anchorLink = inject(HeaderAnchorLink);
+  private teamMembers = inject(TeamMembers);
 
   @ViewChild("articleDiv") articleDiv!: ElementRef;
   private subscription = new Subscription();
@@ -66,7 +79,11 @@ export class Article implements OnInit, OnDestroy {
   articleMeta: any;
   articleBody: any;
   readingTime: number = 0;
+  authors: string[] = [];
+  authorLine = "";
+  authorMembers: TeamMember[] = [];
   private checkExistInterval: any;
+  private unlistenArticleClick?: () => void;
 
   ngOnInit() {
     this.subscription.add(
@@ -91,6 +108,9 @@ export class Article implements OnInit, OnDestroy {
             const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, "");
 
             this.articleMeta = data;
+            this.authors = authorNames(this.articleMeta.author);
+            this.authorLine = joinAuthorNames(this.authors);
+            this.authorMembers = [];
             this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
               this.markdownService.parse(content, {
                 disableSanitizer: true,
@@ -110,6 +130,7 @@ export class Article implements OnInit, OnDestroy {
             let baseUrl = this.SEOHandler.getBaseURL();
             this.SEOHandler.updateThumbnail(baseUrl + this.articleMeta.image);
             this.generateSchemaJSON();
+            this.loadAuthorMembers(id);
 
             if (isPlatformBrowser(this.platformId)) {
               // Wait for the articleDiv to be rendered
@@ -117,7 +138,8 @@ export class Article implements OnInit, OnDestroy {
               this.checkExistInterval = setInterval(() => {
                 if (this.articleDiv) {
                   // attach zoom images on click
-                  this.renderer.listen(
+                  this.unlistenArticleClick?.();
+                  this.unlistenArticleClick = this.renderer.listen(
                     this.articleDiv.nativeElement,
                     "click",
                     (event) => {
@@ -126,6 +148,12 @@ export class Article implements OnInit, OnDestroy {
                         event.target.classList[0] == "zoomin"
                       ) {
                         this.openLightbox(event.target.src);
+                      }
+                      const anchor = (
+                        event.target as HTMLElement
+                      ).closest<HTMLAnchorElement>("a.sc-header-anchor");
+                      if (anchor?.hash) {
+                        this.anchorLink.copy(anchor.hash.slice(1));
                       }
                     },
                   );
@@ -176,6 +204,39 @@ export class Article implements OnInit, OnDestroy {
     }
   }
 
+  private loadAuthorMembers(id: string) {
+    this.teamMembers
+      .getMembers(this.authors)
+      .then((members) => {
+        if (this.id !== id) {
+          return;
+        }
+        this.authorMembers = members;
+        this.generateSchemaJSON();
+      })
+      .catch((error) => {
+        console.error("Error loading team members:", error);
+      });
+  }
+
+  private authorSchema() {
+    return this.authors.map((name) => {
+      const member = this.authorMembers.find((m) => m.name === name);
+      const sameAs = member
+        ? [member.linkedin, member.github, member.x, member.homepage].filter(
+            (url): url is string => !!url,
+          )
+        : [];
+      return {
+        "@type": "Person",
+        name,
+        image: `https://sparecores.com/assets/images/team/${name}.webp`,
+        ...(member ? { jobTitle: member.role } : {}),
+        ...(sameAs.length ? { sameAs } : {}),
+      };
+    });
+  }
+
   openLightbox(imgSrc: string) {
     const album = [
       {
@@ -201,16 +262,8 @@ export class Article implements OnInit, OnDestroy {
       headline: `${this.articleMeta.teaser}`,
       name: `${this.articleMeta.title}`,
       description: `${this.articleMeta.teaser}`,
-      author: {
-        "@type": "Person",
-        name: `${this.articleMeta.author}`,
-        image: `https://sparecores.com/assets/images/team/${this.articleMeta.author}.webp`,
-      },
-      creator: {
-        "@type": "Person",
-        name: `${this.articleMeta.author}`,
-        image: `https://sparecores.com/assets/images/team/${this.articleMeta.author}.webp`,
-      },
+      author: this.authorSchema(),
+      creator: this.authorSchema(),
       publisher: {
         "@type": "Organization",
         name: "Spare Cores",

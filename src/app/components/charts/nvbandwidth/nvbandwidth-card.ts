@@ -16,6 +16,7 @@ import {
 } from "@lucide/angular";
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
+import { HeaderAnchor } from "../../header-anchor/header-anchor";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
@@ -44,6 +45,7 @@ function isRightColumnSection(section: NvbandwidthSection<string>): boolean {
     LucideInfo,
     LucideTriangleAlert,
     BenchmarkIconPipe,
+    HeaderAnchor,
   ],
   templateUrl: "./nvbandwidth-card.html",
   styleUrl: "./nvbandwidth-card.css",
@@ -53,6 +55,7 @@ export class NvbandwidthCard {
 
   benchmarkMeta = input<Benchmark[] | null>([]);
   benchmarkScores = input<BenchmarkScore[] | null>([]);
+  anchored = input(false);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
   tooltipContent = signal("");

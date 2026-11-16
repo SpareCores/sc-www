@@ -11,12 +11,13 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { isPlatformBrowser } from "@angular/common";
 import { RouterLink } from "@angular/router";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { NeetoCal } from "../../services/neeto-cal";
 import { SeoHandler } from "../../services/seo-handler";
 
 @Component({
   selector: "sc-about-spare-cores",
-  imports: [Breadcrumbs, RouterLink],
+  imports: [Breadcrumbs, RouterLink, HeaderAnchor],
   templateUrl: "./about-spare-cores.html",
   styleUrls: ["./about-shared.css", "./about-spare-cores.css"],
 })

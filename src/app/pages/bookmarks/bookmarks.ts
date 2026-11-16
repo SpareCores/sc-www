@@ -47,7 +47,7 @@ import { isKeyboardActivation } from "../../directives/dropdown-focus";
 import { formatMemoryAmount, formatStorageSize } from "../../pipes/pipe-utils";
 import { KeeperAPI } from "../../services/keeper-api";
 import { ModalDialog } from "../../services/modal-dialog";
-import { Toast } from "../../services/toast";
+import { ShareLink } from "../../services/share-link";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { mutationKey } from "../../shared/store/with-mutation-status";
 
@@ -122,7 +122,7 @@ export class Bookmarks implements OnDestroy {
   private collectionsStore = inject(CollectionsStore);
   private keeperAPI = inject(KeeperAPI);
   private router = inject(Router);
-  private toastService = inject(Toast);
+  private shareLink = inject(ShareLink);
   private uiTooltip = inject(UiTooltip);
   private platformId = inject(PLATFORM_ID);
   private auth = inject(AuthState);
@@ -621,27 +621,21 @@ export class Bookmarks implements OnDestroy {
   }
 
   protected shareIcon(card: BookmarksCardViewModel): string {
-    return this.shareIcons()[this.cardKey(card)] ?? "clipboard";
+    return this.shareIcons()[this.cardKey(card)] ?? "share-2";
   }
 
   protected shareCard(card: BookmarksCardViewModel): void {
-    if (!isPlatformBrowser(this.platformId) || !navigator.clipboard) {
-      return;
-    }
-
     const url = this.cardShareUrl(card);
     if (!url) {
       return;
     }
 
     const key = this.cardKey(card);
-    void navigator.clipboard.writeText(url).then(() => {
+    void this.shareLink.copyUrl(url).then((copied) => {
+      if (!copied) {
+        return;
+      }
       this.shareIcons.update((state) => ({ ...state, [key]: "check" }));
-      this.toastService.show({
-        title: "Link copied to clipboard!",
-        type: "success",
-        duration: 2000,
-      });
       setTimeout(() => {
         this.shareIcons.update((state) => {
           const next = { ...state };

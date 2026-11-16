@@ -48,7 +48,7 @@ So first, we looked at existing solutions and frameworks.
 Despite being proprietary, we decided to go with
 <a href="https://www.geekbench.com/" target="_blank" rel="noopener">GeekBench</a>
 due to its ease of deployment, variety of benchmark workloads, and
-support for ARM machines as well. Later, we learned the hard way
+support for Arm machines as well. Later, we learned the hard way
 that the latter is experimental, and cannot be used with the paid license
 for automated runs, so we had to write an HTML parser to store the results.
 Nevertheless, it was indeed relatively easy to deploy and run, and measures
