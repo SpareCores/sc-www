@@ -244,7 +244,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private readonly editingSearchId = signal<string | null>(null);
   private bookmarkSource: SavedSearchItem | null = null;
 
-  clipboardIcon = "clipboard";
   tooltipContent = "";
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
@@ -778,19 +777,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
       item.display_name !== item.api_reference &&
       item.display_name !== item.api_reference.replace("Standard_", "")
     );
-  }
-
-  clipboardURL() {
-    navigator.clipboard.writeText(window.location.href);
-    this.clipboardIcon = "check";
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 
   showTooltip(el: Event, content: string, autoHide = false) {

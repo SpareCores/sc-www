@@ -61,7 +61,7 @@
           <!-- Family section heading -->
           <section>
             <div
-              class="flex items-center gap-3 mb-6 pb-3 border-b border-emerald-400/30"
+              class="flex items-center gap-3 mb-6 pb-3 border-b border-emerald-400/30 sc-header-anchor-host"
               [id]="'family-' + family.framework"
             >
               @switch (family.framework | benchmarkIcon) {
@@ -128,6 +128,11 @@
               }
               <h2 class="text-white text-2xl font-bold font-mono">
                 {{ family.framework }}
+                <sc-header-anchor
+                  [anchorId]="'family-' + family.framework"
+                  [label]="family.framework"
+                  [withTarget]="false"
+                ></sc-header-anchor>
               </h2>
               <span class="ml-auto text-xs text-gray-400 shrink-0">
                 {{ family.benchmarks.length }}

@@ -30,6 +30,7 @@ import { AuthState, authInterceptor, provideAuthFeature } from "./core/auth";
 import { provideCollectionsFeature } from "./collections/collections-feature.providers";
 import { provideE2eReadiness } from "./core/e2e/e2e-readiness-providers";
 import { Analytics } from "./services/analytics";
+import { HeaderAnchorLink } from "./services/header-anchor-link";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   return req.method === "GET";
@@ -102,6 +103,9 @@ export const appConfig: ApplicationConfig = {
     },
     provideAppInitializer(() => {
       inject(Sentry.TraceService);
+    }),
+    provideAppInitializer(() => {
+      inject(HeaderAnchorLink).syncScrollOffset();
     }),
     provideAppInitializer(() => {
       inject(Analytics).initializeTracking();

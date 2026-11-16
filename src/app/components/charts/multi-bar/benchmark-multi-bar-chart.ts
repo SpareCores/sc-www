@@ -25,6 +25,7 @@ import {
   ChartFromBenchmarkTemplateOptions,
 } from "../../../pages/server-details/chartFromBenchmarks";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
+import { HeaderAnchor } from "../../header-anchor/header-anchor";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
@@ -53,6 +54,7 @@ import {
     BaseChartDirective,
     Dropdown,
     BenchmarkIconPipe,
+    HeaderAnchor,
   ],
   templateUrl: "./benchmark-multi-bar-chart.html",
   styles: [
@@ -81,6 +83,7 @@ export class BenchmarkMultiBarChart {
   servers = input<MultiBarServer[]>([]);
   layout = input<"details" | "compare">("details");
   serverCount = input(0);
+  anchorId = input<string | null>(null);
 
   optionSelected = output<number>();
   secondaryOptionSelected = output<number>();

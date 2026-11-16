@@ -1,10 +1,13 @@
 <div class="w-full min-w-0">
   @if (showHeading()) {
-    <h3 class="font-bold text-3xl">
+    <h3 class="font-bold text-3xl sc-header-anchor-host">
       @if (useFaqSchema()) {
         {{ heading() }} FAQs
       } @else {
         {{ heading() }}
+      }
+      @if (anchorId(); as id) {
+        <sc-header-anchor [anchorId]="id" label="FAQs"></sc-header-anchor>
       }
     </h3>
   }

@@ -1,9 +1,15 @@
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import {
+  ActivatedRoute,
+  NavigationBehaviorOptions,
+  Params,
+  Router,
+} from "@angular/router";
 
 export type ListingQueryNavigate = {
   params: "replace" | "merge";
   history: "push" | "replace";
   preserveFragment?: boolean;
+  scroll?: NavigationBehaviorOptions["scroll"];
 };
 
 export function navigateListingQuery(
@@ -20,5 +26,6 @@ export function navigateListingQuery(
       : {}),
     replaceUrl: mode.history === "replace",
     ...(mode.preserveFragment ? { preserveFragment: true } : {}),
+    ...(mode.scroll ? { scroll: mode.scroll } : {}),
   });
 }

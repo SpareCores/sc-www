@@ -26,6 +26,7 @@ import { initGiscus } from "../../tools/initGiscus";
 import { Toast } from "../../services/toast";
 import { PrismHighlighter } from "../../services/prism-highlighter";
 import { Glossary } from "../../services/glossary";
+import { HeaderAnchorLink } from "../../services/header-anchor-link";
 import { Subscription } from "rxjs";
 import {
   TeamMember,
@@ -63,6 +64,7 @@ export class Article implements OnInit, OnDestroy {
   private toastService = inject(Toast);
   private prismService = inject(PrismHighlighter);
   private glossaryService = inject(Glossary);
+  private anchorLink = inject(HeaderAnchorLink);
   private teamMembers = inject(TeamMembers);
 
   @ViewChild("articleDiv") articleDiv!: ElementRef;
@@ -81,6 +83,7 @@ export class Article implements OnInit, OnDestroy {
   authorLine = "";
   authorMembers: TeamMember[] = [];
   private checkExistInterval: any;
+  private unlistenArticleClick?: () => void;
 
   ngOnInit() {
     this.subscription.add(
@@ -135,7 +138,8 @@ export class Article implements OnInit, OnDestroy {
               this.checkExistInterval = setInterval(() => {
                 if (this.articleDiv) {
                   // attach zoom images on click
-                  this.renderer.listen(
+                  this.unlistenArticleClick?.();
+                  this.unlistenArticleClick = this.renderer.listen(
                     this.articleDiv.nativeElement,
                     "click",
                     (event) => {
@@ -144,6 +148,12 @@ export class Article implements OnInit, OnDestroy {
                         event.target.classList[0] == "zoomin"
                       ) {
                         this.openLightbox(event.target.src);
+                      }
+                      const anchor = (
+                        event.target as HTMLElement
+                      ).closest<HTMLAnchorElement>("a.sc-header-anchor");
+                      if (anchor?.hash) {
+                        this.anchorLink.copy(anchor.hash.slice(1));
                       }
                     },
                   );

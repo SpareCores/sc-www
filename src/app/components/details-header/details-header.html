@@ -40,7 +40,7 @@
           priceDescription()
         }}</span>
       </div>
-      <div class="flex gap-4 flex-wrap mt-2">
+      <div class="flex gap-4 flex-wrap lg:flex-nowrap mt-2">
         <ng-content select="[detailsActions]"></ng-content>
         <sc-compare-toggle-button
           [resource]="resource()"
@@ -48,6 +48,15 @@
           [entityId]="entityId()"
           [displayName]="displayName()"
         ></sc-compare-toggle-button>
+        <sc-button
+          variant="outline"
+          label="Share"
+          icon="share-2"
+          [attr.data-ph-capture-attribute-sc-event]="
+            resource() + ' details share'
+          "
+          (click)="share()"
+        ></sc-button>
       </div>
     </div>
   </div>

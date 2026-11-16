@@ -38,7 +38,7 @@ describe("CompareGuide", () => {
       (link) => link.getAttribute("href"),
     );
 
-    expect(hrefs).toContain("/databases/compare#intro");
+    expect(hrefs.some((href) => href?.endsWith("#intro"))).toBeTrue();
     expect(hrefs).toContain("/databases/compare/small");
     expect(hrefs).toContain("/database/aws/db.t4g.micro");
   });

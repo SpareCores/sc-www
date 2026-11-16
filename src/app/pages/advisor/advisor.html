@@ -19,9 +19,8 @@
         [showEdit]="!!exactSavedAssessment()"
         editAriaLabel="Edit assessment"
         [showShare]="true"
-        [shareIcon]="clipboardIcon()"
+        [copyLink]="true"
         shareButtonId="advisor_share_button"
-        (shareClick)="clipboardURL()"
         (bookmarkClick)="toggleSavedAssessment()"
         (editClick)="openSaveAssessmentModal()"
       >

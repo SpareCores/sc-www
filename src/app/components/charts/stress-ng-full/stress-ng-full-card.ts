@@ -17,6 +17,7 @@ import {
 } from "@lucide/angular";
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
+import { HeaderAnchor } from "../../header-anchor/header-anchor";
 import { Button } from "../../button/button";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
@@ -37,6 +38,7 @@ import {
     LucideTriangleAlert,
     BenchmarkIconPipe,
     Button,
+    HeaderAnchor,
   ],
   templateUrl: "./stress-ng-full-card.html",
   styleUrl: "./stress-ng-full-card.css",
@@ -47,6 +49,7 @@ export class StressNgFullCard {
   benchmarkMeta = input<Benchmark[] | null>([]);
   benchmarkScores = input<BenchmarkScore[] | null>([]);
   isEmbedded = input(false);
+  anchored = input(false);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
   tooltipContent = signal("");

@@ -25,6 +25,7 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { EmbedWidgetButton } from "../../components/embed-dialog/embed-widget-button";
 import {
@@ -37,6 +38,7 @@ import { DetailsCard } from "../../components/details-card/details-card";
 import { DetailsHeader } from "../../components/details-header/details-header";
 import { DetailsCardSection } from "../../components/details-card/details-card.types";
 import { Analytics } from "../../services/analytics";
+import { HeaderAnchorLink } from "../../services/header-anchor-link";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { CompareSelection } from "../../services/compare-selection";
@@ -67,6 +69,7 @@ import {
     BenchmarkLineChart,
     EmbedWidgetButton,
     DetailsHeader,
+    HeaderAnchor,
   ],
   templateUrl: "./database-details.html",
   styleUrl: "./database-details.css",
@@ -81,6 +84,7 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   private serverCompare = inject(CompareSelection);
   private specCards = inject(DatabaseSpecCards);
   private underlyingServerLoader = inject(DatabaseUnderlyingServer);
+  private headerAnchorLink = inject(HeaderAnchorLink);
 
   isLoading = true;
   databaseDetails: LoadedDatabase | null = null;
@@ -326,6 +330,9 @@ export class DatabaseDetails implements OnInit, OnDestroy {
         }
 
         this.isLoading = false;
+        if (this.databaseDetails) {
+          this.headerAnchorLink.scrollToCurrentFragment();
+        }
       });
   }
 
