@@ -1,0 +1,8 @@
+@for (author of authors(); track author; let i = $index) {
+  <span class="author-avatar" [style.z-index]="i + 1">
+    <img
+      src="assets/images/team/{{ author }}.webp"
+      alt="{{ author }} profile picture"
+    />
+  </span>
+}

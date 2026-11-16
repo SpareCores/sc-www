@@ -1,0 +1,25 @@
+@reference "../../../styles/tailwind.css";
+
+a {
+  @apply text-gray-200 transition-colors;
+}
+
+a:hover {
+  @apply text-gray-500;
+}
+
+svg {
+  @apply h-5 w-5;
+}
+
+.posts-link svg {
+  @apply h-4 w-4;
+}
+
+.bio ::ng-deep a {
+  @apply underline decoration-dotted;
+}
+
+.bio ::ng-deep a:hover {
+  @apply text-gray-500;
+}

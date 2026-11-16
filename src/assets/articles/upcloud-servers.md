@@ -132,7 +132,7 @@ not the strongest in the competition. However, the Cloud Native plans offer a
 very good performance/price ratio, especially in PassMark workloads, such as
 encryption or compression, or some memory read operations. As a quick example,
 here's a comparison of UpCloud's 4-vCPU Cloud Native plan with four generations
-of 4-vCPU AWS servers with mixed Intel and ARM CPUs:
+of 4-vCPU AWS servers with mixed Intel and Arm CPUs:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
