@@ -86,10 +86,17 @@ export async function createClerkTestOrganization({
     "/organizations",
     { method: "POST", body: { name, created_by: adminId } },
   );
-  await clerkRequest(`/organizations/${organization.id}/memberships`, {
-    method: "POST",
-    body: { user_id: memberId, role: "org:member" },
-  });
+  try {
+    await clerkRequest(`/organizations/${organization.id}/memberships`, {
+      method: "POST",
+      body: { user_id: memberId, role: "org:member" },
+    });
+  } catch (error) {
+    await clerkRequest(`/organizations/${organization.id}`, {
+      method: "DELETE",
+    }).catch(() => undefined);
+    throw error;
+  }
 
   return organization.id;
 }
