@@ -54,4 +54,26 @@ describe("PromoBanner", () => {
     expect(ctaButton?.textContent).toContain(ADVISOR_PROMO_BANNER.ctaLabel!);
     expect(ctaButton?.querySelector("svg")).not.toBeNull();
   });
+
+  it("emits dismissed without preventing default so replayed clicks work", () => {
+    const fixture = TestBed.createComponent(PromoBanner);
+    fixture.componentRef.setInput("message", SITE_PROMO_BANNER);
+    fixture.componentRef.setInput("dismissible", true);
+    fixture.detectChanges();
+
+    const dismissed = jasmine.createSpy("dismissed");
+    fixture.componentInstance.dismissed.subscribe(dismissed);
+
+    const click = new MouseEvent("click", { bubbles: true, cancelable: true });
+    const preventDefault = spyOn(click, "preventDefault").and.throwError(
+      "`preventDefault` called during event replay.",
+    );
+    const close = (fixture.nativeElement as HTMLElement).querySelector(
+      ".promo-banner__close",
+    ) as HTMLButtonElement;
+    close.dispatchEvent(click);
+
+    expect(preventDefault).not.toHaveBeenCalled();
+    expect(dismissed).toHaveBeenCalledTimes(1);
+  });
 });
