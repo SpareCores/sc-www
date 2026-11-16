@@ -55,7 +55,7 @@
 }
 
 @layer base {
-  html:has(.sc-shell-chrome) {
+  html {
     scroll-padding-top: 5.5rem;
   }
 }
