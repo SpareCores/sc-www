@@ -44,6 +44,39 @@
             <svg lucideShield aria-hidden="true"></svg>
             Security
           </button>
+          <button
+            type="button"
+            role="tab"
+            class="profile-modal__tab"
+            data-testid="profile-tab-organization"
+            data-ph-capture-attribute-sc-event="profile tab"
+            data-ph-capture-attribute-profile-tab="organization"
+            [class.profile-modal__tab--active]="tab() === 'organization'"
+            [attr.aria-selected]="tab() === 'organization'"
+            [attr.aria-disabled]="!hasOrganizations()"
+            [attr.title]="
+              hasOrganizations() ? null : messages.noOrganizationsHint
+            "
+            [disabled]="!hasOrganizations()"
+            (click)="selectTab('organization')"
+          >
+            <svg lucideBuilding aria-hidden="true"></svg>
+            Organization
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="profile-modal__tab"
+            data-testid="profile-tab-tokens"
+            data-ph-capture-attribute-sc-event="profile tab"
+            data-ph-capture-attribute-profile-tab="tokens"
+            [class.profile-modal__tab--active]="tab() === 'tokens'"
+            [attr.aria-selected]="tab() === 'tokens'"
+            (click)="selectTab('tokens')"
+          >
+            <svg lucideKeyRound aria-hidden="true"></svg>
+            API Tokens
+          </button>
         </nav>
       }
 
@@ -142,7 +175,406 @@
         </div>
       } @else {
         <div class="profile-modal__content profile-modal__pane" role="tabpanel">
-          @if (tab() === "account") {
+          @if (tab() === "organization") {
+            @let currentOrganization = activeOrganization();
+            <section
+              class="profile-modal__section"
+              data-testid="profile-organization-current"
+            >
+              <h3 class="profile-modal__section-title">Active organization</h3>
+              <div class="profile-modal__row">
+                <div class="profile-modal__identity">
+                  @if (currentOrganization) {
+                    @if (currentOrganization.imageUrl) {
+                      <img
+                        class="profile-modal__avatar"
+                        [src]="currentOrganization.imageUrl"
+                        alt="Organization logo"
+                      />
+                    } @else {
+                      <svg lucideBuilding aria-hidden="true"></svg>
+                    }
+                    <span class="profile-modal__value">{{
+                      currentOrganization.name
+                    }}</span>
+                    <span class="profile-modal__badge">{{
+                      currentOrganization.roleName
+                    }}</span>
+                  } @else {
+                    @if (userImageUrl()) {
+                      <img
+                        class="profile-modal__avatar"
+                        [src]="userImageUrl()"
+                        alt="Profile image"
+                      />
+                    } @else {
+                      <svg lucideCircleUser aria-hidden="true"></svg>
+                    }
+                    <span class="profile-modal__value">Personal account</span>
+                  }
+                </div>
+              </div>
+              <p class="profile-modal__meta">
+                Organization admins can create API tokens owned by the active
+                organization.
+              </p>
+            </section>
+
+            <section
+              class="profile-modal__section"
+              data-testid="profile-organization-switch"
+            >
+              <h3 class="profile-modal__section-title">Switch organization</h3>
+              <ul class="profile-modal__list">
+                <li class="profile-modal__item">
+                  <div class="profile-modal__row profile-modal__row--inline">
+                    <div class="profile-modal__identity">
+                      @if (userImageUrl()) {
+                        <img
+                          class="profile-modal__avatar"
+                          [src]="userImageUrl()"
+                          alt="Profile image"
+                        />
+                      } @else {
+                        <svg lucideCircleUser aria-hidden="true"></svg>
+                      }
+                      <span class="profile-modal__value">Personal account</span>
+                      @if (!currentOrganization) {
+                        <span class="profile-modal__badge">Active</span>
+                      }
+                    </div>
+                    @if (currentOrganization) {
+                      <button
+                        type="button"
+                        class="modal-form__footer-link"
+                        data-testid="profile-organization-personal"
+                        data-ph-capture-attribute-sc-event="profile organization switch"
+                        data-ph-capture-attribute-profile-organization="personal"
+                        [disabled]="!!busy()"
+                        (click)="switchOrganization(null)"
+                      >
+                        {{
+                          busy() === "organization:personal"
+                            ? "Switching..."
+                            : "Switch"
+                        }}
+                      </button>
+                    }
+                  </div>
+                </li>
+                @for (
+                  organization of organizationList();
+                  track organization.id
+                ) {
+                  @let isActive = organization.id === currentOrganization?.id;
+                  <li class="profile-modal__item">
+                    <div class="profile-modal__row profile-modal__row--inline">
+                      <div class="profile-modal__identity">
+                        @if (organization.imageUrl) {
+                          <img
+                            class="profile-modal__avatar"
+                            [src]="organization.imageUrl"
+                            alt="Organization logo"
+                          />
+                        } @else {
+                          <svg lucideBuilding aria-hidden="true"></svg>
+                        }
+                        <span class="profile-modal__value">{{
+                          organization.name
+                        }}</span>
+                        <span
+                          class="profile-modal__badge"
+                          [class.profile-modal__badge--muted]="
+                            !organization.isAdmin
+                          "
+                          >{{ organization.roleName }}</span
+                        >
+                        @if (isActive) {
+                          <span class="profile-modal__badge">Active</span>
+                        }
+                      </div>
+                      @if (!isActive) {
+                        <button
+                          type="button"
+                          class="modal-form__footer-link"
+                          data-testid="profile-organization-option"
+                          data-ph-capture-attribute-sc-event="profile organization switch"
+                          data-ph-capture-attribute-profile-organization="organization"
+                          [disabled]="!!busy()"
+                          (click)="switchOrganization(organization.id)"
+                        >
+                          {{
+                            busy() === "organization:" + organization.id
+                              ? "Switching..."
+                              : "Switch"
+                          }}
+                        </button>
+                      }
+                    </div>
+                  </li>
+                }
+              </ul>
+              <ng-container
+                [ngTemplateOutlet]="feedbackMessage"
+                [ngTemplateOutletContext]="{ $implicit: 'organization' }"
+              ></ng-container>
+            </section>
+          } @else if (tab() === "tokens") {
+            @let tokenOrganization = activeOrganization();
+            <section
+              class="profile-modal__section"
+              data-testid="profile-api-tokens-create"
+            >
+              <h3 class="profile-modal__section-title">API tokens</h3>
+              <p class="profile-modal__meta">
+                Use API tokens to authenticate requests to the Spare Cores API.
+                Tokens have read-only access.
+              </p>
+
+              @let secret = createdToken();
+              @if (secret) {
+                <div
+                  class="profile-modal__secret"
+                  data-testid="profile-api-token-secret"
+                >
+                  <p class="modal-form__info">
+                    {{ messages.apiTokenCopyNotice }}
+                  </p>
+                  <span class="profile-modal__value">{{ secret.name }}</span>
+                  <div class="profile-modal__secret-row">
+                    <code class="profile-modal__secret-value">{{
+                      secret.secret
+                    }}</code>
+                    <button
+                      type="button"
+                      class="profile-modal__copy"
+                      data-testid="profile-api-token-copy"
+                      data-ph-capture-attribute-sc-event="profile api token copy"
+                      [attr.aria-label]="
+                        tokenCopied() ? 'Copied' : 'Copy token'
+                      "
+                      (click)="copyTokenSecret()"
+                    >
+                      @if (tokenCopied()) {
+                        <svg lucideCheck aria-hidden="true"></svg>
+                      } @else {
+                        <svg lucideCopy aria-hidden="true"></svg>
+                      }
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    class="modal-form__footer-link"
+                    data-ph-capture-attribute-sc-event="profile api token secret dismiss"
+                    (click)="dismissCreatedToken()"
+                  >
+                    Done
+                  </button>
+                </div>
+              }
+
+              @if (editor() === "token") {
+                <form
+                  class="profile-modal__editor"
+                  #tokenForm="ngForm"
+                  novalidate
+                  (ngSubmit)="createToken(tokenForm)"
+                >
+                  <label class="modal-form__field">
+                    <span>Name</span>
+                    <input
+                      type="text"
+                      name="tokenName"
+                      class="sc-input"
+                      autocomplete="off"
+                      placeholder="e.g. ci-pipeline"
+                      data-testid="profile-api-token-name"
+                      required
+                      [maxlength]="tokenNameMaxLength"
+                      [(ngModel)]="tokenName"
+                    />
+                  </label>
+                  <label class="modal-form__field">
+                    <span>Expiration</span>
+                    <select
+                      name="tokenExpiration"
+                      class="sc-input"
+                      data-testid="profile-api-token-expiration"
+                      [(ngModel)]="tokenExpirationIndex"
+                    >
+                      @for (
+                        option of expirationOptions;
+                        track option.seconds;
+                        let i = $index
+                      ) {
+                        <option [ngValue]="i">{{ option.label }}</option>
+                      }
+                    </select>
+                  </label>
+                  @if (tokenOrganization && isActiveAdmin()) {
+                    <fieldset
+                      class="profile-modal__owner"
+                      data-testid="profile-api-token-owner"
+                    >
+                      <legend>Owner</legend>
+                      <label class="modal-form__checkbox">
+                        <input
+                          type="radio"
+                          name="tokenOwner"
+                          value="user"
+                          [(ngModel)]="tokenOwner"
+                        />
+                        <span>Me</span>
+                      </label>
+                      <label class="modal-form__checkbox">
+                        <input
+                          type="radio"
+                          name="tokenOwner"
+                          value="organization"
+                          [(ngModel)]="tokenOwner"
+                        />
+                        <span>{{ tokenOrganization.name }}</span>
+                      </label>
+                    </fieldset>
+                  }
+                  <ng-container
+                    [ngTemplateOutlet]="feedbackMessage"
+                    [ngTemplateOutletContext]="{ $implicit: 'tokens' }"
+                  ></ng-container>
+                  <div class="profile-modal__editor-actions">
+                    <sc-button
+                      label="Cancel"
+                      size="small"
+                      variant="outline"
+                      color="brand"
+                      [disabled]="!!busy()"
+                      (buttonClick)="closeEditor()"
+                    ></sc-button>
+                    <sc-button
+                      type="submit"
+                      label="Create token"
+                      size="small"
+                      data-testid="profile-api-token-submit"
+                      data-ph-capture-attribute-sc-event="profile api token create"
+                      [loading]="busy() === 'token-create'"
+                      [disabled]="!!busy() || !tokenName().trim()"
+                    ></sc-button>
+                  </div>
+                </form>
+              } @else {
+                <ng-container
+                  [ngTemplateOutlet]="feedbackMessage"
+                  [ngTemplateOutletContext]="{ $implicit: 'tokens' }"
+                ></ng-container>
+                <button
+                  type="button"
+                  class="modal-form__footer-link profile-modal__add"
+                  data-testid="profile-api-token-new"
+                  data-ph-capture-attribute-sc-event="profile api token create open"
+                  [disabled]="!!busy() || tokensLoading()"
+                  (click)="openEditor('token')"
+                >
+                  <svg lucidePlus aria-hidden="true"></svg>
+                  New API token
+                </button>
+              }
+            </section>
+
+            @for (group of tokenGroups(); track group.owner) {
+              <section
+                class="profile-modal__section"
+                [attr.data-testid]="'profile-api-tokens-' + group.owner"
+              >
+                <h3 class="profile-modal__section-title">{{ group.title }}</h3>
+                @if (tokensLoading() || group.pending) {
+                  <div class="profile-modal__loading">
+                    <sc-loading-spinner size="sm"></sc-loading-spinner>
+                  </div>
+                } @else if (group.notice) {
+                  <p class="profile-modal__meta">{{ group.notice }}</p>
+                } @else if (group.tokens.length === 0) {
+                  <p class="profile-modal__meta">No API tokens yet.</p>
+                } @else {
+                  <ul class="profile-modal__list">
+                    @for (item of group.tokens; track item.id) {
+                      <li
+                        class="profile-modal__item"
+                        data-testid="profile-api-token-item"
+                      >
+                        <div class="profile-modal__device">
+                          <div class="profile-modal__token-header">
+                            <div class="profile-modal__identity">
+                              <svg lucideKeyRound aria-hidden="true"></svg>
+                              <span class="profile-modal__value">{{
+                                item.name
+                              }}</span>
+                              @if (item.expired) {
+                                <span
+                                  class="profile-modal__badge profile-modal__badge--warning"
+                                  >Expired</span
+                                >
+                              }
+                            </div>
+                            @if (
+                              group.canRevoke && !isConfirming("token", item.id)
+                            ) {
+                              <button
+                                type="button"
+                                class="modal-form__footer-link profile-modal__danger-link"
+                                data-testid="profile-api-token-revoke"
+                                data-ph-capture-attribute-sc-event="profile api token revoke open"
+                                [attr.data-ph-capture-attribute-api-token-owner]="
+                                  group.owner
+                                "
+                                [disabled]="!!busy()"
+                                (click)="askConfirm('token', item.id)"
+                              >
+                                Revoke
+                              </button>
+                            }
+                          </div>
+                          <span class="profile-modal__meta">
+                            Created {{ item.createdAt | date: "mediumDate" }}
+                          </span>
+                          <span class="profile-modal__meta">
+                            @if (item.lastUsedAt) {
+                              Last used {{ item.lastUsedAt | date: "medium" }}
+                            } @else {
+                              Never used
+                            }
+                          </span>
+                          <span class="profile-modal__meta">
+                            @if (item.expiration) {
+                              {{ item.expired ? "Expired" : "Expires" }}
+                              {{ item.expiration | date: "mediumDate" }}
+                            } @else {
+                              Never expires
+                            }
+                          </span>
+                        </div>
+                        @if (isConfirming("token", item.id)) {
+                          <ng-container
+                            [ngTemplateOutlet]="confirmPanel"
+                            [ngTemplateOutletContext]="{
+                              $implicit: messages.apiTokenRevokeWarning,
+                              label: 'Revoke',
+                              event: 'profile api token revoke',
+                            }"
+                          ></ng-container>
+                          <ng-container
+                            [ngTemplateOutlet]="feedbackMessage"
+                            [ngTemplateOutletContext]="{
+                              $implicit: 'token-revoke',
+                            }"
+                          ></ng-container>
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
+              </section>
+            }
+          } @else if (tab() === "account") {
             <section
               class="profile-modal__section"
               data-testid="profile-section"
