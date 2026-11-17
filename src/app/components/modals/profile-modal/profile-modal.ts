@@ -18,6 +18,7 @@ import {
   LucideCircleUser,
   LucideCopy,
   LucideDynamicIcon,
+  LucideInfo,
   LucideKeyRound,
   LucideMail,
   LucideMonitor,
@@ -42,6 +43,7 @@ import {
   type ProfileSession,
 } from "../../../core/auth";
 import { ModalDialog } from "../../../services/modal-dialog";
+import { UiTooltip } from "../../../services/ui-tooltip";
 import { Button } from "../../button/button";
 import { LoadingSpinner } from "../../loading-spinner/loading-spinner";
 import { Modal } from "../modal/modal";
@@ -81,14 +83,6 @@ type PendingReverify = {
   cancel: () => void;
 };
 type ProfileActionResult = ProfileResult | ApiTokenCreateResult;
-type TokenGroup = {
-  owner: ApiTokenOwner;
-  title: string;
-  tokens: ProfileApiToken[];
-  notice: string;
-  pending: boolean;
-  canRevoke: boolean;
-};
 
 const COPY_RESET_MS = 2000;
 
@@ -111,6 +105,7 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     LucideCircleUser,
     LucideCopy,
     LucideDynamicIcon,
+    LucideInfo,
     LucideKeyRound,
     LucideMail,
     LucideMonitor,
@@ -129,6 +124,7 @@ export class ProfileModal {
   private readonly profileService = inject(Profile);
   private readonly organizations = inject(Organizations);
   private readonly apiTokens = inject(ApiTokens);
+  private readonly uiTooltip = inject(UiTooltip);
   private readonly modalTemplate = viewChild<TemplateRef<unknown>>(
     "profileModalTemplate",
   );
@@ -169,11 +165,7 @@ export class ProfileModal {
   protected readonly reverifyCode = signal("");
 
   protected readonly tokensLoading = signal(false);
-  protected readonly userTokens = signal<ProfileApiToken[]>([]);
-  protected readonly organizationTokens = signal<ProfileApiToken[] | null>(
-    null,
-  );
-  protected readonly organizationTokensError = signal("");
+  protected readonly tokens = signal<ProfileApiToken[]>([]);
   protected readonly tokensError = signal("");
   private readonly tokensOrganizationId = signal<string | null>(null);
   private readonly activeOrganizationId = computed(
@@ -183,34 +175,23 @@ export class ProfileModal {
   protected readonly tokenCopied = signal(false);
   protected readonly tokenName = signal("");
   protected readonly tokenExpirationIndex = signal(0);
-  protected readonly tokenOwner = signal<ApiTokenOwner>("user");
-
-  protected readonly tokenGroups = computed<TokenGroup[]>(() => {
+  protected readonly tokenOwner = computed<ApiTokenOwner>(() =>
+    this.activeOrganization() ? "organization" : "user",
+  );
+  protected readonly tokensTitle = computed(() => {
     const organization = this.activeOrganization();
-    const error = this.tokensError();
-    const groups: TokenGroup[] = [
-      {
-        owner: "user",
-        title: AUTH_MESSAGES.personalTokensTitle,
-        tokens: this.userTokens(),
-        notice: error,
-        pending: false,
-        canRevoke: this.apiTokens.canManage("user"),
-      },
-    ];
-    if (organization) {
-      const loaded = this.tokensOrganizationId() === organization.id;
-      groups.push({
-        owner: "organization",
-        title: AUTH_MESSAGES.organizationTokensTitle(organization.name),
-        tokens: loaded ? (this.organizationTokens() ?? []) : [],
-        notice: error || (loaded ? this.organizationTokensError() : ""),
-        pending: !loaded && !error,
-        canRevoke: loaded && this.apiTokens.canManage("organization"),
-      });
-    }
-    return groups;
+    return organization
+      ? AUTH_MESSAGES.organizationTokensTitle(organization.name)
+      : AUTH_MESSAGES.personalTokensTitle;
   });
+  protected readonly tokensPending = computed(
+    () =>
+      this.tokensLoading() ||
+      this.tokensOrganizationId() !== this.activeOrganizationId(),
+  );
+  protected readonly canManageTokens = computed(() =>
+    this.apiTokens.canManage(this.tokenOwner()),
+  );
 
   private pendingReverify: PendingReverify | null = null;
   private copyTimer: ReturnType<typeof setTimeout> | null = null;
@@ -229,9 +210,7 @@ export class ProfileModal {
     inject(DestroyRef).onDestroy(() => this.clearCopyTimer());
     effect(() => {
       const organizationId = this.activeOrganizationId();
-      this.isActiveAdmin();
       untracked(() => {
-        this.tokenOwner.set("user");
         if (
           this.tab() === "tokens" &&
           organizationId !== this.tokensOrganizationId()
@@ -279,7 +258,6 @@ export class ProfileModal {
     this.deleteConfirmation.set("");
     this.tokenName.set("");
     this.tokenExpirationIndex.set(0);
-    this.tokenOwner.set("user");
     this.editor.set(editor);
   }
 
@@ -334,10 +312,9 @@ export class ProfileModal {
       );
     }
     if (target.kind === "token") {
-      const remove = (tokens: ProfileApiToken[]) =>
-        tokens.filter((token) => token.id !== target.id);
-      this.userTokens.update(remove);
-      this.organizationTokens.update((tokens) => tokens && remove(tokens));
+      this.tokens.update((tokens) =>
+        tokens.filter((token) => token.id !== target.id),
+      );
     }
   }
 
@@ -519,6 +496,14 @@ export class ProfileModal {
     await this.loadTokens();
   }
 
+  protected showTooltip(tooltip: HTMLElement, event: Event): void {
+    this.uiTooltip.show(tooltip, event);
+  }
+
+  protected hideTooltip(tooltip: HTMLElement): void {
+    this.uiTooltip.hide(tooltip);
+  }
+
   protected dismissCreatedToken(): void {
     this.clearCopyTimer();
     this.createdToken.set(null);
@@ -688,15 +673,13 @@ export class ProfileModal {
       return;
     }
     this.tokensLoading.set(false);
+    this.tokensOrganizationId.set(organizationId);
     if (result.status === "error") {
+      this.tokens.set([]);
       this.tokensError.set(result.message);
-      this.tokensOrganizationId.set(organizationId);
       return;
     }
-    this.userTokens.set(result.user);
-    this.organizationTokens.set(result.organization);
-    this.organizationTokensError.set(result.organizationError);
-    this.tokensOrganizationId.set(result.organizationId);
+    this.tokens.set(result.tokens);
   }
 
   private clearCopyTimer(): void {
@@ -731,9 +714,7 @@ export class ProfileModal {
     this.confirmPassword.set("");
     this.tokensRequest++;
     this.tokensLoading.set(false);
-    this.userTokens.set([]);
-    this.organizationTokens.set(null);
-    this.organizationTokensError.set("");
+    this.tokens.set([]);
     this.tokensError.set("");
     this.tokensOrganizationId.set(null);
     this.dismissCreatedToken();

@@ -320,16 +320,51 @@
               ></ng-container>
             </section>
           } @else if (tab() === "tokens") {
-            @let tokenOrganization = activeOrganization();
             <section
               class="profile-modal__section"
-              data-testid="profile-api-tokens-create"
+              data-testid="profile-api-tokens"
             >
-              <h3 class="profile-modal__section-title">API tokens</h3>
-              <p class="profile-modal__meta">
-                Use API tokens to authenticate requests to the Spare Cores API.
-                Tokens have read-only access.
-              </p>
+              <div class="profile-modal__section-header">
+                <h3 class="profile-modal__section-title">
+                  {{ tokensTitle() }}
+                  <button
+                    type="button"
+                    class="profile-modal__info"
+                    data-testid="profile-api-tokens-info"
+                    [attr.aria-label]="messages.apiTokensInfo"
+                    (mouseenter)="showTooltip(tokensInfoTooltip, $event)"
+                    (mouseleave)="hideTooltip(tokensInfoTooltip)"
+                    (focus)="showTooltip(tokensInfoTooltip, $event)"
+                    (blur)="hideTooltip(tokensInfoTooltip)"
+                  >
+                    <svg lucideInfo aria-hidden="true"></svg>
+                  </button>
+                </h3>
+                @if (canManageTokens() && editor() !== "token") {
+                  <sc-button
+                    label="Create API token"
+                    icon="plus"
+                    iconPosition="start"
+                    size="small"
+                    variant="outline"
+                    color="brand"
+                    data-testid="profile-api-token-new"
+                    data-ph-capture-attribute-sc-event="profile api token create open"
+                    [attr.data-ph-capture-attribute-api-token-owner]="
+                      tokenOwner()
+                    "
+                    [disabled]="!!busy() || tokensPending()"
+                    (buttonClick)="openEditor('token')"
+                  ></sc-button>
+                }
+              </div>
+              <div
+                #tokensInfoTooltip
+                class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+                aria-hidden="true"
+              >
+                {{ messages.apiTokensInfo }}
+              </div>
 
               @let secret = createdToken();
               @if (secret) {
@@ -373,7 +408,7 @@
                 </div>
               }
 
-              @if (editor() === "token") {
+              @if (editor() === "token" && canManageTokens()) {
                 <form
                   class="profile-modal__editor"
                   #tokenForm="ngForm"
@@ -411,32 +446,6 @@
                       }
                     </select>
                   </label>
-                  @if (tokenOrganization && isActiveAdmin()) {
-                    <fieldset
-                      class="profile-modal__owner"
-                      data-testid="profile-api-token-owner"
-                    >
-                      <legend>Owner</legend>
-                      <label class="modal-form__checkbox">
-                        <input
-                          type="radio"
-                          name="tokenOwner"
-                          value="user"
-                          [(ngModel)]="tokenOwner"
-                        />
-                        <span>Me</span>
-                      </label>
-                      <label class="modal-form__checkbox">
-                        <input
-                          type="radio"
-                          name="tokenOwner"
-                          value="organization"
-                          [(ngModel)]="tokenOwner"
-                        />
-                        <span>{{ tokenOrganization.name }}</span>
-                      </label>
-                    </fieldset>
-                  }
                   <ng-container
                     [ngTemplateOutlet]="feedbackMessage"
                     [ngTemplateOutletContext]="{ $implicit: 'tokens' }"
@@ -466,114 +475,95 @@
                   [ngTemplateOutlet]="feedbackMessage"
                   [ngTemplateOutletContext]="{ $implicit: 'tokens' }"
                 ></ng-container>
-                <button
-                  type="button"
-                  class="modal-form__footer-link profile-modal__add"
-                  data-testid="profile-api-token-new"
-                  data-ph-capture-attribute-sc-event="profile api token create open"
-                  [disabled]="!!busy() || tokensLoading()"
-                  (click)="openEditor('token')"
-                >
-                  <svg lucidePlus aria-hidden="true"></svg>
-                  New API token
-                </button>
               }
-            </section>
 
-            @for (group of tokenGroups(); track group.owner) {
-              <section
-                class="profile-modal__section"
-                [attr.data-testid]="'profile-api-tokens-' + group.owner"
-              >
-                <h3 class="profile-modal__section-title">{{ group.title }}</h3>
-                @if (tokensLoading() || group.pending) {
-                  <div class="profile-modal__loading">
-                    <sc-loading-spinner size="sm"></sc-loading-spinner>
-                  </div>
-                } @else if (group.notice) {
-                  <p class="profile-modal__meta">{{ group.notice }}</p>
-                } @else if (group.tokens.length === 0) {
-                  <p class="profile-modal__meta">{{ messages.noApiTokens }}</p>
-                } @else {
-                  <ul class="profile-modal__list">
-                    @for (item of group.tokens; track item.id) {
-                      <li
-                        class="profile-modal__item"
-                        data-testid="profile-api-token-item"
-                      >
-                        <div class="profile-modal__device">
-                          <div class="profile-modal__token-header">
-                            <div class="profile-modal__identity">
-                              <svg lucideKeyRound aria-hidden="true"></svg>
-                              <span class="profile-modal__value">{{
-                                item.name
-                              }}</span>
-                              @if (item.expired) {
-                                <span
-                                  class="profile-modal__badge profile-modal__badge--warning"
-                                  >Expired</span
-                                >
-                              }
-                            </div>
-                            @if (
-                              group.canRevoke && !isConfirming("token", item.id)
-                            ) {
-                              <button
-                                type="button"
-                                class="modal-form__footer-link profile-modal__danger-link"
-                                data-testid="profile-api-token-revoke"
-                                data-ph-capture-attribute-sc-event="profile api token revoke open"
-                                [attr.data-ph-capture-attribute-api-token-owner]="
-                                  group.owner
-                                "
-                                [disabled]="!!busy()"
-                                (click)="askConfirm('token', item.id)"
+              @if (tokensPending()) {
+                <div class="profile-modal__loading">
+                  <sc-loading-spinner size="sm"></sc-loading-spinner>
+                </div>
+              } @else if (tokensError()) {
+                <p class="profile-modal__meta">{{ tokensError() }}</p>
+              } @else if (tokens().length === 0) {
+                <p class="profile-modal__meta">{{ messages.noApiTokens }}</p>
+              } @else {
+                <ul class="profile-modal__list">
+                  @for (item of tokens(); track item.id) {
+                    <li
+                      class="profile-modal__item"
+                      data-testid="profile-api-token-item"
+                    >
+                      <div class="profile-modal__device">
+                        <div class="profile-modal__token-header">
+                          <div class="profile-modal__identity">
+                            <svg lucideKeyRound aria-hidden="true"></svg>
+                            <span class="profile-modal__value">{{
+                              item.name
+                            }}</span>
+                            @if (item.expired) {
+                              <span
+                                class="profile-modal__badge profile-modal__badge--warning"
+                                >Expired</span
                               >
-                                Revoke
-                              </button>
                             }
                           </div>
-                          <span class="profile-modal__meta">
-                            Created {{ item.createdAt | date: "mediumDate" }}
-                          </span>
-                          <span class="profile-modal__meta">
-                            @if (item.lastUsedAt) {
-                              Last used {{ item.lastUsedAt | date: "medium" }}
-                            } @else {
-                              Never used
-                            }
-                          </span>
-                          <span class="profile-modal__meta">
-                            @if (item.expiration) {
-                              {{ item.expired ? "Expired" : "Expires" }}
-                              {{ item.expiration | date: "mediumDate" }}
-                            } @else {
-                              Never expires
-                            }
-                          </span>
+                          @if (
+                            canManageTokens() && !isConfirming("token", item.id)
+                          ) {
+                            <button
+                              type="button"
+                              class="modal-form__footer-link profile-modal__danger-link"
+                              data-testid="profile-api-token-revoke"
+                              data-ph-capture-attribute-sc-event="profile api token revoke open"
+                              [attr.data-ph-capture-attribute-api-token-owner]="
+                                tokenOwner()
+                              "
+                              [disabled]="!!busy()"
+                              (click)="askConfirm('token', item.id)"
+                            >
+                              Revoke
+                            </button>
+                          }
                         </div>
-                        @if (isConfirming("token", item.id)) {
-                          <ng-container
-                            [ngTemplateOutlet]="confirmPanel"
-                            [ngTemplateOutletContext]="{
-                              $implicit: messages.apiTokenRevokeWarning,
-                              label: 'Revoke',
-                              event: 'profile api token revoke',
-                            }"
-                          ></ng-container>
-                          <ng-container
-                            [ngTemplateOutlet]="feedbackMessage"
-                            [ngTemplateOutletContext]="{
-                              $implicit: 'token-revoke',
-                            }"
-                          ></ng-container>
-                        }
-                      </li>
-                    }
-                  </ul>
-                }
-              </section>
-            }
+                        <span class="profile-modal__meta">
+                          Created {{ item.createdAt | date: "mediumDate" }}
+                        </span>
+                        <span class="profile-modal__meta">
+                          @if (item.lastUsedAt) {
+                            Last used {{ item.lastUsedAt | date: "medium" }}
+                          } @else {
+                            Never used
+                          }
+                        </span>
+                        <span class="profile-modal__meta">
+                          @if (item.expiration) {
+                            {{ item.expired ? "Expired" : "Expires" }}
+                            {{ item.expiration | date: "mediumDate" }}
+                          } @else {
+                            Never expires
+                          }
+                        </span>
+                      </div>
+                      @if (isConfirming("token", item.id)) {
+                        <ng-container
+                          [ngTemplateOutlet]="confirmPanel"
+                          [ngTemplateOutletContext]="{
+                            $implicit: messages.apiTokenRevokeWarning,
+                            label: 'Revoke',
+                            event: 'profile api token revoke',
+                          }"
+                        ></ng-container>
+                        <ng-container
+                          [ngTemplateOutlet]="feedbackMessage"
+                          [ngTemplateOutletContext]="{
+                            $implicit: 'token-revoke',
+                          }"
+                        ></ng-container>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+            </section>
           } @else if (tab() === "account") {
             <section
               class="profile-modal__section"

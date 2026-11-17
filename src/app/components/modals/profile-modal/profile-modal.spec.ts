@@ -9,6 +9,7 @@ import {
 } from "@angular/core/testing";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 import {
+  AUTH_MESSAGES,
   ApiTokens,
   AuthState,
   Organizations,
@@ -76,7 +77,9 @@ describe("ProfileModal", () => {
     );
     apiTokens.list.and.resolveTo({
       status: "complete",
-      user: [
+      owner: "user",
+      organizationId: null,
+      tokens: [
         {
           id: "ak_1",
           name: "ci",
@@ -87,9 +90,6 @@ describe("ProfileModal", () => {
           expired: false,
         },
       ],
-      organizationId: null,
-      organization: null,
-      organizationError: "",
     });
     apiTokens.create.and.resolveTo({
       status: "complete",
@@ -273,12 +273,34 @@ describe("ProfileModal", () => {
   it("lists personal API tokens", async () => {
     await openTab("profile-tab-tokens");
 
+    const section = query("profile-api-tokens")?.textContent ?? "";
     expect(apiTokens.list).toHaveBeenCalledOnceWith(null);
-    expect(query("profile-api-tokens-user")?.textContent).toContain("ci");
-    expect(query("profile-api-tokens-organization")).toBeNull();
+    expect(section).toContain("Personal tokens");
+    expect(section).toContain("ci");
+    expect(query("profile-api-tokens-info")?.getAttribute("aria-label")).toBe(
+      AUTH_MESSAGES.apiTokensInfo,
+    );
   });
 
-  it("shows the load error instead of empty or pending token groups", async () => {
+  it("shows only organization tokens while an organization is active", async () => {
+    apiTokens.list.and.resolveTo({
+      status: "complete",
+      owner: "organization",
+      organizationId: "org_1",
+      tokens: [],
+    });
+    activeOrganization.set(acme);
+    isActiveAdmin.set(true);
+    fixture.detectChanges();
+    await openTab("profile-tab-tokens");
+
+    const section = query("profile-api-tokens")?.textContent ?? "";
+    expect(apiTokens.list).toHaveBeenCalledOnceWith("org_1");
+    expect(section).toContain("Acme tokens");
+    expect(section).not.toContain("Personal tokens");
+  });
+
+  it("shows the load error instead of an empty or pending list", async () => {
     apiTokens.list.and.resolveTo({
       status: "error",
       message: "Load failed.",
@@ -287,18 +309,10 @@ describe("ProfileModal", () => {
     fixture.detectChanges();
     await openTab("profile-tab-tokens");
 
-    const user = query("profile-api-tokens-user")?.textContent ?? "";
-    const organization =
-      query("profile-api-tokens-organization")?.textContent ?? "";
-    expect(apiTokens.list).toHaveBeenCalledOnceWith("org_1");
-    expect(user).toContain("Load failed.");
-    expect(user).not.toContain("No API tokens yet.");
-    expect(organization).toContain("Load failed.");
-    expect(
-      query("profile-api-tokens-organization")?.querySelector(
-        "sc-loading-spinner",
-      ),
-    ).toBeNull();
+    const section = query("profile-api-tokens");
+    expect(section?.textContent).toContain("Load failed.");
+    expect(section?.textContent).not.toContain("No API tokens yet.");
+    expect(section?.querySelector("sc-loading-spinner")).toBeNull();
   });
 
   it("reloads tokens when the active organization changes", async () => {
@@ -339,9 +353,9 @@ describe("ProfileModal", () => {
 
   it("creates a user API token and shows its secret", async () => {
     await openTab("profile-tab-tokens");
-    query("profile-api-token-new")?.click();
+    query("profile-api-token-new")?.querySelector("button")?.click();
     fixture.detectChanges();
-    expect(query("profile-api-token-owner")).toBeNull();
+    expect(query("profile-api-token-name")).not.toBeNull();
 
     const component = fixture.componentInstance as unknown as {
       tokenName: { set(value: string): void };
@@ -361,24 +375,35 @@ describe("ProfileModal", () => {
     );
   });
 
-  it("offers organization ownership to admins of the active organization", async () => {
+  it("creates organization tokens for admins of the active organization", async () => {
+    apiTokens.create.and.resolveTo({
+      status: "complete",
+      token: { name: "deploy", secret: "ak_secret", owner: "organization" },
+    });
     activeOrganization.set(acme);
     isActiveAdmin.set(true);
     await openTab("profile-tab-tokens");
 
-    query("profile-api-token-new")?.click();
-    fixture.detectChanges();
+    const component = fixture.componentInstance as unknown as {
+      tokenName: { set(value: string): void };
+      createToken(form: { invalid: boolean }): Promise<void>;
+    };
+    component.tokenName.set("deploy");
+    await component.createToken({ invalid: false });
 
-    expect(query("profile-api-token-owner")?.textContent).toContain("Acme");
-    expect(query("profile-api-tokens-organization")).not.toBeNull();
+    expect(apiTokens.create).toHaveBeenCalledOnceWith({
+      name: "deploy",
+      secondsUntilExpiration: null,
+      owner: "organization",
+    });
   });
 
-  it("hides revoke on organization tokens for non-admins", async () => {
+  it("hides create and revoke on organization tokens for non-admins", async () => {
     apiTokens.list.and.resolveTo({
       status: "complete",
-      user: [],
+      owner: "organization",
       organizationId: "org_1",
-      organization: [
+      tokens: [
         {
           id: "ak_org",
           name: "shared",
@@ -389,16 +414,13 @@ describe("ProfileModal", () => {
           expired: false,
         },
       ],
-      organizationError: "",
     });
     activeOrganization.set({ ...acme, isAdmin: false });
     await openTab("profile-tab-tokens");
 
-    const organization = query("profile-api-tokens-organization");
-    expect(organization?.textContent).toContain("shared");
-    expect(
-      organization?.querySelector('[data-testid="profile-api-token-revoke"]'),
-    ).toBeNull();
+    expect(query("profile-api-tokens")?.textContent).toContain("shared");
+    expect(query("profile-api-token-new")).toBeNull();
+    expect(query("profile-api-token-revoke")).toBeNull();
   });
 
   it("saves the updated name", async () => {

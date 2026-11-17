@@ -47,52 +47,34 @@ describe("ApiTokens", () => {
     TestBed.inject(HttpTestingController).verify();
   });
 
-  it("lists active user and organization tokens by subject", async () => {
-    const getAll = jasmine
-      .createSpy("getAll")
-      .and.callFake(({ subject }: { subject: string }) =>
-        Promise.resolve({
-          data:
-            subject === "user_1"
-              ? [apiKey("ak_user"), apiKey("ak_revoked", true)]
-              : [apiKey("ak_org")],
-          total_count: 1,
-        }),
-      );
+  it("lists active personal tokens by user subject", async () => {
+    const getAll = jasmine.createSpy("getAll").and.resolveTo({
+      data: [apiKey("ak_user"), apiKey("ak_revoked", true)],
+      total_count: 2,
+    });
     const service = createService({
       user: { id: "user_1" },
       apiKeys: { getAll },
     });
 
-    const result = await service.list("org_1");
+    const result = await service.list(null);
 
-    expect(getAll).toHaveBeenCalledWith(
+    expect(getAll).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({ subject: "user_1" }),
     );
-    expect(getAll).toHaveBeenCalledWith(
-      jasmine.objectContaining({ subject: "org_1" }),
-    );
-    expect(result).toEqual(
-      jasmine.objectContaining({
-        status: "complete",
-        user: [jasmine.objectContaining({ id: "ak_user", owner: "user" })],
-        organizationId: "org_1",
-        organization: [
-          jasmine.objectContaining({ id: "ak_org", owner: "organization" }),
-        ],
-        organizationError: "",
-      }),
-    );
+    expect(result).toEqual({
+      status: "complete",
+      owner: "user",
+      organizationId: null,
+      tokens: [jasmine.objectContaining({ id: "ak_user", owner: "user" })],
+    });
   });
 
-  it("keeps user tokens when the organization listing is refused", async () => {
-    const getAll = jasmine
-      .createSpy("getAll")
-      .and.callFake(({ subject }: { subject: string }) =>
-        subject === "user_1"
-          ? Promise.resolve({ data: [apiKey("ak_user")], total_count: 1 })
-          : Promise.reject(new Error("forbidden")),
-      );
+  it("lists only organization tokens while an organization is active", async () => {
+    const getAll = jasmine.createSpy("getAll").and.resolveTo({
+      data: [apiKey("ak_org")],
+      total_count: 1,
+    });
     const service = createService({
       user: { id: "user_1" },
       apiKeys: { getAll },
@@ -100,13 +82,34 @@ describe("ApiTokens", () => {
 
     const result = await service.list("org_1");
 
-    expect(result).toEqual(
-      jasmine.objectContaining({
-        status: "complete",
-        organization: null,
-        organizationError: AUTH_MESSAGES.organizationTokensUnavailable,
-      }),
+    expect(getAll).toHaveBeenCalledOnceWith(
+      jasmine.objectContaining({ subject: "org_1" }),
     );
+    expect(result).toEqual({
+      status: "complete",
+      owner: "organization",
+      organizationId: "org_1",
+      tokens: [
+        jasmine.objectContaining({ id: "ak_org", owner: "organization" }),
+      ],
+    });
+  });
+
+  it("reports a refused organization listing", async () => {
+    const getAll = jasmine
+      .createSpy("getAll")
+      .and.rejectWith(new Error("forbidden"));
+    const service = createService({
+      user: { id: "user_1" },
+      apiKeys: { getAll },
+    });
+
+    const result = await service.list("org_1");
+
+    expect(result).toEqual({
+      status: "error",
+      message: AUTH_MESSAGES.organizationTokensUnavailable,
+    });
   });
 
   it("fetches every page of tokens", async () => {
@@ -129,13 +132,7 @@ describe("ApiTokens", () => {
     const result = await service.list(null);
 
     expect(getAll).toHaveBeenCalledTimes(2);
-    expect(result).toEqual(
-      jasmine.objectContaining({
-        status: "complete",
-        organization: null,
-      }),
-    );
-    expect(result.status === "complete" && result.user.length).toBe(101);
+    expect(result.status === "complete" && result.tokens.length).toBe(101);
   });
 
   function member(role: string) {

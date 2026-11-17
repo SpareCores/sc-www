@@ -7,8 +7,8 @@ import {
 
 type TokenOwner = "user" | "organization";
 
-const ORGANIZATION_SECTION = '[data-testid="profile-api-tokens-organization"]';
-const USER_SECTION = '[data-testid="profile-api-tokens-user"]';
+const TOKENS_SECTION = '[data-testid="profile-api-tokens"]';
+const NEW_TOKEN_BUTTON = '[data-testid="profile-api-token-new"] button';
 
 function openUserProfile(): void {
   cy.get("#auth_button").should("be.visible").click();
@@ -19,11 +19,13 @@ function openUserProfile(): void {
   );
 }
 
-function openTokensTab(): void {
+function openTokensTab(title: string): void {
   cy.get('[data-testid="profile-tab-tokens"]').click();
-  cy.get(USER_SECTION, { timeout: 20000 }).should("be.visible");
-  cy.get('[data-testid="profile-api-token-new"]', { timeout: 20000 }).should(
-    "not.be.disabled",
+  cy.get(TOKENS_SECTION, { timeout: 20000 })
+    .should("be.visible")
+    .and("contain.text", title);
+  cy.get(`${TOKENS_SECTION} sc-loading-spinner`, { timeout: 20000 }).should(
+    "not.exist",
   );
 }
 
@@ -90,11 +92,9 @@ describe("Profile API tokens without an organization", () => {
     openUserProfile();
 
     cy.get('[data-testid="profile-tab-organization"]').should("be.disabled");
-    openTokensTab();
-    cy.get(ORGANIZATION_SECTION).should("not.exist");
+    openTokensTab("Personal tokens");
 
-    cy.get('[data-testid="profile-api-token-new"]').click();
-    cy.get('[data-testid="profile-api-token-owner"]').should("not.exist");
+    cy.get(NEW_TOKEN_BUTTON).should("not.be.disabled").click();
     createToken("e2e-token");
   });
 });
@@ -147,13 +147,12 @@ describe("Profile API tokens in an organization", () => {
       organizationName,
     ).should("contain.text", "Active");
 
-    openTokensTab();
-    cy.get(ORGANIZATION_SECTION)
+    openTokensTab(`${organizationName} tokens`);
+    cy.get(TOKENS_SECTION)
       .should("contain.text", memberVisibleKey)
       .find('[data-testid="profile-api-token-revoke"]')
       .should("not.exist");
-    cy.get('[data-testid="profile-api-token-new"]').click();
-    cy.get('[data-testid="profile-api-token-owner"]').should("not.exist");
+    cy.get('[data-testid="profile-api-token-new"]').should("not.exist");
 
     cy.get('[data-testid="profile-tab-organization"]').click();
     cy.get('[data-testid="profile-organization-personal"]').click();
@@ -161,8 +160,9 @@ describe("Profile API tokens in an organization", () => {
       timeout: 20000,
     }).should("contain.text", "Personal account");
 
-    openTokensTab();
-    cy.get(ORGANIZATION_SECTION).should("not.exist");
+    openTokensTab("Personal tokens");
+    cy.get(TOKENS_SECTION).should("not.contain.text", memberVisibleKey);
+    cy.get(NEW_TOKEN_BUTTON).should("not.be.disabled");
   });
 
   it("lets admins create organization tokens and revoke them", () => {
@@ -172,24 +172,20 @@ describe("Profile API tokens in an organization", () => {
     openUserProfile();
     switchToOrganization(organizationName);
 
-    openTokensTab();
-    cy.get('[data-testid="profile-api-token-new"]').click();
-    cy.get('[data-testid="profile-api-token-owner"]')
-      .should("contain.text", organizationName)
-      .find('input[value="organization"]')
-      .check();
+    openTokensTab(`${organizationName} tokens`);
+    cy.get(NEW_TOKEN_BUTTON).should("not.be.disabled").click();
     createToken("e2e-org-token");
 
     cy.contains(
-      `${ORGANIZATION_SECTION} [data-testid="profile-api-token-item"]`,
+      `${TOKENS_SECTION} [data-testid="profile-api-token-item"]`,
       adminRevokedKey,
     )
       .find('[data-testid="profile-api-token-revoke"]')
       .click();
-    cy.get(`${ORGANIZATION_SECTION} .profile-modal__confirm`)
+    cy.get(`${TOKENS_SECTION} .profile-modal__confirm`)
       .contains("button", "Revoke")
       .click();
-    cy.get(ORGANIZATION_SECTION, { timeout: 20000 })
+    cy.get(TOKENS_SECTION, { timeout: 20000 })
       .should("not.contain.text", adminRevokedKey)
       .and("contain.text", memberVisibleKey);
   });

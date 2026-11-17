@@ -46,36 +46,23 @@ export class ApiTokens {
       return { status: "error", message: AUTH_MESSAGES.authNotReady };
     }
 
-    const [user, organization] = await Promise.allSettled([
-      this.listAll(apiKeys, userId),
-      organizationId
-        ? this.listAll(apiKeys, organizationId)
-        : Promise.resolve(null),
-    ]);
-
-    if (user.status === "rejected") {
+    const owner: ApiTokenOwner = organizationId ? "organization" : "user";
+    try {
+      const keys = await this.listAll(apiKeys, organizationId ?? userId);
+      return {
+        status: "complete",
+        owner,
+        organizationId,
+        tokens: this.toProfileTokens(keys, owner),
+      };
+    } catch (error) {
       return {
         status: "error",
-        message: authErrorMessage(
-          user.reason,
-          AUTH_MESSAGES.unableToLoadApiTokens,
-        ),
+        message: organizationId
+          ? AUTH_MESSAGES.organizationTokensUnavailable
+          : authErrorMessage(error, AUTH_MESSAGES.unableToLoadApiTokens),
       };
     }
-
-    return {
-      status: "complete",
-      user: this.toProfileTokens(user.value, "user"),
-      organizationId,
-      organization:
-        organization.status === "fulfilled" && organization.value
-          ? this.toProfileTokens(organization.value, "organization")
-          : null,
-      organizationError:
-        organization.status === "rejected"
-          ? AUTH_MESSAGES.organizationTokensUnavailable
-          : "",
-    };
   }
 
   async create(payload: ApiTokenCreatePayload): Promise<ApiTokenCreateResult> {

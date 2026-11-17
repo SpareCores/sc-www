@@ -138,6 +138,8 @@ export const AUTH_MESSAGES = {
   organizationSwitched: "Your active organization has been updated.",
   personalTokensTitle: "Personal tokens",
   organizationTokensTitle: (organization: string) => `${organization} tokens`,
+  apiTokensInfo:
+    "Use long-lived API tokens to authenticate requests on your behalf or your organization's behalf to the Spare Cores API. Tokens have read-only access. Visit docs.sparecores.com/api to learn more!",
   noApiTokens: "No API tokens yet.",
   unableToLoadApiTokens: "Unable to load your API tokens.",
   organizationTokensUnavailable:

@@ -138,10 +138,9 @@ export type ApiTokenCreateResult =
 export type ApiTokensListResult =
   | {
       status: "complete";
-      user: ProfileApiToken[];
+      owner: ApiTokenOwner;
       organizationId: string | null;
-      organization: ProfileApiToken[] | null;
-      organizationError: string;
+      tokens: ProfileApiToken[];
     }
   | { status: "error"; message: string };
 
