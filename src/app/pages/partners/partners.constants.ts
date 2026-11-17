@@ -121,6 +121,12 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
             src: "/assets/images/vendors/hcloud.svg",
           },
           {
+            name: "Oracle Cloud",
+            alt: "Oracle Cloud logo",
+            href: "/vendors/oci",
+            src: "/assets/images/vendors/oci.svg",
+          },
+          {
             name: "OVHcloud",
             alt: "OVHcloud logo",
             href: "/vendors/ovh",
@@ -131,6 +137,12 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
             alt: "UpCloud logo",
             href: "/vendors/upcloud",
             src: "/assets/images/vendors/upcloud.svg",
+          },
+          {
+            name: "Vultr",
+            alt: "Vultr logo",
+            href: "/vendors/vultr",
+            src: "/assets/images/vendors/vultr.svg",
           },
         ],
       },
