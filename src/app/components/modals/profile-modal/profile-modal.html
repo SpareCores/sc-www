@@ -1131,17 +1131,17 @@
                           }
                         </div>
                         @if (session.location) {
-                          <span class="profile-modal__meta">{{
-                            session.location
-                          }}</span>
+                          <span class="profile-modal__meta"
+                            >Location: {{ session.location }}</span
+                          >
                         }
                         @if (session.ipAddress) {
-                          <span class="profile-modal__meta">{{
-                            session.ipAddress
-                          }}</span>
+                          <span class="profile-modal__meta"
+                            >IP address: {{ session.ipAddress }}</span
+                          >
                         }
                         <span class="profile-modal__meta">
-                          Last active
+                          Last active:
                           {{ session.lastActiveAt | date: "medium" }}
                         </span>
                       </div>
