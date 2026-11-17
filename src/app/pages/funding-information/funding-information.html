@@ -11,45 +11,24 @@
       <strong>Startup elérhetősége: </strong>
       <a href="https://sparecores.com">https://sparecores.com</a>
     </p>
-    <p><strong>Projekt címe: </strong>Spare Cores Sentinel</p>
-    <p><strong>Projekt azonosítója: </strong>2023-1.1.3-STARTUP/BNL-011</p>
-    <p>
-      <strong>Megvalósítási helyszín: </strong>1037 Budapest, Montevideo utca 9.
-    </p>
-    <p><strong>Elnyert támogatás összege: </strong>20.440.182.- Ft</p>
-    <p>
-      <strong>Projekt megvalósítási ideje: </strong>2025.11.10. – 2026.04.30.
-    </p>
+    @let p = project;
+    <p><strong>Projekt címe: </strong>{{ p.title }}</p>
+    <p><strong>Projekt azonosítója: </strong>{{ p.id }}</p>
+    <p><strong>Megvalósítási helyszín: </strong>{{ p.location }}</p>
+    <p><strong>Elnyert támogatás összege: </strong>{{ p.amount }}</p>
+    <p><strong>Projekt megvalósítási ideje: </strong>{{ p.period }}</p>
 
     <div class="project-summary">
       <p><strong>Projekt rövid összefoglalása:</strong></p>
-      <p>
-        A Spare Cores egy nyílt forráskódú, adatalapú kezdeményezés, amely a
-        felhő-infrastruktúra teljesítményének és költséghatékonyságának
-        mérésével és publikálásával támogatja a modern data science, gépi
-        tanulás és AI-munkafolyamatok infrastruktúra-döntéseit. A pályázat
-        keretében tervezett fejlesztés célja a korábban létrehozott Resource
-        Tracker továbbfejlesztése egy skálázható, felhőalapú, menedzselt
-        szolgáltatás irányába: a mért erőforrás-használati adatok valós idejű
-        streamelése központi Spare Cores infrastruktúrába, ezek biztonságos,
-        token alapú azonosítással történő tárolása, valamint egy interaktív
-        webes dashboard kialakítása, amely automatikus riportokkal és
-        vizualizációkkal támogatja a felhasználók munkáját. A rendszer alapot
-        teremt egy jövőbeli, nemzetközi piacra szánt SaaS termékhez, amely a
-        data science, machine learning és generatív AI feladatok
-        erőforrás-allokációját és költséghatékonyságát optimalizáló ajánlásokat
-        nyújt.
-      </p>
+      <p>{{ p.summary }}</p>
     </div>
 
-    <div class="funding-download">
-      <a
-        href="/assets/images/funding/sentinel-sajtokozlemeny-2026.pdf"
-        download
-        class="funding-download__button"
-      >
-        Sajtóközlemény letöltése
-      </a>
-    </div>
+    @if (p.pressReleaseUrl) {
+      <div class="funding-download">
+        <a [href]="p.pressReleaseUrl" download class="funding-download__button">
+          Sajtóközlemény letöltése
+        </a>
+      </div>
+    }
   </div>
 </div>

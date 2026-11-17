@@ -1,5 +1,7 @@
 import { Component, OnInit, inject } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { SeoHandler } from "../../services/seo-handler";
+import { FUNDING_PROJECTS } from "./funding-information.constants";
 
 @Component({
   selector: "sc-funding-information",
@@ -8,6 +10,10 @@ import { SeoHandler } from "../../services/seo-handler";
 })
 export class FundingInformation implements OnInit {
   private seoHandler = inject(SeoHandler);
+  private route = inject(ActivatedRoute);
+
+  readonly project =
+    FUNDING_PROJECTS[this.route.snapshot.data["fundingProject"]];
 
   ngOnInit(): void {
     this.seoHandler.updateTitleAndMetaTags(

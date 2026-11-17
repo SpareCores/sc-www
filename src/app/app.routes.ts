@@ -245,6 +245,16 @@ export const routes: Routes = [
 
   {
     path: "hu/funding/bnl",
+    data: { fundingProject: "bnl" },
+    loadComponent: () =>
+      import("./pages/funding-information/funding-information").then(
+        (c) => c.FundingInformation,
+      ),
+  },
+
+  {
+    path: "hu/funding/fpi",
+    data: { fundingProject: "fpi" },
     loadComponent: () =>
       import("./pages/funding-information/funding-information").then(
         (c) => c.FundingInformation,
