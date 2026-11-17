@@ -14,6 +14,7 @@ export type PartnerSection = {
   bulletItems?: readonly string[];
   dividerAfter?: boolean;
   logoRowVariant?: "compact";
+  logoColumns?: number;
 };
 
 export type PartnerCategory = {

@@ -89,6 +89,7 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
           "We are proud participants in various Startup and Partner Programs across these ecosystems. These collaborations include deep technical integrations, access to infrastructure credits, and participation in joint ecosystem initiatives, all of which allow us to provide the most up-to-date compute intelligence on the market.",
         ],
         dividerAfter: true,
+        logoColumns: 5,
         logos: [
           {
             name: "Alibaba Cloud",
