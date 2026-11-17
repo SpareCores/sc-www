@@ -60,7 +60,10 @@ export namespace Servers {
         | "ARM"
         | "ARMv8"
         | "ARMv9"
+        | "Altra"
         | "Ampere Altra"
+        | "AmpereOne"
+        | "AmpereOne-M"
         | "EPYC"
         | "Xeon"
         | "Yitian";
@@ -600,6 +603,7 @@ export namespace Servers {
         | "azure"
         | "gcp"
         | "hcloud"
+        | "oci"
         | "ovh"
         | "upcloud"
         | "vultr";
@@ -730,6 +734,7 @@ export namespace Servers {
         | "es-mad1"
         | "eu-central-1"
         | "eu-central-2"
+        | "eu-frankfurt-1"
         | "eu-north-1"
         | "eu-south-1"
         | "eu-south-2"
@@ -832,10 +837,12 @@ export namespace Servers {
         | "uk-lon1"
         | "uksouth"
         | "ukwest"
+        | "us-ashburn-1"
         | "us-chi1"
         | "us-east-1"
         | "us-east-2"
         | "us-nyc1"
+        | "us-phoenix-1"
         | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
@@ -1030,6 +1037,9 @@ export namespace Servers {
         | "hcloud~hil"
         | "hcloud~nbg1"
         | "hcloud~sin"
+        | "oci~eu-frankfurt-1"
+        | "oci~us-ashburn-1"
+        | "oci~us-phoenix-1"
         | "ovh~AP-SOUTH-MUM"
         | "ovh~AP-SOUTH-MUM-1"
         | "ovh~AP-SOUTHEAST-SYD-2"
@@ -1119,6 +1129,7 @@ export namespace Servers {
         | "CH"
         | "CL"
         | "CN"
+        | "CO"
         | "DE"
         | "DK"
         | "ES"
@@ -1133,6 +1144,7 @@ export namespace Servers {
         | "IT"
         | "JP"
         | "KR"
+        | "MA"
         | "MX"
         | "MY"
         | "NL"
@@ -1315,7 +1327,7 @@ export namespace Servers {
        * ASIC manufacturer
        * Manufacturer of the ASIC (Application-Specific Integrated Circuit), e.g. Google.
        */
-      asic_manufacturer?: "Google";
+      asic_manufacturer?: "AWS" | "Google" | "Qualcomm" | "Xilinx";
       /**
        * ASIC family
        * Family of the ASIC (Application-Specific Integrated Circuit), e.g. TPU.
@@ -1325,7 +1337,20 @@ export namespace Servers {
        * ASIC model
        * Model of the ASIC (Application-Specific Integrated Circuit), e.g. v5e.
        */
-      asic_model?: "tpu7" | "v3" | "v5e" | "v5p" | "v6e" | "v7x";
+      asic_model?:
+        | "Inferentia"
+        | "Inferentia2"
+        | "Qualcomm AI100"
+        | "Trainium"
+        | "Trainium2"
+        | "U30"
+        | "Virtex UltraScale+ (VU47P)"
+        | "tpu7"
+        | "v3"
+        | "v5e"
+        | "v5p"
+        | "v6e"
+        | "v7x";
       /**
        * Accelerator type
        * Type of the accelerator, e.g. GPU or TPU.

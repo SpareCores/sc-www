@@ -41,7 +41,7 @@ export class Table<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Return the Benchmark table as-is, without filtering options or relationships resolved.
+   * @description Return the Benchmark table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableBenchmarkTableBenchmarkGet
@@ -56,7 +56,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Country table as-is, without filtering options or relationships resolved.
+   * @description Return the Country table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableCountryTableCountryGet
@@ -71,7 +71,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the ComplianceFramework table as-is, without filtering options or relationships resolved.
+   * @description Return the ComplianceFramework table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableComplianceFrameworksTableComplianceFrameworkGet
@@ -91,7 +91,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the VendorComplianceLink table as-is, without filtering options or relationships resolved.
+   * @description Return the VendorComplianceLink table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableVendorComplianceLinkTableVendorComplianceLinkGet
@@ -111,7 +111,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Vendor table as-is, without filtering options or relationships resolved.
+   * @description Return the Vendor table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableVendorTableVendorGet
@@ -126,7 +126,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Region table as-is, without filtering options or relationships resolved.
+   * @description Return the Region table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableRegionTableRegionGet
@@ -141,7 +141,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Zone table as-is, without filtering options or relationships resolved.
+   * @description Return the Zone table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableZoneTableZoneGet
@@ -156,7 +156,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Server table as-is, without filtering options or relationships resolved.
+   * @description Return the Server table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableServerTableServerGet
@@ -217,7 +217,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Storage table as-is, without filtering options or relationships resolved.
+   * @description Return the Storage table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableStorageTableStorageGet
@@ -232,7 +232,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Database table as-is, without filtering options or relationships resolved.
+   * @description Return the Database table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableDatabaseTableDatabaseGet
@@ -271,7 +271,7 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the DatabaseStorage table as-is, without filtering options or relationships resolved.
+   * @description Return the DatabaseStorage table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
    * @tags Table Dumps
    * @name TableDatabaseStorageTableDatabaseStorageGet

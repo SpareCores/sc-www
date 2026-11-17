@@ -57,6 +57,19 @@
   }
 }
 
+@media (width >= theme(--breakpoint-md)) {
+  .partner-logos--columns .partner-logo-link {
+    flex: 0 0
+      min(
+        6rem,
+        calc(
+          (100% - (var(--partner-columns) - 1) * var(--partner-mobile-gap)) /
+            var(--partner-columns)
+        )
+      );
+  }
+}
+
 .partner-logos--compact {
   --partner-mobile-gap: 1rem;
   @apply gap-4;

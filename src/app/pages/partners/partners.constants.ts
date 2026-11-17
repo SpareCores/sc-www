@@ -89,6 +89,7 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
           "We are proud participants in various Startup and Partner Programs across these ecosystems. These collaborations include deep technical integrations, access to infrastructure credits, and participation in joint ecosystem initiatives, all of which allow us to provide the most up-to-date compute intelligence on the market.",
         ],
         dividerAfter: true,
+        logoColumns: 5,
         logos: [
           {
             name: "Alibaba Cloud",
@@ -121,6 +122,12 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
             src: "/assets/images/vendors/hcloud.svg",
           },
           {
+            name: "Oracle Cloud",
+            alt: "Oracle Cloud logo",
+            href: "/vendors/oci",
+            src: "/assets/images/vendors/oci.svg",
+          },
+          {
             name: "OVHcloud",
             alt: "OVHcloud logo",
             href: "/vendors/ovh",
@@ -131,6 +138,12 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
             alt: "UpCloud logo",
             href: "/vendors/upcloud",
             src: "/assets/images/vendors/upcloud.svg",
+          },
+          {
+            name: "Vultr",
+            alt: "Vultr logo",
+            href: "/vendors/vultr",
+            src: "/assets/images/vendors/vultr.svg",
           },
         ],
       },

@@ -19,7 +19,7 @@ import {
 
 export namespace Server {
   /**
-   * @description Search similar servers to the provided one. The "family" method returns all servers from the same family of the same vendor. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore. The "score_per_price" method is similar to "score", but instead of using the multi-core SCore, it uses the SCore per price.
+   * @description Search similar servers to the provided one. The "family" method returns the servers from the same series of the same vendor (e.g. "t2d" or "m8g"), so the other sizes of the same instance type. When the series of the provided server is unknown or has only a few other servers, it falls back to the servers from the same family (e.g. "General Purpose"), which is a broader category. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore. The "score_per_price" method is similar to "score", but instead of using the multi-core SCore, it uses the SCore per price.
    * @tags Server Details
    * @name GetSimilarServersServerVendorServerSimilarServersByNumGet
    * @summary Get Similar Servers
@@ -178,6 +178,7 @@ export namespace Server {
         | "es-mad1"
         | "eu-central-1"
         | "eu-central-2"
+        | "eu-frankfurt-1"
         | "eu-north-1"
         | "eu-south-1"
         | "eu-south-2"
@@ -280,10 +281,12 @@ export namespace Server {
         | "uk-lon1"
         | "uksouth"
         | "ukwest"
+        | "us-ashburn-1"
         | "us-chi1"
         | "us-east-1"
         | "us-east-2"
         | "us-nyc1"
+        | "us-phoenix-1"
         | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
@@ -312,6 +315,7 @@ export namespace Server {
         | "CH"
         | "CL"
         | "CN"
+        | "CO"
         | "DE"
         | "DK"
         | "ES"
@@ -326,6 +330,7 @@ export namespace Server {
         | "IT"
         | "JP"
         | "KR"
+        | "MA"
         | "MX"
         | "MY"
         | "NL"
@@ -522,6 +527,9 @@ export namespace Server {
         | "hcloud~hil"
         | "hcloud~nbg1"
         | "hcloud~sin"
+        | "oci~eu-frankfurt-1"
+        | "oci~us-ashburn-1"
+        | "oci~us-phoenix-1"
         | "ovh~AP-SOUTH-MUM"
         | "ovh~AP-SOUTH-MUM-1"
         | "ovh~AP-SOUTHEAST-SYD-2"
@@ -661,6 +669,7 @@ export namespace Server {
         | "CH"
         | "CL"
         | "CN"
+        | "CO"
         | "DE"
         | "DK"
         | "ES"
@@ -675,6 +684,7 @@ export namespace Server {
         | "IT"
         | "JP"
         | "KR"
+        | "MA"
         | "MX"
         | "MY"
         | "NL"
@@ -871,6 +881,9 @@ export namespace Server {
         | "hcloud~hil"
         | "hcloud~nbg1"
         | "hcloud~sin"
+        | "oci~eu-frankfurt-1"
+        | "oci~us-ashburn-1"
+        | "oci~us-phoenix-1"
         | "ovh~AP-SOUTH-MUM"
         | "ovh~AP-SOUTH-MUM-1"
         | "ovh~AP-SOUTHEAST-SYD-2"
