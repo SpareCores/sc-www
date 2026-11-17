@@ -33,6 +33,7 @@ export namespace Stats {
         | "azure"
         | "gcp"
         | "hcloud"
+        | "oci"
         | "ovh"
         | "upcloud"
         | "vultr";

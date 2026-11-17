@@ -17,6 +17,7 @@ export enum Vendors {
   Azure = "azure",
   Gcp = "gcp",
   Hcloud = "hcloud",
+  Oci = "oci",
   Ovh = "ovh",
   Upcloud = "upcloud",
   Vultr = "vultr",
@@ -200,6 +201,9 @@ export enum VendorRegions {
   HcloudHil = "hcloud~hil",
   HcloudNbg1 = "hcloud~nbg1",
   HcloudSin = "hcloud~sin",
+  OciEuFrankfurt1 = "oci~eu-frankfurt-1",
+  OciUsAshburn1 = "oci~us-ashburn-1",
+  OciUsPhoenix1 = "oci~us-phoenix-1",
   OvhAPSOUTHMUM = "ovh~AP-SOUTH-MUM",
   OvhAPSOUTHMUM1 = "ovh~AP-SOUTH-MUM-1",
   OvhAPSOUTHEASTSYD2 = "ovh~AP-SOUTHEAST-SYD-2",
@@ -297,13 +301,31 @@ export enum StorageType {
 
 /**
  * Status
- * Last known status of a resource, e.g. active or inactive.
+ * Last known status of a record.
+ *
+ * The docstrings of the values are shown to end-users (e.g. in the API and
+ * on the website), so keep those to what a status means, and document here
+ * how the statuses are set:
+ *
+ * - `ACTIVE` and `INACTIVE` are valid for all tables. Records returned by
+ *   the vendor or defined in code are `ACTIVE`. Records no longer returned
+ *   or defined are set to `INACTIVE` by `pull`, as well as records missing
+ *   from the source by `sync`.
+ * - `PLANNED_FOR_RETIREMENT` and `RETIRED` are only valid for Server and
+ *   Database, and are set only from explicit vendor signals.
+ * - `ARCHIVED` is valid for all tables. It is set only from the
+ *   [archive rules][sc_crawler.archive_rules] by `pull` and `sync`, also for
+ *   child records (e.g. prices of a region), and archived records are not
+ *   updated afterwards. It is our decision on the identity of a record,
+ *   never a vendor signal: end of sale is `RETIRED`, and records no longer
+ *   returned by a vendor are `INACTIVE`.
  */
 export enum Status {
   Active = "active",
   Inactive = "inactive",
   PlannedForRetirement = "planned-for-retirement",
   Retired = "retired",
+  Archived = "archived",
 }
 
 /** ServerColumns */
@@ -496,6 +518,7 @@ export enum Regions {
   EsMad1 = "es-mad1",
   EuCentral1 = "eu-central-1",
   EuCentral2 = "eu-central-2",
+  EuFrankfurt1 = "eu-frankfurt-1",
   EuNorth1 = "eu-north-1",
   EuSouth1 = "eu-south-1",
   EuSouth2 = "eu-south-2",
@@ -598,10 +621,12 @@ export enum Regions {
   UkLon1 = "uk-lon1",
   Uksouth = "uksouth",
   Ukwest = "ukwest",
+  UsAshburn1 = "us-ashburn-1",
   UsChi1 = "us-chi1",
   UsEast1 = "us-east-1",
   UsEast2 = "us-east-2",
   UsNyc1 = "us-nyc1",
+  UsPhoenix1 = "us-phoenix-1",
   UsSjo1 = "us-sjo1",
   UsWest1 = "us-west-1",
   UsWest2 = "us-west-2",
@@ -1070,7 +1095,10 @@ export enum CpuFamilies {
   ARM = "ARM",
   ARMv8 = "ARMv8",
   ARMv9 = "ARMv9",
+  Altra = "Altra",
   AmpereAltra = "Ampere Altra",
+  AmpereOne = "AmpereOne",
+  AmpereOneM = "AmpereOne-M",
   EPYC = "EPYC",
   Xeon = "Xeon",
   Yitian = "Yitian",
@@ -1110,6 +1138,7 @@ export enum Countries {
   CH = "CH",
   CL = "CL",
   CN = "CN",
+  CO = "CO",
   DE = "DE",
   DK = "DK",
   ES = "ES",
@@ -1124,6 +1153,7 @@ export enum Countries {
   IT = "IT",
   JP = "JP",
   KR = "KR",
+  MA = "MA",
   MX = "MX",
   MY = "MY",
   NL = "NL",
@@ -1210,6 +1240,13 @@ export enum BenchmarkComponentAggregationMethod {
 
 /** AsicModels */
 export enum AsicModels {
+  Inferentia = "Inferentia",
+  Inferentia2 = "Inferentia2",
+  QualcommAI100 = "Qualcomm AI100",
+  Trainium = "Trainium",
+  Trainium2 = "Trainium2",
+  U30 = "U30",
+  VirtexUltraScaleVU47P = "Virtex UltraScale+ (VU47P)",
   Tpu7 = "tpu7",
   V3 = "v3",
   V5E = "v5e",
@@ -1220,7 +1257,10 @@ export enum AsicModels {
 
 /** AsicManufacturers */
 export enum AsicManufacturers {
+  AWS = "AWS",
   Google = "Google",
+  Qualcomm = "Qualcomm",
+  Xilinx = "Xilinx",
 }
 
 /** AsicFamilies */
@@ -6935,6 +6975,7 @@ export interface GetStatsStatsGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -7061,6 +7102,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -7186,6 +7228,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -7288,10 +7331,12 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -7486,6 +7531,9 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -7598,6 +7646,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -7723,6 +7772,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -7825,10 +7875,12 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -8023,6 +8075,9 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -8563,6 +8618,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -8665,10 +8721,12 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -8697,6 +8755,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -8711,6 +8770,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -8907,6 +8967,9 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -9052,6 +9115,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -9066,6 +9130,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -9262,6 +9327,9 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -9428,6 +9496,7 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -9442,6 +9511,7 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -9638,6 +9708,9 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -9879,6 +9952,7 @@ export interface SearchRegionsRegionsGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -9925,7 +9999,10 @@ export interface SearchServersServersGetParams {
     | "ARM"
     | "ARMv8"
     | "ARMv9"
+    | "Altra"
     | "Ampere Altra"
+    | "AmpereOne"
+    | "AmpereOne-M"
     | "EPYC"
     | "Xeon"
     | "Yitian";
@@ -10465,6 +10542,7 @@ export interface SearchServersServersGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -10595,6 +10673,7 @@ export interface SearchServersServersGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -10697,10 +10776,12 @@ export interface SearchServersServersGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -10895,6 +10976,9 @@ export interface SearchServersServersGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -10984,6 +11068,7 @@ export interface SearchServersServersGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -10998,6 +11083,7 @@ export interface SearchServersServersGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -11180,7 +11266,7 @@ export interface SearchServersServersGetParams {
    * ASIC manufacturer
    * Manufacturer of the ASIC (Application-Specific Integrated Circuit), e.g. Google.
    */
-  asic_manufacturer?: "Google";
+  asic_manufacturer?: "AWS" | "Google" | "Qualcomm" | "Xilinx";
   /**
    * ASIC family
    * Family of the ASIC (Application-Specific Integrated Circuit), e.g. TPU.
@@ -11190,7 +11276,20 @@ export interface SearchServersServersGetParams {
    * ASIC model
    * Model of the ASIC (Application-Specific Integrated Circuit), e.g. v5e.
    */
-  asic_model?: "tpu7" | "v3" | "v5e" | "v5p" | "v6e" | "v7x";
+  asic_model?:
+    | "Inferentia"
+    | "Inferentia2"
+    | "Qualcomm AI100"
+    | "Trainium"
+    | "Trainium2"
+    | "U30"
+    | "Virtex UltraScale+ (VU47P)"
+    | "tpu7"
+    | "v3"
+    | "v5e"
+    | "v5p"
+    | "v6e"
+    | "v7x";
   /**
    * Accelerator type
    * Type of the accelerator, e.g. GPU or TPU.
@@ -11526,6 +11625,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -11651,6 +11751,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -11753,10 +11854,12 @@ export interface SearchDatabasesDatabasesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -11951,6 +12054,9 @@ export interface SearchDatabasesDatabasesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -12040,6 +12146,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -12054,6 +12161,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -12163,7 +12271,10 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ARM"
     | "ARMv8"
     | "ARMv9"
+    | "Altra"
     | "Ampere Altra"
+    | "AmpereOne"
+    | "AmpereOne-M"
     | "EPYC"
     | "Xeon"
     | "Yitian";
@@ -12223,6 +12334,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -12348,6 +12460,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -12450,10 +12563,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -12648,6 +12763,9 @@ export interface SearchServerPricesServerPricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -12752,6 +12870,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -12766,6 +12885,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -12886,6 +13006,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -13031,6 +13152,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -13133,10 +13255,12 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -13331,6 +13455,9 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -13420,6 +13547,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -13434,6 +13562,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -13499,6 +13628,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -13639,6 +13769,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -13741,10 +13872,12 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -13939,6 +14072,9 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -14028,6 +14164,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -14042,6 +14179,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -14108,6 +14246,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -14243,6 +14382,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -14345,10 +14485,12 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -14543,6 +14685,9 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -14632,6 +14777,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -14646,6 +14792,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"

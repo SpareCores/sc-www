@@ -55,6 +55,8 @@
                     ? getMobileLogoColumns(section.logos.length)
                     : null
                 "
+                [class.partner-logos--columns]="!!section.logoColumns"
+                [style.--partner-columns]="section.logoColumns ?? null"
               >
                 @for (logo of section.logos; track logo.name) {
                   <a

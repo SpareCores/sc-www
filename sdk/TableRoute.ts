@@ -30,7 +30,7 @@ import {
 
 export namespace Table {
   /**
-   * @description Return the Benchmark table as-is, without filtering options or relationships resolved.
+   * @description Return the Benchmark table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableBenchmarkTableBenchmarkGet
    * @summary Table Benchmark
@@ -45,7 +45,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the Country table as-is, without filtering options or relationships resolved.
+   * @description Return the Country table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableCountryTableCountryGet
    * @summary Table Country
@@ -60,7 +60,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the ComplianceFramework table as-is, without filtering options or relationships resolved.
+   * @description Return the ComplianceFramework table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableComplianceFrameworksTableComplianceFrameworkGet
    * @summary Table Compliance Frameworks
@@ -76,7 +76,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the VendorComplianceLink table as-is, without filtering options or relationships resolved.
+   * @description Return the VendorComplianceLink table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableVendorComplianceLinkTableVendorComplianceLinkGet
    * @summary Table Vendor Compliance Link
@@ -92,7 +92,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the Vendor table as-is, without filtering options or relationships resolved.
+   * @description Return the Vendor table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableVendorTableVendorGet
    * @summary Table Vendor
@@ -107,7 +107,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the Region table as-is, without filtering options or relationships resolved.
+   * @description Return the Region table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableRegionTableRegionGet
    * @summary Table Region
@@ -122,7 +122,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the Zone table as-is, without filtering options or relationships resolved.
+   * @description Return the Zone table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableZoneTableZoneGet
    * @summary Table Zone
@@ -137,7 +137,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the Server table as-is, without filtering options or relationships resolved.
+   * @description Return the Server table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableServerTableServerGet
    * @summary Table Server
@@ -251,6 +251,7 @@ export namespace Table {
         | "azure"
         | "gcp"
         | "hcloud"
+        | "oci"
         | "ovh"
         | "upcloud"
         | "vultr";
@@ -376,6 +377,7 @@ export namespace Table {
         | "es-mad1"
         | "eu-central-1"
         | "eu-central-2"
+        | "eu-frankfurt-1"
         | "eu-north-1"
         | "eu-south-1"
         | "eu-south-2"
@@ -478,10 +480,12 @@ export namespace Table {
         | "uk-lon1"
         | "uksouth"
         | "ukwest"
+        | "us-ashburn-1"
         | "us-chi1"
         | "us-east-1"
         | "us-east-2"
         | "us-nyc1"
+        | "us-phoenix-1"
         | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
@@ -676,6 +680,9 @@ export namespace Table {
         | "hcloud~hil"
         | "hcloud~nbg1"
         | "hcloud~sin"
+        | "oci~eu-frankfurt-1"
+        | "oci~us-ashburn-1"
+        | "oci~us-phoenix-1"
         | "ovh~AP-SOUTH-MUM"
         | "ovh~AP-SOUTH-MUM-1"
         | "ovh~AP-SOUTHEAST-SYD-2"
@@ -773,7 +780,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the Storage table as-is, without filtering options or relationships resolved.
+   * @description Return the Storage table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableStorageTableStorageGet
    * @summary Table Storage
@@ -788,7 +795,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the Database table as-is, without filtering options or relationships resolved.
+   * @description Return the Database table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableDatabaseTableDatabaseGet
    * @summary Table Database
@@ -823,6 +830,7 @@ export namespace Table {
         | "azure"
         | "gcp"
         | "hcloud"
+        | "oci"
         | "ovh"
         | "upcloud"
         | "vultr";
@@ -948,6 +956,7 @@ export namespace Table {
         | "es-mad1"
         | "eu-central-1"
         | "eu-central-2"
+        | "eu-frankfurt-1"
         | "eu-north-1"
         | "eu-south-1"
         | "eu-south-2"
@@ -1050,10 +1059,12 @@ export namespace Table {
         | "uk-lon1"
         | "uksouth"
         | "ukwest"
+        | "us-ashburn-1"
         | "us-chi1"
         | "us-east-1"
         | "us-east-2"
         | "us-nyc1"
+        | "us-phoenix-1"
         | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
@@ -1248,6 +1259,9 @@ export namespace Table {
         | "hcloud~hil"
         | "hcloud~nbg1"
         | "hcloud~sin"
+        | "oci~eu-frankfurt-1"
+        | "oci~us-ashburn-1"
+        | "oci~us-phoenix-1"
         | "ovh~AP-SOUTH-MUM"
         | "ovh~AP-SOUTH-MUM-1"
         | "ovh~AP-SOUTHEAST-SYD-2"
@@ -1345,7 +1359,7 @@ export namespace Table {
   }
 
   /**
-   * @description Return the DatabaseStorage table as-is, without filtering options or relationships resolved.
+   * @description Return the DatabaseStorage table without filtering options or relationships resolved; ARCHIVED records are left out.
    * @tags Table Dumps
    * @name TableDatabaseStorageTableDatabaseStorageGet
    * @summary Table Database Storage
