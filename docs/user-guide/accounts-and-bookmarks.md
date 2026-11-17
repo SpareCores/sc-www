@@ -46,6 +46,11 @@ its current filters include servers, databases, searches, comparisons, and
 assessments. Use the name search, category filters, or ordering controls to
 find an item.
 
+The following screenshot shows the Bookmarks page with a saved comparison, a
+saved search, and two bookmarked servers:
+
+![The Bookmarks page with the name search, the Manual order control, the Servers, Databases, Searches, Comparisons, and Assessments toggles, and cards for a comparison, a search, and two servers, each with its action buttons.](bookmarks-page.webp)
+
 Each saved item offers the following actions:
 
 - **Open** opens the server, database, search, comparison, or assessment.
