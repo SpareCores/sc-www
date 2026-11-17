@@ -1,4 +1,4 @@
-# Find Servers in the Navigator
+# Find Servers and Databases
 
 Open the [Navigator](https://sparecores.com/servers) to browse servers. You
 can narrow the results with filters, search by name or ID,
@@ -27,7 +27,7 @@ Use any of the following ways to narrow the listing:
 The following screenshot shows the Search Prompt dialog with suggested filter
 parameters, before you select **Confirm**:
 
-![The Search Prompt dialog with a request for 4 vCPU and 16 GB RAM, the suggested filter parameters below it, and the Confirm button.](../../src/assets/images/user_guide/navigator-search-prompt.webp)
+![The Search Prompt dialog with a request for 4 vCPU and 16 GB RAM, the suggested filter parameters below it, and the Confirm button.](navigator-search-prompt.webp)
 
 The **Basics** group also includes **Active only** and **Orderable only**;
 Orderable only is selected by default. The **Performance** group includes the
@@ -40,12 +40,17 @@ following filters:
 - **Required benchmark score/price**
 - **Required benchmark score/vCPU**
 
+For a walkthrough of these filters, read
+[Search and Order Servers for Any Workload](https://sparecores.com/article/search-benchmarks).
+
 Select **Show filter description** beside a field if you are unsure what it
 filters. Two scores appear throughout the site:
 
 - **SCore** (Spare Cores score) is a server's multi-core CPU speed, measured
   with the CPU stressor of `stress-ng`. See the
-  [glossary](https://docs.sparecores.com/glossary/#score).
+  [glossary](https://docs.sparecores.com/glossary/#score). For how
+  `stress-ng` CPU methods scale, see
+  [Burning CPU Cycles in a Wide Variety of Ways](https://sparecores.com/article/stress-ng-cpu-methods).
 - **$Core** is the SCore per USD per hour, using the server's best on-demand
   or spot price across all zones.
 
@@ -59,11 +64,13 @@ where available, a configuration. Your choice sets what the **BENCHMARK** and
 **$ EFFICIENCY** columns show and what the benchmark filters in the
 **Performance** group compare against.
 
-![The row above the results table with the benchmark selector, the price selector set to Any price, the currency selector set to USD, and the Columns button.](../../src/assets/images/user_guide/navigator-benchmark-row.webp)
+![The row above the results table with the benchmark selector, the price selector set to Any price, the currency selector set to USD, and the Columns button.](navigator-benchmark-row.webp)
 
-Benchmark categories include LLM inference speed.
-Its configurations distinguish prompt processing from text generation and
-include model and token settings. For workload definitions, see the
+Benchmark categories include LLM inference speed. Its configurations
+distinguish prompt processing from text generation and include model and
+token settings; see
+[LLM Inference Speed Benchmarks](https://sparecores.com/article/llm-inference-speed)
+for how they were measured. For workload definitions, see the
 [Benchmarks reference](https://docs.sparecores.com/benchmarks/).
 
 Use **Columns** to change which server properties appear in the listing. For
@@ -80,9 +87,9 @@ no sorting. Two of the default columns need a definition:
 Select a server name to open its detail page. The detail page shows server
 specifications and benchmark information, and includes a **Compare** control.
 
-To share a search, select **Share** in the page header of the
-[Navigator](https://sparecores.com/servers). It copies a link that keeps
-your filters, benchmark, and columns. You do not need an account to share.
+To share a search, select **Share** in the page header of the Navigator. It
+copies a link that keeps your filters, benchmark, and columns. You do not
+need an account to share.
 
 ## Find Managed Databases
 
@@ -92,7 +99,8 @@ it from **Databases** in the site's header menu. It works like the server
 listing: filter in the sidebar, use Search Prompt, and select the checkboxes
 of two or more databases to compare them. Guests can compare up to four
 databases at a time. Its price selector offers **Any price**,
-**Hourly prices**, and **Monthly prices**.
+**Hourly prices**, and **Monthly prices**. For the database benchmark, see
+[Measuring PostgreSQL Performance at Scale](https://sparecores.com/article/benchmark-pgbench-postgres).
 
 For price categories and currencies, see [Understand Prices](./prices.md).
 For database schemas and programmatic access, see

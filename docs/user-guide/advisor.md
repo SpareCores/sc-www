@@ -14,7 +14,7 @@ utilization. **Introduction**, next to it, opens a
 The following screenshot shows the input panel with a baseline server, a
 workload, and a utilization filled in:
 
-![The Advisor input panel with a baseline server, the Baseline workload, the Cost optimization goal, the Average utilization slider at 50%, and Required memory (RAM).](../../src/assets/images/user_guide/advisor-input-panel.webp)
+![The Advisor input panel with a baseline server, the Baseline workload, the Cost optimization goal, the Average utilization slider at 50%, and Required memory (RAM).](advisor-input-panel.webp)
 
 1. Choose a baseline server. The workload control is unavailable until you
    choose a baseline.
@@ -48,7 +48,7 @@ workload, and a utilization filled in:
 The following screenshot shows the **Limit search for matching:** options from
 step 7:
 
-![The Limit search for matching options: CPU allocation, CPU architecture, Price allocation, and Region.](../../src/assets/images/user_guide/advisor-limit-search.webp)
+![The Limit search for matching options: CPU allocation, CPU architecture, Price allocation, and Region.](advisor-limit-search.webp)
 
 For example, with `aws / m5.large` as the baseline, an LLM inference
 workload, and 50% average utilization, the Advisor sets required memory to

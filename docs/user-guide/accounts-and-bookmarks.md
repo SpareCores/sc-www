@@ -1,8 +1,8 @@
 # Create an Account and Manage Bookmarks
 
-You can browse the [Navigator](https://sparecores.com/servers) and use the
-[Advisor](https://sparecores.com/advisor) as a guest. Some actions and limits
-require an account. Select **Register** or **Log in** in the top-right corner
+You can browse the [Navigator](./listings.md) and use the
+[Advisor](./advisor.md) as a guest. Some actions and limits require an
+account. Select **Register** or **Log in** in the top-right corner
 of the site.
 
 ## Guest Limits
