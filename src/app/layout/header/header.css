@@ -135,6 +135,11 @@ li {
 
 .mobile_menu_panel__list {
   @apply grid gap-x-2;
+}
+
+.mobile_menu_panel__list,
+.navbar_menu_list,
+.compare_dropdown_content {
   max-height: calc(100vh - 5.125rem);
   max-height: calc(100dvh - 5.125rem);
   overflow-x: hidden;
