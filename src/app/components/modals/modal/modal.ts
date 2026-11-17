@@ -24,13 +24,12 @@ export function modalTitleId(dialogId: string): string {
   templateUrl: "./modal.html",
   host: {
     class: "block",
-    "[attr.title]": "null",
   },
 })
 export class Modal {
   private dialogRef = inject(DialogRef, { optional: true });
 
-  title = input("");
+  modalTitle = input("");
   size = input<ModalSize>("xl");
   centerTitle = input(false);
   showClose = input(true);

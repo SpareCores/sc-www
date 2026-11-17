@@ -4,8 +4,8 @@
 >
   <div
     class="relative flex gap-4 p-4 border-b border-gray-600"
-    [class.items-center]="!!title()"
-    [class.items-start]="!title()"
+    [class.items-center]="!!modalTitle()"
+    [class.items-start]="!modalTitle()"
     [class.justify-between]="!centerTitle()"
     [class.justify-center]="centerTitle()"
   >
@@ -15,8 +15,8 @@
       [class.text-center]="centerTitle()"
       [attr.id]="titleId"
     >
-      @if (title()) {
-        <h2 class="text-xl font-medium text-white">{{ title() }}</h2>
+      @if (modalTitle()) {
+        <h2 class="text-xl font-medium text-white">{{ modalTitle() }}</h2>
       }
       <ng-content select="[modalHeader]"></ng-content>
     </div>

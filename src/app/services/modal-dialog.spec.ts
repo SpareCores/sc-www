@@ -15,7 +15,7 @@ import { sharedTestingProviders } from "../../testing/testbed.providers";
   template: `
     <button id="opener" (click)="open()">Open</button>
     <ng-template #modalTemplate>
-      <sc-modal id="test-modal" title="Test title">
+      <sc-modal id="test-modal" modalTitle="Test title">
         <p id="modal-body">Body</p>
       </sc-modal>
     </ng-template>

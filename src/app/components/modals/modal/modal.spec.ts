@@ -7,7 +7,7 @@ import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 @Component({
   template: `
     <sc-modal
-      title="Shell title"
+      modalTitle="Shell title"
       size="3xl"
       closeCaptureEvent="test close"
       [closeDisabled]="closeDisabled()"
