@@ -53,4 +53,3 @@ Each saved item offers the following actions:
 - **Edit** changes the name and notes of a search, comparison, or assessment.
 - **Share** copies the item's link.
 - **Delete** removes the item from your bookmarks.
-

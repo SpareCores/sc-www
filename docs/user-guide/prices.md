@@ -29,6 +29,6 @@ Use the currency selector above the
 [Advisor](https://sparecores.com/advisor), or on a comparison page to show
 prices in another currency. USD is the default.
 
-Score-per-price values, such as $Core and **$ EFFICIENCY**, stay per USD per
+Score-per-price values, such as \$Core and **$ EFFICIENCY**, stay per USD per
 hour whichever currency you choose. Check the unit shown with a value before
 you compare prices or efficiency scores.
