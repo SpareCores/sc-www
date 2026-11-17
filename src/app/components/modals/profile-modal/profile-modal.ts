@@ -1,16 +1,25 @@
-import { DatePipe, NgTemplateOutlet } from "@angular/common";
+import { DatePipe, NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   Component,
+  DestroyRef,
+  PLATFORM_ID,
   TemplateRef,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from "@angular/core";
 import { FormsModule, NgForm } from "@angular/forms";
 import {
+  LucideBuilding,
+  LucideCheck,
   LucideCircleUser,
+  LucideCopy,
   LucideDynamicIcon,
+  LucideInfo,
+  LucideKeyRound,
   LucideMail,
   LucideMonitor,
   LucidePlus,
@@ -18,33 +27,49 @@ import {
   LucideSmartphone,
 } from "@lucide/angular";
 import {
+  API_TOKEN_EXPIRATION_OPTIONS,
+  API_TOKEN_NAME_MAX_LENGTH,
   AUTH_MESSAGES,
+  ApiTokens,
   AuthState,
+  Organizations,
   PROFILE_DELETE_CONFIRMATION,
   Profile,
+  type ApiTokenCreateResult,
+  type ApiTokenOwner,
+  type ApiTokenSecret,
+  type ProfileApiToken,
   type ProfileResult,
   type ProfileSession,
 } from "../../../core/auth";
 import { ModalDialog } from "../../../services/modal-dialog";
+import { UiTooltip } from "../../../services/ui-tooltip";
 import { Button } from "../../button/button";
 import { LoadingSpinner } from "../../loading-spinner/loading-spinner";
 import { Modal } from "../modal/modal";
 
-type ProfileTab = "account" | "security";
+type ProfileTab = "account" | "security" | "organization" | "tokens";
 type ProfileSection =
   | "profile"
   | "emails"
   | "github"
   | "password"
   | "devices"
-  | "delete";
-type ProfileConfirm = { kind: "email" | "github" | "session"; id: string };
+  | "delete"
+  | "organization"
+  | "tokens"
+  | "token-revoke";
+type ProfileConfirm = {
+  kind: "email" | "github" | "session" | "token";
+  id: string;
+};
 type ProfileEditor =
   | "name"
   | "email-add"
   | "email-verify"
   | "password"
-  | "delete";
+  | "delete"
+  | "token";
 type ProfileFeedback = {
   section: ProfileSection;
   type: "error" | "info";
@@ -57,11 +82,15 @@ type PendingReverify = {
   retry: () => Promise<void>;
   cancel: () => void;
 };
+type ProfileActionResult = ProfileResult | ApiTokenCreateResult;
+
+const COPY_RESET_MS = 2000;
 
 const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
   email: "emails",
   github: "github",
   session: "devices",
+  token: "token-revoke",
 };
 
 @Component({
@@ -71,8 +100,13 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
     NgTemplateOutlet,
     FormsModule,
     Button,
+    LucideBuilding,
+    LucideCheck,
     LucideCircleUser,
+    LucideCopy,
     LucideDynamicIcon,
+    LucideInfo,
+    LucideKeyRound,
     LucideMail,
     LucideMonitor,
     LucidePlus,
@@ -85,13 +119,24 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
   styleUrls: ["../modal-form.css", "./profile-modal.css"],
 })
 export class ProfileModal {
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly auth = inject(AuthState);
   private readonly profileService = inject(Profile);
+  private readonly organizations = inject(Organizations);
+  private readonly apiTokens = inject(ApiTokens);
+  private readonly uiTooltip = inject(UiTooltip);
   private readonly modalTemplate = viewChild<TemplateRef<unknown>>(
     "profileModalTemplate",
   );
 
   protected readonly profile = this.profileService.profile;
+  protected readonly userImageUrl = this.auth.userImageUrl;
+  protected readonly organizationList = this.organizations.memberships;
+  protected readonly hasOrganizations = this.organizations.hasOrganizations;
+  protected readonly activeOrganization = this.organizations.active;
+  protected readonly isActiveAdmin = this.organizations.isActiveAdmin;
+  protected readonly expirationOptions = API_TOKEN_EXPIRATION_OPTIONS;
+  protected readonly tokenNameMaxLength = API_TOKEN_NAME_MAX_LENGTH;
   protected readonly deleteConfirmationText = PROFILE_DELETE_CONFIRMATION;
   protected readonly messages = AUTH_MESSAGES;
 
@@ -119,7 +164,38 @@ export class ProfileModal {
   protected readonly reverifyPassword = signal("");
   protected readonly reverifyCode = signal("");
 
+  protected readonly tokensLoading = signal(false);
+  protected readonly tokens = signal<ProfileApiToken[]>([]);
+  protected readonly tokensError = signal("");
+  private readonly tokensOrganizationId = signal<string | null>(null);
+  private readonly activeOrganizationId = computed(
+    () => this.activeOrganization()?.id ?? null,
+  );
+  protected readonly createdToken = signal<ApiTokenSecret | null>(null);
+  protected readonly tokenCopied = signal(false);
+  protected readonly tokenName = signal("");
+  protected readonly tokenExpirationIndex = signal(0);
+  protected readonly tokenOwner = computed<ApiTokenOwner>(() =>
+    this.activeOrganization() ? "organization" : "user",
+  );
+  protected readonly tokensTitle = computed(() => {
+    const organization = this.activeOrganization();
+    return organization
+      ? AUTH_MESSAGES.organizationTokensTitle(organization.name)
+      : AUTH_MESSAGES.personalTokensTitle;
+  });
+  protected readonly tokensPending = computed(
+    () =>
+      this.tokensLoading() ||
+      this.tokensOrganizationId() !== this.activeOrganizationId(),
+  );
+  protected readonly canManageTokens = computed(() =>
+    this.apiTokens.canManage(this.tokenOwner()),
+  );
+
   private pendingReverify: PendingReverify | null = null;
+  private copyTimer: ReturnType<typeof setTimeout> | null = null;
+  private tokensRequest = 0;
 
   constructor() {
     inject(ModalDialog).bind({
@@ -131,16 +207,35 @@ export class ProfileModal {
       closed: () => this.auth.closeUserProfile(),
       reset: () => this.reset(),
     });
+    inject(DestroyRef).onDestroy(() => this.clearCopyTimer());
+    effect(() => {
+      const organizationId = this.activeOrganizationId();
+      untracked(() => {
+        if (
+          this.tab() === "tokens" &&
+          organizationId !== this.tokensOrganizationId()
+        ) {
+          void this.loadTokens();
+        }
+      });
+    });
   }
 
   protected selectTab(tab: ProfileTab): void {
-    if (this.busy() || this.tab() === tab) {
+    if (
+      this.busy() ||
+      this.tab() === tab ||
+      (tab === "organization" && !this.hasOrganizations())
+    ) {
       return;
     }
     this.closeEditor();
     this.tab.set(tab);
     if (tab === "security") {
       void this.loadSessions();
+    }
+    if (tab === "tokens") {
+      void this.loadTokens();
     }
   }
 
@@ -161,6 +256,8 @@ export class ProfileModal {
     this.signOutOtherSessions.set(true);
     this.showPassword.set(false);
     this.deleteConfirmation.set("");
+    this.tokenName.set("");
+    this.tokenExpirationIndex.set(0);
     this.editor.set(editor);
   }
 
@@ -212,6 +309,11 @@ export class ProfileModal {
     if (target.kind === "session") {
       this.sessions.update((sessions) =>
         sessions.filter((session) => session.id !== target.id),
+      );
+    }
+    if (target.kind === "token") {
+      this.tokens.update((tokens) =>
+        tokens.filter((token) => token.id !== target.id),
       );
     }
   }
@@ -356,6 +458,80 @@ export class ProfileModal {
     );
   }
 
+  protected async switchOrganization(
+    organizationId: string | null,
+  ): Promise<void> {
+    if ((this.activeOrganization()?.id ?? null) === organizationId) {
+      return;
+    }
+    const result = await this.execute(
+      "organization",
+      `organization:${organizationId ?? "personal"}`,
+      () => this.organizations.switchTo(organizationId),
+    );
+    if (result?.status === "complete") {
+      this.showInfo("organization", AUTH_MESSAGES.organizationSwitched);
+    }
+  }
+
+  protected async createToken(form: NgForm): Promise<void> {
+    const name = this.tokenName().trim();
+    if (form.invalid || !name) {
+      return;
+    }
+    const result = await this.execute("tokens", "token-create", () =>
+      this.apiTokens.create({
+        name,
+        secondsUntilExpiration:
+          this.expirationOptions[this.tokenExpirationIndex()]?.seconds ?? null,
+        owner: this.tokenOwner(),
+      }),
+    );
+    if (result?.status !== "complete") {
+      return;
+    }
+    this.editor.set(null);
+    this.tokenCopied.set(false);
+    this.createdToken.set(result.token);
+    await this.loadTokens();
+  }
+
+  protected showTooltip(tooltip: HTMLElement, event: Event): void {
+    this.uiTooltip.show(tooltip, event);
+  }
+
+  protected hideTooltip(tooltip: HTMLElement): void {
+    this.uiTooltip.hide(tooltip);
+  }
+
+  protected dismissCreatedToken(): void {
+    this.clearCopyTimer();
+    this.createdToken.set(null);
+    this.tokenCopied.set(false);
+  }
+
+  protected async copyTokenSecret(): Promise<void> {
+    const token = this.createdToken();
+    if (!token || !isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(token.secret);
+      this.tokenCopied.set(true);
+      this.clearCopyTimer();
+      this.copyTimer = setTimeout(
+        () => this.tokenCopied.set(false),
+        COPY_RESET_MS,
+      );
+    } catch {
+      this.feedback.set({
+        section: "tokens",
+        type: "error",
+        message: AUTH_MESSAGES.unableToCopyApiToken,
+      });
+    }
+  }
+
   protected async submitReverify(form: NgForm): Promise<void> {
     const state = this.reverify();
     if (!state || form.invalid || this.busy()) {
@@ -391,29 +567,30 @@ export class ProfileModal {
     this.clearReverify();
   }
 
-  private async execute(
+  private async execute<T extends ProfileActionResult>(
     section: ProfileSection,
     key: string,
-    action: () => Promise<ProfileResult>,
-  ): Promise<ProfileResult | null> {
+    action: () => Promise<T>,
+  ): Promise<T | null> {
     if (this.busy()) {
       return null;
     }
 
     this.feedback.set(null);
     this.busy.set(key);
-    let result: ProfileResult;
+    let result: T;
     try {
       result = await action();
     } catch (error) {
       this.busy.set(null);
       throw error;
     }
-    if (result.status !== "redirecting") {
+    const outcome: ProfileActionResult = result;
+    if (outcome.status !== "redirecting") {
       this.busy.set(null);
     }
 
-    if (result.status === "reverify") {
+    if (outcome.status === "reverify") {
       return new Promise((resolve) => {
         void this.startReverify(section, {
           retry: async () => resolve(await this.execute(section, key, action)),
@@ -422,8 +599,8 @@ export class ProfileModal {
       });
     }
 
-    if (result.status === "error") {
-      this.feedback.set({ section, type: "error", message: result.message });
+    if (outcome.status === "error") {
+      this.feedback.set({ section, type: "error", message: outcome.message });
     }
     return result;
   }
@@ -458,6 +635,8 @@ export class ProfileModal {
         return this.profileService.disconnectGitHub();
       case "session":
         return this.profileService.revokeSession(target.id);
+      case "token":
+        return this.apiTokens.revoke(target.id);
     }
   }
 
@@ -484,6 +663,32 @@ export class ProfileModal {
     this.sessions.set(result.sessions);
   }
 
+  private async loadTokens(): Promise<void> {
+    const request = ++this.tokensRequest;
+    const organizationId = this.activeOrganizationId();
+    this.tokensLoading.set(true);
+    this.tokensError.set("");
+    const result = await this.apiTokens.list(organizationId);
+    if (request !== this.tokensRequest) {
+      return;
+    }
+    this.tokensLoading.set(false);
+    this.tokensOrganizationId.set(organizationId);
+    if (result.status === "error") {
+      this.tokens.set([]);
+      this.tokensError.set(result.message);
+      return;
+    }
+    this.tokens.set(result.tokens);
+  }
+
+  private clearCopyTimer(): void {
+    if (this.copyTimer) {
+      clearTimeout(this.copyTimer);
+      this.copyTimer = null;
+    }
+  }
+
   private clearReverify(): void {
     this.reverify.set(null);
     this.reverifyError.set("");
@@ -507,6 +712,12 @@ export class ProfileModal {
     this.currentPassword.set("");
     this.newPassword.set("");
     this.confirmPassword.set("");
+    this.tokensRequest++;
+    this.tokensLoading.set(false);
+    this.tokens.set([]);
+    this.tokensError.set("");
+    this.tokensOrganizationId.set(null);
+    this.dismissCreatedToken();
     this.pendingReverify?.cancel();
     this.pendingReverify = null;
     this.clearReverify();

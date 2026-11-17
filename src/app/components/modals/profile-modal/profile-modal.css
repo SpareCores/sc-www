@@ -1,7 +1,8 @@
 @reference "../../../../styles/tailwind.css";
 
 .profile-modal__pane {
-  min-height: min(38rem, calc(100dvh - 6rem));
+  height: min(38rem, calc(100dvh - 6rem));
+  overflow-y: auto;
 }
 
 .profile-modal__header {
@@ -75,6 +76,12 @@
 
 .profile-modal__tab--active {
   color: var(--color-emerald-400);
+}
+
+.profile-modal__tab:disabled {
+  color: var(--color-gray-400);
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .profile-modal__content {
@@ -158,6 +165,14 @@
   min-width: 0;
 }
 
+.profile-modal__token-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 1.75rem;
+}
+
 .profile-modal__value {
   color: var(--color-white);
   font-size: 0.875rem;
@@ -192,6 +207,11 @@
 .profile-modal__badge--warning {
   border-color: var(--color-yellow-500);
   color: var(--color-yellow-500);
+}
+
+.profile-modal__badge--muted {
+  border-color: var(--color-gray-400);
+  color: var(--color-gray-400);
 }
 
 .profile-modal__avatar {
@@ -266,6 +286,95 @@
   color: var(--color-red-400);
 }
 
+.profile-modal__secret {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border: 1px solid var(--color-emerald-400);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: var(--color-secondary);
+}
+
+.profile-modal__secret-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.profile-modal__secret-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background: color-mix(in oklab, var(--color-white) 8%, transparent);
+  color: var(--color-white);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.profile-modal__copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border: 1px solid var(--color-emerald-400);
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--color-emerald-400);
+  cursor: pointer;
+}
+
+.profile-modal__copy:hover,
+.profile-modal__copy:focus-visible {
+  background: color-mix(in oklab, var(--color-emerald-400) 15%, transparent);
+  outline: none;
+}
+
+.profile-modal__copy svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.profile-modal__section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+}
+
+.profile-modal__section-header .profile-modal__section-title {
+  gap: 0.375rem;
+}
+
+.profile-modal__info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--color-gray-200);
+  cursor: help;
+}
+
+.profile-modal__info:hover,
+.profile-modal__info:focus-visible {
+  color: var(--color-emerald-400);
+  outline: none;
+}
+
+.profile-modal__info svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 .profile-modal__loading {
   display: flex;
   justify-content: center;
@@ -283,6 +392,8 @@
     gap: 1rem;
     height: auto;
     padding: 0 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
   .profile-modal__tabs::after {
@@ -296,6 +407,11 @@
   .profile-modal__row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .profile-modal__row--inline {
+    flex-direction: row;
+    align-items: center;
   }
 
   .profile-modal__editor-actions {

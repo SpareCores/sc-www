@@ -572,7 +572,7 @@
   <sc-modal
     id="server-summarize-modal"
     size="3xl"
-    [title]="serverDetails ? serverDetails.display_name : ''"
+    [modalTitle]="serverDetails ? serverDetails.display_name : ''"
     closeCaptureEvent="server details summarize close"
   >
     @if (serverDescription && isSummarizeModalOpen) {

@@ -3,7 +3,7 @@
   @if (profileData) {
     @let reverifyState = reverify();
     <sc-modal
-      title="Edit profile"
+      modalTitle="Edit profile"
       size="3xl"
       data-testid="profile-modal"
       [closeDisabled]="!!busy()"
@@ -43,6 +43,39 @@
           >
             <svg lucideShield aria-hidden="true"></svg>
             Security
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="profile-modal__tab"
+            data-testid="profile-tab-organization"
+            data-ph-capture-attribute-sc-event="profile tab"
+            data-ph-capture-attribute-profile-tab="organization"
+            [class.profile-modal__tab--active]="tab() === 'organization'"
+            [attr.aria-selected]="tab() === 'organization'"
+            [attr.aria-disabled]="!hasOrganizations()"
+            [attr.title]="
+              hasOrganizations() ? null : messages.noOrganizationsHint
+            "
+            [disabled]="!hasOrganizations()"
+            (click)="selectTab('organization')"
+          >
+            <svg lucideBuilding aria-hidden="true"></svg>
+            Organization
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="profile-modal__tab"
+            data-testid="profile-tab-tokens"
+            data-ph-capture-attribute-sc-event="profile tab"
+            data-ph-capture-attribute-profile-tab="tokens"
+            [class.profile-modal__tab--active]="tab() === 'tokens'"
+            [attr.aria-selected]="tab() === 'tokens'"
+            (click)="selectTab('tokens')"
+          >
+            <svg lucideKeyRound aria-hidden="true"></svg>
+            API Tokens
           </button>
         </nav>
       }
@@ -142,7 +175,396 @@
         </div>
       } @else {
         <div class="profile-modal__content profile-modal__pane" role="tabpanel">
-          @if (tab() === "account") {
+          @if (tab() === "organization") {
+            @let currentOrganization = activeOrganization();
+            <section
+              class="profile-modal__section"
+              data-testid="profile-organization-current"
+            >
+              <h3 class="profile-modal__section-title">Active organization</h3>
+              <div class="profile-modal__row">
+                <div class="profile-modal__identity">
+                  @if (currentOrganization) {
+                    @if (currentOrganization.imageUrl) {
+                      <img
+                        class="profile-modal__avatar"
+                        [src]="currentOrganization.imageUrl"
+                        alt="Organization logo"
+                      />
+                    } @else {
+                      <svg lucideBuilding aria-hidden="true"></svg>
+                    }
+                    <span class="profile-modal__value">{{
+                      currentOrganization.name
+                    }}</span>
+                    <span class="profile-modal__badge">{{
+                      currentOrganization.roleName
+                    }}</span>
+                  } @else {
+                    @if (userImageUrl()) {
+                      <img
+                        class="profile-modal__avatar"
+                        [src]="userImageUrl()"
+                        alt="Profile image"
+                      />
+                    } @else {
+                      <svg lucideCircleUser aria-hidden="true"></svg>
+                    }
+                    <span class="profile-modal__value">Personal account</span>
+                  }
+                </div>
+              </div>
+              <p class="profile-modal__meta">
+                Organization admins can create API tokens owned by the active
+                organization.
+              </p>
+            </section>
+
+            <section
+              class="profile-modal__section"
+              data-testid="profile-organization-switch"
+            >
+              <h3 class="profile-modal__section-title">Switch organization</h3>
+              <ul class="profile-modal__list">
+                <li class="profile-modal__item">
+                  <div class="profile-modal__row profile-modal__row--inline">
+                    <div class="profile-modal__identity">
+                      @if (userImageUrl()) {
+                        <img
+                          class="profile-modal__avatar"
+                          [src]="userImageUrl()"
+                          alt="Profile image"
+                        />
+                      } @else {
+                        <svg lucideCircleUser aria-hidden="true"></svg>
+                      }
+                      <span class="profile-modal__value">Personal account</span>
+                      @if (!currentOrganization) {
+                        <span class="profile-modal__badge">Active</span>
+                      }
+                    </div>
+                    @if (currentOrganization) {
+                      <button
+                        type="button"
+                        class="modal-form__footer-link"
+                        data-testid="profile-organization-personal"
+                        data-ph-capture-attribute-sc-event="profile organization switch"
+                        data-ph-capture-attribute-profile-organization="personal"
+                        [disabled]="!!busy()"
+                        (click)="switchOrganization(null)"
+                      >
+                        {{
+                          busy() === "organization:personal"
+                            ? "Switching..."
+                            : "Switch"
+                        }}
+                      </button>
+                    }
+                  </div>
+                </li>
+                @for (
+                  organization of organizationList();
+                  track organization.id
+                ) {
+                  @let isActive = organization.id === currentOrganization?.id;
+                  <li class="profile-modal__item">
+                    <div class="profile-modal__row profile-modal__row--inline">
+                      <div class="profile-modal__identity">
+                        @if (organization.imageUrl) {
+                          <img
+                            class="profile-modal__avatar"
+                            [src]="organization.imageUrl"
+                            alt="Organization logo"
+                          />
+                        } @else {
+                          <svg lucideBuilding aria-hidden="true"></svg>
+                        }
+                        <span class="profile-modal__value">{{
+                          organization.name
+                        }}</span>
+                        <span
+                          class="profile-modal__badge"
+                          [class.profile-modal__badge--muted]="
+                            !organization.isAdmin
+                          "
+                          >{{ organization.roleName }}</span
+                        >
+                        @if (isActive) {
+                          <span class="profile-modal__badge">Active</span>
+                        }
+                      </div>
+                      @if (!isActive) {
+                        <button
+                          type="button"
+                          class="modal-form__footer-link"
+                          data-testid="profile-organization-option"
+                          data-ph-capture-attribute-sc-event="profile organization switch"
+                          data-ph-capture-attribute-profile-organization="organization"
+                          [disabled]="!!busy()"
+                          (click)="switchOrganization(organization.id)"
+                        >
+                          {{
+                            busy() === "organization:" + organization.id
+                              ? "Switching..."
+                              : "Switch"
+                          }}
+                        </button>
+                      }
+                    </div>
+                  </li>
+                }
+              </ul>
+              <ng-container
+                [ngTemplateOutlet]="feedbackMessage"
+                [ngTemplateOutletContext]="{ $implicit: 'organization' }"
+              ></ng-container>
+            </section>
+          } @else if (tab() === "tokens") {
+            <section
+              class="profile-modal__section"
+              data-testid="profile-api-tokens"
+            >
+              <div class="profile-modal__section-header">
+                <h3 class="profile-modal__section-title">
+                  {{ tokensTitle() }}
+                  <button
+                    type="button"
+                    class="profile-modal__info"
+                    data-testid="profile-api-tokens-info"
+                    [attr.aria-label]="messages.apiTokensInfo"
+                    (mouseenter)="showTooltip(tokensInfoTooltip, $event)"
+                    (mouseleave)="hideTooltip(tokensInfoTooltip)"
+                    (focus)="showTooltip(tokensInfoTooltip, $event)"
+                    (blur)="hideTooltip(tokensInfoTooltip)"
+                  >
+                    <svg lucideInfo aria-hidden="true"></svg>
+                  </button>
+                </h3>
+                @if (canManageTokens() && editor() !== "token") {
+                  <sc-button
+                    label="Create API token"
+                    icon="plus"
+                    iconPosition="start"
+                    size="small"
+                    variant="outline"
+                    color="brand"
+                    data-testid="profile-api-token-new"
+                    data-ph-capture-attribute-sc-event="profile api token create open"
+                    [attr.data-ph-capture-attribute-api-token-owner]="
+                      tokenOwner()
+                    "
+                    [disabled]="!!busy() || tokensPending()"
+                    (buttonClick)="openEditor('token')"
+                  ></sc-button>
+                }
+              </div>
+              <div
+                #tokensInfoTooltip
+                class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+                aria-hidden="true"
+              >
+                {{ messages.apiTokensInfo }}
+              </div>
+
+              @let secret = createdToken();
+              @if (secret) {
+                <div
+                  class="profile-modal__secret"
+                  data-testid="profile-api-token-secret"
+                >
+                  <p class="modal-form__info">
+                    {{ messages.apiTokenCopyNotice }}
+                  </p>
+                  <span class="profile-modal__value">{{ secret.name }}</span>
+                  <div class="profile-modal__secret-row">
+                    <code class="profile-modal__secret-value">{{
+                      secret.secret
+                    }}</code>
+                    <button
+                      type="button"
+                      class="profile-modal__copy"
+                      data-testid="profile-api-token-copy"
+                      data-ph-capture-attribute-sc-event="profile api token copy"
+                      [attr.aria-label]="
+                        tokenCopied() ? 'Copied' : 'Copy token'
+                      "
+                      (click)="copyTokenSecret()"
+                    >
+                      @if (tokenCopied()) {
+                        <svg lucideCheck aria-hidden="true"></svg>
+                      } @else {
+                        <svg lucideCopy aria-hidden="true"></svg>
+                      }
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    class="modal-form__footer-link"
+                    data-ph-capture-attribute-sc-event="profile api token secret dismiss"
+                    (click)="dismissCreatedToken()"
+                  >
+                    Done
+                  </button>
+                </div>
+              }
+
+              @if (editor() === "token" && canManageTokens()) {
+                <form
+                  class="profile-modal__editor"
+                  #tokenForm="ngForm"
+                  novalidate
+                  (ngSubmit)="createToken(tokenForm)"
+                >
+                  <label class="modal-form__field">
+                    <span>Name</span>
+                    <input
+                      type="text"
+                      name="tokenName"
+                      class="sc-input"
+                      autocomplete="off"
+                      placeholder="e.g. ci-pipeline"
+                      data-testid="profile-api-token-name"
+                      required
+                      [maxlength]="tokenNameMaxLength"
+                      [(ngModel)]="tokenName"
+                    />
+                  </label>
+                  <label class="modal-form__field">
+                    <span>Expiration</span>
+                    <select
+                      name="tokenExpiration"
+                      class="sc-input"
+                      data-testid="profile-api-token-expiration"
+                      [(ngModel)]="tokenExpirationIndex"
+                    >
+                      @for (
+                        option of expirationOptions;
+                        track option.seconds;
+                        let i = $index
+                      ) {
+                        <option [ngValue]="i">{{ option.label }}</option>
+                      }
+                    </select>
+                  </label>
+                  <ng-container
+                    [ngTemplateOutlet]="feedbackMessage"
+                    [ngTemplateOutletContext]="{ $implicit: 'tokens' }"
+                  ></ng-container>
+                  <div class="profile-modal__editor-actions">
+                    <sc-button
+                      label="Cancel"
+                      size="small"
+                      variant="outline"
+                      color="brand"
+                      [disabled]="!!busy()"
+                      (buttonClick)="closeEditor()"
+                    ></sc-button>
+                    <sc-button
+                      type="submit"
+                      label="Create token"
+                      size="small"
+                      data-testid="profile-api-token-submit"
+                      data-ph-capture-attribute-sc-event="profile api token create"
+                      [loading]="busy() === 'token-create'"
+                      [disabled]="!!busy() || !tokenName().trim()"
+                    ></sc-button>
+                  </div>
+                </form>
+              } @else {
+                <ng-container
+                  [ngTemplateOutlet]="feedbackMessage"
+                  [ngTemplateOutletContext]="{ $implicit: 'tokens' }"
+                ></ng-container>
+              }
+
+              @if (tokensPending()) {
+                <div class="profile-modal__loading">
+                  <sc-loading-spinner size="sm"></sc-loading-spinner>
+                </div>
+              } @else if (tokensError()) {
+                <p class="profile-modal__meta">{{ tokensError() }}</p>
+              } @else if (tokens().length === 0) {
+                <p class="profile-modal__meta">{{ messages.noApiTokens }}</p>
+              } @else {
+                <ul class="profile-modal__list">
+                  @for (item of tokens(); track item.id) {
+                    <li
+                      class="profile-modal__item"
+                      data-testid="profile-api-token-item"
+                    >
+                      <div class="profile-modal__device">
+                        <div class="profile-modal__token-header">
+                          <div class="profile-modal__identity">
+                            <svg lucideKeyRound aria-hidden="true"></svg>
+                            <span class="profile-modal__value">{{
+                              item.name
+                            }}</span>
+                            @if (item.expired) {
+                              <span
+                                class="profile-modal__badge profile-modal__badge--warning"
+                                >Expired</span
+                              >
+                            }
+                          </div>
+                          @if (
+                            canManageTokens() && !isConfirming("token", item.id)
+                          ) {
+                            <button
+                              type="button"
+                              class="modal-form__footer-link profile-modal__danger-link"
+                              data-testid="profile-api-token-revoke"
+                              data-ph-capture-attribute-sc-event="profile api token revoke open"
+                              [attr.data-ph-capture-attribute-api-token-owner]="
+                                tokenOwner()
+                              "
+                              [disabled]="!!busy()"
+                              (click)="askConfirm('token', item.id)"
+                            >
+                              Revoke
+                            </button>
+                          }
+                        </div>
+                        <span class="profile-modal__meta">
+                          Created {{ item.createdAt | date: "mediumDate" }}
+                        </span>
+                        <span class="profile-modal__meta">
+                          @if (item.lastUsedAt) {
+                            Last used {{ item.lastUsedAt | date: "medium" }}
+                          } @else {
+                            Never used
+                          }
+                        </span>
+                        <span class="profile-modal__meta">
+                          @if (item.expiration) {
+                            {{ item.expired ? "Expired" : "Expires" }}
+                            {{ item.expiration | date: "mediumDate" }}
+                          } @else {
+                            Never expires
+                          }
+                        </span>
+                      </div>
+                      @if (isConfirming("token", item.id)) {
+                        <ng-container
+                          [ngTemplateOutlet]="confirmPanel"
+                          [ngTemplateOutletContext]="{
+                            $implicit: messages.apiTokenRevokeWarning,
+                            label: 'Revoke',
+                            event: 'profile api token revoke',
+                          }"
+                        ></ng-container>
+                        <ng-container
+                          [ngTemplateOutlet]="feedbackMessage"
+                          [ngTemplateOutletContext]="{
+                            $implicit: 'token-revoke',
+                          }"
+                        ></ng-container>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+            </section>
+          } @else if (tab() === "account") {
             <section
               class="profile-modal__section"
               data-testid="profile-section"
@@ -666,8 +1088,8 @@
                 <ul class="profile-modal__list">
                   @for (session of sessions(); track session.id) {
                     <li class="profile-modal__item">
-                      <div class="profile-modal__row">
-                        <div class="profile-modal__device">
+                      <div class="profile-modal__device">
+                        <div class="profile-modal__token-header">
                           <div class="profile-modal__identity">
                             @if (session.isMobile) {
                               <svg lucideSmartphone aria-hidden="true"></svg>
@@ -683,30 +1105,35 @@
                               >
                             }
                           </div>
-                          <span class="profile-modal__meta">
-                            @if (session.location) {
-                              {{ session.location }} ·
-                            }
-                            @if (session.ipAddress) {
-                              {{ session.ipAddress }} ·
-                            }
-                            {{ session.lastActiveAt | date: "medium" }}
-                          </span>
+                          @if (
+                            !session.isCurrent &&
+                            !isConfirming("session", session.id)
+                          ) {
+                            <button
+                              type="button"
+                              class="modal-form__footer-link profile-modal__danger-link"
+                              data-ph-capture-attribute-sc-event="profile session revoke open"
+                              [disabled]="!!busy()"
+                              (click)="askConfirm('session', session.id)"
+                            >
+                              Sign out
+                            </button>
+                          }
                         </div>
-                        @if (
-                          !session.isCurrent &&
-                          !isConfirming("session", session.id)
-                        ) {
-                          <button
-                            type="button"
-                            class="modal-form__footer-link profile-modal__danger-link"
-                            data-ph-capture-attribute-sc-event="profile session revoke open"
-                            [disabled]="!!busy()"
-                            (click)="askConfirm('session', session.id)"
+                        @if (session.location) {
+                          <span class="profile-modal__meta"
+                            >Location: {{ session.location }}</span
                           >
-                            Sign out
-                          </button>
                         }
+                        @if (session.ipAddress) {
+                          <span class="profile-modal__meta"
+                            >IP address: {{ session.ipAddress }}</span
+                          >
+                        }
+                        <span class="profile-modal__meta">
+                          Last active:
+                          {{ session.lastActiveAt | date: "medium" }}
+                        </span>
                       </div>
                       @if (isConfirming("session", session.id)) {
                         <ng-container

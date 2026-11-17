@@ -10,6 +10,8 @@ import { Router } from "@angular/router";
 import type { Clerk } from "@clerk/clerk-js";
 import { isClerkRuntimeError, isNetworkError } from "@clerk/shared/error";
 import type {
+  APIKeysNamespace,
+  OrganizationResource,
   SignInResource,
   SignUpResource,
   UserResource,
@@ -41,6 +43,14 @@ export class ClerkClient {
 
   get session() {
     return this.clerk?.session ?? null;
+  }
+
+  get organization(): OrganizationResource | null {
+    return this.clerk?.organization ?? null;
+  }
+
+  get apiKeys(): APIKeysNamespace | null {
+    return this.clerk?.apiKeys ?? null;
   }
 
   isLoaded(): boolean {
@@ -86,6 +96,10 @@ export class ClerkClient {
 
   async setActive(sessionId: string): Promise<void> {
     await this.clerk?.setActive({ session: sessionId });
+  }
+
+  async setActiveOrganization(organizationId: string | null): Promise<void> {
+    await this.clerk?.setActive({ organization: organizationId });
   }
 
   async signOut(): Promise<void> {

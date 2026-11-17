@@ -99,6 +99,51 @@ export type ProfileSessionsResult =
   | { status: "complete"; sessions: ProfileSession[] }
   | { status: "error"; message: string };
 
+export type ProfileOrganization = {
+  id: string;
+  name: string;
+  imageUrl: string;
+  roleName: string;
+  isAdmin: boolean;
+};
+
+export type ApiTokenOwner = "user" | "organization";
+
+export type ProfileApiToken = {
+  id: string;
+  name: string;
+  owner: ApiTokenOwner;
+  createdAt: Date;
+  lastUsedAt: Date | null;
+  expiration: Date | null;
+  expired: boolean;
+};
+
+export type ApiTokenCreatePayload = {
+  name: string;
+  secondsUntilExpiration: number | null;
+  owner: ApiTokenOwner;
+};
+
+export type ApiTokenSecret = {
+  name: string;
+  secret: string;
+  owner: ApiTokenOwner;
+};
+
+export type ApiTokenCreateResult =
+  | { status: "complete"; token: ApiTokenSecret }
+  | { status: "error"; message: string };
+
+export type ApiTokensListResult =
+  | {
+      status: "complete";
+      owner: ApiTokenOwner;
+      organizationId: string | null;
+      tokens: ProfileApiToken[];
+    }
+  | { status: "error"; message: string };
+
 export type AuthKind = "login" | "registration";
 
 export type GitHubIntent = "signIn" | "signUp";

@@ -29,7 +29,7 @@ export function modalTitleId(dialogId: string): string {
 export class Modal {
   private dialogRef = inject(DialogRef, { optional: true });
 
-  title = input("");
+  modalTitle = input("");
   size = input<ModalSize>("xl");
   centerTitle = input(false);
   showClose = input(true);

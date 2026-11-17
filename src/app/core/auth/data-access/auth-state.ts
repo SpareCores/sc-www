@@ -77,6 +77,8 @@ export class AuthState {
     equal: () => false,
   });
   readonly user = this._user.asReadonly();
+  private readonly _activeOrganizationId = signal<string | null>(null);
+  readonly activeOrganizationId = this._activeOrganizationId.asReadonly();
 
   readonly signInModalOpen = signal(false);
   readonly signUpModalOpen = signal(false);
@@ -696,6 +698,9 @@ export class AuthState {
 
   private setUser(user: UserResource | null): void {
     const previousUser = this._user();
+    this._activeOrganizationId.set(
+      user ? (this.clerk.organization?.id ?? null) : null,
+    );
     this._user.set(user);
 
     if (user) {
