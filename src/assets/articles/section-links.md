@@ -49,7 +49,7 @@ server page at its Geekbench multi-core chart:
 [/server/gcp/t2d-standard-1#geek_multi](/server/gcp/t2d-standard-1#geek_multi).
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="w-full"
     title="Copy a link to a chart"
     alt="Benchmark chart heading on a server details page, with the copy-link # icon shown on hover next to its title."
     src="/assets/images/blog/section-links-hover.webp"/>
