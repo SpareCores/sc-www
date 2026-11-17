@@ -74,6 +74,16 @@ describe("auth guards", () => {
       expect(result instanceof UrlTree).toBeTrue();
       expect(TestBed.inject(Router).serializeUrl(result as UrlTree)).toBe("/");
     });
+
+    it("redirects to the landing page when auth fails to initialize", async () => {
+      setup();
+      auth.init.and.rejectWith(new Error("chunk failed"));
+
+      const result = await run(authGuard);
+
+      expect(result instanceof UrlTree).toBeTrue();
+      expect(TestBed.inject(Router).serializeUrl(result as UrlTree)).toBe("/");
+    });
   });
 
   describe("blockLandingDuringAuthGuard", () => {

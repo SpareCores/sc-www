@@ -1,4 +1,4 @@
-import { PLATFORM_ID } from "@angular/core";
+import { NgZone, PLATFORM_ID } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { ClerkClient } from "./clerk-client";
@@ -181,5 +181,181 @@ describe("ClerkClient", () => {
     await service.clearActiveSession();
 
     expect(setActive).toHaveBeenCalledOnceWith({ session: null });
+  });
+
+  describe("lazy SDK loading", () => {
+    type ClerkModule = typeof import("@clerk/clerk-js");
+    type LoaderInternals = {
+      importClerk: () => Promise<ClerkModule>;
+      publishableKey: string;
+      loadClerk: () => Promise<void>;
+      navigateRouter: (url: string, replace?: boolean) => Promise<boolean>;
+    };
+
+    afterEach(() => {
+      delete (window as Window & { Clerk?: unknown }).Clerk;
+    });
+
+    function loader(service: ClerkClient): LoaderInternals {
+      return service as unknown as LoaderInternals;
+    }
+
+    it("imports, constructs and loads the SDK", async () => {
+      const service = createService();
+      const load = jasmine.createSpy("load").and.resolveTo(undefined);
+      const constructed: string[] = [];
+      class FakeClerk {
+        load = load;
+        constructor(key: string) {
+          constructed.push(key);
+        }
+      }
+      const importClerk = spyOn(loader(service), "importClerk").and.resolveTo({
+        Clerk: FakeClerk,
+      } as unknown as ClerkModule);
+
+      loader(service).publishableKey = "pk_test";
+      await loader(service).loadClerk();
+
+      expect(importClerk).toHaveBeenCalledTimes(1);
+      expect(constructed).toEqual(["pk_test"]);
+      expect(load).toHaveBeenCalledOnceWith(
+        jasmine.objectContaining({ telemetry: false }),
+      );
+      expect(service.isLoaded()).toBeTrue();
+    });
+
+    it("reports not loaded until the SDK has finished loading", async () => {
+      const service = createService();
+      let finishLoading: () => void = () => undefined;
+      class FakeClerk {
+        load = () =>
+          new Promise<void>((resolve) => {
+            finishLoading = resolve;
+          });
+      }
+      spyOn(loader(service), "importClerk").and.resolveTo({
+        Clerk: FakeClerk,
+      } as unknown as ClerkModule);
+
+      loader(service).publishableKey = "pk_test";
+      const loading = loader(service).loadClerk();
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(service.isLoaded()).toBeFalse();
+
+      finishLoading();
+      await loading;
+
+      expect(service.isLoaded()).toBeTrue();
+    });
+
+    it("skips the import when the publishable key is missing", async () => {
+      const service = createService();
+      const importClerk = spyOn(loader(service), "importClerk");
+      spyOn(console, "error");
+
+      loader(service).publishableKey = "";
+      await loader(service).loadClerk();
+
+      expect(importClerk).not.toHaveBeenCalled();
+      expect(service.isLoaded()).toBeFalse();
+    });
+
+    it("stays unloaded when the SDK chunk fails to load", async () => {
+      const service = createService();
+      spyOn(loader(service), "importClerk").and.rejectWith(
+        new Error("chunk failed"),
+      );
+
+      loader(service).publishableKey = "pk_test";
+      await expectAsync(loader(service).loadClerk()).toBeRejected();
+
+      expect(service.isLoaded()).toBeFalse();
+      expect(service.instance).toBeNull();
+    });
+
+    it("retries loading once the cooldown has passed", async () => {
+      const service = createService();
+      const now = spyOn(Date, "now").and.returnValue(0);
+      const loadClerk = spyOn(loader(service), "loadClerk").and.returnValues(
+        Promise.reject(new Error("chunk failed")),
+        Promise.resolve(),
+      );
+
+      await expectAsync(service.init()).toBeRejected();
+      now.and.returnValue(30_000);
+      await expectAsync(service.init()).toBeResolved();
+
+      expect(loadClerk).toHaveBeenCalledTimes(2);
+    });
+
+    it("rejects without reloading during the retry cooldown", async () => {
+      const service = createService();
+      const now = spyOn(Date, "now").and.returnValue(0);
+      const error = new Error("chunk failed");
+      const loadClerk = spyOn(loader(service), "loadClerk").and.rejectWith(
+        error,
+      );
+
+      await expectAsync(service.init()).toBeRejectedWith(error);
+      now.and.returnValue(29_999);
+      await expectAsync(service.init()).toBeRejectedWith(error);
+
+      expect(loadClerk).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not retry loading for tokens after a failed attempt", async () => {
+      const service = createService();
+      const loadClerk = spyOn(loader(service), "loadClerk").and.rejectWith(
+        new Error("chunk failed"),
+      );
+
+      await expectAsync(service.init()).toBeRejected();
+      await expectAsync(service.getToken()).toBeResolvedTo(null);
+
+      expect(loadClerk).toHaveBeenCalledTimes(1);
+    });
+
+    it("resolves no sign-in or sign-up resource when loading fails", async () => {
+      const service = createService();
+      spyOn(loader(service), "loadClerk").and.rejectWith(
+        new Error("chunk failed"),
+      );
+
+      await expectAsync(service.getSignInResource()).toBeResolvedTo(null);
+      await expectAsync(service.getSignUpResource()).toBeResolvedTo(null);
+    });
+
+    it("loads the SDK outside the Angular zone", async () => {
+      const service = createService();
+      let insideZone: boolean | null = null;
+      spyOn(loader(service), "loadClerk").and.callFake(async () => {
+        insideZone = NgZone.isInAngularZone();
+      });
+
+      await TestBed.inject(NgZone).run(() => service.init());
+
+      expect(insideZone).toBeFalse();
+    });
+
+    it("navigates inside the Angular zone for Clerk router callbacks", async () => {
+      const service = createService();
+      let insideZone: boolean | null = null;
+      router.navigateByUrl.and.callFake(async () => {
+        insideZone = NgZone.isInAngularZone();
+        return true;
+      });
+
+      await TestBed.inject(NgZone).runOutsideAngular(() =>
+        loader(service).navigateRouter("/servers"),
+      );
+
+      expect(insideZone).toBeTrue();
+      expect(router.navigateByUrl).toHaveBeenCalledOnceWith(
+        "/servers",
+        undefined,
+      );
+    });
   });
 });

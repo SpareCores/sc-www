@@ -1,6 +1,9 @@
 import { Injectable } from "@angular/core";
 import { TooltipItem, TooltipModel } from "chart.js";
-import { radarDatasetColors } from "../shared/chart-colors.constants";
+import {
+  radarDatasetColors,
+  chartColors,
+} from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
   buildCompareTooltipTitle,
@@ -175,7 +178,7 @@ export class LlmInferenceChartBuilder {
           ...(options.scales?.y?.title || {}),
           display: true,
           text: "Tokens/second",
-          color: "#FFF",
+          color: chartColors.white,
         },
       },
       x: {
@@ -184,7 +187,7 @@ export class LlmInferenceChartBuilder {
           ...(options.scales?.x?.title || {}),
           display: true,
           text: xAxisTitle,
-          color: "#FFFFFF",
+          color: chartColors.white,
         },
       },
     };
@@ -263,7 +266,7 @@ export class LlmInferenceChartBuilder {
     ) as MutableLlmBarChartOptions;
     options.plugins = {
       ...options.plugins,
-      title: { display: true, text: title, color: "#FFF" },
+      title: { display: true, text: title, color: chartColors.white },
       tooltip: {
         ...options.plugins?.tooltip,
         callbacks: {
@@ -292,11 +295,15 @@ export class LlmInferenceChartBuilder {
       ...options.scales,
       y: {
         ...options.scales?.y,
-        title: { display: true, text: "Tokens/second", color: "#FFF" },
+        title: {
+          display: true,
+          text: "Tokens/second",
+          color: chartColors.white,
+        },
       },
       x: {
         ...options.scales?.x,
-        title: { display: true, text: xAxisTitle, color: "#FFF" },
+        title: { display: true, text: xAxisTitle, color: chartColors.white },
       },
     };
     options.layout = { padding: { bottom: 20 } };

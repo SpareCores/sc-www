@@ -11,7 +11,7 @@ import {
   inject,
 } from "@angular/core";
 import { ArticleMeta, ArticlesApi } from "../../services/articles-api";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { KeeperAPI } from "../../services/keeper-api";
 import { isAbortError } from "../../services/keeper-http-client";
 import { Toast } from "../../services/toast";
@@ -20,6 +20,7 @@ import { spinner_initial_data } from "../../tools/spinner_initial_data";
 import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import { ThemeText } from "../../components/theme-text/theme-text";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { Button } from "../../components/button/button";
 import { RouterLink } from "@angular/router";
 import {
@@ -50,7 +51,7 @@ import {
 @Component({
   selector: "sc-landingpage",
   imports: [
-    CommonModule,
+    HeaderAnchor,
     FormsModule,
     ThemeText,
     Button,
@@ -203,7 +204,7 @@ export class LandingPage implements OnInit {
               // move spin_button up and down a bit to attact attention
               const spinButton = document.getElementById("spin_button");
               if (spinButton) {
-                spinButton.style.animation = "bounce 1s 3";
+                spinButton.style.animation = "sc-bounce 1s 3";
               }
             }
           }, startingDelay + 7000);
@@ -261,18 +262,6 @@ export class LandingPage implements OnInit {
     return {
       transform: transform,
     };
-  }
-
-  getInnerStyle(i: number) {
-    if (i > 0) {
-      return "";
-    }
-
-    if (this.isSpinning || !this.hasRealValues) {
-      return "";
-    }
-
-    return "background: rgba(255,255,255,1) !important; color: #000 !important;";
   }
 
   isSlotLinkActive(index: number) {

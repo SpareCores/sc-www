@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .partners-paragraph {
   @apply my-10 text-lg text-white;
 
@@ -24,12 +26,9 @@
 .partner-logos {
   --partner-mobile-gap: 2rem;
   @apply my-8 flex flex-wrap items-center justify-center gap-8 overflow-x-auto pb-2;
-
-  scrollbar-width: thin;
-  scrollbar-color: #34d39933 transparent;
 }
 
-@media (max-width: 767px) {
+@media (width < theme(--breakpoint-md)) {
   .partner-logos--two-rows-mobile {
     @apply flex-wrap justify-center pb-0;
 
@@ -55,6 +54,19 @@
 
   .partner-logos--two-rows-mobile .partner-logo-image {
     max-width: min(100%, 8rem);
+  }
+}
+
+@media (width >= theme(--breakpoint-md)) {
+  .partner-logos--columns .partner-logo-link {
+    flex: 0 0
+      min(
+        6rem,
+        calc(
+          (100% - (var(--partner-columns) - 1) * var(--partner-mobile-gap)) /
+            var(--partner-columns)
+        )
+      );
   }
 }
 
@@ -97,34 +109,5 @@
 .partners-divider {
   @apply my-10 border-0 border-t;
 
-  border-color: rgb(52 211 153 / 0.4);
-}
-
-.partner-logos::-webkit-scrollbar {
-  height: 4px;
-  background: rgb(52 211 153 / 0.12);
-}
-
-.partner-logos::-webkit-scrollbar-thumb {
-  background: rgb(52 211 153 / 0.65);
-}
-
-.partners-anchor-target {
-  position: relative;
-  top: -80px;
-  visibility: hidden;
-}
-
-.header-anchor {
-  opacity: 0;
-  text-decoration: none;
-  margin-left: 0.5rem;
-  transition: opacity 0.2s;
-}
-
-.header-anchor:focus,
-.header-anchor:focus-visible,
-.partners-heading:focus-within .header-anchor,
-.partners-heading:hover .header-anchor {
-  opacity: 1;
+  border-color: color-mix(in oklab, var(--color-emerald-400) 40%, transparent);
 }

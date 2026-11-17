@@ -114,7 +114,7 @@
                     [ngModel]="areAllVendorRegionsSelected(parameter, vendorId)"
                     (click)="toggleAllVendorRegions(parameter, vendorId)"
                     [disabled]="isVendorSelectAllDisabled(parameter, vendorId)"
-                    class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
+                    class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
                   />
                 }
                 <div class="text-white text-sm">
@@ -153,7 +153,7 @@
                       [disabled]="
                         isVendorRegionCheckboxDisabled(parameter, vendorRegion)
                       "
-                      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
+                      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
                     />
                     <div class="text-white text-sm">
                       {{ getVendorRegionDisplayName(vendorRegion) }}

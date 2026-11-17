@@ -31,7 +31,7 @@ export class Server<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Search similar servers to the provided one. The "family" method returns all servers from the same family of the same vendor. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore. The "score_per_price" method is similar to "score", but instead of using the multi-core SCore, it uses the SCore per price.
+   * @description Search similar servers to the provided one. The "family" method returns the servers from the same series of the same vendor (e.g. "t2d" or "m8g"), so the other sizes of the same instance type. When the series of the provided server is unknown or has only a few other servers, it falls back to the servers from the same family (e.g. "General Purpose"), which is a broader category. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore. The "score_per_price" method is similar to "score", but instead of using the multi-core SCore, it uses the SCore per price.
    *
    * @tags Server Details
    * @name GetSimilarServersServerVendorServerSimilarServersByNumGet

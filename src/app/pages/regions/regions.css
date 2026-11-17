@@ -1,31 +1,33 @@
-.items_table {
-  @apply text-white;
+@reference "../../../styles/tailwind.css";
 
-  thead {
-    @apply border-b border-gray-200 border-solid bg-secondary;
-    th {
-      @apply text-left px-5 py-3 font-normal text-xs;
+.sc-table
+  tbody
+  tr:nth-child(
+    2n + 1 of :not(.regions-table__row--hidden, .regions-table__empty)
+  ) {
+  @apply bg-primary;
+}
 
-      &:last-child {
-        text-align: right;
-      }
-    }
+.sc-table
+  tbody
+  tr:nth-child(2n of :not(.regions-table__row--hidden, .regions-table__empty)) {
+  @apply bg-secondary;
+}
+
+.sc-table tbody tr.regions-table__row--hidden {
+  visibility: collapse;
+}
+
+.sc-table tbody tr.regions-table__empty {
+  background: var(--color-yellow-500);
+  cursor: default;
+
+  &:hover {
+    outline: none;
   }
 
-  tbody {
-    tr:nth-child(2n + 1) {
-      @apply bg-primary;
-    }
-    tr:nth-child(2n) {
-      @apply bg-secondary;
-    }
-
-    tr {
-      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
-      td {
-        @apply px-5 py-3 text-left text-sm;
-      }
-    }
+  td {
+    color: var(--color-black);
   }
 }
 
@@ -36,9 +38,13 @@
   margin: auto;
 }
 
-@media screen and (max-width: 1280px) {
+@media (width < theme(--breakpoint-xl)) {
   .datamaps_div {
     width: calc(100% - 1rem);
     margin: 0.5rem;
   }
+}
+
+.sc-table thead th:last-child {
+  text-align: right;
 }

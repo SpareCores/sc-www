@@ -59,9 +59,8 @@ import {
   areSearchParamsEqual,
   toSearchParams,
 } from "../../tools/listing-search-params";
-import { BookmarkButton } from "../../components/collections/bookmark-button/bookmark-button";
-import { InstanceFavoriteContextMenu } from "../../components/collections/instance-favorite-context-menu/instance-favorite-context-menu";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
+import { BookmarkButton } from "../../components/bookmark-button/bookmark-button";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
 import { CollectionsUi } from "../../collections/collections-ui";
 import {
   isDefaultListingQuery,
@@ -127,7 +126,6 @@ type DatabaseListingQuery = Params &
     Dropdown,
     BenchmarkIconPipe,
     BookmarkButton,
-    InstanceFavoriteContextMenu,
     CollectionSaveModal,
   ],
   templateUrl: "./database-listing.html",
@@ -246,7 +244,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private readonly editingSearchId = signal<string | null>(null);
   private bookmarkSource: SavedSearchItem | null = null;
 
-  clipboardIcon = "clipboard";
   tooltipContent = "";
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
@@ -325,8 +322,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
       .map((parameter): SearchBarParameter => {
         const schema = { ...(parameter.schema ?? {}) };
         if (
-          schema.type === "boolean" ||
-          schema.anyOf?.some((item) => item.type === "boolean")
+          parameter.name !== "only_active" &&
+          parameter.name !== "only_orderable" &&
+          (schema.type === "boolean" ||
+            schema.anyOf?.some((item) => item.type === "boolean"))
         ) {
           schema.filter_mode = "tri_state_boolean";
         }
@@ -778,19 +777,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
       item.display_name !== item.api_reference &&
       item.display_name !== item.api_reference.replace("Standard_", "")
     );
-  }
-
-  clipboardURL() {
-    navigator.clipboard.writeText(window.location.href);
-    this.clipboardIcon = "check";
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 
   showTooltip(el: Event, content: string, autoHide = false) {

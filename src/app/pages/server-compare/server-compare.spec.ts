@@ -372,7 +372,7 @@ describe("ServerCompare", () => {
       },
     ] as typeof component.servers;
     component.selectedBaselineServer = component.servers[0];
-    component["lastEncodedCompareQuery"] =
+    component.comparePage["lastEncodedQuery"] =
       "baseline_vendor=aws&baseline_server=t3.medium";
 
     component.selectBaselineServer(null);
@@ -397,7 +397,7 @@ describe("ServerCompare", () => {
         display_name: "T3 Medium",
       },
     ] as typeof component.servers;
-    component["lastEncodedCompareQuery"] = "";
+    component.comparePage["lastEncodedQuery"] = "";
 
     component.selectBaselineServer(component.servers[0]);
 

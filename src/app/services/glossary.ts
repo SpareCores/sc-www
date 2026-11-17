@@ -15,6 +15,7 @@ const GLOSSARY_SCRIPT_TIMEOUT_MS = 10000;
 
 type GlossaryView = {
   term: string;
+  id: string;
   via: string;
 };
 
@@ -29,7 +30,7 @@ export class Glossary {
   private loaded: Promise<boolean> | null = null;
   private viewsTracked = false;
 
-  apply(element: HTMLElement): void {
+  apply(element: HTMLElement, scopes: string[] = []): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -38,7 +39,9 @@ export class Glossary {
       this.load()
         .then((loaded) => {
           if (loaded) {
-            this.document.defaultView?.SpareCoresGlossary?.apply(element);
+            this.document.defaultView?.SpareCoresGlossary?.apply(element, {
+              scopes,
+            });
           }
         })
         .catch((error) => this.analytics.SentryException(error));
@@ -98,6 +101,7 @@ export class Glossary {
       const detail = (event as CustomEvent<GlossaryView>).detail;
       this.analytics.trackEvent("glossary term view", {
         term: detail?.term,
+        id: detail?.id,
         via: detail?.via,
       });
     });

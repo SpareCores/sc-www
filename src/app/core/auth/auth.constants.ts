@@ -12,8 +12,74 @@ export const PROFILE_RETURN_PARAM = "profile";
 export const PROFILE_RETURN_VALUE = "connected";
 export const PROFILE_AVATAR_MAX_BYTES = 10 * 1024 * 1024;
 export const PROFILE_DELETE_CONFIRMATION = "Delete account";
+export const API_TOKEN_NAME_MAX_LENGTH = 256;
+export const API_TOKEN_EXPIRATION_OPTIONS = [
+  { label: "Never", seconds: null },
+  { label: "30 days", seconds: 30 * 24 * 60 * 60 },
+  { label: "90 days", seconds: 90 * 24 * 60 * 60 },
+  { label: "1 year", seconds: 365 * 24 * 60 * 60 },
+] as const;
 
 export const AUTH_MESSAGES = {
+  signInTitle: "Sign in to Spare Cores",
+  signingInTitle: "Signing in to your account",
+  verifyDeviceTitle: "Verify this device",
+  resetPasswordTitle: "Reset your password",
+  setNewPasswordTitle: "Set a new password",
+  createAccountTitle: "Create your account",
+  creatingAccountTitle: "Creating your account",
+  oneLastStepTitle: "One last step",
+  verifyEmailTitle: "Verify your email",
+  closeLoginModal: "Close login modal",
+  closeRegisterModal: "Close register modal",
+  welcomeBack: "Welcome back!",
+  emailAddressLabel: "Email address",
+  emailAddressPlaceholder: "Enter your email address",
+  emailAddressInvalid: "Email address must be a valid email address.",
+  passwordLabel: "Password",
+  enterPasswordPlaceholder: "Enter your password",
+  passwordTooShort: "Password must be at least 8 characters.",
+  showPassword: "Show password",
+  hidePassword: "Hide password",
+  forgotPassword: "Forgot password?",
+  continueButton: "Continue",
+  continueWithGitHub: "Continue with GitHub",
+  orDivider: "or",
+  verifying: "Verifying...",
+  noAccountPrompt: "Don't have an account?",
+  registerLink: "Register!",
+  backToSignIn: "Back to sign in",
+  verificationCodeLabel: "Verification code",
+  verificationCodePlaceholder: "Enter verification code",
+  codeSentToSubtitle: (email: string) =>
+    `Enter the verification code sent to ${email}.`,
+  verifyButton: "Verify",
+  resendCodeButton: "Resend code",
+  resetRequestSubtitle:
+    "Enter your email address and we'll send you a verification code.",
+  backButton: "Back",
+  sendCodeButton: "Send code",
+  resetCodeSentToSubtitle: (email: string) =>
+    `Enter the verification code sent to ${email} and choose a new password.`,
+  newPasswordLabel: "New password",
+  createNewPasswordPlaceholder: "Create a new password",
+  resetPasswordButton: "Reset password",
+  firstNameLabel: "First name",
+  firstNamePlaceholder: "First name",
+  lastNameLabel: "Last name",
+  lastNamePlaceholder: "Last name",
+  createPasswordPlaceholder: "Create a password",
+  alreadyHaveAccountPrompt: "Already have an account?",
+  logInLink: "Log in",
+  consentSubtitle:
+    "Accept the Terms of Service and Privacy Policy to finish signing up. Stay in the loop with the Spare Cores newsletter — optional, but recommended.",
+  agreeToPrefix: "I agree to the",
+  termsOfService: "Terms of Service",
+  andConjunction: "and",
+  privacyPolicy: "Privacy Policy",
+  subscribeNewsletter: "Subscribe me to the Spare Cores newsletter",
+  cancelButton: "Cancel",
+  verifyEmailButton: "Verify email",
   defaultSignUpSubtitle: "Welcome! Please fill in the details to get started.",
   authUnavailable:
     "Auth server offline. Please contact support@sparecores.com for assistance.",
@@ -66,6 +132,24 @@ export const AUTH_MESSAGES = {
   githubDisconnectWarning:
     "Your GitHub account will be disconnected and can no longer be used to sign in.",
   sessionRevokeWarning: "This device will be signed out of your account.",
+  noOrganizationsHint:
+    "Join an organization to share API tokens with your team.",
+  unableToSwitchOrganization: "Unable to switch the active organization.",
+  organizationSwitched: "Your active organization has been updated.",
+  personalTokensTitle: "Personal tokens",
+  organizationTokensTitle: (organization: string) => `${organization} tokens`,
+  apiTokensInfo:
+    "Use long-lived API tokens to authenticate requests on your behalf or your organization's behalf to the Spare Cores API. Tokens have read-only access. Visit docs.sparecores.com/api to learn more!",
+  noApiTokens: "No API tokens yet.",
+  unableToLoadApiTokens: "Unable to load your API tokens.",
+  organizationTokensUnavailable:
+    "Organization API tokens are not available for your role.",
+  unableToCreateApiToken: "Unable to create the API token.",
+  unableToRevokeApiToken: "Unable to revoke the API token.",
+  apiTokenRevokeWarning:
+    "Applications using this token will no longer be able to access the API.",
+  apiTokenCopyNotice: "Copy this token now. It cannot be shown again.",
+  unableToCopyApiToken: "Unable to copy the token. Copy it manually.",
   unknownBrowser: "Unknown browser",
   mobileDevice: "Mobile",
   desktopDevice: "Desktop",

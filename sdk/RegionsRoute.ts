@@ -33,6 +33,7 @@ export namespace Regions {
         | "azure"
         | "gcp"
         | "hcloud"
+        | "oci"
         | "ovh"
         | "upcloud"
         | "vultr";

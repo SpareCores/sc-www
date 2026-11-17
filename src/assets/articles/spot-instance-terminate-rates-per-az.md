@@ -69,7 +69,7 @@ termination rate:
 <div class="text-center m-2.5 mt-8 mb-6">
   <a href="https://aws.amazon.com/ec2/spot/instance-advisor/"
      target="_blank" rel="noopener"
-     class="!no-underline">
+     class="no-underline!">
     <img
       title="AWS Spot Instance advisor for the m5a instance family in us-east-1 (accessed on April 28, 2024)"
       src="/assets/images/blog/aws-spot-instance-advisor-m5a-20240428.png"

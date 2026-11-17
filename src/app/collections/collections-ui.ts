@@ -92,9 +92,11 @@ export class CollectionsUi {
         return;
       }
 
-      untracked(() =>
-        this.toggleFavorite(action.kind, action.vendorId, action.entityId),
-      );
+      untracked(() => {
+        if (!this.isFavorite(action.kind, action.vendorId, action.entityId)) {
+          this.toggleFavorite(action.kind, action.vendorId, action.entityId);
+        }
+      });
     });
   }
 
@@ -112,6 +114,35 @@ export class CollectionsUi {
     this.auth.signUp({
       subtitle: FEATURE_REGISTER_SUBTITLE,
     });
+  }
+
+  async addFavoriteOrPromptRegister(
+    kind: BookmarkEntityKind,
+    vendorId: string,
+    entityId: string,
+  ): Promise<void> {
+    await this.auth.init().catch(() => undefined);
+
+    const action: PendingFeatureAction = {
+      type: "favorite",
+      kind,
+      vendorId,
+      entityId,
+    };
+
+    if (!this.auth.isAuthenticated()) {
+      this.promptRegisterForFeature(action);
+      return;
+    }
+
+    if (!this.store.isLoaded()) {
+      this.setPendingFeatureAction(action);
+      return;
+    }
+
+    if (!this.isFavorite(kind, vendorId, entityId)) {
+      this.toggleFavorite(kind, vendorId, entityId);
+    }
   }
 
   takePendingFeatureAction(): PendingFeatureAction | null {

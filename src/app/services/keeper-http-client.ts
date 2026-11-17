@@ -233,7 +233,7 @@ export class KeeperHttpClient extends HttpClientSDK {
     };
 
     if (isPlatformBrowser(this.platformId)) {
-      const token = await this.auth.getToken();
+      const token = await this.auth.getTokenIfLoaded();
       if (token) {
         headerEntries["Authorization"] = `Bearer ${token}`;
       }

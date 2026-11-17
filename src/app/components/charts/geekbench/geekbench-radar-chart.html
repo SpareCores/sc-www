@@ -1,7 +1,9 @@
 @if (layout() === "details") {
   @if (hasDetailsChart()) {
     <div [class]="blockClass()" [id]="elementId()">
-      <div class="flex justify-between items-center">
+      <div
+        class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
+      >
         <h3 class="text-2xl flex items-center gap-2">
           <svg [lucideIcon]="'geekbench' | benchmarkIcon" class="h-6 w-6"></svg>
           {{ title() }}
@@ -25,6 +27,12 @@
               (mouseleave)="hideTooltip()"
             ></svg>
           }
+          @if (anchorId(); as id) {
+            <sc-header-anchor
+              [anchorId]="id"
+              [label]="title()"
+            ></sc-header-anchor>
+          }
         </h3>
         <div
           class="py-2 px-2 border-emerald-400 border-solid rounded-lg border"
@@ -33,7 +41,7 @@
         </div>
       </div>
       @if (isBrowser) {
-        <div class="h-full">
+        <div class="min-h-0 flex-1">
           <div class="chart_div" chartType="bar">
             <canvas
               [id]="canvasId()"
@@ -49,11 +57,11 @@
     </div>
   }
 } @else {
-  <div class="block_full_short_geekbench">
+  <div class="sc-chart-block sc-chart-block--split-tall">
     @if (isBrowser) {
       <div class="charts_div justify-center">
         @if (showSingle() && resolvedSingleChartData()) {
-          <div chartType="bar" class="chart_div w-full flex justify-center">
+          <div chartType="bar" class="chart_div flex justify-center">
             <canvas
               style="max-width: 100%; width: 100%"
               baseChart
@@ -65,7 +73,7 @@
           </div>
         }
         @if (showMulti() && resolvedMultiChartData()) {
-          <div chartType="bar" class="chart_div w-full flex justify-center">
+          <div chartType="bar" class="chart_div flex justify-center">
             <canvas
               style="max-width: 100%; width: 100%"
               baseChart
@@ -83,8 +91,7 @@
 
 <div
   #tooltipDefault
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none"
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
   [class.tooltip-panel--wide]="!!tooltipHtml"
 >
   @if (tooltipHtml) {

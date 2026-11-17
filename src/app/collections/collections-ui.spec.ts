@@ -11,21 +11,25 @@ import {
 describe("CollectionsUi", () => {
   let service: CollectionsUi;
   let signUp: jasmine.Spy;
+  let init: jasmine.Spy;
   let toggleFavoriteServer: jasmine.Spy;
   let isAuthenticated: ReturnType<typeof signal<boolean>>;
   let authInProgress: ReturnType<typeof signal<boolean>>;
   let signUpModalOpen: ReturnType<typeof signal<boolean>>;
   let signInModalOpen: ReturnType<typeof signal<boolean>>;
   let isLoaded: ReturnType<typeof signal<boolean>>;
+  let serverIsFavorite: boolean;
 
   beforeEach(() => {
     sessionStorage.clear();
+    serverIsFavorite = false;
     isAuthenticated = signal(false);
     authInProgress = signal(false);
     signUpModalOpen = signal(false);
     signInModalOpen = signal(false);
     isLoaded = signal(false);
     signUp = jasmine.createSpy("signUp");
+    init = jasmine.createSpy("init").and.resolveTo();
     toggleFavoriteServer = jasmine.createSpy("toggleFavoriteServer");
 
     TestBed.configureTestingModule({
@@ -40,13 +44,14 @@ describe("CollectionsUi", () => {
             signUpModalOpen: () => signUpModalOpen(),
             signInModalOpen: () => signInModalOpen(),
             signUp,
+            init,
           },
         },
         {
           provide: CollectionsStore,
           useValue: {
             isLoaded: () => isLoaded(),
-            isFavoriteServer: () => false,
+            isFavoriteServer: () => serverIsFavorite,
             isFavoriteDatabase: () => false,
             isMutating: () => false,
             toggleFavoriteServer,
@@ -124,6 +129,89 @@ describe("CollectionsUi", () => {
     });
     expect(sessionStorage.getItem(PENDING_FEATURE_ACTION_KEY)).toBeNull();
     expect(service.takePendingFeatureAction()).toBeNull();
+  });
+
+  it("keeps an existing bookmark when replaying a pending favorite", async () => {
+    serverIsFavorite = true;
+    service.promptRegisterForFeature({
+      type: "favorite",
+      kind: "server",
+      vendorId: "aws",
+      entityId: "t3.nano",
+    });
+    isLoaded.set(true);
+    isAuthenticated.set(true);
+    TestBed.flushEffects();
+    await Promise.resolve();
+
+    expect(toggleFavoriteServer).not.toHaveBeenCalled();
+    expect(sessionStorage.getItem(PENDING_FEATURE_ACTION_KEY)).toBeNull();
+  });
+
+  it("prompts registration for a favorite once auth resolves as guest", async () => {
+    await service.addFavoriteOrPromptRegister("server", "aws", "t3.nano");
+
+    expect(init).toHaveBeenCalled();
+    expect(signUp).toHaveBeenCalledWith({
+      subtitle: FEATURE_REGISTER_SUBTITLE,
+    });
+    expect(
+      JSON.parse(sessionStorage.getItem(PENDING_FEATURE_ACTION_KEY)!),
+    ).toEqual({
+      type: "favorite",
+      kind: "server",
+      vendorId: "aws",
+      entityId: "t3.nano",
+    });
+  });
+
+  it("prompts registration when auth fails to resolve", async () => {
+    init.and.rejectWith(new Error("Clerk failed"));
+
+    await service.addFavoriteOrPromptRegister("server", "aws", "t3.nano");
+
+    expect(signUp).toHaveBeenCalled();
+  });
+
+  it("adds a favorite without prompting when auth resolves as signed in", async () => {
+    init.and.callFake(async () => isAuthenticated.set(true));
+
+    await service.addFavoriteOrPromptRegister("server", "aws", "t3.nano");
+
+    expect(signUp).not.toHaveBeenCalled();
+    expect(toggleFavoriteServer).not.toHaveBeenCalled();
+
+    isLoaded.set(true);
+    TestBed.flushEffects();
+    await Promise.resolve();
+
+    expect(toggleFavoriteServer).toHaveBeenCalledOnceWith({
+      vendorId: "aws",
+      serverId: "t3.nano",
+    });
+  });
+
+  it("adds a favorite directly when signed in with loaded collections", async () => {
+    isAuthenticated.set(true);
+    isLoaded.set(true);
+
+    await service.addFavoriteOrPromptRegister("server", "aws", "t3.nano");
+
+    expect(signUp).not.toHaveBeenCalled();
+    expect(toggleFavoriteServer).toHaveBeenCalledOnceWith({
+      vendorId: "aws",
+      serverId: "t3.nano",
+    });
+  });
+
+  it("keeps an existing bookmark when signed in with loaded collections", async () => {
+    isAuthenticated.set(true);
+    isLoaded.set(true);
+    serverIsFavorite = true;
+
+    await service.addFavoriteOrPromptRegister("server", "aws", "t3.nano");
+
+    expect(toggleFavoriteServer).not.toHaveBeenCalled();
   });
 
   it("clears pending feature state when registration is cancelled", async () => {

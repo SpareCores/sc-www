@@ -1,0 +1,45 @@
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.bookmark-button-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.bookmark-button-wrap--locked {
+  cursor: pointer;
+}
+
+.bookmark-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  --sc-bookmark-toggle-idle-color: color-mix(
+    in oklab,
+    var(--color-gray-400) 50%,
+    transparent
+  );
+  position: relative;
+  transform: translateY(-1px);
+}
+
+.bookmark-button--locked {
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.bookmark-button__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.bookmark-button.bookmark-button--large,
+.bookmark-button--large .bookmark-button__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}

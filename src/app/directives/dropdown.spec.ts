@@ -39,6 +39,18 @@ class HostComponent {
 })
 class TopLayerHostComponent {}
 
+@Component({
+  template: `
+    <button id="fit_trigger" [scDropdown]="panel" [dropdownMinHeight]="120">
+      Open dropdown
+    </button>
+    <ng-template #panel><div id="fit_panel">Panel</div></ng-template>
+  `,
+  imports: [Dropdown],
+  providers: [{ provide: DROPDOWN_LAYER, useValue: "top" }],
+})
+class FitHeightHostComponent {}
+
 describe("Dropdown", () => {
   let fixture: ComponentFixture<HostComponent>;
   let trigger: HTMLButtonElement;
@@ -91,6 +103,19 @@ describe("Dropdown", () => {
         .getContainerElement()
         .querySelector("#top_panel"),
     ).not.toBeNull();
+  });
+
+  it("applies the minimum height to the overlay pane when fitting the viewport", () => {
+    const fitFixture = TestBed.createComponent(FitHeightHostComponent);
+    fitFixture.detectChanges();
+
+    fitFixture.nativeElement.querySelector("#fit_trigger").click();
+    fitFixture.detectChanges();
+
+    const pane = TestBed.inject(OverlayContainer)
+      .getContainerElement()
+      .querySelector<HTMLElement>("#fit_panel")!.parentElement!;
+    expect(pane.style.minHeight).toBe("120px");
   });
 
   it("closes on a second trigger click", () => {

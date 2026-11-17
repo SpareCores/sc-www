@@ -25,17 +25,22 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { DetailsCard } from "../../components/details-card/details-card";
+import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import {
-  ServerPropertyCard,
-  ServerPropertyRow,
-  ServerPropertySection,
-} from "../../components/server-property-card/server-property-card";
+  DetailsCardRow,
+  DetailsCardSection,
+} from "../../components/details-card/details-card.types";
+import { buildDetailsRows } from "../../components/details-card/details-card.utils";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { Analytics } from "../../services/analytics";
+import { HeaderAnchorLink } from "../../services/header-anchor-link";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { Toast } from "../../services/toast";
 import { VENDOR_DETAILS_ERROR_TOAST_ID } from "../../services/toast-ids";
+
+import { chartColors } from "../../components/charts/shared/chart-colors.constants";
 
 declare let Datamap: any;
 
@@ -43,7 +48,7 @@ const SCRIPT_PATH = "assets/datamaps/d3.min.js";
 const SCRIPT_PATH2 = "assets/datamaps/topojson.js";
 const SCRIPT_PATH3 = "assets/datamaps/datamaps.world.min.js";
 
-const VENDOR_MAP_COLOR = "#34D399";
+const VENDOR_MAP_COLOR = chartColors["emerald-400"];
 
 type OpenApiProperty = {
   description?: string;
@@ -69,11 +74,12 @@ const VENDOR_SCHEMA_PROPERTIES: Record<string, OpenApiProperty> =
     Breadcrumbs,
     Button,
     LoadingSpinner,
-    ServerPropertyCard,
+    DetailsCard,
     LucideCheck,
     LucideChevronRight,
     LucideX,
     CountryIdtoNamePipe,
+    HeaderAnchor,
   ],
   templateUrl: "./vendor-details.html",
   styleUrl: "./vendor-details.css",
@@ -89,6 +95,7 @@ export class VendorDetails implements OnInit, OnDestroy {
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
   private renderer = inject(Renderer2);
+  private headerAnchorLink = inject(HeaderAnchorLink);
   private countryNamePipe = new CountryIdtoNamePipe();
   private vendorLoadId = 0;
 
@@ -106,8 +113,8 @@ export class VendorDetails implements OnInit, OnDestroy {
   features: { name: string; value: string }[] = [];
   description = "";
 
-  metadataSections: ServerPropertySection[] = [];
-  billingSections: ServerPropertySection[] = [];
+  metadataSections: DetailsCardSection[] = [];
+  billingSections: DetailsCardSection[] = [];
   expandedCards: Record<string, boolean> = {
     details: false,
     billing: true,
@@ -261,6 +268,7 @@ export class VendorDetails implements OnInit, OnDestroy {
         this.isLoading = false;
         if (isPlatformBrowser(this.platformId) && this.vendor) {
           setTimeout(() => this.initMap());
+          this.headerAnchorLink.scrollToCurrentFragment();
         }
       });
   }
@@ -306,7 +314,7 @@ export class VendorDetails implements OnInit, OnDestroy {
     this.metadataSections = [
       {
         name: "Vendor Metadata",
-        properties: this.rows([
+        rows: this.rows([
           { id: "vendor_id", name: "Vendor ID", value: vendor.vendor_id },
           { id: "name", name: "Full Name", value: vendor.name },
           {
@@ -356,7 +364,7 @@ export class VendorDetails implements OnInit, OnDestroy {
     this.billingSections = [
       {
         name: "Billing",
-        properties: this.rows([
+        rows: this.rows([
           {
             id: "stopped_server_charged",
             name: "Stopped Server Charged",
@@ -397,32 +405,12 @@ export class VendorDetails implements OnInit, OnDestroy {
   }
 
   private rows(
-    items: {
-      id: string;
-      name: string;
-      value: unknown;
-    }[],
-  ): ServerPropertyRow[] {
-    return items
-      .map((item) => {
-        const description = VENDOR_SCHEMA_PROPERTIES[item.id]?.description;
-        return {
-          id: item.id,
-          name: item.name,
-          value: this.toDisplayValue(item.value),
-          tooltips: description
-            ? [{ key: item.id, content: description }]
-            : undefined,
-        };
-      })
-      .filter((item) => item.value !== "");
-  }
-
-  private toDisplayValue(value: unknown): string {
-    if (value === null || value === undefined || value === "") {
-      return "";
-    }
-    return String(value);
+    items: { id: string; name: string; value: unknown }[],
+  ): DetailsCardRow[] {
+    return buildDetailsRows(
+      items,
+      (id) => VENDOR_SCHEMA_PROPERTIES[id]?.description,
+    );
   }
 
   private updateSeo(vendor: Vendor) {
@@ -471,7 +459,7 @@ export class VendorDetails implements OnInit, OnDestroy {
             highlightBorderOpacity: 0,
           },
           fills: {
-            defaultFill: "#06263a",
+            defaultFill: chartColors["sky-975"],
             [this.vendor.vendor_id]: VENDOR_MAP_COLOR,
           },
         });

@@ -15,6 +15,20 @@ import { Analytics } from "../../services/analytics";
 import { SeoHandler } from "../../services/seo-handler";
 import { Subscription } from "rxjs";
 
+type SurveyPayload = {
+  visitorID?: string;
+  startedAt: number;
+  duration: number;
+  counter: number;
+  referrer: string;
+  payload: unknown;
+  event?: string;
+  isComplete?: boolean;
+  finishedAt?: number;
+  pageChangedAt?: number;
+  finishedPageIndex?: number;
+};
+
 @Component({
   selector: "sc-survey-fill",
   imports: [SurveyModule, RouterModule],
@@ -29,13 +43,13 @@ export class SurveyFill implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
 
   surveyModel!: Model;
-  visitorID: string = "";
 
   tracker: any;
   trackPing: number = 0;
   startedAt: number = 0;
   prevData: any;
   private subscription = new Subscription();
+  private visitorIdPromise?: Promise<string>;
 
   ngOnInit() {
     let id = this.route.snapshot.paramMap.get("id");
@@ -66,33 +80,54 @@ export class SurveyFill implements OnInit, OnDestroy {
   }
 
   setup(id: string) {
-    this.visitorID = this.analytics.getId() || this.randomUUID();
-    this.http.get("assets/surveys/" + id + ".json").subscribe((data: any) => {
-      const title = data.title || data.metaTitle || `${id} Survey`;
-      const description = data.description || data.metaDescription;
-      this.SEOhandler.updateTitleAndMetaTags(
-        title + " - SpareCores",
-        description,
-        "",
-      );
-      if (data.ogImage) {
-        this.SEOhandler.updateThumbnail(data.ogImage);
-      }
-
-      if (isPlatformBrowser(this.platformId)) {
-        this.surveyModel = new Model(data);
-
-        this.surveyModel.applyTheme(surveyTheme);
-
-        this.surveyModel.onComplete.add(this.submit.bind(this));
-        this.surveyModel.onCurrentPageChanging.add((sender, options) =>
-          this.pageChange(sender, options),
+    if (isPlatformBrowser(this.platformId)) {
+      void this.resolveVisitorId();
+    }
+    this.subscription.add(
+      this.http.get("assets/surveys/" + id + ".json").subscribe((data: any) => {
+        const title = data.title || data.metaTitle || `${id} Survey`;
+        const description = data.description || data.metaDescription;
+        this.SEOhandler.updateTitleAndMetaTags(
+          title + " - SpareCores",
+          description,
+          "",
         );
+        if (data.ogImage) {
+          this.SEOhandler.updateThumbnail(data.ogImage);
+        }
 
-        this.tracker = setInterval(this.trackProgress.bind(this), 10000);
-        this.startedAt = Date.now();
-      }
-    });
+        if (isPlatformBrowser(this.platformId)) {
+          this.surveyModel = new Model(data);
+
+          this.surveyModel.applyTheme(surveyTheme);
+
+          this.surveyModel.onComplete.add(this.submit.bind(this));
+          this.surveyModel.onCurrentPageChanging.add((sender, options) =>
+            this.pageChange(sender, options),
+          );
+
+          this.tracker = setInterval(this.trackProgress.bind(this), 10000);
+          this.startedAt = Date.now();
+        }
+      }),
+    );
+  }
+
+  private resolveVisitorId(): Promise<string> {
+    this.visitorIdPromise ??= this.analytics
+      .getIdWhenReady()
+      .then((visitorId) => visitorId || this.randomUUID());
+    return this.visitorIdPromise;
+  }
+
+  private async record(
+    eventName: string,
+    payload: SurveyPayload,
+    saveName: string,
+  ) {
+    payload.visitorID = await this.resolveVisitorId();
+    this.analytics.trackEvent(eventName, payload);
+    this.saveSurveyData(payload, saveName);
   }
 
   submit(sender: any) {
@@ -101,8 +136,7 @@ export class SurveyFill implements OnInit, OnDestroy {
     payload.finishedAt = Date.now();
     payload.isComplete = true;
 
-    this.analytics.trackEvent("survey submit", payload);
-    this.saveSurveyData(payload, "submit");
+    void this.record("survey submit", payload, "submit");
 
     clearInterval(this.tracker);
   }
@@ -118,8 +152,11 @@ export class SurveyFill implements OnInit, OnDestroy {
     payload.pageChangedAt = Date.now();
     payload.finishedPageIndex = options.oldCurrentPage.visibleIndex + 1;
     payload.isComplete = false;
-    this.analytics.trackEvent("survey pageChange", payload);
-    this.saveSurveyData(payload, "pageChange" + payload.finishedPageIndex);
+    void this.record(
+      "survey pageChange",
+      payload,
+      "pageChange" + payload.finishedPageIndex,
+    );
   }
 
   /**
@@ -127,9 +164,8 @@ export class SurveyFill implements OnInit, OnDestroy {
    * @param data The survey data to include in the payload
    * @returns A payload object with common properties
    */
-  private createBasePayload(data: any): any {
+  private createBasePayload(data: unknown): SurveyPayload {
     return {
-      visitorID: this.visitorID,
       startedAt: this.startedAt,
       duration: Date.now() - this.startedAt,
       counter: this.trackPing,
@@ -151,10 +187,10 @@ export class SurveyFill implements OnInit, OnDestroy {
    * id_abc123_submit_timestamp_1234567890
    * id_abc123_pageChange_timestamp_1234567890
    */
-  private saveSurveyData(payload: any, event_name: string = "") {
+  private saveSurveyData(payload: SurveyPayload, event_name: string = "") {
     const eventPart = event_name ? `_${event_name}` : "";
     const currentTimestamp = Date.now();
-    const filename = `id_${this.visitorID}${eventPart}_timestamp_${currentTimestamp}`;
+    const filename = `id_${payload.visitorID}${eventPart}_timestamp_${currentTimestamp}`;
     try {
       this.http
         .post("/api/survey-data", {

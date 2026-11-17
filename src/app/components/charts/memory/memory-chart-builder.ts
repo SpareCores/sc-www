@@ -5,7 +5,11 @@ import {
   legacyBWMemOperationLabels,
   membenchSeriesLabels,
 } from "../shared/benchmark-labels.constants";
-import { radarDatasetColors } from "../shared/chart-colors.constants";
+import {
+  radarDatasetColors,
+  chartColors,
+  chartColor,
+} from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
   buildCompareTooltipTitle,
@@ -51,11 +55,11 @@ const COMPARE_CACHE_LEVELS = [
 ] as const;
 
 const COMPARE_CACHE_TOOLTIP_STYLE = {
-  backgroundColor: "rgba(0, 0, 0, 0.8)",
+  backgroundColor: chartColor("black", 0.8),
   borderWidth: 0,
   borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
   padding: 6,
-  color: "#fff",
+  color: chartColors.white,
   titleFont: { weight: "bold" as const, size: 12 },
   bodyFont: { size: 12 },
   labelYAdjust: -8,
@@ -840,13 +844,13 @@ export class MemoryChartBuilder {
       type: "line",
       scaleID: "x",
       borderWidth: 3,
-      borderColor: "#EF4444",
+      borderColor: chartColors["red-500"],
       value,
       label: {
         rotation: "auto",
         position,
         content,
-        backgroundColor: "#EF4444",
+        backgroundColor: chartColors["red-500"],
         display: true,
       },
     };

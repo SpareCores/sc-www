@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { BenchmarkLineChartBuilder } from "./benchmark-line-chart-builder";
+import { chartColors } from "../shared/chart-colors.constants";
 import {
   CompareSslOption,
   LineBenchmarkGroup,
@@ -261,8 +262,12 @@ describe("BenchmarkLineChartBuilder", () => {
     expect(result?.options.scales?.y?.title?.text).toBe("tps");
     expect(result?.data.datasets[0].yAxisID).toBe("y");
     expect(result?.data.datasets[1].yAxisID).toBe("y1");
-    expect(result?.data.datasets[0].borderColor).toBe("#34D399");
-    expect(result?.data.datasets[1].borderColor).toBe("#EAB308");
+    expect(result?.data.datasets[0].borderColor).toBe(
+      chartColors["emerald-400"],
+    );
+    expect(result?.data.datasets[1].borderColor).toBe(
+      chartColors["yellow-500"],
+    );
     expect(result?.data.datasets[0].data).toEqual([
       { x: 2, y: 120, note: "peak nearby", unit: "tps" },
       { x: 4, y: 200, note: undefined, unit: "tps" },

@@ -15,7 +15,7 @@ import { HealthcheckHealthcheckGetData } from "./data-contracts";
 export namespace Healthcheck {
   /**
    * @description Quickly return package and database version information.
-   * @tags Administrative endpoints
+   * @tags Administrative Endpoints
    * @name HealthcheckHealthcheckGet
    * @summary Healthcheck
    * @request GET:/healthcheck

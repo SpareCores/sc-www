@@ -12,7 +12,7 @@ export const authGuard: CanActivateFn = async () => {
     return true;
   }
 
-  await auth.init();
+  await auth.init().catch(() => undefined);
 
   if (auth.isAuthenticated()) {
     return true;

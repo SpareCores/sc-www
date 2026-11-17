@@ -1,0 +1,50 @@
+<sc-button
+  [id]="'baseline_' + resource() + '_button'"
+  [scDropdown]="baselinePanel"
+  #baselineDropdown="scDropdown"
+  [label]="baselineLabel()"
+  icon="target"
+  variant="dropdown"
+></sc-button>
+<sc-button
+  id="currency_button"
+  [scDropdown]="currencyPanel"
+  #currencyDropdown="scDropdown"
+  [label]="currency().slug"
+  icon="credit-card"
+  variant="dropdown"
+></sc-button>
+
+<ng-template #baselinePanel>
+  <div [id]="'baseline_' + resource() + '_options'" class="sc-dropdown w-64">
+    <ul
+      class="sc-dropdown__list"
+      [attr.aria-labelledby]="'baseline_' + resource() + '_button'"
+    >
+      <li class="sc-dropdown__option" (click)="selectBaseline(null)">
+        <div class="text-white text-sm">No baseline</div>
+      </li>
+      @for (item of items(); track item.vendor_id + "_" + item.api_reference) {
+        <li class="sc-dropdown__option" (click)="selectBaseline(item)">
+          <div class="text-white text-sm">
+            {{ item.display_name }} ({{ item.vendor_id }})
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #currencyPanel>
+  <div id="currency_options" class="sc-dropdown w-52">
+    <ul class="sc-dropdown__list" aria-labelledby="currency_button">
+      @for (option of availableCurrencies; track option.name) {
+        <li class="sc-dropdown__option" (click)="selectCurrency(option)">
+          <div class="text-white text-sm">
+            {{ option.name }} ({{ option.symbol }})
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>

@@ -20,6 +20,7 @@ import {
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
+import { HeaderAnchor } from "../../header-anchor/header-anchor";
 import {
   barChartOptionsSSL,
   barChartOptionsSSLCompare,
@@ -54,6 +55,7 @@ import {
     BaseChartDirective,
     Dropdown,
     BenchmarkIconPipe,
+    HeaderAnchor,
   ],
   templateUrl: "./llm-inference-chart.html",
   styles: [
@@ -85,6 +87,8 @@ export class LlmInferenceChart {
   servers = input<LlmChartServer[]>([]);
   showPrompt = input(true);
   showGeneration = input(true);
+  promptAnchorId = input<string | null>(null);
+  generationAnchorId = input<string | null>(null);
 
   readonly barChartType = "bar" as const;
   readonly idBase = `llm_chart_${LlmInferenceChart.nextId++}`;

@@ -1,14 +1,12 @@
-.design-button {
-  @apply py-2 px-4 inline-flex justify-center items-center text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-none focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none;
-}
+@reference "../../../styles/tailwind.css";
 
 .design-gradient-fill-with-brand-colors {
   @apply text-white font-semibold text-4xl;
   background: radial-gradient(
     ellipse at top right,
-    theme("colors.emerald.400"),
-    theme("colors.teal.500"),
-    theme("colors.sky.950")
+    var(--color-emerald-400),
+    var(--color-teal-500),
+    var(--color-sky-950)
   );
 }
 

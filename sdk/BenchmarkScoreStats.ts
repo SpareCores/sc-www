@@ -23,7 +23,7 @@ export class BenchmarkScoreStats<SecurityDataType = unknown> {
   /**
    * @description Return aggregate stats and score distribution histograms for each benchmark. For every benchmark in the Benchmark table, returns: - Basic benchmark metadata (name, framework, unit, etc.) - Count of active, non-null score records - Count of distinct (vendor_id, server_id) pairs - A 20-bin histogram of the score distribution (breakpoints + per-bucket counts) Aggregation and histogram binning are done in SQL to avoid transferring millions of BenchmarkScore rows. Due to the complexity of the query, not using sqlalchemy markup.
    *
-   * @tags Administrative endpoints
+   * @tags Administrative Endpoints
    * @name GetBenchmarkScoreStatsBenchmarkScoreStatsGet
    * @summary Get Benchmark Score Stats
    * @request GET:/benchmark_score_stats

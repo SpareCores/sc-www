@@ -9,6 +9,7 @@ image: /assets/images/blog/thumbnails/database-benchmark-smt-wise.webp
 image_alt: Database benchmark scores of GCP's N2 (with SMT) and T2D (no SMT) at various concurrencies.
 author: Alex Trickey
 tags: [benchmark, performance, score, postgres, aws, gcp]
+glossary: [benchmark-pgbench-postgres]
 ---
 
 Spare Cores has added a new database benchmark and we’re excited to bring you some early results! We can now measure server performance on PostgreSQL workloads across our full range of monitored servers and we have extended our coverage to include managed PostgreSQL servers at several vendors. The new benchmark consists of a demanding read-only transaction containing subqueries hitting the core PostgreSQL functionality (joins, aggregations, indexes, hashes, The Oversized-Attribute Storage Technique (TOAST), text search, and much more). The workload is run at four levels of concurrency and the resulting metric is the maximum transactions per minute (TPM) achieved by each server across any concurrency condition. You can check out the details in our benchmark introduction here: [Measuring PostgreSQL Performance at Scale](/article/benchmark-pgbench-postgres).

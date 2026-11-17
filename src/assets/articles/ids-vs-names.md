@@ -187,7 +187,7 @@ over directly to the database schema documentation:
 <div class="text-center m-2.5 mt-8 mb-6">
   <a href="https://dbdocs.io/spare-cores/sc-crawler"
      target="_blank" rel="noopener"
-     class="!no-underline">
+     class="no-underline!">
     <img
       title="SC Crawler database schemas documented and visualized at dbdocs.io"
       src="/assets/images/blog/dbdocs-screenshot.png"

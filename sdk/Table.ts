@@ -41,9 +41,9 @@ export class Table<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Return the Benchmark table as-is, without filtering options or relationships resolved.
+   * @description Return the Benchmark table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableBenchmarkTableBenchmarkGet
    * @summary Table Benchmark
    * @request GET:/table/benchmark
@@ -56,9 +56,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Country table as-is, without filtering options or relationships resolved.
+   * @description Return the Country table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableCountryTableCountryGet
    * @summary Table Country
    * @request GET:/table/country
@@ -71,9 +71,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the ComplianceFramework table as-is, without filtering options or relationships resolved.
+   * @description Return the ComplianceFramework table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableComplianceFrameworksTableComplianceFrameworkGet
    * @summary Table Compliance Frameworks
    * @request GET:/table/compliance_framework
@@ -91,9 +91,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the VendorComplianceLink table as-is, without filtering options or relationships resolved.
+   * @description Return the VendorComplianceLink table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableVendorComplianceLinkTableVendorComplianceLinkGet
    * @summary Table Vendor Compliance Link
    * @request GET:/table/vendor_compliance_link
@@ -111,9 +111,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Vendor table as-is, without filtering options or relationships resolved.
+   * @description Return the Vendor table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableVendorTableVendorGet
    * @summary Table Vendor
    * @request GET:/table/vendor
@@ -126,9 +126,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Region table as-is, without filtering options or relationships resolved.
+   * @description Return the Region table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableRegionTableRegionGet
    * @summary Table Region
    * @request GET:/table/region
@@ -141,9 +141,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Zone table as-is, without filtering options or relationships resolved.
+   * @description Return the Zone table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableZoneTableZoneGet
    * @summary Table Zone
    * @request GET:/table/zone
@@ -156,9 +156,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Server table as-is, without filtering options or relationships resolved.
+   * @description Return the Server table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableServerTableServerGet
    * @summary Table Server
    * @request GET:/table/server
@@ -173,7 +173,7 @@ export class Table<SecurityDataType = unknown> {
   /**
    * @description Return the Server table with column selection.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableServerSelectTableServerSelectGet
    * @summary Table Server Select
    * @request GET:/table/server/select
@@ -195,7 +195,7 @@ export class Table<SecurityDataType = unknown> {
   /**
    * @description Query ServerPrices records without relationships resolved.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableServerPricesTableServerPricesGet
    * @summary Table Server Prices
    * @request GET:/table/server_prices
@@ -217,9 +217,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Storage table as-is, without filtering options or relationships resolved.
+   * @description Return the Storage table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableStorageTableStorageGet
    * @summary Table Storage
    * @request GET:/table/storage
@@ -232,9 +232,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the Database table as-is, without filtering options or relationships resolved.
+   * @description Return the Database table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableDatabaseTableDatabaseGet
    * @summary Table Database
    * @request GET:/table/database
@@ -249,7 +249,7 @@ export class Table<SecurityDataType = unknown> {
   /**
    * @description Query DatabasePrice records without relationships resolved.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableDatabasePriceTableDatabasePriceGet
    * @summary Table Database Price
    * @request GET:/table/database_price
@@ -271,9 +271,9 @@ export class Table<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description Return the DatabaseStorage table as-is, without filtering options or relationships resolved.
+   * @description Return the DatabaseStorage table without filtering options or relationships resolved; ARCHIVED records are left out.
    *
-   * @tags Table dumps
+   * @tags Table Dumps
    * @name TableDatabaseStorageTableDatabaseStorageGet
    * @summary Table Database Storage
    * @request GET:/table/database_storage
@@ -288,7 +288,7 @@ export class Table<SecurityDataType = unknown> {
   /**
    * @description Server table and column names and comments.
    *
-   * @tags Table metadata
+   * @tags Table Metadata
    * @name TableMetadataServerTableServerMetaGet
    * @summary Table Metadata Server
    * @request GET:/table/server/meta

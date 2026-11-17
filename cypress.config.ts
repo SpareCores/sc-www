@@ -1,7 +1,19 @@
 import { clerkSetup } from "@clerk/testing/cypress";
 import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
-import { deleteClerkUserByEmail } from "./cypress/support/clerk-users";
+import cypressOnFix from "cypress-on-fix";
+import {
+  ClerkTestUser,
+  createClerkTestUser,
+  deleteClerkUserByEmail,
+} from "./cypress/support/clerk-users";
+import {
+  ClerkTestApiKeyRequest,
+  ClerkTestOrganizationRequest,
+  createClerkTestApiKey,
+  createClerkTestOrganization,
+  deleteClerkTestOrganization,
+} from "./cypress/support/clerk-organizations";
 
 const customizeChromeHeadless = (
   browser: Cypress.Browser,
@@ -24,15 +36,30 @@ export default defineConfig({
   chromeWebSecurity: false,
   viewportHeight: 1080,
   viewportWidth: 1440,
+  experimentalMemoryManagement: true,
   e2e: {
-    setupNodeEvents(on, config) {
+    baseUrl: "http://localhost:4200",
+    setupNodeEvents(cypressOn, config) {
+      const on = cypressOnFix(cypressOn);
       on("task", {
         log(message) {
           console.log(message);
           return null;
         },
+        createClerkTestUser(user: ClerkTestUser) {
+          return createClerkTestUser(user);
+        },
         deleteClerkUserByEmail(email: string) {
           return deleteClerkUserByEmail(email);
+        },
+        createClerkTestOrganization(request: ClerkTestOrganizationRequest) {
+          return createClerkTestOrganization(request);
+        },
+        deleteClerkTestOrganization(organizationId: string) {
+          return deleteClerkTestOrganization(organizationId);
+        },
+        createClerkTestApiKey(request: ClerkTestApiKeyRequest) {
+          return createClerkTestApiKey(request);
         },
       });
       getCompareSnapshotPlugin(on, config);

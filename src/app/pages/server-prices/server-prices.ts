@@ -17,7 +17,7 @@ import { Button } from "../../components/button/button";
 import { KeeperAPI } from "../../services/keeper-api";
 import { OrderDir, ServerPriceWithPKs } from "../../../../sdk/data-contracts";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { SeoHandler } from "../../services/seo-handler";
 import { FormsModule } from "@angular/forms";
 import {
@@ -96,7 +96,6 @@ export type RegionVendorMetadata = {
 @Component({
   selector: "sc-server-prices",
   imports: [
-    CommonModule,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,
@@ -216,7 +215,7 @@ export class ServerPrices implements OnInit, OnDestroy {
 
   modalSearch: any;
 
-  isLoading = false;
+  isLoading = true;
 
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
@@ -232,7 +231,6 @@ export class ServerPrices implements OnInit, OnDestroy {
   vendorMetadata: any[] = [];
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
-  clipboardIcon = "clipboard";
   tooltipContent = "";
 
   selectedCountries: string[] = [];
@@ -726,23 +724,6 @@ export class ServerPrices implements OnInit, OnDestroy {
     }
 
     this.modalSearch?.hide();
-  }
-
-  clipboardURL() {
-    let url = window.location.href;
-    navigator.clipboard.writeText(url);
-
-    this.clipboardIcon = "check";
-
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 
   showTooltip(el: any, content: string, autoHide = false) {

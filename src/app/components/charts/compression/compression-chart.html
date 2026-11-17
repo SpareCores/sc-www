@@ -1,8 +1,8 @@
 @if (layout() === "details") {
   @if (detailsChartData()) {
-    <div class="block_half" id="compress_chart">
+    <div class="sc-chart-block sc-chart-block--half" id="compress_chart">
       <div
-        class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between"
+        class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between sc-header-anchor-host sc-header-anchor-host--card"
       >
         <h3 class="text-2xl flex items-center gap-2">
           <svg
@@ -30,10 +30,17 @@
               (mouseleave)="hideTooltip()"
             ></svg>
           }
+          @if (anchorId(); as id) {
+            <sc-header-anchor
+              [anchorId]="id"
+              label="Compression"
+            ></sc-header-anchor>
+          }
         </h3>
         <div class="flex min-w-0 gap-4">
           @if (hasCoresSelector()) {
             <sc-button
+              class="min-w-0"
               #coresDropdown="scDropdown"
               [id]="coresButtonId"
               [scDropdown]="coresPanel"
@@ -44,6 +51,7 @@
             ></sc-button>
           }
           <sc-button
+            class="min-w-0"
             #selectorDropdown="scDropdown"
             [id]="buttonId"
             [scDropdown]="detailsPanel"
@@ -56,7 +64,7 @@
         </div>
       </div>
       @if (isBrowser) {
-        <div class="h-full">
+        <div class="min-h-0 flex-1">
           <div class="chart_div" chartType="bar">
             <canvas
               id="compress_canvas"
@@ -73,10 +81,11 @@
   }
 } @else {
   <div class="relative z-30">
-    <div class="block_full_short_inline">
+    <div class="sc-chart-block sc-chart-block--split">
       <div class="flex justify-end items-center">
         <div class="flex gap-4">
           <sc-button
+            class="min-w-0"
             #selectorDropdown="scDropdown"
             [id]="buttonId"
             [scDropdown]="comparePanel"
@@ -134,17 +143,14 @@
     <ng-template #comparePanel>
       <div
         [id]="optionsId"
-        class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+        class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
       >
-        <ul
-          class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-          [attr.aria-labelledby]="buttonId"
-        >
+        <ul class="sc-dropdown__list" [attr.aria-labelledby]="buttonId">
           @for (option of compareOptions(); track option.name; let i = $index) {
             <li>
               <button
                 type="button"
-                class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+                class="sc-dropdown__option"
                 (click)="selectCompareOption(i)"
               >
                 <div class="text-white text-sm">{{ option.name }}</div>
@@ -160,18 +166,15 @@
 <ng-template #detailsPanel>
   <div
     [id]="optionsId"
-    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      [attr.aria-labelledby]="buttonId"
-    >
+    <ul class="sc-dropdown__list" [attr.aria-labelledby]="buttonId">
       @if (layout() === "details") {
         @for (mode of detailsModes; track mode.key; let i = $index) {
           <li>
             <button
               type="button"
-              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+              class="sc-dropdown__option"
               (click)="selectDetailsMode(i)"
             >
               <div class="text-white text-sm">{{ mode.name }}</div>
@@ -186,17 +189,14 @@
 <ng-template #coresPanel>
   <div
     [id]="coresOptionsId"
-    class="w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+    class="w-max min-w-64 max-w-[calc(100vw-2rem)] sc-dropdown"
   >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      [attr.aria-labelledby]="coresButtonId"
-    >
+    <ul class="sc-dropdown__list" [attr.aria-labelledby]="coresButtonId">
       @for (option of availableCoresOptions(); track option) {
         <li>
           <button
             type="button"
-            class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+            class="sc-dropdown__option"
             (click)="selectCoresMode(option)"
           >
             <div class="text-white text-sm">cores: {{ option }}</div>
@@ -209,8 +209,7 @@
 
 <div
   #tooltipDefault
-  style="opacity: 0; display: none"
-  class="tooltip-panel fixed z-100 pointer-events-none"
+  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
 >
   {{ tooltipContent() }}
 </div>

@@ -1,3 +1,5 @@
+@reference "../../../../styles/tailwind.css";
+
 :host {
   display: contents;
 }
@@ -23,7 +25,7 @@
 }
 
 .workload-profile-details-panel {
-  background-color: #082f49;
+  background-color: var(--color-primary);
   border-radius: 0.5rem;
   padding: 1.5rem;
   min-width: 0;
@@ -35,7 +37,7 @@
 }
 
 .workload-profile-details-panel__table {
-  background-color: #082f49;
+  background-color: var(--color-primary);
   border-radius: 0.5rem 0 0.5rem 0.5rem;
   padding: 1.5rem;
   min-width: 0;
@@ -62,7 +64,7 @@
   margin-inline: auto;
   margin-bottom: 1rem;
 
-  @media (min-width: 1024px) {
+  @media (width >= theme(--breakpoint-lg)) {
     float: right;
     width: 30%;
     max-width: none;
@@ -99,7 +101,7 @@
 }
 
 .workload-profile-score-gauge__number {
-  color: #34d399;
+  color: var(--color-emerald-400);
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
@@ -182,7 +184,7 @@
     }
 
     tr {
-      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
+      @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
 
       td {
         @apply px-3 py-2 text-left text-sm align-middle;

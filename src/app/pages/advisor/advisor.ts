@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
@@ -80,8 +80,8 @@ import {
 } from "../../services/toast-ids";
 import { AuthState } from "../../core/auth";
 import { AssessmentCollections } from "../../collections/assessment-collections";
-import { CollectionSaveModal } from "../../components/collections/collection-save-modal/collection-save-modal";
-import { Modal } from "../../components/modal/modal";
+import { CollectionSaveModal } from "../../components/modals/collections/collection-save-modal/collection-save-modal";
+import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
 import { CollectionsUi } from "../../collections/collections-ui";
 import type { SavedAssessmentItem } from "../../collections/collections.types";
@@ -386,7 +386,6 @@ type AdvisorComparableResourceKey =
 @Component({
   selector: "sc-advisor",
   imports: [
-    CommonModule,
     Button,
     Breadcrumbs,
     Dropdown,
@@ -441,7 +440,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   private compareSubscription = new Subscription();
   private lastEncodedQuery: string | null = null;
-  private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
   private recommendationRequests = new Subject<RecommendationRequest | null>();
   private recommendationRequestVersion = 0;
   private activeRecommendationRequestKey: string | null = null;
@@ -512,7 +510,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   readonly isLoadingRecommendations = signal(false);
   readonly totalRecommendationCount = signal(0);
   readonly compareSelectionKeys = signal<string[]>([]);
-  readonly clipboardIcon = signal("clipboard");
   readonly tooltipContent = signal("");
   readonly pendingBaselineVendorId = signal<string | null>(null);
   readonly pendingBaselineApiReference = signal<string | null>(null);
@@ -1641,11 +1638,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
       this.customControlFocusFrame = null;
     }
 
-    if (this.clipboardResetTimeout) {
-      clearTimeout(this.clipboardResetTimeout);
-      this.clipboardResetTimeout = null;
-    }
-
     this.introductionDialogRef?.close();
     this.toastService.removeToast(QUERY_ERROR_ADVISOR_TOAST_ID);
     this.toastService.removeToast(ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID);
@@ -2111,39 +2103,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
 
   private getAssessmentQuery(): SearchBarQuery {
     return this.getUrlStateQueryParams() as SearchBarQuery;
-  }
-
-  async clipboardURL(): Promise<void> {
-    if (!isPlatformBrowser(this.platformId) || !navigator.clipboard) {
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      this.clipboardIcon.set("check");
-      this.toastService.show({
-        title: "Link copied to clipboard!",
-        type: "success",
-        duration: 2000,
-      });
-
-      if (this.clipboardResetTimeout) {
-        clearTimeout(this.clipboardResetTimeout);
-      }
-
-      this.clipboardResetTimeout = setTimeout(() => {
-        this.clipboardIcon.set("clipboard");
-        this.clipboardResetTimeout = null;
-      }, 3000);
-    } catch (error) {
-      console.error("Failed to copy advisor link", error);
-      this.toastService.show({
-        title: "Failed to copy link",
-        body: "Clipboard access is not available in this browser context.",
-        type: "error",
-        duration: 3000,
-      });
-    }
   }
 
   openIntroductionModal(): void {

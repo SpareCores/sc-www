@@ -1,0 +1,42 @@
+<div
+  class="bookmark-button-wrap"
+  [class.bookmark-button-wrap--locked]="!isAuthenticated()"
+>
+  <button
+    type="button"
+    class="bookmark-button sc-bookmark-toggle"
+    [class.sc-bookmark-toggle--active]="isBookmarked()"
+    [class.sc-bookmark-toggle--can-add]="canAdd()"
+    [class.sc-bookmark-toggle--can-remove]="canRemove()"
+    [class.bookmark-button--locked]="!isAuthenticated()"
+    [class.bookmark-button--large]="size() === 'large'"
+    [disabled]="isAuthenticated() && (disabled() || isLoading())"
+    [attr.aria-disabled]="!isAuthenticated() || disabled() || isLoading()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-pressed]="isBookmarked()"
+    (mouseenter)="onMouseEnter($event)"
+    (mouseleave)="hideTooltip()"
+    (click)="toggle($event)"
+  >
+    <svg
+      lucideBookmark
+      class="bookmark-button__icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--default"
+    ></svg>
+    <svg
+      lucideBookmarkPlus
+      class="bookmark-button__icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--add"
+    ></svg>
+    <svg
+      lucideBookmarkOff
+      class="bookmark-button__icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--remove"
+    ></svg>
+  </button>
+  @if (!isAuthenticated()) {
+    <div
+      #tooltip
+      class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+    >
+      {{ registerHint }}
+    </div>
+  }
+</div>

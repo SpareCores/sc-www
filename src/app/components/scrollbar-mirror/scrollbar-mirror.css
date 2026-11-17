@@ -1,0 +1,14 @@
+:host {
+  display: contents;
+}
+
+.scrollbar_mirror_outer {
+  background: var(--color-gray-700);
+  overflow-y: hidden;
+}
+
+.scrollbar_mirror_inner {
+  height: 1px;
+  margin: 0;
+  padding: 0;
+}

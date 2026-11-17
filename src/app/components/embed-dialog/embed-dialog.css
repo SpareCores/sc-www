@@ -1,0 +1,12 @@
+pre {
+  white-space: pre-wrap;
+  padding: 1rem;
+  code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+:host ::ng-deep div.code-toolbar {
+  width: 100%;
+}

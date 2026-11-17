@@ -17,6 +17,7 @@ export enum Vendors {
   Azure = "azure",
   Gcp = "gcp",
   Hcloud = "hcloud",
+  Oci = "oci",
   Ovh = "ovh",
   Upcloud = "upcloud",
   Vultr = "vultr",
@@ -125,6 +126,7 @@ export enum VendorRegions {
   AzureKoreasouth = "azure~koreasouth",
   AzureMalaysiawest = "azure~malaysiawest",
   AzureMexicocentral = "azure~mexicocentral",
+  AzureNewzealandnorth = "azure~newzealandnorth",
   AzureNorthcentralus = "azure~northcentralus",
   AzureNortheurope = "azure~northeurope",
   AzureNorwayeast = "azure~norwayeast",
@@ -199,6 +201,9 @@ export enum VendorRegions {
   HcloudHil = "hcloud~hil",
   HcloudNbg1 = "hcloud~nbg1",
   HcloudSin = "hcloud~sin",
+  OciEuFrankfurt1 = "oci~eu-frankfurt-1",
+  OciUsAshburn1 = "oci~us-ashburn-1",
+  OciUsPhoenix1 = "oci~us-phoenix-1",
   OvhAPSOUTHMUM = "ovh~AP-SOUTH-MUM",
   OvhAPSOUTHMUM1 = "ovh~AP-SOUTH-MUM-1",
   OvhAPSOUTHEASTSYD2 = "ovh~AP-SOUTHEAST-SYD-2",
@@ -296,13 +301,31 @@ export enum StorageType {
 
 /**
  * Status
- * Last known status of a resource, e.g. active or inactive.
+ * Last known status of a record.
+ *
+ * The docstrings of the values are shown to end-users (e.g. in the API and
+ * on the website), so keep those to what a status means, and document here
+ * how the statuses are set:
+ *
+ * - `ACTIVE` and `INACTIVE` are valid for all tables. Records returned by
+ *   the vendor or defined in code are `ACTIVE`. Records no longer returned
+ *   or defined are set to `INACTIVE` by `pull`, as well as records missing
+ *   from the source by `sync`.
+ * - `PLANNED_FOR_RETIREMENT` and `RETIRED` are only valid for Server and
+ *   Database, and are set only from explicit vendor signals.
+ * - `ARCHIVED` is valid for all tables. It is set only from the
+ *   [archive rules][sc_crawler.archive_rules] by `pull` and `sync`, also for
+ *   child records (e.g. prices of a region), and archived records are not
+ *   updated afterwards. It is our decision on the identity of a record,
+ *   never a vendor signal: end of sale is `RETIRED`, and records no longer
+ *   returned by a vendor are `INACTIVE`.
  */
 export enum Status {
   Active = "active",
   Inactive = "inactive",
   PlannedForRetirement = "planned-for-retirement",
   Retired = "retired",
+  Archived = "archived",
 }
 
 /** ServerColumns */
@@ -441,6 +464,7 @@ export enum Regions {
   APSOUTHEASTSYD2 = "AP-SOUTHEAST-SYD-2",
   APSOUTHMUM = "AP-SOUTH-MUM",
   APSOUTHMUM1 = "AP-SOUTH-MUM-1",
+  Ash = "ash",
   Atl = "atl",
   Australiacentral = "australiacentral",
   Australiacentral2 = "australiacentral2",
@@ -494,6 +518,7 @@ export enum Regions {
   EsMad1 = "es-mad1",
   EuCentral1 = "eu-central-1",
   EuCentral2 = "eu-central-2",
+  EuFrankfurt1 = "eu-frankfurt-1",
   EuNorth1 = "eu-north-1",
   EuSouth1 = "eu-south-1",
   EuSouth2 = "eu-south-2",
@@ -508,12 +533,15 @@ export enum Regions {
   Fra = "fra",
   Francecentral = "francecentral",
   Francesouth = "francesouth",
+  Fsn1 = "fsn1",
   Germanynorth = "germanynorth",
   Germanywestcentral = "germanywestcentral",
   GRA = "GRA",
   GRA11 = "GRA11",
   GRA7 = "GRA7",
   GRA9 = "GRA9",
+  Hel1 = "hel1",
+  Hil = "hil",
   Hnl = "hnl",
   Icn = "icn",
   IlCentral1 = "il-central-1",
@@ -543,6 +571,8 @@ export enum Regions {
   MxCentral1 = "mx-central-1",
   Mxp = "mxp",
   NaSouth1 = "na-south-1",
+  Nbg1 = "nbg1",
+  Newzealandnorth = "newzealandnorth",
   NlAms1 = "nl-ams1",
   Northcentralus = "northcentralus",
   Northeurope = "northeurope",
@@ -568,6 +598,7 @@ export enum Regions {
   SGP = "SGP",
   SGP1 = "SGP1",
   SgSin1 = "sg-sin1",
+  Sin = "sin",
   Sjc = "sjc",
   Southafricanorth = "southafricanorth",
   Southafricawest = "southafricawest",
@@ -590,10 +621,12 @@ export enum Regions {
   UkLon1 = "uk-lon1",
   Uksouth = "uksouth",
   Ukwest = "ukwest",
+  UsAshburn1 = "us-ashburn-1",
   UsChi1 = "us-chi1",
   UsEast1 = "us-east-1",
   UsEast2 = "us-east-2",
   UsNyc1 = "us-nyc1",
+  UsPhoenix1 = "us-phoenix-1",
   UsSjo1 = "us-sjo1",
   UsWest1 = "us-west-1",
   UsWest2 = "us-west-2",
@@ -607,12 +640,6 @@ export enum Regions {
   Westus2 = "westus2",
   Westus3 = "westus3",
   Yto = "yto",
-  Fsn1 = "fsn1",
-  Nbg1 = "nbg1",
-  Hel1 = "hel1",
-  Ash = "ash",
-  Hil = "hil",
-  Sin = "sin",
 }
 
 /**
@@ -641,14 +668,16 @@ export enum GpuModels {
   A10G = "A10G",
   B200 = "B200",
   B300 = "B300",
+  G59 = "G59",
   GB200 = "GB200",
   GB300 = "GB300",
   H100 = "H100",
   H200 = "H200",
-  HL205 = "HL-205",
   L20 = "L20",
   L4 = "L4",
   L40S = "L40S",
+  M60 = "M60",
+  MI300X = "MI300X",
   P100 = "P100",
   P4 = "P4",
   RTX5000 = "RTX 5000",
@@ -658,7 +687,6 @@ export enum GpuModels {
   T4G = "T4G",
   V100 = "V100",
   V100S = "V100S",
-  V520 = "V520",
   V620 = "V620",
   V710 = "V710",
 }
@@ -666,7 +694,6 @@ export enum GpuModels {
 /** GpuManufacturers */
 export enum GpuManufacturers {
   AMD = "AMD",
-  Habana = "Habana",
   NVIDIA = "NVIDIA",
 }
 
@@ -675,10 +702,8 @@ export enum GpuFamilies {
   AdaLovelace = "Ada Lovelace",
   Ampere = "Ampere",
   Blackwell = "Blackwell",
-  Gaudi = "Gaudi",
   Hopper = "Hopper",
   Pascal = "Pascal",
-  RadeonProNavi = "Radeon Pro Navi",
   Turing = "Turing",
   Volta = "Volta",
 }
@@ -1070,7 +1095,10 @@ export enum CpuFamilies {
   ARM = "ARM",
   ARMv8 = "ARMv8",
   ARMv9 = "ARMv9",
+  Altra = "Altra",
   AmpereAltra = "Ampere Altra",
+  AmpereOne = "AmpereOne",
+  AmpereOneM = "AmpereOne-M",
   EPYC = "EPYC",
   Xeon = "Xeon",
   Yitian = "Yitian",
@@ -1110,6 +1138,7 @@ export enum Countries {
   CH = "CH",
   CL = "CL",
   CN = "CN",
+  CO = "CO",
   DE = "DE",
   DK = "DK",
   ES = "ES",
@@ -1124,6 +1153,7 @@ export enum Countries {
   IT = "IT",
   JP = "JP",
   KR = "KR",
+  MA = "MA",
   MX = "MX",
   MY = "MY",
   NL = "NL",
@@ -1210,6 +1240,13 @@ export enum BenchmarkComponentAggregationMethod {
 
 /** AsicModels */
 export enum AsicModels {
+  Inferentia = "Inferentia",
+  Inferentia2 = "Inferentia2",
+  QualcommAI100 = "Qualcomm AI100",
+  Trainium = "Trainium",
+  Trainium2 = "Trainium2",
+  U30 = "U30",
+  VirtexUltraScaleVU47P = "Virtex UltraScale+ (VU47P)",
   Tpu7 = "tpu7",
   V3 = "v3",
   V5E = "v5e",
@@ -1220,7 +1257,10 @@ export enum AsicModels {
 
 /** AsicManufacturers */
 export enum AsicManufacturers {
+  AWS = "AWS",
   Google = "Google",
+  Qualcomm = "Qualcomm",
+  Xilinx = "Xilinx",
 }
 
 /** AsicFamilies */
@@ -1240,11 +1280,14 @@ export enum Allocation {
 
 /**
  * AcceleratorType
- * Type of a hardware accelerator, e.g. GPU or TPU.
+ * Type of a hardware accelerator, e.g. GPU or NPU.
  */
 export enum AcceleratorType {
   GPU = "GPU",
   TPU = "TPU",
+  NPU = "NPU",
+  FPGA = "FPGA",
+  VPU = "VPU",
 }
 
 /**
@@ -1253,13 +1296,13 @@ export enum AcceleratorType {
  */
 export interface Accelerator {
   /** Manufacturer */
-  manufacturer: string;
+  manufacturer?: string | null;
   /** Family */
   family?: string | null;
   /** Model */
   model?: string | null;
   /** Memory */
-  memory: number;
+  memory?: number | null;
   /** Firmware Version */
   firmware_version?: string | null;
   /** Bios Version */
@@ -1506,6 +1549,68 @@ export interface BenchmarkScore {
 }
 
 /**
+ * BenchmarkScoreSnapshot
+ * Columnar snapshot of the `benchmark_score` table.
+ */
+export interface BenchmarkScoreSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Benchmark Id
+   * Reference to the Benchmark.
+   */
+  benchmark_id: string[];
+  /**
+   * Resource Type
+   * Kind of resource the score refers to.
+   */
+  resource_type: ResourceType[];
+  /**
+   * Resource Id
+   * Reference to the resource (see resource_type).
+   */
+  resource_id: string[];
+  /**
+   * Config
+   * Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
+   */
+  config: any[];
+  /**
+   * Framework Version
+   * The version of the benchmark tool used.
+   */
+  framework_version: (string | null)[];
+  /**
+   * Environment
+   * Extensible environment details (e.g. kernel_version, database_engine_version).
+   */
+  environment: (Record<string, any> | null)[];
+  /**
+   * Score
+   * The resulting score of the benchmark.
+   */
+  score: number[];
+  /**
+   * Score Breakdown
+   * Structured derivation of composite scores (e.g. workload profiles): per-component raw values, references, normalized values, weights, and coverage. Null for simple benchmark scores.
+   */
+  score_breakdown: (WorkloadScoreBreakdown | null)[];
+  /**
+   * Note
+   * Optional note, comment or context on the benchmark score.
+   */
+  note: (string | null)[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+/**
  * BenchmarkScoreStatsItem
  * Aggregate statistics and score distribution for a single benchmark.
  */
@@ -1570,6 +1675,83 @@ export interface BenchmarkScoreStatsItem {
 }
 
 /**
+ * BenchmarkSnapshot
+ * Columnar snapshot of the `benchmark` table.
+ */
+export interface BenchmarkSnapshot {
+  /**
+   * Benchmark Id
+   * Unique identifier of a specific Benchmark.
+   */
+  benchmark_id: string[];
+  /**
+   * Category
+   * Category of the resource.
+   */
+  category: (string | null)[];
+  /**
+   * Subcategory
+   * Subcategory of the benchmark within its category, e.g. the scope of an nvbandwidth test.
+   */
+  subcategory: (string | null)[];
+  /**
+   * Source
+   * How the benchmark score is produced. A discriminated object keyed by 'kind': 'measured' (directly observed), 'extrapolated' (derived from this server's own measurements; carries 'derived_from' + 'note'), or 'compound' (aggregated across component benchmarks; carries 'aggregation', 'normalization', and the 'components' recipe).
+   */
+  source: (MeasuredSource | ExtrapolatedSource | CompoundSource)[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Description
+   * Short description.
+   */
+  description: (string | null)[];
+  /**
+   * Note
+   * Optional caveat/comment on how to interpret the metric, surfaced as a warning/info badge (e.g. limited scaling on high vCPU counts, or independence from vCPU count). Null when there is nothing to flag.
+   */
+  note: (string | null)[];
+  /**
+   * Framework
+   * The name of the benchmark framework/software/tool used.
+   */
+  framework: string[];
+  /**
+   * Config Fields
+   * A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
+   */
+  config_fields: Record<string, any>[];
+  /**
+   * Environment Fields
+   * A dictionary of descriptions on the environment details recorded with the benchmark scores, e.g. {"kernel_version": "Linux kernel version of the server."}.
+   */
+  environment_fields: Record<string, any>[];
+  /**
+   * Measurement
+   * The name of measurement recorded in the benchmark.
+   */
+  measurement: (string | null)[];
+  /**
+   * Unit
+   * Optional unit of measurement for the benchmark score.
+   */
+  unit: (string | null)[];
+  /**
+   * Higher Is Better
+   * If higher benchmark score means better performance, or vica versa.
+   */
+  higher_is_better: boolean[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+/**
  * ComplianceFramework
  * List of Compliance Frameworks, such as HIPAA or SOC 2 Type 1.
  *
@@ -1625,6 +1807,48 @@ export interface ComplianceFramework {
    * @format date-time
    */
   observed_at?: string;
+}
+
+/**
+ * ComplianceFrameworkSnapshot
+ * Columnar snapshot of the `compliance_framework` table.
+ */
+export interface ComplianceFrameworkSnapshot {
+  /**
+   * Compliance Framework Id
+   * Unique identifier.
+   */
+  compliance_framework_id: string[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Abbreviation
+   * Short abbreviation of the Framework name.
+   */
+  abbreviation: (string | null)[];
+  /**
+   * Description
+   * Description of the framework in a few paragraphs, outlining key features and characteristics for reference.
+   */
+  description: (string | null)[];
+  /**
+   * Logo
+   * Publicly accessible URL to the image of the Framework's logo.
+   */
+  logo: (string | null)[];
+  /**
+   * Homepage
+   * Public homepage with more information on the Framework.
+   */
+  homepage: (string | null)[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
 }
 
 /**
@@ -1707,6 +1931,28 @@ export interface CountryBase {
 }
 
 /**
+ * CountrySnapshot
+ * Columnar snapshot of the `country` table.
+ */
+export interface CountrySnapshot {
+  /**
+   * Country Id
+   * Country code by ISO 3166 alpha-2.
+   */
+  country_id: string[];
+  /**
+   * Continent
+   * Continent name.
+   */
+  continent: string[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+/**
  * Cpu
  * CPU details.
  */
@@ -1744,6 +1990,28 @@ export interface Cpu {
 }
 
 /**
+ * CurrencySnapshot
+ * Columnar snapshot of the `currency` table.
+ */
+export interface CurrencySnapshot {
+  /**
+   * Base
+   * Base currency, e.g. USD.
+   */
+  base: string[];
+  /**
+   * Quote
+   * Quote currency, e.g. HUF.
+   */
+  quote: string[];
+  /**
+   * Rate
+   * Exchange rate of base and quote currencies.
+   */
+  rate: number[];
+}
+
+/**
  * Database
  * Managed database SKUs.
  *
@@ -1755,8 +2023,8 @@ export interface Cpu {
  *     api_reference_object (typing.Optional[dict]): How this resource is referenced in the vendor API calls, including the parameter name(s).
  *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
  *     description (typing.Optional[str]): Short description.
- *     family (typing.Optional[str]): Hardware family or class classification.
- *     series (typing.Optional[str]): Hardware series within the family.
+ *     family (typing.Optional[str]): Broad workload class of the database in the vendor's own naming, e.g. General Purpose or Memory Optimized.
+ *     series (typing.Optional[str]): Hardware line and generation of the database, matching the series of the server it runs on, where known.
  *     server_id (typing.Optional[str]): Reference to the underlying cloud server's identifier.
  *     vcpus (typing.Optional[int]): Number of virtual CPU cores allocated to the database server instance.
  *     memory_amount (typing.Optional[int]): Amount of RAM (MiB) provisioned for the instance.
@@ -1825,12 +2093,12 @@ export interface Database {
   description: string | null;
   /**
    * Family
-   * Hardware family or class classification.
+   * Broad workload class of the database in the vendor's own naming, e.g. General Purpose or Memory Optimized.
    */
   family?: string | null;
   /**
    * Series
-   * Hardware series within the family.
+   * Hardware line and generation of the database, matching the series of the server it runs on, where known.
    */
   series?: string | null;
   /**
@@ -2018,12 +2286,12 @@ export interface DatabaseBase {
   description: string | null;
   /**
    * Family
-   * Hardware family or class classification.
+   * Broad workload class of the database in the vendor's own naming, e.g. General Purpose or Memory Optimized.
    */
   family?: string | null;
   /**
    * Series
-   * Hardware series within the family.
+   * Hardware line and generation of the database, matching the series of the server it runs on, where known.
    */
   series?: string | null;
   /**
@@ -2211,12 +2479,12 @@ export interface DatabasePKs {
   description: string | null;
   /**
    * Family
-   * Hardware family or class classification.
+   * Broad workload class of the database in the vendor's own naming, e.g. General Purpose or Memory Optimized.
    */
   family?: string | null;
   /**
    * Series
-   * Hardware series within the family.
+   * Hardware line and generation of the database, matching the series of the server it runs on, where known.
    */
   series?: string | null;
   /**
@@ -2483,6 +2751,267 @@ export interface DatabasePriceBreakdown {
 }
 
 /**
+ * DatabasePriceSnapshot
+ * Columnar snapshot of the `database_price` table.
+ */
+export interface DatabasePriceSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string[];
+  /**
+   * Database Id
+   * Reference to the Database.
+   */
+  database_id: string[];
+  /**
+   * Allocation
+   * Allocation method, e.g. on-demand or spot.
+   */
+  allocation: Allocation[];
+  /**
+   * Ha
+   * HA level this price applies to.
+   */
+  ha: DatabaseHaLevel[];
+  /**
+   * Ha Strategy
+   * HA strategy this price applies to.
+   */
+  ha_strategy: DatabaseHaStrategy[];
+  /**
+   * Unit
+   * Billing unit of the pricing model.
+   */
+  unit: PriceUnit[];
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number[];
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   */
+  price_upfront: number[];
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   */
+  price_tiered: PriceTier[][];
+  /**
+   * Currency
+   * Currency of the prices.
+   */
+  currency: string[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+  /** Price Monthly */
+  price_monthly: (number | null)[];
+}
+
+/**
+ * DatabaseSnapshot
+ * Columnar snapshot of the `database` table.
+ */
+export interface DatabaseSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Database Id
+   * Unique identifier, as called at the Vendor.
+   */
+  database_id: string[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
+   */
+  api_reference: string[];
+  /**
+   * Api Reference Object
+   * How this resource is referenced in the vendor API calls, including the parameter name(s).
+   */
+  api_reference_object: (Record<string, any> | null)[];
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string[];
+  /**
+   * Description
+   * Short description.
+   */
+  description: (string | null)[];
+  /**
+   * Family
+   * Broad workload class of the database in the vendor's own naming, e.g. General Purpose or Memory Optimized.
+   */
+  family: (string | null)[];
+  /**
+   * Series
+   * Hardware line and generation of the database, matching the series of the server it runs on, where known.
+   */
+  series: (string | null)[];
+  /**
+   * Server Id
+   * Reference to the underlying cloud server's identifier.
+   */
+  server_id: (string | null)[];
+  /**
+   * Vcpus
+   * Number of virtual CPU cores allocated to the database server instance.
+   */
+  vcpus: (number | null)[];
+  /**
+   * Memory Amount
+   * Amount of RAM (MiB) provisioned for the instance.
+   */
+  memory_amount: (number | null)[];
+  /**
+   * Engine
+   * Managed database engine running on the instance.
+   */
+  engine: (DatabaseEngine | null)[];
+  /**
+   * Wire Protocol
+   * Network protocol used for client connections.
+   */
+  wire_protocol: (DatabaseWireProtocol | null)[];
+  /**
+   * Engine Versions
+   * Major database engine versions supported.
+   */
+  engine_versions: string[][];
+  /**
+   * Auto Upgrade Versions
+   * Auto-upgrade between minor database engine versions.
+   */
+  auto_upgrade_versions: (boolean | null)[];
+  /**
+   * Ha
+   * Ordered HA levels supported, highest tier first.
+   */
+  ha: DatabaseHaLevel[][];
+  /**
+   * Ha Strategy
+   * Ordered HA strategies supported, highest tier first.
+   */
+  ha_strategy: DatabaseHaStrategy[][];
+  /**
+   * Max Read Replicas
+   * Maximum number of read-only replica nodes supported to scale read workloads.
+   */
+  max_read_replicas: (number | null)[];
+  /**
+   * Custom Config
+   * Whether database engine parameters/flags can be customized.
+   */
+  custom_config: (boolean | null)[];
+  /**
+   * Custom Extensions
+   * Support for custom database engine extensions/plugins.
+   */
+  custom_extensions: (boolean | null)[];
+  /**
+   * Storage Size
+   * Bundled storage capacity included in the database (GB).
+   */
+  storage_size: (number | null)[];
+  /**
+   * Storage Extra Min
+   * Minimum custom storage size (in GB) that can be attached to the instance.
+   */
+  storage_extra_min: (number | null)[];
+  /**
+   * Storage Extra Max
+   * Maximum storage limit (in GB) supported by the instance or storage tier.
+   */
+  storage_extra_max: (number | null)[];
+  /**
+   * Storage Extra Autosize
+   * Whether storage capacity can automatically expand as disk usage grows.
+   */
+  storage_extra_autosize: (boolean | null)[];
+  /**
+   * Compatible Storage Ids
+   * List of database_storage_ids that can be attached to the database as extra storage.
+   */
+  compatible_storage_ids: (string[] | null)[];
+  /**
+   * Disk Encryption
+   * Indicates whether underlying storage drives are encrypted at rest.
+   */
+  disk_encryption: (boolean | null)[];
+  /**
+   * Scheduled Backups
+   * Support for automated snapshot schedules and backup retention management.
+   */
+  scheduled_backups: (boolean | null)[];
+  /**
+   * Continuous Backups
+   * Maximum point-in-time recovery (PITR) log retention window expressed in days (0 if unsupported).
+   */
+  continuous_backups: (number | null)[];
+  /**
+   * Connection Pool
+   * Managed connection proxy support.
+   */
+  connection_pool: (boolean | null)[];
+  /**
+   * System Monitoring
+   * Availability of host-level CPU, RAM, and disk metrics dashboards.
+   */
+  system_monitoring: (boolean | null)[];
+  /**
+   * Database Monitoring
+   * Database engine performance insights (slow queries, locks, execution plans).
+   */
+  database_monitoring: (boolean | null)[];
+  /**
+   * Autotuning Advice
+   * Analyzes workload and generates actionable performance tuning advice.
+   */
+  autotuning_advice: (boolean | null)[];
+  /**
+   * Autotuning Apply
+   * System automatically executes performance fixes (e.g., index creation, parameter tuning) without operator intervention.
+   */
+  autotuning_apply: (boolean | null)[];
+  /**
+   * Sla
+   * Service level agreement as a percentage, e.g. 99.95.
+   */
+  sla: (number | null)[];
+  /**
+   * Security Features
+   * Security capabilities supported by DBaaS providers.
+   */
+  security_features: DatabaseSecurityFeature[][];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+/**
  * DatabaseStorage
  * Managed database storage products.
  *
@@ -2623,6 +3152,58 @@ export interface DatabaseStorageBase {
   observed_at?: string;
 }
 
+/**
+ * DatabaseStoragePriceSnapshot
+ * Columnar snapshot of the `database_storage_price` table.
+ */
+export interface DatabaseStoragePriceSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string[];
+  /**
+   * Database Storage Id
+   * Reference to the DatabaseStorage.
+   */
+  database_storage_id: string[];
+  /**
+   * Unit
+   * Billing unit of the pricing model.
+   */
+  unit: PriceUnit[];
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number[];
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   */
+  price_upfront: number[];
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   */
+  price_tiered: PriceTier[][];
+  /**
+   * Currency
+   * Currency of the prices.
+   */
+  currency: string[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
 /** DatabaseStoragePriceWithPKs */
 export interface DatabaseStoragePriceWithPKs {
   /**
@@ -2679,6 +3260,68 @@ export interface DatabaseStoragePriceWithPKs {
   region: RegionBaseWithPKs;
   vendor: VendorBase;
   database_storage: DatabaseStorageBase;
+}
+
+/**
+ * DatabaseStorageSnapshot
+ * Columnar snapshot of the `database_storage` table.
+ */
+export interface DatabaseStorageSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Database Storage Id
+   * Unique identifier, as called at the Vendor.
+   */
+  database_storage_id: string[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Description
+   * Short description.
+   */
+  description: (string | null)[];
+  /**
+   * Scope
+   * Scope of the storage product, e.g. data or backup.
+   */
+  scope: DatabaseStorageScope[];
+  /**
+   * Redundancy
+   * Redundancy model, e.g. LRS or GRS.
+   */
+  redundancy: (string | null)[];
+  /**
+   * Min Size
+   * Minimum required size (GB).
+   */
+  min_size: (number | null)[];
+  /**
+   * Max Size
+   * Maximum possible size (GB).
+   */
+  max_size: (number | null)[];
+  /**
+   * Max Iops
+   * Maximum Input/Output Operations Per Second.
+   */
+  max_iops: (number | null)[];
+  /**
+   * Max Throughput
+   * Maximum Throughput (MB/s).
+   */
+  max_throughput: (number | null)[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
 }
 
 /**
@@ -2747,10 +3390,26 @@ export interface HealthcheckResponse {
   packages: Record<string, any>;
   /** Database Last Updated */
   database_last_updated: number;
-  /** Database Hash */
-  database_hash: string;
+  /**
+   * Database Hash
+   * The hash of the loaded sc-data file, as in the SC-Data-Hash header.
+   */
+  database_hash?: string | null;
+  /**
+   * Database Published At
+   * When the loaded sc-data file was published, in UTC, formatted as in the SC-Data-Published-At header, e.g. 2026-11-07T22:47:08Z.
+   */
+  database_published_at?: string | null;
   /** Database Alembic Version */
   database_alembic_version: string;
+  /** Inspector Rules */
+  inspector_rules: string;
+  /**
+   * Snapshot Hashes
+   * Database hashes with snapshots on this replica, newest first.
+   * @default []
+   */
+  snapshot_hashes?: string[];
 }
 
 /** IdNameAndDescriptionAndCategory */
@@ -2774,6 +3433,53 @@ export interface IdNameAndDescriptionAndCategory {
 export type InspectorTaskBlockReasonCodesResponse = Record<string, string[]>;
 
 /**
+ * Ipv4PriceSnapshot
+ * Columnar snapshot of the `ipv4_price` table.
+ */
+export interface Ipv4PriceSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string[];
+  /**
+   * Unit
+   * Billing unit of the pricing model.
+   */
+  unit: PriceUnit[];
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number[];
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   */
+  price_upfront: number[];
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   */
+  price_tiered: PriceTier[][];
+  /**
+   * Currency
+   * Currency of the prices.
+   */
+  currency: string[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+/**
  * MeasuredSource
  * Benchmark score measured directly by the Inspector.
  */
@@ -2791,6 +3497,15 @@ export interface NameAndDescription {
   name: string;
   /** Description */
   description: string;
+}
+
+/** PingResponse */
+export interface PingResponse {
+  /**
+   * Status
+   * Always `ok`.
+   */
+  status: string;
 }
 
 /** PriceBreakdown */
@@ -3138,6 +3853,93 @@ export interface RegionPKs {
 }
 
 /**
+ * RegionSnapshot
+ * Columnar snapshot of the `region` table.
+ */
+export interface RegionSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Region Id
+   * Unique identifier, as called at the Vendor.
+   */
+  region_id: string[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
+   */
+  api_reference: string[];
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string[];
+  /**
+   * Aliases
+   * List of other commonly used names for the same Region.
+   */
+  aliases: string[][];
+  /**
+   * Country Id
+   * Reference to the Country, where the Region is located.
+   */
+  country_id: string[];
+  /**
+   * State
+   * Optional state/administrative area of the Region's location within the Country.
+   */
+  state: (string | null)[];
+  /**
+   * City
+   * Optional city name of the Region's location.
+   */
+  city: (string | null)[];
+  /**
+   * Address Line
+   * Optional address line of the Region's location.
+   */
+  address_line: (string | null)[];
+  /**
+   * Zip Code
+   * Optional ZIP code of the Region's location.
+   */
+  zip_code: (string | null)[];
+  /**
+   * Lon
+   * Longitude coordinate of the Region's known or approximate location.
+   */
+  lon: (number | null)[];
+  /**
+   * Lat
+   * Latitude coordinate of the Region's known or approximate location.
+   */
+  lat: (number | null)[];
+  /**
+   * Founding Year
+   * 4-digit year when the Region was founded.
+   */
+  founding_year: (number | null)[];
+  /**
+   * Green Energy
+   * If the Region is 100% powered by renewable energy.
+   */
+  green_energy: (boolean | null)[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+/**
  * ScoreComponent
  * One component's contribution to a composite workload profile score.
  */
@@ -3177,8 +3979,8 @@ export interface ScoreComponent {
  *     api_reference_object (typing.Optional[dict]): How this resource is referenced in the vendor API calls, including the parameter name(s).
  *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
  *     description (str): Short description.
- *     family (typing.Optional[str]): Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
- *     series (typing.Optional[str]): Server series within the family, e.g. b3 (OVH General Purpose).
+ *     family (typing.Optional[str]): Broad workload class of the server in the vendor's own naming, e.g. General Purpose, Compute Optimized or Memory Optimized.
+ *     series (typing.Optional[str]): Hardware line and generation of the server, e.g. m5 (AWS), n2 (GCP) or b3 (OVH).
  *     vcpus (int): Default number of virtual CPUs (vCPU) of the server.
  *     hypervisor (typing.Optional[str]): Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
  *     cpu_allocation (CpuAllocation): Allocation of CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -3206,10 +4008,10 @@ export interface ScoreComponent {
  *     memory_generation (typing.Optional[sc_crawler.table_fields.DdrGeneration]): Generation of the DDR SDRAM, e.g. DDR4 or DDR5.
  *     memory_speed (typing.Optional[int]): DDR SDRAM clock rate (Mhz).
  *     memory_ecc (typing.Optional[bool]): If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
- *     accelerator_count (float): Number of accelerator(s), e.g. GPUs or TPUs.
+ *     accelerator_count (float): Number of accelerator(s), e.g. GPUs or NPUs.
  *     accelerator_memory_min (typing.Optional[int]): Memory (MiB) allocated to the lowest-end accelerator.
  *     accelerator_memory_total (typing.Optional[int]): Overall memory (MiB) allocated to all the accelerator(s).
- *     accelerator_type (typing.Optional[sc_crawler.table_fields.AcceleratorType]): The type of the primary accelerator, e.g. GPU or TPU.
+ *     accelerator_type (typing.Optional[sc_crawler.table_fields.AcceleratorType]): The type of the primary accelerator, e.g. GPU or NPU.
  *     accelerator_manufacturer (typing.Optional[str]): The manufacturer of the primary accelerator, e.g. Nvidia or AMD.
  *     accelerator_family (typing.Optional[str]): The product family of the primary accelerator, e.g. Turing.
  *     accelerator_model (typing.Optional[str]): The model number of the primary accelerator, e.g. Tesla T4.
@@ -3218,8 +4020,8 @@ export interface ScoreComponent {
  *     storage_type (typing.Optional[sc_crawler.table_fields.StorageType]): Primary disk type, e.g. HDD, SSD, or NVMe SSD.
  *     storages (typing.List[sc_crawler.table_fields.Disk]): JSON array of disks attached to the server, including the size (GB) and type of each disk.
  *     compatible_storage_ids (typing.Optional[typing.List[str]]): List of storage_ids that can be attached to the server as extra storage.
- *     network_speed_baseline (typing.Optional[float]): The baseline network performance (Gbps) of the network card.
- *     network_speed_max (typing.Optional[float]): The maximum network performance (Gbps) of the network card.
+ *     network_speed_baseline (typing.Optional[float]): The baseline network performance (Gbps) of the server, aggregated over all network cards.
+ *     network_speed_max (typing.Optional[float]): The maximum network performance (Gbps) of the server, aggregated over all network cards.
  *     network_storage_speed_baseline (typing.Optional[float]): The baseline bandwidth performance of network-attached storage (Gbps).
  *     network_storage_speed_max (typing.Optional[float]): The maximum bandwidth performance of network-attached storage (Gbps).
  *     inbound_traffic (float): Amount of complimentary inbound traffic (GB) per month.
@@ -3267,12 +4069,12 @@ export interface Server {
   description: string;
   /**
    * Family
-   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   * Broad workload class of the server in the vendor's own naming, e.g. General Purpose, Compute Optimized or Memory Optimized.
    */
   family?: string | null;
   /**
    * Series
-   * Server series within the family, e.g. b3 (OVH General Purpose).
+   * Hardware line and generation of the server, e.g. m5 (AWS), n2 (GCP) or b3 (OVH).
    */
   series?: string | null;
   /**
@@ -3405,7 +4207,7 @@ export interface Server {
   memory_ecc?: boolean | null;
   /**
    * Accelerator Count
-   * Number of accelerator(s), e.g. GPUs or TPUs.
+   * Number of accelerator(s), e.g. GPUs or NPUs.
    * @default 0
    */
   accelerator_count?: number;
@@ -3419,7 +4221,7 @@ export interface Server {
    * Overall memory (MiB) allocated to all the accelerator(s).
    */
   accelerator_memory_total?: number | null;
-  /** The type of the primary accelerator, e.g. GPU or TPU. */
+  /** The type of the primary accelerator, e.g. GPU or NPU. */
   accelerator_type?: AcceleratorType | null;
   /**
    * Accelerator Manufacturer
@@ -3463,12 +4265,12 @@ export interface Server {
   compatible_storage_ids?: string[] | null;
   /**
    * Network Speed Baseline
-   * The baseline network performance (Gbps) of the network card.
+   * The baseline network performance (Gbps) of the server, aggregated over all network cards.
    */
   network_speed_baseline?: number | null;
   /**
    * Network Speed Max
-   * The maximum network performance (Gbps) of the network card.
+   * The maximum network performance (Gbps) of the server, aggregated over all network cards.
    */
   network_speed_max?: number | null;
   /**
@@ -3556,12 +4358,12 @@ export interface ServerBase {
   description: string;
   /**
    * Family
-   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   * Broad workload class of the server in the vendor's own naming, e.g. General Purpose, Compute Optimized or Memory Optimized.
    */
   family?: string | null;
   /**
    * Series
-   * Server series within the family, e.g. b3 (OVH General Purpose).
+   * Hardware line and generation of the server, e.g. m5 (AWS), n2 (GCP) or b3 (OVH).
    */
   series?: string | null;
   /**
@@ -3694,7 +4496,7 @@ export interface ServerBase {
   memory_ecc?: boolean | null;
   /**
    * Accelerator Count
-   * Number of accelerator(s), e.g. GPUs or TPUs.
+   * Number of accelerator(s), e.g. GPUs or NPUs.
    * @default 0
    */
   accelerator_count?: number;
@@ -3708,7 +4510,7 @@ export interface ServerBase {
    * Overall memory (MiB) allocated to all the accelerator(s).
    */
   accelerator_memory_total?: number | null;
-  /** The type of the primary accelerator, e.g. GPU or TPU. */
+  /** The type of the primary accelerator, e.g. GPU or NPU. */
   accelerator_type?: AcceleratorType | null;
   /**
    * Accelerator Manufacturer
@@ -3752,12 +4554,12 @@ export interface ServerBase {
   compatible_storage_ids?: string[] | null;
   /**
    * Network Speed Baseline
-   * The baseline network performance (Gbps) of the network card.
+   * The baseline network performance (Gbps) of the server, aggregated over all network cards.
    */
   network_speed_baseline?: number | null;
   /**
    * Network Speed Max
-   * The maximum network performance (Gbps) of the network card.
+   * The maximum network performance (Gbps) of the server, aggregated over all network cards.
    */
   network_speed_max?: number | null;
   /**
@@ -3929,6 +4731,63 @@ export interface ServerDescription {
   server_id: string;
 }
 
+/**
+ * ServerDescriptionSnapshot
+ * Columnar snapshot of the `server_description` table.
+ */
+export interface ServerDescriptionSnapshot {
+  /**
+   * Page
+   * Detailed server description with up to 500 words total across multiple paragraphs on hardware specs, benchmark-relative performance, qualitative cost efficiency, tradeoffs, and workload fit.
+   */
+  page: string[][];
+  /**
+   * Description
+   * Dense and technical server description using around 150 words in a single paragraph.
+   */
+  description: string[];
+  /**
+   * Og Description
+   * 200 character server description explicitly including vendor and server name.
+   */
+  og_description: string[];
+  /**
+   * Meta Description
+   * 150 character server description explicitly including vendor and server name.
+   */
+  meta_description: string[];
+  /**
+   * Tagline
+   * 20-word tagline on server positioning and key differentiators without the vendor or server name.
+   */
+  tagline: string[];
+  /**
+   * Bullet Points
+   * 4-6 concise bullet points highlighting key features and best-fit workloads.
+   */
+  bullet_points: string[][];
+  /**
+   * Categories
+   * One or more workload categories best fitting the server.
+   */
+  categories: Category[][];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Server Id
+   * Unique identifier, as called at the Vendor.
+   */
+  server_id: string[];
+}
+
 /** ServerPKs */
 export interface ServerPKs {
   /**
@@ -3968,12 +4827,12 @@ export interface ServerPKs {
   description: string;
   /**
    * Family
-   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   * Broad workload class of the server in the vendor's own naming, e.g. General Purpose, Compute Optimized or Memory Optimized.
    */
   family?: string | null;
   /**
    * Series
-   * Server series within the family, e.g. b3 (OVH General Purpose).
+   * Hardware line and generation of the server, e.g. m5 (AWS), n2 (GCP) or b3 (OVH).
    */
   series?: string | null;
   /**
@@ -4106,7 +4965,7 @@ export interface ServerPKs {
   memory_ecc?: boolean | null;
   /**
    * Accelerator Count
-   * Number of accelerator(s), e.g. GPUs or TPUs.
+   * Number of accelerator(s), e.g. GPUs or NPUs.
    * @default 0
    */
   accelerator_count?: number;
@@ -4120,7 +4979,7 @@ export interface ServerPKs {
    * Overall memory (MiB) allocated to all the accelerator(s).
    */
   accelerator_memory_total?: number | null;
-  /** The type of the primary accelerator, e.g. GPU or TPU. */
+  /** The type of the primary accelerator, e.g. GPU or NPU. */
   accelerator_type?: AcceleratorType | null;
   /**
    * Accelerator Manufacturer
@@ -4164,12 +5023,12 @@ export interface ServerPKs {
   compatible_storage_ids?: string[] | null;
   /**
    * Network Speed Baseline
-   * The baseline network performance (Gbps) of the network card.
+   * The baseline network performance (Gbps) of the server, aggregated over all network cards.
    */
   network_speed_baseline?: number | null;
   /**
    * Network Speed Max
-   * The maximum network performance (Gbps) of the network card.
+   * The maximum network performance (Gbps) of the server, aggregated over all network cards.
    */
   network_speed_max?: number | null;
   /**
@@ -4327,6 +5186,75 @@ export interface ServerPrice {
   observed_at?: string;
 }
 
+/**
+ * ServerPriceSnapshot
+ * Columnar snapshot of the `server_price` table.
+ */
+export interface ServerPriceSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string[];
+  /**
+   * Zone Id
+   * Reference to the Zone.
+   */
+  zone_id: string[];
+  /**
+   * Server Id
+   * Reference to the Server.
+   */
+  server_id: string[];
+  /**
+   * Operating System
+   * Operating System.
+   */
+  operating_system: string[];
+  /**
+   * Allocation
+   * Allocation method, e.g. on-demand or spot.
+   */
+  allocation: Allocation[];
+  /**
+   * Unit
+   * Billing unit of the pricing model.
+   */
+  unit: PriceUnit[];
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number[];
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   */
+  price_upfront: number[];
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   */
+  price_tiered: PriceTier[][];
+  /**
+   * Currency
+   * Currency of the prices.
+   */
+  currency: string[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+  /** Price Monthly */
+  price_monthly: (number | null)[];
+}
+
 /** ServerPriceWithPKs */
 export interface ServerPriceWithPKs {
   /**
@@ -4403,6 +5331,298 @@ export interface ServerPriceWithPKs {
   server: ServerWithScore;
 }
 
+/**
+ * ServerSnapshot
+ * Columnar snapshot of the `server` table.
+ */
+export interface ServerSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Server Id
+   * Unique identifier, as called at the Vendor.
+   */
+  server_id: string[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
+   */
+  api_reference: string[];
+  /**
+   * Api Reference Object
+   * How this resource is referenced in the vendor API calls, including the parameter name(s).
+   */
+  api_reference_object: (Record<string, any> | null)[];
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string[];
+  /**
+   * Description
+   * Short description.
+   */
+  description: string[];
+  /**
+   * Family
+   * Broad workload class of the server in the vendor's own naming, e.g. General Purpose, Compute Optimized or Memory Optimized.
+   */
+  family: (string | null)[];
+  /**
+   * Series
+   * Hardware line and generation of the server, e.g. m5 (AWS), n2 (GCP) or b3 (OVH).
+   */
+  series: (string | null)[];
+  /**
+   * Vcpus
+   * Default number of virtual CPUs (vCPU) of the server.
+   */
+  vcpus: number[];
+  /**
+   * Hypervisor
+   * Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
+   */
+  hypervisor: (string | null)[];
+  /**
+   * Cpu Allocation
+   * Allocation of CPU(s) to the server, e.g. shared, burstable or dedicated.
+   */
+  cpu_allocation: CpuAllocation[];
+  /**
+   * Cpu Cores
+   * Default number of CPU cores of the server. Equals to vCPUs when HyperThreading is disabled.
+   */
+  cpu_cores: (number | null)[];
+  /**
+   * Cpu Speed
+   * Vendor-reported maximum CPU clock speed (GHz).
+   */
+  cpu_speed: (number | null)[];
+  /**
+   * Cpu Architecture
+   * CPU architecture (arm64, arm64_mac, i386, or x86_64).
+   */
+  cpu_architecture: CpuArchitecture[];
+  /**
+   * Cpu Manufacturer
+   * The manufacturer of the primary processor, e.g. Intel or AMD.
+   */
+  cpu_manufacturer: (string | null)[];
+  /**
+   * Cpu Family
+   * The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
+   */
+  cpu_family: (string | null)[];
+  /**
+   * Cpu Model
+   * The model number of the primary processor, e.g. 9750H.
+   */
+  cpu_model: (string | null)[];
+  /**
+   * Cpu L1D Cache
+   * L1 data cache size (KiB).
+   */
+  cpu_l1d_cache: (number | null)[];
+  /**
+   * Cpu L1D Cache Total
+   * Total L1 data cache size (KiB) across all cores.
+   */
+  cpu_l1d_cache_total: (number | null)[];
+  /**
+   * Cpu L1I Cache
+   * L1 instruction cache size (KiB).
+   */
+  cpu_l1i_cache: (number | null)[];
+  /**
+   * Cpu L1I Cache Total
+   * Total L1 instruction cache size (KiB) across all cores.
+   */
+  cpu_l1i_cache_total: (number | null)[];
+  /**
+   * Cpu L2 Cache
+   * L2 cache size (KiB).
+   */
+  cpu_l2_cache: (number | null)[];
+  /**
+   * Cpu L2 Cache Total
+   * Total L2 cache size (KiB) across all cores.
+   */
+  cpu_l2_cache_total: (number | null)[];
+  /**
+   * Cpu L3 Cache
+   * L3 cache size (KiB).
+   */
+  cpu_l3_cache: (number | null)[];
+  /**
+   * Cpu L3 Cache Total
+   * Total L3 cache size (KiB) across all cores.
+   */
+  cpu_l3_cache_total: (number | null)[];
+  /**
+   * Cpu Flags
+   * CPU features/flags.
+   */
+  cpu_flags: string[][];
+  /**
+   * Cpus
+   * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
+   */
+  cpus: Cpu[][];
+  /**
+   * Ecpus
+   * The effective "real-world" core count, calculated by dividing the maximum multi-core SCore by the single-core SCore.
+   */
+  ecpus: (number | null)[];
+  /**
+   * Scalability
+   * Measures how efficiently the server scales from a single core performance to using multiple cores. A score of 100% means perfect linear scaling with zero performance loss.
+   */
+  scalability: (number | null)[];
+  /**
+   * Hw Virt
+   * If hardware virtualization (e.g. KVM) is supported.
+   */
+  hw_virt: (boolean | null)[];
+  /**
+   * Memory Amount
+   * RAM amount (MiB) reported by the vendor.
+   */
+  memory_amount: number[];
+  /**
+   * Memory Amount Actual
+   * Actual RAM amount (MiB) measured on the instance via lstopo or other tool. This amount might not match the vendor-reported memory due to the BIOS or the hypervisor reserving a small percentage.
+   */
+  memory_amount_actual: (number | null)[];
+  /**
+   * Memory Generation
+   * Generation of the DDR SDRAM, e.g. DDR4 or DDR5.
+   */
+  memory_generation: (DdrGeneration | null)[];
+  /**
+   * Memory Speed
+   * DDR SDRAM clock rate (Mhz).
+   */
+  memory_speed: (number | null)[];
+  /**
+   * Memory Ecc
+   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
+   */
+  memory_ecc: (boolean | null)[];
+  /**
+   * Accelerator Count
+   * Number of accelerator(s), e.g. GPUs or NPUs.
+   */
+  accelerator_count: number[];
+  /**
+   * Accelerator Memory Min
+   * Memory (MiB) allocated to the lowest-end accelerator.
+   */
+  accelerator_memory_min: (number | null)[];
+  /**
+   * Accelerator Memory Total
+   * Overall memory (MiB) allocated to all the accelerator(s).
+   */
+  accelerator_memory_total: (number | null)[];
+  /**
+   * Accelerator Type
+   * The type of the primary accelerator, e.g. GPU or NPU.
+   */
+  accelerator_type: (AcceleratorType | null)[];
+  /**
+   * Accelerator Manufacturer
+   * The manufacturer of the primary accelerator, e.g. Nvidia or AMD.
+   */
+  accelerator_manufacturer: (string | null)[];
+  /**
+   * Accelerator Family
+   * The product family of the primary accelerator, e.g. Turing.
+   */
+  accelerator_family: (string | null)[];
+  /**
+   * Accelerator Model
+   * The model number of the primary accelerator, e.g. Tesla T4.
+   */
+  accelerator_model: (string | null)[];
+  /**
+   * Accelerators
+   * JSON array of accelerator details, including the manufacturer, name, and memory (MiB) of each accelerator.
+   */
+  accelerators: Accelerator[][];
+  /**
+   * Storage Size
+   * Overall size (GB) of the disk(s).
+   */
+  storage_size: number[];
+  /**
+   * Storage Type
+   * Primary disk type, e.g. HDD, SSD, or NVMe SSD.
+   */
+  storage_type: (StorageType | null)[];
+  /**
+   * Storages
+   * JSON array of disks attached to the server, including the size (GB) and type of each disk.
+   */
+  storages: Disk[][];
+  /**
+   * Compatible Storage Ids
+   * List of storage_ids that can be attached to the server as extra storage.
+   */
+  compatible_storage_ids: (string[] | null)[];
+  /**
+   * Network Speed Baseline
+   * The baseline network performance (Gbps) of the server, aggregated over all network cards.
+   */
+  network_speed_baseline: (number | null)[];
+  /**
+   * Network Speed Max
+   * The maximum network performance (Gbps) of the server, aggregated over all network cards.
+   */
+  network_speed_max: (number | null)[];
+  /**
+   * Network Storage Speed Baseline
+   * The baseline bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_baseline: (number | null)[];
+  /**
+   * Network Storage Speed Max
+   * The maximum bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_max: (number | null)[];
+  /**
+   * Inbound Traffic
+   * Amount of complimentary inbound traffic (GB) per month.
+   */
+  inbound_traffic: number[];
+  /**
+   * Outbound Traffic
+   * Amount of complimentary outbound traffic (GB) per month.
+   */
+  outbound_traffic: number[];
+  /**
+   * Ipv4
+   * Number of complimentary IPv4 address(es).
+   */
+  ipv4: number[];
+  /**
+   * Average Time To Start
+   * Average time to start the server (seconds).
+   */
+  average_time_to_start: (number | null)[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
 /** ServerTableMetaData */
 export interface ServerTableMetaData {
   table: NameAndDescription;
@@ -4449,12 +5669,12 @@ export interface ServerWithScore {
   description: string;
   /**
    * Family
-   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   * Broad workload class of the server in the vendor's own naming, e.g. General Purpose, Compute Optimized or Memory Optimized.
    */
   family?: string | null;
   /**
    * Series
-   * Server series within the family, e.g. b3 (OVH General Purpose).
+   * Hardware line and generation of the server, e.g. m5 (AWS), n2 (GCP) or b3 (OVH).
    */
   series?: string | null;
   /**
@@ -4587,7 +5807,7 @@ export interface ServerWithScore {
   memory_ecc?: boolean | null;
   /**
    * Accelerator Count
-   * Number of accelerator(s), e.g. GPUs or TPUs.
+   * Number of accelerator(s), e.g. GPUs or NPUs.
    * @default 0
    */
   accelerator_count?: number;
@@ -4601,7 +5821,7 @@ export interface ServerWithScore {
    * Overall memory (MiB) allocated to all the accelerator(s).
    */
   accelerator_memory_total?: number | null;
-  /** The type of the primary accelerator, e.g. GPU or TPU. */
+  /** The type of the primary accelerator, e.g. GPU or NPU. */
   accelerator_type?: AcceleratorType | null;
   /**
    * Accelerator Manufacturer
@@ -4645,12 +5865,12 @@ export interface ServerWithScore {
   compatible_storage_ids?: string[] | null;
   /**
    * Network Speed Baseline
-   * The baseline network performance (Gbps) of the network card.
+   * The baseline network performance (Gbps) of the server, aggregated over all network cards.
    */
   network_speed_baseline?: number | null;
   /**
    * Network Speed Max
-   * The maximum network performance (Gbps) of the network card.
+   * The maximum network performance (Gbps) of the server, aggregated over all network cards.
    */
   network_speed_max?: number | null;
   /**
@@ -4715,6 +5935,28 @@ export interface ServerWithScore {
   selected_benchmark_score?: number | null;
   /** Selected Benchmark Score Per Price */
   selected_benchmark_score_per_price?: number | null;
+}
+
+/**
+ * SnapshotManifest
+ * Every file of a database hash's snapshots, sorted by path.
+ */
+export interface SnapshotManifest {
+  /**
+   * Path
+   * Route below `/snapshot/{hash}/`, e.g. `server_price/aws`.
+   */
+  path: string[];
+  /**
+   * Rows
+   * Number of rows in the file.
+   */
+  rows: number[];
+  /**
+   * Sha256
+   * SHA-256 of the file's uncompressed JSON, in lowercase hex.
+   */
+  sha256: string[];
 }
 
 /**
@@ -4847,6 +6089,58 @@ export interface StorageBase {
   observed_at?: string;
 }
 
+/**
+ * StoragePriceSnapshot
+ * Columnar snapshot of the `storage_price` table.
+ */
+export interface StoragePriceSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string[];
+  /**
+   * Storage Id
+   * Reference to the Storage.
+   */
+  storage_id: string[];
+  /**
+   * Unit
+   * Billing unit of the pricing model.
+   */
+  unit: PriceUnit[];
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number[];
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   */
+  price_upfront: number[];
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   */
+  price_tiered: PriceTier[][];
+  /**
+   * Currency
+   * Currency of the prices.
+   */
+  currency: string[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
 /** StoragePriceWithPKs */
 export interface StoragePriceWithPKs {
   /**
@@ -4903,6 +6197,115 @@ export interface StoragePriceWithPKs {
   region: RegionBaseWithPKs;
   vendor: VendorBase;
   storage: StorageBase;
+}
+
+/**
+ * StorageSnapshot
+ * Columnar snapshot of the `storage` table.
+ */
+export interface StorageSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Storage Id
+   * Unique identifier, as called at the Vendor.
+   */
+  storage_id: string[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Description
+   * Short description.
+   */
+  description: (string | null)[];
+  /**
+   * Storage Type
+   * High-level category of the storage, e.g. HDD or SDD.
+   */
+  storage_type: StorageType[];
+  /**
+   * Max Iops
+   * Maximum Input/Output Operations Per Second.
+   */
+  max_iops: (number | null)[];
+  /**
+   * Max Throughput
+   * Maximum Throughput (MB/s).
+   */
+  max_throughput: (number | null)[];
+  /**
+   * Min Size
+   * Minimum required size (GB).
+   */
+  min_size: (number | null)[];
+  /**
+   * Max Size
+   * Maximum possible size (GB).
+   */
+  max_size: (number | null)[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+/**
+ * TrafficPriceSnapshot
+ * Columnar snapshot of the `traffic_price` table.
+ */
+export interface TrafficPriceSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string[];
+  /**
+   * Direction
+   * Direction of the traffic: inbound or outbound.
+   */
+  direction: TrafficDirection[];
+  /**
+   * Unit
+   * Billing unit of the pricing model.
+   */
+  unit: PriceUnit[];
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number[];
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   */
+  price_upfront: number[];
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   */
+  price_tiered: PriceTier[][];
+  /**
+   * Currency
+   * Currency of the prices.
+   */
+  currency: string[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
 }
 
 /** TrafficPriceWithPKsWithMonthlyTraffic */
@@ -5241,6 +6644,33 @@ export interface VendorComplianceLink {
 }
 
 /**
+ * VendorComplianceLinkSnapshot
+ * Columnar snapshot of the `vendor_compliance_link` table.
+ */
+export interface VendorComplianceLinkSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Compliance Framework Id
+   * Reference to the Compliance Framework.
+   */
+  compliance_framework_id: string[];
+  /**
+   * Comment
+   * Optional references, such as dates, URLs, and additional information/evidence.
+   */
+  comment: (string | null)[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+/**
  * VendorDebugInfo
  * Per-vendor benchmark coverage statistics.
  *
@@ -5279,6 +6709,93 @@ export interface VendorDebugInfo {
    * Number of servers without prices or with inactive status
    */
   inactive: number;
+}
+
+/**
+ * VendorSnapshot
+ * Columnar snapshot of the `vendor` table.
+ */
+export interface VendorSnapshot {
+  /**
+   * Vendor Id
+   * Unique identifier.
+   */
+  vendor_id: string[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Logo
+   * Publicly accessible URL to the image of the Vendor's logo.
+   */
+  logo: (string | null)[];
+  /**
+   * Homepage
+   * Public homepage of the Vendor.
+   */
+  homepage: (string | null)[];
+  /**
+   * Country Id
+   * Reference to the Country, where the Vendor's main headquarter is located.
+   */
+  country_id: string[];
+  /**
+   * State
+   * Optional state/administrative area of the Vendor's location within the Country.
+   */
+  state: (string | null)[];
+  /**
+   * City
+   * Optional city name of the Vendor's main location.
+   */
+  city: (string | null)[];
+  /**
+   * Address Line
+   * Optional address line of the Vendor's main location.
+   */
+  address_line: (string | null)[];
+  /**
+   * Zip Code
+   * Optional ZIP code of the Vendor's main location.
+   */
+  zip_code: (string | null)[];
+  /**
+   * Founding Year
+   * 4-digit year when the public cloud service of the Vendor was launched.
+   */
+  founding_year: number[];
+  /**
+   * Status Page
+   * Public status page of the Vendor.
+   */
+  status_page: (string | null)[];
+  /**
+   * Stopped Server Charged
+   * If the Vendor charges for stopped servers. In case it depends on the instance type or different versions of stopped states, this field reports the worst case.
+   */
+  stopped_server_charged: (boolean | null)[];
+  /**
+   * Billing Increment Seconds
+   * The smallest increment of time for which the Vendor bills for.
+   */
+  billing_increment_seconds: (number | null)[];
+  /**
+   * Minimum Billing Seconds
+   * The minimum amount of time for which the Vendor bills for. In case it depends on the instance type or other context, this field reports the worst case.
+   */
+  minimum_billing_seconds: (number | null)[];
+  /**
+   * Billing Comment
+   * Comment on the Vendor's billing.
+   */
+  billing_comment: (string | null)[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
 }
 
 /**
@@ -5399,6 +6916,50 @@ export interface ZoneBase {
   observed_at?: string;
 }
 
+/**
+ * ZoneSnapshot
+ * Columnar snapshot of the `zone` table.
+ */
+export interface ZoneSnapshot {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string[];
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string[];
+  /**
+   * Zone Id
+   * Unique identifier, as called at the Vendor.
+   */
+  zone_id: string[];
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string[];
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
+   */
+  api_reference: string[];
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string[];
+  /**
+   * Status
+   * Status of the resource (active or inactive).
+   */
+  status: Status[];
+}
+
+export type PingPingGetData = PingResponse;
+
 export type HealthcheckHealthcheckGetData = HealthcheckResponse;
 
 export type MeMeGetData = User;
@@ -5414,6 +6975,7 @@ export interface GetStatsStatsGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -5540,6 +7102,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -5611,6 +7174,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -5664,6 +7228,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -5678,12 +7243,15 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -5713,6 +7281,8 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -5738,6 +7308,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -5760,10 +7331,12 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -5776,13 +7349,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -5889,6 +7456,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -5963,6 +7531,9 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -6075,6 +7646,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -6146,6 +7718,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -6199,6 +7772,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -6213,12 +7787,15 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -6248,6 +7825,8 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -6273,6 +7852,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -6295,10 +7875,12 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -6311,13 +7893,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -6424,6 +8000,7 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -6498,6 +8075,9 @@ export interface TableDatabasePriceTableDatabasePriceGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -6598,6 +8178,308 @@ export type TableDatabaseStorageTableDatabaseStorageGetData = DatabaseStorage[];
 
 export type TableMetadataServerTableServerMetaGetData = ServerTableMetaData;
 
+export interface SnapshotManifestSnapshotHashGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+}
+
+export type SnapshotManifestSnapshotHashGetData = SnapshotManifest;
+
+export interface SnapshotVendorSnapshotHashVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+}
+
+export type SnapshotVendorSnapshotHashVendorGetData = VendorSnapshot;
+
+export interface SnapshotCountrySnapshotHashCountryGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+}
+
+export type SnapshotCountrySnapshotHashCountryGetData = CountrySnapshot;
+
+export interface SnapshotComplianceFrameworkSnapshotHashComplianceFrameworkGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+}
+
+export type SnapshotComplianceFrameworkSnapshotHashComplianceFrameworkGetData =
+  ComplianceFrameworkSnapshot;
+
+export interface SnapshotBenchmarkSnapshotHashBenchmarkGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+}
+
+export type SnapshotBenchmarkSnapshotHashBenchmarkGetData = BenchmarkSnapshot;
+
+export interface SnapshotCurrencySnapshotHashCurrencyGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+}
+
+export type SnapshotCurrencySnapshotHashCurrencyGetData = CurrencySnapshot;
+
+export interface SnapshotRegionSnapshotHashRegionVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotRegionSnapshotHashRegionVendorGetData = RegionSnapshot;
+
+export interface SnapshotZoneSnapshotHashZoneVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotZoneSnapshotHashZoneVendorGetData = ZoneSnapshot;
+
+export interface SnapshotServerSnapshotHashServerVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotServerSnapshotHashServerVendorGetData = ServerSnapshot;
+
+export interface SnapshotServerDescriptionSnapshotHashServerDescriptionVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotServerDescriptionSnapshotHashServerDescriptionVendorGetData =
+  ServerDescriptionSnapshot;
+
+export interface SnapshotServerPriceSnapshotHashServerPriceVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotServerPriceSnapshotHashServerPriceVendorGetData =
+  ServerPriceSnapshot;
+
+export interface SnapshotStorageSnapshotHashStorageVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotStorageSnapshotHashStorageVendorGetData = StorageSnapshot;
+
+export interface SnapshotStoragePriceSnapshotHashStoragePriceVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotStoragePriceSnapshotHashStoragePriceVendorGetData =
+  StoragePriceSnapshot;
+
+export interface SnapshotTrafficPriceSnapshotHashTrafficPriceVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotTrafficPriceSnapshotHashTrafficPriceVendorGetData =
+  TrafficPriceSnapshot;
+
+export interface SnapshotIpv4PriceSnapshotHashIpv4PriceVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotIpv4PriceSnapshotHashIpv4PriceVendorGetData =
+  Ipv4PriceSnapshot;
+
+export interface SnapshotDatabaseSnapshotHashDatabaseVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotDatabaseSnapshotHashDatabaseVendorGetData =
+  DatabaseSnapshot;
+
+export interface SnapshotDatabasePriceSnapshotHashDatabasePriceVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotDatabasePriceSnapshotHashDatabasePriceVendorGetData =
+  DatabasePriceSnapshot;
+
+export interface SnapshotDatabaseStorageSnapshotHashDatabaseStorageVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotDatabaseStorageSnapshotHashDatabaseStorageVendorGetData =
+  DatabaseStorageSnapshot;
+
+export interface SnapshotDatabaseStoragePriceSnapshotHashDatabaseStoragePriceVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotDatabaseStoragePriceSnapshotHashDatabaseStoragePriceVendorGetData =
+  DatabaseStoragePriceSnapshot;
+
+export interface SnapshotVendorComplianceLinkSnapshotHashVendorComplianceLinkVendorGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+}
+
+export type SnapshotVendorComplianceLinkSnapshotHashVendorComplianceLinkVendorGetData =
+  VendorComplianceLinkSnapshot;
+
+export interface SnapshotBenchmarkScoreSnapshotHashBenchmarkScoreVendorBenchmarkIdGetParams {
+  /**
+   * Database hash
+   * Database hash, e.g. `database_hash` of `/healthcheck`.
+   */
+  hash: string;
+  /**
+   * Vendor
+   * Vendor id, e.g. `aws`.
+   */
+  vendor: string;
+  /**
+   * Benchmark
+   * Benchmark id, e.g. `stress_ng:bestn`.
+   */
+  benchmarkId: string;
+}
+
+export type SnapshotBenchmarkScoreSnapshotHashBenchmarkScoreVendorBenchmarkIdGetData =
+  BenchmarkScoreSnapshot;
+
 export interface GetServerWithoutRelationsV2ServerVendorServerGetParams {
   /**
    * Vendor
@@ -6682,6 +8564,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -6735,6 +8618,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -6749,12 +8633,15 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -6784,6 +8671,8 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -6809,6 +8698,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -6831,10 +8721,12 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -6847,13 +8739,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Countries
    * Filter for regions in the provided list of countries.
@@ -6869,6 +8755,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -6883,6 +8770,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -7004,6 +8892,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -7078,6 +8967,9 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -7223,6 +9115,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -7237,6 +9130,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -7358,6 +9252,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -7432,6 +9327,9 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -7598,6 +9496,7 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -7612,6 +9511,7 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -7733,6 +9633,7 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -7807,6 +9708,9 @@ export interface GetDatabasePricesDatabaseVendorDatabasePricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -8048,6 +9952,7 @@ export interface SearchRegionsRegionsGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -8094,7 +9999,10 @@ export interface SearchServersServersGetParams {
     | "ARM"
     | "ARMv8"
     | "ARMv9"
+    | "Altra"
     | "Ampere Altra"
+    | "AmpereOne"
+    | "AmpereOne-M"
     | "EPYC"
     | "Xeon"
     | "Yitian";
@@ -8634,6 +10542,7 @@ export interface SearchServersServersGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -8710,6 +10619,7 @@ export interface SearchServersServersGetParams {
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -8763,6 +10673,7 @@ export interface SearchServersServersGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -8777,12 +10688,15 @@ export interface SearchServersServersGetParams {
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -8812,6 +10726,8 @@ export interface SearchServersServersGetParams {
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -8837,6 +10753,7 @@ export interface SearchServersServersGetParams {
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -8859,10 +10776,12 @@ export interface SearchServersServersGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -8875,13 +10794,7 @@ export interface SearchServersServersGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -8988,6 +10901,7 @@ export interface SearchServersServersGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -9062,6 +10976,9 @@ export interface SearchServersServersGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -9151,6 +11068,7 @@ export interface SearchServersServersGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -9165,6 +11083,7 @@ export interface SearchServersServersGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -9285,16 +11204,14 @@ export interface SearchServersServersGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
     | "Ampere"
     | "Blackwell"
-    | "Gaudi"
     | "Hopper"
     | "Pascal"
-    | "Radeon Pro Navi"
     | "Turing"
     | "Volta";
   /** GPU model */
@@ -9304,14 +11221,16 @@ export interface SearchServersServersGetParams {
     | "A10G"
     | "B200"
     | "B300"
+    | "G59"
     | "GB200"
     | "GB300"
     | "H100"
     | "H200"
-    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
+    | "M60"
+    | "MI300X"
     | "P100"
     | "P4"
     | "RTX 5000"
@@ -9321,7 +11240,6 @@ export interface SearchServersServersGetParams {
     | "T4G"
     | "V100"
     | "V100S"
-    | "V520"
     | "V620"
     | "V710";
   /**
@@ -9348,7 +11266,7 @@ export interface SearchServersServersGetParams {
    * ASIC manufacturer
    * Manufacturer of the ASIC (Application-Specific Integrated Circuit), e.g. Google.
    */
-  asic_manufacturer?: "Google";
+  asic_manufacturer?: "AWS" | "Google" | "Qualcomm" | "Xilinx";
   /**
    * ASIC family
    * Family of the ASIC (Application-Specific Integrated Circuit), e.g. TPU.
@@ -9358,12 +11276,25 @@ export interface SearchServersServersGetParams {
    * ASIC model
    * Model of the ASIC (Application-Specific Integrated Circuit), e.g. v5e.
    */
-  asic_model?: "tpu7" | "v3" | "v5e" | "v5p" | "v6e" | "v7x";
+  asic_model?:
+    | "Inferentia"
+    | "Inferentia2"
+    | "Qualcomm AI100"
+    | "Trainium"
+    | "Trainium2"
+    | "U30"
+    | "Virtex UltraScale+ (VU47P)"
+    | "tpu7"
+    | "v3"
+    | "v5e"
+    | "v5p"
+    | "v6e"
+    | "v7x";
   /**
    * Accelerator type
    * Type of the accelerator, e.g. GPU or TPU.
    */
-  accelerator_type?: "GPU" | "TPU";
+  accelerator_type?: "GPU" | "TPU" | "NPU" | "FPGA" | "VPU";
   /**
    * Accelerator count
    * Required number of accelerators (e.g. GPUs or TPUs).
@@ -9694,6 +11625,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -9765,6 +11697,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -9818,6 +11751,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -9832,12 +11766,15 @@ export interface SearchDatabasesDatabasesGetParams {
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -9867,6 +11804,8 @@ export interface SearchDatabasesDatabasesGetParams {
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -9892,6 +11831,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -9914,10 +11854,12 @@ export interface SearchDatabasesDatabasesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -9930,13 +11872,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -10043,6 +11979,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -10117,6 +12054,9 @@ export interface SearchDatabasesDatabasesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -10206,6 +12146,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -10220,6 +12161,7 @@ export interface SearchDatabasesDatabasesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -10329,7 +12271,10 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ARM"
     | "ARMv8"
     | "ARMv9"
+    | "Altra"
     | "Ampere Altra"
+    | "AmpereOne"
+    | "AmpereOne-M"
     | "EPYC"
     | "Xeon"
     | "Yitian";
@@ -10389,6 +12334,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -10460,6 +12406,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -10513,6 +12460,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -10527,12 +12475,15 @@ export interface SearchServerPricesServerPricesGetParams {
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -10562,6 +12513,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -10587,6 +12540,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -10609,10 +12563,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -10625,13 +12581,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -10738,6 +12688,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -10812,6 +12763,9 @@ export interface SearchServerPricesServerPricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -10916,6 +12870,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -10930,6 +12885,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -10961,16 +12917,14 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
     | "Ampere"
     | "Blackwell"
-    | "Gaudi"
     | "Hopper"
     | "Pascal"
-    | "Radeon Pro Navi"
     | "Turing"
     | "Volta";
   /** GPU model */
@@ -10980,14 +12934,16 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A10G"
     | "B200"
     | "B300"
+    | "G59"
     | "GB200"
     | "GB300"
     | "H100"
     | "H200"
-    | "HL-205"
     | "L20"
     | "L4"
     | "L40S"
+    | "M60"
+    | "MI300X"
     | "P100"
     | "P4"
     | "RTX 5000"
@@ -10997,7 +12953,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "T4G"
     | "V100"
     | "V100S"
-    | "V520"
     | "V620"
     | "V710";
   /**
@@ -11051,6 +13006,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -11142,6 +13098,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -11195,6 +13152,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -11209,12 +13167,15 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -11244,6 +13205,8 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -11269,6 +13232,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -11291,10 +13255,12 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -11307,13 +13273,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -11420,6 +13380,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -11494,6 +13455,9 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -11583,6 +13547,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -11597,6 +13562,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -11662,6 +13628,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -11748,6 +13715,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -11801,6 +13769,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -11815,12 +13784,15 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -11850,6 +13822,8 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -11875,6 +13849,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -11897,10 +13872,12 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -11913,13 +13890,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -12026,6 +13997,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -12100,6 +14072,9 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -12189,6 +14164,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -12203,6 +14179,7 @@ export interface SearchDatabaseStoragePricesDatabaseStoragePricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"
@@ -12269,6 +14246,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "azure"
     | "gcp"
     | "hcloud"
+    | "oci"
     | "ovh"
     | "upcloud"
     | "vultr";
@@ -12350,6 +14328,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "ash"
     | "atl"
     | "australiacentral"
     | "australiacentral2"
@@ -12403,6 +14382,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "es-mad1"
     | "eu-central-1"
     | "eu-central-2"
+    | "eu-frankfurt-1"
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
@@ -12417,12 +14397,15 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "fra"
     | "francecentral"
     | "francesouth"
+    | "fsn1"
     | "germanynorth"
     | "germanywestcentral"
     | "GRA"
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hel1"
+    | "hil"
     | "hnl"
     | "icn"
     | "il-central-1"
@@ -12452,6 +14435,8 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "mx-central-1"
     | "mxp"
     | "na-south-1"
+    | "nbg1"
+    | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
@@ -12477,6 +14462,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sin"
     | "sjc"
     | "southafricanorth"
     | "southafricawest"
@@ -12499,10 +14485,12 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
+    | "us-ashburn-1"
     | "us-chi1"
     | "us-east-1"
     | "us-east-2"
     | "us-nyc1"
+    | "us-phoenix-1"
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
@@ -12515,13 +14503,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3"
-    | "yto"
-    | "fsn1"
-    | "nbg1"
-    | "hel1"
-    | "ash"
-    | "hil"
-    | "sin";
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -12628,6 +14610,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "azure~koreasouth"
     | "azure~malaysiawest"
     | "azure~mexicocentral"
+    | "azure~newzealandnorth"
     | "azure~northcentralus"
     | "azure~northeurope"
     | "azure~norwayeast"
@@ -12702,6 +14685,9 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "hcloud~hil"
     | "hcloud~nbg1"
     | "hcloud~sin"
+    | "oci~eu-frankfurt-1"
+    | "oci~us-ashburn-1"
+    | "oci~us-phoenix-1"
     | "ovh~AP-SOUTH-MUM"
     | "ovh~AP-SOUTH-MUM-1"
     | "ovh~AP-SOUTHEAST-SYD-2"
@@ -12791,6 +14777,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "CH"
     | "CL"
     | "CN"
+    | "CO"
     | "DE"
     | "DK"
     | "ES"
@@ -12805,6 +14792,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MA"
     | "MX"
     | "MY"
     | "NL"

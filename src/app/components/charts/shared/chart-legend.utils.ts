@@ -7,6 +7,8 @@ import {
   LegendItem,
 } from "chart.js";
 
+import { chartColors } from "./chart-colors.constants";
+
 export type CompareChartDataset = {
   serverCompareKey?: string;
   serverTooltipIdentity?: string;
@@ -32,7 +34,7 @@ type LegendHoverHandler = (
 ) => void;
 
 export const chartLegendLabels = {
-  color: "#FFF",
+  color: chartColors.white,
   boxWidth: 40,
   boxHeight: 12,
   usePointStyle: false,

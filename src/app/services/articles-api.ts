@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
+import { authorNames } from "./team-members";
 
 export type ArticleMeta = {
   title: string;
@@ -9,8 +10,9 @@ export type ArticleMeta = {
   image: string;
   image_alt: string;
   filename: string;
-  author: string;
+  author: string | string[];
   tags?: string[];
+  glossary?: string[];
 };
 
 export type SlidesMeta = {
@@ -40,12 +42,18 @@ export type LegalMeta = {
 export class ArticlesApi {
   private http = inject(HttpClient);
 
-  async getArticlesByType(category?: string): Promise<ArticleMeta[]> {
+  async getArticlesByType(
+    category?: string,
+    author?: string,
+  ): Promise<ArticleMeta[]> {
     let files = await firstValueFrom(
       this.http.get(`./assets/articles/all.json`),
     );
     files = (files as ArticleMeta[]).filter((article: ArticleMeta) => {
-      return category ? article.tags?.includes(category) : true;
+      return (
+        (category ? article.tags?.includes(category) : true) &&
+        (author ? authorNames(article.author).includes(author) : true)
+      );
     });
     return files as ArticleMeta[];
   }
@@ -66,10 +74,21 @@ export class ArticlesApi {
           .toLowerCase()
           .replace(/[^\w\s-]/g, "")
           .replace(/\s+/g, "-");
-        // add a hidden element before the header to offset the scroll position due to the sticky navbar
-        return `<div id="${id}" style="position: relative; top: -80px; visibility: hidden"></div>\n\n${hashes} ${headerText} <a class="header-anchor" href="/article/${slug}#${id}">#</a>`;
+        const label = `Copy link to ${this.anchorLabel(headerText)}`;
+        return `<div id="${id}"></div>\n\n${hashes} ${headerText} <a class="sc-header-anchor" href="/article/${slug}#${id}" aria-label="${label}" title="${label}" data-ph-capture-attribute-sc-event="header anchor copy" data-ph-capture-attribute-anchor-id="${id}">#</a>`;
       },
     );
+  }
+
+  private anchorLabel(headerText: string): string {
+    return headerText
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+      .replace(/[`*_]/g, "")
+      .trim()
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   async getSlides(): Promise<SlidesMeta[]> {

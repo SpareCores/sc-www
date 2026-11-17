@@ -5,7 +5,6 @@ import { Button } from "../button/button";
   selector: "sc-pagination",
   imports: [Button],
   templateUrl: "./pagination.html",
-  styleUrl: "./pagination.css",
 })
 export class Pagination {
   @Input() baseQueryParams: any;

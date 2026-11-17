@@ -7,7 +7,7 @@ import {
   fakeAsync,
   flush,
 } from "@angular/core/testing";
-import { Modal } from "../components/modal/modal";
+import { Modal } from "../components/modals/modal/modal";
 import { ModalDialog } from "./modal-dialog";
 import { sharedTestingProviders } from "../../testing/testbed.providers";
 
@@ -15,7 +15,7 @@ import { sharedTestingProviders } from "../../testing/testbed.providers";
   template: `
     <button id="opener" (click)="open()">Open</button>
     <ng-template #modalTemplate>
-      <sc-modal id="test-modal" title="Test title">
+      <sc-modal id="test-modal" modalTitle="Test title">
         <p id="modal-body">Body</p>
       </sc-modal>
     </ng-template>
@@ -82,7 +82,7 @@ describe("ModalDialog", () => {
 
     (
       container.querySelector(
-        'sc-button[ariaLabel="Close modal"] button',
+        'button[aria-label="Close modal"]',
       ) as HTMLButtonElement
     ).click();
     fixture.detectChanges();

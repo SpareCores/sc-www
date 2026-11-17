@@ -12,7 +12,7 @@
     ) {
       <div class="font-bold text-emerald-400 text-sm">
         <span
-          class="data-[required]:after:content-['*'] data-[required]:after:text-red-300"
+          class="data-required:after:content-['*'] data-required:after:text-red-300"
           [textContent]="control.title"
           [attr.data-required]="control.required ? '' : null"
         ></span>
@@ -130,7 +130,7 @@
             {{ getCustomControlMinCharacters(control) }} characters to search.
           </div>
         } @else if ((control.options || []).length > 0) {
-          <div class="custom-autocomplete__panel custom-scrollbar">
+          <div class="custom-autocomplete__panel">
             @for (
               server of control.options || [];
               track server.vendor_id +
@@ -206,7 +206,7 @@
           (isBenchmarkConfigDropdownOpen(control) && !control.disabled)
         ) {
           @if ((control.benchmarkGroups || []).length > 0) {
-            <div class="custom-autocomplete__panel custom-scrollbar">
+            <div class="custom-autocomplete__panel">
               @for (group of control.benchmarkGroups || []; track group.name) {
                 <div class="benchmark-group">
                   <button
@@ -292,7 +292,7 @@
         </div>
 
         @if (isSingleSelectDropdownOpen(control) && !control.disabled) {
-          <div class="custom-autocomplete__panel custom-scrollbar">
+          <div class="custom-autocomplete__panel">
             @for (option of control.selectOptions || []; track option.value) {
               <button
                 type="button"
@@ -347,56 +347,37 @@
       </div>
     }
     @if (control.type === "powerOfTwoStepper") {
-      <div class="custom-stepper mt-4">
-        <button
-          type="button"
-          class="custom-stepper__button"
-          (mousedown)="$event.preventDefault()"
-          [disabled]="!canDecrementPowerOfTwoValue(control)"
-          (click)="decrementPowerOfTwoValue(control)"
-          aria-label="Decrease value"
-        >
-          <svg lucideMinus class="h-4 w-4"></svg>
-        </button>
+      <sc-stepper
+        class="mt-4"
+        [controls]="'custom_control_numeric_' + control.name"
+        [decreaseLabel]="'Decrease ' + control.title"
+        [increaseLabel]="'Increase ' + control.title"
+        [canDecrement]="canDecrementPowerOfTwoValue(control)"
+        [dirty]="isPowerOfTwoStepperDraftDirty(control)"
+        (decrement)="decrementPowerOfTwoValue(control)"
+        (increment)="incrementPowerOfTwoValue(control)"
+      >
+        <input
+          id="custom_control_numeric_{{ control.name }}"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          spellcheck="false"
+          class="sc-stepper__input"
+          [attr.aria-label]="control.title"
+          [attr.min]="control.min ?? null"
+          [style]="getPowerOfTwoStepperInputStyle(control)"
+          [value]="getPowerOfTwoStepperInputValue(control)"
+          (focus)="handlePowerOfTwoStepperFocus(control)"
+          (input)="onPowerOfTwoStepperInput(control, $event)"
+          (blur)="commitPowerOfTwoStepperAfterFocusLoss(control, $event)"
+          (keydown.enter)="commitPowerOfTwoStepperFromEnter($event)"
+        />
 
-        <div
-          class="custom-stepper__field"
-          [class.filter-draft-input--dirty]="
-            isPowerOfTwoStepperDraftDirty(control)
-          "
-        >
-          <input
-            id="custom_control_numeric_{{ control.name }}"
-            type="text"
-            inputmode="decimal"
-            autocomplete="off"
-            spellcheck="false"
-            class="custom-stepper__input"
-            [attr.aria-label]="control.title"
-            [attr.min]="control.min ?? null"
-            [ngStyle]="getPowerOfTwoStepperInputStyle(control)"
-            [value]="getPowerOfTwoStepperInputValue(control)"
-            (focus)="handlePowerOfTwoStepperFocus(control)"
-            (input)="onPowerOfTwoStepperInput(control, $event)"
-            (blur)="commitPowerOfTwoStepperAfterFocusLoss(control, $event)"
-            (keydown.enter)="commitPowerOfTwoStepperFromEnter($event)"
-          />
-
-          @if (getPowerOfTwoStepperInputUnit(control); as inputUnit) {
-            <span class="custom-stepper__unit">{{ inputUnit }}</span>
-          }
-        </div>
-
-        <button
-          type="button"
-          class="custom-stepper__button"
-          (mousedown)="$event.preventDefault()"
-          (click)="incrementPowerOfTwoValue(control)"
-          aria-label="Increase value"
-        >
-          <svg lucidePlus class="h-4 w-4"></svg>
-        </button>
-      </div>
+        @if (getPowerOfTwoStepperInputUnit(control); as inputUnit) {
+          <span class="sc-stepper__unit">{{ inputUnit }}</span>
+        }
+      </sc-stepper>
       @if (isPowerOfTwoStepperDraftDirty(control)) {
         <div class="filter-draft-pending-hint">
           Press Enter or click away to apply filter.

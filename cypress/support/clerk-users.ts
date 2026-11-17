@@ -5,6 +5,45 @@ type ClerkUserSummary = {
 
 const CLERK_TEST_EMAIL_PATTERN = /\+clerk_test(\+[^@]*)?@example\.com$/;
 
+export type ClerkTestUser = { email: string; password: string };
+
+export async function createClerkTestUser({
+  email,
+  password,
+}: ClerkTestUser): Promise<null> {
+  if (!CLERK_TEST_EMAIL_PATTERN.test(email)) {
+    throw new Error(`Refusing to create non-test Clerk user: ${email}`);
+  }
+
+  const secretKey = process.env.CLERK_SECRET_KEY;
+  if (!secretKey) {
+    throw new Error("CLERK_SECRET_KEY is required to create Clerk test users");
+  }
+
+  const response = await fetch("https://api.clerk.com/v1/users", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${secretKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email_address: [email],
+      password,
+      first_name: "Test",
+      last_name: "User",
+      legal_accepted_at: new Date().toISOString(),
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Clerk create user failed (${response.status}) for ${email}: ${await response.text()}`,
+    );
+  }
+
+  return null;
+}
+
 export async function deleteClerkUserByEmail(email: string): Promise<null> {
   if (!CLERK_TEST_EMAIL_PATTERN.test(email)) {
     throw new Error(`Refusing to delete non-test Clerk user: ${email}`);

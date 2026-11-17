@@ -2,6 +2,10 @@ type StoredCollectionItem = Record<string, unknown> & { id: string };
 
 const COLLECTIONS_PATH = /\/collections\/([^/]+)(?:\/([^/]+))?\/?$/;
 
+export function collectionListUrl(type = "[^/?]+"): RegExp {
+  return new RegExp(`/collections/${type}/?(\\?.*)?$`);
+}
+
 function parseBody(body: unknown): Record<string, unknown> {
   if (typeof body === "string") {
     return body ? (JSON.parse(body) as Record<string, unknown>) : {};

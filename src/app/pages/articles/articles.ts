@@ -32,9 +32,12 @@ export class Articles implements OnInit, OnDestroy {
     this.subscription.add(
       this.route.queryParams.subscribe((params) => {
         const category = params["tag"];
-        this.articleHandler.getArticlesByType(category).then((articles) => {
-          this.articles = articles;
-        });
+        const author = params["author"];
+        this.articleHandler
+          .getArticlesByType(category, author)
+          .then((articles) => {
+            this.articles = articles;
+          });
 
         this.breadcrumbs = [
           { name: "Home", url: "/" },
@@ -53,9 +56,19 @@ export class Articles implements OnInit, OnDestroy {
           });
         }
 
+        if (author) {
+          this.breadcrumbs.push({
+            name: author,
+            url: `/articles`,
+            queryParams: { author },
+          });
+        }
+
+        const byAuthor = author ? ` by ${author}` : "";
+
         this.SEOHandler.updateTitleAndMetaTags(
-          `${title} Articles - SpareCores`,
-          `View all ${title} articles on SpareCores.`,
+          `${title} Articles${byAuthor} - SpareCores`,
+          `View all ${title} articles${byAuthor} on SpareCores.`,
           (category?.length ? category + " " : "") +
             `blog posts, articles, guides, tutorials`,
         );

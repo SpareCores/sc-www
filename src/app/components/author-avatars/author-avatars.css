@@ -1,0 +1,21 @@
+@reference "../../../styles/tailwind.css";
+
+.author-avatar {
+  @apply relative h-8 w-8 shrink-0 overflow-hidden rounded-full;
+}
+
+.author-avatar + .author-avatar {
+  box-shadow: 0 0 0 2px var(--sc-avatar-ring, var(--color-primary));
+}
+
+:host(.vertical) .author-avatar + .author-avatar {
+  margin-top: -1rem;
+}
+
+:host(.horizontal) .author-avatar + .author-avatar {
+  margin-left: -0.75rem;
+}
+
+img {
+  @apply block h-full w-full max-w-none object-cover;
+}

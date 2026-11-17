@@ -1,0 +1,29 @@
+@reference "../../../styles/tailwind.css";
+
+:host {
+  display: contents;
+}
+
+.card_sections {
+  @apply flex flex-col;
+}
+
+.items_table_spacer_row {
+  @apply w-full bg-secondary;
+
+  height: 45px;
+  box-sizing: border-box;
+}
+
+.details_card_header {
+  @apply uppercase tracking-wide;
+}
+
+.property_value ::ng-deep ul {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+.property_value ::ng-deep ul li {
+  margin-bottom: 0.25rem;
+}

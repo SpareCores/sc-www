@@ -42,7 +42,7 @@ the monthly ~$5k EC2 costs in the long run:
 <div class="text-center m-2.5 mt-8 mb-6">
   <a href="https://xkcd.com/1205/"
      target="_blank" rel="noopener"
-     class="!no-underline">
+     class="no-underline!">
     <img
       title="Is It Worth the Time? (xkcd.com)"
       src="/assets/images/blog/xkcd-1205-is_it_worth_the_time.png"

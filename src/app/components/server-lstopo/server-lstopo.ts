@@ -19,20 +19,18 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
-import { Subscription, of, switchMap } from "rxjs";
+import { Subscription } from "rxjs";
 import { DragToPan } from "../../directives/drag-to-pan";
 import { LstopoSvg } from "../../services/lstopo-svg";
 import { ModalDialog } from "../../services/modal-dialog";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { Button } from "../button/button";
-import { Modal } from "../modal/modal";
+import { Modal } from "../modals/modal/modal";
+import { HeaderAnchor } from "../header-anchor/header-anchor";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
 const LSTOPO_PATH_SUFFIX = "0/lstopo/lstopo.svg";
-// TODO: drop the legacy fallback once the sc-inspector-data backend rollout
-// moving lstopo under the "0" variant folder has completed (~2026-10-23)
-const LSTOPO_LEGACY_PATH_SUFFIX = "lstopo/lstopo.svg";
 
 type TooltipListener = {
   el: Element;
@@ -42,7 +40,7 @@ type TooltipListener = {
 
 @Component({
   selector: "sc-server-lstopo",
-  imports: [Button, DragToPan, Modal],
+  imports: [Button, DragToPan, Modal, HeaderAnchor],
   templateUrl: "./server-lstopo.html",
   styleUrl: "./server-lstopo.css",
   encapsulation: ViewEncapsulation.None,
@@ -50,6 +48,8 @@ type TooltipListener = {
 export class ServerLstopo implements OnChanges {
   @Input() vendorId: string = "";
   @Input() apiReference: string = "";
+  @Input() fullscreenEnabled = true;
+  @Input() anchored = false;
   @Output() svgExists = new EventEmitter<boolean>();
   @Output() svgWidth = new EventEmitter<number>();
 
@@ -100,23 +100,17 @@ export class ServerLstopo implements OnChanges {
     this.isLoading = true;
     this.resetRenderedSvg();
     this.svgWidth.emit(0);
-    const serverBase = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}`;
-    const url = `${serverBase}/${LSTOPO_PATH_SUFFIX}`;
-    const legacyUrl = `${serverBase}/${LSTOPO_LEGACY_PATH_SUFFIX}`;
+    const url = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}/${LSTOPO_PATH_SUFFIX}`;
     this.lstopoUrl = url;
 
     this.svgSub?.unsubscribe();
+    this.svgSub = undefined;
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     this.svgSub = this.svgService
       .getSvg(url)
-      .pipe(
-        // getSvg maps 404 and other errors to null, so retry the legacy path
-        switchMap((svg) => {
-          if (svg) return of(svg);
-          this.lstopoUrl = legacyUrl;
-          return this.svgService.getSvg(legacyUrl);
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (svg) => {
           try {
@@ -126,30 +120,26 @@ export class ServerLstopo implements OnChanges {
               this.svgWidth.emit(0);
               return;
             }
-            if (isPlatformBrowser(this.platformId)) {
-              try {
-                const { w, normalizedSvg } = this.svgService.processSvg(svg);
-                if (w) setTimeout(() => this.svgWidth.emit(w), 0);
-                const trustedSvg =
-                  this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
-                this.inlineSvg = trustedSvg;
-                this.modalSvg = trustedSvg;
-                this.svgExists.emit(true);
-                this.cdr.markForCheck();
-                this.renderTimeout = setTimeout(() => {
-                  this.renderTimeout = undefined;
-                  if (!this.inlineSvg) return;
-                  this.addSvgTooltips();
-                  this.setupFullscreenCheck();
-                }, 0);
-              } catch (e) {
-                console.warn("[lstopo] SVG processing failed", e);
-                this.resetRenderedSvg();
-                this.svgExists.emit(false);
-                this.cdr.markForCheck();
-              }
-            } else {
-              // Skip inline SVG on server to avoid bloating SSR response
+            try {
+              const { w, normalizedSvg } = this.svgService.processSvg(svg);
+              if (w) setTimeout(() => this.svgWidth.emit(w), 0);
+              const trustedSvg =
+                this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
+              this.inlineSvg = trustedSvg;
+              this.modalSvg = trustedSvg;
+              this.svgExists.emit(true);
+              this.cdr.markForCheck();
+              this.renderTimeout = setTimeout(() => {
+                this.renderTimeout = undefined;
+                if (!this.inlineSvg) return;
+                this.addSvgTooltips();
+                this.setupFullscreenCheck();
+              }, 0);
+            } catch (e) {
+              console.warn("[lstopo] SVG processing failed", e);
+              this.resetRenderedSvg();
+              this.svgExists.emit(false);
+              this.cdr.markForCheck();
             }
           } finally {
             this.isLoading = false;

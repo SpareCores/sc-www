@@ -20,11 +20,9 @@
     @if (vendor) {
       <div
         id="vendor_base_info_box"
-        class="mx-2 xl:mx-0 flex flex-wrap justify-between items-stretch rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+        class="mx-2 xl:mx-0 flex flex-wrap justify-between items-stretch sc-card gap-8 px-6 py-6 mt-12"
       >
-        <div
-          class="flex gap-8 items-start flex-grow min-w-0 lg:max-w-[75%] w-full"
-        >
+        <div class="flex gap-8 items-start grow min-w-0 lg:max-w-[75%] w-full">
           <div class="flex gap-4 flex-col shrink-0">
             <div class="vendor-logo min-w-48 w-48 h-48 bg-white rounded-lg">
               @if (vendor.logo) {
@@ -32,7 +30,7 @@
               }
             </div>
           </div>
-          <div class="flex flex-col gap-3 min-w-0 flex-grow min-h-48">
+          <div class="flex flex-col gap-3 min-w-0 grow min-h-48">
             <h1 class="text-2xl">
               <span class="text-emerald-400 font-bold">{{ vendor.name }}</span>
             </h1>
@@ -105,29 +103,41 @@
 
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
         <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold">Details</h2>
+          <h2 class="text-3xl font-bold sc-header-anchor-host">
+            Details
+            <sc-header-anchor
+              anchorId="vendor-details"
+              label="Details"
+            ></sc-header-anchor>
+          </h2>
         </div>
 
-        <sc-server-property-card
+        <sc-details-card
           cardTitle="Vendor Metadata"
           cardId="details"
+          anchorId="metadata"
           [sections]="metadataSections"
-          [showSectionHeaders]="false"
           [isOpen]="expandedCards.details"
           (toggleRequested)="toggleCard('details')"
-        ></sc-server-property-card>
+        ></sc-details-card>
 
-        <sc-server-property-card
+        <sc-details-card
           cardTitle="Billing"
           cardId="billing"
+          anchorId="billing"
           [sections]="billingSections"
-          [showSectionHeaders]="false"
           [isOpen]="expandedCards.billing"
           (toggleRequested)="toggleCard('billing')"
-        ></sc-server-property-card>
+        ></sc-details-card>
 
         <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold">Regions</h2>
+          <h2 class="text-3xl font-bold sc-header-anchor-host">
+            Regions
+            <sc-header-anchor
+              anchorId="regions"
+              label="Regions"
+            ></sc-header-anchor>
+          </h2>
         </div>
 
         <div
@@ -136,7 +146,7 @@
         ></div>
 
         @if (vendorRegions.length) {
-          <table class="items_table w-full">
+          <table class="sc-table sc-table--interactive w-full">
             <thead>
               <tr>
                 <th>REGION</th>

@@ -25,7 +25,7 @@ import {
 describe("KeeperHttpClient", () => {
   let client: KeeperHttpClient;
   let httpMock: HttpTestingController;
-  let auth: jasmine.SpyObj<Pick<AuthState, "getToken">>;
+  let auth: jasmine.SpyObj<Pick<AuthState, "getTokenIfLoaded">>;
   const path = "/servers";
   const baseUri = import.meta.env.NG_APP_BACKEND_BASE_URI || "";
 
@@ -34,10 +34,11 @@ describe("KeeperHttpClient", () => {
   }
 
   function setup(platformId: object = "browser" as unknown as object) {
-    auth = jasmine.createSpyObj<Pick<AuthState, "getToken">>("AuthState", [
-      "getToken",
-    ]);
-    auth.getToken.and.resolveTo(null);
+    auth = jasmine.createSpyObj<Pick<AuthState, "getTokenIfLoaded">>(
+      "AuthState",
+      ["getTokenIfLoaded"],
+    );
+    auth.getTokenIfLoaded.and.resolveTo(null);
 
     TestBed.configureTestingModule({
       providers: [
@@ -206,7 +207,7 @@ describe("KeeperHttpClient", () => {
     it("fetches a fresh auth token for each retry attempt", fakeAsync(() => {
       let resolved: unknown;
 
-      auth.getToken.and.returnValues(
+      auth.getTokenIfLoaded.and.returnValues(
         Promise.resolve("first-token"),
         Promise.resolve("second-token"),
       );
@@ -233,7 +234,7 @@ describe("KeeperHttpClient", () => {
       secondAttempt.flush([{ ok: true }]);
       flushMicrotasks();
 
-      expect(auth.getToken).toHaveBeenCalledTimes(2);
+      expect(auth.getTokenIfLoaded).toHaveBeenCalledTimes(2);
       expect(resolved).toBeTruthy();
     }));
 

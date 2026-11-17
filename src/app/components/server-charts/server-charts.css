@@ -1,3 +1,5 @@
+@reference "../../../styles/tailwind.css";
+
 .items_table_passmark {
   @apply w-full text-white;
   table-layout: fixed;

@@ -1,0 +1,8 @@
+sc-server-compare-charts {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.compare-table-header-cell {
+  vertical-align: top;
+}

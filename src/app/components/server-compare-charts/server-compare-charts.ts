@@ -32,11 +32,11 @@ import {
   redisChartTemplate,
   staticWebChartCompareTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
-import { ExtendedServerDetails } from "../../pages/server-details/server-details";
+import { ExtendedServerDetails } from "../../pages/server-details/server-details.types";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { CompactNumberPipe } from "../../pipes/compact-number-pipe";
-import { Toast } from "../../services/toast";
 import { Button } from "../button/button";
+import { HeaderAnchor } from "../header-anchor/header-anchor";
 import { CompressionChartBuilder } from "../charts/compression/compression-chart-builder";
 import { CompressionChart } from "../charts/compression/compression-chart";
 import {
@@ -146,6 +146,7 @@ import {
     WorkloadProfilePanel,
     Button,
     Dropdown,
+    HeaderAnchor,
   ],
   providers: [CompareChartLegendVisibility],
   templateUrl: "./server-compare-charts.html",
@@ -154,7 +155,6 @@ import {
 export class ServerCompareCharts implements OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private document = inject(DOCUMENT);
-  private toastService = inject(Toast);
   private tooltipService = inject(ChartTooltip);
   private geekbenchBuilder = inject(GeekbenchRadarChartBuilder);
   private multiBarBuilder = inject(BenchmarkMultiBarChartBuilder);
@@ -189,7 +189,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     compareTableLayout.resolveCompareUnpinnedRowLayout(0);
   private pinnedRowLayoutFrameId: number | null = null;
 
-  bestCellStyle = "font-weight: 600; color: #34D399";
+  bestCellStyle = "font-weight: 600; color: var(--color-emerald-400)";
   SSCoreTooltip =
     "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour -- when otherwise not noted, using the best (usually spot) price of all zones.";
 
@@ -208,7 +208,6 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     },
   ];
 
-  clipboardIcon = "clipboard";
   workloadProfileShowMore = false;
   nvbandwidthSections: NvbandwidthSection<
     number | string,
@@ -937,8 +936,8 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
   }
 
-  hasEmbeddableChart(chartId: string): boolean {
-    switch (chartId) {
+  hasEmbeddableWidget(widgetId: string): boolean {
+    switch (widgetId) {
       case "generic":
         return true;
       case "workload_profile":
@@ -952,16 +951,16 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
 
     const multiBarChart = this.multiBarCharts.find(
-      (chartItem) => chartItem.chart.id === chartId,
+      (chartItem) => chartItem.chart.id === widgetId,
     );
     if (multiBarChart) {
       return this.hasMultiBarCompareChart(multiBarChart);
     }
 
     const categoryId =
-      chartId === "geekbench_single" || chartId === "geekbench_multi"
+      widgetId === "geekbench_single" || widgetId === "geekbench_multi"
         ? "geekbench"
-        : chartId;
+        : widgetId;
     const category = this.benchmarkCategories.find(
       (benchmarkCategory) => benchmarkCategory.id === categoryId,
     );
@@ -970,7 +969,8 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
 
     return (
-      this.isPassmarkBenchmarkCategory(chartId) || this.hasCompareChart(chartId)
+      this.isPassmarkBenchmarkCategory(widgetId) ||
+      this.hasCompareChart(widgetId)
     );
   }
 
@@ -1130,28 +1130,6 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
 
     this.layoutChanged.emit();
-  }
-
-  clipboardURL(event: any, fragment?: string) {
-    let url = window.location.href;
-
-    if (fragment) {
-      // replace url fragment
-      url = url.replace(/#.*$/, "") + "#" + fragment;
-    }
-
-    navigator.clipboard.writeText(url);
-    this.clipboardIcon = "check";
-
-    this.toastService.show({
-      title: "Link copied to clipboard!",
-      type: "success",
-      duration: 2000,
-    });
-
-    setTimeout(() => {
-      this.clipboardIcon = "clipboard";
-    }, 3000);
   }
 
   serializeConfig(config: any) {

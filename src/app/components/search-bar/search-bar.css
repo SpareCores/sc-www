@@ -1,24 +1,6 @@
+@reference "../../../styles/tailwind.css";
+
 .search_bar_content {
-  .custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #34d399 #374151;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #374151;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #34d399;
-    border-radius: 20px;
-    border: 3px solid #34d399;
-  }
-
   width: 100%;
   height: calc(100% - 4rem);
 
@@ -36,17 +18,22 @@
     justify-content: center;
     display: flex;
     padding: 0.5rem;
-    border-top: 1px solid #34d399;
+    border-top: 1px solid var(--color-emerald-400);
   }
 
   .top_search_input {
-    @apply w-full h-full border border-emerald-400 rounded-lg text-sm bg-gray-200 text-sky-950 px-4 outline-none focus:ring-2 focus:ring-emerald-400;
+    @apply w-full h-full border border-emerald-400 rounded-lg text-sm bg-gray-200 text-sky-950 px-4 outline-hidden focus:ring-2 focus:ring-emerald-400;
 
     padding-right: 2.5rem;
     height: 40px;
   }
   .top_search_input.filter-draft-input--dirty {
-    @apply border-yellow-500 bg-yellow-100 focus:ring-yellow-500;
+    @apply border-yellow-500 focus:ring-yellow-500;
+    background-color: color-mix(
+      in oklab,
+      var(--color-yellow-500) 25%,
+      var(--color-white)
+    );
   }
   .top_search_input::placeholder {
     @apply text-sky-800/70;
@@ -72,7 +59,7 @@
   }
 
   .filters {
-    border-right: 1px solid #34d399;
+    border-right: 1px solid var(--color-emerald-400);
     padding-bottom: 1rem;
     min-height: calc(100% - 4rem);
   }
@@ -87,11 +74,20 @@
   .filter-draft-input--compact.filter-draft-input--dirty {
     @apply border-solid border-yellow-500;
 
-    background-color: rgb(234 179 8 / 0.15);
+    background-color: color-mix(
+      in oklab,
+      var(--color-yellow-500) 15%,
+      transparent
+    );
   }
 
   .filter-draft-input--field.filter-draft-input--dirty {
-    @apply border-solid border-yellow-500 bg-yellow-100;
+    @apply border-solid border-yellow-500;
+    background-color: color-mix(
+      in oklab,
+      var(--color-yellow-500) 25%,
+      var(--color-white)
+    );
   }
 
   .filter-draft-pending-hint {
@@ -99,11 +95,11 @@
   }
 
   .checkbox {
-    @apply focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400  disabled:text-gray-400 disabled:bg-gray-400;
+    @apply focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden disabled:accent-gray-400  disabled:text-gray-400 disabled:bg-gray-400;
   }
 
   .tooltip-trigger {
-    @apply inline-flex items-center justify-center rounded-sm text-gray-200 outline-none transition-colors duration-150 hover:text-white focus-visible:ring-2 focus-visible:ring-emerald-400;
+    @apply inline-flex items-center justify-center rounded-xs text-gray-200 outline-hidden transition-colors duration-150 hover:text-white focus-visible:ring-2 focus-visible:ring-emerald-400;
     vertical-align: middle;
     line-height: 0;
     padding: 0;
@@ -128,7 +124,7 @@
   .cpu-cache-slider-tick {
     width: 1px;
     height: 0.5rem;
-    background: rgb(16 185 129 / 0.5);
+    background: color-mix(in oklab, var(--color-emerald-400) 50%, transparent);
   }
 
   .cpu-cache-slider-labels {
@@ -140,7 +136,7 @@
   .cpu-cache-slider-label {
     position: absolute;
     transform: translateX(-50%);
-    color: rgb(209 213 219);
+    color: var(--color-gray-200);
     font-size: 0.65rem;
     line-height: 1;
     white-space: nowrap;
@@ -161,7 +157,7 @@
   }
 
   .custom-autocomplete__input {
-    @apply w-full rounded-lg border border-emerald-400 bg-gray-200 px-4 py-2 text-sm text-sky-950 outline-none focus:ring-2 focus:ring-emerald-400 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-600;
+    @apply w-full rounded-lg border border-emerald-400 bg-gray-200 px-4 py-2 text-sm text-sky-950 outline-hidden focus:ring-2 focus:ring-emerald-400 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-600;
 
     padding-right: 2.5rem;
   }
@@ -221,11 +217,11 @@
   }
 
   .custom-autocomplete__meta {
-    @apply text-xs text-gray-300;
+    @apply text-xs text-gray-200;
   }
 
   .custom-autocomplete__hint {
-    @apply text-xs text-gray-300;
+    @apply text-xs text-gray-200;
   }
 
   .benchmark-group {
@@ -259,7 +255,7 @@
 
   .custom-slider__input {
     width: 100%;
-    accent-color: #34d399;
+    accent-color: var(--color-emerald-400);
     cursor: pointer;
 
     &::-webkit-slider-thumb {
@@ -283,65 +279,12 @@
     display: flex;
     justify-content: space-between;
     gap: 0.5rem;
-    color: rgb(209 213 219);
+    color: var(--color-gray-200);
     font-size: 0.65rem;
     line-height: 1;
   }
+}
 
-  .custom-stepper {
-    display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
-    gap: 0.75rem;
-    align-items: center;
-  }
-
-  .custom-stepper__field {
-    @apply rounded-lg border border-solid border-emerald-400 bg-gray-200 px-4 text-sky-950;
-
-    min-height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition:
-      box-shadow 150ms ease,
-      border-color 150ms ease,
-      background-color 150ms ease;
-  }
-
-  .custom-stepper__field.filter-draft-input--dirty {
-    @apply border-yellow-500 bg-yellow-100;
-  }
-
-  .custom-stepper__field:focus-within {
-    box-shadow: 0 0 0 2px rgb(52 211 153);
-  }
-
-  .custom-stepper__field.filter-draft-input--dirty:focus-within {
-    box-shadow: 0 0 0 2px rgb(234 179 8);
-  }
-
-  .custom-stepper__button {
-    @apply rounded-lg border border-solid border-emerald-400 bg-secondary text-emerald-400 transition-colors duration-150 hover:bg-emerald-400 hover:text-white disabled:cursor-not-allowed disabled:border-gray-600 disabled:bg-primary disabled:text-gray-500;
-
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .custom-stepper__input {
-    @apply bg-transparent px-0 py-0 text-center text-sm font-semibold text-sky-950 outline-none;
-
-    min-width: 1.5ch;
-    max-width: 100%;
-    border: 0;
-    flex: 0 1 auto;
-  }
-
-  .custom-stepper__unit {
-    @apply pointer-events-none text-xs font-semibold text-sky-800;
-
-    position: static;
-    transform: none;
-  }
+.search-bar--borderless .search_bar_content .filters {
+  border-right: 0;
 }
