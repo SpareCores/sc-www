@@ -156,6 +156,10 @@
   .toc_panel_body {
     padding-bottom: 0.5rem;
   }
+
+  .toc_family_btn {
+    min-height: 1.5rem;
+  }
 }
 
 .toc_family_name {
@@ -234,6 +238,7 @@
 
   .toc_family_btn {
     justify-content: center;
+    min-height: 1.5rem;
   }
 
   .toc_family_info {
@@ -299,6 +304,7 @@
 
     .toc_family_btn {
       justify-content: space-between;
+      min-height: 1.25rem;
     }
 
     .toc_family_info {
