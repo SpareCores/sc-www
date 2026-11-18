@@ -18,7 +18,7 @@
     }
 
     @if (serverDetails) {
-      <div class="mx-2 xl:mx-0 flex flex-wrap gap-4 md:gap-8 mt-8">
+      <div class="content-gutter flex flex-wrap gap-4 md:gap-8 mt-8">
         <sc-details-header
           class="w-full"
           resource="server"
@@ -341,7 +341,7 @@
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
-              class="xl:mx-0 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-full"
+              class="bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-full"
               role="alert"
             >
               <svg
