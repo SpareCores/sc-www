@@ -16,7 +16,6 @@ import {
   LucideBookText,
   LucideBuilding2,
   LucideChartCandlestick,
-  LucideCheck,
   LucideDatabase,
   LucideDollarSign,
   LucideDynamicIcon,
@@ -29,6 +28,8 @@ import {
 } from "@lucide/angular";
 import { ThemeText } from "../../components/theme-text/theme-text";
 import { SectionHeading } from "../../components/section-heading/section-heading";
+import { CheckList } from "../../components/check-list/check-list";
+import { CheckListItem } from "../../components/check-list/check-list-item";
 import { Button } from "../../components/button/button";
 import { SeoHandler } from "../../services/seo-handler";
 import { isPlatformBrowser } from "@angular/common";
@@ -52,7 +53,6 @@ interface Quote {
     LucideBookText,
     LucideBuilding2,
     LucideChartCandlestick,
-    LucideCheck,
     LucideDatabase,
     LucideDollarSign,
     LucideDynamicIcon,
@@ -64,6 +64,8 @@ interface Quote {
     LucideSquareKanban,
     ThemeText,
     SectionHeading,
+    CheckList,
+    CheckListItem,
     Button,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

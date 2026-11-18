@@ -14,15 +14,12 @@ import { isPlatformBrowser } from "@angular/common";
 import { SeoHandler } from "../../services/seo-handler";
 import { SectionHeading } from "../../components/section-heading/section-heading";
 import { FeatureCard } from "../../components/feature-card/feature-card";
+import { CheckList } from "../../components/check-list/check-list";
+import { CheckListItem } from "../../components/check-list/check-list-item";
 import { Button } from "../../components/button/button";
 import { SlotMachine } from "../../components/slot-machine/slot-machine";
 import { RouterLink } from "@angular/router";
-import {
-  LucideCheck,
-  LucideQuote,
-  LucideRocket,
-  LucideScanEye,
-} from "@lucide/angular";
+import { LucideQuote, LucideRocket, LucideScanEye } from "@lucide/angular";
 import { ArticleCard } from "../../components/article-card/article-card";
 import { NeetoCal } from "../../services/neeto-cal";
 import { PrismHighlighter } from "../../services/prism-highlighter";
@@ -32,10 +29,11 @@ import { PrismHighlighter } from "../../services/prism-highlighter";
   imports: [
     SectionHeading,
     FeatureCard,
+    CheckList,
+    CheckListItem,
     Button,
     SlotMachine,
     RouterLink,
-    LucideCheck,
     LucideQuote,
     LucideRocket,
     LucideScanEye,

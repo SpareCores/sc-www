@@ -124,40 +124,27 @@
       <div class="flex flex-col justify-center">
         <div class="w-full max-w-112.5 m-auto">
           <div>
-            <div
-              class="flex gap-2 text-lg sm:text-2xl items-center text-gray-200"
-            >
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                <svg lucideCheck class="h-4 w-4"></svg>
-              </div>
-              <b> 8 </b>
-              <span>
-                (out of
-                <span
-                  class="underline decoration-dotted cursor-pointer"
-                  scTooltipTrigger
-                  (tooltipOpen)="showTooltip($event)"
-                  (tooltipClose)="hideTooltip()"
-                  >10 planned</span
-                >) vendors
-              </span>
-            </div>
-            @for (feature of features; track feature.text; let i = $index) {
-              <div>
-                <div
-                  class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
-                ></div>
-                <div
-                  class="flex gap-2 text-lg sm:text-2xl items-center text-gray-200"
-                >
-                  <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                    <svg lucideCheck class="h-4 w-4"></svg>
-                  </div>
+            <sc-check-list>
+              <sc-check-list-item>
+                <b> 8 </b>
+                <span>
+                  (out of
+                  <span
+                    class="underline decoration-dotted cursor-pointer"
+                    scTooltipTrigger
+                    (tooltipOpen)="showTooltip($event)"
+                    (tooltipClose)="hideTooltip()"
+                    >10 planned</span
+                  >) vendors
+                </span>
+              </sc-check-list-item>
+              @for (feature of features; track feature.text) {
+                <sc-check-list-item>
                   <b> {{ feature.count }} </b>
                   <span> {{ feature.text }} </span>
-                </div>
-              </div>
-            }
+                </sc-check-list-item>
+              }
+            </sc-check-list>
             <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
           </div>
         </div>
