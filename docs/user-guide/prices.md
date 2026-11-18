@@ -1,14 +1,14 @@
-# Understand Prices
+# Understand prices
 
-The [Navigator](./listings.md) and the [Advisor](./advisor.md) provide
+The [Servers listing](./listings.md) and the [Advisor](./advisor.md) provide
 controls for choosing which price data to use and which currency to display. The
 displayed price depends on those choices.
 
-## Choose a Price Category
+## Choose a price category
 
-The price selector above the Navigator sets which prices count as a server's
-best price, which the **BEST PRICE** column and the price-based scores use.
-It offers the following categories:
+The price selector above the Servers listing sets which prices count as a
+server's best price, which the **BEST PRICE** column and the price-based
+scores use. It offers the following categories:
 
 - **Any price**: the lowest price of the three categories below. This is the
   default.
@@ -21,9 +21,9 @@ In the Advisor, select **Price allocation** under
 **Limit search for matching:** to choose one of the same categories.
 Without it, the Advisor uses any price.
 
-## Change the Display Currency
+## Change the display currency
 
-Use the currency selector above the Navigator, in the Advisor, or on a
+Use the currency selector above a listing, in the Advisor, or on a
 comparison page to show prices in another currency. USD is the default.
 
 Score-per-price values, such as \$Core and **$ EFFICIENCY**, stay per USD per

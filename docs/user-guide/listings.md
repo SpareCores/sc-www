@@ -1,12 +1,13 @@
-# Find Servers and Databases
+# Find servers and databases
 
-Open the [Navigator](https://sparecores.com/servers) to browse servers. You
-can narrow the results with filters, search by name or ID,
-or describe what you need in Search Prompt. For a
+Find servers and managed databases in the site's listings with filters,
+search by name or ID, and Search Prompt, which turns a description of what you
+need into filters. Start from the
+[Servers listing](https://sparecores.com/servers). For a
 [video introduction](https://www.youtube.com/watch?v=hO0KQoxk1SM) to the
 listing, select **Introduction** in the page header.
 
-## Search for Servers
+## Search for servers
 
 Use any of the following ways to narrow the listing:
 
@@ -57,7 +58,7 @@ filters. Two scores appear throughout the site:
 Guests can select one country in the Region filter. For other guest limits,
 see [Accounts and bookmarks](./accounts-and-bookmarks.md).
 
-## Choose a Benchmark and View Results
+## Choose a benchmark and view results
 
 Select **Select Benchmark** above the results to choose a benchmark and,
 where available, a configuration. Your choice sets what the **BENCHMARK** and
@@ -87,22 +88,22 @@ no sorting. Two of the default columns need a definition:
 Select a server name to open its detail page. The detail page shows server
 specifications and benchmark information, and includes a **Compare** control.
 
-To share a search, select **Share** in the page header of the Navigator. It
+To share a search, select **Share** in the page header of the listing. It
 copies a link that keeps your filters, benchmark, and columns. You do not
 need an account to share.
 
-## Find Managed Databases
+## Find managed databases
 
-The Navigator also lists managed database services, or DBaaS (Database as a
-Service), in the [database listing](https://sparecores.com/databases). Open
-it from **Databases** in the site's header menu. It works like the server
-listing: filter in the sidebar, use Search Prompt, and select the checkboxes
-of two or more databases to compare them. Guests can compare up to four
+Managed database services, or DBaaS (Database as a Service), are in the
+[Databases listing](https://sparecores.com/databases). Open it from
+**Databases** in the Navigator menu of the site's header. It works like the
+Servers listing: filter in the sidebar, use Search Prompt, and select the
+checkboxes of two or more databases to compare them. Guests can compare up to four
 databases at a time. Its price selector offers **Any price**,
 **Hourly prices**, and **Monthly prices**. For the database benchmark, see
 [Measuring PostgreSQL Performance at Scale](https://sparecores.com/article/benchmark-pgbench-postgres).
 
-For price categories and currencies, see [Understand Prices](./prices.md).
+For price categories and currencies, see [Understand prices](./prices.md).
 For database schemas and programmatic access, see
 [Schemas](https://docs.sparecores.com/schemas/) and
 [API](https://docs.sparecores.com/api/).

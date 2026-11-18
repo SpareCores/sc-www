@@ -1,15 +1,15 @@
-# Compare Servers and Databases
+# Compare servers and databases
 
 You can compare servers or managed databases side by side. Start from the
-[Navigator](./listings.md)'s server or database listing, or from a server or
-database detail page. For servers, you can also start from the
+[Servers or Databases listing](./listings.md), or from a server or database
+detail page. For servers, you can also start from the
 [Advisor](./advisor.md)'s recommendations.
 
-## Start a Comparison
+## Start a comparison
 
-### From the Navigator
+### From a listing
 
-1. Open the Navigator's server or database listing.
+1. Open the Servers or Databases listing.
 2. Select the checkboxes for at least two servers or databases.
 3. Select **Compare (N)**, for example **Compare (3)**, in the bar that
    appears at the bottom of the page, next to **Clear**.
@@ -18,7 +18,7 @@ Guests can compare up to four servers, and separately up to four databases,
 at a time. The listing disables further selection when the guest limit is
 reached and shows a registration prompt.
 
-### From a Detail Page
+### From a detail page
 
 Open a server or database from its listing and select **Compare**. The
 control changes to **Don't Compare** when that item is in the current
@@ -32,9 +32,9 @@ select **Compare servers** or **Compare databases**.
 In the Advisor, select **Compare baseline**, select the checkboxes of one or
 more recommendations, and select **Compare (N)**. The comparison shows the
 baseline next to the selected servers. See
-[Compare a Recommendation with the Baseline](./advisor.md#compare-a-recommendation-with-the-baseline).
+[Compare a recommendation with the baseline](./advisor.md#compare-a-recommendation-with-the-baseline).
 
-## Read a Comparison
+## Read a comparison
 
 The comparison page places the selected servers side by side: property
 sections such as CPU, Memory, and Storage, then **Workload Profiles**,
@@ -66,5 +66,5 @@ The [curated server comparisons](https://sparecores.com/servers/compare) and
 [curated database comparisons](https://sparecores.com/databases/compare)
 provide preselected groups to explore.
 
-For price display, see [Understand Prices](./prices.md). For guest limits and
+For price display, see [Understand prices](./prices.md). For guest limits and
 bookmarks, see [Accounts and bookmarks](./accounts-and-bookmarks.md).
