@@ -1,9 +1,9 @@
-# Spare Cores Website User Guide
+# Web UI user guide
 
-The [Spare Cores website](https://sparecores.com/) lists cloud servers from
-many vendors with their prices and benchmark results. Use the
-[Navigator](./listings.md), the site's server listing, to browse, filter, and
-compare servers yourself. Use the [Advisor](./advisor.md) when you run a
+The Spare Cores Web UI, at [sparecores.com](https://sparecores.com/), lists
+cloud servers from many vendors with their prices and benchmark results. Use
+the [Servers listing](./listings.md) to browse, filter, and compare servers
+yourself. Use the [Advisor](./advisor.md) when you run a
 server today and want a cheaper or faster server for the same workload.
 
 You do not need an account to start. As a guest, you can browse and filter
@@ -12,29 +12,28 @@ time, and share links. Register for free to save bookmarks and to remove the
 compare and location-filter limits; see
 [Guest limits](./accounts-and-bookmarks.md#guest-limits).
 
-## Choose a Task
+## Choose a task
 
-- [Find Servers and Databases](./listings.md) to search, filter, and
+- [Find servers and databases](./listings.md) to search, filter, and
   inspect servers and managed databases.
-- [Compare Servers and Databases](./compare.md) to review servers or managed
+- [Compare servers and databases](./compare.md) to review servers or managed
   databases side by side.
-- [Get Recommendations in the Advisor](./advisor.md) to compare a baseline
+- [Get recommendations in the Advisor](./advisor.md) to compare a baseline
   server with other servers for a selected workload.
-- [Understand Prices](./prices.md) to learn what the price and currency
+- [Understand prices](./prices.md) to learn what the price and currency
   controls change.
-- [Create an Account and Manage Bookmarks](./accounts-and-bookmarks.md) to
+- [Create an account and manage bookmarks](./accounts-and-bookmarks.md) to
   save servers and searches.
 
-## Where the Results Come From
+## Where the results come from
 
-The Navigator's data comes from
+The site's data comes from
 [Spare Cores Navigator](https://docs.sparecores.com/overview/), the platform
 that collects cloud resource information and prices, inspects servers, and
 runs benchmark workloads; its Overview describes the data flow. The
 [Benchmarks](https://docs.sparecores.com/benchmarks/) reference describes
-benchmark workloads; the [Schemas](https://docs.sparecores.com/schemas/) and
-[API](https://docs.sparecores.com/api/) references describe technical ways to
-access the data.
+benchmark workloads. For other ways to access the data, such as the API or an
+SQLite download, see [Data](https://docs.sparecores.com/data/).
 
 ## Help
 

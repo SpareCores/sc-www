@@ -1,4 +1,4 @@
-# Get Recommendations in the Advisor
+# Get recommendations in the Advisor
 
 The Advisor compares candidate servers with a baseline for a workload and
 utilization level. Open the [Advisor](https://sparecores.com/advisor) to
@@ -9,7 +9,7 @@ in the page header. It fills in a sample baseline server, workload, and
 utilization. **Introduction**, next to it, opens a
 [video about the Advisor](https://www.youtube.com/watch?v=4QwvxaLTW2k).
 
-## Set Up an Assessment
+## Set up an assessment
 
 The following screenshot shows the input panel with a baseline server, a
 workload, and a utilization filled in:
@@ -54,7 +54,7 @@ For example, with `aws / m5.large` as the baseline, an LLM inference
 workload, and 50% average utilization, the Advisor sets required memory to
 4 GiB.
 
-## Compare a Recommendation with the Baseline
+## Compare a recommendation with the baseline
 
 1. Select **Compare baseline** above the recommendations to add the baseline
    to your comparison. The button changes to **Remove baseline**.
@@ -62,9 +62,10 @@ workload, and 50% average utilization, the Advisor sets required memory to
 3. Select **Compare (N)** in the bar at the bottom of the page.
 
 The comparison shows the baseline and the selected servers side by side. For
-more detail on the comparison view, see [Compare Servers](./compare.md).
+more detail on the comparison view, see
+[Compare servers and databases](./compare.md).
 
 Price allocation and currency affect the price information shown. See
-[Understand Prices](./prices.md). The
+[Understand prices](./prices.md). The
 [Benchmarks reference](https://docs.sparecores.com/benchmarks/) describes
 benchmark workloads used in the results.

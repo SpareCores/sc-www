@@ -1,11 +1,11 @@
-# Create an Account and Manage Bookmarks
+# Create an account and manage bookmarks
 
-You can browse the [Navigator](./listings.md) and use the
-[Advisor](./advisor.md) as a guest. Some actions and limits require an
-account. Select **Register** or **Log in** in the top-right corner
-of the site.
+A free account lifts the guest limits and lets you bookmark servers,
+databases, searches, comparisons, and Advisor assessments. Without one, you
+can still use the [listings](./listings.md) and the [Advisor](./advisor.md).
+Select **Register** or **Log in** in the top-right corner of the site.
 
-## Guest Limits
+## Guest limits
 
 As a guest, you can use everything except bookmarks, with the following
 limits:
@@ -26,7 +26,7 @@ bookmark action as a guest, the site can prompt you to register or sign in;
 the pending action completes after registration. When signed in, the account
 menu includes **Bookmarks**, **Edit Profile**, and **Sign Out**.
 
-## Save Servers, Searches, and Comparisons
+## Save servers, searches, and comparisons
 
 To bookmark a server or database, select its bookmark icon in the listing or
 on its detail page. The bookmark is saved at once, with no dialog; select the
@@ -39,7 +39,7 @@ To save a search, a comparison, or an Advisor assessment:
 2. Enter a **Name** of at least three characters. **Notes** are optional.
 3. Select **Confirm** to save.
 
-## Find and Manage Saved Items
+## Find and manage saved items
 
 Open **Bookmarks** from the account menu. The page groups saved items by type;
 its current filters include servers, databases, searches, comparisons, and
