@@ -37,6 +37,10 @@
   @apply whitespace-normal;
 }
 
+.sc-button--mobile {
+  @apply h-6 rounded-md px-2 py-0 text-xs;
+}
+
 .sc-button--small {
   @apply px-3 py-2;
 }
@@ -436,6 +440,10 @@
   @apply rounded-full;
 }
 
+.sc-button--round .sc-button__icon {
+  @apply size-4.75;
+}
+
 .sc-button__label.sc-button__label--fit {
   overflow: visible;
   text-overflow: clip;
@@ -456,7 +464,7 @@
 
 .sc-button--compact .sc-button__icon,
 .sc-button--compact .sc-button__compact-icon {
-  @apply size-4;
+  @apply size-4.75;
 }
 
 .sc-button--compact .sc-button__compact-icon {
@@ -488,6 +496,10 @@
 
   .sc-button--compact .sc-button__label {
     @apply inline;
+  }
+
+  .sc-button--compact .sc-button__icon {
+    @apply size-4;
   }
 
   .sc-button--compact .sc-button__extension-label {

@@ -10,7 +10,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon } from "@lucide/angular";
 
-export type ScButtonSize = "small" | "default" | "large";
+export type ScButtonSize = "mobile" | "small" | "default" | "large";
 export type ScButtonVariant =
   | "solid"
   | "outline"
