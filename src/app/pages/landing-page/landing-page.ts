@@ -13,17 +13,15 @@ import { ArticleMeta, ArticlesApi } from "../../services/articles-api";
 import { isPlatformBrowser } from "@angular/common";
 import { SeoHandler } from "../../services/seo-handler";
 import { SectionHeading } from "../../components/section-heading/section-heading";
+import { FeatureCard } from "../../components/feature-card/feature-card";
 import { Button } from "../../components/button/button";
 import { SlotMachine } from "../../components/slot-machine/slot-machine";
 import { RouterLink } from "@angular/router";
 import {
   LucideCheck,
-  LucideMessageSquareMore,
   LucideQuote,
   LucideRocket,
   LucideScanEye,
-  LucideSquareArrowDown,
-  LucideSquareArrowUpRight,
 } from "@lucide/angular";
 import { ArticleCard } from "../../components/article-card/article-card";
 import { NeetoCal } from "../../services/neeto-cal";
@@ -33,16 +31,14 @@ import { PrismHighlighter } from "../../services/prism-highlighter";
   selector: "sc-landingpage",
   imports: [
     SectionHeading,
+    FeatureCard,
     Button,
     SlotMachine,
     RouterLink,
     LucideCheck,
-    LucideMessageSquareMore,
     LucideQuote,
     LucideRocket,
     LucideScanEye,
-    LucideSquareArrowDown,
-    LucideSquareArrowUpRight,
     ArticleCard,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

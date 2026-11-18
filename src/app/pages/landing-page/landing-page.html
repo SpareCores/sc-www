@@ -114,148 +114,50 @@
         <div
           class="grid gap-x-8 gap-y-24 pt-20 sm:px-4 md:grid-cols-2 xl:grid-cols-4"
         >
-          <div
-            class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
+          <sc-feature-card
+            badge="Know"
+            heading="navigator"
+            headingVariant="tag"
+            actionIcon="square-arrow-up-right"
+            actionLabel="Explore Navigator"
+            actionLink="/servers"
           >
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div
-                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
-              >
-                <span class="text-2xl font-bold">Know</span>
-              </div>
-            </div>
-            <div
-              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
-            >
-              <span class="text-emerald-400">&lt;</span>
-              <span class="text-white font-light">navigator</span>
-              <span class="text-emerald-400">&gt;</span>
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Search and compare 5,000+ servers by price, specs, benchmarks, and
-              cost efficiency.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <a
-                routerLink="/servers"
-                class="-m-2 inline-flex p-2 text-emerald-400"
-                aria-label="Explore Navigator"
-              >
-                <svg
-                  lucideSquareArrowUpRight
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </a>
-            </div>
-          </div>
-          <div
-            class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
+            Search and compare 5,000+ servers by price, specs, benchmarks, and
+            cost efficiency.
+          </sc-feature-card>
+          <sc-feature-card
+            badge="Track"
+            heading="resource_tracker"
+            headingVariant="tag"
+            actionIcon="square-arrow-down"
+            actionLabel="Explore Resource Tracker"
+            (actionClick)="scrollTo('resource-tracker')"
           >
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div
-                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
-              >
-                <span class="text-2xl font-bold">Track</span>
-              </div>
-            </div>
-            <div
-              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
-            >
-              <span class="text-emerald-400">&lt;</span>
-              <span class="text-white font-light">resource_tracker</span>
-              <span class="text-emerald-400">&gt;</span>
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Track real CPU, GPU, memory, and runtime usage from AI/ML jobs
-              with open-source tooling.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                (click)="scrollTo('resource-tracker')"
-                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
-                aria-label="Explore Resource Tracker"
-              >
-                <svg
-                  lucideSquareArrowDown
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
-          <div
-            class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
+            Track real CPU, GPU, memory, and runtime usage from AI/ML jobs with
+            open-source tooling.
+          </sc-feature-card>
+          <sc-feature-card
+            badge="Scale"
+            heading="advisor"
+            headingVariant="tag"
+            actionIcon="square-arrow-up-right"
+            actionLabel="Explore Advisor"
+            actionLink="/advisor"
           >
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div
-                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
-              >
-                <span class="text-2xl font-bold">Scale</span>
-              </div>
-            </div>
-            <div
-              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
-            >
-              <span class="text-emerald-400">&lt;</span>
-              <span class="text-white font-light">advisor</span>
-              <span class="text-emerald-400">&gt;</span>
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Turn utilization data and constraints into ranked, explainable
-              instance recommendations.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <a
-                routerLink="/advisor"
-                class="-m-2 inline-flex p-2 text-emerald-400"
-                aria-label="Explore Advisor"
-              >
-                <svg
-                  lucideSquareArrowUpRight
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </a>
-            </div>
-          </div>
-          <div
-            class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
+            Turn utilization data and constraints into ranked, explainable
+            instance recommendations.
+          </sc-feature-card>
+          <sc-feature-card
+            badge="Govern"
+            heading="sentinel"
+            headingVariant="tag"
+            actionIcon="square-arrow-down"
+            actionLabel="Explore Sentinel"
+            (actionClick)="scrollTo('sentinel')"
           >
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div
-                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
-              >
-                <span class="text-2xl font-bold">Govern</span>
-              </div>
-            </div>
-            <div
-              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
-            >
-              <span class="text-emerald-400">&lt;</span>
-              <span class="text-white font-light">sentinel</span>
-              <span class="text-emerald-400">&gt;</span>
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Use dashboards, reports, alerts, and team controls to catch
-              over-provisioning and track savings.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                (click)="scrollTo('sentinel')"
-                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
-                aria-label="Explore Sentinel"
-              >
-                <svg
-                  lucideSquareArrowDown
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
+            Use dashboards, reports, alerts, and team controls to catch
+            over-provisioning and track savings.
+          </sc-feature-card>
         </div>
       </div>
     </div>
@@ -738,106 +640,42 @@
         <div
           class="grid gap-8 justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-4 pt-8 sm:px-4"
         >
-          <div
-            class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
+          <sc-feature-card
+            heading="Spare Cores Navigator"
+            actionIcon="square-arrow-up-right"
+            actionLabel="Learn about Navigator"
+            actionLink="/about/navigator"
           >
-            <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
-              Spare Cores Navigator
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Vendor-neutral cloud intelligence covering 5,000+ cloud servers
-              across providers, with standardized pricing, specs, and
-              benchmarks.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <a
-                routerLink="/about/navigator"
-                class="-m-2 inline-flex p-2 text-emerald-400"
-                aria-label="Learn about Navigator"
-              >
-                <svg
-                  lucideSquareArrowUpRight
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </a>
-            </div>
-          </div>
-          <div
-            class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
+            Vendor-neutral cloud intelligence covering 5,000+ cloud servers
+            across providers, with standardized pricing, specs, and benchmarks.
+          </sc-feature-card>
+          <sc-feature-card
+            heading="Cloud Optimization Assessment"
+            actionIcon="message-square-more"
+            actionLabel="Contact sales about Cloud Optimization Assessment"
+            actionId="meeting-services-consulting"
           >
-            <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
-              Cloud Optimization Assessment
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Baseline AI/ML infrastructure spend, identify workload
-              inefficiencies, recommend and prioritize right-sizing actions.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                id="meeting-services-consulting"
-                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
-                aria-label="Contact sales about Cloud Optimization Assessment"
-              >
-                <svg
-                  lucideMessageSquareMore
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
-          <div
-            class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
+            Baseline AI/ML infrastructure spend, identify workload
+            inefficiencies, recommend and prioritize right-sizing actions.
+          </sc-feature-card>
+          <sc-feature-card
+            heading="Scalable Shiny / Streamlit Hosting"
+            actionIcon="message-square-more"
+            actionLabel="Contact sales about Shiny and Streamlit hosting"
+            actionId="meeting-services-shiny"
           >
-            <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
-              Scalable Shiny / Streamlit Hosting
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Monitoring and auto‑scaling containerized dashboards from zero to
-              thousands of users on your cloud—or ours.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                id="meeting-services-shiny"
-                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
-                aria-label="Contact sales about Shiny and Streamlit hosting"
-              >
-                <svg
-                  lucideMessageSquareMore
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
-          <div
-            class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
+            Monitoring and auto‑scaling containerized dashboards from zero to
+            thousands of users on your cloud—or ours.
+          </sc-feature-card>
+          <sc-feature-card
+            heading="Ad-hoc AI Workload Sizing"
+            actionIcon="message-square-more"
+            actionLabel="Contact sales about AI workload sizing"
+            actionId="meeting-services-llms"
           >
-            <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
-              Ad-hoc AI Workload Sizing
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Instantly pick the lowest-cost, right-sized infra for one-off
-              tasks—like labeling 10 k PDFs with an LLM.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                id="meeting-services-llms"
-                class="-m-2 inline-flex p-2 text-emerald-400 cursor-pointer"
-                aria-label="Contact sales about AI workload sizing"
-              >
-                <svg
-                  lucideMessageSquareMore
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
+            Instantly pick the lowest-cost, right-sized infra for one-off
+            tasks—like labeling 10 k PDFs with an LLM.
+          </sc-feature-card>
         </div>
       </div>
     </div>
