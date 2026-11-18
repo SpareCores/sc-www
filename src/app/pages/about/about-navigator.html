@@ -103,20 +103,14 @@
 </div>
 <div class="content_section even">
   <div class="flex flex-col gap-12 justify-center">
-    <sc-theme-text
-      text="extract_transform_load"
-      classes="text-xl sm:text-4xl justify-center font-light sc-header-anchor-host"
-    >
-      <sc-header-anchor
-        anchorId="extract-transform-load"
-        label="Extract, transform, load"
-      ></sc-header-anchor>
-    </sc-theme-text>
-    <div
-      class="font-mono full flex justify-center mx-auto my-auto text-lg sm:text-2xl"
+    <sc-section-heading
+      tag="extract_transform_load"
+      anchorId="extract-transform-load"
+      anchorLabel="Extract, transform, load"
+      [anchorWithTarget]="true"
     >
       Here are some key highlights regarding the information we currently cover.
-    </div>
+    </sc-section-heading>
     <div class="flex gap-12 lg:gap-24 justify-center flex-col lg:flex-row">
       <div class="flex justify-center">
         <!-- 550x380 -->
@@ -173,15 +167,12 @@
 <div class="content_section odd">
   <div class="content">
     <div class="flex flex-col w-full lg:w-1/2 justify-center mx-auto gap-8">
-      <sc-theme-text
-        text="fun_facts"
-        classes="text-xl sm:text-4xl justify-center font-light sc-header-anchor-host"
-      >
-        <sc-header-anchor
-          anchorId="fun-facts"
-          label="Fun facts"
-        ></sc-header-anchor>
-      </sc-theme-text>
+      <sc-section-heading
+        tag="fun_facts"
+        anchorId="fun-facts"
+        anchorLabel="Fun facts"
+        [anchorWithTarget]="true"
+      ></sc-section-heading>
       <swiper-container
         class="w-full"
         slides-per-view="1"
@@ -283,15 +274,12 @@
 <div class="content_section even">
   <div class="content">
     <div class="flex flex-col gap-12 justify-center">
-      <sc-theme-text
-        text="resource_optimization"
-        classes="text-xl sm:text-4xl justify-center font-light sc-header-anchor-host"
-      >
-        <sc-header-anchor
-          anchorId="resource-optimization"
-          label="Resource optimization"
-        ></sc-header-anchor>
-      </sc-theme-text>
+      <sc-section-heading
+        tag="resource_optimization"
+        anchorId="resource-optimization"
+        anchorLabel="Resource optimization"
+        [anchorWithTarget]="true"
+      ></sc-section-heading>
       <div
         class="w-full lg:w-2/5 mx-auto my-auto font-bold text-2xl sm:text-4xl text-center mb-8"
       >
@@ -394,22 +382,14 @@
 <div class="content_section odd" id="project-components">
   <div class="content flex justify-center">
     <div class="w-full lg:w-3/5 flex flex-col gap-12">
-      <sc-theme-text
-        text="project_components"
-        classes="text-xl sm:text-4xl justify-center font-light sc-header-anchor-host"
+      <sc-section-heading
+        tag="project_components"
+        anchorId="project-components"
+        anchorLabel="Project components"
       >
-        <sc-header-anchor
-          anchorId="project-components"
-          label="Project components"
-          [withTarget]="false"
-        ></sc-header-anchor>
-      </sc-theme-text>
-      <div class="flex gap-4 justify-center">
-        <div class="font-mono text-lg sm:text-2xl text-center">
-          The status and brief descriptions of the<br />Spare Cores Navigator
-          components:
-        </div>
-      </div>
+        The status and brief descriptions of the Spare Cores Navigator
+        components:
+      </sc-section-heading>
       <div class="min-w-0 overflow-x-auto mb-8">
         <table class="repo_table">
           <thead>
@@ -607,18 +587,14 @@
 <div class="content_section odd">
   <div class="content">
     <div class="flex flex-col w-full lg:w-2/3 justify-center mx-auto gap-8">
-      <sc-theme-text
-        text="testimonials"
-        classes="text-xl sm:text-4xl justify-center font-light sc-header-anchor-host"
+      <sc-section-heading
+        tag="testimonials"
+        anchorId="testimonials"
+        anchorLabel="Testimonials"
+        [anchorWithTarget]="true"
       >
-        <sc-header-anchor
-          anchorId="testimonials"
-          label="Testimonials"
-        ></sc-header-anchor>
-      </sc-theme-text>
-      <div class="w-full mx-auto my-auto font-bold text-2xl text-center">
         What the community is saying about the Spare Cores Navigator:
-      </div>
+      </sc-section-heading>
       <swiper-container
         #testimonialsSwiper
         class="w-full"

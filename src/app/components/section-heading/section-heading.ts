@@ -17,4 +17,5 @@ export class SectionHeading {
   readonly subtitle = input<string>();
   readonly anchorId = input<string>();
   readonly anchorLabel = input("");
+  readonly anchorWithTarget = input(false);
 }

@@ -28,7 +28,7 @@ import {
   LucideSquareKanban,
 } from "@lucide/angular";
 import { ThemeText } from "../../components/theme-text/theme-text";
-import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
+import { SectionHeading } from "../../components/section-heading/section-heading";
 import { Button } from "../../components/button/button";
 import { SeoHandler } from "../../services/seo-handler";
 import { isPlatformBrowser } from "@angular/common";
@@ -47,7 +47,6 @@ interface Quote {
 @Component({
   selector: "sc-about-navigator",
   imports: [
-    HeaderAnchor,
     TooltipTrigger,
     Breadcrumbs,
     LucideBookText,
@@ -64,6 +63,7 @@ interface Quote {
     LucideScale,
     LucideSquareKanban,
     ThemeText,
+    SectionHeading,
     Button,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
