@@ -8,7 +8,7 @@
   position: relative;
   width: 560px;
   height: 620px;
-  zoom: tan(atan2(100vw - 2rem, 560px));
+  zoom: tan(atan2(100vw - 2rem, 590px));
 
   @media (width >= theme(--breakpoint-sm)) {
     zoom: 1;
