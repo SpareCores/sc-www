@@ -68,7 +68,7 @@ what it says. But running it at scale on modern cloud hardware exposed a few fri
   process-creation overhead and gives us direct control over thread placement.
 
 - **No huge page support.** `bw_mem` uses `valloc`, so large buffer latency tests pay TLB
-  overhead on top of actual memory latency. On a 128 MB buffer with 4 KB pages, you need 32,768
+  overhead on top of actual memory latency. On a 128 MiB buffer with 4 KiB pages, you need 32,768
   page table entries -- far beyond the TLB capacity on most CPUs. `sc-membench` handles this
   transparently with `-H`.
 
@@ -94,7 +94,7 @@ entire cache hierarchy:
   interference
 
 Buffer sizes are derived from detected cache sizes and cover L1/2, L1, 2xL1, L2/2, L2, 2xL2,
-L3/4, L3/2, L3, 2xL3, and 4xL3 per thread. The latency test goes up to 2 GB (or 25% of RAM)
+L3/4, L3/2, L3, 2xL3, and 4xL3 per thread. The latency test goes up to 2 GiB (or 25% of RAM)
 to handle processors with unusually large L3 caches like AMD EPYC 9754 with its 1.1 GB 3D V-Cache.
 
 Output is CSV by default (machine-readable, easy to ingest), or a formatted table with a
@@ -137,6 +137,10 @@ BENCHMARK SCORE (higher is better):
 --------------------------------------------------------------------------------
 ```
 
+`sc-membench` labels its own output loosely: KB means KiB, MB/s means MiB/s, and GB/s and TB/s
+mean thousands and millions of MiB/s. The bandwidth score is the mean peak bandwidth in thousands of
+MiB/s.
+
 The combined score is a geometric mean of bandwidth and latency scores, so neither dimension
 dominates. Note that scores are only comparable across runs that used the same default settings
 (no `-t`, `-p`, or `-s` flags), and the tool will warn you if they might not be.
@@ -177,7 +181,7 @@ for the current packaging status.
 
 A few options worth knowing:
 
-- `-H` enables huge pages via THP for buffers >= 4 MB (no setup needed, graceful fallback)
+- `-H` enables huge pages via THP for buffers >= 4 MiB (no setup needed, graceful fallback)
 - `-v` / `-vv` prints verbose output including detected cache and NUMA topology
 - `-a` auto-scales thread count to find the optimal configuration per buffer size
 - `-t SECONDS` sets a runtime limit for quick checks
@@ -187,7 +191,7 @@ A few options worth knowing:
 
 The cache detection relies on `hwloc` when available, and falls back to
 `/sys/devices/system/cpu/*/cache/` on Linux or `sysctl` on BSD/macOS.
-If detection fails, the benchmark falls back to hardcoded defaults (32 KB L1, 256 KB L2, 8 MB L3),
+If detection fails, the benchmark falls back to hardcoded defaults (32 KiB L1, 256 KiB L2, 8 MiB L3),
 which may not exercise the right size boundaries on your hardware. Running with `-v` will
 show what was detected.
 
