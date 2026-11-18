@@ -176,7 +176,7 @@
         ></sc-section-heading>
         <div class="grid gap-8 pt-4 xl:grid-cols-2 xl:gap-12">
           <div class="flex flex-col justify-center md:max-lg:px-12">
-            <sc-check-list>
+            <sc-check-list class="mx-4.75">
               <sc-check-list-item>
                 Add lightweight telemetry to AI/ML jobs.
               </sc-check-list-item>
@@ -308,28 +308,30 @@
           class="flex flex-col gap-12 md:max-lg:px-12 lg:flex-row lg:gap-24 pt-8"
         >
           <div class="flex flex-col w-full lg:w-1/2">
-            <div class="flex flex-row gap-4 items-center pb-8">
+            <div class="grid grid-cols-[auto_1fr] items-center gap-x-2 pb-8">
               <div
-                class="shrink-0 rounded-full border-2 border-emerald-400 p-6"
+                class="flex size-9.5 items-center justify-center rounded-full border-2 border-emerald-400"
               >
-                <svg lucideScanEye class="h-12 w-12 text-emerald-400"></svg>
+                <svg
+                  lucideScanEye
+                  class="size-4.75 text-emerald-400"
+                  aria-hidden="true"
+                ></svg>
               </div>
-              <div>
-                <div class="text-3xl font-bold text-emerald-400">
-                  Sentinel Access
-                </div>
-                <div class="text-2xl font-light">
-                  <a
-                    href="https://sentinel.sparecores.com/"
-                    target="_blank"
-                    rel="noopener"
-                    class="sc-link"
-                    >Start free</a
-                  >
-                </div>
+              <div class="text-2xl font-bold text-emerald-400">
+                Sentinel Access
+              </div>
+              <div class="col-start-2 text-xl font-light">
+                <a
+                  href="https://sentinel.sparecores.com/"
+                  target="_blank"
+                  rel="noopener"
+                  class="sc-link"
+                  >Start free</a
+                >
               </div>
             </div>
-            <sc-check-list>
+            <sc-check-list class="mx-4.75">
               <sc-check-list-item>
                 360-view of every job you run in a central dashboard
               </sc-check-list-item>
@@ -345,28 +347,30 @@
             </sc-check-list>
           </div>
           <div class="flex flex-col w-full lg:w-1/2">
-            <div class="flex flex-row gap-4 items-center pb-8">
+            <div class="grid grid-cols-[auto_1fr] items-center gap-x-2 pb-8">
               <div
-                class="shrink-0 rounded-full border-2 border-emerald-400 p-6"
+                class="flex size-9.5 items-center justify-center rounded-full border-2 border-emerald-400"
               >
-                <svg lucideRocket class="h-12 w-12 text-emerald-400"></svg>
+                <svg
+                  lucideRocket
+                  class="size-4.75 text-emerald-400"
+                  aria-hidden="true"
+                ></svg>
               </div>
-              <div>
-                <div class="text-3xl font-bold text-emerald-400">
-                  Sentinel team plans
-                </div>
-                <div class="text-2xl font-light">
-                  <button
-                    type="button"
-                    id="meeting-sentinel-team-plans"
-                    class="bg-transparent sc-link"
-                  >
-                    Contact sales
-                  </button>
-                </div>
+              <div class="text-2xl font-bold text-emerald-400">
+                Sentinel team plans
+              </div>
+              <div class="col-start-2 text-xl font-light">
+                <button
+                  type="button"
+                  id="meeting-sentinel-team-plans"
+                  class="bg-transparent sc-link"
+                >
+                  Contact sales
+                </button>
               </div>
             </div>
-            <sc-check-list>
+            <sc-check-list class="mx-4.75">
               <sc-check-list-item>
                 Everything in Sentinel Access, plus team support
               </sc-check-list-item>
