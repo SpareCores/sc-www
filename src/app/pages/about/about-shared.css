@@ -3,8 +3,12 @@
 .content_section {
   @apply bg-primary;
   @apply text-white;
-  padding: 4rem 2rem;
+  padding: 3rem 0.5rem;
   border-top: 1px solid var(--color-emerald-400);
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding: 4rem 2rem;
+  }
 }
 
 .content_section.even {
