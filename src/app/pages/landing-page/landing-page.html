@@ -225,20 +225,20 @@
             ></iframe>
           </div>
         </div>
-        <div class="w-full lg:w-4/5 mx-auto my-auto text-2xl pt-8">
+        <div class="w-full lg:w-4/5 mx-auto my-auto text-2xl sm:pt-8">
           <div
             class="quote-container flex flex-col items-center gap-4 px-2 pb-2 sm:flex-row sm:gap-8"
           >
             <div>
               <span
-                class="inline-flex justify-center items-center size-[90px] text-emerald-400"
+                class="flex justify-center items-center size-12.5 sm:inline-flex sm:size-22.5 text-emerald-400"
               >
-                <svg lucideQuote class="shrink-0 size-[50px]"></svg>
+                <svg lucideQuote class="shrink-0 size-12.5"></svg>
               </span>
             </div>
             <div class="w-full">
               <button
-                class="quote-preview text-lg sm:text-2xl cursor-zoom-in"
+                class="quote-preview text-base sm:text-2xl cursor-zoom-in"
                 (click)="toggleQuote($event)"
               >
                 The Resource Tracker has become an essential part of our
@@ -248,7 +248,7 @@
                   >— Data Engineer, Too Good To Go</span
                 >
               </button>
-              <div class="quote-full text-lg sm:text-2xl hidden">
+              <div class="quote-full text-base sm:text-2xl hidden">
                 <p class="pb-4">
                   We run several ML pipelines that process high volumes of data
                   daily. Initially, we over-provisioned CPU and memory to avoid
@@ -390,20 +390,20 @@
           </div>
         </div>
       </div>
-      <div class="w-full sm:w-4/5 mx-auto my-auto text-2xl pt-16">
+      <div class="w-full sm:w-4/5 mx-auto my-auto text-2xl pt-8 sm:pt-16">
         <div
           class="quote-container flex flex-col items-center gap-4 px-2 pb-2 sm:flex-row sm:gap-8"
         >
           <div>
             <span
-              class="inline-flex justify-center items-center size-[90px] text-emerald-400"
+              class="flex justify-center items-center size-12.5 sm:inline-flex sm:size-22.5 text-emerald-400"
             >
-              <svg lucideQuote class="shrink-0 size-[50px]"></svg>
+              <svg lucideQuote class="shrink-0 size-12.5"></svg>
             </span>
           </div>
           <div class="w-full">
             <button
-              class="quote-preview text-lg sm:text-2xl cursor-zoom-in"
+              class="quote-preview text-base sm:text-2xl cursor-zoom-in"
               (click)="toggleQuote($event)"
             >
               They brought stability and scalability to the platform,
@@ -411,7 +411,7 @@
               costs [...]
               <span class="text-gray-400">— Chief Data Officer, System1</span>
             </button>
-            <div class="quote-full text-lg sm:text-2xl hidden">
+            <div class="quote-full text-base sm:text-2xl hidden">
               <p class="pb-4">
                 Gergely and his team played a key role in building and
                 productionizing the infrastructure for our data science
