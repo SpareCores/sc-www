@@ -24,7 +24,6 @@ import {
   LucideGauge,
   LucideImageUp,
   LucideMemoryStick,
-  LucideNotebookText,
   LucidePackageOpen,
   LucideRefreshCcwDot,
 } from "@lucide/angular";
@@ -43,6 +42,7 @@ import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner
 import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { ScrollSpy } from "../../directives/scroll-spy";
 import { BenchmarkWorkloadsSidebar } from "../../components/benchmark-workloads-sidebar/benchmark-workloads-sidebar";
+import { PageHeader } from "../../components/page-header/page-header";
 import {
   BenchmarkFamily,
   BenchmarkWorkloadConfig,
@@ -73,7 +73,6 @@ type SidebarPreference = "auto" | "expanded" | "collapsed";
     LucideGauge,
     LucideImageUp,
     LucideMemoryStick,
-    LucideNotebookText,
     LucidePackageOpen,
     LucideRefreshCcwDot,
     BenchmarkWorkload,
@@ -81,6 +80,7 @@ type SidebarPreference = "auto" | "expanded" | "collapsed";
     ScrollSpy,
     BenchmarkWorkloadsSidebar,
     BenchmarkIconPipe,
+    PageHeader,
   ],
   templateUrl: "./benchmark-workloads.html",
   styleUrl: "./benchmark-workloads.css",

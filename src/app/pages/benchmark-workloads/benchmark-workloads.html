@@ -2,14 +2,9 @@
 <div class="w-full bg-primary">
   <div class="content pt-8 lg:pt-16 pb-4">
     <sc-breadcrumbs [segments]="breadcrumbs()"></sc-breadcrumbs>
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
-      <div class="flex gap-4 items-center w-full justify-between">
-        <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideNotebookText class="h-8 w-8 mr-2"></svg>
-          {{ pageTitle }}
-        </h1>
-      </div>
-      <div class="text-white text-xl pr-4 md:pr-16">
+    <div class="flex flex-col gap-4 my-8 content-gutter">
+      <sc-page-header icon="notebook-text" [title]="pageTitle"></sc-page-header>
+      <div class="text-white text-base sm:text-xl sm:pr-16">
         {{ pageDescription }}
       </div>
     </div>
@@ -17,7 +12,7 @@
 </div>
 
 <!-- Main content area -->
-<div class="content py-8 bg-primary min-h-screen">
+<div class="content py-8 bg-primary min-h-dvh">
   @if (isLoading()) {
     <div class="flex justify-center items-center mt-16">
       <sc-loading-spinner
@@ -32,7 +27,7 @@
     </div>
   } @else {
     <div
-      class="flex gap-8 page_layout page_layout_spacing"
+      class="flex page_layout content-gutter -ml-2 lg:ml-0"
       [class.layout_static]="disableLayoutTransitions()"
     >
       <!-- Sticky TOC sidebar -->
