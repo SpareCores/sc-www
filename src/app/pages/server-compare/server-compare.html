@@ -18,7 +18,7 @@
         ></sc-loading-spinner>
       </div>
     } @else {
-      <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <div class="flex flex-col gap-4 my-8 content-gutter">
         <sc-page-header
           icon="scale"
           [title]="comparePage.title"
@@ -66,7 +66,7 @@
       </div>
 
       @if (!instances.length) {
-        <div class="flex flex-col gap-4 mx-2 xl:mx-0">
+        <div class="flex flex-col gap-4 content-gutter">
           <div class="text-white text-base sm:text-xl sm:pr-16">
             Compare cloud servers and their characteristics, such as CPU, GPU,
             memory, and storage details, and the performance of the instances by
@@ -125,68 +125,73 @@
       }
 
       @if (instances.length) {
-        <div
-          id="table_holder"
-          #tableHolder
-          class="compare_table_holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative min-h-dvh mx-2 xl:mx-0"
-          (scroll)="updateMirrorLayout()"
-        >
-          @if (isBrowser() && isTableOutsideViewport()) {
-            <div class="fixed_thead" [style]="stickyFixedDivStyle()">
-              <table class="sc-compare-table" [style]="stickyMainTableStyle()">
-                <thead>
-                  <tr>
-                    <th [style]="stickyFirstColStyle()"></th>
-                    @for (
-                      server of servers;
-                      track server.vendor_id + "_" + server.server_id;
-                      let i = $index
-                    ) {
-                      <th
-                        [style]="stickyColumnStyles()[i] || ''"
-                        class="compact-number-header-cell compare-table-header-cell"
-                      >
-                        <div
-                          class="ml-auto flex flex-col items-end gap-1 w-fit"
+        <div class="content-gutter">
+          <div
+            id="table_holder"
+            #tableHolder
+            class="compare_table_holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative min-h-dvh"
+            (scroll)="updateMirrorLayout()"
+          >
+            @if (isBrowser() && isTableOutsideViewport()) {
+              <div class="fixed_thead" [style]="stickyFixedDivStyle()">
+                <table
+                  class="sc-compare-table"
+                  [style]="stickyMainTableStyle()"
+                >
+                  <thead>
+                    <tr>
+                      <th [style]="stickyFirstColStyle()"></th>
+                      @for (
+                        server of servers;
+                        track server.vendor_id + "_" + server.server_id;
+                        let i = $index
+                      ) {
+                        <th
+                          [style]="stickyColumnStyles()[i] || ''"
+                          class="compact-number-header-cell compare-table-header-cell"
                         >
-                          <a
-                            class="underline decoration-dotted whitespace-nowrap"
-                            [href]="
-                              '/server/' +
-                              server.vendor_id +
-                              '/' +
-                              server.api_reference
-                            "
-                            target="_blank"
-                          >
-                            {{ server.display_name | uppercase }}
-                          </a>
-                        </div>
-                        @if (isBaselineServer(server)) {
                           <div
-                            class="compare-table-header-baseline-marker"
-                            aria-hidden="true"
-                          ></div>
-                        }
-                      </th>
-                    }
-                  </tr>
-                </thead>
-              </table>
+                            class="ml-auto flex flex-col items-end gap-1 w-fit"
+                          >
+                            <a
+                              class="underline decoration-dotted whitespace-nowrap"
+                              [href]="
+                                '/server/' +
+                                server.vendor_id +
+                                '/' +
+                                server.api_reference
+                              "
+                              target="_blank"
+                            >
+                              {{ server.display_name | uppercase }}
+                            </a>
+                          </div>
+                          @if (isBaselineServer(server)) {
+                            <div
+                              class="compare-table-header-baseline-marker"
+                              aria-hidden="true"
+                            ></div>
+                          }
+                        </th>
+                      }
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            }
+            <div>
+              <sc-server-compare-charts
+                [servers]="servers"
+                [baselineServer]="selectedBaselineServer"
+                [instanceProperties]="instanceProperties"
+                [benchmarkMeta]="benchmarkMeta"
+                [benchmarkCategories]="benchmarkCategories"
+                [instancePropertyCategories]="instancePropertyCategories"
+                [showZone]="showZoneIds"
+                (layoutChanged)="onCompareTableLayoutChange()"
+              >
+              </sc-server-compare-charts>
             </div>
-          }
-          <div>
-            <sc-server-compare-charts
-              [servers]="servers"
-              [baselineServer]="selectedBaselineServer"
-              [instanceProperties]="instanceProperties"
-              [benchmarkMeta]="benchmarkMeta"
-              [benchmarkCategories]="benchmarkCategories"
-              [instancePropertyCategories]="instancePropertyCategories"
-              [showZone]="showZoneIds"
-              (layoutChanged)="onCompareTableLayoutChange()"
-            >
-            </sc-server-compare-charts>
           </div>
         </div>
         @if (isBrowser()) {
