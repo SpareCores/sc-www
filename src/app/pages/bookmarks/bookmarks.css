@@ -120,8 +120,14 @@
   border: 0;
   background: transparent;
   color: var(--color-primary);
-  font-size: 0.875rem;
+  font-size: 1rem;
   outline: none;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .bookmarks-search__input {
+    font-size: 0.875rem;
+  }
 }
 
 .bookmarks-search__input::placeholder {

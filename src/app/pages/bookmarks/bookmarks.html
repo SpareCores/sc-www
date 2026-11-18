@@ -1,14 +1,14 @@
 @if (viewReady()) {
   <div class="w-full bg-primary">
-    <div class="content pt-16 pb-16">
+    <div class="content pt-8 pb-8 lg:pt-16 lg:pb-16">
       <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-      <div class="flex flex-col gap-4 my-6 mx-2 xl:mx-0">
+      <div class="flex flex-col gap-4 my-8 content-gutter">
         <sc-page-header
           icon="folder-bookmark"
           title="Bookmarks"
         ></sc-page-header>
-        <p class="text-white text-xl pr-16">
+        <p class="text-white text-base sm:text-xl sm:pr-16">
           Manage your bookmarks, saved searches, comparisons, and advisor
           recommendations in one place. Edit their note or rename them to make
           them easier to find.
@@ -63,7 +63,7 @@
         </div>
       </div>
 
-      <div class="bookmarks-stats mx-2 xl:mx-0">
+      <div class="bookmarks-stats content-gutter">
         @for (stat of statEntries(); track stat.key) {
           <label
             class="bookmarks-stats__item"
@@ -98,12 +98,12 @@
           <sc-loading-spinner size="lg"></sc-loading-spinner>
         </div>
       } @else if (!cards().length) {
-        <div class="text-center text-gray-400 py-16 mx-2 xl:mx-0">
+        <div class="text-center text-gray-400 py-16 content-gutter">
           No bookmarks match the current filters.
         </div>
       } @else {
         <div
-          class="bookmarks-grid mx-2 xl:mx-0"
+          class="bookmarks-grid content-gutter"
           cdkDropList
           cdkDropListOrientation="mixed"
           [cdkDropListDisabled]="!canReorder()"
