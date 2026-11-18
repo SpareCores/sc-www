@@ -6,13 +6,8 @@
   transition: color 0.15s ease;
 }
 
-.sc-bookmark-toggle--active,
-.sc-bookmark-toggle--can-add:hover:not(:disabled) {
+.sc-bookmark-toggle--active {
   --sc-bookmark-toggle-color: var(--color-emerald-400);
-}
-
-.sc-bookmark-toggle--can-remove:hover:not(:disabled) {
-  --sc-bookmark-toggle-color: var(--color-red-500);
 }
 
 .sc-bookmark-toggle__icon--add,
@@ -25,17 +20,27 @@
   fill: currentColor;
 }
 
-.sc-bookmark-toggle--can-add:hover:not(:disabled)
-  .sc-bookmark-toggle__icon--default,
-.sc-bookmark-toggle--can-remove:hover:not(:disabled)
-  .sc-bookmark-toggle__icon--default {
-  display: none;
-}
+@media (hover: hover) {
+  .sc-bookmark-toggle--can-add:hover:not(:disabled) {
+    --sc-bookmark-toggle-color: var(--color-emerald-400);
+  }
 
-.sc-bookmark-toggle--can-add:hover:not(:disabled)
-  .sc-bookmark-toggle__icon--add,
-.sc-bookmark-toggle--can-remove:hover:not(:disabled)
-  .sc-bookmark-toggle__icon--remove {
-  display: block;
-  position: static;
+  .sc-bookmark-toggle--can-remove:hover:not(:disabled) {
+    --sc-bookmark-toggle-color: var(--color-red-500);
+  }
+
+  .sc-bookmark-toggle--can-add:hover:not(:disabled)
+    .sc-bookmark-toggle__icon--default,
+  .sc-bookmark-toggle--can-remove:hover:not(:disabled)
+    .sc-bookmark-toggle__icon--default {
+    display: none;
+  }
+
+  .sc-bookmark-toggle--can-add:hover:not(:disabled)
+    .sc-bookmark-toggle__icon--add,
+  .sc-bookmark-toggle--can-remove:hover:not(:disabled)
+    .sc-bookmark-toggle__icon--remove {
+    display: block;
+    position: static;
+  }
 }
