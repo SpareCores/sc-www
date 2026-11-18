@@ -16,33 +16,35 @@
       </div>
     }
     @if (databaseDetails) {
-      <sc-details-header
-        resource="database"
-        [vendorId]="databaseDetails.vendor_id"
-        [vendorName]="databaseDetails.vendor?.name || databaseDetails.vendor_id"
-        [vendorLogo]="databaseDetails.vendor?.logo"
-        [entityId]="databaseDetails.api_reference"
-        [displayName]="databaseDetails.display_name"
-        [description]="description"
-        [priceDescription]="cardPriceDescription"
-        [features]="features"
-        [score]="
-          hasPgbenchHeaderScores
-            ? {
-                primary: pgbenchPeakScore ?? '',
-                primaryValue: pgbenchPeakValue,
-                primaryLabel: 'Peak TPM',
-                secondary: pgbenchSingleScore ?? '',
-                secondaryValue: pgbenchSingleValue,
-                secondaryLabel: 'Single-client baseline',
-              }
-            : null
-        "
-      >
-        <span detailsScoreTitle>Performance</span>
-      </sc-details-header>
-
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-4 md:gap-8 mt-8">
+        <sc-details-header
+          class="w-full"
+          resource="database"
+          [vendorId]="databaseDetails.vendor_id"
+          [vendorName]="
+            databaseDetails.vendor?.name || databaseDetails.vendor_id
+          "
+          [vendorLogo]="databaseDetails.vendor?.logo"
+          [entityId]="databaseDetails.api_reference"
+          [displayName]="databaseDetails.display_name"
+          [description]="description"
+          [priceDescription]="cardPriceDescription"
+          [features]="features"
+          [score]="
+            hasPgbenchHeaderScores
+              ? {
+                  primary: pgbenchPeakScore ?? '',
+                  primaryValue: pgbenchPeakValue,
+                  primaryLabel: 'Peak TPM',
+                  secondary: pgbenchSingleScore ?? '',
+                  secondaryValue: pgbenchSingleValue,
+                  secondaryLabel: 'Single-client baseline',
+                }
+              : null
+          "
+        >
+          <span detailsScoreTitle>Performance</span>
+        </sc-details-header>
         <div
           class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
         >

@@ -18,85 +18,83 @@
     }
 
     @if (serverDetails) {
-      <sc-details-header
-        resource="server"
-        [vendorId]="serverDetails.vendor_id"
-        [vendorName]="serverDetails.vendor.name"
-        [vendorLogo]="serverDetails.vendor.logo"
-        [entityId]="serverDetails.api_reference"
-        [displayName]="serverDetails.display_name"
-        [description]="description"
-        [priceDescription]="cardPriceDescription"
-        [features]="features"
-        [score]="
-          getBenchmarkValue(true) === null && getBenchmarkValue(false) === null
-            ? null
-            : {
-                primary: getBenchmark(true),
-                primaryValue: getBenchmarkValue(true),
-                primaryLabel: 'All-cores',
-                secondary: getBenchmark(false),
-                secondaryValue: getBenchmarkValue(false),
-                secondaryLabel: 'Single-core',
-              }
-        "
-      >
-        <span detailsScoreTitle
-          >Spare <span class="text-emerald-400"> SC</span>ore</span
-        >
-        <sc-button
-          detailsActions
-          label="Summarize"
-          [compact]="true"
-          icon="sparkles"
-          [disabled]="!descriptionsAvailable"
-          [title]="
-            descriptionsAvailable
-              ? 'Open AI-generated server summary'
-              : 'AI summary not available for this server'
-          "
-          data-ph-capture-attribute-sc-event="server details summarize open"
-          (click)="openSummarizeModal()"
-        ></sc-button>
-      </sc-details-header>
-    }
-
-    @if (serverDetails && getBenchmark(true) === "-") {
-      <div
-        class="mx-2 xl:mx-0 mt-8 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
-        role="alert"
-      >
-        <svg
-          lucideTriangleAlert
-          class="h-4 w-4 shrink-0 bounce-3 sm:h-6 sm:w-6"
-        ></svg>
-        <div>
-          <span class="font-bold"
-            >Benchmark data is currently unavailable for this server.
-          </span>
-          View this
-          <a
-            class="underline font-semibold"
-            routerLink="/navigator/benchmark-coverage"
-            [queryParams]="{
-              search: serverDetails.api_reference,
-            }"
-            fragment="benchmark-coverage-details-pointer"
-          >
-            server's measurement status </a
-          >, or visit the
-          <a
-            class="underline font-semibold"
-            routerLink="/navigator/benchmark-coverage"
-            >general Benchmark Coverage</a
-          >
-          page to learn more about possible causes.
-        </div>
-      </div>
-    }
-
-    @if (serverDetails) {
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-4 md:gap-8 mt-8">
+        <sc-details-header
+          class="w-full"
+          resource="server"
+          [vendorId]="serverDetails.vendor_id"
+          [vendorName]="serverDetails.vendor.name"
+          [vendorLogo]="serverDetails.vendor.logo"
+          [entityId]="serverDetails.api_reference"
+          [displayName]="serverDetails.display_name"
+          [description]="description"
+          [priceDescription]="cardPriceDescription"
+          [features]="features"
+          [score]="
+            getBenchmarkValue(true) === null &&
+            getBenchmarkValue(false) === null
+              ? null
+              : {
+                  primary: getBenchmark(true),
+                  primaryValue: getBenchmarkValue(true),
+                  primaryLabel: 'All-cores',
+                  secondary: getBenchmark(false),
+                  secondaryValue: getBenchmarkValue(false),
+                  secondaryLabel: 'Single-core',
+                }
+          "
+        >
+          <span detailsScoreTitle
+            >Spare <span class="text-emerald-400"> SC</span>ore</span
+          >
+          <sc-button
+            detailsActions
+            label="Summarize"
+            [compact]="true"
+            icon="sparkles"
+            [disabled]="!descriptionsAvailable"
+            [title]="
+              descriptionsAvailable
+                ? 'Open AI-generated server summary'
+                : 'AI summary not available for this server'
+            "
+            data-ph-capture-attribute-sc-event="server details summarize open"
+            (click)="openSummarizeModal()"
+          ></sc-button>
+        </sc-details-header>
+        @if (getBenchmark(true) === "-") {
+          <div
+            class="w-full bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
+            role="alert"
+          >
+            <svg
+              lucideTriangleAlert
+              class="h-4 w-4 shrink-0 bounce-3 sm:h-6 sm:w-6"
+            ></svg>
+            <div>
+              <span class="font-bold"
+                >Benchmark data is currently unavailable for this server.
+              </span>
+              View this
+              <a
+                class="underline font-semibold"
+                routerLink="/navigator/benchmark-coverage"
+                [queryParams]="{
+                  search: serverDetails.api_reference,
+                }"
+                fragment="benchmark-coverage-details-pointer"
+              >
+                server's measurement status </a
+              >, or visit the
+              <a
+                class="underline font-semibold"
+                routerLink="/navigator/benchmark-coverage"
+                >general Benchmark Coverage</a
+              >
+              page to learn more about possible causes.
+            </div>
+          </div>
+        }
         <div
           class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
         >
@@ -513,21 +511,21 @@
             </table>
           </div>
         </div>
-      </div>
-    }
-
-    @if (serverDetails) {
-      <div #giscusParent class="my-8 mx-2 lg:mx-auto lg:w-1/2">
-        <sc-accordion
-          [useFaqSchema]="true"
-          [showHeading]="true"
-          anchorId="faqs"
-          [heading]="serverDetails.display_name"
-          [items]="faqs"
-          [activeIndex]="activeFAQ"
-          (activeIndexChange)="activeFAQChanged($event)"
-        ></sc-accordion>
-        <div class="giscus"></div>
+        <div
+          #giscusParent
+          class="w-full px-4.25 mb-8 md:px-6.25 lg:mx-auto lg:w-1/2 lg:px-0"
+        >
+          <sc-accordion
+            [useFaqSchema]="true"
+            [showHeading]="true"
+            anchorId="faqs"
+            [heading]="serverDetails.display_name"
+            [items]="faqs"
+            [activeIndex]="activeFAQ"
+            (activeIndexChange)="activeFAQChanged($event)"
+          ></sc-accordion>
+          <div class="giscus"></div>
+        </div>
       </div>
     }
   </div>
