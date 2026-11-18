@@ -46,7 +46,7 @@
           <span detailsScoreTitle>Performance</span>
         </sc-details-header>
         <div
-          class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
+          class="mt-4 sm:my-2 w-full flex justify-between items-center sc-header-anchor-host"
         >
           <h2 class="text-3xl font-bold">
             Specifications
@@ -127,7 +127,7 @@
         ></sc-details-card>
 
         @if (pgbenchChart) {
-          <div class="my-2 w-full">
+          <div class="mt-4 sm:my-2 w-full">
             <h2 class="text-3xl font-bold sc-header-anchor-host">
               Performance
               <sc-header-anchor
@@ -152,7 +152,7 @@
         }
         @if (showUnderlyingServerPerformance && underlyingServerPgbenchChart) {
           <div
-            class="my-2 w-full flex justify-between items-center gap-4 sc-header-anchor-host"
+            class="mt-4 sm:my-2 w-full flex justify-between items-center gap-4 sc-header-anchor-host"
           >
             <h2 class="text-3xl font-bold">
               Underlying Server's Performance

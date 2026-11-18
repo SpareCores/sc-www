@@ -96,7 +96,7 @@
           </div>
         }
         <div
-          class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
+          class="mt-4 sm:my-2 w-full flex justify-between items-center sc-header-anchor-host"
         >
           <h2 class="text-3xl font-bold">
             Specifications
@@ -222,7 +222,7 @@
             </p>
           </div>
         }
-        <div class="my-2 w-full">
+        <div class="mt-4 sm:my-2 w-full">
           <h2 class="text-3xl font-bold sc-header-anchor-host">
             Economics
             <sc-header-anchor
@@ -330,7 +330,7 @@
           }
         </div>
         @if (serverDetails.benchmark_scores.length) {
-          <div class="my-2 w-full">
+          <div class="mt-4 sm:my-2 w-full">
             <h2 class="text-3xl font-bold sc-header-anchor-host">
               Performance
               <sc-header-anchor
@@ -363,7 +363,7 @@
           [benchmarksByCategory]="benchmarksByCategory"
           [benchmarkMeta]="benchmarkMeta"
         ></sc-server-charts>
-        <div class="my-2 w-full">
+        <div class="mt-4 sm:my-2 w-full">
           <h2 class="text-3xl font-bold sc-header-anchor-host">
             Alternatives
             <sc-header-anchor
@@ -513,7 +513,7 @@
         </div>
         <div
           #giscusParent
-          class="w-full px-4.25 mb-8 md:px-6.25 lg:mx-auto lg:w-1/2 lg:px-0"
+          class="w-full px-4.25 mt-4 mb-8 sm:mt-2 md:px-6.25 lg:mx-auto lg:w-1/2 lg:px-0"
         >
           <sc-accordion
             [useFaqSchema]="true"
