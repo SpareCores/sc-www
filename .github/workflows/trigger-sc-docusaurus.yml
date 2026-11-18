@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'docs/user-guide/**'
+      - "docs/user-guide/**"
 
 jobs:
   dispatch:
