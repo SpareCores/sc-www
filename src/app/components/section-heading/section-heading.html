@@ -1,0 +1,30 @@
+<h2
+  class="text-2xl font-light sm:text-4xl"
+  [class.sc-header-anchor-host]="!!anchorId()"
+>
+  <span class="text-emerald-400">&lt;</span>
+  @if (attrName()) {
+    <span class="text-gray-400">{{ tag() }} {{ attrName() }}="</span
+    >{{ attrValue() }}<span class="text-gray-400">"</span>
+  } @else {
+    <span>{{ tag() }}</span>
+  }
+  <span class="text-emerald-400">&gt;</span>
+  @if (anchorId(); as id) {
+    <sc-header-anchor
+      [anchorId]="id"
+      [label]="anchorLabel()"
+      [withTarget]="false"
+    ></sc-header-anchor>
+  }
+</h2>
+@if (subtitle()) {
+  <p
+    class="mx-auto w-full text-2xl font-bold text-emerald-400 sm:w-2/3 sm:text-4xl xl:w-full"
+  >
+    {{ subtitle() }}
+  </p>
+}
+<p class="mx-auto w-full text-base empty:hidden sm:w-4/5 sm:text-2xl lg:w-2/3">
+  <ng-content />
+</p>

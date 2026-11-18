@@ -12,8 +12,7 @@ import {
 import { ArticleMeta, ArticlesApi } from "../../services/articles-api";
 import { isPlatformBrowser } from "@angular/common";
 import { SeoHandler } from "../../services/seo-handler";
-import { ThemeText } from "../../components/theme-text/theme-text";
-import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
+import { SectionHeading } from "../../components/section-heading/section-heading";
 import { Button } from "../../components/button/button";
 import { SlotMachine } from "../../components/slot-machine/slot-machine";
 import { RouterLink } from "@angular/router";
@@ -33,8 +32,7 @@ import { PrismHighlighter } from "../../services/prism-highlighter";
 @Component({
   selector: "sc-landingpage",
   imports: [
-    HeaderAnchor,
-    ThemeText,
+    SectionHeading,
     Button,
     SlotMachine,
     RouterLink,
