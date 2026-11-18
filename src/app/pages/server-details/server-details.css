@@ -45,7 +45,14 @@
 }
 
 .summarize-fab {
-  @apply fixed bottom-6 right-6 z-40;
+  @apply fixed z-40;
+  right: max(0.5rem, env(safe-area-inset-right));
+  bottom: max(0.5rem, env(safe-area-inset-bottom));
+
+  @media (width >= theme(--breakpoint-lg)) {
+    right: max(1.5rem, env(safe-area-inset-right));
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
 }
 
 .items_table_similar {

@@ -28,14 +28,18 @@
         [description]="description"
         [priceDescription]="cardPriceDescription"
         [features]="features"
-        [score]="{
-          primary: getBenchmark(true),
-          primaryValue: getBenchmarkValue(true),
-          primaryLabel: 'All-cores',
-          secondary: getBenchmark(false),
-          secondaryValue: getBenchmarkValue(false),
-          secondaryLabel: 'Single-core',
-        }"
+        [score]="
+          getBenchmarkValue(true) === null && getBenchmarkValue(false) === null
+            ? null
+            : {
+                primary: getBenchmark(true),
+                primaryValue: getBenchmarkValue(true),
+                primaryLabel: 'All-cores',
+                secondary: getBenchmark(false),
+                secondaryValue: getBenchmarkValue(false),
+                secondaryLabel: 'Single-core',
+              }
+        "
       >
         <span detailsScoreTitle
           >Spare <span class="text-emerald-400"> SC</span>ore</span
