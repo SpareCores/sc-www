@@ -20,7 +20,6 @@
             }
           </p>
         </div>
-        <hr class="partners-divider" />
 
         @for (category of categories(); track category.id) {
           <h2
@@ -113,10 +112,6 @@
                   <li [innerHTML]="item"></li>
                 }
               </ul>
-            }
-
-            @if (section.dividerAfter) {
-              <hr class="partners-divider" />
             }
           }
         }

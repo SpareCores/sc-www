@@ -16,15 +16,15 @@
 }
 
 .partners-heading {
-  @apply font-bold text-emerald-400 my-4;
+  @apply font-bold text-white my-4;
 }
 
 .partners-heading--section {
-  @apply text-xl my-4 sm:text-2xl sm:my-10;
+  @apply text-xl mt-8 mb-4 sm:text-2xl sm:my-10;
 }
 
 .partners-heading--subsection {
-  @apply text-xl;
+  @apply text-xl mt-8 sm:mt-4;
 }
 
 .partner-logos {
@@ -108,10 +108,4 @@
 
   text-align: justify;
   text-align-last: left;
-}
-
-.partners-divider {
-  @apply mt-8 mb-4 border-0 border-t sm:my-10;
-
-  border-color: color-mix(in oklab, var(--color-emerald-400) 40%, transparent);
 }
