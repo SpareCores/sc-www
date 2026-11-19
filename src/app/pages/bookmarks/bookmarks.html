@@ -1,9 +1,9 @@
 @if (viewReady()) {
   <div class="w-full bg-primary">
-    <div class="content pt-8 pb-8 lg:pt-16 lg:pb-16">
+    <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
       <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-      <div class="flex flex-col gap-4 my-8 content-gutter">
+      <div class="flex flex-col gap-4 mt-4 mb-8 sm:mt-8 sm:mb-6 content-gutter">
         <sc-page-header
           icon="folder-bookmark"
           title="Bookmarks"
@@ -13,84 +13,85 @@
           recommendations in one place. Edit their note or rename them to make
           them easier to find.
         </p>
-        <div class="bookmarks-search">
-          <div class="bookmarks-search__input-wrap">
-            <svg
-              [lucideIcon]="'search'"
-              class="bookmarks-search__icon"
-              aria-hidden="true"
-            ></svg>
-            <input
-              id="bookmarks-name-search"
-              type="search"
-              class="bookmarks-search__input"
-              placeholder="Search bookmarks by name"
-              aria-label="Search bookmarks by name"
-              [value]="nameQuery()"
-              (input)="onNameQueryInput($event)"
-            />
-          </div>
-          <div class="bookmarks-search__sort">
-            <div class="bookmarks-sort-control">
-              <button
-                type="button"
-                id="bookmarks_sort_button"
-                [scDropdown]="sortPanel"
-                [dropdownTriggerType]="'none'"
-                #sortDropdown="scDropdown"
-                class="bookmarks-sort-control__label"
-                (click)="toggleSortDropdown($event)"
-              >
-                <span class="bookmarks-sort-control__label-text">{{
-                  sortByLabel()
-                }}</span>
-              </button>
-              <button
-                type="button"
-                class="bookmarks-sort-control__dir"
-                [disabled]="!canToggleSortDir()"
-                [attr.aria-label]="sortDirAriaLabel()"
-                (click)="onSortDirClick($event)"
-              >
-                <svg
-                  [lucideIcon]="sortDirIcon()"
-                  class="bookmarks-sort-control__dir-icon"
-                  aria-hidden="true"
-                ></svg>
-              </button>
+        <div class="bookmarks-controls">
+          <div class="bookmarks-search">
+            <div class="bookmarks-search__input-wrap">
+              <svg
+                [lucideIcon]="'search'"
+                class="bookmarks-search__icon"
+                aria-hidden="true"
+              ></svg>
+              <input
+                id="bookmarks-name-search"
+                type="search"
+                class="bookmarks-search__input"
+                placeholder="Search bookmarks by name"
+                aria-label="Search bookmarks by name"
+                [value]="nameQuery()"
+                (input)="onNameQueryInput($event)"
+              />
+            </div>
+            <div class="bookmarks-search__sort">
+              <div class="bookmarks-sort-control">
+                <button
+                  type="button"
+                  id="bookmarks_sort_button"
+                  [scDropdown]="sortPanel"
+                  [dropdownTriggerType]="'none'"
+                  #sortDropdown="scDropdown"
+                  class="bookmarks-sort-control__label"
+                  (click)="toggleSortDropdown($event)"
+                >
+                  <span class="bookmarks-sort-control__label-text">{{
+                    sortByLabel()
+                  }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="bookmarks-sort-control__dir"
+                  [disabled]="!canToggleSortDir()"
+                  [attr.aria-label]="sortDirAriaLabel()"
+                  (click)="onSortDirClick($event)"
+                >
+                  <svg
+                    [lucideIcon]="sortDirIcon()"
+                    class="bookmarks-sort-control__dir-icon"
+                    aria-hidden="true"
+                  ></svg>
+                </button>
+              </div>
             </div>
           </div>
+          <div class="bookmarks-stats">
+            @for (stat of statEntries(); track stat.key) {
+              <label
+                class="bookmarks-stats__item"
+                [attr.aria-label]="stat.label + ': ' + stat.value"
+              >
+                <input
+                  type="checkbox"
+                  class="peer sr-only"
+                  [checked]="stat.enabled"
+                  (change)="toggleFilter(stat.key, $any($event.target).checked)"
+                />
+                <span class="bookmarks-filter__track">
+                  <span class="bookmarks-filter__thumb"></span>
+                </span>
+                <svg
+                  [lucideIcon]="stat.icon"
+                  class="bookmarks-stats__icon"
+                  aria-hidden="true"
+                ></svg>
+                <span class="bookmarks-stats__label"
+                  >{{ stat.label }}: {{ stat.value }}</span
+                >
+                <span class="bookmarks-stats__badge" aria-hidden="true">{{
+                  stat.value
+                }}</span>
+              </label>
+            }
+          </div>
         </div>
-      </div>
-
-      <div class="bookmarks-stats content-gutter">
-        @for (stat of statEntries(); track stat.key) {
-          <label
-            class="bookmarks-stats__item"
-            [attr.aria-label]="stat.label + ': ' + stat.value"
-          >
-            <input
-              type="checkbox"
-              class="peer sr-only"
-              [checked]="stat.enabled"
-              (change)="toggleFilter(stat.key, $any($event.target).checked)"
-            />
-            <span class="bookmarks-filter__track">
-              <span class="bookmarks-filter__thumb"></span>
-            </span>
-            <svg
-              [lucideIcon]="stat.icon"
-              class="bookmarks-stats__icon"
-              aria-hidden="true"
-            ></svg>
-            <span class="bookmarks-stats__label"
-              >{{ stat.label }}: {{ stat.value }}</span
-            >
-            <span class="bookmarks-stats__badge" aria-hidden="true">{{
-              stat.value
-            }}</span>
-          </label>
-        }
       </div>
 
       @if (isLoading()) {
@@ -288,6 +289,7 @@
                       <div class="bookmarks-card__details-more">
                         <sc-button
                           icon="chevron-down"
+                          size="small"
                           ariaLabel="Expand list"
                           color="brand"
                           (buttonClick)="toggleDetails(cardKey(card))"
@@ -297,6 +299,7 @@
                       <div class="bookmarks-card__details-less">
                         <sc-button
                           icon="chevron-up"
+                          size="small"
                           ariaLabel="Collapse list"
                           color="brand"
                           (buttonClick)="toggleDetails(cardKey(card))"
@@ -316,6 +319,7 @@
                 @if (isEditableCard(card)) {
                   <sc-button
                     icon="square-pen"
+                    size="small"
                     ariaLabel="Edit"
                     title="Edit"
                     variant="outline"
@@ -324,6 +328,7 @@
                   ></sc-button>
                   <sc-button
                     icon="notebook-text"
+                    size="small"
                     ariaLabel="View note"
                     title="View note"
                     variant="outline"
@@ -335,6 +340,7 @@
                 @if (cardLink(card)) {
                   <sc-button
                     icon="square-arrow-out-up-right"
+                    size="small"
                     ariaLabel="Open"
                     title="Open"
                     variant="outline"
@@ -344,6 +350,7 @@
                 }
                 <sc-button
                   icon="bookmark-off"
+                  size="small"
                   ariaLabel="Delete"
                   title="Delete"
                   variant="outline"
@@ -354,6 +361,7 @@
                 @if (cardLink(card)) {
                   <sc-button
                     [icon]="shareIcon(card)"
+                    size="small"
                     ariaLabel="Share"
                     title="Share"
                     variant="outline"
