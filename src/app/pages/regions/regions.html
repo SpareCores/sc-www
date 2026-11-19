@@ -1,6 +1,6 @@
 <div class="w-full bg-primary">
   <div
-    class="content pt-8 pb-8 lg:pt-16 lg:pb-16 text-white flex flex-col gap-8"
+    class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16 text-white flex flex-col gap-4 sm:gap-8"
   >
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
     <div class="content-gutter flex flex-col gap-4">
@@ -13,28 +13,30 @@
     </div>
 
     @if (vendors.length) {
-      <div
-        class="vendor_labels mt-4 mb-4 flex flex-wrap justify-center gap-8 content-gutter"
-      >
-        @for (vendor of vendors; track vendor.vendor_id) {
-          <sc-button
-            [label]="vendor.name"
-            [swatchColor]="vendor.color"
-            variant="ghost"
-            color="inverse"
-            [ariaPressed]="!isVendorHidden(vendor.vendor_id)"
-            [buttonClass]="
-              isVendorHidden(vendor.vendor_id)
-                ? 'sc-button--swatch-inactive'
-                : ''
-            "
-            (buttonClick)="toggleVendorSelected(vendor.vendor_id)"
-          ></sc-button>
-        }
+      <div class="content-gutter sm:my-4">
+        <div
+          class="vendor_labels -mx-3 flex flex-wrap gap-1 sm:mx-0 sm:justify-center sm:gap-8"
+        >
+          @for (vendor of vendors; track vendor.vendor_id) {
+            <sc-button
+              [label]="vendor.name"
+              [swatchColor]="vendor.color"
+              variant="ghost"
+              color="inverse"
+              [ariaPressed]="!isVendorHidden(vendor.vendor_id)"
+              [buttonClass]="
+                isVendorHidden(vendor.vendor_id)
+                  ? 'sc-button--swatch-inactive'
+                  : ''
+              "
+              (buttonClick)="toggleVendorSelected(vendor.vendor_id)"
+            ></sc-button>
+          }
+        </div>
       </div>
     }
 
-    <div class="content-gutter">
+    <div class="content-gutter -my-4 sm:my-0">
       <div class="text-black datamaps_div" id="datamapdiv" #datamapdiv></div>
     </div>
 
