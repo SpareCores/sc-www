@@ -4,6 +4,7 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
+import { PageHeader } from "../../components/page-header/page-header";
 import { KeeperAPI } from "../../services/keeper-api";
 import { Toast } from "../../services/toast";
 import { VENDORS_ERROR_TOAST_ID } from "../../services/toast-ids";
@@ -17,7 +18,13 @@ import { Router, RouterModule } from "@angular/router";
 
 @Component({
   selector: "sc-vendors",
-  imports: [Breadcrumbs, LucideChevronRight, CountryIdtoNamePipe, RouterModule],
+  imports: [
+    Breadcrumbs,
+    PageHeader,
+    LucideChevronRight,
+    CountryIdtoNamePipe,
+    RouterModule,
+  ],
   templateUrl: "./vendors.html",
 })
 export class Vendors implements OnInit {

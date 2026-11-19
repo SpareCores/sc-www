@@ -11,7 +11,6 @@ import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
   LucideChevronLeft,
-  LucideDollarSign,
   LucideDynamicIcon,
   LucideInfo,
 } from "@lucide/angular";
@@ -24,6 +23,7 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
+import { PageHeader } from "../../components/page-header/page-header";
 import { Pagination } from "../../components/pagination/pagination";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { Dropdown } from "../../directives/dropdown";
@@ -43,9 +43,9 @@ import {
   imports: [
     FormsModule,
     Breadcrumbs,
+    PageHeader,
     LucideDynamicIcon,
     LucideChevronLeft,
-    LucideDollarSign,
     LucideInfo,
     RouterModule,
     Button,
