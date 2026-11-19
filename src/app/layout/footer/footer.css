@@ -11,7 +11,7 @@
 }
 
 .footer_shell {
-  padding-bottom: max(3rem, calc(env(safe-area-inset-bottom) + 1rem));
+  padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1rem));
 }
 
 @media (width >= theme(--breakpoint-lg)) {
