@@ -80,7 +80,11 @@ li {
 
 .compare_dropdown_panel {
   width: max-content;
-  max-width: calc(100vw - 2rem);
+  max-width: calc(100vw - 4.75rem);
+
+  @media (width >= theme(--breakpoint-xl)) {
+    max-width: calc(100vw - 2rem);
+  }
 }
 
 .compare_dropdown_content {

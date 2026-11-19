@@ -22,7 +22,7 @@
       id="mobile-menu-2"
     >
       <div
-        class="flex font-medium flex-row gap-4 mt-0 items-center justify-end"
+        class="flex font-medium flex-row gap-1 mt-0 items-center justify-end xl:gap-4"
       >
         <div class="relative hidden xl:flex">
           <sc-button
@@ -750,11 +750,13 @@
                 </span>
               </button>
               <a
-                class="navbar_link min-w-0 flex-1 truncate"
+                class="navbar_link min-w-0 flex-1"
                 routerLink="/server/{{ server.vendor }}/{{ server.server }}"
                 (click)="closeCompare()"
               >
-                {{ server.vendor }}: {{ server.display_name }}
+                <span class="min-w-0 whitespace-normal wrap-break-word"
+                  >{{ server.vendor }}: {{ server.display_name }}</span
+                >
               </a>
               <button
                 type="button"
@@ -831,13 +833,15 @@
                 </span>
               </button>
               <a
-                class="navbar_link min-w-0 flex-1 truncate"
+                class="navbar_link min-w-0 flex-1"
                 routerLink="/database/{{ database.vendor }}/{{
                   database.database
                 }}"
                 (click)="closeCompare()"
               >
-                {{ database.vendor }}: {{ database.display_name }}
+                <span class="min-w-0 whitespace-normal wrap-break-word"
+                  >{{ database.vendor }}: {{ database.display_name }}</span
+                >
               </a>
               <button
                 type="button"
