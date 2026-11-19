@@ -116,21 +116,21 @@
                 }
               </div>
             </td>
-            <td
-              class="stress_ng_value"
-              scTooltipTrigger
-              (tooltipOpen)="showTooltip($event, row.single.exact)"
-              (tooltipClose)="hideTooltip()"
-            >
-              {{ row.single.text }}
+            <td class="stress_ng_value">
+              <span
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, row.single.exact)"
+                (tooltipClose)="hideTooltip()"
+                >{{ row.single.text }}</span
+              >
             </td>
-            <td
-              class="stress_ng_value"
-              scTooltipTrigger
-              (tooltipOpen)="showTooltip($event, row.multi.exact)"
-              (tooltipClose)="hideTooltip()"
-            >
-              {{ row.multi.text }}
+            <td class="stress_ng_value">
+              <span
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, row.multi.exact)"
+                (tooltipClose)="hideTooltip()"
+                >{{ row.multi.text }}</span
+              >
             </td>
             <td class="stress_ng_value">{{ row.scaling }}</td>
           </tr>
