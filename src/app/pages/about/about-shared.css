@@ -19,6 +19,21 @@
   @apply bg-primary;
 }
 
+.content_section.snug-bottom {
+  padding-bottom: 2rem;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-bottom: 4rem;
+  }
+}
+
 .content_section.first {
   border-top: 0px;
+  padding-top: 0;
+  padding-bottom: 2rem;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
 }
