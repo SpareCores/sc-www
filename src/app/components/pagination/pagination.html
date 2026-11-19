@@ -1,4 +1,4 @@
-<div class="flex flex-wrap justify-end gap-2 items-center">
+<div class="flex flex-wrap justify-end gap-1 sm:gap-2 items-center">
   @if (currentPage > 1) {
     <sc-button
       id="pagination_prev_arrow"
@@ -34,6 +34,7 @@
       [variant]="page === this.currentPage ? 'solid' : 'ghost'"
       [color]="page === this.currentPage ? 'brand' : 'inverse'"
       buttonClass="sc-button--pagination"
+      [class.sc-pagination__neighbour]="page !== currentPage"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(page)"
       data-ph-capture-attribute-sc-event="server listing paginate"

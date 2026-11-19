@@ -4,7 +4,6 @@ import {
   PLATFORM_ID,
   OnInit,
   ViewChild,
-  viewChild,
   ElementRef,
   OnDestroy,
   inject,
@@ -35,8 +34,7 @@ import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
-import { Pagination } from "../../components/pagination/pagination";
-import { Dropdown } from "../../directives/dropdown";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { Analytics } from "../../services/analytics";
@@ -119,9 +117,8 @@ export type RegionVendorMetadata = {
     Button,
     PageHeader,
     SearchBar,
-    Pagination,
+    TableFooter,
     LoadingSpinner,
-    Dropdown,
     SelectDropdown,
     ColumnPicker,
   ],
@@ -135,7 +132,6 @@ export class ServerPrices implements OnInit, OnDestroy {
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
   private analytics = inject(Analytics);
-  pageDropdown = viewChild<Dropdown>("pageDropdown");
   private serverCompare = inject(CompareSelection);
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
@@ -670,7 +666,6 @@ export class ServerPrices implements OnInit, OnDestroy {
     this.page = 1;
 
     this.searchOptionsChanged(this.query);
-    this.pageDropdown()?.hide();
 
     window.scrollTo(0, 0);
   }

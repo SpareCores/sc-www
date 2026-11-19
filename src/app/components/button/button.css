@@ -414,16 +414,12 @@
 }
 
 .sc-button.sc-button--pagination {
-  @apply size-11 shrink-0 justify-center border-0 p-0;
+  @apply size-9.5 shrink-0 justify-center border-0 p-0;
 }
 
 .sc-button.sc-button--pagination:hover,
 .sc-button.sc-button--pagination:focus {
   @apply border-0 bg-emerald-400 text-white;
-}
-
-.sc-button.sc-button--pagination-nav {
-  @apply size-11 p-0;
 }
 
 .sc-button.sc-button--outline.sc-button--chip {
@@ -508,6 +504,22 @@
       .sc-button--benchmark
     ).sc-button--large {
     @apply p-5;
+  }
+
+  .sc-button.sc-button--pagination {
+    @apply size-11;
+  }
+
+  .sc-button--pagination-size .sc-button__extension-label {
+    @apply px-4 py-3;
+  }
+
+  .sc-button--pagination-size .sc-button__square {
+    @apply w-11;
+  }
+
+  .sc-button--pagination-size .sc-button__square-icon {
+    @apply size-4;
   }
 
   .sc-button--compact.sc-button--benchmark {

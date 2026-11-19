@@ -52,12 +52,11 @@ import { PageHeader } from "../../components/page-header/page-header";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import type { SearchBarParameter } from "../../components/search-bar/types/search-bar.types";
-import { Pagination } from "../../components/pagination/pagination";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import {
   ComparedServer,
   CompareSelection,
 } from "../../services/compare-selection";
-import { Dropdown } from "../../directives/dropdown";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { Analytics } from "../../services/analytics";
@@ -126,7 +125,7 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     PageHeader,
     BenchmarkIconPipe,
     SearchBar,
-    Pagination,
+    TableFooter,
     LoadingSpinner,
     AcceleratorCountPipe,
     CpuCacheSizePipe,
@@ -134,7 +133,6 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     StoragePipe,
     AcceleratorMemoryPipe,
     Ipv4CountPipe,
-    Dropdown,
     SelectDropdown,
     ColumnPicker,
     BookmarkButton,
@@ -150,7 +148,6 @@ export class ServerListing implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  pageDropdown = viewChild<Dropdown>("pageDropdown");
   private analytics = inject(Analytics);
   private serverCompare = inject(CompareSelection);
   private toastService = inject(Toast);
@@ -1159,8 +1156,6 @@ export class ServerListing implements OnInit, OnDestroy {
     this.limit = limit;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-
-    this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
   }

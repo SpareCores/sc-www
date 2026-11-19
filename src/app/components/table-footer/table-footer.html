@@ -1,0 +1,25 @@
+<div class="flex items-center gap-2">
+  <sc-select-dropdown
+    [attr.data-ph-capture-attribute-sc-event]="pageSizeEvent()"
+    buttonId="pagesize_button"
+    panelId="pagesize_options"
+    icon="chevron-down"
+    placement="bottom-start"
+    [flip]="true"
+    size="small"
+    buttonClass="sc-button--pagination-size"
+    [ariaLabel]="limit() + ' items per page'"
+    [label]="'' + limit()"
+    [options]="pageLimits()"
+    [selected]="limit()"
+    (selectedChange)="limitChange.emit($event)"
+  ></sc-select-dropdown>
+  <span class="hidden text-white sm:inline">items per page</span>
+</div>
+
+<sc-pagination
+  [baseURL]="baseURL()"
+  [currentPage]="page()"
+  [totalPages]="totalPages()"
+  [baseQueryParams]="baseQueryParams()"
+></sc-pagination>

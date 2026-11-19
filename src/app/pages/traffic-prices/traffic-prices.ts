@@ -5,7 +5,6 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
-  viewChild,
 } from "@angular/core";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
@@ -20,12 +19,10 @@ import {
   Breadcrumbs,
   BreadcrumbSegment,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
-import { Pagination } from "../../components/pagination/pagination";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import { SearchBar } from "../../components/search-bar/search-bar";
-import { Dropdown } from "../../directives/dropdown";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { KeeperAPI } from "../../services/keeper-api";
@@ -51,11 +48,9 @@ import {
     LucideChevronLeft,
     LucideInfo,
     RouterModule,
-    Button,
     SearchBar,
-    Pagination,
+    TableFooter,
     LoadingSpinner,
-    Dropdown,
     SelectDropdown,
     ColumnPicker,
   ],
@@ -69,7 +64,6 @@ export class TrafficPrices implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  pageDropdown = viewChild<Dropdown>("pageDropdown");
 
   private subscription = new Subscription();
   private searchRequestId = 0;
@@ -332,8 +326,6 @@ export class TrafficPrices implements OnInit, OnDestroy {
     this.limit = limit;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-
-    this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
   }

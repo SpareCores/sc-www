@@ -48,7 +48,7 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { Pagination } from "../../components/pagination/pagination";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import {
   SearchBarBenchmarkConfigGroup,
   SearchBarBenchmarkConfigOption,
@@ -57,7 +57,6 @@ import {
   SearchBarParameter,
   SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar";
-import { Dropdown } from "../../directives/dropdown";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size-pipe";
@@ -393,7 +392,6 @@ type AdvisorComparableResourceKey =
     TooltipTrigger,
     Button,
     Breadcrumbs,
-    Dropdown,
     SelectDropdown,
     ColumnPicker,
     LucideArrowDownNarrowWide,
@@ -404,7 +402,7 @@ type AdvisorComparableResourceKey =
     LucideScale,
     LoadingSpinner,
     PageHeader,
-    Pagination,
+    TableFooter,
     AcceleratorCountPipe,
     CpuCacheSizePipe,
     Ipv4CountPipe,
@@ -437,7 +435,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private modalDialog = inject(ModalDialog);
   readonly advisorUi = inject(AdvisorUi);
   saveAssessmentModal = viewChild(CollectionSaveModal);
-  readonly pageDropdown = viewChild<Dropdown>("pageDropdown");
   readonly searchBar = viewChild(SearchBar);
   private readonly introductionModalTemplate = viewChild.required<
     TemplateRef<unknown>
@@ -1929,8 +1926,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   selectPageSize(limit: number): void {
     this.limit.set(limit);
     this.page.set(1);
-
-    this.pageDropdown()?.hide();
 
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);

@@ -1342,56 +1342,20 @@
             {{ tooltipContent() }}
           </div>
 
-          <div class="flex justify-between mt-4 flex-wrap gap-4">
-            <div class="flex items-center gap-2">
-              <sc-button
-                id="advisor_pagesize_button"
-                [scDropdown]="pageSizePanel"
-                [dropdownFlip]="true"
-                [dropdownPlacement]="'bottom-start'"
-                #pageDropdown="scDropdown"
-                [label]="'' + limit()"
-                icon="chevron-down"
-                variant="dropdown"
-              ></sc-button>
-              <span class="text-white">items per page</span>
-            </div>
-
-            <div>
-              <sc-pagination
-                baseURL="/advisor"
-                [currentPage]="page()"
-                [totalPages]="totalPages()"
-                [baseQueryParams]="getUrlStateQueryParams()"
-              >
-              </sc-pagination>
-            </div>
-          </div>
+          <sc-table-footer
+            baseURL="/advisor"
+            [limit]="limit()"
+            [pageLimits]="pageLimits"
+            [page]="page()"
+            [totalPages]="totalPages()"
+            [baseQueryParams]="getUrlStateQueryParams()"
+            (limitChange)="selectPageSize($event)"
+          ></sc-table-footer>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<ng-template #pageSizePanel>
-  <div id="advisor_pagesize_options" class="sc-dropdown w-44">
-    <ul class="sc-dropdown__list" aria-labelledby="advisor_pagesize_button">
-      @for (pageLimit of pageLimits; track $index) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectPageSize(pageLimit)"
-          (keydown.enter)="selectPageSize(pageLimit)"
-          (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
-          role="option"
-          [attr.aria-selected]="pageLimit === limit()"
-          tabindex="0"
-        >
-          <div class="text-sm text-white">{{ pageLimit }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
 
 @if (compareCount() >= 2 && selectedBaselineServer()) {
   <div class="advisor-compare-bar">
