@@ -1,9 +1,12 @@
 <div class="w-full bg-primary min-h-screen overflow-hidden">
   <div class="content pt-8 pb-8 lg:pt-16 lg:pb-16 text-white">
-    <sc-breadcrumbs [segments]="breadcrumbs()"></sc-breadcrumbs>
+    <sc-breadcrumbs
+      [segments]="breadcrumbs()"
+      [wideGutter]="true"
+    ></sc-breadcrumbs>
 
-    <div class="content-gutter">
-      <div class="py-12 px-12 mx-auto partners-content max-w-[750px]">
+    <div class="content-gutter-wide">
+      <div class="py-12 px-0 sm:px-12 mx-auto partners-content max-w-[750px]">
         <h1 class="text-emerald-400 text-3xl font-bold mb-2">
           {{ pageTitle }}
         </h1>

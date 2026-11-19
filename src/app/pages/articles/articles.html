@@ -1,10 +1,17 @@
 <div class="w-full bg-primary">
   <div class="content pt-8 pb-8 lg:pt-16 lg:pb-16">
-    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
+    <sc-breadcrumbs
+      [segments]="breadcrumbs"
+      [wideGutter]="true"
+    ></sc-breadcrumbs>
 
-    <div class="content-gutter articles_holder flex flex-wrap mt-4 text-white">
+    <div
+      class="content-gutter-wide articles_holder flex flex-wrap mt-4 text-white"
+    >
       @for (article of articles; track article.title + "_" + article.date) {
-        <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4">
+        <div
+          class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-0 sm:px-6 py-4"
+        >
           <sc-article-card [article]="article"></sc-article-card>
         </div>
       }
