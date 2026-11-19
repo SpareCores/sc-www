@@ -221,32 +221,31 @@
                       <tbody>
                         @for (row of visibleDetails(card); track $index) {
                           <tr>
-                            <td
-                              class="bookmarks-card__table-filter"
-                              scTooltipTrigger
-                              (tooltipOpen)="
-                                showDetailTooltip($event, row.field)
-                              "
-                              (tooltipClose)="hideDetailTooltip()"
-                            >
+                            <td class="bookmarks-card__table-filter">
                               @if (row.fieldHref) {
                                 <a
                                   class="bookmarks-card__table-link"
                                   [routerLink]="row.fieldHref"
+                                  scTooltipTrigger
+                                  tooltipMode="action"
+                                  (tooltipOpen)="
+                                    showDetailTooltip($event, row.field)
+                                  "
+                                  (tooltipClose)="hideDetailTooltip()"
                                   >{{ row.field }}</a
                                 >
                               } @else {
-                                {{ row.field }}
+                                <span
+                                  scTooltipTrigger
+                                  (tooltipOpen)="
+                                    showDetailTooltip($event, row.field)
+                                  "
+                                  (tooltipClose)="hideDetailTooltip()"
+                                  >{{ row.field }}</span
+                                >
                               }
                             </td>
-                            <td
-                              class="bookmarks-card__table-value"
-                              scTooltipTrigger
-                              (tooltipOpen)="
-                                showDetailTooltip($event, row.value)
-                              "
-                              (tooltipClose)="hideDetailTooltip()"
-                            >
+                            <td class="bookmarks-card__table-value">
                               <span class="bookmarks-card__table-value-inner">
                                 @if (row.isBaseline) {
                                   <svg
@@ -259,10 +258,23 @@
                                   <a
                                     class="bookmarks-card__table-link"
                                     [routerLink]="row.valueHref"
+                                    scTooltipTrigger
+                                    tooltipMode="action"
+                                    (tooltipOpen)="
+                                      showDetailTooltip($event, row.value)
+                                    "
+                                    (tooltipClose)="hideDetailTooltip()"
                                     >{{ row.value }}</a
                                   >
                                 } @else {
-                                  {{ row.value }}
+                                  <span
+                                    scTooltipTrigger
+                                    (tooltipOpen)="
+                                      showDetailTooltip($event, row.value)
+                                    "
+                                    (tooltipClose)="hideDetailTooltip()"
+                                    >{{ row.value }}</span
+                                  >
                                 }
                               </span>
                             </td>

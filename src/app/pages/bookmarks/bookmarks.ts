@@ -424,12 +424,13 @@ export class Bookmarks implements OnDestroy {
 
   protected showDetailTooltip(anchor: Element, content: string): void {
     const tooltip = this.tooltipRef()?.nativeElement;
-    const target = anchor;
+    const target = anchor.closest("td") ?? anchor;
     if (
       !tooltip ||
       !content ||
       !(target instanceof HTMLElement) ||
-      target.scrollWidth <= target.clientWidth
+      (target.scrollWidth <= target.clientWidth &&
+        anchor.scrollWidth <= anchor.clientWidth)
     ) {
       return;
     }
