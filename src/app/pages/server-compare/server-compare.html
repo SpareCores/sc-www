@@ -54,7 +54,7 @@
         </sc-page-header>
         @if (instances.length) {
           <div
-            class="text-white text-base sm:text-xl sm:pr-16"
+            class="sc-page-description"
             [innerHTML]="comparePage.description"
           ></div>
           <sc-compare-toolbar
@@ -70,13 +70,13 @@
 
       @if (!instances.length) {
         <div class="flex flex-col gap-4 mt-4 content-gutter">
-          <div class="text-white text-base sm:text-xl sm:pr-16">
+          <div class="sc-page-description">
             Compare cloud servers and their characteristics, such as CPU, GPU,
             memory, and storage details, and the performance of the instances by
             various benchmarking workloads to find the optimal compute resource
             for your needs.
           </div>
-          <div class="text-white text-base sm:text-xl sm:pr-16">
+          <div class="sc-page-description">
             To get started, select at least two servers using the checkboxes in
             the left column of our
             <a class="text-emerald-400" routerLink="/servers"
@@ -92,7 +92,7 @@
             instanceKey="server"
           ></sc-compare-guide>
           <hr class="mt-6" />
-          <div class="text-white text-base sm:text-xl sm:pr-16 mt-3">
+          <div class="sc-page-description mt-3">
             <p>
               <i
                 >You made it to the bottom of the page and still missing the

@@ -55,7 +55,7 @@
         </sc-page-header>
         @if (instances.length) {
           <div
-            class="text-white text-base sm:text-xl sm:pr-16"
+            class="sc-page-description"
             [innerHTML]="comparePage.description"
           ></div>
           <sc-compare-toolbar
@@ -71,14 +71,14 @@
 
       @if (!instances.length) {
         <div class="flex flex-col gap-4 mt-4 content-gutter">
-          <div class="text-white text-base sm:text-xl sm:pr-16">
+          <div class="sc-page-description">
             Compare managed databases (DBaaS) and their key specs, including
             engine type and versions supported, vCPU and RAM, storage throughput
             and backup options, high availability features etc. alongside
             benchmark metrics to find the optimal managed cloud database for
             your workload.
           </div>
-          <div class="text-white text-base sm:text-xl sm:pr-16">
+          <div class="sc-page-description">
             To get started, select two or more databases using the checkboxes on
             our
             <a class="text-emerald-400" routerLink="/databases"
@@ -95,7 +95,7 @@
             instanceKey="database"
           ></sc-compare-guide>
           <hr class="mt-6" />
-          <div class="text-white text-base sm:text-xl sm:pr-16 mt-3">
+          <div class="sc-page-description mt-3">
             <p>
               <i
                 >Reached the end of the page and haven't found the database

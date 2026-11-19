@@ -8,7 +8,7 @@
         icon="mail"
         title="Hi, we would love to hear from you!"
       ></sc-page-header>
-      <div class="text-white text-base sm:text-xl sm:pr-16 mb-4 pb-4">
+      <div class="sc-page-description">
         You can reach us on social media (find the related links at the bottom
         of the page), or you can use the form below to contact us regarding any
         matter (let it be a general inquiry about our open-source tools,
@@ -19,7 +19,7 @@
       <form
         [formGroup]="contactForm"
         (ngSubmit)="onSubmit()"
-        class="flex flex-col gap-6"
+        class="mt-4 flex flex-col gap-6"
       >
         <input type="hidden" id="powChallenge" formControlName="powChallenge" />
         <input type="hidden" id="powSolution" formControlName="powSolution" />

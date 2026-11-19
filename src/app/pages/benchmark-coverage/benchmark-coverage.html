@@ -4,7 +4,7 @@
 
     <div class="flex flex-col gap-4 my-8 content-gutter">
       <sc-page-header icon="activity" [title]="pageTitle"></sc-page-header>
-      <div class="text-white text-base sm:text-xl pr-0 md:pr-16">
+      <div class="sc-page-description">
         {{ pageDescription }}
       </div>
     </div>
@@ -179,10 +179,7 @@
       </div>
     }
     <div class="flex flex-col gap-4 mt-8 mb-12 content-gutter">
-      <div
-        class="text-white text-base sm:text-xl pr-0 md:pr-16"
-        id="benchmark-coverage-details-pointer"
-      >
+      <div class="sc-page-description" id="benchmark-coverage-details-pointer">
         {{ pageHelperText }}
       </div>
     </div>

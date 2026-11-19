@@ -22,6 +22,7 @@
 @import "./styles/components/link.css" layer(components);
 @import "./styles/components/stepper.css" layer(components);
 @import "./styles/components/input.css" layer(components);
+@import "./styles/components/page-description.css" layer(components);
 
 @layer base {
   *,
