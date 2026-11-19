@@ -14,18 +14,18 @@ tags: [open-source, data, funding]
 A question we often get is how we make a living from open source, when all
 our code and data are public.
 
-Everyone says that making money from open source is tough. Honestly, it is.
+Making money from open source is often tough. Honestly, it is.
 This post is our long answer, and what it means for companies building on our
 data.
 
 ## Open Source Is Not the Same as Free
 
-English uses the same word for two different things: free as in freedom, and
-free as in free of cost. Open source is about the first one. You can use,
+English uses one word for two meanings: freedom and freedom from cost.
+Open source is about the first one. You can use,
 change and share our code, and use our raw data for your own work.
 
-It says nothing about the second one. Someone still pays for the servers, the
-benchmark runs, and the people writing and maintaining the code.
+Cost is a separate issue. The servers, benchmark runs, and code maintenance
+cost money.
 
 ## What's Open
 
@@ -42,13 +42,14 @@ First of all, everything you need to check our work is public:
   <a href="https://github.com/SpareCores/sc-inspector-data" target="_blank" rel="noopener">`sc-inspector-data`</a>
   repository.
 - **The full history** of both. Git shows how we produced a score two years
-  ago and what we changed since. The commit messages often even say why.
+  ago and what we changed since. They often explain why too.
 
 Why does this matter so much for us?
 
-Because a score nobody can reproduce is hard to trust. Benchmarks are
-simplifications, and some of our choices will be wrong for your workload. Being open means you don't need to
-take our word for any number: you can see exactly what we ran, on which
+It matters because a score nobody can reproduce is hard to trust. Benchmarks
+are simplifications, and some of our choices will be wrong for your workload.
+Being open means you do not need to take our word for a number: you can see
+exactly what we ran, on which
 server, with which settings, and rerun it yourself. As described in our
 [Unlocking Cloud Compute Performance](/article/cloud-compute-performance-benchmarks)
 article, all benchmarks are wrong, but some are useful, and openness is how
@@ -56,8 +57,8 @@ you can decide which ones are useful for you.
 
 ## What Isn't Free
 
-Running all this is. Every benchmark run means starting real servers at
-real cloud vendors, and paying for them. Over the years, this added up to
+Running it all costs money. A benchmark run means starting real servers at
+real cloud vendors and paying for them. Over the years, this added up to
 <TODO: cloud spend figure, or drop the number>.
 
 Then comes the work that is less visible: keeping up with the vendors'
@@ -82,14 +83,14 @@ run and support it:
 - commercial access to the database,
 - support and consulting.
 
-You could run the whole stack yourself, but then you would also take on the
-data collection, the cloud bill, and the maintenance work.
+You could run the whole stack yourself. In that case, you would also take on
+data collection, the cloud bill, and maintenance.
 
 ## The Licenses in Plain Words
 
-We use three licenses:
+We use these three licenses:
 
-- **Code: MPL 2.0.** You can use it for anything, also commercially. If you
+- **Code: MPL 2.0.** You can use it for anything, including commercially. If you
   change one of our files and distribute it, you share those changes under the
   same license.
 - **Raw data: CC BY-SA 4.0.** You can use it for anything, also commercially,
@@ -103,7 +104,7 @@ We use three licenses:
   CC BY-SA 4.0 three years after its publication.
 
 Note that only the code is open source. The raw data is open data, and the
-compiled database is source-available. Why BSL for the database? <TODO: Gergely's reasoning, e.g. the curation that goes into the
+compiled database is source-available. We chose BSL for the database because: <TODO: Gergely's reasoning, e.g. the curation that goes into the
 compiled database, and protection against a hosted copy of the Navigator
 competing with the service that funds it.>
 
@@ -118,13 +119,13 @@ data allow commercial use, and the API is free under a
 The compiled database is the exception. Companies above $1M annual revenue
 need a commercial agreement to use it in production.
 
-Beyond that, we'd like to ask: if our data creates value for your company,
-please use our managed services. That pays for the benchmark runs.
+If our data creates value for your company, please consider using our managed
+services. Using the managed services pays for the benchmark runs.
 
-## Not a Silver Bullet
+## When This Model Applies
 
-This model works for the Navigator because of a few specific traits: the data
-is expensive to generate, its value depends on trust and reproducibility, and
+This model fits the Navigator because of a few specific traits: generating
+the data costs money, its value depends on trust and reproducibility, and
 there is a managed service that people want to use instead of running their
 own copy. A project without these traits, such as a small library with no
 running costs, may need a different model, and we don't claim to have the
