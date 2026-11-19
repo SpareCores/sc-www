@@ -14,15 +14,14 @@ tags: [open-source, data, funding]
 A question we often get is how we make a living from open source, when all
 our code and data are public.
 
-Making money from open source is often tough. Honestly, it is.
-This post is our long answer, and what it means for companies building on our
-data.
+Making money from open source is tough. This post is our long answer, and
+what it means for companies building on our data.
 
 ## Open Source Is Not the Same as Free
 
-English uses one word for two meanings: freedom and freedom from cost.
-Open source is about the first one. You can use,
-change and share our code, and use our raw data for your own work.
+English uses one word, "free", for two meanings: free as in freedom, and free
+of cost. Open source is about the first one. You can use, change and share
+our code, and use our raw data for your own work.
 
 Cost is a separate issue. The servers, benchmark runs, and code maintenance
 cost money.
@@ -42,15 +41,15 @@ First of all, everything you need to check our work is public:
   <a href="https://github.com/SpareCores/sc-inspector-data" target="_blank" rel="noopener">`sc-inspector-data`</a>
   repository.
 - **The full history** of both. Git shows how we produced a score two years
-  ago and what we changed since. They often explain why too.
+  ago and what we changed since. It often even explains why.
 
 Why does this matter so much for us?
 
 It matters because a score nobody can reproduce is hard to trust. Benchmarks
 are simplifications, and some of our choices will be wrong for your workload.
 Being open means you do not need to take our word for a number: you can see
-exactly what we ran, on which
-server, with which settings, and rerun it yourself. As described in our
+exactly what we ran, on which server, with which settings, and rerun it
+yourself. As described in our
 [Unlocking Cloud Compute Performance](/article/cloud-compute-performance-benchmarks)
 article, all benchmarks are wrong, but some are useful, and openness is how
 you can decide which ones are useful for you.
@@ -90,11 +89,12 @@ data collection, the cloud bill, and maintenance.
 
 We use these three licenses:
 
-- **Code: MPL 2.0.** You can use it for anything, including commercially. If you
-  change one of our files and distribute it, you share those changes under the
-  same license.
-- **Raw data: CC BY-SA 4.0.** You can use it for anything, also commercially,
-  with attribution, and you share adapted data under the same license.
+- **Code: MPL 2.0.** You can use it for anything, including commercially. If
+  you change one of our files and distribute it, you share those changes under
+  the same license.
+- **Raw data: CC BY-SA 4.0.** You can use it for anything, including
+  commercially, with attribution, and you share adapted data under the same
+  license.
 - **Compiled database: BSL 1.1.** This is the SQLite file we build from the
   raw data. BSL is source-available, not an open-source license. Its
   additional use grant allows production use for non-commercial academic
@@ -104,9 +104,10 @@ We use these three licenses:
   CC BY-SA 4.0 three years after its publication.
 
 Note that only the code is open source. The raw data is open data, and the
-compiled database is source-available. We chose BSL for the database because: <TODO: Gergely's reasoning, e.g. the curation that goes into the
-compiled database, and protection against a hosted copy of the Navigator
-competing with the service that funds it.>
+compiled database is source-available. We chose BSL for the database because:
+<TODO: Gergely's reasoning, e.g. the curation that goes into the compiled
+database, and protection against a hosted copy of the Navigator competing
+with the service that funds it.>
 
 The full details are in the
 <a href="https://docs.sparecores.com/#licensing" target="_blank" rel="noopener">Licensing section of our docs</a>.
@@ -120,7 +121,7 @@ The compiled database is the exception. Companies above $1M annual revenue
 need a commercial agreement to use it in production.
 
 If our data creates value for your company, please consider using our managed
-services. Using the managed services pays for the benchmark runs.
+services. That pays for the benchmark runs.
 
 ## When This Model Applies
 
