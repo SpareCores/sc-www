@@ -1,5 +1,5 @@
 <div class="w-full bg-primary">
-  <div class="content pt-8 text-white">
+  <div class="content pt-4 sm:pt-8 text-white">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     @if (isLoading) {
@@ -18,7 +18,7 @@
     }
 
     @if (serverDetails) {
-      <div class="content-gutter flex flex-wrap gap-4 md:gap-8 mt-8">
+      <div class="content-gutter flex flex-wrap gap-4 md:gap-8 mt-4 sm:mt-8">
         <sc-details-header
           class="w-full"
           resource="server"
