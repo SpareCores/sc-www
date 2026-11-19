@@ -58,6 +58,7 @@ import {
   SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar";
 import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size-pipe";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
@@ -99,6 +100,7 @@ import {
   bestPriceAllocationTypes as BEST_PRICE_ALLOCATION_TYPES,
   BestPriceAllocationType,
   CurrencyOption,
+  currencyLabel,
 } from "../../tools/shared_data";
 import { TableColumn, buildAdvisorColumns } from "../../tools/table-columns";
 import { AdvisorUi } from "./advisor-ui";
@@ -391,6 +393,7 @@ type AdvisorComparableResourceKey =
     Button,
     Breadcrumbs,
     Dropdown,
+    SelectDropdown,
     LucideArrowDownNarrowWide,
     LucideArrowDownWideNarrow,
     LucideChevronLeft,
@@ -432,7 +435,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private modalDialog = inject(ModalDialog);
   readonly advisorUi = inject(AdvisorUi);
   saveAssessmentModal = viewChild(CollectionSaveModal);
-  readonly currencyDropdown = viewChild<Dropdown>("currencyDropdown");
   readonly pageDropdown = viewChild<Dropdown>("pageDropdown");
   readonly searchBar = viewChild(SearchBar);
   private readonly introductionModalTemplate = viewChild.required<
@@ -525,6 +527,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   readonly manualOrderDir = signal<OrderDir | undefined>(undefined);
   readonly pageLimits = ADVISOR_PAGE_LIMITS;
   readonly availableCurrencies = AVAILABLE_CURRENCIES;
+  readonly currencyLabel = currencyLabel;
   private readonly defaultCurrency =
     this.availableCurrencies.find(
       (currency) => currency.slug === ADVISOR_DEFAULT_CURRENCY,
@@ -1935,7 +1938,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   selectCurrency(currency: CurrencyOption): void {
     this.selectedCurrency.set(currency);
     this.page.set(1);
-    this.currencyDropdown()?.hide();
   }
 
   setColumnVisibility(columnName: string, show: boolean): void {

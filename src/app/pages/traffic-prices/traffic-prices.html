@@ -43,14 +43,17 @@
         <div
           class="sc-listing-toolbar w-full flex justify-end gap-4 items-center"
         >
-          <sc-button
-            id="currency_button"
-            [scDropdown]="currencyPanel"
-            #currencyDropdown="scDropdown"
-            [label]="selectedCurrency.slug"
+          <sc-select-dropdown
+            buttonId="currency_button"
+            panelId="currency_options"
             icon="credit-card"
-            variant="dropdown"
-          ></sc-button>
+            compactIcon="credit-card"
+            [label]="selectedCurrency.slug"
+            [options]="availableCurrencies"
+            [selected]="selectedCurrency"
+            [optionLabel]="currencyLabel"
+            (selectedChange)="selectCurrency($event)"
+          ></sc-select-dropdown>
           <sc-button
             id="column_button"
             data-ph-capture-attribute-sc-event="traffic prices columns select"
@@ -256,24 +259,6 @@
             class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
           />
           <div class="text-white text-sm">{{ column.name }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #currencyPanel>
-  <div id="currency_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
-      @for (currency of availableCurrencies; track currency.name) {
-        <li
-          tabindex="0"
-          class="sc-dropdown__option"
-          (click)="selectCurrency(currency)"
-        >
-          <div class="text-white text-sm">
-            {{ currency.name }} ({{ currency.symbol }})
-          </div>
         </li>
       }
     </ul>

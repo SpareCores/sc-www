@@ -27,11 +27,16 @@ import { PageHeader } from "../../components/page-header/page-header";
 import { Pagination } from "../../components/pagination/pagination";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { KeeperAPI } from "../../services/keeper-api";
 import { Toast } from "../../services/toast";
 import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { SeoHandler } from "../../services/seo-handler";
-import { availableCurrencies, CurrencyOption } from "../../tools/shared_data";
+import {
+  availableCurrencies,
+  CurrencyOption,
+  currencyLabel,
+} from "../../tools/shared_data";
 import {
   buildTrafficPricesColumns,
   TableColumn,
@@ -52,6 +57,7 @@ import {
     Pagination,
     LoadingSpinner,
     Dropdown,
+    SelectDropdown,
   ],
   templateUrl: "./traffic-prices.html",
 })
@@ -63,7 +69,6 @@ export class TrafficPrices implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
   pageDropdown = viewChild<Dropdown>("pageDropdown");
 
   private subscription = new Subscription();
@@ -112,6 +117,8 @@ export class TrafficPrices implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
   selectedCurrency: CurrencyOption = availableCurrencies[0];
+
+  readonly currencyLabel = currencyLabel;
 
   ngOnInit() {
     this.SEOHandler.updateThumbnail(
@@ -304,12 +311,10 @@ export class TrafficPrices implements OnInit, OnDestroy {
     this.searchOptionsChanged(this.query);
   }
 
-  selectCurrency(currency: any) {
+  selectCurrency(currency: CurrencyOption) {
     this.selectedCurrency = currency;
 
     this.searchOptionsChanged(this.query);
-
-    this.currencyDropdown()?.hide();
   }
 
   getOrderingIcon(column: TableColumn) {

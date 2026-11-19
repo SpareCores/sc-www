@@ -181,16 +181,17 @@
           ></sc-button>
 
           <div class="advisor-top-controls">
-            <div>
-              <sc-button
-                id="advisor_currency_button"
-                [scDropdown]="currencyPanel"
-                #currencyDropdown="scDropdown"
-                [label]="selectedCurrency().slug"
-                icon="credit-card"
-                variant="dropdown"
-              ></sc-button>
-            </div>
+            <sc-select-dropdown
+              buttonId="advisor_currency_button"
+              panelId="advisor_currency_options"
+              icon="credit-card"
+              compactIcon="credit-card"
+              [label]="selectedCurrency().slug"
+              [options]="availableCurrencies"
+              [selected]="selectedCurrency()"
+              [optionLabel]="currencyLabel"
+              (selectedChange)="selectCurrency($event)"
+            ></sc-select-dropdown>
 
             <div>
               <sc-button
@@ -1388,28 +1389,6 @@
           tabindex="0"
         >
           <div class="text-sm text-white">{{ pageLimit }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #currencyPanel>
-  <div id="advisor_currency_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list" aria-labelledby="advisor_currency_button">
-      @for (currency of availableCurrencies; track currency.name) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectCurrency(currency)"
-          (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
-          (keydown.space)="selectCurrency(currency); $event.preventDefault()"
-          role="option"
-          [attr.aria-selected]="currency === selectedCurrency()"
-          tabindex="0"
-        >
-          <div class="text-sm text-white">
-            {{ currency.name }} ({{ currency.symbol }})
-          </div>
         </li>
       }
     </ul>

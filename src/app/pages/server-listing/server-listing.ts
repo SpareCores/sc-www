@@ -58,6 +58,7 @@ import {
   CompareSelection,
 } from "../../services/compare-selection";
 import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { Analytics } from "../../services/analytics";
 import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
@@ -95,7 +96,9 @@ import {
   BestPriceAllocationType,
   bestPriceAllocationTypes,
   CurrencyOption,
+  allocationLabel,
   availableCurrencies,
+  currencyLabel,
 } from "../../tools/shared_data";
 import {
   buildServerListingColumns,
@@ -131,6 +134,7 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     AcceleratorMemoryPipe,
     Ipv4CountPipe,
     Dropdown,
+    SelectDropdown,
     BookmarkButton,
     CollectionSaveModal,
     Modal,
@@ -144,8 +148,6 @@ export class ServerListing implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  allocationDropdown = viewChild<Dropdown>("allocationDropdown");
   pageDropdown = viewChild<Dropdown>("pageDropdown");
   private analytics = inject(Analytics);
   private serverCompare = inject(CompareSelection);
@@ -223,6 +225,8 @@ export class ServerListing implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
   displayedCurrency = this.availableCurrencies[0];
+  readonly currencyLabel = currencyLabel;
+  readonly allocationLabel = allocationLabel;
 
   bestPriceAllocationTypes: BestPriceAllocationType[] =
     bestPriceAllocationTypes;
@@ -1131,14 +1135,12 @@ export class ServerListing implements OnInit, OnDestroy {
     this.selectedCurrency = currency;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.currencyDropdown()?.hide();
   }
 
   selectAllocation(allocation: BestPriceAllocationType) {
     this.bestPriceAllocation = allocation;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.allocationDropdown()?.hide();
   }
 
   selectPageSize(limit: number) {

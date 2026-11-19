@@ -76,29 +76,30 @@
               [sublabel]="selectedBenchmarkConfig"
             ></sc-button>
           </div>
-          <div class="min-w-0">
-            <sc-button
-              id="allocation_button"
-              data-ph-capture-attribute-sc-event="database listing price allocation select"
-              [scDropdown]="allocationPanel"
-              #allocationDropdown="scDropdown"
-              [label]="bestPriceAllocation.name"
-              icon="calendar-search"
-              variant="dropdown"
-              class="min-w-0 max-w-full"
-            ></sc-button>
-          </div>
-          <div>
-            <sc-button
-              id="currency_button"
-              data-ph-capture-attribute-sc-event="database listing currency select"
-              [scDropdown]="currencyPanel"
-              #currencyDropdown="scDropdown"
-              [label]="selectedCurrency.slug"
-              icon="credit-card"
-              variant="dropdown"
-            ></sc-button>
-          </div>
+          <sc-select-dropdown
+            data-ph-capture-attribute-sc-event="database listing price allocation select"
+            buttonId="allocation_button"
+            panelId="allocation_options"
+            icon="calendar-search"
+            compactIcon="calendar-search"
+            [label]="bestPriceAllocation.name"
+            [options]="bestPriceAllocationTypes"
+            [selected]="bestPriceAllocation"
+            [optionLabel]="allocationLabel"
+            (selectedChange)="selectAllocation($event)"
+          ></sc-select-dropdown>
+          <sc-select-dropdown
+            data-ph-capture-attribute-sc-event="database listing currency select"
+            buttonId="currency_button"
+            panelId="currency_options"
+            icon="credit-card"
+            compactIcon="credit-card"
+            [label]="selectedCurrency.slug"
+            [options]="availableCurrencies"
+            [selected]="selectedCurrency"
+            [optionLabel]="currencyLabel"
+            (selectedChange)="selectCurrency($event)"
+          ></sc-select-dropdown>
           <div>
             <sc-button
               id="column_button"
@@ -503,53 +504,6 @@
           tabindex="0"
         >
           <div class="text-white text-sm">{{ pageLimit }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #allocationPanel>
-  <div id="allocation_options" class="sc-dropdown w-44">
-    <ul class="sc-dropdown__list" aria-labelledby="allocation_button">
-      @for (
-        allocationType of bestPriceAllocationTypes;
-        track allocationType.name
-      ) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectAllocation(allocationType)"
-          (keydown.enter)="selectAllocation(allocationType)"
-          (keydown.space)="
-            selectAllocation(allocationType); $event.preventDefault()
-          "
-          role="option"
-          [attr.aria-selected]="allocationType === bestPriceAllocation"
-          tabindex="0"
-        >
-          <div class="text-white text-sm">{{ allocationType.name }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #currencyPanel>
-  <div id="currency_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list" aria-labelledby="currency_button">
-      @for (currency of availableCurrencies; track currency.name) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectCurrency(currency)"
-          (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
-          (keydown.space)="selectCurrency(currency); $event.preventDefault()"
-          role="option"
-          [attr.aria-selected]="currency === selectedCurrency"
-          tabindex="0"
-        >
-          <div class="text-white text-sm">
-            {{ currency.name }} ({{ currency.symbol }})
-          </div>
         </li>
       }
     </ul>

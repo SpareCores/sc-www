@@ -37,12 +37,15 @@ import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { Pagination } from "../../components/pagination/pagination";
 import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { Analytics } from "../../services/analytics";
 import {
   AllocationType,
+  allocationLabel,
   allocationTypes,
   CurrencyOption,
   availableCurrencies,
+  currencyLabel,
 } from "../../tools/shared_data";
 import {
   ComparedServer,
@@ -118,6 +121,7 @@ export type RegionVendorMetadata = {
     Pagination,
     LoadingSpinner,
     Dropdown,
+    SelectDropdown,
   ],
   templateUrl: "./server-prices.html",
   styleUrl: "./server-prices.css",
@@ -129,8 +133,6 @@ export class ServerPrices implements OnInit, OnDestroy {
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
   private analytics = inject(Analytics);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  allocationDropdown = viewChild<Dropdown>("allocationDropdown");
   pageDropdown = viewChild<Dropdown>("pageDropdown");
   private serverCompare = inject(CompareSelection);
   private toastService = inject(Toast);
@@ -201,6 +203,9 @@ export class ServerPrices implements OnInit, OnDestroy {
   allocation = this.allocationTypes[0];
 
   selectedCurrency = this.availableCurrencies[0];
+
+  readonly currencyLabel = currencyLabel;
+  readonly allocationLabel = allocationLabel;
 
   limit = 25;
   page = 1;
@@ -635,21 +640,17 @@ export class ServerPrices implements OnInit, OnDestroy {
     }
   }
 
-  selectCurrency(currency: any) {
+  selectCurrency(currency: CurrencyOption) {
     this.selectedCurrency = currency;
 
     this.searchOptionsChanged(this.query);
-
-    this.currencyDropdown()?.hide();
   }
 
-  selectAllocation(allocation: any) {
+  selectAllocation(allocation: AllocationType) {
     this.allocation = allocation;
     this.page = 1;
 
     this.searchOptionsChanged(this.query);
-
-    this.allocationDropdown()?.hide();
   }
 
   selectPageSize(limit: number) {

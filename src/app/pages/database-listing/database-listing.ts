@@ -45,6 +45,7 @@ import type {
   SearchBarQuery,
 } from "../../components/search-bar/types/search-bar.types";
 import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { Analytics } from "../../services/analytics";
@@ -72,8 +73,10 @@ import { AuthState } from "../../core/auth";
 import {
   BestDatabasePriceAllocationType,
   CurrencyOption,
+  allocationLabel,
   availableCurrencies,
   bestDatabasePriceAllocationTypes,
+  currencyLabel,
 } from "../../tools/shared_data";
 import {
   TableColumn,
@@ -126,6 +129,7 @@ type DatabaseListingQuery = Params &
     LoadingSpinner,
     StoragePipe,
     Dropdown,
+    SelectDropdown,
     BenchmarkIconPipe,
     BookmarkButton,
     CollectionSaveModal,
@@ -139,8 +143,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  allocationDropdown = viewChild<Dropdown>("allocationDropdown");
   pageDropdown = viewChild<Dropdown>("pageDropdown");
   private analytics = inject(Analytics);
   private toastService = inject(Toast);
@@ -217,6 +219,8 @@ export class DatabaseListing implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
   displayedCurrency = this.availableCurrencies[0];
+  readonly currencyLabel = currencyLabel;
+  readonly allocationLabel = allocationLabel;
 
   bestPriceAllocationTypes: BestDatabasePriceAllocationType[] =
     bestDatabasePriceAllocationTypes;
@@ -727,14 +731,12 @@ export class DatabaseListing implements OnInit, OnDestroy {
     this.selectedCurrency = currency;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.currencyDropdown()?.hide();
   }
 
   selectAllocation(allocation: BestDatabasePriceAllocationType) {
     this.bestPriceAllocation = allocation;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.allocationDropdown()?.hide();
   }
 
   selectPageSize(limit: number) {
