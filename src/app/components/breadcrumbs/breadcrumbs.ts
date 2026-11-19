@@ -1,4 +1,4 @@
-import { Component, Input, input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 
 export type BreadcrumbSegment = {
@@ -15,5 +15,4 @@ export type BreadcrumbSegment = {
 })
 export class Breadcrumbs {
   @Input() segments: BreadcrumbSegment[] = [];
-  readonly wideGutter = input(false);
 }
