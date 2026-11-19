@@ -1,7 +1,7 @@
 @reference "../../../styles/tailwind.css";
 
 .partners-paragraph {
-  @apply my-10 text-sm text-white sm:text-lg;
+  @apply my-4 text-sm text-white sm:my-10 sm:text-lg;
 
   text-align: justify;
   text-align-last: left;
@@ -11,12 +11,16 @@
   @apply mb-3;
 }
 
+.partners-paragraph--outro {
+  @apply mb-0 sm:mb-10;
+}
+
 .partners-heading {
   @apply font-bold text-emerald-400 my-4;
 }
 
 .partners-heading--section {
-  @apply text-2xl my-10;
+  @apply text-xl my-4 sm:text-2xl sm:my-10;
 }
 
 .partners-heading--subsection {
@@ -25,7 +29,7 @@
 
 .partner-logos {
   --partner-mobile-gap: 2rem;
-  @apply my-8 flex flex-wrap items-center justify-center gap-8 overflow-x-auto pb-2;
+  @apply flex flex-wrap mb-4 sm:my-8 items-center justify-center gap-8 overflow-x-auto sm:pb-2;
 }
 
 @media (width < theme(--breakpoint-md)) {
@@ -84,7 +88,7 @@
 }
 
 .partner-logo-link {
-  @apply inline-flex shrink-0 items-center justify-center;
+  @apply inline-flex h-10 shrink-0 items-center justify-center sm:h-auto;
 }
 
 .partner-logo-image {
@@ -100,14 +104,14 @@
 }
 
 .partners-list li {
-  @apply list-disc text-lg my-1 ml-8 text-white;
+  @apply list-disc text-sm my-1 mx-8 text-white sm:mr-0 sm:text-lg;
 
   text-align: justify;
   text-align-last: left;
 }
 
 .partners-divider {
-  @apply my-10 border-0 border-t;
+  @apply mt-8 mb-4 border-0 border-t sm:my-10;
 
   border-color: color-mix(in oklab, var(--color-emerald-400) 40%, transparent);
 }
