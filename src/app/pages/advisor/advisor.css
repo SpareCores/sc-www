@@ -90,7 +90,7 @@
   gap: 0.5rem;
   row-gap: 0.75rem;
   width: 100%;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   box-sizing: border-box;
 }
 
@@ -99,6 +99,7 @@
     min-height: 4rem;
     gap: 1rem;
     row-gap: 0.75rem;
+    flex-wrap: wrap;
   }
 }
 
@@ -125,8 +126,7 @@
 }
 
 .advisor-summary-alert {
-  @apply inline-flex min-w-0 items-center overflow-hidden rounded-lg border px-4 py-3 text-sm font-medium;
-  width: 100%;
+  @apply inline-flex min-w-0 shrink items-center overflow-hidden rounded-lg border px-3 py-2 text-sm font-medium sm:px-4 sm:py-3;
   max-width: none;
 }
 
