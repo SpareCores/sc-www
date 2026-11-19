@@ -418,101 +418,109 @@
               <tr>
                 <td class="text-nowrap">{{ githubComponent.component }}</td>
                 <td class="text-nowrap">{{ githubComponent.license }}</td>
-                <td class="flex gap-1">
-                  @if (githubComponent.github) {
-                    <a
-                      href="https://github.com/SpareCores/{{
-                        githubComponent.github
-                      }}"
-                      target="_blank"
-                      rel="noopener"
-                      [title]="'GitHub repository of ' + githubComponent.github"
-                      [attr.aria-label]="
-                        'GitHub repository of ' + githubComponent.github
-                      "
-                    >
-                      <svg lucideIcon="github"></svg>
-                    </a>
-                  }
-                  @if (githubComponent.pypi) {
-                    <a
-                      href="https://pypi.org/project/{{ githubComponent.pypi }}"
-                      target="_blank"
-                      rel="noopener"
-                      [title]="githubComponent.pypi + ' on PyPI'"
-                      [attr.aria-label]="githubComponent.pypi + ' on PyPI'"
-                    >
-                      <img
-                        class="w-[24px] align-middle"
-                        src="assets/images/icons/python.svg"
-                        alt="Python logo"
-                      />
-                    </a>
-                  }
-                  @if (githubComponent.docs) {
-                    <a
-                      href="{{ githubComponent.docs }}"
-                      target="_blank"
-                      rel="noopener"
-                      [title]="
-                        'Documentation site of ' + githubComponent.component
-                      "
-                      [attr.aria-label]="
-                        'Documentation site of ' + githubComponent.component
-                      "
-                    >
-                      <svg lucideBookText></svg>
-                    </a>
-                  }
-                  @if (githubComponent.www) {
-                    <a
-                      href="{{ githubComponent.www }}"
-                      target="_blank"
-                      rel="noopener"
-                      [title]="'Homepage of ' + githubComponent.component"
-                      [attr.aria-label]="
-                        'Homepage of ' + githubComponent.component
-                      "
-                    >
-                      <img
-                        class="w-[24px] align-middle"
-                        src="assets/images/icons/www.svg"
-                        alt="WWW logo"
-                      />
-                    </a>
-                  }
-                  @if (githubComponent.api) {
-                    <a
-                      href="{{ githubComponent.api }}"
-                      target="_blank"
-                      rel="noopener"
-                      [title]="'API endpoint of ' + githubComponent.component"
-                      [attr.aria-label]="
-                        'API endpoint of ' + githubComponent.component
-                      "
-                    >
-                      <img
-                        class="w-[24px] align-middle"
-                        src="assets/images/icons/api.svg"
-                        alt="API logo"
-                      />
-                    </a>
-                  }
-                  @if (githubComponent.data) {
-                    <a
-                      href="{{ githubComponent.data }}"
-                      target="_blank"
-                      rel="noopener"
-                      [title]="'Download ' + githubComponent.component"
-                      [attr.aria-label]="
-                        'Download ' + githubComponent.component
-                      "
-                    >
-                      <svg lucideDatabase></svg>
-                    </a>
-                  }
+                <td>
+                  <div class="flex gap-1">
+                    @if (githubComponent.github) {
+                      <a
+                        href="https://github.com/SpareCores/{{
+                          githubComponent.github
+                        }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="
+                          'GitHub repository of ' + githubComponent.github
+                        "
+                        [attr.aria-label]="
+                          'GitHub repository of ' + githubComponent.github
+                        "
+                      >
+                        <svg lucideIcon="github"></svg>
+                      </a>
+                    }
+                    @if (githubComponent.pypi) {
+                      <a
+                        href="https://pypi.org/project/{{
+                          githubComponent.pypi
+                        }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="githubComponent.pypi + ' on PyPI'"
+                        [attr.aria-label]="githubComponent.pypi + ' on PyPI'"
+                      >
+                        <img
+                          class="w-[24px] align-middle"
+                          src="assets/images/icons/python.svg"
+                          alt="Python logo"
+                        />
+                      </a>
+                    }
+                    @if (githubComponent.docs) {
+                      <a
+                        href="{{ githubComponent.docs }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="
+                          'Documentation site of ' + githubComponent.component
+                        "
+                        [attr.aria-label]="
+                          'Documentation site of ' + githubComponent.component
+                        "
+                      >
+                        <svg lucideBookText></svg>
+                      </a>
+                    }
+                    @if (githubComponent.www) {
+                      <a
+                        href="{{ githubComponent.www }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="'Homepage of ' + githubComponent.component"
+                        [attr.aria-label]="
+                          'Homepage of ' + githubComponent.component
+                        "
+                      >
+                        <img
+                          class="w-[24px] align-middle"
+                          src="assets/images/icons/www.svg"
+                          alt="WWW logo"
+                        />
+                      </a>
+                    }
+                    @if (githubComponent.api) {
+                      <a
+                        href="{{ githubComponent.api }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="'API endpoint of ' + githubComponent.component"
+                        [attr.aria-label]="
+                          'API endpoint of ' + githubComponent.component
+                        "
+                      >
+                        <img
+                          class="w-[24px] align-middle"
+                          src="assets/images/icons/api.svg"
+                          alt="API logo"
+                        />
+                      </a>
+                    }
+                    @if (githubComponent.data) {
+                      <a
+                        href="{{ githubComponent.data }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="'Download ' + githubComponent.component"
+                        [attr.aria-label]="
+                          'Download ' + githubComponent.component
+                        "
+                      >
+                        <svg lucideDatabase></svg>
+                      </a>
+                    }
+                  </div>
                 </td>
-                <td>{{ githubComponent.description }}</td>
+                <td>
+                  {{ githubComponent.description }}
+                </td>
               </tr>
             }
           </tbody>
