@@ -6,7 +6,7 @@ date: 2026-11-19
 teaser: Why the Spare Cores Navigator is open source, what we charge for, and why running it is not free.
 # 320x220
 image: /assets/images/blog/thumbnails/open-source-is-not-free.webp
-image_alt: <TODO: alt text for the thumbnail, as a full sentence>
+image_alt: A glowing green and blue Spare Cores logo on a dark navy background, above the words Spare Cores Open Source.
 author: Gergely Daroczi
 tags: [open-source, data, funding]
 ---
