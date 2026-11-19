@@ -1,11 +1,15 @@
-<div class="flex flex-col gap-4 mt-4">
+<div class="flex flex-col gap-4 sm:mt-4">
   @for (compare of compares(); track compare.title) {
     <div
-      class="flex flex-col py-6 gap-2 text-white"
-      [class]="compare.type === 'card' ? 'bg-secondary rounded-lg px-6' : ''"
+      class="flex flex-col text-white"
+      [class]="
+        compare.type === 'card'
+          ? 'gap-2 py-6 bg-secondary rounded-lg px-6'
+          : 'gap-4 pt-4 sm:gap-2 sm:py-6'
+      "
     >
       @if (compare.type === "section") {
-        <h2 class="sc-header-anchor-host text-2xl font-semibold">
+        <h2 class="sc-header-anchor-host text-xl font-semibold sm:text-2xl">
           <span>{{ compare.title }}</span>
           @if (compare.id; as id) {
             <sc-header-anchor
@@ -28,14 +32,18 @@
       @if (compare.description && compare.hide_description_in_index !== true) {
         <div
           class="description_inner_html"
-          [class]="compare.type === 'section' ? 'text-lg space-y-4' : ''"
+          [class]="
+            compare.type === 'section'
+              ? 'text-sm space-y-4 sm:text-lg'
+              : 'text-sm sm:text-base'
+          "
           [innerHTML]="compare.description"
         ></div>
       }
       @if (compare.query) {
         <details
           class="flex flex-col gap-2 open:[&_svg]:-rotate-90"
-          [class.mt-4]="compare.type === 'section'"
+          [class]="compare.type === 'section' ? 'sm:mt-4' : ''"
         >
           <summary class="text-sm list-none cursor-pointer">
             SQL query used to select instances
@@ -44,7 +52,9 @@
               class="inline opacity-75 w-4 h-4 -mr-1 rotate-90"
             ></svg>
           </summary>
-          <pre class="language-sql"><code>{{compare.query}}</code></pre>
+          <pre
+            class="language-sql text-sm sm:text-base"
+          ><code>{{compare.query}}</code></pre>
         </details>
       }
       @if (compare.instances) {

@@ -1,5 +1,5 @@
 <div class="w-full bg-primary min-h-dvh">
-  <div class="content pt-8 pb-8">
+  <div class="content pt-4 pb-8 sm:pt-8">
     <sc-breadcrumbs [segments]="comparePage.breadcrumbs"></sc-breadcrumbs>
 
     <sc-collection-save-modal
@@ -19,7 +19,7 @@
       </div>
     } @else {
       <div
-        class="flex flex-col gap-4 mt-8 content-gutter"
+        class="flex flex-col gap-4 mt-4 sm:mt-8 content-gutter"
         [class.mb-8]="instances.length"
       >
         <sc-page-header
@@ -70,13 +70,12 @@
 
       @if (!instances.length) {
         <div class="flex flex-col gap-4 mt-4 content-gutter">
-          <div class="sc-page-description">
+          <p class="sc-page-description">
             Compare cloud servers and their characteristics, such as CPU, GPU,
             memory, and storage details, and the performance of the instances by
             various benchmarking workloads to find the optimal compute resource
             for your needs.
-          </div>
-          <div class="sc-page-description">
+            <br /><br />
             To get started, select at least two servers using the checkboxes in
             the left column of our
             <a class="text-emerald-400" routerLink="/servers"
@@ -84,7 +83,7 @@
             >, and optionally add/remove servers on their dedicated server
             details pages as well via the "Compare" button, or find below a
             curated list of server comparison sets.
-          </div>
+          </p>
           <sc-compare-guide
             [compares]="serverCompares"
             comparePath="/servers/compare"
