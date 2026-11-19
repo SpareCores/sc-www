@@ -59,6 +59,7 @@ import {
 } from "../../services/compare-selection";
 import { Dropdown } from "../../directives/dropdown";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { Analytics } from "../../services/analytics";
 import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
@@ -135,6 +136,7 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     Ipv4CountPipe,
     Dropdown,
     SelectDropdown,
+    ColumnPicker,
     BookmarkButton,
     CollectionSaveModal,
     Modal,
@@ -1118,6 +1120,16 @@ export class ServerListing implements OnInit, OnDestroy {
       params: "merge",
       history: "replace",
     });
+  }
+
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
   }
 
   refreshColumns(save = true) {

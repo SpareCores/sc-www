@@ -193,15 +193,12 @@
               (selectedChange)="selectCurrency($event)"
             ></sc-select-dropdown>
 
-            <div>
-              <sc-button
-                id="advisor_column_button"
-                [scDropdown]="columnPanel"
-                label="Columns"
-                icon="columns-3-cog"
-                variant="dropdown"
-              ></sc-button>
-            </div>
+            <sc-column-picker
+              buttonId="advisor_column_button"
+              panelId="advisor_column_options"
+              [columns]="possibleColumns()"
+              (visibilityChange)="setColumnVisibility($event.name, $event.show)"
+            ></sc-column-picker>
           </div>
         </div>
 
@@ -1389,26 +1386,6 @@
           tabindex="0"
         >
           <div class="text-sm text-white">{{ pageLimit }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #columnPanel>
-  <div id="advisor_column_options" class="sc-dropdown w-56">
-    <ul class="sc-dropdown__list px-3" aria-labelledby="advisor_column_button">
-      @for (column of possibleColumns(); track column.name) {
-        <li class="flex py-1 gap-2 items-center">
-          <input
-            type="checkbox"
-            [checked]="column.show"
-            (change)="
-              setColumnVisibility(column.name, $any($event.target).checked)
-            "
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
-          />
-          <div class="text-sm text-white">{{ column.name }}</div>
         </li>
       }
     </ul>

@@ -100,16 +100,11 @@
             [optionLabel]="currencyLabel"
             (selectedChange)="selectCurrency($event)"
           ></sc-select-dropdown>
-          <div>
-            <sc-button
-              id="column_button"
-              data-ph-capture-attribute-sc-event="database listing columns select"
-              [scDropdown]="columnPanel"
-              label="Columns"
-              icon="columns-3-cog"
-              variant="dropdown"
-            ></sc-button>
-          </div>
+          <sc-column-picker
+            data-ph-capture-attribute-sc-event="database listing columns select"
+            [columns]="possibleColumns"
+            (visibilityChange)="setColumnVisibility($event.name, $event.show)"
+          ></sc-column-picker>
         </div>
         <div>
           <div class="relative">
@@ -504,24 +499,6 @@
           tabindex="0"
         >
           <div class="text-white text-sm">{{ pageLimit }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #columnPanel>
-  <div id="column_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list px-3" aria-labelledby="dropdownDefaultButton">
-      @for (column of possibleColumns; track column.name) {
-        <li class="flex py-1 gap-2 items-center">
-          <input
-            type="checkbox"
-            [(ngModel)]="column.show"
-            (ngModelChange)="refreshColumns()"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
-          />
-          <div class="text-white text-sm">{{ column.name }}</div>
         </li>
       }
     </ul>

@@ -38,6 +38,7 @@ import { SearchBar } from "../../components/search-bar/search-bar";
 import { Pagination } from "../../components/pagination/pagination";
 import { Dropdown } from "../../directives/dropdown";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { Analytics } from "../../services/analytics";
 import {
   AllocationType,
@@ -122,6 +123,7 @@ export type RegionVendorMetadata = {
     LoadingSpinner,
     Dropdown,
     SelectDropdown,
+    ColumnPicker,
   ],
   templateUrl: "./server-prices.html",
   styleUrl: "./server-prices.css",
@@ -626,6 +628,16 @@ export class ServerPrices implements OnInit, OnDestroy {
       params: "merge",
       history: "replace",
     });
+  }
+
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
   }
 
   refreshColumns(save = true) {

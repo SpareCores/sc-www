@@ -59,6 +59,7 @@ import {
 } from "../../components/search-bar/search-bar";
 import { Dropdown } from "../../directives/dropdown";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size-pipe";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
@@ -394,6 +395,7 @@ type AdvisorComparableResourceKey =
     Breadcrumbs,
     Dropdown,
     SelectDropdown,
+    ColumnPicker,
     LucideArrowDownNarrowWide,
     LucideArrowDownWideNarrow,
     LucideChevronLeft,

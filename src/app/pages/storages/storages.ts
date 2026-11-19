@@ -7,7 +7,6 @@ import {
   inject,
   viewChild,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
   LucideChevronLeft,
@@ -28,6 +27,7 @@ import { Pagination } from "../../components/pagination/pagination";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { Dropdown } from "../../directives/dropdown";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
@@ -46,7 +46,6 @@ import {
 @Component({
   selector: "sc-storages",
   imports: [
-    FormsModule,
     Breadcrumbs,
     PageHeader,
     LucideDynamicIcon,
@@ -59,6 +58,7 @@ import {
     LoadingSpinner,
     Dropdown,
     SelectDropdown,
+    ColumnPicker,
     StoragePipe,
   ],
   templateUrl: "./storages.html",
@@ -344,6 +344,16 @@ export class Storages implements OnInit, OnDestroy {
       const value = (obj as Record<string, unknown>)[key];
       return value !== undefined && value !== null ? value : undefined;
     }, item);
+  }
+
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
   }
 
   refreshColumns() {

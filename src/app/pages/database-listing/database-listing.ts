@@ -46,6 +46,7 @@ import type {
 } from "../../components/search-bar/types/search-bar.types";
 import { Dropdown } from "../../directives/dropdown";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { Analytics } from "../../services/analytics";
@@ -130,6 +131,7 @@ type DatabaseListingQuery = Params &
     StoragePipe,
     Dropdown,
     SelectDropdown,
+    ColumnPicker,
     BenchmarkIconPipe,
     BookmarkButton,
     CollectionSaveModal,
@@ -714,6 +716,16 @@ export class DatabaseListing implements OnInit, OnDestroy {
       params: "merge",
       history: "replace",
     });
+  }
+
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
   }
 
   refreshColumns(save = true) {
