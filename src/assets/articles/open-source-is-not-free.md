@@ -89,14 +89,15 @@ data collection, the cloud bill, and maintenance.
 
 We use these three licenses:
 
-- **Code: MPL 2.0.** You can use it for anything, including commercially. If
-  you change one of our files and distribute it, you share those changes under
-  the same license.
-- **Raw data: CC BY-SA 4.0.** You can use it for anything, including
-  commercially, with attribution, and you share adapted data under the same
-  license.
-- **Compiled database: BSL 1.1.** This is the SQLite file we build from the
-  raw data. BSL is source-available, not an open-source license. Its
+- **Code: [MPL 2.0](/legal/license-mpl).** You can use it for anything,
+  including commercially. If you change one of our files and distribute it,
+  you share those changes under the same license.
+- **Raw data: [CC BY-SA 4.0](/legal/license-cc-by-sa).** You can use it for
+  anything, including commercially, with attribution, and you share adapted
+  data under the same license.
+- **Compiled database: [BSL 1.1](/legal/license-bsl).** This is the SQLite
+  file we build from the raw data. BSL is source-available, not an
+  open-source license. Its
   additional use grant allows production use for non-commercial academic
   research at accredited universities, and for entities with less than
   $1,000,000 USD in annual revenue, unless the use creates a competing cloud
