@@ -8,7 +8,7 @@
 }
 
 .pagination_controls {
-  @apply flex flex-wrap justify-between items-center mt-12 gap-4 pb-4;
+  @apply flex flex-wrap justify-between items-center gap-4 sm:mt-12 sm:pb-4;
 }
 
 .pagination_nav {
