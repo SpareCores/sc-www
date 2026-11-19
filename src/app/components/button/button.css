@@ -50,7 +50,7 @@
 }
 
 .sc-button--large {
-  @apply p-4 sm:p-5;
+  @apply px-3 py-2 sm:p-5;
 }
 
 .sc-button--icon-only.sc-button--small {
@@ -336,7 +336,7 @@
 }
 
 .sc-button--large .sc-button__extension-label {
-  @apply p-4 sm:p-5;
+  @apply px-3 py-2 sm:p-5;
 }
 
 .sc-button--small.sc-button--benchmark {
