@@ -28,11 +28,11 @@
 }
 
 @media (width < theme(--breakpoint-sm)) {
-  .fun-facts-swiper {
+  .navigator-swiper {
     --swiper-pagination-bottom: 0px;
   }
 
-  .fun-facts-swiper::part(pagination) {
+  .navigator-swiper::part(pagination) {
     display: flex;
     justify-content: center;
   }

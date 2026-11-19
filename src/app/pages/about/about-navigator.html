@@ -184,7 +184,7 @@
         [anchorWithTarget]="true"
       ></sc-section-heading>
       <swiper-container
-        class="fun-facts-swiper w-full"
+        class="navigator-swiper w-full"
         slides-per-view="1"
         speed="2000"
         loop="true"
@@ -602,9 +602,11 @@
     </div>
   </div>
 </div>
-<div class="content_section odd">
+<div class="content_section odd snug-top snug-bottom">
   <div class="content">
-    <div class="flex flex-col w-full lg:w-2/3 justify-center mx-auto gap-8">
+    <div
+      class="flex flex-col w-full lg:w-2/3 justify-center mx-auto gap-4 sm:gap-8"
+    >
       <sc-section-heading
         tag="testimonials"
         anchorId="testimonials"
@@ -615,7 +617,7 @@
       </sc-section-heading>
       <swiper-container
         #testimonialsSwiper
-        class="w-full"
+        class="navigator-swiper w-full"
         slides-per-view="1"
         speed="2000"
         loop="true"
@@ -637,8 +639,10 @@
                 {{ quote.quote }}
               </div>
             </div>
-            <div class="flex gap-8 items-center px-2 sm:pl-[130px] pb-12">
-              <div class="text-xl text-gray-400">
+            <div
+              class="flex gap-8 items-center px-2 sm:pl-[130px] pb-6 sm:pb-12"
+            >
+              <div class="text-sm sm:text-xl text-gray-400">
                 — {{ quote.author }}
                 @if (quote.source) {
                   <span>
