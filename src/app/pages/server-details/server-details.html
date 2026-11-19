@@ -30,19 +30,7 @@
           [description]="description"
           [priceDescription]="cardPriceDescription"
           [features]="features"
-          [score]="
-            getBenchmarkValue(true) === null &&
-            getBenchmarkValue(false) === null
-              ? null
-              : {
-                  primary: getBenchmark(true),
-                  primaryValue: getBenchmarkValue(true),
-                  primaryLabel: 'All-cores',
-                  secondary: getBenchmark(false),
-                  secondaryValue: getBenchmarkValue(false),
-                  secondaryLabel: 'Single-core',
-                }
-          "
+          [score]="headerScore"
         >
           <span detailsScoreTitle
             >Spare <span class="text-emerald-400"> SC</span>ore</span
@@ -62,7 +50,7 @@
             (click)="openSummarizeModal()"
           ></sc-button>
         </sc-details-header>
-        @if (getBenchmark(true) === "-") {
+        @if (!headerScore || headerScore.primaryValue === null) {
           <div
             class="w-full bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
             role="alert"
