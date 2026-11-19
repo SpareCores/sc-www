@@ -10,8 +10,8 @@
   height: 620px;
   zoom: tan(
     atan2(
-      100vw - max(0.5rem, env(safe-area-inset-left)) -
-        max(0.5rem, env(safe-area-inset-right)),
+      100vw - max(1rem, env(safe-area-inset-left)) -
+        max(1rem, env(safe-area-inset-right)),
       560px
     )
   );
@@ -112,14 +112,14 @@
   }
   .spinner_box_1 {
     position: absolute;
-    left: 20px;
+    left: 25px;
     top: 95px;
     width: 150px;
     height: 200px;
   }
   .spinner_box_2 {
     position: absolute;
-    left: 202.5px;
+    left: 207.5px;
     top: 95px;
     width: 200px;
     height: 200px;
@@ -140,10 +140,26 @@
       0deg,
       var(--color-primary) 10%,
       var(--color-emerald-400) 50%,
-      var(--color-primary) 100%
+      var(--color-primary) 90%
     );
     overflow: hidden;
     z-index: 2;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: inherit;
+      mask-image: linear-gradient(
+        to bottom,
+        var(--color-primary) 5%,
+        transparent 33%,
+        transparent 67%,
+        var(--color-primary) 95%
+      );
+    }
 
     .ring_lines {
       position: absolute;
@@ -157,7 +173,7 @@
   .spin_ring {
     position: absolute;
     top: 132px;
-    width: 142px;
+    width: 145px;
     height: 135px;
     margin: 0 auto;
     float: left;
@@ -166,7 +182,7 @@
 
     .slot {
       position: absolute;
-      width: 142px;
+      width: 145px;
       height: 135px;
       box-sizing: border-box;
       opacity: 0.9;
@@ -181,7 +197,7 @@
     }
 
     .slot_inner {
-      height: 100%;
+      height: calc(100% - 1rem);
       width: calc(100% - 1rem);
       margin: 0.5rem 0.5rem;
       border-radius: 1rem;
@@ -225,6 +241,8 @@
 
   .slot_logo {
     margin: 0.5rem;
+    min-height: 0;
+    object-fit: contain;
   }
 
   .container {
