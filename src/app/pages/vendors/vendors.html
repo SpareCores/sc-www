@@ -1,4 +1,4 @@
-<div class="w-full bg-primary min-h-screen">
+<div class="w-full bg-primary sm:min-h-screen">
   <div
     class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16 text-white flex flex-col gap-4 sm:gap-8"
   >
@@ -12,82 +12,92 @@
       </div>
     </div>
 
-    <div class="min-w-0 overflow-x-auto content-gutter">
-      <table class="sc-table sc-table--interactive w-full">
-        <thead>
-          <tr>
-            <th></th>
-            <th>
-              <div class="flex gap-1">NAME</div>
-            </th>
-            <th>
-              <div class="flex gap-1">HEADQUARTER</div>
-            </th>
-            <th>
-              <div class="flex gap-1">FOUNDED</div>
-            </th>
-            <th>
-              <div class="flex gap-1">HOMEPAGE</div>
-            </th>
-            <th>
-              <div class="flex gap-1">REGIONS</div>
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (vendor of vendors; track vendor.vendor_id) {
-            <tr
-              (click)="openLink(vendor)"
-              (keydown.enter)="openLink(vendor)"
-              tabindex="0"
-            >
-              <td>
-                @if (vendor.logo) {
-                  <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-                    <img [src]="vendor.logo" alt="{{ vendor.name }} logo" />
-                  </div>
-                }
-              </td>
-              <td>
-                {{ vendor.name }}
-              </td>
-              <td>
-                {{ vendor.city }}, {{ vendor.country_id | countryIdtoName }}
-              </td>
-              <td>{{ vendor.founding_year }}</td>
-              <td>
-                <a
-                  href="{{ vendor.homepage }}"
-                  (click)="$event.stopPropagation()"
-                  class="sc-link"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  {{ vendor.homepage }}
-                </a>
-              </td>
-              <td>{{ vendor.regions }}</td>
-              <td>
-                <div
-                  class="flex justify-end"
-                  (click)="$event.stopPropagation()"
-                >
-                  <a
-                    routerLink="/servers"
-                    [queryParams]="{ vendor: vendor.vendor_id, limit: 100 }"
-                  >
-                    <svg
-                      lucideChevronRight
-                      class="h-6 w-6 text-emerald-400"
-                    ></svg>
-                  </a>
-                </div>
-              </td>
+    <div class="content-gutter">
+      <div class="min-w-0 overflow-x-auto">
+        <table
+          class="sc-table sc-table--interactive w-full text-nowrap sm:text-wrap"
+        >
+          <thead>
+            <tr>
+              <th class="pl-3 pr-0 sm:px-5"></th>
+              <th>
+                <div class="flex gap-1">NAME</div>
+              </th>
+              <th>
+                <div class="flex gap-1">HEADQUARTER</div>
+              </th>
+              <th>
+                <div class="flex gap-1">FOUNDED</div>
+              </th>
+              <th>
+                <div class="flex gap-1">HOMEPAGE</div>
+              </th>
+              <th>
+                <div class="flex gap-1">REGIONS</div>
+              </th>
+              <th></th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (vendor of vendors; track vendor.vendor_id) {
+              <tr
+                (click)="openLink(vendor)"
+                (keydown.enter)="openLink(vendor)"
+                tabindex="0"
+              >
+                <td class="pl-3 pr-0 sm:px-5">
+                  @if (vendor.logo) {
+                    <div
+                      class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white p-1"
+                    >
+                      <img
+                        class="size-full object-contain"
+                        [src]="vendor.logo"
+                        alt="{{ vendor.name }} logo"
+                      />
+                    </div>
+                  }
+                </td>
+                <td>
+                  {{ vendor.name }}
+                </td>
+                <td>
+                  {{ vendor.city }}, {{ vendor.country_id | countryIdtoName }}
+                </td>
+                <td>{{ vendor.founding_year }}</td>
+                <td>
+                  <a
+                    href="{{ vendor.homepage }}"
+                    (click)="$event.stopPropagation()"
+                    class="sc-link"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {{ vendor.homepage }}
+                  </a>
+                </td>
+                <td>{{ vendor.regions }}</td>
+                <td>
+                  <div
+                    class="flex justify-end"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <a
+                      routerLink="/servers"
+                      [queryParams]="{ vendor: vendor.vendor_id, limit: 100 }"
+                    >
+                      <svg
+                        lucideChevronRight
+                        class="h-6 w-6 text-emerald-400"
+                      ></svg>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

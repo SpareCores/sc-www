@@ -38,102 +38,104 @@
       <div class="text-black datamaps_div" id="datamapdiv" #datamapdiv></div>
     </div>
 
-    <div class="min-w-0 overflow-x-auto content-gutter">
-      <table class="sc-table sc-table--interactive">
-        <thead>
-          <tr>
-            <th class="cursor-pointer" (click)="toggleOrdering('region')">
-              <div class="flex gap-1">
-                REGION
-                @if (getOrderingIcon("region")) {
-                  <svg
-                    [lucideIcon]="getOrderingIcon('region')"
-                    class="h-4 w-4 text-white"
-                  ></svg>
-                }
-              </div>
-            </th>
-            <th class="cursor-pointer" (click)="toggleOrdering('vendor')">
-              <div class="flex gap-1">
-                VENDOR
-                @if (getOrderingIcon("vendor")) {
-                  <svg
-                    [lucideIcon]="getOrderingIcon('vendor')"
-                    class="h-4 w-4 text-white"
-                  ></svg>
-                }
-              </div>
-            </th>
-            <th class="cursor-pointer" (click)="toggleOrdering('country')">
-              <div class="flex gap-1">
-                COUNTRY
-                @if (getOrderingIcon("country")) {
-                  <svg
-                    [lucideIcon]="getOrderingIcon('country')"
-                    class="h-4 w-4 text-white"
-                  ></svg>
-                }
-              </div>
-            </th>
-            <th>
-              <div class="flex gap-1">FOUNDING YEAR</div>
-            </th>
-            <th>SERVERS</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (
-            region of regions;
-            track region.vendor_id + "_" + region.region_id
-          ) {
-            <tr
-              [class.regions-table__row--hidden]="
-                isVendorHidden(region.vendor_id)
-              "
-              (click)="openLink(region)"
-            >
-              <td>
+    <div class="content-gutter">
+      <div class="min-w-0 overflow-x-auto">
+        <table class="sc-table sc-table--interactive text-nowrap sm:text-wrap">
+          <thead>
+            <tr>
+              <th class="cursor-pointer" (click)="toggleOrdering('region')">
                 <div class="flex gap-1">
-                  {{ region.display_name }}
-                  @if (region.green_energy) {
-                    <svg lucideLeaf class="h-4 w-4 text-emerald-400"></svg>
+                  REGION
+                  @if (getOrderingIcon("region")) {
+                    <svg
+                      [lucideIcon]="getOrderingIcon('region')"
+                      class="h-4 w-4 text-white"
+                    ></svg>
                   }
                 </div>
-              </td>
-              <td>{{ getVendorName(region.vendor_id) }}</td>
-              <td>{{ region.country_id | countryIdtoName }}</td>
-              <td>{{ region.founding_year || "-" }}</td>
-              <td>
-                <div
-                  class="flex justify-end"
-                  (click)="$event.stopPropagation()"
-                >
-                  <a
-                    routerLink="/servers"
-                    [queryParams]="{
-                      vendor_regions: getVendorRegionFilter(region),
-                    }"
-                  >
+              </th>
+              <th class="cursor-pointer" (click)="toggleOrdering('vendor')">
+                <div class="flex gap-1">
+                  VENDOR
+                  @if (getOrderingIcon("vendor")) {
                     <svg
-                      lucideChevronRight
-                      class="h-6 w-6 text-emerald-400"
+                      [lucideIcon]="getOrderingIcon('vendor')"
+                      class="h-4 w-4 text-white"
                     ></svg>
-                  </a>
+                  }
                 </div>
-              </td>
+              </th>
+              <th class="cursor-pointer" (click)="toggleOrdering('country')">
+                <div class="flex gap-1">
+                  COUNTRY
+                  @if (getOrderingIcon("country")) {
+                    <svg
+                      [lucideIcon]="getOrderingIcon('country')"
+                      class="h-4 w-4 text-white"
+                    ></svg>
+                  }
+                </div>
+              </th>
+              <th>
+                <div class="flex gap-1">FOUNDING YEAR</div>
+              </th>
+              <th>SERVERS</th>
             </tr>
-          }
-          @if (regions.length && !hasVisibleRegions) {
-            <tr class="regions-table__empty">
-              <td colspan="5">
-                <strong>All vendors are hidden.</strong>
-                Turn on at least one vendor above the map to list its regions
-                here.
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (
+              region of regions;
+              track region.vendor_id + "_" + region.region_id
+            ) {
+              <tr
+                [class.regions-table__row--hidden]="
+                  isVendorHidden(region.vendor_id)
+                "
+                (click)="openLink(region)"
+              >
+                <td>
+                  <div class="flex gap-1">
+                    {{ region.display_name }}
+                    @if (region.green_energy) {
+                      <svg lucideLeaf class="h-4 w-4 text-emerald-400"></svg>
+                    }
+                  </div>
+                </td>
+                <td>{{ getVendorName(region.vendor_id) }}</td>
+                <td>{{ region.country_id | countryIdtoName }}</td>
+                <td>{{ region.founding_year || "-" }}</td>
+                <td>
+                  <div
+                    class="flex justify-end"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <a
+                      routerLink="/servers"
+                      [queryParams]="{
+                        vendor_regions: getVendorRegionFilter(region),
+                      }"
+                    >
+                      <svg
+                        lucideChevronRight
+                        class="h-6 w-6 text-emerald-400"
+                      ></svg>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (regions.length && !hasVisibleRegions) {
+              <tr class="regions-table__empty">
+                <td colspan="5">
+                  <strong>All vendors are hidden.</strong>
+                  Turn on at least one vendor above the map to list its regions
+                  here.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
