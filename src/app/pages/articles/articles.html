@@ -1,12 +1,12 @@
 <div class="w-full bg-primary">
-  <div class="content pt-8 pb-8 lg:pt-16 lg:pb-16">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
     <sc-breadcrumbs
       [segments]="breadcrumbs"
       [wideGutter]="true"
     ></sc-breadcrumbs>
 
     <div
-      class="content-gutter-wide articles_holder flex flex-wrap mt-4 text-white"
+      class="content-gutter-wide articles_holder flex flex-wrap sm:mt-4 text-white"
     >
       @for (article of articles; track article.title + "_" + article.date) {
         <div
