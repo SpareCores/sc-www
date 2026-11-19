@@ -1,4 +1,7 @@
-<div class="flex justify-center items-center" role="status">
+<div
+  class="flex flex-col items-center justify-center gap-3 sm:flex-row"
+  role="status"
+>
   <svg
     aria-hidden="true"
     [class]="'inline animate-spin fill-emerald-400 ' + sizeClasses"
@@ -17,6 +20,6 @@
   </svg>
   <span class="sr-only">Loading...</span>
   @if (text) {
-    <span [class]="'ml-3 ' + textClasses">{{ text }}</span>
+    <span [class]="'text-center ' + textClasses">{{ text }}</span>
   }
 </div>
