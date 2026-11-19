@@ -463,18 +463,25 @@
 }
 
 .sc-button--compact .sc-button__icon,
-.sc-button--compact .sc-button__compact-icon {
+.sc-button--compact .sc-button__compact-icon,
+.sc-button--compact.sc-button--benchmark .sc-button__square-icon {
   @apply size-4.75;
 }
 
-.sc-button--compact .sc-button__compact-icon {
+.sc-button--compact .sc-button__compact-icon,
+.sc-button--compact.sc-button--benchmark .sc-button__square-icon {
   @apply text-white;
 }
 
 .sc-button--compact .sc-button__label,
 .sc-button--compact .sc-button__extension-label,
+.sc-button--compact .sc-button__benchmark-labels,
 .sc-button--compact .sc-button__square-icon:not(.sc-button__compact-icon) {
   @apply hidden;
+}
+
+.sc-button--compact.sc-button--benchmark .sc-button__square-icon {
+  @apply block;
 }
 
 @media (width >= theme(--breakpoint-sm)) {
@@ -482,16 +489,33 @@
     @apply h-auto w-full shrink;
   }
 
-  .sc-button--compact:not(.sc-button--dropdown).sc-button--small {
+  .sc-button--compact:not(
+      .sc-button--dropdown,
+      .sc-button--benchmark
+    ).sc-button--small {
     @apply px-3 py-2;
   }
 
-  .sc-button--compact:not(.sc-button--dropdown).sc-button--default {
+  .sc-button--compact:not(
+      .sc-button--dropdown,
+      .sc-button--benchmark
+    ).sc-button--default {
     @apply px-4 py-3;
   }
 
-  .sc-button--compact:not(.sc-button--dropdown).sc-button--large {
+  .sc-button--compact:not(
+      .sc-button--dropdown,
+      .sc-button--benchmark
+    ).sc-button--large {
     @apply p-5;
+  }
+
+  .sc-button--compact.sc-button--benchmark {
+    @apply h-[46px];
+  }
+
+  .sc-button--compact.sc-button--benchmark .sc-button__square-icon {
+    @apply size-4 text-emerald-400;
   }
 
   .sc-button--compact .sc-button__label {
@@ -502,7 +526,8 @@
     @apply size-4;
   }
 
-  .sc-button--compact .sc-button__extension-label {
+  .sc-button--compact .sc-button__extension-label,
+  .sc-button--compact .sc-button__benchmark-labels {
     @apply flex;
   }
 

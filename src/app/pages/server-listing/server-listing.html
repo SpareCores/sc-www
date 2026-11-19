@@ -109,11 +109,12 @@
         [class.w-full]="isCollapsed"
       >
         <div
-          class="sc-listing-toolbar w-full xl:w-[calc(100%-60px)] flex justify-end gap-4 items-center ml-auto"
+          class="sc-listing-toolbar w-full xl:w-[calc(100%-60px)] flex justify-end gap-2 sm:gap-4 items-center ml-auto"
         >
           <div class="min-w-0">
             <sc-button
               id="benchmark_select_button"
+              [compact]="true"
               data-ph-capture-attribute-sc-event="server listing benchmark select"
               class="min-w-0 max-w-full"
               variant="benchmark"
