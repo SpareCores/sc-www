@@ -15,6 +15,12 @@ import { TooltipTrigger, TooltipTriggerMode } from "./tooltip-trigger";
         (tooltipOpen)="open($event)"
         (tooltipClose)="close()"
       ></span>
+      <span
+        id="trigger-b"
+        scTooltipTrigger
+        (tooltipOpen)="open($event)"
+        (tooltipClose)="close()"
+      ></span>
     </div>
   `,
 })
@@ -48,15 +54,19 @@ function pointer(type: string, pointerType: string): PointerEvent {
 describe("TooltipTrigger", () => {
   let fixture: ComponentFixture<TooltipHost>;
   let host: TooltipHost;
+  let uiTooltip: UiTooltip;
   let trigger: HTMLElement;
+  let triggerB: HTMLElement;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [TooltipHost] });
     fixture = TestBed.createComponent(TooltipHost);
     host = fixture.componentInstance;
-    host.setTooltip(TestBed.inject(UiTooltip));
+    uiTooltip = TestBed.inject(UiTooltip);
+    host.setTooltip(uiTooltip);
     fixture.detectChanges();
     trigger = fixture.debugElement.query(By.css("#trigger")).nativeElement;
+    triggerB = fixture.debugElement.query(By.css("#trigger-b")).nativeElement;
   });
 
   afterEach(() => {
@@ -98,6 +108,25 @@ describe("TooltipTrigger", () => {
     trigger.click();
 
     expect(host.opens.length).toBe(1);
+    expect(host.closes).toBe(0);
+  });
+
+  it("does not close another trigger's tooltip on focusout", () => {
+    trigger.focus();
+    triggerB.dispatchEvent(pointer("pointerenter", "mouse"));
+    trigger.blur();
+
+    expect(host.opens).toEqual([trigger, triggerB]);
+    expect(host.closes).toBe(0);
+    expect(uiTooltip.shownAnchor()).toBe(triggerB);
+  });
+
+  it("does not close on focusout after the tooltip was dismissed", () => {
+    trigger.click();
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    trigger.dispatchEvent(new FocusEvent("focusout"));
+
+    expect(uiTooltip.shownAnchor()).toBeNull();
     expect(host.closes).toBe(0);
   });
 

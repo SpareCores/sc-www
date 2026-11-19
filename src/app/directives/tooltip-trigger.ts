@@ -72,7 +72,7 @@ export class TooltipTrigger {
   }
 
   protected onPointerLeave(event: PointerEvent): void {
-    if (event.pointerType === "mouse" && this.openedBy === "hover") {
+    if (event.pointerType === "mouse" && this.activeSource() === "hover") {
       this.close();
     }
   }
@@ -103,7 +103,8 @@ export class TooltipTrigger {
   }
 
   protected onFocusOut(): void {
-    if (this.openedBy !== null && this.openedBy !== "hover") {
+    const source = this.activeSource();
+    if (source === "tap" || source === "focus") {
       this.close();
     }
   }
@@ -114,9 +115,13 @@ export class TooltipTrigger {
       return;
     }
 
-    if (this.openedBy !== "hover") {
+    if (this.activeSource() !== "hover") {
       this.close();
     }
+  }
+
+  private activeSource(): TooltipOpenSource | null {
+    return this.isShown() ? this.openedBy : null;
   }
 
   private open(source: TooltipOpenSource): void {
