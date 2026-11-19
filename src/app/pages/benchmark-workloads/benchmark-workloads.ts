@@ -97,7 +97,7 @@ export class BenchmarkWorkloads implements OnInit {
   private seoHandler = inject(SeoHandler);
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
-  private readonly isBelowLg = watchBelowBreakpoint(
+  readonly isMobileViewport = watchBelowBreakpoint(
     isPlatformBrowser(this.platformId) ? this.document.defaultView : null,
     "lg",
     this.destroyRef,
@@ -116,11 +116,11 @@ export class BenchmarkWorkloads implements OnInit {
   private pendingScrollTargetId: string | null = null;
   private deferredScrollTimeout: ReturnType<typeof setTimeout> | null = null;
   private pendingScrollTimeout: ReturnType<typeof setTimeout> | null = null;
-  private hasInitializedViewportState = false;
+  private lastViewportIsMobile: boolean | null = null;
   private desktopCollapsedState = false;
   constructor() {
     effect(() => {
-      const isMobileViewport = this.isBelowLg();
+      const isMobileViewport = this.isMobileViewport();
       untracked(() => this.syncSidebarStateForViewport(isMobileViewport));
     });
 
@@ -197,10 +197,9 @@ export class BenchmarkWorkloads implements OnInit {
   readonly isCollapsed = computed(() => {
     const preference = this.sidebarPreference();
     return preference === "auto"
-      ? this.isBelowLg()
+      ? this.isMobileViewport()
       : preference === "collapsed";
   });
-  readonly isMobileViewport = signal(false);
   readonly disableLayoutTransitions = signal(false);
   readonly activeBenchmarkId = signal<string>("");
   readonly expandedFamily = signal<string | null>(null);
@@ -349,16 +348,10 @@ export class BenchmarkWorkloads implements OnInit {
       return;
     }
 
-    const wasMobileViewport = this.isMobileViewport();
+    const wasMobileViewport = this.lastViewportIsMobile;
+    this.lastViewportIsMobile = isMobileViewport;
 
-    this.isMobileViewport.set(isMobileViewport);
-
-    if (!this.hasInitializedViewportState) {
-      this.hasInitializedViewportState = true;
-      return;
-    }
-
-    if (isMobileViewport === wasMobileViewport) {
+    if (wasMobileViewport === null || isMobileViewport === wasMobileViewport) {
       return;
     }
 
