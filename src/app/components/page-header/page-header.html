@@ -1,73 +1,13 @@
 <div class="page-header">
-  <h1 class="page-header__title">
-    <svg
-      [lucideIcon]="icon()"
-      class="page-header__icon"
-      aria-hidden="true"
-    ></svg>
-    @if (showBookmark()) {
-      <span
-        class="page-header__bookmark-wrap"
-        [class.page-header__bookmark-wrap--locked]="bookmarkGuestLocked()"
-      >
-        <button
-          type="button"
-          class="page-header__icon-btn page-header__bookmark sc-bookmark-toggle"
-          [class.sc-bookmark-toggle--active]="bookmarkActive()"
-          [class.sc-bookmark-toggle--can-add]="
-            !bookmarkGuestLocked() &&
-            !bookmarkActive() &&
-            !bookmarkDisabled() &&
-            !bookmarkLoading()
-          "
-          [class.sc-bookmark-toggle--can-remove]="
-            !bookmarkGuestLocked() &&
-            bookmarkActive() &&
-            !bookmarkDisabled() &&
-            !bookmarkLoading()
-          "
-          [class.page-header__bookmark--locked]="bookmarkGuestLocked()"
-          [disabled]="
-            !bookmarkGuestLocked() && (bookmarkDisabled() || bookmarkLoading())
-          "
-          [attr.aria-label]="
-            bookmarkGuestLocked()
-              ? registerHint
-              : bookmarkActive()
-                ? 'Remove bookmark'
-                : 'Add bookmark'
-          "
-          [attr.aria-pressed]="bookmarkActive()"
-          scTooltipTrigger
-          tooltipMode="action"
-          (tooltipOpen)="onBookmarkMouseEnter($event)"
-          (tooltipClose)="hideTooltip()"
-          (click)="onBookmarkClick($event)"
-        >
-          <svg
-            lucideBookmark
-            class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--default"
-          ></svg>
-          <svg
-            lucideBookmarkPlus
-            class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--add"
-          ></svg>
-          <svg
-            lucideBookmarkOff
-            class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--remove"
-          ></svg>
-        </button>
-        @if (bookmarkGuestLocked()) {
-          <div
-            #tooltip
-            class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
-          >
-            {{ registerHint }}
-          </div>
-        }
-      </span>
+  <div class="page-header__heading">
+    @if (icon()) {
+      <svg
+        [lucideIcon]="icon()"
+        class="page-header__icon"
+        aria-hidden="true"
+      ></svg>
     }
-    <span class="page-header__title-text">{{ title() }}</span>
+    <h1 class="page-header__title">{{ title() }}</h1>
     @if (showEdit()) {
       <button
         type="button"
@@ -78,7 +18,69 @@
         <svg lucideSquarePen class="page-header__icon-btn-svg"></svg>
       </button>
     }
-  </h1>
+  </div>
+  @if (showBookmark()) {
+    <span
+      class="page-header__bookmark-wrap"
+      [class.page-header__bookmark-wrap--locked]="bookmarkGuestLocked()"
+    >
+      <button
+        type="button"
+        class="page-header__icon-btn page-header__bookmark sc-bookmark-toggle"
+        [class.sc-bookmark-toggle--active]="bookmarkActive()"
+        [class.sc-bookmark-toggle--can-add]="
+          !bookmarkGuestLocked() &&
+          !bookmarkActive() &&
+          !bookmarkDisabled() &&
+          !bookmarkLoading()
+        "
+        [class.sc-bookmark-toggle--can-remove]="
+          !bookmarkGuestLocked() &&
+          bookmarkActive() &&
+          !bookmarkDisabled() &&
+          !bookmarkLoading()
+        "
+        [class.page-header__bookmark--locked]="bookmarkGuestLocked()"
+        [disabled]="
+          !bookmarkGuestLocked() && (bookmarkDisabled() || bookmarkLoading())
+        "
+        [attr.aria-label]="
+          bookmarkGuestLocked()
+            ? registerHint
+            : bookmarkActive()
+              ? 'Remove bookmark'
+              : 'Add bookmark'
+        "
+        [attr.aria-pressed]="bookmarkActive()"
+        scTooltipTrigger
+        tooltipMode="action"
+        (tooltipOpen)="onBookmarkMouseEnter($event)"
+        (tooltipClose)="hideTooltip()"
+        (click)="onBookmarkClick($event)"
+      >
+        <svg
+          lucideBookmark
+          class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--default"
+        ></svg>
+        <svg
+          lucideBookmarkPlus
+          class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--add"
+        ></svg>
+        <svg
+          lucideBookmarkOff
+          class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--remove"
+        ></svg>
+      </button>
+      @if (bookmarkGuestLocked()) {
+        <div
+          #tooltip
+          class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+        >
+          {{ registerHint }}
+        </div>
+      }
+    </span>
+  }
   <div class="page-header__actions">
     <ng-content></ng-content>
     @if (showShare()) {

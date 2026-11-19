@@ -75,4 +75,14 @@ describe("PageHeader", () => {
     expect(copy).toHaveBeenCalled();
     expect(share?.componentInstance.icon()).toBe("check");
   });
+
+  it("renders without an icon and keeps the controls out of the heading", () => {
+    fixture.componentRef.setInput("icon", null);
+    fixture.detectChanges();
+
+    const heading = fixture.debugElement.query(By.css("h1"));
+    expect(fixture.debugElement.query(By.css(".page-header__icon"))).toBeNull();
+    expect(heading.query(By.css("button"))).toBeNull();
+    expect(heading.nativeElement.textContent.trim()).toBe("Servers");
+  });
 });

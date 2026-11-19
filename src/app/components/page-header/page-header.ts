@@ -43,7 +43,7 @@ export class PageHeader {
   private copiedTimeout?: ReturnType<typeof setTimeout>;
   private readonly linkCopied = signal(false);
 
-  icon = input.required<string>();
+  icon = input<string | null>(null);
   title = input.required<string>();
   showBookmark = input(false);
   bookmarkActive = input(false);

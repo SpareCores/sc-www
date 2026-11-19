@@ -1,23 +1,23 @@
 @reference "../../../styles/tailwind.css";
 
 .page-header {
-  @apply flex gap-3 justify-between items-start sm:gap-4 sm:items-center;
+  @apply flex flex-wrap items-center gap-x-2 gap-y-3 sm:flex-nowrap;
 }
 
-.page-header__title {
-  @apply text-white font-bold text-2xl flex items-start min-w-0 sm:text-3xl sm:items-center;
+.page-header__heading {
+  @apply flex basis-full items-start gap-2 min-w-0 sm:contents;
 }
 
 .page-header__icon {
-  @apply size-9.5 shrink-0 mr-2 sm:size-8;
+  @apply size-9.5 shrink-0 text-white sm:order-1 sm:size-8;
 }
 
-.page-header__title-text {
-  @apply mr-2 min-w-0 leading-9.5 sm:leading-9;
+.page-header__title {
+  @apply text-white font-bold text-2xl leading-9.5 min-w-0 sm:order-3 sm:text-3xl sm:leading-9;
 }
 
 .page-header__icon-btn {
-  @apply inline-flex items-center justify-center shrink-0 mr-2 rounded-md size-9.5 sm:size-8;
+  @apply inline-flex items-center justify-center shrink-0 rounded-md size-9.5 sm:size-8;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -26,6 +26,7 @@
 }
 
 .page-header__bookmark {
+  @apply justify-start sm:size-6;
   --sc-bookmark-toggle-idle-color: color-mix(
     in oklab,
     var(--color-gray-400) 70%,
@@ -33,7 +34,22 @@
   );
 }
 
+.page-header__bookmark-icon ::ng-deep > * {
+  transform: translate(-4.8px, -2.4px) scale(1.2);
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .page-header__bookmark {
+    transform: translateY(-1px);
+  }
+
+  .page-header__bookmark-icon ::ng-deep > * {
+    transform: none;
+  }
+}
+
 .page-header__edit {
+  @apply sm:order-4;
   color: color-mix(in oklab, var(--color-gray-400) 70%, transparent);
 }
 
@@ -47,17 +63,13 @@
 }
 
 .page-header__bookmark-wrap {
+  @apply sm:order-2;
   display: inline-flex;
   align-items: center;
-  margin-right: 0.5rem;
 }
 
 .page-header__bookmark-wrap--locked {
   cursor: pointer;
-}
-
-.page-header__bookmark-wrap .page-header__icon-btn {
-  margin-right: 0;
 }
 
 .page-header__bookmark--locked {
@@ -71,5 +83,5 @@
 }
 
 .page-header__actions {
-  @apply flex shrink-0 items-center gap-2 sm:shrink sm:flex-wrap sm:gap-4 lg:justify-end;
+  @apply flex items-center gap-2 empty:hidden sm:order-5 sm:ml-auto sm:shrink sm:flex-wrap sm:gap-4 sm:pl-4 lg:justify-end;
 }
