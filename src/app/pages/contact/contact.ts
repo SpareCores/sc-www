@@ -9,13 +9,14 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
+import { PageHeader } from "../../components/page-header/page-header";
 import * as crypto from "crypto-js";
 import { Button } from "../../components/button/button";
 import { Toast } from "../../services/toast";
 
 @Component({
   selector: "sc-contact",
-  imports: [ReactiveFormsModule, Breadcrumbs, Button],
+  imports: [ReactiveFormsModule, Breadcrumbs, PageHeader, Button],
   templateUrl: "./contact.html",
 })
 export class Contact {
