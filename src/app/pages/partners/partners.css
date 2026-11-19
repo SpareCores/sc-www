@@ -1,7 +1,7 @@
 @reference "../../../styles/tailwind.css";
 
 .partners-paragraph {
-  @apply my-10 text-lg text-white;
+  @apply my-10 text-sm text-white sm:text-lg;
 
   text-align: justify;
   text-align-last: left;

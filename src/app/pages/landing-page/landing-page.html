@@ -7,7 +7,7 @@
             Don't gamble with your cloud costs.
             <span class="text-emerald-400">Use Spare Cores!</span>
           </div>
-          <div class="grid gap-4 text-base md:text-3xl">
+          <div class="grid gap-4 text-sm sm:text-base md:text-3xl">
             <p>
               Right-size AI/ML compute with vendor-neutral cloud intelligence
               and real workload telemetry.
@@ -238,7 +238,7 @@
             </div>
             <div class="w-full">
               <button
-                class="quote-preview text-base sm:text-2xl cursor-zoom-in"
+                class="quote-preview text-sm sm:text-2xl cursor-zoom-in"
                 (click)="toggleQuote($event)"
               >
                 The Resource Tracker has become an essential part of our
@@ -248,7 +248,7 @@
                   >— Data Engineer, Too Good To Go</span
                 >
               </button>
-              <div class="quote-full text-base sm:text-2xl hidden">
+              <div class="quote-full text-sm sm:text-2xl hidden">
                 <p class="pb-4">
                   We run several ML pipelines that process high volumes of data
                   daily. Initially, we over-provisioned CPU and memory to avoid
@@ -403,7 +403,7 @@
           </div>
           <div class="w-full">
             <button
-              class="quote-preview text-base sm:text-2xl cursor-zoom-in"
+              class="quote-preview text-sm sm:text-2xl cursor-zoom-in"
               (click)="toggleQuote($event)"
             >
               They brought stability and scalability to the platform,
@@ -411,7 +411,7 @@
               costs [...]
               <span class="text-gray-400">— Chief Data Officer, System1</span>
             </button>
-            <div class="quote-full text-base sm:text-2xl hidden">
+            <div class="quote-full text-sm sm:text-2xl hidden">
               <p class="pb-4">
                 Gergely and his team played a key role in building and
                 productionizing the infrastructure for our data science
@@ -456,7 +456,7 @@
         >
           <div class="flex flex-col w-full lg:w-1/2 justify-center">
             <ol
-              class="list-decimal list-outside mx-4.75 pl-6.75 text-lg leading-8 sm:mx-0 sm:pl-0 sm:text-2xl sm:leading-10.5"
+              class="list-decimal list-outside mx-4.75 pl-6.75 text-sm leading-6 sm:mx-0 sm:pl-0 sm:text-2xl sm:leading-10.5"
             >
               <li class="pb-4">
                 <a routerLink="/servers" class="sc-link font-bold">
@@ -505,7 +505,10 @@
           </div>
           <div class="flex min-w-0 flex-col w-full lg:w-1/2 justify-center">
             @if (showResourceTrackerCode) {
-              <pre class="language-python line-numbers" data-line="4"><code>
+              <pre
+                class="language-python line-numbers text-sm sm:text-base"
+                data-line="4"
+              ><code>
                                           from resource_tracker import ResourceTracker
 
                                           # start trackers in the background (non-blocking)

@@ -1,7 +1,7 @@
 @reference "../../../styles/tailwind.css";
 
 p {
-  @apply text-white text-xl pr-16 mb-4 pb-4;
+  @apply text-white text-sm pr-16 mb-4 pb-4 sm:text-xl;
 }
 a {
   @apply underline decoration-dotted hover:text-gray-500;

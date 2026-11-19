@@ -9,7 +9,7 @@ import { LucideCheck } from "@lucide/angular";
   host: {
     role: "listitem",
     class:
-      "flex items-center gap-2 pt-3 pb-3.75 text-base text-gray-200 first:pt-0 last:pb-0",
+      "flex items-center gap-2 pt-3 pb-3.75 text-sm text-gray-200 sm:text-base first:pt-0 last:pb-0",
   },
 })
 export class CheckListItem {}
