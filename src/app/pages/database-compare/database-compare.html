@@ -18,7 +18,10 @@
         ></sc-loading-spinner>
       </div>
     } @else {
-      <div class="flex flex-col gap-4 my-8 content-gutter">
+      <div
+        class="flex flex-col gap-4 mt-8 content-gutter"
+        [class.mb-8]="instances.length"
+      >
         <sc-page-header
           icon="scale"
           [title]="comparePage.title"
@@ -67,7 +70,7 @@
       </div>
 
       @if (!instances.length) {
-        <div class="flex flex-col gap-4 content-gutter">
+        <div class="flex flex-col gap-4 mt-4 content-gutter">
           <div class="text-white text-base sm:text-xl sm:pr-16">
             Compare managed databases (DBaaS) and their key specs, including
             engine type and versions supported, vCPU and RAM, storage throughput
