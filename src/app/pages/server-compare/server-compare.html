@@ -20,7 +20,7 @@
     } @else {
       <div
         class="flex flex-col gap-4 mt-4 sm:mt-8 content-gutter"
-        [class.mb-8]="instances.length"
+        [class]="instances.length ? 'mb-4 sm:mb-8' : ''"
       >
         <sc-page-header
           icon="scale"
