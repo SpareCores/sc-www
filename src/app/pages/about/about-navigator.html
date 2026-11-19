@@ -172,9 +172,11 @@
     </div>
   </div>
 </div>
-<div class="content_section odd">
+<div class="content_section odd snug-top snug-bottom">
   <div class="content">
-    <div class="flex flex-col w-full lg:w-1/2 justify-center mx-auto gap-8">
+    <div
+      class="flex flex-col w-full lg:w-1/2 justify-center mx-auto gap-4 sm:gap-8"
+    >
       <sc-section-heading
         tag="fun_facts"
         anchorId="fun-facts"
@@ -182,7 +184,7 @@
         [anchorWithTarget]="true"
       ></sc-section-heading>
       <swiper-container
-        class="w-full"
+        class="fun-facts-swiper w-full"
         slides-per-view="1"
         speed="2000"
         loop="true"
@@ -191,7 +193,7 @@
         init="false"
       >
         <swiper-slide>
-          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
                 class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
@@ -206,7 +208,7 @@
           </div>
         </swiper-slide>
         <swiper-slide>
-          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
                 class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
@@ -224,7 +226,7 @@
           </div>
         </swiper-slide>
         <swiper-slide>
-          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
                 class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
@@ -242,7 +244,7 @@
           </div>
         </swiper-slide>
         <swiper-slide>
-          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
                 class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
@@ -258,7 +260,7 @@
           </div>
         </swiper-slide>
         <swiper-slide>
-          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
                 class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
@@ -279,9 +281,9 @@
     </div>
   </div>
 </div>
-<div class="content_section even">
+<div class="content_section even snug-top">
   <div class="content">
-    <div class="flex flex-col gap-12 justify-center">
+    <div class="flex flex-col gap-4 sm:gap-12 justify-center">
       <sc-section-heading
         tag="resource_optimization"
         anchorId="resource-optimization"
@@ -289,7 +291,7 @@
         [anchorWithTarget]="true"
       ></sc-section-heading>
       <div
-        class="w-full lg:w-2/5 mx-auto my-auto font-bold text-2xl sm:text-4xl text-center mb-8"
+        class="w-full lg:w-2/5 mx-auto my-auto font-bold text-xl sm:text-4xl text-center mb-4 sm:mb-8"
       >
         Only 3 Steps to <span class="text-emerald-400">optimize</span> your
         <span class="text-emerald-400">compute resources</span>

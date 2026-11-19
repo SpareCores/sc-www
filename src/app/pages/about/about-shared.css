@@ -19,6 +19,14 @@
   @apply bg-primary;
 }
 
+.content_section.snug-top {
+  padding-top: 2rem;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-top: 4rem;
+  }
+}
+
 .content_section.snug-bottom {
   padding-bottom: 2rem;
 
