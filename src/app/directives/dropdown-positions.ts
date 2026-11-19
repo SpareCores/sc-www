@@ -25,6 +25,7 @@ export interface TriggerRect extends PanelSize {
 
 const OFFSET = 10;
 const EDGE = 8;
+const MIN_PANEL_SPACE = 160;
 
 const MIRRORED_PLACEMENTS: Record<DropdownPlacement, DropdownPlacement> = {
   bottom: "top",
@@ -66,6 +67,10 @@ export function placePanel(
     placeBelow = true;
   }
   if (flip && !fitsBelow && !fitsAbove) {
+    placeBelow = spaceBelow >= spaceAbove;
+  }
+  const space = placeBelow ? spaceBelow : spaceAbove;
+  if (panel.height > space && space < MIN_PANEL_SPACE) {
     placeBelow = spaceBelow >= spaceAbove;
   }
 
