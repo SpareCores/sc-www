@@ -10,7 +10,7 @@ export type ThemeTextSize = "sm" | "md" | "lg";
 const SIZE_CLASSES: Record<ThemeTextSize, string> = {
   sm: "text-xl",
   md: "text-2xl font-light sm:text-4xl",
-  lg: "text-4xl font-bold sm:text-6xl",
+  lg: "text-3xl font-bold sm:text-6xl",
 };
 
 @Component({
