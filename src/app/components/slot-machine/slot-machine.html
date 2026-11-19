@@ -66,7 +66,7 @@
           track spinnerItem;
           let i = $index
         ) {
-          <div class="slot flex flex-col align-center" [style]="getStyle(i)">
+          <div class="slot" [style]="getStyle(i)">
             @if (isSlotLinkActive(i) && hasVendorLink(spinnerItem)) {
               <a
                 id="slot_vendor_link"
@@ -123,7 +123,7 @@
           track spinnerItem;
           let i = $index
         ) {
-          <div class="slot flex flex-col align-center" [style]="getStyle(i)">
+          <div class="slot" [style]="getStyle(i)">
             @if (isSlotLinkActive(i) && hasServerLink(spinnerItem)) {
               <a
                 id="slot_server_link"
@@ -174,7 +174,7 @@
           track spinnerItem;
           let i = $index
         ) {
-          <div class="slot flex flex-col align-center" [style]="getStyle(i)">
+          <div class="slot" [style]="getStyle(i)">
             @if (isSlotLinkActive(i) && hasRegionLink(spinnerItem)) {
               <a
                 id="slot_region_link"
