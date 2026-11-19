@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from "@angular/core/testing";
 import { PLATFORM_ID } from "@angular/core";
 import {
   SearchServersServersGetData,
@@ -176,6 +181,22 @@ describe("SlotMachine", () => {
       "US East (N. Virginia)",
     );
   });
+
+  it("should clear the spin timers when destroyed", fakeAsync(() => {
+    const spinner = component as unknown as {
+      populateSpinnerContents(
+        servers: SearchServersServersGetData,
+      ): Promise<void>;
+    };
+    const populateSpinnerContents = spyOn(spinner, "populateSpinnerContents");
+
+    component.spinStart = Date.now();
+    component.spinAnim([]);
+    fixture.destroy();
+    tick(5000);
+
+    expect(populateSpinnerContents).not.toHaveBeenCalled();
+  }));
 
   it("shows query-error toast when welcome search fails with 422", async () => {
     const toastService = fixture.debugElement.injector.get(Toast);

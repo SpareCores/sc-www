@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  NgZone,
   PLATFORM_ID,
   afterNextRender,
   inject,
@@ -40,6 +41,9 @@ export class SlotMachine {
   private destroyRef = inject(DestroyRef);
   private analyticsService = inject(Analytics);
   private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+  private readonly timeouts = new Set<ReturnType<typeof setTimeout>>();
+  private priceInterval: ReturnType<typeof setInterval> | null = null;
   private searchRequestId = 0;
   private searchAbortController: AbortController | null = null;
   private regionLookupPromise?: Promise<
@@ -65,6 +69,9 @@ export class SlotMachine {
     this.destroyRef.onDestroy(() => {
       this.searchAbortController?.abort();
       this.searchAbortController = null;
+      this.timeouts.forEach((timeout) => clearTimeout(timeout));
+      this.timeouts.clear();
+      this.stopPriceInterval();
       this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
     });
 
@@ -111,7 +118,7 @@ export class SlotMachine {
         this.toastService.removeToast(QUERY_ERROR_LANDING_TOAST_ID);
 
         if (!this.spinnerClicked) {
-          setTimeout(() => {
+          this.schedule(() => {
             if (!this.spinnerClicked) {
               const spinButton = document.getElementById("spin_button");
               if (spinButton) {
@@ -120,7 +127,7 @@ export class SlotMachine {
             }
           }, startingDelay + 7000);
 
-          setTimeout(() => {
+          this.schedule(() => {
             const spinButton = document.getElementById("spin_button");
             if (spinButton) {
               spinButton.style.animation = "press 1.0s";
@@ -406,6 +413,10 @@ export class SlotMachine {
       top3server.map((server) => this.getSpinnerRegionItem(server)),
     );
 
+    if (this.destroyRef.destroyed) {
+      return;
+    }
+
     regionItems.forEach((result, i) => {
       const index = indices[i];
 
@@ -534,19 +545,25 @@ export class SlotMachine {
 
     fraction = Math.floor(fraction * 100000) / 100000;
 
-    const interval = setInterval(() => {
-      price -= fraction;
-      if (price < animPriceEnd) {
-        price = animPriceEnd;
-      }
-      this.priceValue = "$" + Math.round(price * 10000) / 10000;
-    }, spinAnimFraction);
+    this.ngZone.runOutsideAngular(() => {
+      this.priceInterval = setInterval(
+        () => {
+          price -= fraction;
+          if (price < animPriceEnd) {
+            price = animPriceEnd;
+          }
+          this.priceValue = "$" + Math.round(price * 10000) / 10000;
+          this.cdr.detectChanges();
+        },
+        Math.max(16, spinAnimFraction),
+      );
+    });
 
-    setTimeout(() => {
+    this.schedule(() => {
       void this.populateSpinnerContents(servers);
     }, 200);
 
-    setTimeout(() => {
+    this.schedule(() => {
       const spinButton = document.getElementById("spin_button");
       if (spinButton) {
         spinButton.style.animation = "none";
@@ -559,7 +576,7 @@ export class SlotMachine {
           el.style.animation = "none";
         }
       });
-      clearInterval(interval);
+      this.stopPriceInterval();
       this.priceValue = "$" + animPriceEnd;
       this.isSpinning = false;
       this.hasRealValues = true;
@@ -568,5 +585,20 @@ export class SlotMachine {
         autostarted: isFake,
       });
     }, spinAnimEnd);
+  }
+
+  private schedule(callback: () => void, delay: number): void {
+    const timeout = setTimeout(() => {
+      this.timeouts.delete(timeout);
+      callback();
+    }, delay);
+    this.timeouts.add(timeout);
+  }
+
+  private stopPriceInterval(): void {
+    if (this.priceInterval !== null) {
+      clearInterval(this.priceInterval);
+      this.priceInterval = null;
+    }
   }
 }
