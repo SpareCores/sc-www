@@ -1,16 +1,15 @@
 @if (badge()) {
   <div
-    class="absolute -top-16 left-1/2 flex size-32 -translate-x-1/2 items-center justify-center rounded-full bg-emerald-400"
+    class="absolute -top-13.5 left-1/2 flex size-27 -translate-x-1/2 items-center justify-center rounded-full bg-emerald-400 sm:-top-16 sm:size-32"
   >
-    <span class="text-2xl font-bold">{{ badge() }}</span>
+    <span class="text-xl font-bold sm:text-2xl">{{ badge() }}</span>
   </div>
 }
 @switch (headingVariant()) {
   @case ("tag") {
     <h3
-      class="mb-4 text-center font-mono text-2xl text-emerald-400"
-      [class.mt-16]="badge()"
-      [class.mt-2]="!badge()"
+      class="mb-4 text-center font-mono text-xl text-emerald-400 sm:text-2xl"
+      [class]="badge() ? 'mt-13.5 sm:mt-16' : 'mt-2'"
     >
       <span>&lt;</span>
       <span class="font-light text-white">{{ heading() }}</span>
@@ -20,8 +19,7 @@
   @case ("bold") {
     <h3
       class="mb-4 text-2xl font-bold text-emerald-400"
-      [class.mt-12]="badge()"
-      [class.mt-2]="!badge()"
+      [class]="badge() ? 'mt-10 sm:mt-12' : 'mt-2'"
     >
       {{ heading() }}
     </h3>
