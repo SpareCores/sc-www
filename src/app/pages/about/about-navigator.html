@@ -389,9 +389,9 @@
     </div>
   </div>
 </div>
-<div class="content_section odd" id="project-components">
+<div class="content_section odd snug-top snug-bottom" id="project-components">
   <div class="content flex justify-center">
-    <div class="w-full lg:w-3/5 flex flex-col gap-12">
+    <div class="w-full lg:w-3/5 flex flex-col gap-8 sm:gap-12">
       <sc-section-heading
         tag="project_components"
         anchorId="project-components"
@@ -400,7 +400,7 @@
         The status and brief descriptions of the Spare Cores Navigator
         components:
       </sc-section-heading>
-      <div class="min-w-0 overflow-x-auto mb-8">
+      <div class="min-w-0 overflow-x-auto sm:mb-8">
         <table class="repo_table">
           <thead>
             <tr>
@@ -518,7 +518,7 @@
                     }
                   </div>
                 </td>
-                <td>
+                <td class="text-nowrap sm:text-wrap">
                   {{ githubComponent.description }}
                 </td>
               </tr>
@@ -527,7 +527,7 @@
         </table>
       </div>
       <div class="flex justify-center">
-        <p class="text-xl w-full">
+        <p class="text-sm sm:text-xl w-full">
           To make the Spare Cores Navigator available to the community, our
           software components are licensed under MPL 2.0 and all raw collected
           data under CC BY-SA 4.0. For deep production integrations and
