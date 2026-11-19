@@ -1,5 +1,5 @@
 <div class="w-full bg-primary min-h-dvh">
-  <div class="content pt-8 pb-8">
+  <div class="content pt-4 pb-8 sm:pt-8">
     <sc-breadcrumbs [segments]="comparePage.breadcrumbs"></sc-breadcrumbs>
 
     <sc-collection-save-modal
@@ -19,7 +19,7 @@
       </div>
     } @else {
       <div
-        class="flex flex-col gap-4 mt-8 content-gutter"
+        class="flex flex-col gap-4 mt-4 sm:mt-8 content-gutter"
         [class.mb-8]="instances.length"
       >
         <sc-page-header
@@ -71,14 +71,13 @@
 
       @if (!instances.length) {
         <div class="flex flex-col gap-4 mt-4 content-gutter">
-          <div class="sc-page-description">
+          <p class="sc-page-description">
             Compare managed databases (DBaaS) and their key specs, including
             engine type and versions supported, vCPU and RAM, storage throughput
             and backup options, high availability features etc. alongside
             benchmark metrics to find the optimal managed cloud database for
             your workload.
-          </div>
-          <div class="sc-page-description">
+            <br /><br />
             To get started, select two or more databases using the checkboxes on
             our
             <a class="text-emerald-400" routerLink="/databases"
@@ -87,7 +86,7 @@
             below, or add/remove options directly on individual database detail
             pages using the "Compare" button. You can also explore our curated
             comparison sets below.
-          </div>
+          </p>
           <sc-compare-guide
             [compares]="databaseCompares"
             comparePath="/databases/compare"
