@@ -3,7 +3,6 @@
 }
 
 .scrollbar_mirror_outer {
-  background: var(--color-gray-700);
   overflow-y: hidden;
 }
 
