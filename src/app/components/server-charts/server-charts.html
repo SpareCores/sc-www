@@ -164,6 +164,7 @@
 @if (isChartShown("passmark_other") && passmarkOTHERData?.length) {
   <div
     class="sc-chart-block sc-chart-block--half sc-chart-block--scrollable"
+    [class.passmark_card_fit]="!isEmbedded"
     id="passmark_other"
   >
     <div class="flex items-center min-h-[42px] sc-header-anchor-host">

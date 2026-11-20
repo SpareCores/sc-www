@@ -1,5 +1,17 @@
 @reference "../../../styles/tailwind.css";
 
+.passmark_card_fit {
+  height: auto;
+  min-height: 0;
+}
+
+@media (width >= theme(--breakpoint-md)) {
+  .passmark_card_fit {
+    height: revert-layer;
+    min-height: revert-layer;
+  }
+}
+
 .items_table_passmark {
   @apply w-full text-white;
   table-layout: fixed;
