@@ -113,6 +113,7 @@
 
 .advisor-top-controls {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
@@ -121,6 +122,7 @@
 
 @media (width >= theme(--breakpoint-sm)) {
   .advisor-top-controls {
+    flex-shrink: 1;
     gap: 1rem;
   }
 }
