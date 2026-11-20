@@ -1380,9 +1380,14 @@
                       ></sc-header-anchor>
                     }
                   </h3>
-                  @if (!isEmbedded) {
+                  @let categoryControls =
+                    getHeaderChartControls(benchmarkCategory.id);
+                  @if (categoryControls || (!isEmbedded && canToggleDetails)) {
                     <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
-                      @if (canToggleDetails) {
+                      @if (categoryControls) {
+                        <ng-container [ngTemplateOutlet]="categoryControls" />
+                      }
+                      @if (!isEmbedded && canToggleDetails) {
                         <sc-button
                           [label]="
                             (benchmarkCategory.show_more ? 'Hide' : 'Show') +
@@ -1421,6 +1426,7 @@
                   @if (benchmarkCategory.id === "bw_mem") {
                     <div>
                       <sc-server-compare-memory-chart
+                        [controlsInHeader]="isPhoneViewport()"
                         [servers]="memoryCompareServers"
                         [benchmarkMeta]="memoryBenchmarkMeta"
                       ></sc-server-compare-memory-chart>
@@ -1432,6 +1438,7 @@
                         layout="compare"
                         blockClass="sc-chart-block sc-chart-block--inline"
                         chartSource="compare-ssl"
+                        [controlsInHeader]="isPhoneViewport()"
                         chartType="bar"
                         [servers]="lineCompareServers"
                         [benchmarkMeta]="lineBenchmarkMeta"
@@ -1465,6 +1472,7 @@
                   @if (benchmarkCategory.id === "compress") {
                     <div>
                       <sc-compression-chart
+                        [controlsInHeader]="isPhoneViewport()"
                         layout="compare"
                         [servers]="compressionServers"
                         [benchmarkMeta]="compressionBenchmarkMeta"
@@ -1493,6 +1501,7 @@
                   @if (benchmarkCategory.id === "llm_inference") {
                     <div>
                       <sc-llm-inference-chart
+                        [controlsInHeader]="isPhoneViewport()"
                         layout="compare"
                         [benchmarkMeta]="benchmarkMeta"
                         [servers]="llmCompareServers"
@@ -1874,18 +1883,27 @@
                     ></sc-header-anchor>
                   }
                 </h3>
-                @if (!isEmbedded) {
+                @let multiBarControls =
+                  isPhoneViewport()
+                    ? multiBarChart.compareControls()
+                    : undefined;
+                @if (multiBarControls || !isEmbedded) {
                   <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
-                    <sc-button
-                      [label]="
-                        (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
-                      "
-                      [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
-                      iconPosition="start"
-                      [compact]="true"
-                      size="small"
-                      (click)="toggleBenchmarkCategory(chartItem)"
-                    ></sc-button>
+                    @if (multiBarControls) {
+                      <ng-container [ngTemplateOutlet]="multiBarControls" />
+                    }
+                    @if (!isEmbedded) {
+                      <sc-button
+                        [label]="
+                          (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
+                        "
+                        [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
+                        iconPosition="start"
+                        [compact]="true"
+                        size="small"
+                        (click)="toggleBenchmarkCategory(chartItem)"
+                      ></sc-button>
+                    }
                   </div>
                 }
               </div>
@@ -1901,6 +1919,8 @@
                 [style]="pinnedRow.widthStyle"
               >
                 <sc-benchmark-multi-bar-chart
+                  #multiBarChart
+                  [controlsInHeader]="isPhoneViewport()"
                   [chartItem]="chartItem"
                   [benchmarkMeta]="benchmarkMeta"
                   [servers]="multiBarCompareServers"

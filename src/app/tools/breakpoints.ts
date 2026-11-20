@@ -1,6 +1,7 @@
 import { DestroyRef, Signal, signal } from "@angular/core";
 
 export const breakpoints = {
+  sm: "40rem",
   lg: "64rem",
 } as const;
 

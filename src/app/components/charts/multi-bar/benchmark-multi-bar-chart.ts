@@ -1,9 +1,10 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   effect,
   inject,
@@ -48,6 +49,7 @@ import { TooltipTrigger } from "../../../directives/tooltip-trigger";
   selector: "sc-benchmark-multi-bar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
     TooltipTrigger,
     Button,
     LucideDynamicIcon,
@@ -84,6 +86,8 @@ export class BenchmarkMultiBarChart {
   detailsBenchmarks = input<MultiBarBenchmarkGroup[]>([]);
   servers = input<MultiBarServer[]>([]);
   layout = input<"details" | "compare">("details");
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
   serverCount = input(0);
   anchorId = input<string | null>(null);
 

@@ -87,22 +87,27 @@
 } @else {
   <div class="relative z-30">
     <div class="sc-chart-block sc-chart-block--split">
-      <div class="flex justify-end items-center">
-        <div class="flex gap-2 sm:gap-4">
-          <sc-button
-            class="min-w-0"
-            #selectorDropdown="scDropdown"
-            [id]="buttonId"
-            [scDropdown]="comparePanel"
-            [dropdownEnabled]="hasOptions()"
-            [label]="currentCompareOptionName()"
-            icon="chevron-down"
-            compactIcon="settings"
-            variant="dropdown"
-            size="small"
-          ></sc-button>
+      @if (!controlsInHeader()) {
+        <div class="flex justify-end items-center">
+          <div class="flex gap-2 sm:gap-4">
+            <ng-container [ngTemplateOutlet]="compareControls" />
+          </div>
         </div>
-      </div>
+      }
+      <ng-template #compareControls>
+        <sc-button
+          class="min-w-0"
+          #selectorDropdown="scDropdown"
+          [id]="buttonId"
+          [scDropdown]="comparePanel"
+          [dropdownEnabled]="hasOptions()"
+          [label]="currentCompareOptionName()"
+          icon="chevron-down"
+          compactIcon="settings"
+          variant="dropdown"
+          size="small"
+        ></sc-button>
+      </ng-template>
       @if (isBrowser && hasOptions()) {
         <div class="charts_div">
           <div class="chart_div" [attr.chartType]="compareChartType()">

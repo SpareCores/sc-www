@@ -1,7 +1,8 @@
-import { DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { DOCUMENT, NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   Input,
@@ -10,8 +11,10 @@ import {
   output,
   PLATFORM_ID,
   signal,
+  TemplateRef,
   ViewChild,
   viewChild,
+  viewChildren,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
@@ -126,6 +129,7 @@ import {
   WORKLOAD_PROFILE_INFO_TOOLTIP,
 } from "../charts/workload-profile/workload-profile.utils";
 import { TooltipTrigger } from "../../directives/tooltip-trigger";
+import { watchBelowBreakpoint } from "../../tools/breakpoints";
 
 @Component({
   selector: "sc-server-compare-charts",
@@ -149,6 +153,7 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     Button,
     Dropdown,
     HeaderAnchor,
+    NgTemplateOutlet,
   ],
   providers: [CompareChartLegendVisibility],
   templateUrl: "./server-compare-charts.html",
@@ -166,6 +171,17 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   private llmBuilder = inject(LlmInferenceChartBuilder);
   private advisorUi = inject(AdvisorUi);
   private legendVisibility = inject(CompareChartLegendVisibility);
+  private destroyRef = inject(DestroyRef);
+  private memoryChart = viewChild(ServerCompareMemoryChart);
+  private compressionChart = viewChild(CompressionChart);
+  private llmChart = viewChild(LlmInferenceChart);
+  private lineChartComponents = viewChildren(BenchmarkLineChart);
+
+  readonly isPhoneViewport = watchBelowBreakpoint(
+    isPlatformBrowser(this.platformId) ? this.document.defaultView : null,
+    "sm",
+    this.destroyRef,
+  );
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() baselineServer: ExtendedServerDetails | null = null;
@@ -559,6 +575,27 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
 
   readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
   readonly formatWorkloadProfileLabel = formatWorkloadProfileLabel;
+
+  getHeaderChartControls(sectionId: string): TemplateRef<unknown> | undefined {
+    if (!this.isPhoneViewport()) {
+      return undefined;
+    }
+
+    switch (sectionId) {
+      case "bw_mem":
+        return this.memoryChart()?.compareControls();
+      case "compress":
+        return this.compressionChart()?.compareControls();
+      case "llm_inference":
+        return this.llmChart()?.compareControls();
+      case "openssl":
+        return this.lineChartComponents()
+          .find((chart) => chart.chartSource() === "compare-ssl")
+          ?.compareControls();
+      default:
+        return undefined;
+    }
+  }
 
   showTruncatedTitleTooltip(el: Element, title: string) {
     if (el.scrollWidth > el.clientWidth) {

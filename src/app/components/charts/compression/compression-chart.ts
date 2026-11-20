@@ -1,9 +1,10 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   effect,
   inject,
@@ -50,6 +51,7 @@ import { TooltipTrigger } from "../../../directives/tooltip-trigger";
   selector: "sc-compression-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
     TooltipTrigger,
     Button,
     LucideDynamicIcon,
@@ -82,6 +84,8 @@ export class CompressionChart {
   coresDropdown = viewChild<Dropdown>("coresDropdown");
 
   layout = input<"details" | "compare">("details");
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
   benchmarksByCategory = input<CompressionBenchmarkGroup[]>([]);
   benchmarkMeta = input<CompressionBenchmarkMeta[]>([]);
   servers = input<CompressionServer[]>([]);

@@ -73,9 +73,14 @@
   </div>
 } @else {
   <div class="sc-chart-block sc-chart-block--inline">
-    <div
-      class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-2 sm:gap-4"
-    >
+    @if (!controlsInHeader()) {
+      <div
+        class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-2 sm:gap-4"
+      >
+        <ng-container [ngTemplateOutlet]="compareControls" />
+      </div>
+    }
+    <ng-template #compareControls>
       @if (hasSecondaryOptions()) {
         <sc-button
           class="min-w-0"
@@ -104,7 +109,7 @@
         size="small"
         [title]="currentOption().name || null"
       ></sc-button>
-    </div>
+    </ng-template>
     @if (chartData() && isBrowserEnvironment()) {
       <div class="min-h-0 flex-1">
         <div class="chart_div" chartType="bar">

@@ -1,8 +1,9 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   effect,
   inject,
@@ -24,7 +25,7 @@ import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 @Component({
   selector: "sc-server-compare-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Button, BaseChartDirective, Dropdown],
+  imports: [Button, BaseChartDirective, Dropdown, NgTemplateOutlet],
   templateUrl: "./server-compare-memory-chart.html",
   styles: [
     `
@@ -42,6 +43,8 @@ export class ServerCompareMemoryChart {
   private legendVisibility = injectCompareLegendVisibility();
 
   dropdownBWmem = viewChild(Dropdown);
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
 
   servers = input<MemoryChartServer[]>([]);
   benchmarkMeta = input<MemoryBenchmarkMeta[]>([]);

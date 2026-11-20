@@ -88,8 +88,13 @@
   </div>
 } @else {
   <div [class]="blockClass()">
-    @if (hasSelector()) {
+    @if (hasSelector() && !controlsInHeader()) {
       <div class="flex justify-end items-center">
+        <ng-container [ngTemplateOutlet]="compareControls" />
+      </div>
+    }
+    <ng-template #compareControls>
+      @if (hasSelector()) {
         <sc-button
           class="min-w-0"
           #selectorDropdown="scDropdown"
@@ -102,8 +107,8 @@
           variant="dropdown"
           size="small"
         ></sc-button>
-      </div>
-    }
+      }
+    </ng-template>
     @if (resolvedChartData() && isBrowser) {
       <div class="min-h-0 flex-1">
         <div class="chart_div" [attr.chartType]="chartType()">

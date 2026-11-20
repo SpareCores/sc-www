@@ -1,9 +1,10 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   effect,
   inject,
@@ -48,6 +49,7 @@ import { Button } from "../../button/button";
   selector: "sc-llm-inference-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
     TooltipTrigger,
     LucideDynamicIcon,
     LucideCircleArrowUp,
@@ -80,6 +82,8 @@ export class LlmInferenceChart {
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
   layout = input<"details" | "compare">("details");
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
   promptData = input<LlmBarChartData | undefined>(undefined);
   promptOptions = input<LlmBarChartOptions>(undefined);
   generationData = input<LlmBarChartData | undefined>(undefined);

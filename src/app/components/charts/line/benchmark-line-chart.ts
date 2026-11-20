@@ -1,9 +1,10 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   inject,
   input,
@@ -60,6 +61,7 @@ import { TooltipTrigger } from "../../../directives/tooltip-trigger";
   selector: "sc-benchmark-line-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
     TooltipTrigger,
     Button,
     LucideDynamicIcon,
@@ -97,6 +99,8 @@ export class BenchmarkLineChart {
   chartSource = input<BenchmarkLineChartSource>("direct");
   chartType = input<BenchmarkLineChartKind>("line");
   layout = input<"details" | "compare">("details");
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
   benchmarkKey = input("");
   title = input("");
   orderTooltip = input("");
