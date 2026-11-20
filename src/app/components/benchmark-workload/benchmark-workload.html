@@ -4,8 +4,9 @@
     @if (isActive()) {
       <span
         class="relative flex h-3 w-3 cursor-help"
-        (mouseenter)="showTooltip($event, 'Active')"
-        (mouseleave)="hideTooltip()"
+        scTooltipTrigger
+        (tooltipOpen)="showTooltip($event, 'Active')"
+        (tooltipClose)="hideTooltip()"
       >
         <span
           class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-emerald-400"
@@ -17,8 +18,9 @@
     } @else {
       <span
         class="relative flex h-3 w-3 cursor-help"
-        (mouseenter)="showTooltip($event, 'Inactive')"
-        (mouseleave)="hideTooltip()"
+        scTooltipTrigger
+        (tooltipOpen)="showTooltip($event, 'Inactive')"
+        (tooltipClose)="hideTooltip()"
       >
         <span
           class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-red-500"
@@ -37,7 +39,7 @@
 
   <!-- Workload name + Higher/Lower is better badge -->
   <div class="flex flex-wrap items-center gap-3 pr-20">
-    <h3 class="text-white text-2xl font-bold leading-tight">
+    <h3 class="text-white text-xl font-bold leading-tight sm:text-2xl">
       {{ workload().name }}
     </h3>
 
@@ -45,15 +47,17 @@
       <svg
         lucideCircleArrowUp
         class="h-4 w-4 text-gray-200 cursor-help"
-        (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()"
+        scTooltipTrigger
+        (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+        (tooltipClose)="hideTooltip()"
       ></svg>
     } @else {
       <svg
         lucideCircleArrowDown
         class="h-4 w-4 text-gray-200 cursor-help"
-        (mouseenter)="showTooltip($event, 'Lower is better.')"
-        (mouseleave)="hideTooltip()"
+        scTooltipTrigger
+        (tooltipOpen)="showTooltip($event, 'Lower is better.')"
+        (tooltipClose)="hideTooltip()"
       ></svg>
     }
   </div>

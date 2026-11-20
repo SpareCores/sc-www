@@ -5,6 +5,7 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
+import { PageHeader } from "../../components/page-header/page-header";
 import { SeoHandler } from "../../services/seo-handler";
 import {
   PARTNER_CATEGORIES,
@@ -18,7 +19,7 @@ import { PartnerCategory, PartnerInterestSection } from "./partners.types";
 
 @Component({
   selector: "sc-partners",
-  imports: [Breadcrumbs, HeaderAnchor, RouterLink],
+  imports: [Breadcrumbs, HeaderAnchor, PageHeader, RouterLink],
   templateUrl: "./partners.html",
   styleUrl: "./partners.css",
 })

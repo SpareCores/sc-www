@@ -5,13 +5,10 @@ import {
   OnInit,
   PLATFORM_ID,
   inject,
-  viewChild,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
   LucideChevronLeft,
-  LucideDollarSign,
   LucideDynamicIcon,
   LucideInfo,
 } from "@lucide/angular";
@@ -22,17 +19,22 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { Pagination } from "../../components/pagination/pagination";
+import { PageHeader } from "../../components/page-header/page-header";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import { SearchBar } from "../../components/search-bar/search-bar";
-import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { KeeperAPI } from "../../services/keeper-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { Toast } from "../../services/toast";
 import { QUERY_ERROR_STORAGE_PRICES_TOAST_ID } from "../../services/toast-ids";
-import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
+import {
+  CurrencyOption,
+  availableCurrencies,
+  currencyLabel,
+} from "../../tools/shared_data";
 import {
   TableColumn,
   buildStoragePricesColumns,
@@ -41,18 +43,17 @@ import {
 @Component({
   selector: "sc-storages",
   imports: [
-    FormsModule,
     Breadcrumbs,
+    PageHeader,
     LucideDynamicIcon,
     LucideChevronLeft,
-    LucideDollarSign,
     LucideInfo,
     RouterModule,
-    Button,
     SearchBar,
-    Pagination,
+    TableFooter,
     LoadingSpinner,
-    Dropdown,
+    SelectDropdown,
+    ColumnPicker,
     StoragePipe,
   ],
   templateUrl: "./storages.html",
@@ -65,8 +66,6 @@ export class Storages implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  pageDropdown = viewChild<Dropdown>("pageDropdown");
 
   private subscription = new Subscription();
   private searchRequestId = 0;
@@ -112,6 +111,8 @@ export class Storages implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
   selectedCurrency: CurrencyOption = availableCurrencies[0];
+
+  readonly currencyLabel = currencyLabel;
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
@@ -304,12 +305,10 @@ export class Storages implements OnInit, OnDestroy {
     this.searchOptionsChanged(this.query);
   }
 
-  selectCurrency(currency: any) {
+  selectCurrency(currency: CurrencyOption) {
     this.selectedCurrency = currency;
 
     this.searchOptionsChanged(this.query);
-
-    this.currencyDropdown()?.hide();
   }
 
   getOrderingIcon(column: TableColumn) {
@@ -327,8 +326,6 @@ export class Storages implements OnInit, OnDestroy {
     this.limit = limit;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-
-    this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
   }
@@ -339,6 +336,16 @@ export class Storages implements OnInit, OnDestroy {
       const value = (obj as Record<string, unknown>)[key];
       return value !== undefined && value !== null ? value : undefined;
     }, item);
+  }
+
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
   }
 
   refreshColumns() {

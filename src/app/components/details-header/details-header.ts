@@ -1,8 +1,9 @@
-import { Component, inject, input } from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideCheck } from "@lucide/angular";
 import { BookmarkButton } from "../bookmark-button/bookmark-button";
 import { CompareToggleButton } from "../compare-toggle-button/compare-toggle-button";
+import { ScoreGauge } from "../charts/score-gauge/score-gauge";
 import { Button } from "../button/button";
 import { ShareLink } from "../../services/share-link";
 import {
@@ -17,6 +18,7 @@ import {
     LucideCheck,
     BookmarkButton,
     CompareToggleButton,
+    ScoreGauge,
     Button,
   ],
   templateUrl: "./details-header.html",
@@ -34,6 +36,18 @@ export class DetailsHeader {
   priceDescription = input("");
   features = input<DetailsHeaderFeature[]>([]);
   score = input<DetailsHeaderScore | null>(null);
+
+  readonly displayNameParts = computed(() =>
+    this.displayName().split(/(?<=[_-])/),
+  );
+
+  readonly gaugeMax = computed(() => {
+    const score = this.score();
+    const values = [score?.primaryValue, score?.secondaryValue].filter(
+      (value): value is number => value !== null && value !== undefined,
+    );
+    return values.length ? Math.max(...values) : null;
+  });
 
   share(): void {
     void this.shareLink.copyCurrentUrl();

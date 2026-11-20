@@ -50,7 +50,6 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
         description: [
           "We collaborate with the creators of Metaflow, including code exchanges with Outerbounds and Netflix, to develop specialized extensions that enable data scientists to seamlessly track resource utilization directly within their workflows and receive automated recommendations for server allocations, ensuring models are trained and deployed on the most cost-effective infrastructure available.",
         ],
-        dividerAfter: true,
         logoRowVariant: "compact",
         logos: [
           {
@@ -88,7 +87,6 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
         description: [
           "We are proud participants in various Startup and Partner Programs across these ecosystems. These collaborations include deep technical integrations, access to infrastructure credits, and participation in joint ecosystem initiatives, all of which allow us to provide the most up-to-date compute intelligence on the market.",
         ],
-        dividerAfter: true,
         logoColumns: 5,
         logos: [
           {
@@ -161,7 +159,6 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
         description: [
           'Beyond hosting production-focused engineering internship programs and active research collaboration on cloud cost driving factors, Spare Cores provides a highly scalable dashboarding solution for the CEU Business Analytics curriculum as part of <a href="https://gabors-data-analysis.com/lab" target="_blank" rel="noopener noreferrer">Gabors Data Analysis and AI Lab</a>. This live deployment allows students and researchers to interact with real-world data, proving the platform\'s utility in high-concurrency educational and analytical environments.',
         ],
-        dividerAfter: true,
         logos: [
           {
             name: "Central European University",
@@ -194,7 +191,6 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
           'Public Innovation Funding: We were selected for the <a href="/article/ngi-search-grant" target="_blank">NGI (Next Generation Internet) Search initiative</a>, a European Commission program, for building open, transparent, and sovereign infrastructure for the future of the internet and AI; also received the <a href="/article/eic-seal-of-excellence" target="_blank">Seal of Excellence</a> for our "high-quality project proposal" in the EIC (European Innovation Council) Pre-Acceleration program.',
           "Venture Supported: We are backed by a pre-seed investment round led by BNL Start Partners and FPI (First Principle Innovation).",
         ],
-        dividerAfter: true,
         logos: [
           {
             name: "NVIDIA Inception Program",

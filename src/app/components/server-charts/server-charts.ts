@@ -46,10 +46,12 @@ import { ChartTooltip } from "../charts/shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../charts/shared/chart-tooltip.utils";
 import { WorkloadProfilePanel } from "../charts/workload-profile/workload-profile-panel";
 import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload-profile.utils";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-server-charts",
   imports: [
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideInfo,
@@ -181,10 +183,10 @@ export class ServerCharts implements OnChanges {
     });
   }
 
-  showTooltip(el: MouseEvent, content: string | undefined) {
+  showTooltip(el: Element | Event, content: string | undefined) {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
@@ -192,10 +194,10 @@ export class ServerCharts implements OnChanges {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content: string | undefined) {
+  showWarningTooltip(el: Element | Event, content: string | undefined) {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning",
       onShow: (tooltipContent) => {
@@ -204,7 +206,7 @@ export class ServerCharts implements OnChanges {
     });
   }
 
-  showTooltipChart(el: MouseEvent, type: string) {
+  showTooltipChart(el: Element | Event, type: string) {
     this.showTooltip(el, this.benchmarkDescription(type) || undefined);
   }
 

@@ -21,10 +21,9 @@
             type="button"
             class="tooltip-trigger ml-1"
             aria-label="Show filter description"
-            (mouseenter)="emitTooltip($event, control.description)"
-            (mouseleave)="hideTooltip.emit()"
-            (focus)="emitTooltip($event, control.description)"
-            (blur)="hideTooltip.emit()"
+            scTooltipTrigger
+            (tooltipOpen)="emitTooltip($event, control.description)"
+            (tooltipClose)="hideTooltip.emit()"
           >
             <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
           </button>
@@ -59,10 +58,9 @@
                 type="button"
                 class="tooltip-trigger"
                 aria-label="Show filter description"
-                (mouseenter)="emitTooltip($event, control.description)"
-                (mouseleave)="hideTooltip.emit()"
-                (focus)="emitTooltip($event, control.description)"
-                (blur)="hideTooltip.emit()"
+                scTooltipTrigger
+                (tooltipOpen)="emitTooltip($event, control.description)"
+                (tooltipClose)="hideTooltip.emit()"
               >
                 <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
               </button>

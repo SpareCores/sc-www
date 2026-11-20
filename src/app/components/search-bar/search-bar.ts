@@ -985,7 +985,7 @@ export class SearchBar implements OnInit, OnDestroy {
   }
 
   showTooltip(
-    event: MouseEvent | FocusEvent,
+    event: Element | Event,
     content: string,
     autoHide = false,
     variant: TooltipVariant = "default",

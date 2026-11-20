@@ -27,6 +27,7 @@ import {
   formatNvbandwidthScore,
   nvbandwidthGroupId,
 } from "./nvbandwidth.utils";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 const RIGHT_COLUMN_GROUPS = ["efficiency"];
 
@@ -39,6 +40,7 @@ function isRightColumnSection(section: NvbandwidthSection<string>): boolean {
 @Component({
   selector: "sc-nvbandwidth-card",
   imports: [
+    TooltipTrigger,
     NgTemplateOutlet,
     LucideCircleArrowDown,
     LucideDynamicIcon,
@@ -88,13 +90,13 @@ export class NvbandwidthCard {
   );
 
   showTooltip(
-    event: MouseEvent,
+    event: Element | Event,
     content: string | null | undefined,
     variant?: "warning",
   ) {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event,
+      anchor: event,
       content: content ?? undefined,
       variant,
       onShow: (tooltipContent) => {

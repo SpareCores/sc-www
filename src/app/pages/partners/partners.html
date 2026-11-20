@@ -1,17 +1,22 @@
 <div class="w-full bg-primary min-h-screen overflow-hidden">
-  <div class="content pt-16 pb-16 text-white">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16 text-white">
     <sc-breadcrumbs [segments]="breadcrumbs()"></sc-breadcrumbs>
 
-    <div class="content_gutter">
-      <div class="py-12 px-12 mx-auto partners-content max-w-[750px]">
-        <h1 class="text-emerald-400 text-3xl font-bold mb-2">
-          {{ pageTitle }}
-        </h1>
-
-        @for (paragraph of pageIntro; track paragraph) {
-          <p class="partners-paragraph">{{ paragraph }}</p>
-        }
-        <hr class="partners-divider" />
+    <div class="content-gutter">
+      <div
+        class="pt-4 sm:py-12 px-0 sm:px-12 mx-auto partners-content max-w-[750px]"
+      >
+        <div class="flex flex-col gap-4">
+          <sc-page-header icon="handshake" [title]="pageTitle"></sc-page-header>
+          <p class="sc-page-description sm:text-lg">
+            @for (paragraph of pageIntro; track paragraph) {
+              @if (!$first) {
+                <br /><br />
+              }
+              {{ paragraph }}
+            }
+          </p>
+        </div>
 
         @for (category of categories(); track category.id) {
           <h2
@@ -24,9 +29,14 @@
             ></sc-header-anchor>
           </h2>
 
-          @for (paragraph of category.intro; track paragraph) {
-            <p class="partners-paragraph">{{ paragraph }}</p>
-          }
+          <p class="partners-paragraph">
+            @for (paragraph of category.intro; track paragraph) {
+              @if (!$first) {
+                <br /><br />
+              }
+              {{ paragraph }}
+            }
+          </p>
 
           @for (section of category.sections; track section.id) {
             @if (section.heading) {
@@ -82,8 +92,15 @@
               </div>
             }
 
-            @for (paragraph of section.description; track paragraph) {
-              <p class="partners-paragraph" [innerHTML]="paragraph"></p>
+            @if (section.description.length) {
+              <p class="partners-paragraph">
+                @for (paragraph of section.description; track paragraph) {
+                  @if (!$first) {
+                    <br /><br />
+                  }
+                  <span [innerHTML]="paragraph"></span>
+                }
+              </p>
             }
 
             @if (section.bulletItems?.length) {
@@ -92,10 +109,6 @@
                   <li [innerHTML]="item"></li>
                 }
               </ul>
-            }
-
-            @if (section.dividerAfter) {
-              <hr class="partners-divider" />
             }
           }
         }
@@ -110,9 +123,14 @@
           ></sc-header-anchor>
         </h2>
 
-        @for (paragraph of interestSection().intro; track paragraph) {
-          <p class="partners-paragraph">{{ paragraph }}</p>
-        }
+        <p class="partners-paragraph">
+          @for (paragraph of interestSection().intro; track paragraph) {
+            @if (!$first) {
+              <br /><br />
+            }
+            {{ paragraph }}
+          }
+        </p>
 
         <p class="partners-paragraph partners-paragraph--list-intro">
           {{ interestSection().areasHeading }}
@@ -122,7 +140,7 @@
             <li>{{ area }}</li>
           }
         </ul>
-        <p class="partners-paragraph">
+        <p class="partners-paragraph partners-paragraph--outro">
           <a [routerLink]="interestSection().outro.linkHref">
             {{ interestSection().outro.linkLabel }}
           </a>

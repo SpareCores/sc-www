@@ -1,5 +1,17 @@
 @reference "../../../styles/tailwind.css";
 
+.passmark_card_fit {
+  height: auto;
+  min-height: 0;
+}
+
+@media (width >= theme(--breakpoint-md)) {
+  .passmark_card_fit {
+    height: revert-layer;
+    min-height: revert-layer;
+  }
+}
+
 .items_table_passmark {
   @apply w-full text-white;
   table-layout: fixed;
@@ -7,7 +19,7 @@
 
   thead {
     th {
-      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 font-normal;
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-0 py-3 font-normal md:px-5;
     }
 
     th.passmark-score-col {
@@ -28,7 +40,7 @@
 
     tr {
       td {
-        @apply px-5 py-3 text-left text-sm;
+        @apply px-0 py-3 text-left text-sm md:px-5;
       }
 
       td:first-child {

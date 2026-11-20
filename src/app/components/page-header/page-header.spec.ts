@@ -34,7 +34,7 @@ describe("PageHeader", () => {
 
   it("renders locked bookmark state for guests", () => {
     const button = fixture.debugElement.query(
-      By.css(".page-header__bookmark--locked"),
+      By.css(".page-bookmark__button--locked"),
     );
     expect(button).toBeTruthy();
     expect(button.attributes["aria-label"]).toBe(FEATURE_REGISTER_HINT);
@@ -47,7 +47,7 @@ describe("PageHeader", () => {
       emitted.push(event);
     });
     const button = fixture.debugElement.query(
-      By.css("button.page-header__bookmark"),
+      By.css("button.page-bookmark__button"),
     );
 
     expect(button.nativeElement.disabled).toBeFalse();
@@ -56,13 +56,12 @@ describe("PageHeader", () => {
     expect(emitted.length).toBe(1);
   });
 
-  it("copies the link and swaps the share icon when copyLink is set", async () => {
+  it("copies the link and swaps the share icon when Share is clicked", async () => {
     const copy = spyOn(
       TestBed.inject(ShareLink),
       "copyCurrentUrl",
     ).and.resolveTo(true);
     fixture.componentRef.setInput("showShare", true);
-    fixture.componentRef.setInput("copyLink", true);
     fixture.detectChanges();
 
     const share = fixture.debugElement
@@ -74,5 +73,15 @@ describe("PageHeader", () => {
 
     expect(copy).toHaveBeenCalled();
     expect(share?.componentInstance.icon()).toBe("check");
+  });
+
+  it("renders without an icon and keeps the controls out of the heading", () => {
+    fixture.componentRef.setInput("icon", null);
+    fixture.detectChanges();
+
+    const heading = fixture.debugElement.query(By.css("h1"));
+    expect(fixture.debugElement.query(By.css(".page-header__icon"))).toBeNull();
+    expect(heading.query(By.css("button"))).toBeNull();
+    expect(heading.nativeElement.textContent.trim()).toBe("Servers");
   });
 });

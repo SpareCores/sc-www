@@ -2,7 +2,12 @@
   class="sc-chart-block sc-chart-block--inline"
   [class.memory-compare-chart--cache-markers]="hasCacheAnnotations()"
 >
-  <div class="flex justify-end items-center">
+  @if (!controlsInHeader()) {
+    <div class="flex justify-end items-center">
+      <ng-container [ngTemplateOutlet]="compareControls" />
+    </div>
+  }
+  <ng-template #compareControls>
     <sc-button
       class="min-w-0"
       #memoryCompareDropdown="scDropdown"
@@ -11,9 +16,10 @@
       [dropdownEnabled]="availableOptions().length > 0"
       [label]="currentOptionName()"
       icon="chevron-down"
+      compactIcon="settings"
       variant="dropdown"
     ></sc-button>
-  </div>
+  </ng-template>
   @if (chartData() && isBrowser) {
     <div class="h-full">
       <div class="chart_div" chartType="bar">

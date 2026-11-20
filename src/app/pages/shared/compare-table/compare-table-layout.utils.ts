@@ -4,9 +4,6 @@ import {
   COMPARE_HEADER_SPACER_MIN_COLSPAN,
   COMPARE_OVERFLOW_TOLERANCE_PX,
   COMPARE_PIN_FALLBACK_ITEM_THRESHOLD,
-  COMPARE_PINNED_CONTENT_MAX_COLSPAN,
-  COMPARE_PINNED_TRAILING_MIN_COLSPAN,
-  COMPARE_SECTION_ACTION_COLSPAN,
   COMPARE_SECTION_MIN_COLSPAN,
 } from "./compare-table-layout.constants";
 
@@ -20,10 +17,8 @@ export type ComparePinnedRowLayoutOptions = {
 };
 
 export type ComparePinnedRowLayout = {
-  contentColSpan: number;
-  trailingColSpan: number;
-  actionSpacerColSpan: number;
-  chartWidthStyle: string;
+  colSpan: number;
+  widthStyle: string;
 };
 
 function getCompareColumnWidthStyle(
@@ -116,10 +111,8 @@ export function resolveCompareUnpinnedRowLayout(
   itemCount: number,
 ): ComparePinnedRowLayout {
   return {
-    contentColSpan: getCompareSectionColSpan(itemCount),
-    trailingColSpan: 0,
-    actionSpacerColSpan: 0,
-    chartWidthStyle: COMPARE_FULL_WIDTH_STYLE,
+    colSpan: getCompareSectionColSpan(itemCount),
+    widthStyle: COMPARE_FULL_WIDTH_STYLE,
   };
 }
 
@@ -169,26 +162,17 @@ export function resolveComparePinnedRowLayout(
     return resolveCompareUnpinnedRowLayout(options.itemCount);
   }
 
-  const sectionColSpan = getCompareSectionColSpan(options.itemCount);
-
-  const contentColSpan = Math.min(
-    sectionColSpan - COMPARE_PINNED_TRAILING_MIN_COLSPAN,
-    COMPARE_PINNED_CONTENT_MAX_COLSPAN,
-  );
-  const trailingColSpan = Math.max(sectionColSpan - contentColSpan, 0);
-
   return {
-    contentColSpan,
-    trailingColSpan,
-    actionSpacerColSpan: Math.max(
-      trailingColSpan - COMPARE_SECTION_ACTION_COLSPAN,
-      0,
-    ),
-    chartWidthStyle:
+    colSpan: getCompareSectionColSpan(options.itemCount),
+    widthStyle:
       options.isBrowser && holderWidthPx
         ? `width: ${holderWidthPx}px; max-width: ${holderWidthPx}px;`
         : COMPARE_FULL_WIDTH_STYLE,
   };
+}
+
+export function getCompareColumnWidth(displayName: string | undefined): string {
+  return `max(var(--compare-column-min-width), calc(${displayName?.length ?? 0} * var(--compare-column-char-width) + var(--compare-column-name-gap)))`;
 }
 
 export function getCompareHeaderSpacerColSpan(itemCount: number): number {

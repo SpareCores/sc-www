@@ -168,7 +168,7 @@ export class ServerSpecCards {
 
   private formatAvailabilityPrice(price: AvailabilityPrice): string {
     return price.price
-      ? `${price.price} ${price.currency}/${reduceUnitName(price.unit)}`
+      ? `${price.price} <span class="property_unit">${price.currency}/${reduceUnitName(price.unit)}</span>`
       : "-";
   }
 

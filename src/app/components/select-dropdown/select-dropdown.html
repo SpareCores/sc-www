@@ -1,0 +1,38 @@
+<sc-button
+  [attr.id]="buttonId()"
+  [scDropdown]="panel"
+  [dropdownPlacement]="placement()"
+  [dropdownFlip]="flip()"
+  [label]="label()"
+  [icon]="icon()"
+  [compactIcon]="compactIcon()"
+  [ariaLabel]="ariaLabel()"
+  [buttonClass]="buttonClass()"
+  [size]="size()"
+  variant="dropdown"
+  class="min-w-0 max-w-full"
+></sc-button>
+
+<ng-template #panel>
+  <div [attr.id]="panelId()" class="sc-dropdown w-52">
+    <ul
+      class="sc-dropdown__list"
+      role="listbox"
+      [attr.aria-labelledby]="buttonId()"
+    >
+      @for (option of options(); track $index) {
+        <li
+          class="sc-dropdown__option"
+          (click)="select(option)"
+          (keydown.enter)="select(option); $event.preventDefault()"
+          (keydown.space)="select(option); $event.preventDefault()"
+          role="option"
+          [attr.aria-selected]="option === selected()"
+          tabindex="0"
+        >
+          <div class="text-sm text-white">{{ optionLabel()(option) }}</div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>

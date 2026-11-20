@@ -1,0 +1,22 @@
+@reference "../../../styles/tailwind.css";
+
+:host {
+  @apply mr-auto flex items-center gap-2 sm:hidden;
+}
+
+.page-actions__edit {
+  @apply inline-flex items-center justify-center shrink-0 rounded-md size-9.5 sm:size-8;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  color: color-mix(in oklab, var(--color-gray-400) 70%, transparent);
+}
+
+.page-actions__edit:hover {
+  color: var(--color-emerald-400);
+}
+
+.page-actions__edit-icon {
+  @apply size-full;
+}

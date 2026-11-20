@@ -8,7 +8,7 @@
       <div
         class="flex justify-between items-center mb-4 gap-4 sc-header-anchor-host sc-header-anchor-host--card"
       >
-        <h3 class="text-2xl flex items-center gap-2">
+        <h3 class="sc-chart-title">
           <svg
             [lucideIcon]="'workload_profile' | benchmarkIcon"
             class="h-6 w-6"
@@ -17,23 +17,26 @@
           <svg
             lucideCircleArrowUp
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, 'Higher is better.')"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+            (tooltipClose)="hideTooltip()"
           ></svg>
           <svg
             lucideInfo
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, workloadProfileInfoTooltip)"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, workloadProfileInfoTooltip)"
+            (tooltipClose)="hideTooltip()"
           ></svg>
           @if (workloadProfileMetaNote()) {
             <svg
               lucideTriangleAlert
               class="benchmark-note-icon"
-              (mouseenter)="
+              scTooltipTrigger
+              (tooltipOpen)="
                 showWarningTooltip($event, workloadProfileMetaNote())
               "
-              (mouseleave)="hideTooltip()"
+              (tooltipClose)="hideTooltip()"
             ></svg>
           }
           @if (anchorId(); as id) {
@@ -52,6 +55,7 @@
             [label]="selectedProfileItem()?.title || ''"
             [title]="selectedProfileItem()?.title || null"
             icon="chevron-down"
+            compactIcon="settings"
             variant="dropdown"
             size="small"
           ></sc-button>
@@ -180,13 +184,11 @@
                           type="button"
                           class="workload-profile-tooltip-trigger"
                           aria-label="Show impact formula"
-                          (mouseenter)="
+                          scTooltipTrigger
+                          (tooltipOpen)="
                             showTooltip($event, breakdown.impactFormula)
                           "
-                          (mouseleave)="hideTooltip()"
-                          (focus)="showTooltip($event, breakdown.impactFormula)"
-                          (blur)="hideTooltip()"
-                          (click)="showTooltip($event, breakdown.impactFormula)"
+                          (tooltipClose)="hideTooltip()"
                         >
                           <svg
                             lucideInfo
@@ -243,17 +245,11 @@
                             type="button"
                             class="workload-profile-tooltip-trigger"
                             aria-label="Show component description"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltip($event, row.componentDescription)
                             "
-                            (mouseleave)="hideTooltip()"
-                            (focus)="
-                              showTooltip($event, row.componentDescription)
-                            "
-                            (blur)="hideTooltip()"
-                            (click)="
-                              showTooltip($event, row.componentDescription)
-                            "
+                            (tooltipClose)="hideTooltip()"
                           >
                             <svg
                               lucideInfo
@@ -267,17 +263,11 @@
                             type="button"
                             class="workload-profile-tooltip-trigger"
                             aria-label="Show benchmark note"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showWarningTooltip($event, row.benchmarkNote)
                             "
-                            (mouseleave)="hideTooltip()"
-                            (focus)="
-                              showWarningTooltip($event, row.benchmarkNote)
-                            "
-                            (blur)="hideTooltip()"
-                            (click)="
-                              showWarningTooltip($event, row.benchmarkNote)
-                            "
+                            (tooltipClose)="hideTooltip()"
                           >
                             <svg
                               lucideTriangleAlert
@@ -330,7 +320,9 @@
                       {{ formatImpactPercent(row.impact) }}
                     </td>
                     @if (breakdown.hasNotes) {
-                      <td>{{ row.note?.trim() || "" }}</td>
+                      <td class="workload-profile-breakdown-table__note">
+                        {{ row.note?.trim() || "" }}
+                      </td>
                     }
                   </tr>
                 }
@@ -355,7 +347,7 @@
         </div>
         @if (accordionItems().length) {
           <div
-            class="w-full min-w-0 text-base pr-4 lg:min-h-[460px] lg:pt-18 lg:col-start-2 lg:row-start-1"
+            class="w-full min-w-0 text-sm sm:text-base pr-4 lg:min-h-[460px] lg:pt-18 lg:col-start-2 lg:row-start-1"
           >
             <sc-accordion
               class="workload-profile-accordion"

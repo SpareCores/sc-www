@@ -23,10 +23,9 @@
             type="button"
             class="tooltip-trigger ml-1"
             aria-label="Show filter description"
-            (mouseenter)="emitTooltip($event, parameter.schema.description)"
-            (mouseleave)="hideTooltip.emit()"
-            (focus)="emitTooltip($event, parameter.schema.description)"
-            (blur)="hideTooltip.emit()"
+            scTooltipTrigger
+            (tooltipOpen)="emitTooltip($event, parameter.schema.description)"
+            (tooltipClose)="hideTooltip.emit()"
           >
             <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
           </button>
@@ -285,10 +284,9 @@
               type="button"
               class="tooltip-trigger"
               aria-label="Show filter description"
-              (mouseenter)="emitTooltip($event, parameter.schema.description)"
-              (mouseleave)="hideTooltip.emit()"
-              (focus)="emitTooltip($event, parameter.schema.description)"
-              (blur)="hideTooltip.emit()"
+              scTooltipTrigger
+              (tooltipOpen)="emitTooltip($event, parameter.schema.description)"
+              (tooltipClose)="hideTooltip.emit()"
             >
               <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
             </button>
@@ -298,10 +296,9 @@
               type="button"
               class="tooltip-trigger"
               aria-label="Show filter warning"
-              (mouseenter)="emitTooltip($event, warningText, 'warning')"
-              (mouseleave)="hideTooltip.emit()"
-              (focus)="emitTooltip($event, warningText, 'warning')"
-              (blur)="hideTooltip.emit()"
+              scTooltipTrigger
+              (tooltipOpen)="emitTooltip($event, warningText, 'warning')"
+              (tooltipClose)="hideTooltip.emit()"
             >
               <svg lucideTriangleAlert class="benchmark-note-icon"></svg>
             </button>

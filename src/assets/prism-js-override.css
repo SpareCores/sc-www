@@ -9,13 +9,18 @@ div.code-toolbar > .toolbar {
   top: 0px !important;
   right: 5px !important;
   transition: opacity 0.3s ease-in-out !important;
-  opacity: 0 !important;
+  opacity: 1 !important;
   z-index: 10 !important;
   width: auto !important;
   max-width: calc(100% - 10px) !important;
 }
-div.code-toolbar:hover > .toolbar {
-  opacity: 1 !important;
+@media (hover: hover) {
+  div.code-toolbar > .toolbar {
+    opacity: 0 !important;
+  }
+  div.code-toolbar:hover > .toolbar {
+    opacity: 1 !important;
+  }
 }
 .code-toolbar > .toolbar > .toolbar-item {
   max-width: 100% !important;
@@ -27,6 +32,7 @@ div.code-toolbar:hover > .toolbar {
   border: 1px solid #ddd;
   border-radius: 3px;
   padding: 3px 8px;
+  min-height: 1.5rem;
 }
 .code-toolbar > .toolbar > .toolbar-item > button:hover {
   background-color: #34d399;

@@ -1,5 +1,5 @@
-<div class="w-full bg-primary min-h-screen">
-  <div class="content pt-16 pb-16">
+<div class="w-full bg-primary min-h-dvh">
+  <div class="content pt-4 pb-8 sm:pt-8">
     <sc-breadcrumbs [segments]="comparePage.breadcrumbs"></sc-breadcrumbs>
 
     <sc-collection-save-modal
@@ -18,7 +18,10 @@
         ></sc-loading-spinner>
       </div>
     } @else {
-      <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <div
+        class="flex flex-col gap-4 mt-4 sm:mt-8 content-gutter"
+        [class]="instances.length ? 'mb-4 sm:mb-8' : ''"
+      >
         <sc-page-header
           icon="scale"
           [title]="comparePage.title"
@@ -33,7 +36,6 @@
           [showEdit]="!!comparePage.exactSavedComparison()"
           editAriaLabel="Edit comparison"
           [showShare]="!!instances.length"
-          [copyLink]="true"
           (bookmarkClick)="comparePage.toggleSavedComparison()"
           (editClick)="comparePage.openSaveComparisonModal()"
         >
@@ -49,33 +51,36 @@
               (opening)="updateEmbeddableWidgets()"
             ></sc-embed-widget-button>
           }
+          @if (instances.length) {
+            <div
+              pageHeaderDescription
+              class="sc-page-description"
+              [innerHTML]="comparePage.description"
+            ></div>
+          }
+          @if (instances.length) {
+            <sc-compare-toolbar
+              pageHeaderToolbar
+              resource="database"
+              [items]="databases"
+              [baseline]="baselineDatabase"
+              [currency]="selectedCurrency"
+              (baselineSelected)="selectBaselineDatabase($event)"
+              (currencySelected)="selectCurrency($event)"
+            ></sc-compare-toolbar>
+          }
         </sc-page-header>
-        @if (instances.length) {
-          <div
-            class="text-white text-xl pr-16"
-            [innerHTML]="comparePage.description"
-          ></div>
-          <sc-compare-toolbar
-            resource="database"
-            [items]="databases"
-            [baseline]="baselineDatabase"
-            [currency]="selectedCurrency"
-            (baselineSelected)="selectBaselineDatabase($event)"
-            (currencySelected)="selectCurrency($event)"
-          ></sc-compare-toolbar>
-        }
       </div>
 
       @if (!instances.length) {
-        <div class="flex flex-col gap-4 mx-2 xl:mx-0">
-          <div class="text-white text-xl pr-16">
+        <div class="flex flex-col gap-4 mt-4 content-gutter">
+          <p class="sc-page-description">
             Compare managed databases (DBaaS) and their key specs, including
             engine type and versions supported, vCPU and RAM, storage throughput
             and backup options, high availability features etc. alongside
             benchmark metrics to find the optimal managed cloud database for
             your workload.
-          </div>
-          <div class="text-white text-xl pr-16">
+            <br /><br />
             To get started, select two or more databases using the checkboxes on
             our
             <a class="text-emerald-400" routerLink="/databases"
@@ -84,7 +89,7 @@
             below, or add/remove options directly on individual database detail
             pages using the "Compare" button. You can also explore our curated
             comparison sets below.
-          </div>
+          </p>
           <sc-compare-guide
             [compares]="databaseCompares"
             comparePath="/databases/compare"
@@ -92,7 +97,7 @@
             instanceKey="database"
           ></sc-compare-guide>
           <hr class="mt-6" />
-          <div class="text-white text-xl pr-16 mt-3">
+          <div class="sc-page-description mt-3">
             <p>
               <i
                 >Reached the end of the page and haven't found the database
@@ -128,291 +133,313 @@
       }
 
       @if (databases.length) {
-        <div
-          id="database_compare_table_holder"
-          #tableHolder
-          class="compare_table_holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative mx-2 xl:mx-0"
-          (scroll)="updateStickyLayout()"
-        >
-          @if (isBrowser() && isTableOutsideViewport()) {
-            <div class="fixed_thead" [style]="stickyFixedDivStyle()">
-              <table
-                class="sc-compare-table sc-compare-table--fixed"
-                [style]="stickyMainTableStyle()"
-              >
-                <thead>
-                  <tr>
-                    <th [style]="stickyFirstColStyle()"></th>
-                    @for (
-                      database of databases;
-                      track database.vendor_id + "_" + database.database_id;
-                      let i = $index
-                    ) {
-                      <th
-                        [style]="stickyColumnStyles()[i] || ''"
-                        class="compact-number-header-cell compare-table-header-cell"
-                      >
-                        <div
-                          class="ml-auto flex flex-col items-end gap-1 w-fit"
-                        >
-                          <a
-                            class="underline decoration-dotted whitespace-nowrap"
-                            [href]="
-                              '/database/' +
-                              database.vendor_id +
-                              '/' +
-                              database.api_reference
-                            "
-                            target="_blank"
-                          >
-                            {{ toUpper(database.display_name) }}
-                          </a>
-                        </div>
-                        @if (isBaselineDatabase(database)) {
-                          <div
-                            class="compare-table-header-baseline-marker"
-                            aria-hidden="true"
-                          ></div>
-                        }
-                      </th>
-                    }
-                  </tr>
-                </thead>
-              </table>
-            </div>
-          }
-          <table
-            class="sc-compare-table sc-compare-table--fixed"
-            id="database-compare-table"
+        <div class="sm:content-gutter">
+          <div
+            id="database_compare_table_holder"
+            #tableHolder
+            class="compare_table_holder sc-compare-table-holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative"
+            (scroll)="updateStickyLayout()"
           >
-            <colgroup>
-              <col class="compare-first-column-col" />
-              @for (
-                database of databases;
-                track database.vendor_id + "_" + database.database_id
-              ) {
-                <col [style.minWidth]="getDatabaseColumnWidth(database)" />
-              }
-            </colgroup>
-            <thead>
-              <tr>
-                <th id="database-compare-table-first-col"></th>
+            @if (isBrowser() && isTableOutsideViewport()) {
+              <div class="fixed_thead" [style]="stickyFixedDivStyle()">
+                <table
+                  class="sc-compare-table sc-compare-table--fixed"
+                  [style]="stickyMainTableStyle()"
+                >
+                  <thead>
+                    <tr>
+                      <th [style]="stickyFirstColStyle()"></th>
+                      @for (
+                        database of databases;
+                        track database.vendor_id + "_" + database.database_id;
+                        let i = $index
+                      ) {
+                        <th
+                          [style]="stickyColumnStyles()[i] || ''"
+                          class="compact-number-header-cell compare-table-header-cell"
+                        >
+                          <div
+                            class="ml-auto flex flex-col items-end gap-1 w-fit"
+                          >
+                            <a
+                              class="underline decoration-dotted sm:whitespace-nowrap"
+                              [href]="
+                                '/database/' +
+                                database.vendor_id +
+                                '/' +
+                                database.api_reference
+                              "
+                              target="_blank"
+                            >
+                              {{ toUpper(database.display_name) }}
+                            </a>
+                          </div>
+                          @if (isBaselineDatabase(database)) {
+                            <div
+                              class="compare-table-header-baseline-marker"
+                              aria-hidden="true"
+                            ></div>
+                          }
+                        </th>
+                      }
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            }
+            <table
+              class="sc-compare-table sc-compare-table--fixed"
+              id="database-compare-table"
+            >
+              <colgroup>
+                <col class="compare-first-column-col" />
                 @for (
                   database of databases;
                   track database.vendor_id + "_" + database.database_id
                 ) {
-                  <th
-                    class="align-baseline compact-number-header-cell compare-table-header-cell"
-                    [style.minWidth]="getDatabaseColumnWidth(database)"
-                  >
-                    <div
-                      class="flex flex-col gap-1 justify-center ml-auto w-fit"
-                    >
-                      <a
-                        class="underline decoration-dotted whitespace-nowrap"
-                        routerLink="/database/{{ database.vendor_id }}/{{
-                          database.api_reference
-                        }}"
-                        target="_blank"
-                      >
-                        {{ toUpper(database.display_name) }}
-                      </a>
-                    </div>
-                    @if (isBaselineDatabase(database)) {
-                      <span class="sr-only">Baseline database</span>
-                      <div
-                        class="compare-table-header-baseline-marker"
-                        aria-hidden="true"
-                      ></div>
-                    }
-                  </th>
+                  <col [style.minWidth]="getDatabaseColumnWidth(database)" />
                 }
-              </tr>
-            </thead>
-            <sc-database-compare-spec-rows
-              [sections]="propertySections"
-              [priceRows]="priceRows"
-              [databases]="databases"
-              [baselineIndex]="baselineIndex()"
-              [showAnchors]="true"
-              (descriptionEnter)="
-                showChartTooltip($event.event, $event.content)
-              "
-              (descriptionLeave)="hideChartTooltip()"
-            ></sc-database-compare-spec-rows>
-            <tbody>
-              @if (hasPgbenchCompareChart()) {
-                @let pinnedRow = getComparePinnedRowLayout();
+              </colgroup>
+              <thead>
+                <tr>
+                  <th id="database-compare-table-first-col"></th>
+                  @for (
+                    database of databases;
+                    track database.vendor_id + "_" + database.database_id
+                  ) {
+                    <th
+                      class="align-baseline compact-number-header-cell compare-table-header-cell"
+                      [style.minWidth]="getDatabaseColumnWidth(database)"
+                    >
+                      <div
+                        class="flex flex-col gap-1 justify-center ml-auto w-fit"
+                      >
+                        <a
+                          class="underline decoration-dotted sm:whitespace-nowrap"
+                          routerLink="/database/{{ database.vendor_id }}/{{
+                            database.api_reference
+                          }}"
+                          target="_blank"
+                        >
+                          {{ toUpper(database.display_name) }}
+                        </a>
+                      </div>
+                      @if (isBaselineDatabase(database)) {
+                        <span class="sr-only">Baseline database</span>
+                        <div
+                          class="compare-table-header-baseline-marker"
+                          aria-hidden="true"
+                        ></div>
+                      }
+                    </th>
+                  }
+                </tr>
+              </thead>
+              <sc-database-compare-spec-rows
+                [sections]="propertySections"
+                [priceRows]="priceRows"
+                [databases]="databases"
+                [baselineIndex]="baselineIndex()"
+                [showAnchors]="true"
+                (descriptionEnter)="
+                  showChartTooltip($event.event, $event.content)
+                "
+                (descriptionLeave)="hideChartTooltip()"
+              ></sc-database-compare-spec-rows>
+              <tbody>
+                @if (hasPgbenchCompareChart()) {
+                  @let pinnedRow = getComparePinnedRowLayout();
+                  <tr
+                    class="section_header sc-header-anchor-host"
+                    id="database_compare_pgbench_section"
+                  >
+                    <td
+                      [attr.colspan]="pinnedRow.colSpan"
+                      class="sc-compare-table__pinned-cell"
+                    >
+                      <div
+                        class="sc-compare-table__pinned-content compare-section-header-row"
+                        [style]="pinnedRow.widthStyle"
+                      >
+                        <h3
+                          class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+                        >
+                          <span class="compare-section-header-title">
+                            <svg
+                              [lucideIcon]="'pgbench' | benchmarkIcon"
+                              class="h-6 w-6 shrink-0"
+                            ></svg>
+                            <span
+                              class="compare-section-header-title__text"
+                              scTooltipTrigger
+                              (tooltipOpen)="
+                                showTruncatedTitleTooltip(
+                                  $event,
+                                  pgbenchMeta.title
+                                )
+                              "
+                              (tooltipClose)="hideChartTooltip()"
+                            >
+                              {{ pgbenchMeta.title }}
+                            </span>
+                            <span class="compare-section-header-title__icons">
+                              <svg
+                                lucideCircleArrowUp
+                                class="h-4 w-4 text-gray-200 shrink-0"
+                                scTooltipTrigger
+                                (tooltipOpen)="
+                                  showChartTooltip($event, 'Higher is better.')
+                                "
+                                (tooltipClose)="hideChartTooltip()"
+                              ></svg>
+                              @if (pgbenchMeta.infoTooltip) {
+                                <svg
+                                  lucideInfo
+                                  class="h-4 w-4 text-gray-200 shrink-0"
+                                  scTooltipTrigger
+                                  (tooltipOpen)="
+                                    showChartTooltip(
+                                      $event,
+                                      pgbenchMeta.infoTooltip
+                                    )
+                                  "
+                                  (tooltipClose)="hideChartTooltip()"
+                                ></svg>
+                              }
+                              @if (pgbenchMeta.noteTooltip) {
+                                <svg
+                                  lucideTriangleAlert
+                                  class="benchmark-note-icon"
+                                  scTooltipTrigger
+                                  (tooltipOpen)="
+                                    showChartWarningTooltip(
+                                      $event,
+                                      pgbenchMeta.noteTooltip
+                                    )
+                                  "
+                                  (tooltipClose)="hideChartTooltip()"
+                                ></svg>
+                              }
+                            </span>
+                          </span>
+                          <sc-header-anchor
+                            anchorId="database_compare_pgbench_section"
+                            [label]="pgbenchMeta.title"
+                            [withTarget]="false"
+                          ></sc-header-anchor>
+                        </h3>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="compare-fixed-chart-row">
+                    <td
+                      [attr.colspan]="pinnedRow.colSpan"
+                      class="sc-compare-table__pinned-cell"
+                    >
+                      <div
+                        class="sc-compare-table__pinned-content compare-chart-content"
+                        [style]="pinnedRow.widthStyle"
+                      >
+                        <sc-benchmark-line-chart
+                          benchmarkKey="pgbench"
+                          chartSource="compare-pgbench"
+                          layout="compare"
+                          [title]="pgbenchMeta.title"
+                          chartType="line"
+                          elementId="database_compare_pgbench_chart"
+                          canvasId="database_compare_pgbench_canvas"
+                          blockClass="sc-chart-block sc-chart-block--inline"
+                          [servers]="lineCompareServers"
+                          [benchmarkMeta]="benchmarkMeta"
+                          [infoTooltip]="pgbenchMeta.infoTooltip"
+                          [noteTooltip]="pgbenchMeta.noteTooltip"
+                        ></sc-benchmark-line-chart>
+                      </div>
+                    </td>
+                  </tr>
+                }
                 <tr
                   class="section_header sc-header-anchor-host"
-                  id="database_compare_pgbench_section"
+                  id="spec_line_more_details"
                 >
-                  <td [attr.colspan]="pinnedRow.contentColSpan">
-                    <div class="compare-section-header-row">
-                      <h3 class="text-xl font-semibold m-0 flex items-center">
-                        <span class="compare-section-header-title">
-                          <svg
-                            [lucideIcon]="'pgbench' | benchmarkIcon"
-                            class="h-6 w-6 shrink-0"
-                          ></svg>
-                          <span class="compare-section-header-title__text">
-                            {{ pgbenchMeta.title }}
-                          </span>
-                          <span class="compare-section-header-title__icons">
-                            <svg
-                              lucideCircleArrowUp
-                              class="h-4 w-4 text-gray-200 shrink-0"
-                              (mouseenter)="
-                                showChartTooltip($event, 'Higher is better.')
-                              "
-                              (mouseleave)="hideChartTooltip()"
-                            ></svg>
-                            @if (pgbenchMeta.infoTooltip) {
-                              <svg
-                                lucideInfo
-                                class="h-4 w-4 text-gray-200 shrink-0"
-                                (mouseenter)="
-                                  showChartTooltip(
-                                    $event,
-                                    pgbenchMeta.infoTooltip
-                                  )
-                                "
-                                (mouseleave)="hideChartTooltip()"
-                              ></svg>
-                            }
-                            @if (pgbenchMeta.noteTooltip) {
-                              <svg
-                                lucideTriangleAlert
-                                class="benchmark-note-icon"
-                                (mouseenter)="
-                                  showChartWarningTooltip(
-                                    $event,
-                                    pgbenchMeta.noteTooltip
-                                  )
-                                "
-                                (mouseleave)="hideChartTooltip()"
-                              ></svg>
-                            }
-                          </span>
-                        </span>
-                        <sc-header-anchor
-                          anchorId="database_compare_pgbench_section"
-                          [label]="pgbenchMeta.title"
-                          [withTarget]="false"
-                        ></sc-header-anchor>
-                      </h3>
-                    </div>
-                  </td>
-                  @if (pinnedRow.trailingColSpan) {
-                    <td [attr.colspan]="pinnedRow.trailingColSpan"></td>
-                  }
-                </tr>
-                <tr class="compare-fixed-chart-row">
-                  <td [attr.colspan]="pinnedRow.contentColSpan">
-                    <div
-                      class="compare-chart-content"
-                      [style]="pinnedRow.chartWidthStyle"
+                  <td>
+                    <h2
+                      class="text-lg sm:text-xl font-semibold whitespace-nowrap"
                     >
-                      <sc-benchmark-line-chart
-                        benchmarkKey="pgbench"
-                        chartSource="compare-pgbench"
-                        layout="compare"
-                        [title]="pgbenchMeta.title"
-                        chartType="line"
-                        elementId="database_compare_pgbench_chart"
-                        canvasId="database_compare_pgbench_canvas"
-                        blockClass="sc-chart-block sc-chart-block--inline"
-                        [servers]="lineCompareServers"
-                        [benchmarkMeta]="benchmarkMeta"
-                        [infoTooltip]="pgbenchMeta.infoTooltip"
-                        [noteTooltip]="pgbenchMeta.noteTooltip"
-                      ></sc-benchmark-line-chart>
-                    </div>
+                      More Details
+                      <sc-header-anchor
+                        anchorId="spec_line_more_details"
+                        label="More Details"
+                        [withTarget]="false"
+                      ></sc-header-anchor>
+                    </h2>
                   </td>
-                  @if (pinnedRow.trailingColSpan) {
-                    <td [attr.colspan]="pinnedRow.trailingColSpan"></td>
-                  }
+                  <td [attr.colspan]="databases.length"></td>
                 </tr>
-              }
-              <tr
-                class="section_header sc-header-anchor-host"
-                id="spec_line_more_details"
-              >
-                <td>
-                  <h2 class="text-xl font-semibold">
-                    More Details
-                    <sc-header-anchor
-                      anchorId="spec_line_more_details"
-                      label="More Details"
-                      [withTarget]="false"
-                    ></sc-header-anchor>
-                  </h2>
-                </td>
-                <td [attr.colspan]="databases.length"></td>
-              </tr>
-              <tr class="compare-instance-section-gap" aria-hidden="true">
-                <td></td>
-                <td [attr.colspan]="databases.length"></td>
-              </tr>
-              <tr
-                id="database-compare-view-database-row"
-                class="compare-instance-section-first-row"
-              >
-                <td class="whitespace-nowrap">Database Details</td>
-                @for (
-                  database of databases;
-                  track database.vendor_id + "_" + database.database_id
-                ) {
-                  <td>
-                    <sc-button
-                      class="w-full min-w-0 max-w-full"
-                      [label]="database.display_name"
-                      [title]="database.display_name"
-                      size="small"
-                      buttonClass="min-w-0 overflow-hidden"
-                      [href]="
-                        '/database/' +
-                        database.vendor_id +
-                        '/' +
-                        database.api_reference
-                      "
-                      target="_blank"
-                    ></sc-button>
-                  </td>
-                }
-              </tr>
-              <tr id="database-compare-view-server-row">
-                <td class="whitespace-nowrap">Underlying Server</td>
-                @for (
-                  database of databases;
-                  track database.vendor_id + "_" + database.database_id
-                ) {
-                  <td>
-                    @if (database.underlyingServer; as server) {
+                <tr class="compare-instance-section-gap" aria-hidden="true">
+                  <td></td>
+                  <td [attr.colspan]="databases.length"></td>
+                </tr>
+                <tr
+                  id="database-compare-view-database-row"
+                  class="compare-instance-section-first-row"
+                >
+                  <td class="sm:whitespace-nowrap">Database Details</td>
+                  @for (
+                    database of databases;
+                    track database.vendor_id + "_" + database.database_id
+                  ) {
+                    <td>
                       <sc-button
                         class="w-full min-w-0 max-w-full"
-                        [label]="server.display_name"
-                        [title]="server.display_name"
+                        [label]="database.display_name"
+                        [title]="database.display_name"
                         size="small"
                         buttonClass="min-w-0 overflow-hidden"
                         [href]="
-                          '/server/' +
+                          '/database/' +
                           database.vendor_id +
                           '/' +
-                          server.api_reference
+                          database.api_reference
                         "
                         target="_blank"
                       ></sc-button>
-                    }
-                  </td>
-                }
-              </tr>
-              <tr class="compare-instance-section-gap" aria-hidden="true">
-                <td></td>
-                <td [attr.colspan]="databases.length"></td>
-              </tr>
-            </tbody>
-          </table>
+                    </td>
+                  }
+                </tr>
+                <tr id="database-compare-view-server-row">
+                  <td class="sm:whitespace-nowrap">Underlying Server</td>
+                  @for (
+                    database of databases;
+                    track database.vendor_id + "_" + database.database_id
+                  ) {
+                    <td>
+                      @if (database.underlyingServer; as server) {
+                        <sc-button
+                          class="w-full min-w-0 max-w-full"
+                          [label]="server.display_name"
+                          [title]="server.display_name"
+                          size="small"
+                          buttonClass="min-w-0 overflow-hidden"
+                          [href]="
+                            '/server/' +
+                            database.vendor_id +
+                            '/' +
+                            server.api_reference
+                          "
+                          target="_blank"
+                        ></sc-button>
+                      }
+                    </td>
+                  }
+                </tr>
+                <tr class="compare-instance-section-gap" aria-hidden="true">
+                  <td></td>
+                  <td [attr.colspan]="databases.length"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         @if (isBrowser()) {
           <sc-scrollbar-mirror

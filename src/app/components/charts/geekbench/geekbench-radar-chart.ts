@@ -34,11 +34,13 @@ import {
   GeekbenchRadarChartOptions,
   GeekbenchTooltipHtml,
 } from "./geekbench-radar-chart.types";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-geekbench-radar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TooltipTrigger,
     LucideDynamicIcon,
     LucideCircleArrowUp,
     LucideInfo,
@@ -203,10 +205,10 @@ export class GeekbenchRadarChart {
   tooltipContent = "";
   tooltipHtml: GeekbenchTooltipHtml = null;
 
-  showTextTooltip(el: MouseEvent, content?: string): void {
+  showTextTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (text) => {
         this.tooltipContent = text;
@@ -215,10 +217,10 @@ export class GeekbenchRadarChart {
     });
   }
 
-  showWarningTextTooltip(el: MouseEvent, content?: string): void {
+  showWarningTextTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (text) => {
@@ -228,7 +230,7 @@ export class GeekbenchRadarChart {
     });
   }
 
-  showHtmlTooltip(el: MouseEvent, content?: GeekbenchTooltipHtml): void {
+  showHtmlTooltip(el: Element | Event, content?: GeekbenchTooltipHtml): void {
     const tooltipElement = this.tooltip()?.nativeElement;
     if (!content || !tooltipElement) {
       return;

@@ -1,88 +1,48 @@
-<div class="page-header">
-  <h1 class="page-header__title">
-    <svg [lucideIcon]="icon()" class="h-8 w-8 mr-2" aria-hidden="true"></svg>
-    @if (showBookmark()) {
-      <span
-        class="page-header__bookmark-wrap"
-        [class.page-header__bookmark-wrap--locked]="bookmarkGuestLocked()"
-      >
+<div class="page-header" [class.page-header--actions-from-sm]="actionsFromSm()">
+  <div class="page-header__bar">
+    <div class="page-header__heading">
+      @if (icon()) {
+        <svg
+          [lucideIcon]="icon()"
+          class="page-header__icon"
+          aria-hidden="true"
+        ></svg>
+      }
+      <h1 class="page-header__title">{{ title() }}</h1>
+      @if (showEdit()) {
         <button
           type="button"
-          class="page-header__icon-btn page-header__bookmark sc-bookmark-toggle"
-          [class.sc-bookmark-toggle--active]="bookmarkActive()"
-          [class.sc-bookmark-toggle--can-add]="
-            !bookmarkGuestLocked() &&
-            !bookmarkActive() &&
-            !bookmarkDisabled() &&
-            !bookmarkLoading()
-          "
-          [class.sc-bookmark-toggle--can-remove]="
-            !bookmarkGuestLocked() &&
-            bookmarkActive() &&
-            !bookmarkDisabled() &&
-            !bookmarkLoading()
-          "
-          [class.page-header__bookmark--locked]="bookmarkGuestLocked()"
-          [disabled]="
-            !bookmarkGuestLocked() && (bookmarkDisabled() || bookmarkLoading())
-          "
-          [attr.aria-label]="
-            bookmarkGuestLocked()
-              ? registerHint
-              : bookmarkActive()
-                ? 'Remove bookmark'
-                : 'Add bookmark'
-          "
-          [attr.aria-pressed]="bookmarkActive()"
-          (mouseenter)="onBookmarkMouseEnter($event)"
-          (mouseleave)="hideTooltip()"
-          (click)="onBookmarkClick($event)"
+          class="page-header__edit"
+          [attr.aria-label]="editAriaLabel()"
+          (click)="editClick.emit($event)"
         >
-          <svg
-            lucideBookmark
-            class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--default"
-          ></svg>
-          <svg
-            lucideBookmarkPlus
-            class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--add"
-          ></svg>
-          <svg
-            lucideBookmarkOff
-            class="page-header__bookmark-icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--remove"
-          ></svg>
+          <svg lucideSquarePen class="page-header__edit-icon"></svg>
         </button>
-        @if (bookmarkGuestLocked()) {
-          <div
-            #tooltip
-            class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
-          >
-            {{ registerHint }}
-          </div>
-        }
-      </span>
+      }
+    </div>
+    @if (showBookmark()) {
+      <sc-page-bookmark
+        class="page-header__bookmark-wrap"
+        [active]="bookmarkActive()"
+        [disabled]="bookmarkDisabled()"
+        [loading]="bookmarkLoading()"
+        [guestLocked]="bookmarkGuestLocked()"
+        (bookmarkClick)="bookmarkClick.emit($event)"
+      ></sc-page-bookmark>
     }
-    <span class="page-header__title-text">{{ title() }}</span>
-    @if (showEdit()) {
-      <button
-        type="button"
-        class="page-header__icon-btn page-header__edit"
-        [attr.aria-label]="editAriaLabel()"
-        (click)="editClick.emit($event)"
-      >
-        <svg lucideSquarePen class="page-header__icon-btn-svg"></svg>
-      </button>
-    }
-  </h1>
-  <div class="page-header__actions">
-    <ng-content></ng-content>
-    @if (showShare()) {
-      <sc-button
-        [attr.id]="shareButtonId()"
-        label="Share"
-        [icon]="resolvedShareIcon()"
-        [variant]="shareVariant()"
-        (buttonClick)="onShareClick($event)"
-      ></sc-button>
-    }
+    <div class="page-header__actions">
+      <ng-content></ng-content>
+      @if (showShare()) {
+        <sc-share-link-button
+          [buttonId]="shareButtonId()"
+        ></sc-share-link-button>
+      }
+    </div>
+  </div>
+  <div class="page-header__description">
+    <ng-content select="[pageHeaderDescription]"></ng-content>
+  </div>
+  <div class="page-header__toolbar">
+    <ng-content select="[pageHeaderToolbar]"></ng-content>
   </div>
 </div>

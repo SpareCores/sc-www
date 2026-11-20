@@ -1,9 +1,10 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   effect,
   inject,
@@ -42,11 +43,14 @@ import {
   MultiBarBenchmarkMeta,
   MultiBarServer,
 } from "./benchmark-multi-bar-chart.types";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-benchmark-multi-bar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideInfo,
@@ -82,6 +86,8 @@ export class BenchmarkMultiBarChart {
   detailsBenchmarks = input<MultiBarBenchmarkGroup[]>([]);
   servers = input<MultiBarServer[]>([]);
   layout = input<"details" | "compare">("details");
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
   serverCount = input(0);
   anchorId = input<string | null>(null);
 
@@ -228,10 +234,10 @@ export class BenchmarkMultiBarChart {
     this.secondaryOptionSelected.emit(index);
     this.secondaryDropdown()?.hide();
   }
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -239,10 +245,10 @@ export class BenchmarkMultiBarChart {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {

@@ -1,4 +1,4 @@
-import { SlotMachineContents } from "../pages/landing-page/landing-page.types";
+import { SlotMachineContents } from "../components/slot-machine/slot-machine.types";
 
 export const spinner_initial_data: SlotMachineContents = [
   [

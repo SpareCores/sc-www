@@ -16,7 +16,6 @@ import {
   LucideBookText,
   LucideBuilding2,
   LucideChartCandlestick,
-  LucideCheck,
   LucideDatabase,
   LucideDollarSign,
   LucideDynamicIcon,
@@ -28,12 +27,15 @@ import {
   LucideSquareKanban,
 } from "@lucide/angular";
 import { ThemeText } from "../../components/theme-text/theme-text";
-import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
+import { SectionHeading } from "../../components/section-heading/section-heading";
+import { CheckList } from "../../components/check-list/check-list";
+import { CheckListItem } from "../../components/check-list/check-list-item";
 import { Button } from "../../components/button/button";
 import { SeoHandler } from "../../services/seo-handler";
 import { isPlatformBrowser } from "@angular/common";
 import { NeetoCal } from "../../services/neeto-cal";
 import { UiTooltip } from "../../services/ui-tooltip";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 interface Quote {
   quote: string;
@@ -46,12 +48,11 @@ interface Quote {
 @Component({
   selector: "sc-about-navigator",
   imports: [
-    HeaderAnchor,
+    TooltipTrigger,
     Breadcrumbs,
     LucideBookText,
     LucideBuilding2,
     LucideChartCandlestick,
-    LucideCheck,
     LucideDatabase,
     LucideDollarSign,
     LucideDynamicIcon,
@@ -62,11 +63,14 @@ interface Quote {
     LucideScale,
     LucideSquareKanban,
     ThemeText,
+    SectionHeading,
+    CheckList,
+    CheckListItem,
     Button,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: "./about-navigator.html",
-  styleUrls: ["./about-shared.css", "./about-navigator.css"],
+  styleUrl: "./about-navigator.css",
 })
 export class AboutNavigator implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
@@ -286,7 +290,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
     }
   }
 
-  showTooltip(el: any) {
+  showTooltip(el: Element | Event) {
     const tooltip = this.tooltip.nativeElement;
     this.uiTooltip.show(tooltip, el, {
       left: "anchor-right",

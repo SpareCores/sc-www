@@ -30,7 +30,7 @@
             >
               <div class="flex flex-col gap-1 justify-center ml-auto w-fit">
                 <a
-                  class="underline decoration-dotted whitespace-nowrap"
+                  class="underline decoration-dotted sm:whitespace-nowrap"
                   href="/server/{{ server.vendor_id }}/{{
                     server.api_reference
                   }}"
@@ -45,8 +45,9 @@
                   @if (isBestPrice(server)) {
                     <div
                       class="text-emerald-400 text-xl"
-                      (mouseenter)="showTooltip($event, 'Lowest price')"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showTooltip($event, 'Lowest price')"
+                      (tooltipClose)="hideTooltip()"
                     >
                       💰
                     </div>
@@ -54,8 +55,11 @@
                   @if (isBestSSCore(server)) {
                     <div
                       class="text-emerald-400 text-xl"
-                      (mouseenter)="showTooltip($event, 'Best value for price')"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="
+                        showTooltip($event, 'Best value for price')
+                      "
+                      (tooltipClose)="hideTooltip()"
                     >
                       🥇
                     </div>
@@ -63,8 +67,9 @@
                   @if (getBecnchmarkStyle(server, true) !== "") {
                     <div
                       class="text-emerald-400 text-xl"
-                      (mouseenter)="showTooltip($event, 'Top performance')"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showTooltip($event, 'Top performance')"
+                      (tooltipClose)="hideTooltip()"
                     >
                       💪
                     </div>
@@ -133,8 +138,9 @@
                 lucideInfo
                 class="h-4 w-4 shrink-0 text-gray-200"
                 data-cy="compare-score-tooltip-trigger"
-                (mouseenter)="showTooltip($event, SSCoreTooltip)"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, SSCoreTooltip)"
+                (tooltipClose)="hideTooltip()"
               ></svg>
             </div>
           </td>
@@ -370,7 +376,7 @@
               [id]="'spec_line_' + propertyCategory.category"
             >
               <td>
-                <h2 class="text-xl font-semibold">
+                <h2 class="text-lg sm:text-xl font-semibold whitespace-nowrap">
                   {{ propertyCategory.name }}
                   @if (!isEmbedded) {
                     <sc-header-anchor
@@ -397,26 +403,30 @@
                 [class.compare-instance-section-first-row]="first"
                 [class.compare-instance-section-last-row]="last"
               >
-                <td class="whitespace-nowrap">
-                  <div class="flex gap-2 items-center">
-                    {{ category.name }}
+                <td class="sm:whitespace-nowrap">
+                  <span>{{ category.name }}</span>
+                  <span class="whitespace-nowrap">
                     @if (category.id === "average_time_to_start") {
-                      <svg
+                      &nbsp;<svg
                         [lucideIcon]="'circle-arrow-down'"
-                        class="h-4 w-4 shrink-0 text-gray-200"
-                        (mouseenter)="showTooltip($event, 'Lower is better.')"
-                        (mouseleave)="hideTooltip()"
+                        class="inline-block h-4 w-4 align-middle text-gray-200"
+                        scTooltipTrigger
+                        (tooltipOpen)="showTooltip($event, 'Lower is better.')"
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
                     @if (category.description) {
-                      <svg
+                      &nbsp;<svg
                         lucideInfo
-                        class="h-4 w-4 shrink-0 text-gray-200"
-                        (mouseenter)="showTooltip($event, category.description)"
-                        (mouseleave)="hideTooltip()"
+                        class="inline-block h-4 w-4 align-middle text-gray-200"
+                        scTooltipTrigger
+                        (tooltipOpen)="
+                          showTooltip($event, category.description)
+                        "
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
-                  </div>
+                  </span>
                 </td>
                 @for (
                   server of servers;
@@ -491,43 +501,61 @@
           class="section_header sc-header-anchor-host"
           id="benchmark_line_workload_profile"
         >
-          <td [colSpan]="pinnedRow.contentColSpan">
-            <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+          <td
+            [colSpan]="pinnedRow.colSpan"
+            class="sc-compare-table__pinned-cell"
+          >
+            <div
+              class="sc-compare-table__pinned-content compare-section-header-row"
+              [style]="pinnedRow.widthStyle"
+            >
+              <h3
+                class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'workload_profile' | benchmarkIcon"
                     class="h-6 w-6 shrink-0"
                   ></svg>
-                  <span class="compare-section-header-title__text">
+                  <span
+                    class="compare-section-header-title__text"
+                    scTooltipTrigger
+                    (tooltipOpen)="
+                      showTruncatedTitleTooltip($event, 'Workload Profiles')
+                    "
+                    (tooltipClose)="hideTooltip()"
+                  >
                     Workload Profiles
                   </span>
                   <span class="compare-section-header-title__icons">
                     <svg
                       lucideCircleArrowUp
                       class="h-4 w-4 text-gray-200 shrink-0"
-                      (mouseenter)="showTooltip($event, 'Higher is better.')"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                     <svg
                       lucideInfo
                       class="h-4 w-4 text-gray-200 shrink-0"
-                      (mouseenter)="
+                      scTooltipTrigger
+                      (tooltipOpen)="
                         showTooltip($event, workloadProfileInfoTooltip)
                       "
-                      (mouseleave)="hideTooltip()"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                     @if (getWorkloadProfileMetaNote()) {
                       <svg
                         lucideTriangleAlert
                         class="benchmark-note-icon"
-                        (mouseenter)="
+                        scTooltipTrigger
+                        (tooltipOpen)="
                           showWarningSectionTooltip(
                             $event,
                             getWorkloadProfileMetaNote()
                           )
                         "
-                        (mouseleave)="hideTooltip()"
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
                   </span>
@@ -540,14 +568,15 @@
                   ></sc-header-anchor>
                 }
               </h3>
-              @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                <div class="flex items-stretch gap-4 shrink-0">
+              @if (!isEmbedded) {
+                <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
                   <sc-button
                     [label]="
                       (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
                     "
                     [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
                     iconPosition="start"
+                    [compact]="true"
                     size="small"
                     (click)="toggleWorkloadProfileDetails()"
                   ></sc-button>
@@ -555,32 +584,15 @@
               }
             </div>
           </td>
-          @if (pinnedRow.actionSpacerColSpan) {
-            <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
-          }
-          @if (pinnedRow.trailingColSpan) {
-            <td [colSpan]="1" class="compare-section-header-action-cell">
-              @if (!isEmbedded) {
-                <div class="flex justify-end items-stretch gap-4">
-                  <sc-button
-                    [label]="
-                      (workloadProfileShowMore ? 'Hide' : 'Show') + ' Details'
-                    "
-                    [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
-                    iconPosition="start"
-                    size="small"
-                    (click)="toggleWorkloadProfileDetails()"
-                  ></sc-button>
-                </div>
-              }
-            </td>
-          }
         </tr>
         <tr class="compare-fixed-chart-row">
-          <td [colSpan]="pinnedRow.contentColSpan">
+          <td
+            [colSpan]="pinnedRow.colSpan"
+            class="sc-compare-table__pinned-cell"
+          >
             <div
-              class="compare-chart-content"
-              [style]="pinnedRow.chartWidthStyle"
+              class="sc-compare-table__pinned-content compare-chart-content"
+              [style]="pinnedRow.widthStyle"
             >
               <sc-workload-profile-panel
                 layout="compare"
@@ -592,9 +604,6 @@
               ></sc-workload-profile-panel>
             </div>
           </td>
-          @if (pinnedRow.trailingColSpan) {
-            <td [colSpan]="pinnedRow.trailingColSpan"></td>
-          }
         </tr>
         @if (workloadProfileShowMore) {
           @for (
@@ -612,10 +621,11 @@
                       <svg
                         lucideInfo
                         class="inline-block h-4 w-4 shrink-0 text-gray-200 ml-1"
-                        (mouseenter)="
+                        scTooltipTrigger
+                        (tooltipOpen)="
                           showTooltip($event, benchmark.description)
                         "
-                        (mouseleave)="hideTooltip()"
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
                     @if (
@@ -626,7 +636,8 @@
                       <svg
                         lucideTriangleAlert
                         class="benchmark-note-icon inline-block ml-1"
-                        (mouseenter)="
+                        scTooltipTrigger
+                        (tooltipOpen)="
                           showWarningTooltip(
                             $event,
                             getBenchmarkRowNote(
@@ -634,7 +645,7 @@
                             )
                           )
                         "
-                        (mouseleave)="hideTooltip()"
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
                   </div>
@@ -651,11 +662,12 @@
                   >
                     <div class="compare-table-metric-cell">
                       <span
-                        (mouseenter)="
+                        scTooltipTrigger
+                        (tooltipOpen)="
                           value !== null &&
                             showTooltip($event, value.toString())
                         "
-                        (mouseleave)="hideTooltip()"
+                        (tooltipClose)="hideTooltip()"
                         >{{
                           value === null ? "-" : (value | compactNumber)
                         }}</span
@@ -710,15 +722,30 @@
           class="section_header sc-header-anchor-host"
           id="benchmark_line_nvbandwidth"
         >
-          <td [colSpan]="pinnedRow.contentColSpan">
-            <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+          <td
+            [colSpan]="pinnedRow.colSpan"
+            class="sc-compare-table__pinned-cell"
+          >
+            <div
+              class="sc-compare-table__pinned-content compare-section-header-row"
+              [style]="pinnedRow.widthStyle"
+            >
+              <h3
+                class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'nvbandwidth' | benchmarkIcon"
                     class="h-6 w-6 shrink-0"
                   ></svg>
-                  <span class="compare-section-header-title__text">
+                  <span
+                    class="compare-section-header-title__text"
+                    scTooltipTrigger
+                    (tooltipOpen)="
+                      showTruncatedTitleTooltip($event, nvbandwidthTitle)
+                    "
+                    (tooltipClose)="hideTooltip()"
+                  >
                     {{ nvbandwidthTitle }}
                   </span>
                 </span>
@@ -732,12 +759,6 @@
               </h3>
             </div>
           </td>
-          @if (pinnedRow.actionSpacerColSpan) {
-            <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
-          }
-          @if (pinnedRow.trailingColSpan) {
-            <td [colSpan]="1" class="compare-section-header-action-cell"></td>
-          }
         </tr>
         @for (section of nvbandwidthSections; track section.name) {
           <tr class="compare-instance-section-gap" aria-hidden="true">
@@ -755,37 +776,40 @@
           @for (row of section.rows; track row.benchmark.benchmark_id) {
             <tr>
               <td>
-                <div class="ml-4 flex gap-2 items-center whitespace-nowrap">
+                <div class="ml-4 flex gap-2 items-center sm:whitespace-nowrap">
                   {{ row.name }}
                   @if (row.benchmark.higher_is_better === false) {
                     <svg
                       lucideCircleArrowDown
                       class="h-4 w-4 shrink-0 text-gray-200"
-                      (mouseenter)="showTooltip($event, 'Lower is better.')"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showTooltip($event, 'Lower is better.')"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                   @if (row.benchmark.description) {
                     <svg
                       lucideInfo
                       class="h-4 w-4 shrink-0 text-gray-200"
-                      (mouseenter)="
+                      scTooltipTrigger
+                      (tooltipOpen)="
                         showTooltip($event, row.benchmark.description)
                       "
-                      (mouseleave)="hideTooltip()"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                   @if (getBenchmarkRowNote(row.benchmark.benchmark_id)) {
                     <svg
                       lucideTriangleAlert
                       class="benchmark-note-icon"
-                      (mouseenter)="
+                      scTooltipTrigger
+                      (tooltipOpen)="
                         showWarningTooltip(
                           $event,
                           getBenchmarkRowNote(row.benchmark.benchmark_id)
                         )
                       "
-                      (mouseleave)="hideTooltip()"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                 </div>
@@ -855,14 +879,15 @@
           @for (row of nvbandwidthEnvironmentRows; track row.key) {
             <tr>
               <td>
-                <div class="ml-4 flex gap-2 items-center whitespace-nowrap">
+                <div class="ml-4 flex gap-2 items-center sm:whitespace-nowrap">
                   {{ row.name }}
                   @if (row.description) {
                     <svg
                       lucideInfo
                       class="h-4 w-4 shrink-0 text-gray-200"
-                      (mouseenter)="showTooltip($event, row.description)"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showTooltip($event, row.description)"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                 </div>
@@ -910,23 +935,39 @@
             class="section_header compare-dropdown-header-row sc-header-anchor-host"
             id="benchmark_line_stress_ng_full"
           >
-            <td [colSpan]="pinnedRow.contentColSpan">
-              <div class="compare-section-header-row">
-                <h3 class="text-xl font-semibold m-0 flex items-center">
+            <td
+              [colSpan]="pinnedRow.colSpan"
+              class="sc-compare-table__pinned-cell"
+            >
+              <div
+                class="sc-compare-table__pinned-content compare-section-header-row"
+                [style]="pinnedRow.widthStyle"
+              >
+                <h3
+                  class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+                >
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="'stress_ng' | benchmarkIcon"
                       class="h-6 w-6 shrink-0"
                     ></svg>
-                    <span class="compare-section-header-title__text">
+                    <span
+                      class="compare-section-header-title__text"
+                      scTooltipTrigger
+                      (tooltipOpen)="
+                        showTruncatedTitleTooltip($event, stressNgTitle)
+                      "
+                      (tooltipClose)="hideTooltip()"
+                    >
                       {{ stressNgTitle }}
                     </span>
                     <span class="compare-section-header-title__icons">
                       <svg
                         lucideCircleArrowUp
                         class="h-4 w-4 text-gray-200 shrink-0"
-                        (mouseenter)="showTooltip($event, 'Higher is better.')"
-                        (mouseleave)="hideTooltip()"
+                        scTooltipTrigger
+                        (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                     </span>
                   </span>
@@ -938,32 +979,32 @@
                     ></sc-header-anchor>
                   }
                 </h3>
-                @if (!pinnedRow.trailingColSpan) {
-                  <div class="flex items-stretch gap-4 shrink-0">
-                    <sc-button
-                      class="min-w-0"
-                      #stressNgSubcategoryDropdown="scDropdown"
-                      id="stress_ng_full_subcategory_button"
-                      [scDropdown]="stressNgSubcategoryPanel"
-                      [label]="stressNgActiveSection.name"
-                      icon="chevron-down"
-                      variant="dropdown"
-                      size="small"
-                      [title]="stressNgActiveSection.name"
-                    ></sc-button>
-                    <sc-button
-                      class="min-w-0"
-                      #stressNgMetricDropdown="scDropdown"
-                      id="stress_ng_full_metric_button"
-                      [scDropdown]="stressNgMetricPanel"
-                      [label]="stressNgMetricName()"
-                      icon="chevron-down"
-                      variant="dropdown"
-                      size="small"
-                      [title]="stressNgMetricName()"
-                    ></sc-button>
-                  </div>
-                }
+                <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
+                  <sc-button
+                    class="min-w-0"
+                    #stressNgSubcategoryDropdown="scDropdown"
+                    id="stress_ng_full_subcategory_button"
+                    [scDropdown]="stressNgSubcategoryPanel"
+                    [label]="stressNgActiveSection.name"
+                    icon="chevron-down"
+                    compactIcon="settings"
+                    variant="dropdown"
+                    size="small"
+                    [title]="stressNgActiveSection.name"
+                  ></sc-button>
+                  <sc-button
+                    class="min-w-0"
+                    #stressNgMetricDropdown="scDropdown"
+                    id="stress_ng_full_metric_button"
+                    [scDropdown]="stressNgMetricPanel"
+                    [label]="stressNgMetricName()"
+                    icon="chevron-down"
+                    compactIcon="gauge"
+                    variant="dropdown"
+                    size="small"
+                    [title]="stressNgMetricName()"
+                  ></sc-button>
+                </div>
               </div>
               <ng-template #stressNgSubcategoryPanel>
                 <div
@@ -1024,37 +1065,6 @@
                 </div>
               </ng-template>
             </td>
-            @if (pinnedRow.actionSpacerColSpan) {
-              <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
-            }
-            @if (pinnedRow.trailingColSpan) {
-              <td [colSpan]="1" class="compare-section-header-action-cell">
-                <div class="flex justify-end items-stretch gap-4">
-                  <sc-button
-                    class="min-w-0"
-                    #stressNgSubcategoryDropdown="scDropdown"
-                    id="stress_ng_full_subcategory_button"
-                    [scDropdown]="stressNgSubcategoryPanel"
-                    [label]="stressNgActiveSection.name"
-                    icon="chevron-down"
-                    variant="dropdown"
-                    size="small"
-                    [title]="stressNgActiveSection.name"
-                  ></sc-button>
-                  <sc-button
-                    class="min-w-0"
-                    #stressNgMetricDropdown="scDropdown"
-                    id="stress_ng_full_metric_button"
-                    [scDropdown]="stressNgMetricPanel"
-                    [label]="stressNgMetricName()"
-                    icon="chevron-down"
-                    variant="dropdown"
-                    size="small"
-                    [title]="stressNgMetricName()"
-                  ></sc-button>
-                </div>
-              </td>
-            }
           </tr>
           @for (
             row of stressNgActiveSection.rows;
@@ -1062,37 +1072,40 @@
           ) {
             <tr>
               <td>
-                <div class="ml-4 flex gap-2 items-center whitespace-nowrap">
+                <div class="ml-4 flex gap-2 items-center sm:whitespace-nowrap">
                   {{ row.name }}
                   @if (row.benchmark.higher_is_better === false) {
                     <svg
                       lucideCircleArrowDown
                       class="h-4 w-4 shrink-0 text-gray-200"
-                      (mouseenter)="showTooltip($event, 'Lower is better.')"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showTooltip($event, 'Lower is better.')"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                   @if (row.benchmark.description) {
                     <svg
                       lucideInfo
                       class="h-4 w-4 shrink-0 text-gray-200"
-                      (mouseenter)="
+                      scTooltipTrigger
+                      (tooltipOpen)="
                         showTooltip($event, row.benchmark.description)
                       "
-                      (mouseleave)="hideTooltip()"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                   @if (getBenchmarkRowNote(row.benchmark.benchmark_id)) {
                     <svg
                       lucideTriangleAlert
                       class="benchmark-note-icon"
-                      (mouseenter)="
+                      scTooltipTrigger
+                      (tooltipOpen)="
                         showWarningTooltip(
                           $event,
                           getBenchmarkRowNote(row.benchmark.benchmark_id)
                         )
                       "
-                      (mouseleave)="hideTooltip()"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                 </div>
@@ -1104,10 +1117,11 @@
                 >
                   <div class="compare-table-metric-cell">
                     <span
-                      (mouseenter)="
+                      scTooltipTrigger
+                      (tooltipOpen)="
                         showTooltip($event, stressNgExactValue(value))
                       "
-                      (mouseleave)="hideTooltip()"
+                      (tooltipClose)="hideTooltip()"
                       >{{
                         stressNgMetric() === "scaling"
                           ? formatStressNgScalingValue(value)
@@ -1167,25 +1181,44 @@
                 benchmarkCategory.id === 'openssl'
               "
             >
-              <td [colSpan]="pinnedRow.contentColSpan">
-                <div class="compare-section-header-row">
-                  <h3 class="text-xl font-semibold m-0 flex items-center">
+              <td
+                [colSpan]="pinnedRow.colSpan"
+                class="sc-compare-table__pinned-cell"
+              >
+                <div
+                  class="sc-compare-table__pinned-content compare-section-header-row"
+                  [style]="pinnedRow.widthStyle"
+                >
+                  <h3
+                    class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+                  >
                     <span class="compare-section-header-title">
                       <svg
                         [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
                         class="h-6 w-6 shrink-0"
                       ></svg>
-                      <span class="compare-section-header-title__text">
+                      <span
+                        class="compare-section-header-title__text"
+                        scTooltipTrigger
+                        (tooltipOpen)="
+                          showTruncatedTitleTooltip(
+                            $event,
+                            benchmarkCategory.name
+                          )
+                        "
+                        (tooltipClose)="hideTooltip()"
+                      >
                         {{ benchmarkCategory.name }}
                       </span>
                       <span class="compare-section-header-title__icons">
                         <svg
                           lucideCircleArrowUp
                           class="h-4 w-4 text-gray-200 shrink-0"
-                          (mouseenter)="
+                          scTooltipTrigger
+                          (tooltipOpen)="
                             showTooltip($event, 'Higher is better.')
                           "
-                          (mouseleave)="hideTooltip()"
+                          (tooltipClose)="hideTooltip()"
                         ></svg>
                         @if (
                           benchmarkCategory.id === "bw_mem" ||
@@ -1194,22 +1227,24 @@
                           <svg
                             lucideInfo
                             class="h-4 w-4 text-gray-200 shrink-0"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltipChart($event, benchmarkCategory.id)
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                           @if (getBenchmarkNote(benchmarkCategory.id)) {
                             <svg
                               lucideTriangleAlert
                               class="benchmark-note-icon"
-                              (mouseenter)="
+                              scTooltipTrigger
+                              (tooltipOpen)="
                                 showWarningSectionTooltip(
                                   $event,
                                   getBenchmarkNote(benchmarkCategory.id)
                                 )
                               "
-                              (mouseleave)="hideTooltip()"
+                              (tooltipClose)="hideTooltip()"
                             ></svg>
                           }
                         }
@@ -1217,22 +1252,24 @@
                           <svg
                             lucideInfo
                             class="h-4 w-4 text-gray-200 shrink-0"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltipChart($event, 'stress_ng:div16')
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                           @if (getBenchmarkNote("stress_ng:div16")) {
                             <svg
                               lucideTriangleAlert
                               class="benchmark-note-icon"
-                              (mouseenter)="
+                              scTooltipTrigger
+                              (tooltipOpen)="
                                 showWarningSectionTooltip(
                                   $event,
                                   getBenchmarkNote('stress_ng:div16')
                                 )
                               "
-                              (mouseleave)="hideTooltip()"
+                              (tooltipClose)="hideTooltip()"
                             ></svg>
                           }
                         }
@@ -1240,38 +1277,41 @@
                           <svg
                             lucideInfo
                             class="h-4 w-4 text-gray-200 shrink-0"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltip(
                                 $event,
                                 'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.'
                               )
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                         }
                         @if (benchmarkCategory.id === "compress") {
                           <svg
                             lucideInfo
                             class="h-4 w-4 text-gray-200 shrink-0"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltip(
                                 $event,
                                 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.'
                               )
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                           @if (getBenchmarkNote("compression_text:ratio")) {
                             <svg
                               lucideTriangleAlert
                               class="benchmark-note-icon"
-                              (mouseenter)="
+                              scTooltipTrigger
+                              (tooltipOpen)="
                                 showWarningSectionTooltip(
                                   $event,
                                   getBenchmarkNote('compression_text:ratio')
                                 )
                               "
-                              (mouseleave)="hideTooltip()"
+                              (tooltipClose)="hideTooltip()"
                             ></svg>
                           }
                         }
@@ -1283,20 +1323,22 @@
                           <svg
                             lucideInfo
                             class="h-4 w-4 text-gray-200 shrink-0"
-                            (mouseenter)="showGeekbenchInfoTooltip($event)"
-                            (mouseleave)="hideTooltip()"
+                            scTooltipTrigger
+                            (tooltipOpen)="showGeekbenchInfoTooltip($event)"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                           @if (getGeekbenchMetaNote()) {
                             <svg
                               lucideTriangleAlert
                               class="benchmark-note-icon"
-                              (mouseenter)="
+                              scTooltipTrigger
+                              (tooltipOpen)="
                                 showWarningSectionTooltip(
                                   $event,
                                   getGeekbenchMetaNote()
                                 )
                               "
-                              (mouseleave)="hideTooltip()"
+                              (tooltipClose)="hideTooltip()"
                             ></svg>
                           }
                         }
@@ -1304,25 +1346,27 @@
                           <svg
                             lucideInfo
                             class="h-4 w-4 text-gray-200 shrink-0"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltip(
                                 $event,
                                 'Running llama-bench from llama.cpp using various quantized model files to measure the speed of processing 16 to 16k tokens (prompt processing) and generating 16 to 4k tokens (text generation).'
                               )
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                           @if (getLlmMetaNote()) {
                             <svg
                               lucideTriangleAlert
                               class="benchmark-note-icon"
-                              (mouseenter)="
+                              scTooltipTrigger
+                              (tooltipOpen)="
                                 showWarningSectionTooltip(
                                   $event,
                                   getLlmMetaNote()
                                 )
                               "
-                              (mouseleave)="hideTooltip()"
+                              (tooltipClose)="hideTooltip()"
                             ></svg>
                           }
                         }
@@ -1336,9 +1380,14 @@
                       ></sc-header-anchor>
                     }
                   </h3>
-                  @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                    <div class="flex items-stretch gap-4 shrink-0">
-                      @if (canToggleDetails) {
+                  @let categoryControls =
+                    getHeaderChartControls(benchmarkCategory.id);
+                  @if (categoryControls || (!isEmbedded && canToggleDetails)) {
+                    <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
+                      @if (categoryControls) {
+                        <ng-container [ngTemplateOutlet]="categoryControls" />
+                      }
+                      @if (!isEmbedded && canToggleDetails) {
                         <sc-button
                           [label]="
                             (benchmarkCategory.show_more ? 'Hide' : 'Show') +
@@ -1348,6 +1397,7 @@
                             benchmarkCategory.show_more ? 'eye-off' : 'eye'
                           "
                           iconPosition="start"
+                          [compact]="true"
                           size="small"
                           (click)="toggleBenchmarkCategory(benchmarkCategory)"
                         ></sc-button>
@@ -1356,31 +1406,6 @@
                   }
                 </div>
               </td>
-              @if (pinnedRow.actionSpacerColSpan) {
-                <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
-              }
-              @if (pinnedRow.trailingColSpan) {
-                <td [colSpan]="1" class="compare-section-header-action-cell">
-                  @if (!isEmbedded) {
-                    <div class="flex justify-end items-stretch gap-4">
-                      @if (canToggleDetails) {
-                        <sc-button
-                          [label]="
-                            (benchmarkCategory.show_more ? 'Hide' : 'Show') +
-                            ' Details'
-                          "
-                          [icon]="
-                            benchmarkCategory.show_more ? 'eye-off' : 'eye'
-                          "
-                          iconPosition="start"
-                          size="small"
-                          (click)="toggleBenchmarkCategory(benchmarkCategory)"
-                        ></sc-button>
-                      }
-                    </div>
-                  }
-                </td>
-              }
             </tr>
           }
           @if (showCompareChart) {
@@ -1390,14 +1415,18 @@
                 benchmarkCategory.id === 'compress'
               "
             >
-              <td [colSpan]="pinnedRow.contentColSpan">
+              <td
+                [colSpan]="pinnedRow.colSpan"
+                class="sc-compare-table__pinned-cell"
+              >
                 <div
-                  class="compare-chart-content"
-                  [style]="pinnedRow.chartWidthStyle"
+                  class="sc-compare-table__pinned-content compare-chart-content"
+                  [style]="pinnedRow.widthStyle"
                 >
                   @if (benchmarkCategory.id === "bw_mem") {
                     <div>
                       <sc-server-compare-memory-chart
+                        [controlsInHeader]="isPhoneViewport()"
                         [servers]="memoryCompareServers"
                         [benchmarkMeta]="memoryBenchmarkMeta"
                       ></sc-server-compare-memory-chart>
@@ -1409,6 +1438,7 @@
                         layout="compare"
                         blockClass="sc-chart-block sc-chart-block--inline"
                         chartSource="compare-ssl"
+                        [controlsInHeader]="isPhoneViewport()"
                         chartType="bar"
                         [servers]="lineCompareServers"
                         [benchmarkMeta]="lineBenchmarkMeta"
@@ -1442,6 +1472,7 @@
                   @if (benchmarkCategory.id === "compress") {
                     <div>
                       <sc-compression-chart
+                        [controlsInHeader]="isPhoneViewport()"
                         layout="compare"
                         [servers]="compressionServers"
                         [benchmarkMeta]="compressionBenchmarkMeta"
@@ -1470,6 +1501,7 @@
                   @if (benchmarkCategory.id === "llm_inference") {
                     <div>
                       <sc-llm-inference-chart
+                        [controlsInHeader]="isPhoneViewport()"
                         layout="compare"
                         [benchmarkMeta]="benchmarkMeta"
                         [servers]="llmCompareServers"
@@ -1478,9 +1510,6 @@
                   }
                 </div>
               </td>
-              @if (pinnedRow.trailingColSpan) {
-                <td [colSpan]="pinnedRow.trailingColSpan"></td>
-              }
             </tr>
           }
           @if (isPassmark) {
@@ -1501,10 +1530,11 @@
                         <svg
                           lucideInfo
                           class="inline-block h-4 w-4 shrink-0 text-gray-200 ml-1"
-                          (mouseenter)="
+                          scTooltipTrigger
+                          (tooltipOpen)="
                             showTooltip($event, benchmarkData.description)
                           "
-                          (mouseleave)="hideTooltip()"
+                          (tooltipClose)="hideTooltip()"
                         ></svg>
                       }
                       @if (
@@ -1516,7 +1546,8 @@
                         <svg
                           lucideTriangleAlert
                           class="benchmark-note-icon inline-block ml-1"
-                          (mouseenter)="
+                          scTooltipTrigger
+                          (tooltipOpen)="
                             showWarningTooltip(
                               $event,
                               getBenchmarkRowNote(
@@ -1525,7 +1556,7 @@
                               )
                             )
                           "
-                          (mouseleave)="hideTooltip()"
+                          (tooltipClose)="hideTooltip()"
                         ></svg>
                       }
                     </div>
@@ -1548,11 +1579,12 @@
                     >
                       <div class="compare-table-metric-cell">
                         <span
-                          (mouseenter)="
+                          scTooltipTrigger
+                          (tooltipOpen)="
                             value !== null &&
                               showTooltip($event, value.toString())
                           "
-                          (mouseleave)="hideTooltip()"
+                          (tooltipClose)="hideTooltip()"
                           >{{ value | compactNumber }}</span
                         >
                         @if (baselineServer) {
@@ -1614,10 +1646,11 @@
                           <svg
                             lucideInfo
                             class="h-4 w-4 shrink-0 text-gray-200"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltip($event, benchmarkData.description)
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                         }
                         @if (
@@ -1629,7 +1662,8 @@
                           <svg
                             lucideTriangleAlert
                             class="benchmark-note-icon"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showWarningTooltip(
                                 $event,
                                 getBenchmarkRowNote(
@@ -1638,7 +1672,7 @@
                                 )
                               )
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                         }
                       </div>
@@ -1692,11 +1726,12 @@
                       >
                         <div class="compare-table-metric-cell">
                           <span
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               value !== null &&
                                 showTooltip($event, value.toString())
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                             >{{ value | compactNumber }}</span
                           >
                           @if (baselineServer) {
@@ -1749,9 +1784,17 @@
             class="section_header sc-header-anchor-host"
             [id]="'benchmark_line_' + chartItem.chart.id"
           >
-            <td [colSpan]="pinnedRow.contentColSpan">
-              <div class="compare-section-header-row">
-                <h3 class="text-xl font-semibold m-0 flex items-center min-w-0">
+            <td
+              [colSpan]="pinnedRow.colSpan"
+              class="sc-compare-table__pinned-cell"
+            >
+              <div
+                class="sc-compare-table__pinned-content compare-section-header-row"
+                [style]="pinnedRow.widthStyle"
+              >
+                <h3
+                  class="text-lg sm:text-xl font-semibold m-0 flex items-center min-w-0"
+                >
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="chartItem.chart.name | benchmarkIcon"
@@ -1759,6 +1802,11 @@
                     ></svg>
                     <span
                       class="compare-section-header-title__text min-w-0 truncate"
+                      scTooltipTrigger
+                      (tooltipOpen)="
+                        showTruncatedTitleTooltip($event, chartItem.chart.name)
+                      "
+                      (tooltipClose)="hideTooltip()"
                       >{{ chartItem.chart.name }}</span
                     >
                     <span class="compare-section-header-title__icons">
@@ -1773,7 +1821,8 @@
                             ].icon || ''
                           "
                           class="h-4 w-4 text-gray-200 shrink-0"
-                          (mouseenter)="
+                          scTooltipTrigger
+                          (tooltipOpen)="
                             showTooltip(
                               $event,
                               chartItem.chart.options[
@@ -1781,13 +1830,14 @@
                               ].tooltip
                             )
                           "
-                          (mouseleave)="hideTooltip()"
+                          (tooltipClose)="hideTooltip()"
                         ></svg>
                       }
                       <svg
                         lucideInfo
                         class="h-4 w-4 text-gray-200 shrink-0"
-                        (mouseenter)="
+                        scTooltipTrigger
+                        (tooltipOpen)="
                           showTooltipChart(
                             $event,
                             chartItem.chart.options[
@@ -1795,7 +1845,7 @@
                             ].benchmark_id
                           )
                         "
-                        (mouseleave)="hideTooltip()"
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                       @if (
                         getBenchmarkNote(
@@ -1808,7 +1858,8 @@
                         <svg
                           lucideTriangleAlert
                           class="benchmark-note-icon"
-                          (mouseenter)="
+                          scTooltipTrigger
+                          (tooltipOpen)="
                             showWarningSectionTooltip(
                               $event,
                               getBenchmarkNote(
@@ -1819,7 +1870,7 @@
                               )
                             )
                           "
-                          (mouseleave)="hideTooltip()"
+                          (tooltipClose)="hideTooltip()"
                         ></svg>
                       }
                     </span>
@@ -1832,49 +1883,44 @@
                     ></sc-header-anchor>
                   }
                 </h3>
-                @if (!isEmbedded && !pinnedRow.trailingColSpan) {
-                  <div class="flex items-stretch gap-4 shrink-0">
-                    <sc-button
-                      [label]="
-                        (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
-                      "
-                      [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
-                      iconPosition="start"
-                      size="small"
-                      (click)="toggleBenchmarkCategory(chartItem)"
-                    ></sc-button>
+                @let multiBarControls =
+                  isPhoneViewport()
+                    ? multiBarChart.compareControls()
+                    : undefined;
+                @if (multiBarControls || !isEmbedded) {
+                  <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
+                    @if (multiBarControls) {
+                      <ng-container [ngTemplateOutlet]="multiBarControls" />
+                    }
+                    @if (!isEmbedded) {
+                      <sc-button
+                        [label]="
+                          (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
+                        "
+                        [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
+                        iconPosition="start"
+                        [compact]="true"
+                        size="small"
+                        (click)="toggleBenchmarkCategory(chartItem)"
+                      ></sc-button>
+                    }
                   </div>
                 }
               </div>
             </td>
-            @if (pinnedRow.actionSpacerColSpan) {
-              <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
-            }
-            @if (pinnedRow.trailingColSpan) {
-              <td [colSpan]="1" class="compare-section-header-action-cell">
-                @if (!isEmbedded) {
-                  <div class="flex justify-end items-stretch gap-4">
-                    <sc-button
-                      [label]="
-                        (chartItem.show_more ? 'Hide' : 'Show') + ' Details'
-                      "
-                      [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
-                      iconPosition="start"
-                      size="small"
-                      (click)="toggleBenchmarkCategory(chartItem)"
-                    ></sc-button>
-                  </div>
-                }
-              </td>
-            }
           </tr>
           <tr class="compare-fixed-chart-row">
-            <td [colSpan]="pinnedRow.contentColSpan">
+            <td
+              [colSpan]="pinnedRow.colSpan"
+              class="sc-compare-table__pinned-cell"
+            >
               <div
-                class="compare-chart-content"
-                [style]="pinnedRow.chartWidthStyle"
+                class="sc-compare-table__pinned-content compare-chart-content"
+                [style]="pinnedRow.widthStyle"
               >
                 <sc-benchmark-multi-bar-chart
+                  #multiBarChart
+                  [controlsInHeader]="isPhoneViewport()"
                   [chartItem]="chartItem"
                   [benchmarkMeta]="benchmarkMeta"
                   [servers]="multiBarCompareServers"
@@ -1887,9 +1933,6 @@
                 ></sc-benchmark-multi-bar-chart>
               </div>
             </td>
-            @if (pinnedRow.trailingColSpan) {
-              <td [colSpan]="pinnedRow.trailingColSpan"></td>
-            }
           </tr>
           @if (chartItem.show_more) {
             @for (chartData of chartItem.data ?? []; track chartData) {
@@ -1903,23 +1946,25 @@
                           <svg
                             lucideInfo
                             class="h-4 w-4 text-gray-200 shrink-0"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showTooltip($event, chartData.description)
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                         }
                         @if (getBenchmarkRowNote(chartData.benchmark_id)) {
                           <svg
                             lucideTriangleAlert
                             class="benchmark-note-icon"
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               showWarningTooltip(
                                 $event,
                                 getBenchmarkRowNote(chartData.benchmark_id)
                               )
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                           ></svg>
                         }
                       </div>
@@ -1967,11 +2012,12 @@
                       >
                         <div class="compare-table-metric-cell">
                           <span
-                            (mouseenter)="
+                            scTooltipTrigger
+                            (tooltipOpen)="
                               value !== null &&
                                 showTooltip($event, value.toString())
                             "
-                            (mouseleave)="hideTooltip()"
+                            (tooltipClose)="hideTooltip()"
                             >{{
                               value === null ? "-" : (value | compactNumber)
                             }}</span
@@ -2026,40 +2072,58 @@
           class="section_header sc-header-anchor-host"
           id="benchmark_line_pgbench"
         >
-          <td [colSpan]="pinnedRow.contentColSpan">
-            <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold m-0 flex items-center">
+          <td
+            [colSpan]="pinnedRow.colSpan"
+            class="sc-compare-table__pinned-cell"
+          >
+            <div
+              class="sc-compare-table__pinned-content compare-section-header-row"
+              [style]="pinnedRow.widthStyle"
+            >
+              <h3
+                class="text-lg sm:text-xl font-semibold m-0 flex items-center"
+              >
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'pgbench' | benchmarkIcon"
                     class="h-6 w-6 shrink-0"
                   ></svg>
-                  <span class="compare-section-header-title__text">
+                  <span
+                    class="compare-section-header-title__text"
+                    scTooltipTrigger
+                    (tooltipOpen)="
+                      showTruncatedTitleTooltip($event, pgbenchTitle)
+                    "
+                    (tooltipClose)="hideTooltip()"
+                  >
                     {{ pgbenchTitle }}
                   </span>
                   <span class="compare-section-header-title__icons">
                     <svg
                       lucideCircleArrowUp
                       class="h-4 w-4 text-gray-200 shrink-0"
-                      (mouseenter)="showTooltip($event, 'Higher is better.')"
-                      (mouseleave)="hideTooltip()"
+                      scTooltipTrigger
+                      (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                     @if (pgbenchInfoTooltip) {
                       <svg
                         lucideInfo
                         class="h-4 w-4 text-gray-200 shrink-0"
-                        (mouseenter)="showTooltip($event, pgbenchInfoTooltip)"
-                        (mouseleave)="hideTooltip()"
+                        scTooltipTrigger
+                        (tooltipOpen)="showTooltip($event, pgbenchInfoTooltip)"
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
                     @if (pgbenchNoteTooltip) {
                       <svg
                         lucideTriangleAlert
                         class="benchmark-note-icon"
-                        (mouseenter)="
+                        scTooltipTrigger
+                        (tooltipOpen)="
                           showWarningSectionTooltip($event, pgbenchNoteTooltip)
                         "
-                        (mouseleave)="hideTooltip()"
+                        (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
                   </span>
@@ -2074,18 +2138,15 @@
               </h3>
             </div>
           </td>
-          @if (pinnedRow.actionSpacerColSpan) {
-            <td [colSpan]="pinnedRow.actionSpacerColSpan"></td>
-          }
-          @if (pinnedRow.trailingColSpan) {
-            <td [colSpan]="1" class="compare-section-header-action-cell"></td>
-          }
         </tr>
         <tr class="compare-fixed-chart-row">
-          <td [colSpan]="pinnedRow.contentColSpan">
+          <td
+            [colSpan]="pinnedRow.colSpan"
+            class="sc-compare-table__pinned-cell"
+          >
             <div
-              class="compare-chart-content"
-              [style]="pinnedRow.chartWidthStyle"
+              class="sc-compare-table__pinned-content compare-chart-content"
+              [style]="pinnedRow.widthStyle"
             >
               <sc-benchmark-line-chart
                 benchmarkKey="pgbench"
@@ -2103,9 +2164,6 @@
               ></sc-benchmark-line-chart>
             </div>
           </td>
-          @if (pinnedRow.trailingColSpan) {
-            <td [colSpan]="pinnedRow.trailingColSpan"></td>
-          }
         </tr>
       }
 
@@ -2115,7 +2173,7 @@
           id="benchmark_line_further_benchmarks"
         >
           <td [colSpan]="2">
-            <h3 class="pl-3 text-xl font-semibold">
+            <h3 class="pl-3 text-lg sm:text-xl font-semibold">
               Further Benchmarks
               <sc-header-anchor
                 anchorId="benchmark_line_further_benchmarks"
@@ -2139,30 +2197,32 @@
                     [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
                     class="h-6 w-6 shrink-0"
                   ></svg>
-                  <span class="whitespace-nowrap">{{
+                  <span class="sm:whitespace-nowrap">{{
                     benchmarkCategory.name
                   }}</span>
                   @if (benchmarkCategory.description) {
                     <svg
                       lucideInfo
                       class="h-4 w-4 text-gray-200 shrink-0"
-                      (mouseenter)="
+                      scTooltipTrigger
+                      (tooltipOpen)="
                         showTooltip($event, benchmarkCategory.description)
                       "
-                      (mouseleave)="hideTooltip()"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                   @if (getBenchmarkRowNote(benchmarkCategory.benchmark_id)) {
                     <svg
                       lucideTriangleAlert
                       class="benchmark-note-icon"
-                      (mouseenter)="
+                      scTooltipTrigger
+                      (tooltipOpen)="
                         showWarningTooltip(
                           $event,
                           getBenchmarkRowNote(benchmarkCategory.benchmark_id)
                         )
                       "
-                      (mouseleave)="hideTooltip()"
+                      (tooltipClose)="hideTooltip()"
                     ></svg>
                   }
                 </div>
@@ -2210,11 +2270,12 @@
                   >
                     <div class="compare-table-metric-cell">
                       <span
-                        (mouseenter)="
+                        scTooltipTrigger
+                        (tooltipOpen)="
                           value !== null &&
                             showTooltip($event, value.toString())
                         "
-                        (mouseleave)="hideTooltip()"
+                        (tooltipClose)="hideTooltip()"
                         >{{ value | compactNumber }}</span
                       >
                       @if (baselineServer) {

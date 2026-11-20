@@ -1,0 +1,48 @@
+@reference "../../../styles/tailwind.css";
+
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+:host(.page-bookmark--locked) {
+  cursor: pointer;
+}
+
+.page-bookmark__button {
+  @apply inline-flex items-center justify-start shrink-0 rounded-md size-9.5 sm:size-8;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s ease;
+  --sc-bookmark-toggle-idle-color: color-mix(
+    in oklab,
+    var(--color-gray-400) 70%,
+    transparent
+  );
+}
+
+.page-bookmark__button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.page-bookmark__button--locked {
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.page-bookmark__icon {
+  @apply size-full;
+}
+
+.page-bookmark__icon ::ng-deep > * {
+  transform: translate(-4.8px, -2.4px) scale(1.2);
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .page-bookmark__icon ::ng-deep > * {
+    transform: none;
+  }
+}

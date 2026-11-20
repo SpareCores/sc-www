@@ -167,7 +167,7 @@ describe("ChartTooltip", () => {
 
     const result = service.showIfPresent({
       tooltipElement: tooltip,
-      event: { currentTarget: target } as unknown as MouseEvent,
+      anchor: target,
       content: "tooltip text",
       onShow,
     });
@@ -183,7 +183,7 @@ describe("ChartTooltip", () => {
 
     const result = service.showIfPresent({
       tooltipElement: tooltip,
-      event: { target: tooltip } as unknown as MouseEvent,
+      anchor: tooltip,
       content: "",
       onShow,
     });

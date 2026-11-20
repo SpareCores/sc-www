@@ -173,7 +173,10 @@ export class Dropdown {
       return;
     }
 
-    const { top, left } = placePanel(
+    const scroller = panel.firstElementChild ?? panel;
+    this.renderer.removeStyle(scroller, "max-height");
+    this.renderer.removeStyle(scroller, "overflow-y");
+    const { top, left, maxHeight } = placePanel(
       this.host.nativeElement.getBoundingClientRect(),
       panel.getBoundingClientRect(),
       {
@@ -183,6 +186,10 @@ export class Dropdown {
       this.dropdownPlacement(),
       this.dropdownFlip(),
     );
+    if (panel.getBoundingClientRect().height > maxHeight) {
+      this.renderer.setStyle(scroller, "max-height", `${maxHeight}px`);
+      this.renderer.setStyle(scroller, "overflow-y", "auto");
+    }
     this.renderer.setStyle(panel, "top", `${top + view.scrollY}px`);
     this.renderer.setStyle(panel, "left", `${left + view.scrollX}px`);
   }

@@ -9,7 +9,6 @@
 
 .dropdown_input {
   @apply py-3 ps-14 pe-4 block;
-  min-width: 300px;
 }
 
 .button_list_holder {

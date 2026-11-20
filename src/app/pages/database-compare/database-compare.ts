@@ -105,10 +105,12 @@ import {
   DATABASE_COMPARISON_TITLE,
 } from "./database-compare.constants";
 import databaseComparesData from "./database-compares.js";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-database-compare",
   imports: [
+    TooltipTrigger,
     RouterModule,
     Breadcrumbs,
     Button,
@@ -304,10 +306,10 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     return isCompareBaselineServer(database, this.baselineDatabase);
   }
 
-  showChartTooltip(el: MouseEvent, content?: string): void {
+  showChartTooltip(el: Element | Event, content?: string): void {
     this.chartTooltip.showIfPresent({
       tooltipElement: this.chartSectionTooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.chartTooltipContent = tooltipContent;
@@ -315,16 +317,22 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  showChartWarningTooltip(el: MouseEvent, content?: string): void {
+  showChartWarningTooltip(el: Element | Event, content?: string): void {
     this.chartTooltip.showIfPresent({
       tooltipElement: this.chartSectionTooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {
         this.chartTooltipContent = tooltipContent;
       },
     });
+  }
+
+  showTruncatedTitleTooltip(el: Element, title: string): void {
+    if (el.scrollWidth > el.clientWidth) {
+      this.showChartTooltip(el, title);
+    }
   }
 
   hideChartTooltip(): void {

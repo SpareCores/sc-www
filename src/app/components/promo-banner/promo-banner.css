@@ -28,7 +28,7 @@
 
 .promo-banner__lead {
   color: var(--color-gray-900);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.5rem;
   flex: 0 0 auto;
@@ -36,7 +36,7 @@
 
 .promo-banner__copy {
   color: var(--color-white);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   line-height: 1.5rem;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
@@ -75,8 +75,39 @@
 
 @media (width < theme(--breakpoint-sm)) {
   .promo-banner {
-    align-items: center;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: 0.5rem;
+    row-gap: 0.25rem;
     padding: 0.75rem;
+  }
+
+  .promo-banner__body,
+  .promo-banner__actions {
+    display: contents;
+  }
+
+  .promo-banner__lead {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .promo-banner__copy {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .promo-banner__close {
+    grid-column: 2;
+    grid-row: 1;
+    height: 1.5rem;
+  }
+
+  .promo-banner__actions > sc-button {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: start;
+    margin-top: 0.5rem;
   }
 }

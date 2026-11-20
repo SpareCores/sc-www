@@ -27,6 +27,21 @@
   @apply pr-2 pl-3;
 }
 
+@media (width < theme(--breakpoint-sm)) {
+  .sc-table thead th,
+  .sc-table tbody td {
+    @apply px-2;
+  }
+
+  .sc-table tr > :first-child {
+    @apply pl-3;
+  }
+
+  .sc-table tr > :last-child {
+    @apply pr-3;
+  }
+}
+
 .sc-table--hoverable tbody tr,
 .sc-table--interactive tbody tr {
   @apply hover:outline-1 hover:-outline-offset-1 hover:outline-solid hover:outline-emerald-400;
@@ -118,7 +133,7 @@
 }
 
 .sc-compare-table thead th {
-  @apply px-5 py-3 text-left text-xs font-normal;
+  @apply px-2 py-3 text-left text-xs font-normal md:px-5;
 }
 
 .sc-compare-table thead th.compact-number-header-cell {
@@ -138,7 +153,17 @@
 }
 
 .sc-compare-table tbody tr td {
-  @apply px-5 py-3 text-left text-sm;
+  @apply px-2 py-3 text-left text-xs sm:text-sm md:px-5;
+}
+
+.sc-compare-table thead tr th:first-child,
+.sc-compare-table tbody tr td:first-child {
+  @apply max-md:pl-0;
+}
+
+.sc-compare-table thead tr th:last-child,
+.sc-compare-table tbody tr td:last-child {
+  @apply max-md:pr-0;
 }
 
 .sc-compare-table tbody tr td.compact-number {
@@ -158,9 +183,21 @@
 }
 
 .sc-compare-table--fixed {
-  --compare-first-column-width: clamp(8rem, 12vw, 12rem);
+  --compare-first-column-width: 7.5rem;
+  --compare-column-min-width: 8rem;
+  --compare-column-char-width: 0px;
+  --compare-column-name-gap: 0px;
   min-width: 100%;
   table-layout: fixed;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-compare-table--fixed {
+    --compare-first-column-width: clamp(8rem, 12vw, 12rem);
+    --compare-column-min-width: 10.5rem;
+    --compare-column-char-width: 1ch;
+    --compare-column-name-gap: 3ch;
+  }
 }
 
 .sc-compare-table--fixed col.compare-first-column-col {
@@ -172,7 +209,24 @@
   width: var(--compare-first-column-width);
   min-width: var(--compare-first-column-width);
   max-width: var(--compare-first-column-width);
-  white-space: nowrap;
+  overflow-wrap: break-word;
+}
+
+@media (width < theme(--breakpoint-sm)) {
+  .sc-compare-table--fixed col.compare-first-column-col,
+  .sc-compare-table--fixed thead tr th:nth-of-type(1),
+  .sc-compare-table--fixed tbody tr td:nth-of-type(1) {
+    width: 7.5rem;
+    min-width: 7.5rem;
+    max-width: 7.5rem;
+  }
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-compare-table--fixed thead tr th:nth-of-type(1),
+  .sc-compare-table--fixed tbody tr td:nth-of-type(1) {
+    white-space: nowrap;
+  }
 }
 
 .sc-compare-table--fixed tbody tr td:not(:nth-of-type(1)) {
@@ -201,4 +255,34 @@
 
 .sc-compare-table--fixed tbody tr.compare-instance-section-last-row td {
   padding-bottom: 0;
+}
+
+@media (width < theme(--breakpoint-sm)) {
+  .sc-compare-table-holder
+    .sc-compare-table
+    tr
+    > :first-child:not(.sc-compare-table__pinned-cell) {
+    padding-left: max(calc(var(--spacing) * 4), env(safe-area-inset-left));
+  }
+
+  .sc-compare-table-holder
+    .sc-compare-table
+    tr
+    > :last-child:not(.sc-compare-table__pinned-cell) {
+    padding-right: max(calc(var(--spacing) * 4), env(safe-area-inset-right));
+  }
+
+  .sc-compare-table-holder .sc-compare-table__pinned-content {
+    padding-left: max(calc(var(--spacing) * 4), env(safe-area-inset-left));
+    padding-right: max(calc(var(--spacing) * 4), env(safe-area-inset-right));
+  }
+}
+
+.sc-compare-table tbody tr td.sc-compare-table__pinned-cell {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sc-compare-table__pinned-content {
+  @apply sticky left-0 box-border md:px-5;
 }

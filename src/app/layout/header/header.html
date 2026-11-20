@@ -1,18 +1,28 @@
-<nav class="bg-custom px-4 lg:px-6 py-2.5 w-full">
+<nav class="bg-custom shell-gutter py-2.5 w-full">
   <div class="content flex justify-between items-center w-full">
-    <a routerLink="/" class="h-12 max-w-[284px] w-[284px]">
+    <a
+      routerLink="/"
+      class="flex h-11 min-w-0 shrink items-center gap-2 lg:h-12 lg:w-71"
+      aria-label="Spare Cores"
+    >
       <img
-        class="h-12 max-w-[284px] w-[284px]"
+        class="-ml-1 h-9 w-auto lg:hidden"
+        src="./assets/images/logos/logo.png"
+        alt=""
+      />
+      <sc-theme-text class="lg:hidden" text="spare_cores"></sc-theme-text>
+      <img
+        class="hidden h-12 w-full object-contain object-left lg:block"
         src="./assets/images/logos/logo_header.png"
         alt="Spare Cores Logo"
       />
     </a>
     <div
-      class="justify-end items-center w-auto flex order-1"
+      class="justify-end items-center w-auto flex order-1 shrink-0"
       id="mobile-menu-2"
     >
       <div
-        class="flex font-medium flex-row gap-4 mt-0 items-center justify-end"
+        class="flex font-medium flex-row gap-1 mt-0 items-center justify-end xl:gap-4"
       >
         <div class="relative hidden xl:flex">
           <sc-button
@@ -122,7 +132,7 @@
                 [avatarAlt]="auth.userName()"
                 icon="chevron-down"
                 iconPosition="end"
-                buttonClass="max-xl:gap-0 max-xl:px-1"
+                buttonClass="min-h-11 min-w-11 lg:min-h-0 lg:min-w-0 max-xl:gap-0 max-xl:px-1"
                 ariaLabel="Account menu"
               ></sc-button>
               <div
@@ -142,6 +152,7 @@
                 #compareDropdown="scInlineDropdown"
                 icon="scale"
                 size="small"
+                buttonClass="min-h-11 min-w-11 lg:min-h-0 lg:min-w-0"
                 ariaLabel="Open compare menu"
                 [badge]="compareCount()"
                 [badgePing]="true"
@@ -163,7 +174,7 @@
             [scInlineDropdown]="menuPanelHost"
             (dropdownOpened)="initMeetingButtons()"
             #menuDropdown="scInlineDropdown"
-            class="navbar_link"
+            class="navbar_link -mr-1 min-h-11 min-w-11 justify-end"
             aria-label="Open menu"
           >
             <span class="navbar_icon">
@@ -190,30 +201,38 @@
       aria-labelledby="dropdownDefaultButton"
       (click)="closeMenu()"
     >
-      <li class="px-2 py-2" [class.hidden]="auth.isAuthenticated()">
-        <div class="flex flex-col gap-2">
-          <sc-button
-            label="Log in"
-            size="small"
-            icon="key-square"
-            iconPosition="start"
-            variant="outline"
-            color="brand"
-            class="w-full"
-            (buttonClick)="signIn()"
-          ></sc-button>
-          <sc-button
-            label="Register"
-            size="small"
-            icon="user-plus"
-            iconPosition="start"
-            class="w-full"
-            (buttonClick)="signUp()"
-          ></sc-button>
-        </div>
+      <li
+        class="mobile_menu_panel__auth"
+        [class.hidden]="auth.isAuthenticated()"
+      >
+        <sc-button
+          label="Log in"
+          size="small"
+          icon="key-square"
+          iconPosition="start"
+          variant="outline"
+          color="brand"
+          class="w-full"
+          buttonClass="h-9.5"
+          (buttonClick)="signIn()"
+        ></sc-button>
       </li>
       <li
-        class="mx-3 my-1 border-b border-emerald-400/30"
+        class="mobile_menu_panel__auth"
+        [class.hidden]="auth.isAuthenticated()"
+      >
+        <sc-button
+          label="Register"
+          size="small"
+          icon="user-plus"
+          iconPosition="start"
+          class="w-full"
+          buttonClass="h-9.5"
+          (buttonClick)="signUp()"
+        ></sc-button>
+      </li>
+      <li
+        class="mx-3 my-4 border-b border-emerald-400/30"
         [class.hidden]="auth.isAuthenticated()"
       ></li>
       @if (auth.isAuthenticated()) {
@@ -731,11 +750,13 @@
                 </span>
               </button>
               <a
-                class="navbar_link min-w-0 flex-1 truncate"
+                class="navbar_link min-w-0 flex-1"
                 routerLink="/server/{{ server.vendor }}/{{ server.server }}"
                 (click)="closeCompare()"
               >
-                {{ server.vendor }}: {{ server.display_name }}
+                <span class="min-w-0 whitespace-normal wrap-break-word"
+                  >{{ server.vendor }}: {{ server.display_name }}</span
+                >
               </a>
               <button
                 type="button"
@@ -812,13 +833,15 @@
                 </span>
               </button>
               <a
-                class="navbar_link min-w-0 flex-1 truncate"
+                class="navbar_link min-w-0 flex-1"
                 routerLink="/database/{{ database.vendor }}/{{
                   database.database
                 }}"
                 (click)="closeCompare()"
               >
-                {{ database.vendor }}: {{ database.display_name }}
+                <span class="min-w-0 whitespace-normal wrap-break-word"
+                  >{{ database.vendor }}: {{ database.display_name }}</span
+                >
               </a>
               <button
                 type="button"

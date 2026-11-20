@@ -13,16 +13,16 @@ export class ChartTooltip {
 
   show(
     tooltipElement: HTMLElement,
-    event: Event,
+    anchor: Element | Event,
     placement?: TooltipPlacement,
     variant?: TooltipVariant,
   ) {
-    this.uiTooltip.show(tooltipElement, event, placement, variant);
+    this.uiTooltip.show(tooltipElement, anchor, placement, variant);
   }
 
   showIfPresent<T>(params: {
     tooltipElement: HTMLElement | undefined;
-    event: Event;
+    anchor: Element | Event;
     content: T | null | undefined | false | "";
     onShow: (content: T) => void;
     placement?: TooltipPlacement;

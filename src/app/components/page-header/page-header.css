@@ -1,78 +1,63 @@
 @reference "../../../styles/tailwind.css";
 
 .page-header {
-  @apply flex gap-4 justify-between items-center;
+  @apply flex flex-wrap items-center gap-x-2 gap-y-3 sm:flex-col sm:items-stretch sm:gap-4;
+}
+
+.page-header__bar {
+  @apply contents sm:flex sm:flex-nowrap sm:items-center sm:gap-x-2;
+}
+
+.page-header__heading {
+  @apply order-1 flex basis-full items-start gap-2 min-w-0 sm:contents;
+}
+
+.page-header__icon {
+  @apply size-9.5 shrink-0 text-white sm:order-1 sm:size-8;
 }
 
 .page-header__title {
-  @apply text-white font-bold text-3xl flex items-center;
-}
-
-.page-header__title-text {
-  @apply mr-2;
-}
-
-.page-header__icon-btn {
-  @apply inline-flex items-center justify-center shrink-0 mr-2 rounded-md;
-  width: 2rem;
-  height: 2rem;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  position: relative;
-  transition: color 0.15s ease;
-}
-
-.page-header__bookmark {
-  --sc-bookmark-toggle-idle-color: color-mix(
-    in oklab,
-    var(--color-gray-400) 70%,
-    transparent
-  );
+  @apply text-white font-bold text-xl leading-9.5 min-w-0 sm:order-3 sm:text-3xl sm:leading-9;
 }
 
 .page-header__edit {
+  @apply inline-flex items-center justify-center shrink-0 rounded-md size-9.5 sm:order-4 sm:size-8;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.15s ease;
   color: color-mix(in oklab, var(--color-gray-400) 70%, transparent);
 }
 
-.page-header__edit:hover:not(:disabled) {
+.page-header__edit:hover {
   color: var(--color-emerald-400);
 }
 
-.page-header__icon-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.page-header__edit-icon {
+  @apply size-full;
 }
 
 .page-header__bookmark-wrap {
-  display: inline-flex;
-  align-items: center;
-  margin-right: 0.5rem;
-}
-
-.page-header__bookmark-wrap--locked {
-  cursor: pointer;
-}
-
-.page-header__bookmark-wrap .page-header__icon-btn {
-  margin-right: 0;
-}
-
-.page-header__bookmark--locked {
-  opacity: 0.55;
-  cursor: pointer;
-}
-
-.page-header__icon-btn-svg {
-  width: 2rem;
-  height: 2rem;
-}
-
-.page-header__bookmark-icon {
-  width: 2rem;
-  height: 2rem;
+  @apply order-3 sm:order-2;
 }
 
 .page-header__actions {
-  @apply flex flex-wrap items-center gap-4 lg:justify-end;
+  @apply order-4 flex items-center gap-2 empty:hidden sm:order-5 sm:ml-auto sm:shrink sm:flex-wrap sm:gap-4 sm:pl-4 lg:justify-end;
+}
+
+.page-header__description {
+  @apply order-2 my-1 basis-full empty:hidden sm:contents;
+}
+
+.page-header__toolbar {
+  @apply order-5 ml-auto flex empty:hidden sm:contents;
+}
+
+.page-header--actions-from-sm .page-header__bookmark-wrap,
+.page-header--actions-from-sm .page-header__edit {
+  @apply hidden sm:inline-flex;
+}
+
+.page-header--actions-from-sm .page-header__actions {
+  @apply hidden sm:flex;
 }

@@ -122,6 +122,8 @@ export class DatabaseDetails implements OnInit, OnDestroy {
   );
   pgbenchPeakScore: string | null = null;
   pgbenchSingleScore: string | null = null;
+  pgbenchPeakValue: number | null = null;
+  pgbenchSingleValue: number | null = null;
   showUnderlyingServerPerformance = false;
   underlyingServerPgbenchChart: PgbenchChartResult | undefined;
   underlyingServerLink: string[] | null = null;
@@ -368,6 +370,8 @@ export class DatabaseDetails implements OnInit, OnDestroy {
     const single = scores.find(
       (score) => score.benchmark_id === PGBENCH_SINGLE_BENCHMARK_ID,
     );
+    this.pgbenchPeakValue = peak ? peak.score : null;
+    this.pgbenchSingleValue = single ? single.score : null;
     this.pgbenchPeakScore = peak
       ? formatNumberWithCommas(Math.round(peak.score))
       : null;

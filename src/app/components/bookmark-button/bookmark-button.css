@@ -38,8 +38,33 @@
   height: 1.25rem;
 }
 
-.bookmark-button.bookmark-button--large,
+.bookmark-button.bookmark-button--large {
+  width: 2.375rem;
+  height: 2.375rem;
+  transform: none;
+}
+
+.bookmark-button--large {
+  justify-content: flex-start;
+}
+
 .bookmark-button--large .bookmark-button__icon {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 100%;
+  height: 100%;
+}
+
+.bookmark-button--large .bookmark-button__icon ::ng-deep > * {
+  transform: translate(-4.8px, -2.4px) scale(1.2);
+}
+
+@media (width >= 40rem) {
+  .bookmark-button.bookmark-button--large {
+    width: 1.5rem;
+    height: 1.5rem;
+    transform: translateY(-1px);
+  }
+
+  .bookmark-button--large .bookmark-button__icon ::ng-deep > * {
+    transform: none;
+  }
 }

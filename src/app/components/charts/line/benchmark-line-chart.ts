@@ -1,9 +1,10 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   inject,
   input,
@@ -54,11 +55,14 @@ import {
   LineChartDetailsServer,
   LineChartServer,
 } from "./benchmark-line-chart.types";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-benchmark-line-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideCircleArrowUp,
@@ -95,6 +99,8 @@ export class BenchmarkLineChart {
   chartSource = input<BenchmarkLineChartSource>("direct");
   chartType = input<BenchmarkLineChartKind>("line");
   layout = input<"details" | "compare">("details");
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
   benchmarkKey = input("");
   title = input("");
   orderTooltip = input("");
@@ -385,19 +391,19 @@ export class BenchmarkLineChart {
     this.selectorDropdown()?.hide();
   }
 
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => this.tooltipContent.set(tooltipContent),
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => this.tooltipContent.set(tooltipContent),

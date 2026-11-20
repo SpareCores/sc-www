@@ -22,6 +22,7 @@
 @import "./styles/components/link.css" layer(components);
 @import "./styles/components/stepper.css" layer(components);
 @import "./styles/components/input.css" layer(components);
+@import "./styles/components/page-description.css" layer(components);
 
 @layer base {
   *,
@@ -111,7 +112,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 35;
+  z-index: 45;
 }
 
 .sc-chart-embed .sc-chart-block--scrollable {

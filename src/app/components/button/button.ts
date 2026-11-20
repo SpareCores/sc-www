@@ -10,7 +10,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon } from "@lucide/angular";
 
-export type ScButtonSize = "small" | "default" | "large";
+export type ScButtonSize = "mobile" | "small" | "default" | "large";
 export type ScButtonVariant =
   | "solid"
   | "outline"
@@ -63,6 +63,8 @@ export class Button {
   avatarSrc = input<string | null | undefined>(undefined);
   avatarAlt = input<string | null>(null);
   labelClass = input<string>("");
+  compact = input(false);
+  compactIcon = input<string | null>(null);
   loading = input(false);
 
   buttonClick = output<MouseEvent>();
@@ -80,6 +82,12 @@ export class Button {
   );
 
   avatarAltText = computed(() => this.avatarAlt() || this.label() || "Avatar");
+
+  isCompact = computed(() => this.compact() || !!this.compactIcon());
+
+  resolvedAriaLabel = computed(
+    () => this.ariaLabel() || (this.isCompact() ? this.label() : null),
+  );
 
   isDisabled = computed(() => this.disabled() || this.loading());
 

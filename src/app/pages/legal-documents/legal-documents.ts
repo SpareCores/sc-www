@@ -5,12 +5,13 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
+import { PageHeader } from "../../components/page-header/page-header";
 import { SeoHandler } from "../../services/seo-handler";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
 
 @Component({
   selector: "sc-legal-documents",
-  imports: [Breadcrumbs, RouterModule, TimeToShortDatePipe],
+  imports: [Breadcrumbs, PageHeader, RouterModule, TimeToShortDatePipe],
   templateUrl: "./legal-documents.html",
   styleUrl: "./legal-documents.css",
 })

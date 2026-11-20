@@ -282,7 +282,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       E2EEvent.visitURL("/servers");
       cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
       cy.get(
-        "button.page-header__bookmark:not(.page-header__bookmark--locked)",
+        "sc-page-header button.page-bookmark__button:not(.page-bookmark__button--locked)",
       ).should("be.visible");
       E2EEvent.waitForListingResults("servers_table");
       stabilizeSignedInHeader();
@@ -299,7 +299,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       E2EEvent.visitURL("/databases");
       cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
       cy.get(
-        "button.page-header__bookmark:not(.page-header__bookmark--locked)",
+        "sc-page-header button.page-bookmark__button:not(.page-bookmark__button--locked)",
       ).should("be.visible");
       E2EEvent.waitForListingResults("databases_table");
       stabilizeSignedInHeader();

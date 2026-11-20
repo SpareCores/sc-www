@@ -37,6 +37,10 @@
   @apply whitespace-normal;
 }
 
+.sc-button--mobile {
+  @apply h-6 rounded-md px-2 py-0 text-xs;
+}
+
 .sc-button--small {
   @apply px-3 py-2;
 }
@@ -46,7 +50,7 @@
 }
 
 .sc-button--large {
-  @apply p-4 sm:p-5;
+  @apply px-3 py-2 sm:p-5;
 }
 
 .sc-button--icon-only.sc-button--small {
@@ -62,7 +66,7 @@
 }
 
 .sc-button--icon-only.sc-button--small .sc-button__icon {
-  @apply size-3;
+  @apply size-4.75;
 }
 
 .sc-button--icon-only.sc-button--large .sc-button__icon {
@@ -332,7 +336,7 @@
 }
 
 .sc-button--large .sc-button__extension-label {
-  @apply p-4 sm:p-5;
+  @apply px-3 py-2 sm:p-5;
 }
 
 .sc-button--small.sc-button--benchmark {
@@ -410,16 +414,12 @@
 }
 
 .sc-button.sc-button--pagination {
-  @apply size-11 shrink-0 justify-center border-0 p-0;
+  @apply size-9.5 shrink-0 justify-center border-0 p-0;
 }
 
 .sc-button.sc-button--pagination:hover,
 .sc-button.sc-button--pagination:focus {
   @apply border-0 bg-emerald-400 text-white;
-}
-
-.sc-button.sc-button--pagination-nav {
-  @apply size-11 p-0;
 }
 
 .sc-button.sc-button--outline.sc-button--chip {
@@ -436,8 +436,138 @@
   @apply rounded-full;
 }
 
+.sc-button--round .sc-button__icon {
+  @apply size-4.75;
+}
+
+.sc-button--default:is(.sc-button--floating, .sc-button--dialog) {
+  @apply px-3 py-2 sm:px-4 sm:py-3;
+}
+
+.sc-button.sc-button--close.sc-button--dialog {
+  @apply size-9.5 p-2.25 sm:size-8 sm:p-1.5;
+}
+
 .sc-button__label.sc-button__label--fit {
   overflow: visible;
   text-overflow: clip;
   min-width: max-content;
+}
+
+.sc-button.sc-button--compact {
+  @apply size-9.5 shrink-0 p-0;
+}
+
+.sc-button.sc-button--compact.sc-button--dropdown {
+  @apply overflow-hidden;
+}
+
+.sc-button--compact .sc-button__square {
+  @apply w-full rounded-lg bg-emerald-400;
+}
+
+.sc-button--compact .sc-button__icon,
+.sc-button--compact .sc-button__compact-icon,
+.sc-button--compact.sc-button--benchmark .sc-button__square-icon {
+  @apply size-4.75;
+}
+
+.sc-button--compact .sc-button__compact-icon,
+.sc-button--compact.sc-button--benchmark .sc-button__square-icon {
+  @apply text-white;
+}
+
+.sc-button--compact .sc-button__label,
+.sc-button--compact .sc-button__extension-label,
+.sc-button--compact .sc-button__benchmark-labels,
+.sc-button--compact .sc-button__square-icon:not(.sc-button__compact-icon) {
+  @apply hidden;
+}
+
+.sc-button--compact.sc-button--benchmark .sc-button__square-icon {
+  @apply block;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-button.sc-button--compact {
+    @apply h-auto w-full shrink;
+  }
+
+  .sc-button--compact:not(
+      .sc-button--dropdown,
+      .sc-button--benchmark
+    ).sc-button--small {
+    @apply px-3 py-2;
+  }
+
+  .sc-button--compact:not(
+      .sc-button--dropdown,
+      .sc-button--benchmark
+    ).sc-button--default {
+    @apply px-4 py-3;
+  }
+
+  .sc-button--compact:not(
+      .sc-button--dropdown,
+      .sc-button--benchmark
+    ).sc-button--large {
+    @apply p-5;
+  }
+
+  .sc-button.sc-button--pagination {
+    @apply size-11;
+  }
+
+  .sc-button--pagination-size .sc-button__extension-label {
+    @apply px-4 py-3;
+  }
+
+  .sc-button--pagination-size .sc-button__square {
+    @apply w-11;
+  }
+
+  .sc-button--pagination-size .sc-button__square-icon {
+    @apply size-4;
+  }
+
+  .sc-button--compact.sc-button--benchmark {
+    @apply h-[46px];
+  }
+
+  .sc-button--compact.sc-button--benchmark .sc-button__square-icon {
+    @apply size-4 text-emerald-400;
+  }
+
+  .sc-button--compact .sc-button__label {
+    @apply inline;
+  }
+
+  .sc-button--compact .sc-button__icon {
+    @apply size-4;
+  }
+
+  .sc-button--compact .sc-button__extension-label,
+  .sc-button--compact .sc-button__benchmark-labels {
+    @apply flex;
+  }
+
+  .sc-button--compact .sc-button__square-icon:not(.sc-button__compact-icon) {
+    @apply block;
+  }
+
+  .sc-button--compact .sc-button__square {
+    @apply w-11 rounded-l-none rounded-r-lg bg-sky-950;
+  }
+
+  .sc-button--small.sc-button--compact .sc-button__square {
+    @apply w-[38px];
+  }
+
+  .sc-button--large.sc-button--compact .sc-button__square {
+    @apply w-[62px];
+  }
+
+  .sc-button--compact .sc-button__compact-icon {
+    @apply hidden;
+  }
 }

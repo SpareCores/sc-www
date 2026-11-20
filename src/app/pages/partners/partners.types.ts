@@ -12,7 +12,6 @@ export type PartnerSection = {
   description: readonly string[];
   logos: readonly PartnerLogo[];
   bulletItems?: readonly string[];
-  dividerAfter?: boolean;
   logoRowVariant?: "compact";
   logoColumns?: number;
 };

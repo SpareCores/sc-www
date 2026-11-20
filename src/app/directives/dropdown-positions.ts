@@ -25,6 +25,7 @@ export interface TriggerRect extends PanelSize {
 
 const OFFSET = 10;
 const EDGE = 8;
+const MIN_PANEL_SPACE = 160;
 
 const MIRRORED_PLACEMENTS: Record<DropdownPlacement, DropdownPlacement> = {
   bottom: "top",
@@ -51,19 +52,31 @@ export function placePanel(
   viewport: PanelSize,
   placement: DropdownPlacement,
   flip: boolean,
-): { top: number; left: number } {
+): { top: number; left: number; maxHeight: number } {
   const [side, alignment] = placement.split("-");
   const below = trigger.bottom + OFFSET;
-  const above = trigger.top - OFFSET - panel.height;
-  const fitsBelow = below + panel.height <= viewport.height;
-  const fitsAbove = above >= 0;
+  const spaceBelow = Math.max(viewport.height - below - EDGE, 0);
+  const spaceAbove = Math.max(trigger.top - OFFSET - EDGE, 0);
+  const fitsBelow = panel.height <= spaceBelow;
+  const fitsAbove = panel.height <= spaceAbove;
 
-  let top = side === "bottom" ? below : above;
-  if (flip && side === "bottom" && !fitsBelow && fitsAbove) {
-    top = above;
-  } else if (flip && side === "top" && !fitsAbove && fitsBelow) {
-    top = below;
+  let placeBelow = side === "bottom";
+  if (flip && placeBelow && !fitsBelow && fitsAbove) {
+    placeBelow = false;
+  } else if (flip && !placeBelow && !fitsAbove && fitsBelow) {
+    placeBelow = true;
   }
+  if (flip && !fitsBelow && !fitsAbove) {
+    placeBelow = spaceBelow >= spaceAbove;
+  }
+  const space = placeBelow ? spaceBelow : spaceAbove;
+  if (panel.height > space && space < MIN_PANEL_SPACE) {
+    placeBelow = spaceBelow >= spaceAbove;
+  }
+
+  const maxHeight = placeBelow ? spaceBelow : spaceAbove;
+  const height = Math.min(panel.height, maxHeight);
+  const top = placeBelow ? below : trigger.top - OFFSET - height;
 
   const left =
     alignment === "start"
@@ -73,7 +86,7 @@ export function placePanel(
         : trigger.left + (trigger.width - panel.width) / 2;
   const maxLeft = Math.max(viewport.width - panel.width - EDGE, EDGE);
 
-  return { top, left: Math.min(Math.max(left, EDGE), maxLeft) };
+  return { top, left: Math.min(Math.max(left, EDGE), maxLeft), maxHeight };
 }
 
 function toConnectedPosition(placement: DropdownPlacement): ConnectedPosition {

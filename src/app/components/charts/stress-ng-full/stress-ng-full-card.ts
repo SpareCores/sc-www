@@ -26,10 +26,12 @@ import {
   buildStressNgSections,
   splitStressNgColumns,
 } from "./stress-ng-full.utils";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-stress-ng-full-card",
   imports: [
+    TooltipTrigger,
     NgTemplateOutlet,
     LucideCircleArrowDown,
     LucideCircleArrowUp,
@@ -70,13 +72,13 @@ export class StressNgFullCard {
   }
 
   showTooltip(
-    event: MouseEvent,
+    event: Element | Event,
     content: string | null | undefined,
     variant?: "warning",
   ) {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event,
+      anchor: event,
       content: content ?? undefined,
       variant,
       onShow: (tooltipContent) => {

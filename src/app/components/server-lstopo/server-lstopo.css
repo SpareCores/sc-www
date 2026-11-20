@@ -52,3 +52,30 @@
   pointer-events: all;
   cursor: help;
 }
+
+.lstopo-fullscreen-probe {
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  container-type: inline-size;
+  container-name: lstopo-fullscreen;
+  width: clamp(
+    0px,
+    calc((var(--lstopo-svg-width, 99999px) - 100%) * 1000),
+    1px
+  );
+}
+
+.lstopo-fullscreen-button {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+@container lstopo-fullscreen (width >= 1px) {
+  .lstopo-fullscreen-button {
+    display: inline-flex;
+  }
+}

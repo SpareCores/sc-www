@@ -2,9 +2,9 @@
   @if (detailsChartData()) {
     <div class="sc-chart-block sc-chart-block--half" id="compress_chart">
       <div
-        class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between sc-header-anchor-host sc-header-anchor-host--card"
+        class="flex items-center justify-between gap-4 sm:max-md:flex-col sm:max-md:items-start sc-header-anchor-host sc-header-anchor-host--card"
       >
-        <h3 class="text-2xl flex items-center gap-2">
+        <h3 class="sc-chart-title">
           <svg
             [lucideIcon]="'compression' | benchmarkIcon"
             class="h-6 w-6"
@@ -13,21 +13,24 @@
           <svg
             [lucideIcon]="currentDetailsMode().icon"
             class="h-4 w-4 shrink-0 text-gray-200"
-            (mouseenter)="showTooltip($event, currentDetailsMode().order)"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, currentDetailsMode().order)"
+            (tooltipClose)="hideTooltip()"
           ></svg>
           <svg
             lucideInfo
             class="h-4 w-4 shrink-0 text-gray-200"
-            (mouseenter)="showTooltip($event, infoTooltip)"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, infoTooltip)"
+            (tooltipClose)="hideTooltip()"
           ></svg>
           @if (compressionMetaNote()) {
             <svg
               lucideTriangleAlert
               class="benchmark-note-icon"
-              (mouseenter)="showWarningTooltip($event, compressionMetaNote())"
-              (mouseleave)="hideTooltip()"
+              scTooltipTrigger
+              (tooltipOpen)="showWarningTooltip($event, compressionMetaNote())"
+              (tooltipClose)="hideTooltip()"
             ></svg>
           }
           @if (anchorId(); as id) {
@@ -37,7 +40,7 @@
             ></sc-header-anchor>
           }
         </h3>
-        <div class="flex min-w-0 gap-4">
+        <div class="flex min-w-0 gap-2 max-sm:shrink-0 sm:gap-4">
           @if (hasCoresSelector()) {
             <sc-button
               class="min-w-0"
@@ -46,6 +49,7 @@
               [scDropdown]="coresPanel"
               [label]="coresLabel()"
               icon="chevron-down"
+              compactIcon="cpu"
               variant="dropdown"
               size="small"
             ></sc-button>
@@ -58,6 +62,7 @@
             [dropdownEnabled]="hasOptions()"
             [label]="currentDetailsMode().name"
             icon="chevron-down"
+            compactIcon="settings"
             variant="dropdown"
             size="small"
           ></sc-button>
@@ -82,21 +87,27 @@
 } @else {
   <div class="relative z-30">
     <div class="sc-chart-block sc-chart-block--split">
-      <div class="flex justify-end items-center">
-        <div class="flex gap-4">
-          <sc-button
-            class="min-w-0"
-            #selectorDropdown="scDropdown"
-            [id]="buttonId"
-            [scDropdown]="comparePanel"
-            [dropdownEnabled]="hasOptions()"
-            [label]="currentCompareOptionName()"
-            icon="chevron-down"
-            variant="dropdown"
-            size="small"
-          ></sc-button>
+      @if (!controlsInHeader()) {
+        <div class="flex justify-end items-center">
+          <div class="flex gap-2 sm:gap-4">
+            <ng-container [ngTemplateOutlet]="compareControls" />
+          </div>
         </div>
-      </div>
+      }
+      <ng-template #compareControls>
+        <sc-button
+          class="min-w-0"
+          #selectorDropdown="scDropdown"
+          [id]="buttonId"
+          [scDropdown]="comparePanel"
+          [dropdownEnabled]="hasOptions()"
+          [label]="currentCompareOptionName()"
+          icon="chevron-down"
+          compactIcon="settings"
+          variant="dropdown"
+          size="small"
+        ></sc-button>
+      </ng-template>
       @if (isBrowser && hasOptions()) {
         <div class="charts_div">
           <div class="chart_div" [attr.chartType]="compareChartType()">

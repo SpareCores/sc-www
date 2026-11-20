@@ -1,18 +1,27 @@
 <div class="flex gap-2 flex-col">
   <div class="delimiter"></div>
-  <nav class="ml-3" id="breadcrumbNav" #breadcrumbNav>
+  <nav class="nav" id="breadcrumbNav" #breadcrumbNav>
     <div
       class="flex gap-2 text-sm"
       itemscope
       itemtype="https://schema.org/BreadcrumbList"
     >
-      @for (segment of segments; track segment.name; let i = $index) {
-        <div class="flex gap-2">
+      @for (
+        segment of segments;
+        track segment.name;
+        let i = $index, last = $last
+      ) {
+        <div
+          class="flex items-center gap-2 whitespace-nowrap"
+          [class.shrink-0]="!last"
+          [class.min-w-0]="last"
+        >
           @if (i > 0) {
             <div class="text-emerald-400">/</div>
           }
           <div
             class="breadcrumb-item"
+            [class.min-w-0]="last"
             itemprop="itemListElement"
             itemscope
             itemtype="https://schema.org/ListItem"
@@ -22,13 +31,16 @@
                 itemprop="item"
                 routerLink="{{ segment.url }}"
                 [queryParams]="segment.queryParams"
-                class="text-white hover:text-emerald-400"
+                class="flex min-h-6 min-w-0 items-center lg:min-h-0 text-white hover:text-emerald-400"
               >
-                <span itemprop="name">{{ segment.name }}</span>
+                <span itemprop="name" class="truncate">{{ segment.name }}</span>
               </a>
             } @else {
-              <span itemprop="item" class="text-white">
-                <span itemprop="name">{{ segment.name }}</span>
+              <span
+                itemprop="item"
+                class="flex min-h-6 min-w-0 items-center lg:min-h-0 text-white"
+              >
+                <span itemprop="name" class="truncate">{{ segment.name }}</span>
               </span>
             }
             <meta itemprop="position" content="{{ i + 1 }}" />

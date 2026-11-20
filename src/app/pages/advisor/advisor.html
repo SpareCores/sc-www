@@ -4,10 +4,10 @@
     isLoadingBaselineBenchmarkScores()
   "
 >
-  <div class="content pt-16 pb-16">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
     <sc-breadcrumbs [segments]="displayBreadcrumbs()"></sc-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+    <div class="flex flex-col gap-4 mt-4 mb-4 sm:mt-8 sm:mb-8 content-gutter">
       <sc-page-header
         icon="bot"
         [title]="displayTitle()"
@@ -19,7 +19,7 @@
         [showEdit]="!!exactSavedAssessment()"
         editAriaLabel="Edit assessment"
         [showShare]="true"
-        [copyLink]="true"
+        [actionsFromSm]="true"
         shareButtonId="advisor_share_button"
         (bookmarkClick)="toggleSavedAssessment()"
         (editClick)="openSaveAssessmentModal()"
@@ -27,6 +27,7 @@
         <sc-button
           id="advisor_example_button"
           label="Example"
+          [compact]="true"
           icon="dices"
           iconPosition="start"
           variant="outline"
@@ -36,13 +37,14 @@
         <sc-button
           id="advisor_introduction_button"
           label="Introduction"
+          [compact]="true"
           icon="tv-minimal-play"
           iconPosition="start"
           variant="outline"
           (click)="openIntroductionModal()"
         ></sc-button>
       </sc-page-header>
-      <div class="text-white text-xl lg:pr-16">
+      <div class="sc-page-description">
         {{ displayDescription() }}
       </div>
     </div>
@@ -61,7 +63,7 @@
         modalTitle="Advisor introduction"
         size="4xl"
       >
-        <div class="p-4">
+        <div class="my-auto p-4">
           @if (showIntroductionVideo) {
             <iframe
               width="100%"
@@ -87,7 +89,7 @@
       </sc-modal>
     </ng-template>
 
-    <div class="advisor-page-body mx-2 xl:mx-0">
+    <div class="advisor-page-body content-gutter">
       <div
         class="advisor-filter-bar bg-primary"
         [class.advisor-filter-bar-collapsed]="isCollapsed()"
@@ -168,36 +170,73 @@
             </div>
           }
 
-          <sc-button
-            id="advisor_compare_baseline_button"
-            [label]="baselineCompareButtonLabel()"
-            icon="scale"
-            iconPosition="start"
-            [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
-            [disabled]="!selectedBaselineServer()"
-            (click)="toggleBaselineCompare()"
-          ></sc-button>
-
-          <div class="advisor-top-controls">
-            <div>
+          <div class="advisor-toolbar-buttons">
+            <sc-page-actions
+              [bookmarkGuestLocked]="!isAuthenticated()"
+              [bookmarkActive]="!!exactSavedAssessment()"
+              [bookmarkDisabled]="
+                !exactSavedAssessment() && !canSaveAssessment()
+              "
+              [bookmarkLoading]="isDeleteAssessmentPending()"
+              [showEdit]="!!exactSavedAssessment()"
+              editAriaLabel="Edit assessment"
+              shareButtonId="advisor_share_button_mobile"
+              (bookmarkClick)="toggleSavedAssessment()"
+              (editClick)="openSaveAssessmentModal()"
+            >
               <sc-button
-                id="advisor_currency_button"
-                [scDropdown]="currencyPanel"
-                #currencyDropdown="scDropdown"
-                [label]="selectedCurrency().slug"
+                id="advisor_example_button_mobile"
+                label="Example"
+                [compact]="true"
+                icon="dices"
+                iconPosition="start"
+                variant="outline"
+                [routerLink]="['/advisor']"
+                [queryParams]="advisorExampleQueryParams"
+              ></sc-button>
+              <sc-button
+                id="advisor_introduction_button_mobile"
+                label="Introduction"
+                [compact]="true"
+                icon="tv-minimal-play"
+                iconPosition="start"
+                variant="outline"
+                (click)="openIntroductionModal()"
+              ></sc-button>
+            </sc-page-actions>
+
+            <sc-button
+              id="advisor_compare_baseline_button"
+              [compact]="true"
+              [label]="baselineCompareButtonLabel()"
+              icon="scale"
+              iconPosition="start"
+              [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
+              [disabled]="!selectedBaselineServer()"
+              (click)="toggleBaselineCompare()"
+            ></sc-button>
+
+            <div class="advisor-top-controls">
+              <sc-select-dropdown
+                buttonId="advisor_currency_button"
+                panelId="advisor_currency_options"
                 icon="credit-card"
-                variant="dropdown"
-              ></sc-button>
-            </div>
+                compactIcon="credit-card"
+                [label]="selectedCurrency().slug"
+                [options]="availableCurrencies"
+                [selected]="selectedCurrency()"
+                [optionLabel]="currencyLabel"
+                (selectedChange)="selectCurrency($event)"
+              ></sc-select-dropdown>
 
-            <div>
-              <sc-button
-                id="advisor_column_button"
-                [scDropdown]="columnPanel"
-                label="Columns"
-                icon="columns-3-cog"
-                variant="dropdown"
-              ></sc-button>
+              <sc-column-picker
+                buttonId="advisor_column_button"
+                panelId="advisor_column_options"
+                [columns]="possibleColumns()"
+                (visibilityChange)="
+                  setColumnVisibility($event.name, $event.show)
+                "
+              ></sc-column-picker>
             </div>
           </div>
         </div>
@@ -223,8 +262,9 @@
                           @if (column.info) {
                             <svg
                               lucideInfo
-                              (mouseenter)="showTooltip($event, column.info)"
-                              (mouseleave)="hideTooltip()"
+                              scTooltipTrigger
+                              (tooltipOpen)="showTooltip($event, column.info)"
+                              (tooltipClose)="hideTooltip()"
                               class="h-4 w-4 text-gray-200"
                             ></svg>
                           }
@@ -1340,98 +1380,20 @@
             {{ tooltipContent() }}
           </div>
 
-          <div class="flex justify-between mt-4 flex-wrap gap-4">
-            <div class="flex items-center gap-2">
-              <sc-button
-                id="advisor_pagesize_button"
-                [scDropdown]="pageSizePanel"
-                [dropdownFlip]="true"
-                [dropdownPlacement]="'bottom-start'"
-                #pageDropdown="scDropdown"
-                [label]="'' + limit()"
-                icon="chevron-down"
-                variant="dropdown"
-              ></sc-button>
-              <span class="text-white">items per page</span>
-            </div>
-
-            <div>
-              <sc-pagination
-                baseURL="/advisor"
-                [currentPage]="page()"
-                [totalPages]="totalPages()"
-                [baseQueryParams]="getUrlStateQueryParams()"
-              >
-              </sc-pagination>
-            </div>
-          </div>
+          <sc-table-footer
+            baseURL="/advisor"
+            [limit]="limit()"
+            [pageLimits]="pageLimits"
+            [page]="page()"
+            [totalPages]="totalPages()"
+            [baseQueryParams]="getUrlStateQueryParams()"
+            (limitChange)="selectPageSize($event)"
+          ></sc-table-footer>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<ng-template #pageSizePanel>
-  <div id="advisor_pagesize_options" class="sc-dropdown w-44">
-    <ul class="sc-dropdown__list" aria-labelledby="advisor_pagesize_button">
-      @for (pageLimit of pageLimits; track $index) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectPageSize(pageLimit)"
-          (keydown.enter)="selectPageSize(pageLimit)"
-          (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
-          role="option"
-          [attr.aria-selected]="pageLimit === limit()"
-          tabindex="0"
-        >
-          <div class="text-sm text-white">{{ pageLimit }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #currencyPanel>
-  <div id="advisor_currency_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list" aria-labelledby="advisor_currency_button">
-      @for (currency of availableCurrencies; track currency.name) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectCurrency(currency)"
-          (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
-          (keydown.space)="selectCurrency(currency); $event.preventDefault()"
-          role="option"
-          [attr.aria-selected]="currency === selectedCurrency()"
-          tabindex="0"
-        >
-          <div class="text-sm text-white">
-            {{ currency.name }} ({{ currency.symbol }})
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #columnPanel>
-  <div id="advisor_column_options" class="sc-dropdown w-56">
-    <ul class="sc-dropdown__list px-3" aria-labelledby="advisor_column_button">
-      @for (column of possibleColumns(); track column.name) {
-        <li class="flex py-1 gap-2 items-center">
-          <input
-            type="checkbox"
-            [checked]="column.show"
-            (change)="
-              setColumnVisibility(column.name, $any($event.target).checked)
-            "
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
-          />
-          <div class="text-sm text-white">{{ column.name }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
 
 @if (compareCount() >= 2 && selectedBaselineServer()) {
   <div class="advisor-compare-bar">
@@ -1442,6 +1404,7 @@
         iconPosition="start"
         color="danger"
         class="advisor-compare-bar-button"
+        buttonClass="sc-button--floating"
         (click)="clearCompareSelection()"
       ></sc-button>
       <sc-button
@@ -1449,6 +1412,7 @@
         icon="scale"
         iconPosition="start"
         class="advisor-compare-bar-button"
+        buttonClass="sc-button--floating"
         (click)="openCompare()"
       ></sc-button>
     </div>

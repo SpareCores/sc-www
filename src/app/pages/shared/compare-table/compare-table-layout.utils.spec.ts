@@ -1,6 +1,5 @@
 import {
   COMPARE_PIN_FALLBACK_ITEM_THRESHOLD,
-  COMPARE_PINNED_CONTENT_MAX_COLSPAN,
   COMPARE_SECTION_MIN_COLSPAN,
 } from "./compare-table-layout.constants";
 import {
@@ -94,34 +93,29 @@ describe("compare-table-layout.utils pinned rows", () => {
     ).toBeFalse();
   });
 
-  it("resolves pinned chart width and colspans when overflowing", () => {
+  it("resolves the pinned content width when overflowing", () => {
     Object.defineProperty(thead, "scrollWidth", {
       configurable: true,
       value: 1200,
     });
 
     const pinned = resolveComparePinnedRowLayout(options({ itemCount: 9 }));
-    expect(pinned.chartWidthStyle).toBe("width: 800px; max-width: 800px;");
-    expect(pinned.contentColSpan).toBe(COMPARE_PINNED_CONTENT_MAX_COLSPAN);
-    expect(pinned.trailingColSpan).toBe(7);
-    expect(pinned.actionSpacerColSpan).toBe(6);
+    expect(pinned.widthStyle).toBe("width: 800px; max-width: 800px;");
+    expect(pinned.colSpan).toBe(10);
 
     Object.defineProperty(thead, "scrollWidth", {
       configurable: true,
       value: 800,
     });
     const unpinned = resolveComparePinnedRowLayout(options({ itemCount: 3 }));
-    expect(unpinned.chartWidthStyle).toBe("width: 100%; max-width: 100%;");
-    expect(unpinned.contentColSpan).toBe(4);
-    expect(unpinned.trailingColSpan).toBe(0);
-    expect(unpinned.actionSpacerColSpan).toBe(0);
+    expect(unpinned.widthStyle).toBe("width: 100%; max-width: 100%;");
+    expect(unpinned.colSpan).toBe(4);
 
     const embedded = resolveComparePinnedRowLayout(
       options({ itemCount: 9, isEmbedded: true }),
     );
-    expect(embedded.contentColSpan).toBe(10);
-    expect(embedded.trailingColSpan).toBe(0);
-    expect(embedded.actionSpacerColSpan).toBe(0);
+    expect(embedded.widthStyle).toBe("width: 100%; max-width: 100%;");
+    expect(embedded.colSpan).toBe(10);
   });
 
   it("keeps pinned rows unpinned until browser measurements are available", () => {
@@ -137,10 +131,8 @@ describe("compare-table-layout.utils pinned rows", () => {
     const unmeasured = resolveComparePinnedRowLayout(
       options({ itemCount: 9, isBrowser: true, isEmbedded: false }),
     );
-    expect(unmeasured.chartWidthStyle).toBe("width: 100%; max-width: 100%;");
-    expect(unmeasured.contentColSpan).toBe(10);
-    expect(unmeasured.trailingColSpan).toBe(0);
-    expect(unmeasured.actionSpacerColSpan).toBe(0);
+    expect(unmeasured.widthStyle).toBe("width: 100%; max-width: 100%;");
+    expect(unmeasured.colSpan).toBe(10);
   });
 });
 

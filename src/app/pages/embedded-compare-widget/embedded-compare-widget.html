@@ -41,7 +41,7 @@
                 ) {
                   <th class="align-baseline compare-table-header-cell">
                     <a
-                      class="block ml-auto w-fit underline decoration-dotted whitespace-nowrap"
+                      class="block ml-auto w-fit underline decoration-dotted sm:whitespace-nowrap"
                       href="/database/{{ item.vendor_id }}/{{
                         item.api_reference
                       }}"
@@ -78,27 +78,30 @@
               <svg
                 lucideCircleArrowUp
                 class="h-4 w-4 text-gray-200 shrink-0"
-                (mouseenter)="showTooltip($event, 'Higher is better.')"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               @if (database.pgbench.infoTooltip) {
                 <svg
                   lucideInfo
                   class="h-4 w-4 text-gray-200 shrink-0"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     showTooltip($event, database.pgbench.infoTooltip)
                   "
-                  (mouseleave)="hideTooltip()"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (database.pgbench.noteTooltip) {
                 <svg
                   lucideTriangleAlert
                   class="benchmark-note-icon"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     showWarningTooltip($event, database.pgbench.noteTooltip)
                   "
-                  (mouseleave)="hideTooltip()"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
             </h3>

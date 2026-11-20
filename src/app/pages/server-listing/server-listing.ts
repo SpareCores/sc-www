@@ -49,15 +49,17 @@ import {
 } from "@lucide/angular";
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
+import { PageActions } from "../../components/page-actions/page-actions";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import type { SearchBarParameter } from "../../components/search-bar/types/search-bar.types";
-import { Pagination } from "../../components/pagination/pagination";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import {
   ComparedServer,
   CompareSelection,
 } from "../../services/compare-selection";
-import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { Analytics } from "../../services/analytics";
 import { Modal } from "../../components/modals/modal/modal";
 import { ModalDialog } from "../../services/modal-dialog";
@@ -95,16 +97,20 @@ import {
   BestPriceAllocationType,
   bestPriceAllocationTypes,
   CurrencyOption,
+  allocationLabel,
   availableCurrencies,
+  currencyLabel,
 } from "../../tools/shared_data";
 import {
   buildServerListingColumns,
   TableColumn,
 } from "../../tools/table-columns";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-server-listing",
   imports: [
+    TooltipTrigger,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,
@@ -118,9 +124,10 @@ import {
     RouterModule,
     Button,
     PageHeader,
+    PageActions,
     BenchmarkIconPipe,
     SearchBar,
-    Pagination,
+    TableFooter,
     LoadingSpinner,
     AcceleratorCountPipe,
     CpuCacheSizePipe,
@@ -128,7 +135,8 @@ import {
     StoragePipe,
     AcceleratorMemoryPipe,
     Ipv4CountPipe,
-    Dropdown,
+    SelectDropdown,
+    ColumnPicker,
     BookmarkButton,
     CollectionSaveModal,
     Modal,
@@ -142,9 +150,6 @@ export class ServerListing implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  allocationDropdown = viewChild<Dropdown>("allocationDropdown");
-  pageDropdown = viewChild<Dropdown>("pageDropdown");
   private analytics = inject(Analytics);
   private serverCompare = inject(CompareSelection);
   private toastService = inject(Toast);
@@ -221,6 +226,8 @@ export class ServerListing implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
   displayedCurrency = this.availableCurrencies[0];
+  readonly currencyLabel = currencyLabel;
+  readonly allocationLabel = allocationLabel;
 
   bestPriceAllocationTypes: BestPriceAllocationType[] =
     bestPriceAllocationTypes;
@@ -1114,6 +1121,16 @@ export class ServerListing implements OnInit, OnDestroy {
     });
   }
 
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
+  }
+
   refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
     if (isPlatformBrowser(this.platformId) && save) {
@@ -1129,22 +1146,18 @@ export class ServerListing implements OnInit, OnDestroy {
     this.selectedCurrency = currency;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.currencyDropdown()?.hide();
   }
 
   selectAllocation(allocation: BestPriceAllocationType) {
     this.bestPriceAllocation = allocation;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.allocationDropdown()?.hide();
   }
 
   selectPageSize(limit: number) {
     this.limit = limit;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-
-    this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
   }
@@ -1322,7 +1335,7 @@ export class ServerListing implements OnInit, OnDestroy {
     });
   }
 
-  showTooltip(el: any, content: string, autoHide = false) {
+  showTooltip(el: Element | Event, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
     this.uiTooltip.show(tooltip, el, {

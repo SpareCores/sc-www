@@ -1,6 +1,6 @@
-<div class="logo_text {{ classes }}">
+<div class="logo_text" [class]="sizeClasses()">
   <div class="text-emerald-400"><</div>
-  {{ text }}
+  {{ text() }}
   <div class="text-emerald-400">
     ><span class="text-white"><ng-content></ng-content></span>
   </div>

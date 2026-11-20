@@ -1,0 +1,11 @@
+@reference "../../../styles/tailwind.css";
+
+.sc-pagination__neighbour {
+  display: none;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-pagination__neighbour {
+    display: inline-flex;
+  }
+}

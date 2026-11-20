@@ -3,7 +3,7 @@
     <div
       class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
     >
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3 class="sc-chart-title">
         @if (benchmarkKey()) {
           <svg
             [lucideIcon]="benchmarkKey() | benchmarkIcon"
@@ -15,24 +15,27 @@
           <svg
             lucideCircleArrowUp
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, orderTooltip())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, orderTooltip())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (infoTooltip()) {
           <svg
             lucideInfo
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, infoTooltip())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, infoTooltip())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (noteTooltip()) {
           <svg
             lucideTriangleAlert
             class="benchmark-note-icon"
-            (mouseenter)="showWarningTooltip($event, noteTooltip())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showWarningTooltip($event, noteTooltip())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (anchorId(); as id) {
@@ -51,6 +54,7 @@
           [dropdownEnabled]="hasSelector()"
           [label]="resolvedSelectedOptionName()"
           icon="chevron-down"
+          compactIcon="settings"
           variant="dropdown"
           size="small"
         ></sc-button>
@@ -84,8 +88,13 @@
   </div>
 } @else {
   <div [class]="blockClass()">
-    @if (hasSelector()) {
+    @if (hasSelector() && !controlsInHeader()) {
       <div class="flex justify-end items-center">
+        <ng-container [ngTemplateOutlet]="compareControls" />
+      </div>
+    }
+    <ng-template #compareControls>
+      @if (hasSelector()) {
         <sc-button
           class="min-w-0"
           #selectorDropdown="scDropdown"
@@ -94,11 +103,12 @@
           [dropdownEnabled]="hasSelector()"
           [label]="resolvedSelectedOptionName()"
           icon="chevron-down"
+          compactIcon="settings"
           variant="dropdown"
           size="small"
         ></sc-button>
-      </div>
-    }
+      }
+    </ng-template>
     @if (resolvedChartData() && isBrowser) {
       <div class="min-h-0 flex-1">
         <div class="chart_div" [attr.chartType]="chartType()">

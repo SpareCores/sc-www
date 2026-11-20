@@ -5,13 +5,13 @@ import { Button } from "../../button/button";
 export type ModalSize = "sm" | "lg" | "xl" | "3xl" | "4xl" | "wide" | "full";
 
 const SIZE_CLASSES: Record<ModalSize, string> = {
-  sm: "max-w-100",
-  lg: "max-w-lg",
-  xl: "max-w-xl",
-  "3xl": "max-w-3xl",
-  "4xl": "max-w-4xl",
-  wide: "max-w-350",
-  full: "max-w-full",
+  sm: "sm:max-w-100",
+  lg: "sm:max-w-lg",
+  xl: "sm:max-w-xl",
+  "3xl": "sm:max-w-3xl",
+  "4xl": "sm:max-w-4xl",
+  wide: "sm:max-w-350",
+  full: "sm:max-w-full",
 };
 
 export function modalTitleId(dialogId: string): string {

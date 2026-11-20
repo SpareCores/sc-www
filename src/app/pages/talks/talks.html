@@ -1,15 +1,19 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-    <div class="content_gutter flex flex-col mt-8 text-white">
-      <h1 class="font-semibold text-3xl mb-4">Spare Cores Conference Talks</h1>
-      <div class="text-white text-xl pr-16 mb-4">
+    <div class="content-gutter flex flex-col mt-4 sm:mt-8 text-white">
+      <sc-page-header
+        class="mb-4"
+        icon="projector"
+        title="Spare Cores Conference Talks"
+      ></sc-page-header>
+      <div class="sc-page-description">
         Browse past and upcoming Spare Cores presentations, with slides and
         video recordings when available:
       </div>
-      <div class="w-full flex flex-col gap-4 px-6 py-4">
-        <table class="sc-table sc-table--links w-full">
+      <div class="w-full min-w-0 overflow-x-auto pt-4 sm:pb-4 sm:px-6">
+        <table class="sc-table sc-table--links w-full text-nowrap sm:text-wrap">
           <thead>
             <tr>
               <th>DATE</th>

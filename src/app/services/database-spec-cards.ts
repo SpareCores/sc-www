@@ -53,9 +53,9 @@ export class DatabaseSpecCards {
             price.ha_strategy || "none",
             price.price === null || price.price === undefined
               ? "-"
-              : `${price.price} ${price.currency || "USD"}/${reduceUnitName(
+              : `${price.price} <span class="property_unit">${price.currency || "USD"}/${reduceUnitName(
                   price.unit,
-                )}`,
+                )}</span>`,
           ],
         })),
       },

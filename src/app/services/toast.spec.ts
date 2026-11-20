@@ -33,6 +33,31 @@ describe("Toast", () => {
     clearToasts();
   });
 
+  function toastContainerTop(): string | undefined {
+    const container = document.querySelector('[data-cy="toast"]')
+      ?.parentElement as HTMLElement | null;
+    return container?.style.top;
+  }
+
+  it("keeps toasts at the default offset without a promo banner", () => {
+    service.show({ title: "No banner" });
+
+    expect(toastContainerTop()).toBe("80px");
+  });
+
+  it("places toasts below a visible promo banner", () => {
+    const banner = document.createElement("sc-promo-banner");
+    document.body.appendChild(banner);
+    spyOn(banner, "getBoundingClientRect").and.returnValue(
+      new DOMRect(0, 90, 300, 150),
+    );
+
+    service.show({ title: "Below banner" });
+
+    expect(toastContainerTop()).toBe("248px");
+    banner.remove();
+  });
+
   it("renders title and body in an alert", () => {
     service.show({
       title: "Request timed out",

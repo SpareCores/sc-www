@@ -4,7 +4,6 @@ import {
   PLATFORM_ID,
   OnInit,
   ViewChild,
-  viewChild,
   ElementRef,
   OnDestroy,
   inject,
@@ -31,18 +30,22 @@ import {
 } from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { PageHeader } from "../../components/page-header/page-header";
+import { PageActions } from "../../components/page-actions/page-actions";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
-import { Pagination } from "../../components/pagination/pagination";
-import { Dropdown } from "../../directives/dropdown";
+import { TableFooter } from "../../components/table-footer/table-footer";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { Analytics } from "../../services/analytics";
 import {
   AllocationType,
+  allocationLabel,
   allocationTypes,
   CurrencyOption,
   availableCurrencies,
+  currencyLabel,
 } from "../../tools/shared_data";
 import {
   ComparedServer,
@@ -64,6 +67,7 @@ import {
   buildServerPricesColumns,
   TableColumn,
 } from "../../tools/table-columns";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 export type CountryMetadata = {
   continent: string;
@@ -96,6 +100,7 @@ export type RegionVendorMetadata = {
 @Component({
   selector: "sc-server-prices",
   imports: [
+    TooltipTrigger,
     FormsModule,
     Breadcrumbs,
     LucideDynamicIcon,
@@ -112,10 +117,12 @@ export type RegionVendorMetadata = {
     RouterModule,
     Button,
     PageHeader,
+    PageActions,
     SearchBar,
-    Pagination,
+    TableFooter,
     LoadingSpinner,
-    Dropdown,
+    SelectDropdown,
+    ColumnPicker,
   ],
   templateUrl: "./server-prices.html",
   styleUrl: "./server-prices.css",
@@ -127,9 +134,6 @@ export class ServerPrices implements OnInit, OnDestroy {
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
   private analytics = inject(Analytics);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  allocationDropdown = viewChild<Dropdown>("allocationDropdown");
-  pageDropdown = viewChild<Dropdown>("pageDropdown");
   private serverCompare = inject(CompareSelection);
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
@@ -199,6 +203,9 @@ export class ServerPrices implements OnInit, OnDestroy {
   allocation = this.allocationTypes[0];
 
   selectedCurrency = this.availableCurrencies[0];
+
+  readonly currencyLabel = currencyLabel;
+  readonly allocationLabel = allocationLabel;
 
   limit = 25;
   page = 1;
@@ -621,6 +628,16 @@ export class ServerPrices implements OnInit, OnDestroy {
     });
   }
 
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
+  }
+
   refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
 
@@ -633,21 +650,17 @@ export class ServerPrices implements OnInit, OnDestroy {
     }
   }
 
-  selectCurrency(currency: any) {
+  selectCurrency(currency: CurrencyOption) {
     this.selectedCurrency = currency;
 
     this.searchOptionsChanged(this.query);
-
-    this.currencyDropdown()?.hide();
   }
 
-  selectAllocation(allocation: any) {
+  selectAllocation(allocation: AllocationType) {
     this.allocation = allocation;
     this.page = 1;
 
     this.searchOptionsChanged(this.query);
-
-    this.allocationDropdown()?.hide();
   }
 
   selectPageSize(limit: number) {
@@ -655,7 +668,6 @@ export class ServerPrices implements OnInit, OnDestroy {
     this.page = 1;
 
     this.searchOptionsChanged(this.query);
-    this.pageDropdown()?.hide();
 
     window.scrollTo(0, 0);
   }
@@ -726,7 +738,7 @@ export class ServerPrices implements OnInit, OnDestroy {
     this.modalSearch?.hide();
   }
 
-  showTooltip(el: any, content: string, autoHide = false) {
+  showTooltip(el: Element | Event, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
     this.uiTooltip.show(tooltip, el, {
