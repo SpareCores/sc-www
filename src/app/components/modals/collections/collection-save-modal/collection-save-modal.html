@@ -40,11 +40,13 @@
         label="Cancel"
         variant="outline"
         color="brand"
+        buttonClass="sc-button--dialog"
         (buttonClick)="close()"
       ></sc-button>
       <sc-button
         [label]="confirmLabel()"
         icon="circle-check"
+        buttonClass="sc-button--dialog"
         [loading]="saving()"
         [disabled]="!canConfirm()"
         (buttonClick)="confirm()"

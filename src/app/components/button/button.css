@@ -440,8 +440,12 @@
   @apply size-4.75;
 }
 
-.sc-button--default.sc-button--floating {
+.sc-button--default:is(.sc-button--floating, .sc-button--dialog) {
   @apply px-3 py-2 sm:px-4 sm:py-3;
+}
+
+.sc-button.sc-button--close.sc-button--dialog {
+  @apply size-9.5 p-2.25 sm:size-8 sm:p-1.5;
 }
 
 .sc-button__label.sc-button__label--fit {

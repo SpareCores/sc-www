@@ -585,7 +585,9 @@
     closeCaptureEvent="server details summarize close"
   >
     @if (serverDescription && isSummarizeModalOpen) {
-      <div class="flex flex-col gap-4 p-4 md:p-6 max-h-[70vh] overflow-y-auto">
+      <div
+        class="flex flex-col gap-4 p-4 sm:max-h-[70vh] sm:overflow-y-auto md:p-6"
+      >
         @if (serverDescription.tagline || serverDescription.categories.length) {
           <div class="flex flex-col gap-4 pb-4 border-b border-gray-600">
             @if (serverDescription.tagline) {
