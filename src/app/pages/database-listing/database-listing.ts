@@ -38,6 +38,7 @@ import {
 import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
+import { PageActions } from "../../components/page-actions/page-actions";
 import { TableFooter } from "../../components/table-footer/table-footer";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import type {
@@ -124,6 +125,7 @@ type DatabaseListingQuery = Params &
     RouterModule,
     Button,
     PageHeader,
+    PageActions,
     SearchBar,
     TableFooter,
     LoadingSpinner,

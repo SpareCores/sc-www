@@ -1,0 +1,43 @@
+<button
+  type="button"
+  class="page-bookmark__button sc-bookmark-toggle"
+  [class.sc-bookmark-toggle--active]="active()"
+  [class.sc-bookmark-toggle--can-add]="
+    !guestLocked() && !active() && !disabled() && !loading()
+  "
+  [class.sc-bookmark-toggle--can-remove]="
+    !guestLocked() && active() && !disabled() && !loading()
+  "
+  [class.page-bookmark__button--locked]="guestLocked()"
+  [disabled]="!guestLocked() && (disabled() || loading())"
+  [attr.aria-label]="
+    guestLocked() ? registerHint : active() ? 'Remove bookmark' : 'Add bookmark'
+  "
+  [attr.aria-pressed]="active()"
+  scTooltipTrigger
+  tooltipMode="action"
+  (tooltipOpen)="onMouseEnter($event)"
+  (tooltipClose)="hideTooltip()"
+  (click)="onClick($event)"
+>
+  <svg
+    lucideBookmark
+    class="page-bookmark__icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--default"
+  ></svg>
+  <svg
+    lucideBookmarkPlus
+    class="page-bookmark__icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--add"
+  ></svg>
+  <svg
+    lucideBookmarkOff
+    class="page-bookmark__icon sc-bookmark-toggle__icon sc-bookmark-toggle__icon--remove"
+  ></svg>
+</button>
+@if (guestLocked()) {
+  <div
+    #tooltip
+    class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+  >
+    {{ registerHint }}
+  </div>
+}

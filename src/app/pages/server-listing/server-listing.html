@@ -14,7 +14,7 @@
         [showEdit]="!!activeSavedSearch()"
         editAriaLabel="Edit search"
         [showShare]="true"
-        [copyLink]="true"
+        [actionsFromSm]="true"
         shareButtonId="server_listing_share_button"
         (bookmarkClick)="toggleSavedSearch()"
         (editClick)="openSaveSearchModal()"
@@ -111,6 +111,27 @@
         <div
           class="sc-listing-toolbar w-full xl:w-[calc(100%-60px)] flex justify-end gap-2 sm:gap-4 items-center ml-auto"
         >
+          <sc-page-actions
+            [bookmarkGuestLocked]="!isAuthenticated()"
+            [bookmarkActive]="!!activeSavedSearch()"
+            [bookmarkDisabled]="!activeSavedSearch() && !canSaveSearch()"
+            [bookmarkLoading]="isDeleteSearchPending()"
+            [showEdit]="!!activeSavedSearch()"
+            editAriaLabel="Edit search"
+            shareButtonId="server_listing_share_button_mobile"
+            (bookmarkClick)="toggleSavedSearch()"
+            (editClick)="openSaveSearchModal()"
+          >
+            <sc-button
+              id="server_listing_introduction_button_mobile"
+              label="Introduction"
+              [compact]="true"
+              icon="tv-minimal-play"
+              iconPosition="start"
+              variant="outline"
+              (click)="openIntroductionModal()"
+            ></sc-button>
+          </sc-page-actions>
           <div class="min-w-0">
             <sc-button
               id="benchmark_select_button"

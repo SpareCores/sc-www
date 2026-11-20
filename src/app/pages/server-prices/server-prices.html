@@ -7,7 +7,7 @@
         icon="dollar-sign"
         title="Real-time Cloud Server Prices"
         [showShare]="true"
-        [copyLink]="true"
+        [actionsFromSm]="true"
       ></sc-page-header>
       <div class="sc-page-description">
         Explore, search, and evaluate cloud compute resources and their pricing
@@ -50,6 +50,7 @@
         <div
           class="sc-listing-toolbar w-full flex justify-end gap-2 sm:gap-4 items-center"
         >
+          <sc-page-actions [showBookmark]="false"></sc-page-actions>
           <sc-select-dropdown
             data-ph-capture-attribute-sc-event="server listing price allocation select"
             buttonId="allocation_button"

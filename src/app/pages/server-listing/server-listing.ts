@@ -49,6 +49,7 @@ import {
 } from "@lucide/angular";
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
+import { PageActions } from "../../components/page-actions/page-actions";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import type { SearchBarParameter } from "../../components/search-bar/types/search-bar.types";
@@ -123,6 +124,7 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     RouterModule,
     Button,
     PageHeader,
+    PageActions,
     BenchmarkIconPipe,
     SearchBar,
     TableFooter,

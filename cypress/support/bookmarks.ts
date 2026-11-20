@@ -31,7 +31,9 @@ export function loadAdvisorExample(): void {
 
 export function openPageHeaderSaveModal(modalId: string): void {
   cy.scrollTo(0, 0, { ensureScrollable: false });
-  cy.get("button.page-header__bookmark:not(.page-header__bookmark--locked)")
+  cy.get(
+    "sc-page-header button.page-bookmark__button:not(.page-bookmark__button--locked)",
+  )
     .should("be.visible")
     .and("not.be.disabled")
     .click({ scrollBehavior: false });

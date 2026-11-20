@@ -43,6 +43,7 @@ import {
 import openApiSpec from "../../../../sdk/openapi.json";
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
+import { PageActions } from "../../components/page-actions/page-actions";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
@@ -402,6 +403,7 @@ type AdvisorComparableResourceKey =
     LucideScale,
     LoadingSpinner,
     PageHeader,
+    PageActions,
     TableFooter,
     AcceleratorCountPipe,
     CpuCacheSizePipe,

@@ -19,7 +19,7 @@
         [showEdit]="!!exactSavedAssessment()"
         editAriaLabel="Edit assessment"
         [showShare]="true"
-        [copyLink]="true"
+        [actionsFromSm]="true"
         shareButtonId="advisor_share_button"
         (bookmarkClick)="toggleSavedAssessment()"
         (editClick)="openSaveAssessmentModal()"
@@ -170,36 +170,74 @@
             </div>
           }
 
-          <sc-button
-            id="advisor_compare_baseline_button"
-            [compact]="true"
-            [label]="baselineCompareButtonLabel()"
-            icon="scale"
-            iconPosition="start"
-            [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
-            [disabled]="!selectedBaselineServer()"
-            (click)="toggleBaselineCompare()"
-          ></sc-button>
+          <div class="advisor-toolbar-buttons">
+            <sc-page-actions
+              [bookmarkGuestLocked]="!isAuthenticated()"
+              [bookmarkActive]="!!exactSavedAssessment()"
+              [bookmarkDisabled]="
+                !exactSavedAssessment() && !canSaveAssessment()
+              "
+              [bookmarkLoading]="isDeleteAssessmentPending()"
+              [showEdit]="!!exactSavedAssessment()"
+              editAriaLabel="Edit assessment"
+              shareButtonId="advisor_share_button_mobile"
+              (bookmarkClick)="toggleSavedAssessment()"
+              (editClick)="openSaveAssessmentModal()"
+            >
+              <sc-button
+                id="advisor_example_button_mobile"
+                label="Example"
+                [compact]="true"
+                icon="dices"
+                iconPosition="start"
+                variant="outline"
+                [routerLink]="['/advisor']"
+                [queryParams]="advisorExampleQueryParams"
+              ></sc-button>
+              <sc-button
+                id="advisor_introduction_button_mobile"
+                label="Introduction"
+                [compact]="true"
+                icon="tv-minimal-play"
+                iconPosition="start"
+                variant="outline"
+                (click)="openIntroductionModal()"
+              ></sc-button>
+            </sc-page-actions>
 
-          <div class="advisor-top-controls">
-            <sc-select-dropdown
-              buttonId="advisor_currency_button"
-              panelId="advisor_currency_options"
-              icon="credit-card"
-              compactIcon="credit-card"
-              [label]="selectedCurrency().slug"
-              [options]="availableCurrencies"
-              [selected]="selectedCurrency()"
-              [optionLabel]="currencyLabel"
-              (selectedChange)="selectCurrency($event)"
-            ></sc-select-dropdown>
+            <sc-button
+              id="advisor_compare_baseline_button"
+              [compact]="true"
+              [label]="baselineCompareButtonLabel()"
+              icon="scale"
+              iconPosition="start"
+              [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
+              [disabled]="!selectedBaselineServer()"
+              (click)="toggleBaselineCompare()"
+            ></sc-button>
 
-            <sc-column-picker
-              buttonId="advisor_column_button"
-              panelId="advisor_column_options"
-              [columns]="possibleColumns()"
-              (visibilityChange)="setColumnVisibility($event.name, $event.show)"
-            ></sc-column-picker>
+            <div class="advisor-top-controls">
+              <sc-select-dropdown
+                buttonId="advisor_currency_button"
+                panelId="advisor_currency_options"
+                icon="credit-card"
+                compactIcon="credit-card"
+                [label]="selectedCurrency().slug"
+                [options]="availableCurrencies"
+                [selected]="selectedCurrency()"
+                [optionLabel]="currencyLabel"
+                (selectedChange)="selectCurrency($event)"
+              ></sc-select-dropdown>
+
+              <sc-column-picker
+                buttonId="advisor_column_button"
+                panelId="advisor_column_options"
+                [columns]="possibleColumns()"
+                (visibilityChange)="
+                  setColumnVisibility($event.name, $event.show)
+                "
+              ></sc-column-picker>
+            </div>
           </div>
         </div>
 

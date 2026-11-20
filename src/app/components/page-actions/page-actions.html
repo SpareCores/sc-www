@@ -1,0 +1,21 @@
+@if (showBookmark()) {
+  <sc-page-bookmark
+    [active]="bookmarkActive()"
+    [disabled]="bookmarkDisabled()"
+    [loading]="bookmarkLoading()"
+    [guestLocked]="bookmarkGuestLocked()"
+    (bookmarkClick)="bookmarkClick.emit($event)"
+  ></sc-page-bookmark>
+}
+@if (showEdit()) {
+  <button
+    type="button"
+    class="page-actions__edit"
+    [attr.aria-label]="editAriaLabel()"
+    (click)="editClick.emit($event)"
+  >
+    <svg lucideSquarePen class="page-actions__edit-icon"></svg>
+  </button>
+}
+<ng-content></ng-content>
+<sc-share-link-button [buttonId]="shareButtonId()"></sc-share-link-button>

@@ -30,6 +30,7 @@ import {
 } from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
 import { PageHeader } from "../../components/page-header/page-header";
+import { PageActions } from "../../components/page-actions/page-actions";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { AcceleratorMemoryPipe } from "../../pipes/accelerator-memory-pipe";
@@ -116,6 +117,7 @@ export type RegionVendorMetadata = {
     RouterModule,
     Button,
     PageHeader,
+    PageActions,
     SearchBar,
     TableFooter,
     LoadingSpinner,

@@ -109,7 +109,9 @@ describe("Guest feature limits", () => {
 
   it("opens register from the listing page-header bookmark", () => {
     visitWithClerk("/servers");
-    cy.get("button.page-header__bookmark--locked").should("be.visible").click();
+    cy.get("sc-page-header button.page-bookmark__button--locked")
+      .should("be.visible")
+      .click();
     assertRegisterModalOpened();
   });
 

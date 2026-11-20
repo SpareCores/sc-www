@@ -36,7 +36,6 @@
           [showEdit]="!!comparePage.exactSavedComparison()"
           editAriaLabel="Edit comparison"
           [showShare]="!!instances.length"
-          [copyLink]="true"
           (bookmarkClick)="comparePage.toggleSavedComparison()"
           (editClick)="comparePage.openSaveComparisonModal()"
         >
@@ -52,21 +51,25 @@
               (opening)="updateEmbeddableWidgets()"
             ></sc-embed-widget-button>
           }
+          @if (instances.length) {
+            <div
+              pageHeaderDescription
+              class="sc-page-description"
+              [innerHTML]="comparePage.description"
+            ></div>
+          }
+          @if (instances.length) {
+            <sc-compare-toolbar
+              pageHeaderToolbar
+              resource="database"
+              [items]="databases"
+              [baseline]="baselineDatabase"
+              [currency]="selectedCurrency"
+              (baselineSelected)="selectBaselineDatabase($event)"
+              (currencySelected)="selectCurrency($event)"
+            ></sc-compare-toolbar>
+          }
         </sc-page-header>
-        @if (instances.length) {
-          <div
-            class="sc-page-description"
-            [innerHTML]="comparePage.description"
-          ></div>
-          <sc-compare-toolbar
-            resource="database"
-            [items]="databases"
-            [baseline]="baselineDatabase"
-            [currency]="selectedCurrency"
-            (baselineSelected)="selectBaselineDatabase($event)"
-            (currencySelected)="selectCurrency($event)"
-          ></sc-compare-toolbar>
-        }
       </div>
 
       @if (!instances.length) {
