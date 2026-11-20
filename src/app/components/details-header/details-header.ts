@@ -37,6 +37,10 @@ export class DetailsHeader {
   features = input<DetailsHeaderFeature[]>([]);
   score = input<DetailsHeaderScore | null>(null);
 
+  readonly displayNameParts = computed(() =>
+    this.displayName().split(/(?<=[_-])/),
+  );
+
   readonly gaugeMax = computed(() => {
     const score = this.score();
     const values = [score?.primaryValue, score?.secondaryValue].filter(

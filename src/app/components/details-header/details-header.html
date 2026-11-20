@@ -4,11 +4,13 @@
   class="flex flex-wrap justify-between sc-card gap-4 p-4 md:p-6"
 >
   <div
-    class="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center w-full sm:flex sm:items-start sm:gap-6 lg:w-auto lg:flex-1 lg:min-w-0"
+    class="grid grid-cols-[auto_minmax(0,1fr)_auto_auto_auto] items-center w-full sm:flex sm:items-start sm:gap-6 lg:w-auto lg:flex-1 lg:min-w-0"
   >
-    <div class="col-start-2 row-start-1 flex gap-4 flex-col shrink-0">
+    <div
+      class="col-start-1 row-start-2 row-span-2 self-start flex gap-4 flex-col shrink-0 max-sm:mt-4 max-sm:mr-3"
+    >
       <div
-        class="vendor-logo size-9.5 min-w-9.5 sm:w-28 sm:h-28 sm:min-w-28 xl:w-20 xl:h-20 xl:min-w-20 bg-white rounded-lg"
+        class="vendor-logo size-13 min-w-13 sm:w-28 sm:h-28 sm:min-w-28 xl:w-20 xl:h-20 xl:min-w-20 bg-white rounded-lg"
       >
         @if (vendorLogo(); as logo) {
           <a [routerLink]="['/vendors', vendorId()]" class="block h-full">
@@ -32,11 +34,15 @@
           "
         ></sc-bookmark-button>
         <span
-          class="col-span-full row-start-2 mt-4 min-w-0 wrap-break-word leading-8 text-emerald-400 font-bold sm:mt-0 sm:self-end"
-          >{{ displayName() }}</span
+          class="col-[2/-1] row-start-2 mt-4 min-w-0 wrap-break-word leading-8 text-emerald-400 font-bold sm:mt-0 sm:self-end"
         >
+          @for (part of displayNameParts(); track $index) {
+            <span>{{ part }}</span
+            ><wbr />
+          }
+        </span>
         <span
-          class="col-span-full row-start-3 inline-flex items-center gap-x-2 text-base sm:text-2xl sm:basis-full xl:basis-auto"
+          class="col-[2/-1] row-start-3 inline-flex items-center gap-x-2 text-base sm:text-2xl sm:basis-full xl:basis-auto"
         >
           by
           <a [routerLink]="['/vendors', vendorId()]" class="sc-link">
