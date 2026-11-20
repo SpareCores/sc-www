@@ -4,8 +4,38 @@
   display: contents;
 }
 
+.details_card_fit {
+  height: auto;
+  min-height: 0;
+  max-height: 28.75rem;
+}
+
+.details_card_fit.sc-chart-block--open {
+  max-height: none;
+}
+
+@media (width >= theme(--breakpoint-md)) {
+  .details_card_fit:not(.sc-chart-block--half-from-xl) {
+    height: revert-layer;
+    min-height: revert-layer;
+    max-height: revert-layer;
+  }
+}
+
+@media (width >= theme(--breakpoint-xl)) {
+  .details_card_fit {
+    height: revert-layer;
+    min-height: revert-layer;
+    max-height: revert-layer;
+  }
+}
+
 .card_sections {
   @apply flex flex-col;
+}
+
+.card_sections > :last-child .sc-kv-table tbody tr:last-child {
+  border-bottom-width: 0;
 }
 
 .items_table_spacer_row {

@@ -3,6 +3,7 @@
   [class.sc-chart-block--half-from-xl]="halfFromXl()"
   [class.sc-chart-block--open]="isOpen()"
   [class.sc-chart-block--scrollable]="!expandable()"
+  [class.details_card_fit]="expandable()"
   [attr.id]="cardId()"
   #cardRoot
 >
@@ -140,10 +141,7 @@
         ></sc-button>
       </div>
     } @else {
-      <div
-        class="w-full pt-3 flex justify-center"
-        [attr.id]="cardId() + '_less'"
-      >
+      <div class="w-full flex justify-center" [attr.id]="cardId() + '_less'">
         <sc-button
           [label]="lessLabel()"
           size="small"
