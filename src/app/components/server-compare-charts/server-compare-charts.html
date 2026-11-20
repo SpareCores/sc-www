@@ -404,21 +404,21 @@
                 [class.compare-instance-section-last-row]="last"
               >
                 <td class="sm:whitespace-nowrap">
-                  <div class="flex gap-2 items-center">
-                    {{ category.name }}
+                  <span>{{ category.name }}</span>
+                  <span class="whitespace-nowrap">
                     @if (category.id === "average_time_to_start") {
-                      <svg
+                      &nbsp;<svg
                         [lucideIcon]="'circle-arrow-down'"
-                        class="h-4 w-4 shrink-0 text-gray-200"
+                        class="inline-block h-4 w-4 align-middle text-gray-200"
                         scTooltipTrigger
                         (tooltipOpen)="showTooltip($event, 'Lower is better.')"
                         (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
                     @if (category.description) {
-                      <svg
+                      &nbsp;<svg
                         lucideInfo
-                        class="h-4 w-4 shrink-0 text-gray-200"
+                        class="inline-block h-4 w-4 align-middle text-gray-200"
                         scTooltipTrigger
                         (tooltipOpen)="
                           showTooltip($event, category.description)
@@ -426,7 +426,7 @@
                         (tooltipClose)="hideTooltip()"
                       ></svg>
                     }
-                  </div>
+                  </span>
                 </td>
                 @for (
                   server of servers;
