@@ -1,10 +1,7 @@
 @reference "../../../styles/tailwind.css";
 
 .about-paragraph {
-  @apply my-4 text-sm text-white sm:my-10 sm:text-lg;
-
-  text-align: justify;
-  text-align-last: left;
+  @apply my-4 text-sm text-left text-white sm:my-10 sm:text-lg;
 }
 
 .about-paragraph--list-intro {
@@ -16,7 +13,11 @@
 }
 
 .about-heading {
-  @apply text-xl font-bold text-white mt-8 mb-4 sm:text-2xl sm:my-10;
+  @apply text-xl font-bold text-white mt-8 mb-4 border-t border-gray-600 pt-8 sm:text-2xl;
+}
+
+.about-heading + .about-paragraph {
+  @apply mt-4;
 }
 
 .about-list {
@@ -24,12 +25,9 @@
 }
 
 .about-list li {
-  @apply list-disc text-sm my-1 mx-8 text-white sm:mr-0 sm:text-lg;
-
-  text-align: justify;
-  text-align-last: left;
+  @apply list-disc text-sm text-left my-1 mx-8 text-white sm:mr-0 sm:text-lg;
 }
 
 a {
-  @apply underline decoration-dotted hover:text-gray-500;
+  @apply underline decoration-dotted hover:text-gray-500 focus-visible:text-gray-500;
 }
