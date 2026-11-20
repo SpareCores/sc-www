@@ -8,7 +8,7 @@
       >
         <div class="flex flex-col gap-4">
           <sc-page-header icon="handshake" [title]="pageTitle"></sc-page-header>
-          <p class="sc-page-description">
+          <p class="sc-page-description sm:text-lg">
             @for (paragraph of pageIntro; track paragraph) {
               @if (!$first) {
                 <br /><br />
