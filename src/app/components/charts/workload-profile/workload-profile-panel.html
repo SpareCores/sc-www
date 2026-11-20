@@ -320,7 +320,9 @@
                       {{ formatImpactPercent(row.impact) }}
                     </td>
                     @if (breakdown.hasNotes) {
-                      <td>{{ row.note?.trim() || "" }}</td>
+                      <td class="workload-profile-breakdown-table__note">
+                        {{ row.note?.trim() || "" }}
+                      </td>
                     }
                   </tr>
                 }

@@ -221,6 +221,14 @@
         text-align: left;
         white-space: nowrap;
       }
+
+      td.workload-profile-breakdown-table__note {
+        white-space: nowrap;
+
+        @media (width >= theme(--breakpoint-lg)) {
+          white-space: normal;
+        }
+      }
     }
   }
 }
