@@ -1,5 +1,9 @@
 @if (layout() === "details") {
-  <div class="sc-chart-block sc-chart-block--half" id="{{ chart().id }}_chart">
+  <div
+    class="sc-chart-block sc-chart-block--half"
+    [class.sc-chart-block--aspect-from-md]="chart().id === 'static_web'"
+    id="{{ chart().id }}_chart"
+  >
     <div
       class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
     >

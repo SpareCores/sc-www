@@ -63,6 +63,13 @@
   }
 }
 
+@media (width >= theme(--breakpoint-md)) {
+  .sc-chart-block--aspect-from-md .chart_div {
+    height: auto;
+    aspect-ratio: 2;
+  }
+}
+
 .sc-chart-block--inline {
   @apply relative gap-4 overflow-hidden bg-transparent p-4 md:p-6;
   width: 100%;
