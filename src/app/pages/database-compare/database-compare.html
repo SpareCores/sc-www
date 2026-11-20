@@ -133,11 +133,11 @@
       }
 
       @if (databases.length) {
-        <div class="content-gutter">
+        <div class="sm:content-gutter">
           <div
             id="database_compare_table_holder"
             #tableHolder
-            class="compare_table_holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative"
+            class="compare_table_holder sc-compare-table-holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative"
             (scroll)="updateStickyLayout()"
           >
             @if (isBrowser() && isTableOutsideViewport()) {
@@ -162,7 +162,7 @@
                             class="ml-auto flex flex-col items-end gap-1 w-fit"
                           >
                             <a
-                              class="underline decoration-dotted whitespace-nowrap"
+                              class="underline decoration-dotted sm:whitespace-nowrap"
                               [href]="
                                 '/database/' +
                                 database.vendor_id +
@@ -215,7 +215,7 @@
                         class="flex flex-col gap-1 justify-center ml-auto w-fit"
                       >
                         <a
-                          class="underline decoration-dotted whitespace-nowrap"
+                          class="underline decoration-dotted sm:whitespace-nowrap"
                           routerLink="/database/{{ database.vendor_id }}/{{
                             database.api_reference
                           }}"
@@ -253,8 +253,14 @@
                     class="section_header sc-header-anchor-host"
                     id="database_compare_pgbench_section"
                   >
-                    <td [attr.colspan]="pinnedRow.contentColSpan">
-                      <div class="compare-section-header-row">
+                    <td
+                      [attr.colspan]="pinnedRow.colSpan"
+                      class="sc-compare-table__pinned-cell"
+                    >
+                      <div
+                        class="sc-compare-table__pinned-content compare-section-header-row"
+                        [style]="pinnedRow.widthStyle"
+                      >
                         <h3
                           class="text-lg sm:text-xl font-semibold m-0 flex items-center"
                         >
@@ -263,7 +269,17 @@
                               [lucideIcon]="'pgbench' | benchmarkIcon"
                               class="h-6 w-6 shrink-0"
                             ></svg>
-                            <span class="compare-section-header-title__text">
+                            <span
+                              class="compare-section-header-title__text"
+                              scTooltipTrigger
+                              (tooltipOpen)="
+                                showTruncatedTitleTooltip(
+                                  $event,
+                                  pgbenchMeta.title
+                                )
+                              "
+                              (tooltipClose)="hideChartTooltip()"
+                            >
                               {{ pgbenchMeta.title }}
                             </span>
                             <span class="compare-section-header-title__icons">
@@ -314,15 +330,15 @@
                         </h3>
                       </div>
                     </td>
-                    @if (pinnedRow.trailingColSpan) {
-                      <td [attr.colspan]="pinnedRow.trailingColSpan"></td>
-                    }
                   </tr>
                   <tr class="compare-fixed-chart-row">
-                    <td [attr.colspan]="pinnedRow.contentColSpan">
+                    <td
+                      [attr.colspan]="pinnedRow.colSpan"
+                      class="sc-compare-table__pinned-cell"
+                    >
                       <div
-                        class="compare-chart-content"
-                        [style]="pinnedRow.chartWidthStyle"
+                        class="sc-compare-table__pinned-content compare-chart-content"
+                        [style]="pinnedRow.widthStyle"
                       >
                         <sc-benchmark-line-chart
                           benchmarkKey="pgbench"
@@ -340,9 +356,6 @@
                         ></sc-benchmark-line-chart>
                       </div>
                     </td>
-                    @if (pinnedRow.trailingColSpan) {
-                      <td [attr.colspan]="pinnedRow.trailingColSpan"></td>
-                    }
                   </tr>
                 }
                 <tr
@@ -350,7 +363,9 @@
                   id="spec_line_more_details"
                 >
                   <td>
-                    <h2 class="text-lg sm:text-xl font-semibold">
+                    <h2
+                      class="text-lg sm:text-xl font-semibold whitespace-nowrap"
+                    >
                       More Details
                       <sc-header-anchor
                         anchorId="spec_line_more_details"

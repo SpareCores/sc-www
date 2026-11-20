@@ -331,8 +331,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   }
 
   getServerColumnWidth(server: ExtendedServerDetails) {
-    const displayNameLength = server.display_name?.length ?? 0;
-    return `max(10.5rem, ${displayNameLength + 3}ch)`;
+    return compareTableLayout.getCompareColumnWidth(server.display_name);
   }
 
   private schedulePinnedRowLayoutUpdate(): void {
@@ -560,6 +559,12 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
 
   readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
   readonly formatWorkloadProfileLabel = formatWorkloadProfileLabel;
+
+  showTruncatedTitleTooltip(el: Element, title: string) {
+    if (el.scrollWidth > el.clientWidth) {
+      this.showTooltip(el, title);
+    }
+  }
 
   showTooltip(el: Element | Event, content?: string, autoHide = false) {
     this.tooltipHtml = "";

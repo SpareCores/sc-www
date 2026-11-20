@@ -20,15 +20,19 @@
 }
 
 .compare-section-header-title {
-  @apply inline-flex max-w-none flex-nowrap items-center gap-2 whitespace-nowrap;
+  @apply inline-flex min-w-0 max-w-none flex-nowrap items-center gap-2 whitespace-nowrap;
 }
 
 .compare-section-header-row {
   @apply flex items-center justify-between gap-4;
 }
 
+.compare-section-header-row > h3 {
+  @apply min-w-0;
+}
+
 .compare-section-header-title__text {
-  @apply whitespace-nowrap leading-tight;
+  @apply truncate leading-tight;
 }
 
 .compare-section-header-title__icons {
@@ -36,9 +40,7 @@
 }
 
 .compare-chart-content {
-  box-sizing: border-box;
-  min-width: 0;
-  padding-right: 1rem;
+  @apply box-border min-w-0 pr-4 md:pr-9;
 }
 
 .benchmark-note-icon {

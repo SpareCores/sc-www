@@ -130,11 +130,11 @@
       }
 
       @if (instances.length) {
-        <div class="content-gutter">
+        <div class="sm:content-gutter">
           <div
             id="table_holder"
             #tableHolder
-            class="compare_table_holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative min-h-dvh"
+            class="compare_table_holder sc-compare-table-holder scrollbar-hidden overflow-x-auto overflow-y-hidden relative min-h-dvh"
             (scroll)="updateMirrorLayout()"
           >
             @if (isBrowser() && isTableOutsideViewport()) {
@@ -159,7 +159,7 @@
                             class="ml-auto flex flex-col items-end gap-1 w-fit"
                           >
                             <a
-                              class="underline decoration-dotted whitespace-nowrap"
+                              class="underline decoration-dotted sm:whitespace-nowrap"
                               [href]="
                                 '/server/' +
                                 server.vendor_id +

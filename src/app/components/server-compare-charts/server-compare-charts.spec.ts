@@ -281,7 +281,7 @@ describe("ServerCompareCharts", () => {
     expect(chartContent?.style.maxWidth).toBe("100%");
   });
 
-  it("keeps benchmark category title and chart sticky spans capped for many servers", () => {
+  it("pins benchmark category title and chart rows to the holder width for many servers", () => {
     mountTableHolder(1200);
 
     component.servers = buildServers(9) as unknown as typeof component.servers;
@@ -320,15 +320,21 @@ describe("ServerCompareCharts", () => {
 
     const titleCells = titleRow?.querySelectorAll(":scope > td");
     const chartCells = chartRow?.querySelectorAll(":scope > td");
+    const titleContent = titleRow?.querySelector(
+      ".sc-compare-table__pinned-content",
+    ) as HTMLDivElement | null;
+    const chartContent = chartRow?.querySelector(
+      ".sc-compare-table__pinned-content",
+    ) as HTMLDivElement | null;
 
-    expect(titleCells?.length).toBe(3);
-    expect(titleCells?.[0].getAttribute("colspan")).toBe("3");
-    expect(titleCells?.[1].getAttribute("colspan")).toBe("6");
-    expect(titleCells?.[2].getAttribute("colspan")).toBe("1");
+    expect(titleCells?.length).toBe(1);
+    expect(titleCells?.[0].getAttribute("colspan")).toBe("10");
+    expect(titleContent?.style.width).toBe("1200px");
+    expect(titleContent?.querySelector("sc-button")).toBeTruthy();
 
-    expect(chartCells?.length).toBe(2);
-    expect(chartCells?.[0].getAttribute("colspan")).toBe("3");
-    expect(chartCells?.[1].getAttribute("colspan")).toBe("7");
+    expect(chartCells?.length).toBe(1);
+    expect(chartCells?.[0].getAttribute("colspan")).toBe("10");
+    expect(chartContent?.style.width).toBe("1200px");
   });
 
   it("renders embedded benchmark rows full width without trailing filler cells", () => {
@@ -380,7 +386,7 @@ describe("ServerCompareCharts", () => {
     ).toBeTruthy();
   });
 
-  it("keeps multi-bar title and chart sticky spans capped for many servers", () => {
+  it("pins multi-bar title and chart rows to the holder width for many servers", () => {
     mountTableHolder(1200);
 
     component.showChart = "static_web";
@@ -399,15 +405,21 @@ describe("ServerCompareCharts", () => {
 
     const titleCells = titleRow?.querySelectorAll(":scope > td");
     const chartCells = chartRow?.querySelectorAll(":scope > td");
+    const titleContent = titleRow?.querySelector(
+      ".sc-compare-table__pinned-content",
+    ) as HTMLDivElement | null;
+    const chartContent = chartRow?.querySelector(
+      ".sc-compare-table__pinned-content",
+    ) as HTMLDivElement | null;
 
-    expect(titleCells?.length).toBe(3);
-    expect(titleCells?.[0].getAttribute("colspan")).toBe("3");
-    expect(titleCells?.[1].getAttribute("colspan")).toBe("6");
-    expect(titleCells?.[2].getAttribute("colspan")).toBe("1");
+    expect(titleCells?.length).toBe(1);
+    expect(titleCells?.[0].getAttribute("colspan")).toBe("10");
+    expect(titleContent?.style.width).toBe("1200px");
+    expect(titleContent?.querySelector("sc-button")).toBeTruthy();
 
-    expect(chartCells?.length).toBe(2);
-    expect(chartCells?.[0].getAttribute("colspan")).toBe("3");
-    expect(chartCells?.[1].getAttribute("colspan")).toBe("7");
+    expect(chartCells?.length).toBe(1);
+    expect(chartCells?.[0].getAttribute("colspan")).toBe("10");
+    expect(chartContent?.style.width).toBe("1200px");
   });
 
   it("renders expanded benchmark detail names in fixed split rows", () => {

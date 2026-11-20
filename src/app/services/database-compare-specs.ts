@@ -17,6 +17,7 @@ import {
   toCompareDeltaView,
 } from "../components/charts/shared/server-compare-table.utils";
 import { AdvisorUi } from "../pages/advisor/advisor-ui";
+import { getCompareColumnWidth } from "../pages/shared/compare-table/compare-table-layout.utils";
 import { formatKebabTitle } from "../pipes/pipe-utils";
 import { ComparedDatabase } from "./compare-selection";
 import { PGBENCH_PEAK_BENCHMARK_ID } from "./database-pgbench.constants";
@@ -111,7 +112,7 @@ export class DatabaseCompareSpecs {
   }
 
   columnWidth(displayName: string | undefined): string {
-    return `max(10.5rem, ${(displayName?.length ?? 0) + 3}ch)`;
+    return getCompareColumnWidth(displayName);
   }
 
   bestCellStyle(row: ComparePropertyRow, databaseIndex: number): string {

@@ -329,6 +329,12 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  showTruncatedTitleTooltip(el: Element, title: string): void {
+    if (el.scrollWidth > el.clientWidth) {
+      this.showChartTooltip(el, title);
+    }
+  }
+
   hideChartTooltip(): void {
     this.chartTooltip.hide(this.chartSectionTooltip()?.nativeElement);
   }

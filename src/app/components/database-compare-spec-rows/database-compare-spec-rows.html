@@ -4,7 +4,7 @@
       @let sectionId = sectionAnchorId(section);
       <tr class="section_header sc-header-anchor-host" [id]="sectionId">
         <td>
-          <h2 class="text-lg sm:text-xl font-semibold">
+          <h2 class="text-lg sm:text-xl font-semibold whitespace-nowrap">
             {{ section.name }}
             @if (showAnchors()) {
               <sc-header-anchor
@@ -131,7 +131,7 @@
     @if (sectionIndex === 0 && priceRows().length) {
       <tr class="section_header sc-header-anchor-host" id="spec_line_pricing">
         <td>
-          <h2 class="text-lg sm:text-xl font-semibold">
+          <h2 class="text-lg sm:text-xl font-semibold whitespace-nowrap">
             Pricing
             @if (showAnchors()) {
               <sc-header-anchor
