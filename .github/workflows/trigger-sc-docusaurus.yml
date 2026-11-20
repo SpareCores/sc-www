@@ -1,0 +1,23 @@
+name: Trigger docs rebuild
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/user-guide/**"
+
+jobs:
+  dispatch:
+    name: Dispatch docs deploy workflow
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Trigger SpareCores/sc-docusaurus deploy.yml
+        env:
+          GH_TOKEN: ${{ secrets.SC_DOCS_DISPATCH_TOKEN }}
+        run: >
+          gh workflow run deploy.yml
+          --repo SpareCores/sc-docusaurus
+          --ref main
+          -f source=${{ github.event.repository.name }}
