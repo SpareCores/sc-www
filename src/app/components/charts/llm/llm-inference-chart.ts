@@ -13,7 +13,6 @@ import {
 } from "@angular/core";
 import {
   LucideDynamicIcon,
-  LucideChevronDown,
   LucideCircleArrowUp,
   LucideInfo,
   LucideTriangleAlert,
@@ -43,6 +42,7 @@ import {
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
 import { TooltipTrigger } from "../../../directives/tooltip-trigger";
+import { Button } from "../../button/button";
 
 @Component({
   selector: "sc-llm-inference-chart",
@@ -50,11 +50,11 @@ import { TooltipTrigger } from "../../../directives/tooltip-trigger";
   imports: [
     TooltipTrigger,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideCircleArrowUp,
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,
+    Button,
     Dropdown,
     BenchmarkIconPipe,
     HeaderAnchor,
