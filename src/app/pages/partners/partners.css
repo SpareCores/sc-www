@@ -1,9 +1,7 @@
 @reference "../../../styles/tailwind.css";
 
 .partners-paragraph {
-  @apply my-4 text-sm text-justify text-white sm:my-10 sm:text-left sm:text-lg;
-
-  text-align-last: left;
+  @apply my-4 text-sm text-left text-white sm:my-10 sm:text-lg;
 }
 
 .partners-paragraph--list-intro {
@@ -107,7 +105,5 @@
 }
 
 .partners-list li {
-  @apply list-disc text-sm text-justify my-1 mx-8 text-white sm:mr-0 sm:text-left sm:text-lg;
-
-  text-align-last: left;
+  @apply list-disc text-sm text-left my-1 mx-8 text-white sm:mr-0 sm:text-lg;
 }
