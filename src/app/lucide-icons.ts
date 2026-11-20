@@ -89,6 +89,7 @@ import {
   LucideSearch,
   LucideSend,
   LucideServer,
+  LucideSettings,
   LucideShare2,
   LucideShieldCog,
   LucideShipWheel,
@@ -302,4 +303,5 @@ export const lucideIcons = [
   LucideSquarePen,
   LucideSquareArrowOutUpRight,
   LucideTrash2,
+  LucideSettings,
 ] as const;
