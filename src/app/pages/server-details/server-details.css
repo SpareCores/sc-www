@@ -97,7 +97,7 @@
 }
 
 div.giscus {
-  margin-top: 35px;
+  @apply mt-4;
 }
 
 #toast-danger {
