@@ -16,6 +16,7 @@ export class SectionHeading {
   readonly tag = input.required<string>();
   readonly attrName = input<string>();
   readonly attrValue = input<string>();
+  readonly monoTitle = input(false);
   readonly subtitle = input<string>();
   readonly fullWidthSubtitle = input(false);
   readonly description = input<SectionHeadingDescription>("body");

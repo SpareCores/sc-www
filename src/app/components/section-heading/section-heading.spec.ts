@@ -34,6 +34,16 @@ describe("SectionHeading", () => {
     expect(fixture.nativeElement.textContent).toContain("For platform leads");
   });
 
+  it("sets the title in the mono font from sm when monoTitle is set", () => {
+    const title = fixture.nativeElement.querySelector("h2");
+    expect(title.classList).not.toContain("sm:font-mono");
+
+    fixture.componentRef.setInput("monoTitle", true);
+    fixture.detectChanges();
+
+    expect(title.classList).toContain("sm:font-mono");
+  });
+
   it("renders a header anchor in the title when anchorId is set", () => {
     expect(fixture.nativeElement.querySelector("sc-header-anchor")).toBeNull();
 

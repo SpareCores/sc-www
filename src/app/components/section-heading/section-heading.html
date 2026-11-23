@@ -1,5 +1,6 @@
 <h2
   class="text-xl font-light wrap-break-word sm:text-4xl"
+  [class]="monoTitle() ? 'sm:font-mono sm:tracking-[0.125rem]' : ''"
   [class.sc-header-anchor-host]="!!anchorId()"
 >
   <span class="text-emerald-400">&lt;</span>
