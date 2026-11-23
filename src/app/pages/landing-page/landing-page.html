@@ -177,8 +177,10 @@
           anchorLabel="Resource Tracker"
         ></sc-section-heading>
         <div class="grid gap-8 sm:pt-4 xl:grid-cols-2 xl:gap-12">
-          <div class="flex flex-col justify-center md:max-lg:px-12">
-            <sc-check-list class="mx-4.75">
+          <div class="flex flex-col justify-center sm:max-lg:px-20">
+            <sc-check-list
+              class="mx-4.75 sm:mx-0 sm:font-light *:sm:pt-6 *:sm:pb-4.75"
+            >
               <sc-check-list-item>
                 Add lightweight telemetry to AI/ML jobs.
               </sc-check-list-item>
@@ -193,7 +195,7 @@
               </sc-check-list-item>
             </sc-check-list>
             <div
-              class="w-full text-xl sm:text-2xl font-bold pt-8 sm:pt-12 text-center lg:text-left mx-auto"
+              class="w-full sm:w-4/5 lg:w-full text-xl sm:text-2xl font-bold pt-8 sm:pt-12 text-center lg:text-left mx-auto"
             >
               <a
                 href="https://sparecores.github.io/resource-tracker/"
@@ -308,11 +310,11 @@
           infrastructure guesswork into measurable optimization.
         </sc-section-heading>
         <div
-          class="flex flex-col gap-8 sm:gap-12 md:max-lg:px-12 lg:flex-row lg:gap-24 sm:pt-8"
+          class="flex flex-col gap-8 sm:gap-24 sm:max-lg:px-20 lg:flex-row lg:gap-24 sm:pt-8"
         >
           <div class="flex flex-col w-full lg:w-1/2">
             <div
-              class="grid grid-cols-[auto_1fr] items-center gap-x-2 pb-4 sm:pb-8"
+              class="grid grid-cols-[auto_1fr] items-center gap-x-2 pb-4 sm:gap-x-4 sm:pb-8"
             >
               <div
                 class="flex size-9.5 items-center justify-center rounded-full border-2 border-emerald-400"
@@ -323,10 +325,10 @@
                   aria-hidden="true"
                 ></svg>
               </div>
-              <div class="text-xl font-bold text-emerald-400 sm:text-2xl">
+              <div class="text-xl font-bold text-emerald-400 sm:text-3xl">
                 Sentinel Access
               </div>
-              <div class="col-start-2 text-xl font-light">
+              <div class="col-start-2 text-xl font-light sm:text-2xl">
                 <a
                   href="https://sentinel.sparecores.com/"
                   target="_blank"
@@ -336,7 +338,9 @@
                 >
               </div>
             </div>
-            <sc-check-list class="mx-4.75">
+            <sc-check-list
+              class="mx-4.75 sm:mx-0 sm:font-light *:sm:pt-6 *:sm:pb-4.75"
+            >
               <sc-check-list-item>
                 360-view of every job you run in a central dashboard
               </sc-check-list-item>
@@ -353,7 +357,7 @@
           </div>
           <div class="flex flex-col w-full lg:w-1/2">
             <div
-              class="grid grid-cols-[auto_1fr] items-center gap-x-2 pb-4 sm:pb-8"
+              class="grid grid-cols-[auto_1fr] items-center gap-x-2 pb-4 sm:gap-x-4 sm:pb-8"
             >
               <div
                 class="flex size-9.5 items-center justify-center rounded-full border-2 border-emerald-400"
@@ -364,10 +368,10 @@
                   aria-hidden="true"
                 ></svg>
               </div>
-              <div class="text-xl font-bold text-emerald-400 sm:text-2xl">
+              <div class="text-xl font-bold text-emerald-400 sm:text-3xl">
                 Sentinel team plans
               </div>
-              <div class="col-start-2 text-xl font-light">
+              <div class="col-start-2 text-xl font-light sm:text-2xl">
                 <button
                   type="button"
                   id="meeting-sentinel-team-plans"
@@ -377,7 +381,9 @@
                 </button>
               </div>
             </div>
-            <sc-check-list class="mx-4.75">
+            <sc-check-list
+              class="mx-4.75 sm:mx-0 sm:font-light *:sm:pt-6 *:sm:pb-4.75"
+            >
               <sc-check-list-item>
                 Everything in Sentinel Access, plus team support
               </sc-check-list-item>
