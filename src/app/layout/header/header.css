@@ -6,7 +6,7 @@
   display: flex;
   gap: 0.5rem;
   white-space: nowrap;
-  @apply text-base items-center;
+  @apply text-sm items-center;
 }
 
 a.navbar_link,
@@ -75,7 +75,7 @@ li {
 }
 
 .mobile_menu_panel .navbar_link {
-  @apply h-9.5;
+  @apply h-9.5 text-base;
 }
 
 .compare_dropdown_panel {
