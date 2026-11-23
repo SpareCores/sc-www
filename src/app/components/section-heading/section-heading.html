@@ -20,11 +20,18 @@
 </h2>
 @if (subtitle()) {
   <p
-    class="mx-auto w-full text-xl font-bold text-emerald-400 sm:w-2/3 sm:text-4xl xl:w-full"
+    class="mx-auto w-full text-xl font-bold text-emerald-400 sm:text-4xl"
+    [class]="fullWidthSubtitle() ? '' : 'sm:w-2/3'"
   >
     {{ subtitle() }}
   </p>
 }
-<p class="mx-auto w-full text-sm empty:hidden sm:w-4/5 sm:text-2xl lg:w-2/3">
+@let descriptionClasses =
+  description() === "lead"
+    ? "sm:w-4/5 sm:pt-8 sm:text-4xl sm:font-light sm:italic"
+    : description() === "compact"
+      ? "sm:w-3/5 sm:pt-4 sm:text-xl sm:font-medium"
+      : "sm:w-4/5 sm:text-2xl lg:w-2/3";
+<p class="mx-auto w-full text-sm empty:hidden" [class]="descriptionClasses">
   <ng-content />
 </p>

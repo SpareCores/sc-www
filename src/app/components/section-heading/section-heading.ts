@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { HeaderAnchor } from "../header-anchor/header-anchor";
 
+export type SectionHeadingDescription = "body" | "lead" | "compact";
+
 @Component({
   selector: "sc-section-heading",
   imports: [HeaderAnchor],
@@ -15,6 +17,8 @@ export class SectionHeading {
   readonly attrName = input<string>();
   readonly attrValue = input<string>();
   readonly subtitle = input<string>();
+  readonly fullWidthSubtitle = input(false);
+  readonly description = input<SectionHeadingDescription>("body");
   readonly anchorId = input<string>();
   readonly anchorLabel = input("");
   readonly anchorWithTarget = input(false);
