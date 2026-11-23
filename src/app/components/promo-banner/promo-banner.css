@@ -111,3 +111,10 @@
     margin-top: 0.5rem;
   }
 }
+
+@media (width >= theme(--breakpoint-sm)) {
+  .promo-banner__lead,
+  .promo-banner__copy {
+    font-size: 1rem;
+  }
+}
