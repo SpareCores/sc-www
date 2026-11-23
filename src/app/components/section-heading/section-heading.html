@@ -1,6 +1,9 @@
+@let titleClasses =
+  (monoTitle() ? "sm:font-mono sm:tracking-[0.125rem] " : "") +
+  (wideTitleGap() ? "sm:mb-4" : "");
 <h2
   class="text-xl font-light wrap-break-word sm:text-4xl"
-  [class]="monoTitle() ? 'sm:font-mono sm:tracking-[0.125rem]' : ''"
+  [class]="titleClasses"
   [class.sc-header-anchor-host]="!!anchorId()"
 >
   <span class="text-emerald-400">&lt;</span>
@@ -33,6 +36,9 @@
     : description() === "compact"
       ? "sm:w-3/5 sm:pt-4 sm:text-xl sm:font-medium"
       : "sm:w-4/5 sm:text-2xl lg:w-2/3";
-<p class="mx-auto w-full text-sm empty:hidden" [class]="descriptionClasses">
+<p
+  class="mx-auto w-full text-sm empty:hidden"
+  [class]="descriptionClasses + (monoDescription() ? ' sm:font-mono' : '')"
+>
   <ng-content />
 </p>

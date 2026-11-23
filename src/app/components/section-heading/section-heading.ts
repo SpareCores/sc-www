@@ -17,9 +17,11 @@ export class SectionHeading {
   readonly attrName = input<string>();
   readonly attrValue = input<string>();
   readonly monoTitle = input(false);
+  readonly wideTitleGap = input(false);
   readonly subtitle = input<string>();
   readonly fullWidthSubtitle = input(false);
   readonly description = input<SectionHeadingDescription>("body");
+  readonly monoDescription = input(false);
   readonly anchorId = input<string>();
   readonly anchorLabel = input("");
   readonly anchorWithTarget = input(false);

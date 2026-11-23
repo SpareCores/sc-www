@@ -44,6 +44,26 @@ describe("SectionHeading", () => {
     expect(title.classList).toContain("sm:font-mono");
   });
 
+  it("widens the gap below the title from sm when wideTitleGap is set", () => {
+    const title = fixture.nativeElement.querySelector("h2");
+    expect(title.classList).not.toContain("sm:mb-4");
+
+    fixture.componentRef.setInput("wideTitleGap", true);
+    fixture.detectChanges();
+
+    expect(title.classList).toContain("sm:mb-4");
+  });
+
+  it("sets the description in the mono font from sm when monoDescription is set", () => {
+    const description = fixture.nativeElement.querySelector("p");
+    expect(description.classList).not.toContain("sm:font-mono");
+
+    fixture.componentRef.setInput("monoDescription", true);
+    fixture.detectChanges();
+
+    expect(description.classList).toContain("sm:font-mono");
+  });
+
   it("renders a header anchor in the title when anchorId is set", () => {
     expect(fixture.nativeElement.querySelector("sc-header-anchor")).toBeNull();
 
