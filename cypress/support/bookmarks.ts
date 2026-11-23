@@ -20,9 +20,23 @@ export function openBookmarksPage(): void {
   cy.get("sc-loading-spinner", { timeout: 20000 }).should("not.exist");
 }
 
+export function visiblePageBookmarkButton(): Cypress.Chainable<
+  JQuery<HTMLElement>
+> {
+  return cy
+    .get("sc-page-header, sc-page-actions")
+    .find("button.page-bookmark__button:not(.page-bookmark__button--locked)")
+    .filter(":visible")
+    .first();
+}
+
 export function loadAdvisorExample(): void {
   E2EEvent.visitURL("/advisor");
-  cy.get("#advisor_example_button").should("be.visible").click({ force: true });
+  cy.get("#advisor_example_button, #advisor_example_button_mobile")
+    .filter(":visible")
+    .first()
+    .should("be.visible")
+    .click({ force: true });
   cy.get(
     "#advisor_results_table tbody tr:not(.advisor-empty-state-row)",
   ).should("have.length.greaterThan", 0);
@@ -31,9 +45,7 @@ export function loadAdvisorExample(): void {
 
 export function openPageHeaderSaveModal(modalId: string): void {
   cy.scrollTo(0, 0, { ensureScrollable: false });
-  cy.get(
-    "sc-page-header button.page-bookmark__button:not(.page-bookmark__button--locked)",
-  )
+  visiblePageBookmarkButton()
     .should("be.visible")
     .and("not.be.disabled")
     .click({ scrollBehavior: false });
