@@ -102,7 +102,7 @@ describe("Server Compare", () => {
   });
 
   it("dismisses the compare tooltip when the table scrolls on smaller screens", () => {
-    cy.viewport(800, 900);
+    cy.viewport(390, 850);
     E2EEvent.visitURL(COMPARE_PRICE_URL);
     E2EEvent.waitForServerCompare();
 
