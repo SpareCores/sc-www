@@ -27,7 +27,7 @@ describe("ThemeText", () => {
     fixture.detectChanges();
     const text: HTMLElement = fixture.nativeElement.querySelector(".logo_text");
     expect(text.classList).toContain("logo_text");
-    expect(text.classList).toContain("sm:text-6xl");
-    expect(text.classList).not.toContain("text-xl");
+    expect(text.classList).toContain("logo_text--lg");
+    expect(text.classList).not.toContain("logo_text--sm");
   });
 });

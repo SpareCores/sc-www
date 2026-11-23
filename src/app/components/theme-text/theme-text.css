@@ -1,7 +1,21 @@
+@reference "../../../styles/tailwind.css";
+
 .logo_text {
   letter-spacing: 0.125rem;
   gap: 0.125rem;
   display: flex;
   color: var(--color-white);
   font-family: "Roboto Mono", sans-serif;
+}
+
+.logo_text--sm {
+  @apply text-xl;
+}
+
+.logo_text--md {
+  @apply text-2xl font-light sm:text-4xl;
+}
+
+.logo_text--lg {
+  @apply text-3xl font-bold sm:text-6xl;
 }
