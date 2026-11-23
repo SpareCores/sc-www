@@ -4,6 +4,14 @@
   display: contents;
 }
 
+.workload-profile-panel--compare {
+  @apply px-4 py-4 bg-transparent min-h-[500px] h-auto overflow-visible max-lg:min-h-[520px];
+}
+
+.workload-profile-panel--details {
+  @apply p-4 md:p-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px] h-auto overflow-visible;
+}
+
 .workload-profile-radar-chart--compare {
   display: flex;
   height: 28.75rem;
