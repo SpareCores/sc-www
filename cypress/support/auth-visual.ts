@@ -139,7 +139,7 @@ function snapUntil(
     const bottoms = Array.from(win.document.querySelectorAll(bottomSelector))
       .filter((element) => element.getClientRects().length > 0)
       .map((element) => element.getBoundingClientRect().bottom);
-    expect(bottoms, `${bottomSelector} bottom`).to.not.be.empty;
+    expect(bottoms.length, `${bottomSelector} bottom`).to.be.greaterThan(0);
     const width = win.document.documentElement.clientWidth;
     const height = Math.ceil(Math.max(...bottoms) + padding);
     const fitsViewport = height <= win.innerHeight;
