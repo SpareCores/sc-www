@@ -84,7 +84,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 ### Overlays
 
 - Dropdowns use the `[scDropdown]` directive (`src/app/directives/dropdown.ts`); modals use `<sc-modal>` opened through the `ModalDialog` service (`src/app/services/modal-dialog.ts`). Both run on Angular CDK; never reintroduce Flowbite, Popper or hand-rolled show/hide overlays.
-- Keep `OVERLAY_DEFAULT_CONFIG` set to `{ usePopover: false }` in `app.config.ts`; the overlay z-index layers (page dropdowns 40, header dropdowns and dialogs 60) depend on it.
+- Keep `OVERLAY_DEFAULT_CONFIG` set to `{ usePopover: false }` in `app.config.ts`; the overlay z-index layers (page dropdowns 45, header dropdowns and dialogs 60) depend on it.
 
 ## HTML Templates (`*.html`)
 
