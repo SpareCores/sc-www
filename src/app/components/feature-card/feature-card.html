@@ -18,18 +18,18 @@
   }
   @case ("bold") {
     <h3
-      class="mb-4 px-4 text-2xl font-bold text-emerald-400"
+      class="mb-4 px-4 text-2xl font-bold text-emerald-400 sm:px-0"
       [class]="badge() ? 'mt-10 sm:mt-12' : 'mt-2'"
     >
       {{ heading() }}
     </h3>
   }
 }
-<p class="grow text-left text-sm text-white px-4 sm:text-base">
+<p class="grow text-left text-sm text-white px-4 sm:px-0 sm:pb-8 sm:text-xl">
   <ng-content />
 </p>
 @if (actionIcon(); as icon) {
-  <div class="mt-4 flex justify-end">
+  <div class="mt-4 flex justify-end sm:absolute sm:right-4 sm:bottom-4 sm:mt-0">
     <sc-button
       variant="outline"
       size="small"
