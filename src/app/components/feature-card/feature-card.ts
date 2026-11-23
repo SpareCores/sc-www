@@ -14,7 +14,8 @@ export type FeatureCardHeadingVariant = "tag" | "bold";
   templateUrl: "./feature-card.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: "relative flex flex-col sc-card sc-card--primary p-4 sm:gap-4 sm:p-8",
+    class:
+      "relative flex flex-col sc-card sc-card--primary p-4 sm:gap-4 sm:p-8",
   },
 })
 export class FeatureCard {
