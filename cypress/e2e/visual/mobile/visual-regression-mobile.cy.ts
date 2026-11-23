@@ -1,13 +1,16 @@
+import { MOBILE_VISUAL_VIEWPORTS } from "../../../support/generics";
 import {
   registerMobileMenuSuite,
   registerVisualSuites,
 } from "../../../support/visual";
 
-describe("Visual regression tests (small screen - 800px)", () => {
-  beforeEach(() => {
-    cy.viewport(800, 900);
-  });
+MOBILE_VISUAL_VIEWPORTS.forEach(({ prefix, width, height }) => {
+  describe(`Visual regression tests (phone - ${width}x${height})`, () => {
+    beforeEach(() => {
+      cy.viewport(width, height);
+    });
 
-  registerVisualSuites("mobile");
-  registerMobileMenuSuite("mobile");
+    registerVisualSuites(prefix);
+    registerMobileMenuSuite(prefix);
+  });
 });

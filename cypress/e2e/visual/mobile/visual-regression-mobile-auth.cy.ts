@@ -1,9 +1,12 @@
 import { registerAuthVisualSuites } from "../../../support/auth-visual";
+import { MOBILE_VISUAL_VIEWPORTS } from "../../../support/generics";
 
-describe("Auth visual (small screen - 800px)", () => {
-  beforeEach(() => {
-    cy.viewport(800, 900);
+MOBILE_VISUAL_VIEWPORTS.forEach(({ prefix, width, height }) => {
+  describe(`Auth visual (phone - ${width}x${height})`, () => {
+    beforeEach(() => {
+      cy.viewport(width, height);
+    });
+
+    registerAuthVisualSuites(prefix);
   });
-
-  registerAuthVisualSuites("mobile");
 });

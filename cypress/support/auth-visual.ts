@@ -6,6 +6,7 @@ import {
   loadAdvisorExample,
   openBookmarksPage,
   openPageHeaderSaveModal,
+  visiblePageBookmarkButton,
 } from "./bookmarks";
 import {
   acceptRegisterConsent,
@@ -14,6 +15,8 @@ import {
   ensureClerkTestSession,
   expectAuthModalStep,
   fillRegisterDetails,
+  openAccountAction,
+  openAccountMenu,
   openGuestAuthButton,
   openRegisterModal,
   randomClerkTestPassword,
@@ -105,7 +108,7 @@ function snap(name: string, prefix: VisualSizePrefix): void {
   });
 }
 
-function snapViewport(name: string, prefix: VisualSizePrefix): void {
+function snapModal(name: string, prefix: VisualSizePrefix): void {
   waitForHeaderLogo();
   cy.document().then((doc) => {
     const root = doc.documentElement;
@@ -115,11 +118,12 @@ function snapViewport(name: string, prefix: VisualSizePrefix): void {
   });
   cy.scrollTo(0, 0, { ensureScrollable: false });
   E2EEvent.hideScrollbarsForScreenshot({ lockOverflow: true });
-  cy.compareSnapshot({
-    name: visualSnapshotName(name, prefix),
-    exactName: true,
-    cypressScreenshotOptions: { capture: "viewport" },
-  });
+  cy.get("cdk-dialog-container")
+    .should("have.length", 1)
+    .compareSnapshot({
+      name: visualSnapshotName(name, prefix),
+      exactName: true,
+    });
 }
 
 function snapUntil(
@@ -129,15 +133,15 @@ function snapUntil(
   padding = 16,
 ): void {
   waitForHeaderLogo();
-  cy.scrollTo(0, 0);
-  cy.get(bottomSelector).first().should("be.visible");
+  cy.scrollTo(0, 0, { ensureScrollable: false });
+  cy.get(bottomSelector).filter(":visible").should("have.length.at.least", 1);
   cy.window().then((win) => {
-    const bottom = win.document
-      .querySelector(bottomSelector)
-      ?.getBoundingClientRect().bottom;
-    expect(bottom, `${bottomSelector} bottom`).to.be.a("number");
+    const bottoms = Array.from(win.document.querySelectorAll(bottomSelector))
+      .filter((element) => element.getClientRects().length > 0)
+      .map((element) => element.getBoundingClientRect().bottom);
+    expect(bottoms, `${bottomSelector} bottom`).to.not.be.empty;
     const width = win.document.documentElement.clientWidth;
-    const height = Math.ceil((bottom ?? 0) + padding);
+    const height = Math.ceil(Math.max(...bottoms) + padding);
     const fitsViewport = height <= win.innerHeight;
     E2EEvent.hideScrollbarsForScreenshot({ lockOverflow: fitsViewport });
     cy.compareSnapshot({
@@ -152,6 +156,8 @@ function snapUntil(
 }
 
 export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
+  const accountInMenu = prefix === "mobile";
+
   describe("Auth visual — guest modals", () => {
     let pendingEmail: string | undefined;
 
@@ -171,7 +177,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
         "Sign in to Spare Cores",
       );
       prepareLandingChrome();
-      snapViewport("auth-sign-in-modal", prefix);
+      snapModal("auth-sign-in-modal", prefix);
     });
 
     it("compares default registration subtitle", () => {
@@ -186,7 +192,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
         "Welcome! Please fill in the details to get started.",
       );
       prepareLandingChrome();
-      snapViewport("auth-register-default-subtitle", prefix);
+      snapModal("auth-register-default-subtitle", prefix);
     });
 
     it("compares feature registration subtitle", () => {
@@ -206,7 +212,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       );
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("servers_table");
-      snapViewport("auth-register-feature-subtitle", prefix);
+      snapModal("auth-register-feature-subtitle", prefix);
     });
 
     it("compares registration consent step", () => {
@@ -216,7 +222,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       fillRegisterDetails(pendingEmail, randomClerkTestPassword());
       expectAuthModalStep("One last step");
       prepareLandingChrome();
-      snapViewport("auth-register-consent", prefix);
+      snapModal("auth-register-consent", prefix);
     });
 
     it("compares registration verify step", () => {
@@ -230,7 +236,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
         "Enter the verification code sent to sc-www+clerk_test@example.com.",
       );
       prepareLandingChrome();
-      snapViewport("auth-register-verify", prefix);
+      snapModal("auth-register-verify", prefix);
     });
   });
 
@@ -243,27 +249,27 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       ensureClerkTestSession(user);
     });
 
-    it("compares signed-in header", () => {
-      E2EEvent.visitURL("/");
-      stabilizeSignedInHeader();
-      prepareLandingChrome();
-      snapUntil("auth-signed-in-header", prefix, ".sc-shell-chrome");
-    });
+    if (!accountInMenu) {
+      it("compares signed-in header", () => {
+        E2EEvent.visitURL("/");
+        stabilizeSignedInHeader();
+        prepareLandingChrome();
+        snapUntil("auth-signed-in-header", prefix, ".sc-shell-chrome");
+      });
+    }
 
     it("compares signed-in account menu", () => {
       E2EEvent.visitURL("/");
-      cy.get("#auth_button").should("be.visible").click();
-      cy.get("#auth_options").should("be.visible");
-      stabilizeSignedInHeader();
-      prepareLandingChrome();
-      snapUntil("auth-signed-in-account-menu", prefix, "#auth_options");
+      openAccountMenu().then((panel) => {
+        stabilizeSignedInHeader();
+        prepareLandingChrome();
+        snapUntil("auth-signed-in-account-menu", prefix, panel);
+      });
     });
 
     it("compares edit profile", () => {
       E2EEvent.visitURL("/");
-      cy.get("#auth_button").should("be.visible").click();
-      cy.get("#auth_options").should("be.visible");
-      cy.contains("#auth_options button", "Edit Profile").click();
+      openAccountAction("Edit Profile");
       cy.get('[data-testid="profile-modal"]', { timeout: 20000 }).should(
         "be.visible",
       );
@@ -275,15 +281,13 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
         .invoke("css", "visibility", "hidden");
       stabilizeSignedInHeader();
       prepareLandingChrome();
-      snapViewport("auth-edit-profile", prefix);
+      snapModal("auth-edit-profile", prefix);
     });
 
     it("compares unlocked server listing bookmarks", () => {
       E2EEvent.visitURL("/servers");
       cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
-      cy.get(
-        "sc-page-header button.page-bookmark__button:not(.page-bookmark__button--locked)",
-      ).should("be.visible");
+      visiblePageBookmarkButton().should("be.visible");
       E2EEvent.waitForListingResults("servers_table");
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
@@ -291,16 +295,14 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       snapUntil(
         "auth-unlocked-server-listing-bookmarks",
         prefix,
-        "sc-page-header + div",
+        "sc-page-header + div, sc-page-actions",
       );
     });
 
     it("compares unlocked database listing bookmarks", () => {
       E2EEvent.visitURL("/databases");
       cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible");
-      cy.get(
-        "sc-page-header button.page-bookmark__button:not(.page-bookmark__button--locked)",
-      ).should("be.visible");
+      visiblePageBookmarkButton().should("be.visible");
       E2EEvent.waitForListingResults("databases_table");
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
@@ -308,7 +310,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       snapUntil(
         "auth-unlocked-database-listing-bookmarks",
         prefix,
-        "sc-page-header + div",
+        "sc-page-header + div, sc-page-actions",
       );
     });
 
@@ -379,7 +381,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("servers_table");
-      snapViewport("auth-save-search-servers-modal", prefix);
+      snapModal("auth-save-search-servers-modal", prefix);
     });
 
     it("compares save-search modal on databases", () => {
@@ -389,7 +391,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       stabilizeSignedInHeader();
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("databases_table");
-      snapViewport("auth-save-search-databases-modal", prefix);
+      snapModal("auth-save-search-databases-modal", prefix);
     });
 
     it("compares save-comparison modal", () => {
@@ -401,7 +403,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       openPageHeaderSaveModal("server-compare-save-modal");
       stabilizeSignedInHeader();
       prepareServerCompareChrome();
-      snapViewport("auth-save-comparison-modal", prefix);
+      snapModal("auth-save-comparison-modal", prefix);
     });
 
     it("compares save-assessment modal", () => {
@@ -412,13 +414,18 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
       E2EEvent.prepareHeaderForScreenshot();
       E2EEvent.hideListingTableResultsForScreenshot("advisor_results_table");
       cy.get(".advisor-summary-alert").invoke("css", "visibility", "hidden");
-      snapViewport("auth-save-assessment-modal", prefix);
+      snapModal("auth-save-assessment-modal", prefix);
     });
 
     it("compares signed-out header after sign-out", () => {
       signOutClerkTestUser();
       prepareLandingChrome();
-      snapUntil("auth-signed-out-header", prefix, ".sc-shell-chrome");
+      if (accountInMenu) {
+        E2EEvent.openMobileMenuForScreenshot();
+        snapUntil("auth-signed-out-header", prefix, "#menu_options");
+      } else {
+        snapUntil("auth-signed-out-header", prefix, ".sc-shell-chrome");
+      }
     });
   });
 }

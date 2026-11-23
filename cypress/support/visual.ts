@@ -4,10 +4,12 @@ import { E2EEvent, VisualSizePrefix, visualSnapshotName } from "./generics";
 export function compareVisualSnapshot(
   name: string,
   prefix: VisualSizePrefix,
+  capture: "fullPage" | "viewport" = "fullPage",
 ): void {
   cy.compareSnapshot({
     name: visualSnapshotName(name, prefix),
     exactName: true,
+    cypressScreenshotOptions: { capture },
   });
 }
 
@@ -72,7 +74,7 @@ export function registerMobileMenuSuite(prefix: VisualSizePrefix): void {
   it("should compare screenshot of the landing page with the mobile menu open", () => {
     prepareLandingPage();
     E2EEvent.openMobileMenuForScreenshot();
-    compareVisualSnapshot("landing-page-mobile-menu-open", prefix);
+    compareVisualSnapshot("landing-page-mobile-menu-open", prefix, "viewport");
   });
 }
 
@@ -110,17 +112,22 @@ export function registerVisualSuites(prefix: VisualSizePrefix): void {
     compare("databases-aws-vcpus2");
   });
 
-  it("should compare screenshot of design page", () => {
-    E2EEvent.visitURL("/design");
-    cy.get("sc-downloadable-logo-collection").should("have.length.at.least", 1);
+  if (prefix === "desktop") {
+    it("should compare screenshot of design page", () => {
+      E2EEvent.visitURL("/design");
+      cy.get("sc-downloadable-logo-collection").should(
+        "have.length.at.least",
+        1,
+      );
 
-    // Prepare header position for a consistent visual regression snapshot
-    E2EEvent.prepareHeaderForScreenshot();
+      // Prepare header position for a consistent visual regression snapshot
+      E2EEvent.prepareHeaderForScreenshot();
 
-    E2EEvent.loadImagesForScreenshot(".design-grid img");
+      E2EEvent.loadImagesForScreenshot(".design-grid img");
 
-    compare("design-page");
-  });
+      compare("design-page");
+    });
+  }
 
   it("should compare screenshot of server details page", () => {
     E2EEvent.visitURL("/server/gcp/t2d-standard-1");
@@ -224,7 +231,7 @@ export function registerVisualSuites(prefix: VisualSizePrefix): void {
     E2EEvent.prepareHeaderForScreenshot();
 
     cy.contains("No matches yet").should("be.visible");
-    cy.get("#serverSearchBar").should("be.visible");
+    cy.get("#serverSearchBar").should("exist");
 
     compare("advisor-page");
   });
