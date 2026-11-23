@@ -1,0 +1,29 @@
+@reference "../../../../styles/tailwind.css";
+
+.modal--sm {
+  @apply sm:max-w-100;
+}
+
+.modal--lg {
+  @apply sm:max-w-lg;
+}
+
+.modal--xl {
+  @apply sm:max-w-xl;
+}
+
+.modal--3xl {
+  @apply sm:max-w-3xl;
+}
+
+.modal--4xl {
+  @apply sm:max-w-4xl;
+}
+
+.modal--wide {
+  @apply sm:max-w-350;
+}
+
+.modal--full {
+  @apply sm:max-w-full;
+}

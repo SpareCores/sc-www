@@ -65,7 +65,7 @@ describe("Modal", () => {
     expect(element().querySelector("#sidebar")).not.toBeNull();
     expect(element().querySelector("#body")).not.toBeNull();
     expect(element().querySelector("#footer")).not.toBeNull();
-    expect(element().querySelector(".sm\\:max-w-3xl")).not.toBeNull();
+    expect(element().querySelector(".modal--3xl")).not.toBeNull();
   });
 
   it("projects the sidebar next to the body instead of into it", () => {
