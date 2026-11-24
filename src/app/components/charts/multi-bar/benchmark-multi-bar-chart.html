@@ -112,7 +112,7 @@
     </ng-template>
     @if (chartData() && isBrowserEnvironment()) {
       <div class="min-h-0 flex-1">
-        <div class="chart_div" chartType="bar">
+        <div class="chart_div sm:pt-8.5" chartType="bar">
           <canvas
             baseChart
             [data]="chartData()"
