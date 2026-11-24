@@ -90,15 +90,13 @@
 .sc-chart-block--split {
   @apply relative gap-4 overflow-visible bg-transparent px-4 py-4 md:px-6;
   width: 100%;
-  min-height: 53.75rem;
-  height: 53.75rem;
+  min-height: 50.5rem;
+  height: 50.5rem;
 }
 
 .sc-chart-block--split-tall {
   @apply relative gap-4 overflow-hidden bg-transparent px-4 py-4;
   width: 100%;
-  min-height: 58.75rem;
-  height: 58.75rem;
 }
 
 .sc-chart-block--split .charts_div,
@@ -113,7 +111,24 @@
 
 .sc-chart-block--split-tall .charts_div .chart_div {
   @apply w-full;
-  height: 28.75rem;
+  aspect-ratio: 1;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-chart-block--split {
+    min-height: 53.75rem;
+    height: 53.75rem;
+  }
+
+  .sc-chart-block--split-tall {
+    min-height: 58.75rem;
+    height: 58.75rem;
+  }
+
+  .sc-chart-block--split-tall .charts_div .chart_div {
+    height: 28.75rem;
+    aspect-ratio: auto;
+  }
 }
 
 @media (width >= theme(--breakpoint-lg)) {
