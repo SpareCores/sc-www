@@ -34,14 +34,17 @@
   @apply flex flex-col;
 }
 
-.card_sections > :last-child .sc-kv-table tbody tr:last-child {
+.card_sections
+  > :is(:last-child, :has(+ .items_table_spacer_row))
+  .sc-kv-table
+  tbody
+  tr:last-child {
   border-bottom-width: 0;
 }
 
 .items_table_spacer_row {
-  @apply w-full bg-secondary;
+  @apply h-4 w-full bg-secondary md:h-[45px];
 
-  height: 45px;
   box-sizing: border-box;
 }
 
