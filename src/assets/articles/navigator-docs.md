@@ -1,6 +1,6 @@
 ---
 # ~50 chars
-title: The Spare Cores Navigator Has Docs
+title: The Spare Cores Navigator Has Docs!
 date: 2026-11-24
 # ~100 character
 teaser: A tour of the new Spare Cores Navigator docs, from a first API call to the benchmark methodology.
@@ -22,7 +22,7 @@ of AWS alone, the fastest ([`m8azn.large`](/server/aws/m8azn.large)) was over
 seven times as fast on a single core as the slowest
 ([`a1.large`](/server/aws/a1.large)), by PassMark's
 <a href="https://docs.sparecores.com/benchmarks/passmark#passmark-cpu_single_threaded_test" target="_blank" rel="noopener">CPU Single Threaded Test</a>.
-This is what I like to call the conceptual uncertainty of a vCPU 😊
+This is what we like to call the conceptual uncertainty of a vCPU 😊
 The Navigator closes that visibility gap: our data holds the specs, prices,
 and benchmark scores of 5,000+ server types across nine vendors. We measure
 the benchmark scores the same way, and the data is open to use.
