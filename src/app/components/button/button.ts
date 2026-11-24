@@ -15,6 +15,7 @@ export type ScButtonVariant =
   | "solid"
   | "outline"
   | "ghost"
+  | "icon"
   | "soft"
   | "white"
   | "link"

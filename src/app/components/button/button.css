@@ -73,6 +73,14 @@
   @apply size-5;
 }
 
+.sc-button--icon.sc-button--icon-only {
+  @apply border-0;
+}
+
+.sc-button--icon.sc-button--icon-only .sc-button__icon {
+  @apply size-full stroke-[1.5];
+}
+
 .sc-button--ghost:has(.sc-button__swatch) {
   @apply px-3;
 }
@@ -175,7 +183,10 @@
   @apply border-transparent bg-white text-gray-900 hover:bg-white/90 focus-visible:bg-white/90;
 }
 
-.sc-button--outline:is(.sc-button--brand, .sc-button--brand-inverse) {
+:is(.sc-button--outline, .sc-button--icon):is(
+  .sc-button--brand,
+  .sc-button--brand-inverse
+) {
   @apply border-emerald-400 text-emerald-400 hover:bg-emerald-400/10 focus-visible:bg-emerald-400/10;
 }
 
