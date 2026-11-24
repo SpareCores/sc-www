@@ -1808,11 +1808,11 @@ describe("Advisor", () => {
     const cpuCacheLines =
       cells[visibleColumnIndex("CPU CACHE")].querySelectorAll("div");
     const memoryPrimaryLine = cells[visibleColumnIndex("MEMORY")].querySelector(
-      "div.text-sm",
+      "div.sm\\:text-sm",
     ) as HTMLElement;
     const memorySecondaryLine = cells[
       visibleColumnIndex("MEMORY")
-    ].querySelector("div.text-xs") as HTMLElement;
+    ].querySelector("div.text-xs:not(.sm\\:text-sm)") as HTMLElement;
     const memoryDelta = memoryPrimaryLine.querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
@@ -1916,10 +1916,10 @@ describe("Advisor", () => {
       visibleColumnIndex("XPU")
     ] as HTMLTableCellElement;
     const memoryPrimaryLine = memoryCell.querySelector(
-      "div.text-sm",
+      "div.sm\\:text-sm",
     ) as HTMLElement;
     const memorySecondaryLine = memoryCell.querySelector(
-      "div.text-xs",
+      "div.text-xs:not(.sm\\:text-sm)",
     ) as HTMLElement;
     const memoryDelta = memoryPrimaryLine.querySelector(".advisor-table-delta");
     const acceleratorDelta = acceleratorCell.querySelector(
