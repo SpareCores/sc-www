@@ -52,14 +52,13 @@ No API key is needed for this, nor for most other endpoints.
 
 The
 <a href="https://docs.sparecores.com/web-ui" target="_blank" rel="noopener">Web UI user guide</a>
-walks through sparecores.com:
-<a href="https://docs.sparecores.com/web-ui/listings" target="_blank" rel="noopener">finding servers and databases</a>,
-<a href="https://docs.sparecores.com/web-ui/compare" target="_blank" rel="noopener">comparing them</a>,
-the
-<a href="https://docs.sparecores.com/web-ui/advisor" target="_blank" rel="noopener">Advisor</a>,
-which recommends servers for a workload compared to a server you use today,
-and
-<a href="https://docs.sparecores.com/web-ui/prices" target="_blank" rel="noopener">how to read the prices</a>.
+walks through the following on sparecores.com:
+
+- <a href="https://docs.sparecores.com/web-ui/listings" target="_blank" rel="noopener">finding servers and databases</a>
+- <a href="https://docs.sparecores.com/web-ui/compare" target="_blank" rel="noopener">comparing them</a>
+- the <a href="https://docs.sparecores.com/web-ui/advisor" target="_blank" rel="noopener">Advisor</a>,
+  which recommends servers for a workload compared to a server you use today
+- <a href="https://docs.sparecores.com/web-ui/prices" target="_blank" rel="noopener">reading the prices</a>
 
 ## Build on the API
 
@@ -82,8 +81,12 @@ If you'd rather analyze the data yourself, the whole database is available
 as a single SQLite file. The
 <a href="https://docs.sparecores.com/sqlite" target="_blank" rel="noopener">SQLite database</a>
 page shows how to download it and query it with SQL, Python, or R, with
-example queries for the cheapest servers for given specs, the fastest single
-core, prices by continent, and the cost of LLM inference per token.
+example queries for the following:
+
+- the cheapest servers for given specs
+- the fastest single core
+- prices by continent
+- the cost of LLM inference per token
 
 Some of these examples are surprising even for us. For example, the clock
 speed of a CPU tells little about how fast a core is: among the server types
@@ -108,15 +111,15 @@ section explains how the data is collected: how the
 pulls the vendors' products and prices, and how we start servers to inspect
 their hardware and run the benchmarks in the
 <a href="https://docs.sparecores.com/images" target="_blank" rel="noopener">container images</a>.
-The image docs include the methodology details, and also its limits: what a
-benchmark does not measure, and where its results need care. As described in
-our [Open Source Is Not Free](/article/open-source-is-not-free) article, all
+The image docs include the methodology details, and many also have a
+Limitations section: what the benchmark does not measure, and where its
+results need care. As described in our [Open Source Is Not Free](/article/open-source-is-not-free) article, all
 of this is public, so you don't need to take our word for a number.
 
 ## For Your AI Assistant
 
 AI assistants and coding agents can (and should) read it all too. Following
-the <a href="https://llmstxt.org/" target="_blank" rel="noopener">llms.txt</a>
+the <a href="https://llmstxt.org/" target="_blank" rel="noopener">`llms.txt`</a>
 convention, the docs are available as plain Markdown:
 
 - <a href="https://docs.sparecores.com/llms.txt" target="_blank" rel="noopener">`llms.txt`</a>:
@@ -132,7 +135,7 @@ For example, ask your assistant:
 > API to find the cheapest server types with at least 8 vCPUs and 32 GB of
 > memory in Europe, and compare their benchmark scores.
 
-And if a term is new to you, such as SCore or spot allocation, the
+And if a term is new to you, such as SCore or spot instance, the
 <a href="https://docs.sparecores.com/glossary" target="_blank" rel="noopener">Glossary</a>
 explains it.
 
