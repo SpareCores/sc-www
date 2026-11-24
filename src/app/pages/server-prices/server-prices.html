@@ -187,7 +187,9 @@
                       @for (column of tableColumns; track column.name) {
                         @if (column.type === "name") {
                           <td class="min-w-[225px]">
-                            <div class="text-sm text-white flex gap-1">
+                            <div
+                              class="text-xs sm:text-sm text-white flex gap-1"
+                            >
                               <span>{{ server.server.display_name }} </span>
                               @if (showAPIReference(server)) {
                                 <span class="text-emerald-400">|</span>
@@ -213,7 +215,9 @@
                         }
                         @if (column.type === "processor") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ server.server.vcpus }} vCPUs ({{
                                 server.server.cpu_architecture
                               }})
@@ -250,7 +254,7 @@
                         }
                         @if (column.type === "score") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ getScore(server.server.score) }}
                             </div>
                             @if (server.server.score_per_price) {
@@ -296,7 +300,7 @@
                         }
                         @if (column.type === "storage") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ server.server.storage_size | storage }}
                             </div>
                             @if (server.server.storage_type) {
@@ -308,7 +312,7 @@
                         }
                         @if (column.type === "price") {
                           <td class="min-w-[160px]">
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ server.price }} {{ selectedCurrency.slug }}
                             </div>
                             <div class="text-xs text-white">
@@ -318,7 +322,7 @@
                         }
                         @if (column.type === "accelerator") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{
                                 server.server.accelerator_count
                                   | acceleratorCount
@@ -336,7 +340,9 @@
                         @if (column.type === "cpu_model") {
                           <td>
                             @if (server.server.cpu_model) {
-                              <div class="text-sm text-white flex gap-1">
+                              <div
+                                class="text-xs sm:text-sm text-white flex gap-1"
+                              >
                                 <span>{{ server.server.cpu_model }}</span>
                               </div>
                             }
@@ -355,7 +361,9 @@
                         @if (column.type === "accelerator_model") {
                           <td>
                             @if (server.server.accelerator_model) {
-                              <div class="text-sm text-white flex gap-1">
+                              <div
+                                class="text-xs sm:text-sm text-white flex gap-1"
+                              >
                                 <span>{{
                                   server.server.accelerator_model
                                 }}</span>
@@ -441,7 +449,7 @@
                         }
                         @if (column.type === "region") {
                           <td class="min-w-[225px]">
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ server.region.display_name }}
                             </div>
                             <div class="text-xs text-white flex gap-1">
@@ -462,7 +470,7 @@
                               </div>
                             }
                             @if (!server.vendor.logo) {
-                              <div class="text-white text-sm">
+                              <div class="text-white text-xs sm:text-sm">
                                 {{ server.vendor.name }}
                               </div>
                             }

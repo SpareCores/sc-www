@@ -332,7 +332,9 @@
                                   recommendation.api_reference,
                                 ]"
                               >
-                                <div class="text-sm text-white flex gap-1">
+                                <div
+                                  class="text-xs sm:text-sm text-white flex gap-1"
+                                >
                                   <span class="whitespace-nowrap">
                                     {{
                                       recommendation.display_name ||
@@ -371,7 +373,7 @@
                                 />
                               </div>
                             } @else {
-                              <div class="text-white text-sm">
+                              <div class="text-white text-xs sm:text-sm">
                                 {{ advisorUi.getVendorName(recommendation) }}
                               </div>
                             }
@@ -379,7 +381,9 @@
                         }
                         @if (column.type === "score") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ advisorUi.formatScore(recommendation.score) }}
                               @if (
                                 getScoreDelta(recommendation);
@@ -423,7 +427,9 @@
                         @if (column.type === "score_per_price") {
                           <td>
                             @if (recommendation.score_per_price) {
-                              <div class="text-sm text-white whitespace-nowrap">
+                              <div
+                                class="text-xs sm:text-sm text-white whitespace-nowrap"
+                              >
                                 {{
                                   advisorUi.formatScore(
                                     recommendation.score_per_price
@@ -464,7 +470,9 @@
                         }
                         @if (column.type === "processor") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ recommendation.vcpus || 0 }} vCPUs
                               @if (recommendation.cpu_architecture) {
                                 <span
@@ -499,7 +507,9 @@
                         }
                         @if (column.type === "cpu_model") {
                           <td>
-                            <div class="text-sm text-white flex gap-1">
+                            <div
+                              class="text-xs sm:text-sm text-white flex gap-1"
+                            >
                               <span>{{
                                 advisorUi.getModelDetail(
                                   recommendation,
@@ -622,13 +632,15 @@
                                 }
                               </div>
                             } @else {
-                              <div class="text-sm text-white">-</div>
+                              <div class="text-xs sm:text-sm text-white">-</div>
                             }
                           </td>
                         }
                         @if (column.type === "benchmark") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{
                                 advisorUi.formatScore(
                                   getBenchmarkDisplayScore(recommendation)
@@ -716,7 +728,9 @@
                               );
                               as efficiencyValue
                             ) {
-                              <div class="text-sm text-white whitespace-nowrap">
+                              <div
+                                class="text-xs sm:text-sm text-white whitespace-nowrap"
+                              >
                                 {{ advisorUi.formatScore(efficiencyValue) }}
                                 @if (
                                   !isSelectedBaselineRecommendation(
@@ -760,7 +774,9 @@
                         }
                         @if (column.type === "memory") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ advisorUi.formatMemory(recommendation) }}
                               @if (
                                 getComparableResourceDelta(
@@ -808,7 +824,9 @@
                         }
                         @if (column.type === "accelerator") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{
                                 recommendation.accelerator_count
                                   | acceleratorCount
@@ -852,7 +870,7 @@
                         }
                         @if (column.type === "accelerator_memory_min") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{
                                 recommendation.accelerator_memory_min
                                   | acceleratorMemory
@@ -894,7 +912,7 @@
                         }
                         @if (column.type === "accelerator_memory_total") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{
                                 recommendation.accelerator_memory_total
                                   | acceleratorMemory
@@ -936,7 +954,9 @@
                         }
                         @if (column.type === "accelerator_model") {
                           <td>
-                            <div class="text-sm text-white flex gap-1">
+                            <div
+                              class="text-xs sm:text-sm text-white flex gap-1"
+                            >
                               <span>{{
                                 advisorUi.getModelDetail(
                                   recommendation,
@@ -960,7 +980,9 @@
                         }
                         @if (column.type === "storage") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ recommendation.storage_size | storage }}
                               @if (
                                 getComparableResourceDelta(
@@ -999,7 +1021,9 @@
                         }
                         @if (column.type === "price") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{
                                 advisorUi.formatPrice(
                                   recommendation,

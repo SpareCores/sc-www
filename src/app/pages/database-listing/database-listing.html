@@ -216,7 +216,9 @@
                                   item.vendor.vendor_id
                                 }}/{{ item.api_reference }}"
                               >
-                                <div class="text-sm text-white flex gap-1">
+                                <div
+                                  class="text-xs sm:text-sm text-white flex gap-1"
+                                >
                                   <span class="whitespace-nowrap"
                                     >{{ item.display_name }}
                                   </span>
@@ -236,7 +238,9 @@
                         }
                         @if (column.type === "processor") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               @if (item.vcpus !== null) {
                                 {{ item.vcpus }} vCPUs
                               } @else {
@@ -247,7 +251,9 @@
                         }
                         @if (column.type === "benchmark") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ getScore(item.selected_benchmark_score) }}
                             </div>
                             @if (item.selected_benchmark_score) {
@@ -289,38 +295,42 @@
                               priceValue !== undefined &&
                               priceValue !== ""
                             ) {
-                              <div class="text-sm text-white whitespace-nowrap">
+                              <div
+                                class="text-xs sm:text-sm text-white whitespace-nowrap"
+                              >
                                 {{ priceValue }} {{ displayedCurrency.slug }}
                               </div>
                             } @else {
-                              <div class="text-sm text-white">-</div>
+                              <div class="text-xs sm:text-sm text-white">-</div>
                             }
                           </td>
                         }
                         @if (column.type === "memory") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ getMemory(item) }}
                             </div>
                           </td>
                         }
                         @if (column.type === "storage") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ item.storage_size | storage }}
                             </div>
                           </td>
                         }
                         @if (column.type === "list" && column.key) {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ formatList(getField(item, column.key)) }}
                             </div>
                           </td>
                         }
                         @if (column.type === "sla" && column.key) {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ formatSla(getField(item, column.key)) }}
                             </div>
                           </td>
@@ -390,7 +400,7 @@
                                 />
                               </div>
                             } @else {
-                              <div class="text-white text-sm">
+                              <div class="text-white text-xs sm:text-sm">
                                 {{ item.vendor.name }}
                               </div>
                             }

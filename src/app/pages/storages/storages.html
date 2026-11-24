@@ -100,7 +100,7 @@
                       @for (column of tableColumns; track column.name) {
                         @if (column.type === "name") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ storage.storage.name }}
                             </div>
                             <div class="text-xs text-white flex gap-1">
@@ -110,7 +110,9 @@
                         }
                         @if (column.type === "price") {
                           <td>
-                            <div class="text-sm text-white text-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white text-nowrap"
+                            >
                               {{ storage.price }} {{ storage.currency }}/{{
                                 storage.unit
                               }}
@@ -119,7 +121,9 @@
                         }
                         @if (column.type === "storage" && column.key) {
                           <td>
-                            <div class="text-sm text-white text-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white text-nowrap"
+                            >
                               {{ getField(storage, column.key) | storage }}
                             </div>
                           </td>
@@ -142,7 +146,7 @@
                               </div>
                             }
                             @if (!storage.vendor.logo) {
-                              <div class="text-white text-sm">
+                              <div class="text-white text-xs sm:text-sm">
                                 {{ storage.vendor.name }}
                               </div>
                             }
@@ -150,7 +154,7 @@
                         }
                         @if (column.type === "region") {
                           <td class="min-w-[225px]">
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ storage.region.display_name }}
                             </div>
                             <div class="text-xs text-white flex gap-1">

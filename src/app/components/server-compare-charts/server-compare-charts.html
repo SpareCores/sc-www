@@ -118,7 +118,7 @@
               }
               @if (!server.vendor.logo) {
                 <a
-                  class="text-white text-sm ml-auto underline decoration-dotted"
+                  class="text-white text-xs sm:text-sm ml-auto underline decoration-dotted"
                   [routerLink]="['/vendors', server.vendor_id]"
                   [attr.target]="isEmbedded ? '_blank' : null"
                 >
@@ -767,7 +767,7 @@
           </tr>
           <tr>
             <td>
-              <div class="ml-4 text-sm font-normal uppercase">
+              <div class="ml-4 text-xs sm:text-sm font-normal uppercase">
                 {{ section.name }}
               </div>
             </td>
@@ -870,7 +870,7 @@
           </tr>
           <tr>
             <td>
-              <div class="ml-4 text-sm font-normal uppercase">
+              <div class="ml-4 text-xs sm:text-sm font-normal uppercase">
                 Benchmark Environment
               </div>
             </td>

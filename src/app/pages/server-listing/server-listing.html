@@ -292,7 +292,9 @@
                                   limit
                                 "
                               >
-                                <div class="text-sm text-white flex gap-1">
+                                <div
+                                  class="text-xs sm:text-sm text-white flex gap-1"
+                                >
                                   <span class="whitespace-nowrap"
                                     >{{ item.display_name }}
                                   </span>
@@ -312,7 +314,9 @@
                         }
                         @if (column.type === "processor") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ item.vcpus }} vCPUs ({{
                                 item.cpu_architecture
                               }})
@@ -343,18 +347,22 @@
                             @if (
                               priceValue !== null && priceValue !== undefined
                             ) {
-                              <div class="text-sm text-white whitespace-nowrap">
+                              <div
+                                class="text-xs sm:text-sm text-white whitespace-nowrap"
+                              >
                                 {{ priceValue }}
                                 {{ displayedCurrency.slug }}
                               </div>
                             } @else {
-                              <div class="text-sm text-white">-</div>
+                              <div class="text-xs sm:text-sm text-white">-</div>
                             }
                           </td>
                         }
                         @if (column.type === "score") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ getScore(item.score) }}
                             </div>
                             @if (item.score_per_price) {
@@ -369,7 +377,9 @@
                         }
                         @if (column.type === "benchmark") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ getScore(item.selected_benchmark_score) }}
                             </div>
                             @if (item.selected_benchmark_score) {
@@ -419,7 +429,7 @@
                         }
                         @if (column.type === "memory") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ getMemory(item) }}
                             </div>
                             @if (item.memory_speed) {
@@ -456,7 +466,7 @@
                         }
                         @if (column.type === "storage") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ item.storage_size | storage }}
                             </div>
                             @if (item.storage_type) {
@@ -468,7 +478,7 @@
                         }
                         @if (column.type === "accelerator") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ item.accelerator_count | acceleratorCount }}
                             </div>
                             @if (item.accelerator_model) {
@@ -495,14 +505,16 @@
                                 L3: {{ item.cpu_l3_cache | cpuCacheSize }}
                               </div>
                             } @else {
-                              <div class="text-sm text-white">-</div>
+                              <div class="text-xs sm:text-sm text-white">-</div>
                             }
                           </td>
                         }
                         @if (column.type === "cpu_model") {
                           <td>
                             @if (item.cpu_model) {
-                              <div class="text-sm text-white flex gap-1">
+                              <div
+                                class="text-xs sm:text-sm text-white flex gap-1"
+                              >
                                 <span>{{ item.cpu_model }}</span>
                               </div>
                             }
@@ -519,7 +531,9 @@
                         @if (column.type === "accelerator_model") {
                           <td>
                             @if (item.accelerator_model) {
-                              <div class="text-sm text-white flex gap-1">
+                              <div
+                                class="text-xs sm:text-sm text-white flex gap-1"
+                              >
                                 <span>{{ item.accelerator_model }}</span>
                               </div>
                             }
@@ -639,7 +653,7 @@
                               </div>
                             }
                             @if (!item.vendor.logo) {
-                              <div class="text-white text-sm">
+                              <div class="text-white text-xs sm:text-sm">
                                 {{ item.vendor.name }}
                               </div>
                             }
