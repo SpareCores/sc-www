@@ -18,9 +18,9 @@ It has been exciting (and a bit tedious) to summarize what we worked on in
 the past three years! 📚
 
 But why does the Navigator exist at all? When we measured the 2-vCPU servers
-of AWS, GCP and Azure, the fastest ([`m8azn.large`](/server/aws/m8azn.large)
-at AWS) was over 25 times as fast on a single core as the slowest
-([`e2-micro`](/server/gcp/e2-micro) at GCP), by PassMark's
+of AWS alone, the fastest ([`m8azn.large`](/server/aws/m8azn.large)) was over
+seven times as fast on a single core as the slowest
+([`a1.large`](/server/aws/a1.large)), by PassMark's
 <a href="https://docs.sparecores.com/benchmarks/passmark#passmark-cpu_single_threaded_test" target="_blank" rel="noopener">CPU Single Threaded Test</a>.
 This is what I like to call the conceptual uncertainty of a vCPU 😊
 The Navigator closes that visibility gap: our data holds the specs, prices,
