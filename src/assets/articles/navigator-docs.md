@@ -7,7 +7,7 @@ teaser: A tour of the new Spare Cores Navigator docs, from a first API call to t
 # 320x220
 image: /assets/images/blog/thumbnails/navigator-docs.webp
 image_alt: The Spare Cores Navigator docs site, with its Getting started page open.
-author: Gergely Daroczi
+author: [Adam Toth, Gergely Daroczi]
 tags: [data, open-source]
 ---
 
@@ -17,10 +17,12 @@ docs at
 It has been exciting (and a bit tedious) to summarize what we worked on in
 the past three years! 📚
 
-But why does the Navigator exist at all? When we measured two 2-vCPU servers
-from hyperscalers, one was over 30x faster than the other on a single core.
-<TODO: which two servers and which benchmark, ideally as an embedded compare
-chart.> This is what I like to call the conceptual uncertainty of a vCPU 😊
+But why does the Navigator exist at all? When we measured the 2-vCPU servers
+of AWS, GCP and Azure, the fastest ([`m8azn.large`](/server/aws/m8azn.large)
+at AWS) was over 25 times as fast on a single core as the slowest
+([`e2-micro`](/server/gcp/e2-micro) at GCP), by PassMark's
+<a href="https://docs.sparecores.com/benchmarks/passmark#passmark-cpu_single_threaded_test" target="_blank" rel="noopener">CPU Single Threaded Test</a>.
+This is what I like to call the conceptual uncertainty of a vCPU 😊
 The Navigator closes that visibility gap: our data holds the specs, prices,
 and benchmark scores of 5,000+ server types across nine vendors, measured
 the same way, and open to use.
