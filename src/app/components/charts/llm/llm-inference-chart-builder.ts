@@ -306,7 +306,6 @@ export class LlmInferenceChartBuilder {
         title: { display: true, text: xAxisTitle, color: chartColors.white },
       },
     };
-    options.layout = { padding: { bottom: 20 } };
     return options;
   }
   private sortModels(models: string[]): string[] {

@@ -151,7 +151,7 @@
     @if (isBrowser) {
       <div class="charts_div">
         @if (comparePromptData()) {
-          <div chartType="bar" class="chart_div">
+          <div chartType="bar" class="chart_div sm:pb-5">
             <canvas
               baseChart
               [data]="comparePromptData()"
@@ -162,7 +162,7 @@
           </div>
         }
         @if (compareGenerationData()) {
-          <div chartType="bar" class="chart_div">
+          <div chartType="bar" class="chart_div sm:pb-5">
             <canvas
               baseChart
               [data]="compareGenerationData()"
