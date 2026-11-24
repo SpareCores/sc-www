@@ -6,7 +6,7 @@ date: 2026-11-24
 teaser: A tour of the new Spare Cores Navigator docs, from a first API call to the benchmark methodology.
 # 320x220
 image: /assets/images/blog/thumbnails/navigator-docs.webp
-image_alt: The Spare Cores Navigator docs site, with its Getting started page open.
+image_alt: A green dinosaur reading a book among stacks of servers, under the title Spare Cores Navigator Docs.
 author: [Adam Toth, Gergely Daroczi]
 tags: [data, open-source]
 ---
