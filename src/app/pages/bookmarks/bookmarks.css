@@ -495,7 +495,7 @@
     td {
       padding: 0.75rem 0.5rem 0.75rem 0.75rem;
       text-align: left;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
       vertical-align: middle;
     }
   }
@@ -503,11 +503,18 @@
 
 .bookmarks-card__table-filter {
   color: var(--color-white);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   white-space: nowrap;
   width: 40%;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .bookmarks-card__table tbody td,
+  .bookmarks-card__table-filter {
+    font-size: 0.875rem;
+  }
 }
 
 .bookmarks-card__table-value {

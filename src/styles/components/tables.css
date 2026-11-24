@@ -19,7 +19,7 @@
 }
 
 .sc-table tbody td {
-  @apply px-5 py-3 text-left text-sm;
+  @apply px-5 py-3 text-left text-xs sm:text-sm;
 }
 
 .sc-table--compact thead th,
@@ -96,7 +96,7 @@
 }
 
 .sc-kv-table thead th {
-  @apply border-b border-solid border-gray-200 bg-secondary px-5 py-3 text-left leading-5 font-normal;
+  @apply border-b border-solid border-gray-200 bg-secondary px-5 py-3 text-left text-xs leading-5 font-normal sm:text-base;
 }
 
 .sc-kv-table tbody tr {
@@ -104,7 +104,7 @@
 }
 
 .sc-kv-table tbody td {
-  @apply px-5 py-3 text-left text-sm;
+  @apply px-5 py-3 text-left text-xs sm:text-sm;
 }
 
 .sc-kv-table__label {

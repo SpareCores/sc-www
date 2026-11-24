@@ -195,7 +195,7 @@
       @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
 
       td {
-        @apply px-3 py-2 text-left text-sm align-middle;
+        @apply px-3 py-2 text-left text-xs align-middle sm:text-sm;
       }
 
       td:first-child {

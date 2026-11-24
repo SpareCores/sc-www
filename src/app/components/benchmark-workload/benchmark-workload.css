@@ -28,7 +28,7 @@
     tr {
       @apply hover:outline-solid hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
       td {
-        @apply pl-3 pr-2 py-3 text-left text-sm align-middle;
+        @apply pl-3 pr-2 py-3 text-left text-xs align-middle sm:text-sm;
       }
     }
   }

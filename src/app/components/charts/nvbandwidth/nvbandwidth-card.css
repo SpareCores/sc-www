@@ -9,7 +9,7 @@
 
   thead {
     th {
-      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 leading-5 font-normal uppercase;
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 text-xs leading-5 font-normal uppercase sm:text-base;
     }
   }
 
@@ -19,7 +19,7 @@
     }
 
     td {
-      @apply px-5 py-3 text-left text-sm;
+      @apply px-5 py-3 text-left text-xs sm:text-sm;
     }
 
     td.nvbandwidth_value {

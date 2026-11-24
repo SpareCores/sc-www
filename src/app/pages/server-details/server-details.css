@@ -60,7 +60,7 @@
 
   thead {
     th {
-      @apply bg-secondary border-b border-gray-200 border-solid text-left px-2 py-3 text-sm leading-5 font-normal md:px-5;
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-2 py-3 text-xs leading-5 font-normal sm:text-sm md:px-5;
 
       &:first-child {
         @apply max-md:pl-0;
@@ -79,7 +79,7 @@
 
     tr {
       td {
-        @apply px-2 py-3 text-left text-sm md:px-5;
+        @apply px-2 py-3 text-left text-xs sm:text-sm md:px-5;
 
         &:first-child {
           @apply max-md:pl-0;

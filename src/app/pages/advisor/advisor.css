@@ -248,7 +248,7 @@
       }
 
       td {
-        @apply pl-3 pr-2 py-3 text-left text-sm;
+        @apply pl-3 pr-2 py-3 text-left text-xs sm:text-sm;
 
         &.advisor-checkbox-column {
           width: 2rem;
