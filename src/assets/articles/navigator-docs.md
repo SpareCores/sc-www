@@ -24,18 +24,19 @@ seven times as fast on a single core as the slowest
 <a href="https://docs.sparecores.com/benchmarks/passmark#passmark-cpu_single_threaded_test" target="_blank" rel="noopener">CPU Single Threaded Test</a>.
 This is what I like to call the conceptual uncertainty of a vCPU 😊
 The Navigator closes that visibility gap: our data holds the specs, prices,
-and benchmark scores of 5,000+ server types across nine vendors, measured
-the same way, and open to use.
+and benchmark scores of 5,000+ server types across nine vendors. We measure
+the benchmark scores the same way, and the data is open to use.
 
 The docs show how to put that data to work.
 
 ## Getting Started
 
-You can get a first result in a few minutes, with or without writing code, as
-the
+You can get a first result in a few minutes, with or without writing code.
+The
 <a href="https://docs.sparecores.com/getting-started" target="_blank" rel="noopener">Getting started</a>
-page shows. For example, this lists the three cheapest server types with at
-least 8 vCPUs and 32 GB of memory, by their on-demand price:
+page shows how. For example, the command below lists the three cheapest
+server types with at least 8 vCPUs and 32 GB of memory, by their on-demand
+price:
 
 ```shell
 curl -G https://keeper.sparecores.net/servers \
@@ -45,12 +46,12 @@ curl -G https://keeper.sparecores.net/servers \
   -d limit=3
 ```
 
-No API key is needed for this, nor for most other endpoints.
+You don't need an API key for this command or for most other endpoints.
 
 ## Web UI
 
-If you don't want to write code, sparecores.com has it all in the browser, and
-the
+If you don't want to write code, you can use the full Web UI at
+sparecores.com. The
 <a href="https://docs.sparecores.com/web-ui" target="_blank" rel="noopener">Web UI user guide</a>
 covers the following:
 
@@ -62,23 +63,23 @@ covers the following:
 
 ## API
 
-To build the data into your own tools, start with the
+To build this data into your own tools, start with the
 <a href="https://docs.sparecores.com/api/examples" target="_blank" rel="noopener">API examples</a>,
-such as
+which include examples of
 <a href="https://docs.sparecores.com/api/examples#rank-servers-by-a-benchmark" target="_blank" rel="noopener">ranking servers by a benchmark</a>
-(e.g. by single-core performance) or
+(for example, by single-core performance) and
 <a href="https://docs.sparecores.com/api/examples#rank-servers-by-cost-efficiency" target="_blank" rel="noopener">by cost-efficiency</a>.
 The
 <a href="https://docs.sparecores.com/api" target="_blank" rel="noopener">API reference</a>
-covers every endpoint and parameter, with a built-in client to try them in
-the browser, and the
+covers every endpoint and parameter. Its built-in client lets you try them in
+the browser. The
 <a href="https://docs.sparecores.com/api/news" target="_blank" rel="noopener">News</a>
 page lists what changed in the API.
 
 ## SQLite Database
 
-If you'd rather analyze the data yourself, the whole database is available
-as a single SQLite file. The
+If you'd rather analyze the data yourself, you can download the whole
+database as a single SQLite file. The
 <a href="https://docs.sparecores.com/sqlite" target="_blank" rel="noopener">SQLite database</a>
 page shows how to download it and query it with SQL, Python, or R, with
 example queries for the following:
@@ -98,29 +99,29 @@ describe every table and column.
 
 ## Methodology
 
-We run many benchmark workloads, from `stress-ng` and PassMark to LLM
-inference speed and `pgbench`, and the
+We run many benchmark workloads, including `stress-ng`, PassMark, LLM
+inference speed, and `pgbench`. The
 <a href="https://docs.sparecores.com/benchmarks" target="_blank" rel="noopener">Benchmarks</a>
-section describes each of them.
+section describes each workload.
 
 The
 <a href="https://docs.sparecores.com/under-the-hood" target="_blank" rel="noopener">Under the hood</a>
-section explains how the data is collected: how the
+section explains how we collect the data. It covers how the
 <a href="https://docs.sparecores.com/crawler" target="_blank" rel="noopener">Crawler</a>
-pulls the vendors' products and prices, and how we start servers to inspect
-their hardware and run the benchmarks in the
+pulls product and price data from vendors. It also explains how we start
+servers to inspect their hardware and run benchmarks in the
 <a href="https://docs.sparecores.com/images" target="_blank" rel="noopener">container images</a>.
-The image docs include the methodology details, and many also have a
-Limitations section: what the benchmark does not measure, and where its
+The image docs include methodology details. Many also have a Limitations
+section, which explains what a benchmark does not measure and where its
 results need care. As described in our
 [Open Source Is Not Free](/article/open-source-is-not-free) article, all of
 this is public, so you don't need to take our word for a number.
 
 ## AI Assistants
 
-AI assistants and coding agents can (and should) read it all too. Following
-the <a href="https://llmstxt.org/" target="_blank" rel="noopener">`llms.txt`</a>
-convention, the docs are available as plain Markdown:
+AI assistants and coding agents can (and should) read it all too. The docs
+follow the <a href="https://llmstxt.org/" target="_blank" rel="noopener">`llms.txt`</a>
+convention and are available as plain Markdown:
 
 - <a href="https://docs.sparecores.com/llms.txt" target="_blank" rel="noopener">`llms.txt`</a>:
   an index of all pages, plus machine-readable resources, such as the
@@ -135,14 +136,14 @@ For example, ask your assistant:
 > API to find the cheapest server types with at least 8 vCPUs and 32 GB of
 > memory in Europe, and compare their benchmark scores.
 
-And if a term is new to you, such as SCore or spot instance, the
+If a term is new to you, such as SCore or spot instance, the
 <a href="https://docs.sparecores.com/glossary" target="_blank" rel="noopener">Glossary</a>
 explains it.
 
 ## Feedback
 
 Feedback is very welcome! 🙇 Please share your thoughts in the comment box
-below, or open an issue in the GitHub repository of the part you have a
-question about, as listed on the
+below. You can also open an issue in the GitHub repository for the part you
+have a question about. See the
 <a href="https://docs.sparecores.com/getting-started#getting-help" target="_blank" rel="noopener">Getting started</a>
-page.
+page for the list of repositories.
