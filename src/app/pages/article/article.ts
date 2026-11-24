@@ -36,6 +36,7 @@ import {
 } from "../../services/team-members";
 import { AuthorAvatars } from "../../components/author-avatars/author-avatars";
 import { AuthorBioCard } from "../../components/author-bio-card/author-bio-card";
+import { Button } from "../../components/button/button";
 
 @Component({
   selector: "sc-article",
@@ -47,6 +48,7 @@ import { AuthorBioCard } from "../../components/author-bio-card/author-bio-card"
     LightboxModule,
     AuthorAvatars,
     AuthorBioCard,
+    Button,
   ],
   templateUrl: "./article.html",
   styleUrls: ["../../../styles/prose.css", "./article.css"],
