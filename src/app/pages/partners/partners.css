@@ -21,7 +21,7 @@
 }
 
 .partners-heading--section + .partners-paragraph {
-  @apply mt-4;
+  @apply mt-4 sm:mt-8;
 }
 
 .partners-heading--subsection {
