@@ -1,10 +1,12 @@
 import { DOCUMENT, NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
+  afterNextRender,
   Component,
   computed,
   DestroyRef,
   ElementRef,
   inject,
+  Injector,
   Input,
   OnChanges,
   OnDestroy,
@@ -172,6 +174,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   private advisorUi = inject(AdvisorUi);
   private legendVisibility = inject(CompareChartLegendVisibility);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
   private memoryChart = viewChild(ServerCompareMemoryChart);
   private compressionChart = viewChild(CompressionChart);
   private llmChart = viewChild(LlmInferenceChart);
@@ -1137,6 +1140,24 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   toggleWorkloadProfileDetails(): void {
     this.workloadProfileShowMore = !this.workloadProfileShowMore;
     this.layoutChanged.emit();
+
+    if (this.workloadProfileShowMore) {
+      this.scrollToSectionDetails("benchmark_line_workload_profile");
+    }
+  }
+
+  private scrollToSectionDetails(sectionId: string): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    afterNextRender(
+      () =>
+        this.document
+          .querySelector(`[data-compare-details-start="${sectionId}"]`)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      { injector: this.injector },
+    );
   }
 
   getUncategorizedBenchmarksCategories() {
@@ -1165,7 +1186,10 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     );
   }
 
-  toggleBenchmarkCategory(category: BenchmarkMultiBarChartItem): void {
+  toggleBenchmarkCategory(
+    category: BenchmarkMultiBarChartItem,
+    sectionId: string,
+  ): void {
     category.show_more = !category.show_more;
 
     // single item lists are auto toggled
@@ -1174,6 +1198,10 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
 
     this.layoutChanged.emit();
+
+    if (category.show_more) {
+      this.scrollToSectionDetails(sectionId);
+    }
   }
 
   serializeConfig(config: any) {

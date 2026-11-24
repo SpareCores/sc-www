@@ -606,6 +606,11 @@
           </td>
         </tr>
         @if (workloadProfileShowMore) {
+          <tr
+            class="compare-details-start"
+            data-compare-details-start="benchmark_line_workload_profile"
+            aria-hidden="true"
+          ></tr>
           @for (
             benchmark of getWorkloadProfileBenchmarks();
             track benchmark.benchmark_key ?? benchmark.benchmark_id
@@ -1399,7 +1404,12 @@
                           iconPosition="start"
                           [compact]="true"
                           size="small"
-                          (click)="toggleBenchmarkCategory(benchmarkCategory)"
+                          (click)="
+                            toggleBenchmarkCategory(
+                              benchmarkCategory,
+                              'benchmark_line_' + benchmarkCategory.id
+                            )
+                          "
                         ></sc-button>
                       }
                     </div>
@@ -1632,6 +1642,13 @@
             </tr>
           }
           @if (benchmarkCategory.show_more && !isEmbedded) {
+            <tr
+              class="compare-details-start"
+              [attr.data-compare-details-start]="
+                'benchmark_line_' + benchmarkCategory.id
+              "
+              aria-hidden="true"
+            ></tr>
             @for (
               benchmarkData of benchmarkCategory.data;
               track benchmarkData.benchmark_key ?? benchmarkData.benchmark_id
@@ -1901,7 +1918,12 @@
                         iconPosition="start"
                         [compact]="true"
                         size="small"
-                        (click)="toggleBenchmarkCategory(chartItem)"
+                        (click)="
+                          toggleBenchmarkCategory(
+                            chartItem,
+                            'benchmark_line_' + chartItem.chart.id
+                          )
+                        "
                       ></sc-button>
                     }
                   </div>
@@ -1935,6 +1957,13 @@
             </td>
           </tr>
           @if (chartItem.show_more) {
+            <tr
+              class="compare-details-start"
+              [attr.data-compare-details-start]="
+                'benchmark_line_' + chartItem.chart.id
+              "
+              aria-hidden="true"
+            ></tr>
             @for (chartData of chartItem.data ?? []; track chartData) {
               @if (hasMultipleChartData(chartItem)) {
                 <tr class="compare-fixed-header-row">

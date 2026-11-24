@@ -18,6 +18,10 @@
   @apply bg-primary;
 }
 
+.sc-compare-table tbody tr.compare-details-start {
+  @apply scroll-mt-14;
+}
+
 .sc-compare-table tbody tr.compare-section-header {
   position: relative;
   z-index: 1;

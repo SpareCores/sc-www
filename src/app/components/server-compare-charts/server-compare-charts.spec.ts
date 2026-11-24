@@ -685,6 +685,48 @@ describe("ServerCompareCharts", () => {
     ).toBeNull();
   });
 
+  it("scrolls to the first workload profile detail row on expand only", () => {
+    component.showChart = "workload_profile";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        server_id: "server-a",
+        display_name: "Server A",
+        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 10 }],
+      },
+    ] as unknown as typeof component.servers;
+    component.baselineServer = component.servers[0];
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "workload:web-server",
+        benchmark_key: "workload:web-server",
+        name: "Workload profile: Web server",
+        description: "Web server workload profile",
+        status: Status.Active,
+      },
+    ];
+    fixture.detectChanges();
+
+    const scrollSpy = spyOn(Element.prototype, "scrollIntoView");
+
+    component.toggleWorkloadProfileDetails();
+    fixture.detectChanges();
+    TestBed.tick();
+
+    const marker = (fixture.nativeElement as HTMLElement).querySelector(
+      '[data-compare-details-start="benchmark_line_workload_profile"]',
+    );
+    expect(marker).toBeTruthy();
+    expect(scrollSpy).toHaveBeenCalledTimes(1);
+    expect(scrollSpy.calls.mostRecent().object === marker).toBeTrue();
+
+    component.toggleWorkloadProfileDetails();
+    fixture.detectChanges();
+    TestBed.tick();
+
+    expect(scrollSpy).toHaveBeenCalledTimes(1);
+  });
+
   it("resolves benchmark metadata notes for compare warning icons", () => {
     component.benchmarkMeta = [
       {
