@@ -9,7 +9,7 @@
 }
 
 .page-header__heading {
-  @apply order-1 flex basis-full items-start gap-2 min-w-0 sm:contents;
+  @apply order-1 flex basis-full items-center gap-2 min-w-0 sm:contents;
 }
 
 .page-header__icon {
@@ -17,7 +17,7 @@
 }
 
 .page-header__title {
-  @apply text-white font-bold text-xl leading-9.5 min-w-0 sm:order-3 sm:text-3xl sm:leading-9;
+  @apply text-white font-bold text-xl leading-tight min-w-0 sm:order-3 sm:text-3xl sm:leading-9;
 }
 
 .page-header__edit {
