@@ -164,6 +164,20 @@ const LucideLinkedin = {
   ],
 } satisfies LucideIconData;
 
+const LucideScaleOff = {
+  name: "scale-off",
+  node: [
+    ["path", { d: "M12 3v3.343" }],
+    ["path", { d: "M12 12v9" }],
+    ["path", { d: "m19 8 3 8a5 5 0 0 1-6 0zV7" }],
+    ["path", { d: "M3 7h1a17 17 0 0 0 2.772-.228" }],
+    ["path", { d: "M11.102 5.445a17 17 0 0 0 .898-.445 17 17 0 0 0 8 2h1" }],
+    ["path", { d: "m5 8 3 8a5 5 0 0 1-6 0zV7" }],
+    ["path", { d: "M7 21h10" }],
+    ["path", { d: "m2 2 20 20" }],
+  ],
+} satisfies LucideIconData;
+
 const LucideTwitter = {
   name: "twitter",
   node: [
@@ -236,6 +250,7 @@ export const lucideIcons = [
   LucideChartCandlestick,
   LucideMapPinned,
   LucideScale,
+  LucideScaleOff,
   LucideEllipsis,
   LucideMenu,
   LucideLeaf,
