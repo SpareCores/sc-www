@@ -158,12 +158,12 @@
 
 .sc-compare-table thead tr th:first-child,
 .sc-compare-table tbody tr td:first-child {
-  @apply max-md:pl-0;
+  @apply sm:max-md:pl-0;
 }
 
 .sc-compare-table thead tr th:last-child,
 .sc-compare-table tbody tr td:last-child {
-  @apply max-md:pr-0;
+  @apply sm:max-md:pr-0;
 }
 
 .sc-compare-table tbody tr td.compact-number {
@@ -257,32 +257,11 @@
   padding-bottom: 0;
 }
 
-@media (width < theme(--breakpoint-sm)) {
-  .sc-compare-table-holder
-    .sc-compare-table
-    tr
-    > :first-child:not(.sc-compare-table__pinned-cell) {
-    padding-left: max(calc(var(--spacing) * 4), env(safe-area-inset-left));
-  }
-
-  .sc-compare-table-holder
-    .sc-compare-table
-    tr
-    > :last-child:not(.sc-compare-table__pinned-cell) {
-    padding-right: max(calc(var(--spacing) * 4), env(safe-area-inset-right));
-  }
-
-  .sc-compare-table-holder .sc-compare-table__pinned-content {
-    padding-left: max(calc(var(--spacing) * 4), env(safe-area-inset-left));
-    padding-right: max(calc(var(--spacing) * 4), env(safe-area-inset-right));
-  }
-}
-
 .sc-compare-table tbody tr td.sc-compare-table__pinned-cell {
   padding-left: 0;
   padding-right: 0;
 }
 
 .sc-compare-table__pinned-content {
-  @apply sticky left-0 box-border md:px-5;
+  @apply sticky left-0 box-border max-sm:px-2 md:px-5;
 }
