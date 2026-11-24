@@ -51,6 +51,7 @@
         <p
           class="min-w-0 pl-2 text-wrap wrap-break-word font-light"
           [class.mb-6]="i < items().length - 1"
+          [class.pb-4]="i === items().length - 1"
           [attr.itemscope]="useFaqSchema() ? '' : null"
           [attr.itemprop]="useFaqSchema() ? 'acceptedAnswer' : null"
           [attr.itemtype]="useFaqSchema() ? 'https://schema.org/Answer' : null"
