@@ -598,7 +598,20 @@
               </p>
             }
             @if (serverDescription.categories.length) {
-              <div class="server-description-categories">
+              <div class="flex flex-wrap gap-2 sm:hidden">
+                @for (
+                  category of serverDescription.categories;
+                  track category
+                ) {
+                  <sc-button
+                    variant="outline"
+                    size="mobile"
+                    [label]="category"
+                    [disabled]="true"
+                  ></sc-button>
+                }
+              </div>
+              <div class="hidden flex-wrap gap-2 sm:flex">
                 @for (
                   category of serverDescription.categories;
                   track category
