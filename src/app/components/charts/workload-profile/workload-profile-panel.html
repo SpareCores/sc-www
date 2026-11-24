@@ -3,10 +3,11 @@
     class="w-full relative flex flex-col gap-4 sc-chart-block--scrollable workload-profile-charts-to-hide-for-test"
     [attr.id]="isEmbedded() ? 'workload_profile' : null"
     [class]="panelClass()"
+    [class.workload-profile-radar-card]="layout() === 'details'"
   >
     @if (showHeader()) {
       <div
-        class="flex justify-between items-center mb-4 gap-4 sc-header-anchor-host sc-header-anchor-host--card"
+        class="flex justify-between items-center gap-4 sc-header-anchor-host sc-header-anchor-host--card"
       >
         <h3 class="sc-chart-title">
           <svg
@@ -46,14 +47,67 @@
             ></sc-header-anchor>
           }
         </h3>
-        @if (layout() === "details" && profileDropdownItems().length) {
+      </div>
+    }
+    @if (layout() === "details") {
+      <div
+        class="workload-profile-radar-chart workload-profile-radar-chart--details workload-profile-radar-chart-to-hide-for-test"
+      >
+        <sc-workload-profile-radar-chart
+          [layout]="layout()"
+          [benchmarkMeta]="benchmarkMeta()"
+          [servers]="servers()"
+          [serverDetails]="serverDetails()"
+          (profileSelected)="onProfileSelected($event)"
+        ></sc-workload-profile-radar-chart>
+      </div>
+    } @else {
+      <div
+        class="workload-profile-panel-grid grid min-w-0 grid-cols-1 gap-8 items-start lg:grid-cols-2"
+      >
+        <div
+          class="workload-profile-radar-chart lg:row-start-1 lg:col-start-1 workload-profile-radar-chart--compare"
+        >
+          <sc-workload-profile-radar-chart
+            [layout]="layout()"
+            [benchmarkMeta]="benchmarkMeta()"
+            [servers]="servers()"
+            [serverDetails]="serverDetails()"
+          ></sc-workload-profile-radar-chart>
+        </div>
+        @if (accordionItems().length) {
+          <div
+            class="w-full min-w-0 text-sm sm:text-base pr-4 lg:min-h-[460px] lg:pt-18 lg:col-start-2 lg:row-start-1"
+          >
+            <sc-accordion
+              class="workload-profile-accordion"
+              [useFaqSchema]="false"
+              [showHeading]="false"
+              [items]="accordionItems()"
+              [activeIndex]="activeAccordionIndex()"
+              (activeIndexChange)="onAccordionChanged($event)"
+            ></sc-accordion>
+          </div>
+        }
+      </div>
+    }
+  </div>
+  @if (layout() === "details" && selectedProfileItem(); as selectedItem) {
+    <div
+      class="w-full relative flex flex-col gap-4 sc-chart-block--scrollable workload-profile-charts-to-hide-for-test"
+      [class]="panelClass()"
+      #profileCard
+    >
+      <div class="flex justify-between items-center mb-4 gap-4">
+        <h3 class="sc-chart-title min-w-0">{{ selectedItem.title }}</h3>
+        @if (profileDropdownItems().length) {
           <sc-button
             class="min-w-0"
             #profileDropdown="scDropdown"
             [id]="profileButtonId"
             [scDropdown]="profilePanel"
-            [label]="selectedProfileItem()?.title || ''"
-            [title]="selectedProfileItem()?.title || null"
+            [label]="selectedItem.title"
+            [title]="selectedItem.title"
             icon="chevron-down"
             compactIcon="settings"
             variant="dropdown"
@@ -84,53 +138,27 @@
           </ng-template>
         }
       </div>
-    }
-    @if (layout() === "details" && selectedProfileItem(); as selectedItem) {
       <div class="workload-profile-details-layout min-w-0">
         <div
-          class="workload-profile-panel-grid grid min-w-0 grid-cols-1 gap-8 items-stretch lg:grid-cols-2"
+          class="workload-profile-details-panel min-w-0"
+          [class.workload-profile-details-panel--with-table]="
+            !!selectedBreakdownTable()
+          "
         >
-          <div
-            class="workload-profile-radar-chart workload-profile-radar-chart--details workload-profile-radar-chart-to-hide-for-test lg:col-start-1 lg:row-start-1 mb-8"
-          >
-            <sc-workload-profile-radar-chart
-              [layout]="layout()"
-              [benchmarkMeta]="benchmarkMeta()"
-              [servers]="servers()"
-              [serverDetails]="serverDetails()"
-              (profileSelected)="onProfileSelected($event)"
-            ></sc-workload-profile-radar-chart>
-          </div>
-          <div
-            class="workload-profile-details-panel min-w-0 lg:col-start-2 lg:row-start-1"
-            [class.workload-profile-details-panel--with-table]="
-              !!selectedBreakdownTable()
-            "
-          >
-            <div class="workload-profile-details-panel__header">
-              @let gaugeChart = scoreGaugeChart();
-              <div class="workload-profile-score-gauge">
-                @if (isBrowser) {
-                  <div class="workload-profile-score-gauge__canvas">
-                    <canvas
-                      #scoreGauge
-                      baseChart
-                      [data]="gaugeChart.data"
-                      [options]="gaugeChart.options"
-                      [plugins]="scoreGaugePlugins"
-                      type="doughnut"
-                    ></canvas>
-                    <div class="workload-profile-score-gauge__value">
-                      <span class="workload-profile-score-gauge__number">{{
-                        gaugeChart.displayValue
-                      }}</span>
-                      <span class="workload-profile-score-gauge__label"
-                        >Score</span
-                      >
-                    </div>
-                  </div>
-                } @else {
-                  <div class="workload-profile-score-gauge__fallback">
+          <div class="workload-profile-details-panel__header">
+            @let gaugeChart = scoreGaugeChart();
+            <div class="workload-profile-score-gauge">
+              @if (isBrowser) {
+                <div class="workload-profile-score-gauge__canvas">
+                  <canvas
+                    #scoreGauge
+                    baseChart
+                    [data]="gaugeChart.data"
+                    [options]="gaugeChart.options"
+                    [plugins]="scoreGaugePlugins"
+                    type="doughnut"
+                  ></canvas>
+                  <div class="workload-profile-score-gauge__value">
                     <span class="workload-profile-score-gauge__number">{{
                       gaugeChart.displayValue
                     }}</span>
@@ -138,17 +166,24 @@
                       >Score</span
                     >
                   </div>
-                }
-              </div>
-              <div class="workload-profile-details-panel__description min-w-0">
-                <div class="min-w-0 text-wrap wrap-break-word font-light">
-                  <span>{{ selectedItem.content }}</span>
-                  @if (selectedItem.note) {
-                    <span class="block mt-2 text-yellow-500">{{
-                      selectedItem.note
-                    }}</span>
-                  }
                 </div>
+              } @else {
+                <div class="workload-profile-score-gauge__fallback">
+                  <span class="workload-profile-score-gauge__number">{{
+                    gaugeChart.displayValue
+                  }}</span>
+                  <span class="workload-profile-score-gauge__label">Score</span>
+                </div>
+              }
+            </div>
+            <div class="workload-profile-details-panel__description min-w-0">
+              <div class="min-w-0 text-wrap wrap-break-word font-light">
+                <span>{{ selectedItem.content }}</span>
+                @if (selectedItem.note) {
+                  <span class="block mt-2 text-yellow-500">{{
+                    selectedItem.note
+                  }}</span>
+                }
               </div>
             </div>
           </div>
@@ -331,37 +366,8 @@
           </div>
         }
       </div>
-    } @else if (layout() === "compare") {
-      <div
-        class="workload-profile-panel-grid grid min-w-0 grid-cols-1 gap-8 items-start lg:grid-cols-2"
-      >
-        <div
-          class="workload-profile-radar-chart lg:row-start-1 lg:col-start-1 workload-profile-radar-chart--compare"
-        >
-          <sc-workload-profile-radar-chart
-            [layout]="layout()"
-            [benchmarkMeta]="benchmarkMeta()"
-            [servers]="servers()"
-            [serverDetails]="serverDetails()"
-          ></sc-workload-profile-radar-chart>
-        </div>
-        @if (accordionItems().length) {
-          <div
-            class="w-full min-w-0 text-sm sm:text-base pr-4 lg:min-h-[460px] lg:pt-18 lg:col-start-2 lg:row-start-1"
-          >
-            <sc-accordion
-              class="workload-profile-accordion"
-              [useFaqSchema]="false"
-              [showHeading]="false"
-              [items]="accordionItems()"
-              [activeIndex]="activeAccordionIndex()"
-              (activeIndexChange)="onAccordionChanged($event)"
-            ></sc-accordion>
-          </div>
-        }
-      </div>
-    }
-  </div>
+    </div>
+  }
 }
 
 @if (showHeader()) {

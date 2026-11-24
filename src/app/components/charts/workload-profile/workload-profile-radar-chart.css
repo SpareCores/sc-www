@@ -17,7 +17,7 @@
 }
 
 .workload-profile-radar-chart__canvas--details {
-  height: 420px;
+  height: 100%;
 }
 
 @media (width < theme(--breakpoint-lg)) {

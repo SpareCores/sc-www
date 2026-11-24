@@ -4,7 +4,9 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  Injector,
   PLATFORM_ID,
+  afterNextRender,
   computed,
   effect,
   inject,
@@ -182,9 +184,11 @@ export class WorkloadProfilePanel {
 
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
   private tooltipService = inject(ChartTooltip);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
+  profileCard = viewChild<ElementRef<HTMLElement>>("profileCard");
   scoreGaugeDirective = viewChild<BaseChartDirective>("scoreGauge");
   profileDropdown = viewChild<Dropdown>("profileDropdown");
 
@@ -384,6 +388,19 @@ export class WorkloadProfilePanel {
   onProfileSelected(profileId: string): void {
     this.selectedProfileId.set(profileId);
     this.layoutChanged.emit();
+
+    if (!this.isBrowser) {
+      return;
+    }
+
+    afterNextRender(
+      () =>
+        this.profileCard()?.nativeElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        }),
+      { injector: this.injector },
+    );
   }
 
   selectProfile(profileId: string): void {
