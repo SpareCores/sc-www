@@ -717,9 +717,7 @@
               }
             </tr>
           }
-          <tr class="h-4">
-            <!-- spacer -->
-          </tr>
+          <tr class="compare-details-end" aria-hidden="true"></tr>
         }
       }
       @if (nvbandwidthSections.length && isChartShown("nvbandwidth")) {
@@ -924,7 +922,7 @@
             </tr>
           }
         }
-        <tr class="h-4"></tr>
+        <tr class="compare-details-end" aria-hidden="true"></tr>
       }
       @for (
         benchmarkCategory of benchmarkCategories;
@@ -1172,7 +1170,7 @@
               }
             </tr>
           }
-          <tr class="h-4"></tr>
+          <tr class="compare-details-end" aria-hidden="true"></tr>
         }
         @if (benchmarkCategory.data.length && !benchmarkCategory.hidden) {
           @let isPassmark = isPassmarkBenchmarkCategory(benchmarkCategory.id);
@@ -1637,9 +1635,7 @@
                 }
               </tr>
             }
-            <tr class="h-4">
-              <!-- spacer -->
-            </tr>
+            <tr class="compare-details-end" aria-hidden="true"></tr>
           }
           @if (benchmarkCategory.show_more && !isEmbedded) {
             <tr
@@ -1792,6 +1788,7 @@
                 }
               }
             }
+            <tr class="compare-details-end" aria-hidden="true"></tr>
           }
         }
       }
@@ -2092,6 +2089,7 @@
                 }
               }
             }
+            <tr class="compare-details-end" aria-hidden="true"></tr>
           }
         }
       }

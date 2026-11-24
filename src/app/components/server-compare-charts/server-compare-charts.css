@@ -22,6 +22,10 @@
   @apply scroll-mt-14;
 }
 
+.sc-compare-table tbody tr.compare-details-end {
+  @apply h-8;
+}
+
 .sc-compare-table tbody tr.compare-section-header {
   position: relative;
   z-index: 1;
