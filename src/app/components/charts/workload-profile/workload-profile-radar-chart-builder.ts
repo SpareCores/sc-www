@@ -24,6 +24,8 @@ import {
   WorkloadProfileRadarPoint,
 } from "./workload-profile-radar-chart.types";
 
+const RADAR_POINT_LABEL_MAX_LINE_LENGTH = 13;
+
 @Injectable({
   providedIn: "root",
 })
@@ -139,6 +141,8 @@ export class WorkloadProfileRadarChartBuilder {
       baseTooltip.callbacks !== null
         ? baseTooltip.callbacks
         : {};
+    const baseScales = resolvedOptions.scales ?? {};
+    const baseRadialScale = baseScales["r"] ?? {};
 
     return {
       ...resolvedOptions,
@@ -147,6 +151,20 @@ export class WorkloadProfileRadarChartBuilder {
       layout: {
         ...baseLayout,
         padding: 0,
+      },
+      scales: {
+        ...baseScales,
+        r: {
+          ...baseRadialScale,
+          pointLabels: {
+            ...baseRadialScale.pointLabels,
+            callback: (label: string) =>
+              wrapTextAtWordBoundaries(
+                label,
+                RADAR_POINT_LABEL_MAX_LINE_LENGTH,
+              ),
+          },
+        },
       },
       plugins: {
         ...basePlugins,

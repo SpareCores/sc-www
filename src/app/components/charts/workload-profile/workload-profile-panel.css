@@ -5,7 +5,7 @@
 }
 
 .workload-profile-panel--compare {
-  @apply px-4 py-4 bg-transparent h-auto overflow-visible lg:min-h-[500px];
+  @apply px-4 py-4 bg-transparent h-auto overflow-visible lg:min-h-125;
 }
 
 .workload-profile-panel-grid {
@@ -18,7 +18,7 @@
 
 .workload-profile-radar-chart--compare {
   display: flex;
-  height: min(28.75rem, 63cqw + 6rem);
+  height: min(28.75rem, 115cqw - 135px + 6rem);
   min-width: 0;
 
   @media (width >= theme(--breakpoint-lg)) {
@@ -32,7 +32,7 @@
 
 .workload-profile-radar-chart--details {
   display: flex;
-  height: min(26.25rem, max(63cqw, 150cqw - 370px) + 0.5rem);
+  height: min(26.25rem, max(115cqw - 135px, 95cqw - 56px) + 0.5rem);
   min-width: 0;
 }
 
