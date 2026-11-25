@@ -20,12 +20,12 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 ### Commands & Dependencies
 
-- You may run non-mutating checks: `npm run prettier:check`, `npm run lint`, `npm run build`, and `npm run test:ci`. Run anything else (e.g. `ng serve`, Cypress) only when explicitly requested.
+- You may run non-mutating checks: `npm run prettier:check`, `npm run lint`, `npm run build`, `npm run test:ci`, and `npx prettier --write` on files you changed. Run anything else (e.g. `ng serve`, Cypress) only when explicitly requested.
 - Never add, remove, or upgrade packages, and never run `npm install`, `uninstall`, or `update`. Ask the user and let them update the lockfile.
 
 ### Context & Tool Management
 
-- Read and edit only files explicitly referenced by the task or tagged by the user, unless the user approved a plan for a multi-file change; list those files in the plan.
+- Read and edit only files explicitly referenced by the task or tagged by the user, unless the user approved a plan for a multi-file change; list those files in the plan. `CHANGELOG.md` and `.agents/changelog.md` are always in scope when documenting a user-facing change.
 - Do not perform blind repository-wide scans. Use targeted search or symbol lookup only when a missing import, type interface, or dependency blocks immediate execution.
 - Ignore structural config files unless directly required. You are explicitly allowed to inspect `src/app/services/keeper-api.ts` to resolve server endpoints.
 - Store plans in `.claude/plans/` with a descriptive kebab-case file name prefixed by the Linear ID from the branch name and stating the plan's subject (e.g. `dev-1045-clerk-posthog-lazy-load-review-fixes.md`); never use random or generated names.
@@ -37,6 +37,11 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 - Generate minimal `.spec.ts` files (component creation and core triggers only) when creating a new element or when explicitly requested.
 - Never regenerate visual regression baselines locally unless explicitly asked; they are regenerated in CI.
 - Put Cypress specs in the folders that the CI shards run: functional specs in `cypress/e2e/functional/auth/`, `http/` or `pages/`, visual specs in `cypress/e2e/visual/desktop/`, `mobile/` or `tablet/`. A spec outside these folders never runs in CI.
+
+### Changelog
+
+- Document every user-facing change (new features, UI/UX improvements, visible fixes, new articles and slides) in `CHANGELOG.md` in the same PR.
+- Read `.agents/changelog.md` before editing `CHANGELOG.md`; it defines the sections, entry style and formatting.
 
 ### Formatting
 
