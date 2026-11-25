@@ -10,7 +10,7 @@
             class="h-6 w-6"
           ></svg>
         }
-        {{ title() }}
+        <sc-truncated-title [text]="title()"></sc-truncated-title>
         @if (orderTooltip()) {
           <svg
             lucideCircleArrowUp

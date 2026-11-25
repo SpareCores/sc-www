@@ -14,7 +14,7 @@
             [lucideIcon]="'workload_profile' | benchmarkIcon"
             class="h-6 w-6"
           ></svg>
-          Workload Profiles
+          <sc-truncated-title text="Workload Profiles"></sc-truncated-title>
           <svg
             lucideCircleArrowUp
             class="h-4 w-4 text-gray-200"
@@ -95,8 +95,8 @@
       <div
         class="flex justify-between items-center gap-4 lg:col-start-2 lg:row-start-1 lg:justify-end"
       >
-        <h3 class="sc-chart-title min-w-0 lg:hidden">
-          {{ selectedItem.title }}
+        <h3 class="sc-chart-title lg:hidden">
+          <sc-truncated-title [text]="selectedItem.title"></sc-truncated-title>
         </h3>
         @if (profileDropdownItems().length) {
           <sc-button

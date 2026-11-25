@@ -27,6 +27,7 @@ import { UiTooltip } from "../../services/ui-tooltip";
 import { Button } from "../button/button";
 import { Modal } from "../modals/modal/modal";
 import { HeaderAnchor } from "../header-anchor/header-anchor";
+import { TruncatedTitle } from "../truncated-title/truncated-title";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
@@ -40,7 +41,7 @@ type TooltipListener = {
 
 @Component({
   selector: "sc-server-lstopo",
-  imports: [Button, DragToPan, Modal, HeaderAnchor],
+  imports: [Button, DragToPan, Modal, HeaderAnchor, TruncatedTitle],
   templateUrl: "./server-lstopo.html",
   styleUrl: "./server-lstopo.css",
   encapsulation: ViewEncapsulation.None,

@@ -24,6 +24,7 @@ import { ChartConfiguration, Plugin, ArcElement } from "chart.js";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { Accordion } from "../../accordion/accordion";
 import { Dropdown } from "../../../directives/dropdown";
 import { ChartTooltip } from "../shared/chart-tooltip";
@@ -173,6 +174,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
     BaseChartDirective,
     Dropdown,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./workload-profile-panel.html",
   styleUrls: ["./workload-profile-panel.css"],

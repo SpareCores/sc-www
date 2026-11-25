@@ -6,7 +6,7 @@
       >
         <h3 class="sc-chart-title">
           <svg [lucideIcon]="'geekbench' | benchmarkIcon" class="h-6 w-6"></svg>
-          {{ title() }}
+          <sc-truncated-title [text]="title()"></sc-truncated-title>
           <svg
             lucideCircleArrowUp
             class="h-4 w-4 text-gray-200"

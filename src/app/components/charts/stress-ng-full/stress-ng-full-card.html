@@ -7,7 +7,7 @@
     <div class="flex items-center min-h-[42px] sc-header-anchor-host">
       <h3 class="sc-chart-title">
         <svg [lucideIcon]="'stress_ng' | benchmarkIcon" class="h-6 w-6"></svg>
-        {{ title }}
+        <sc-truncated-title [text]="title"></sc-truncated-title>
         <svg
           lucideCircleArrowUp
           class="h-4 w-4 text-gray-200"

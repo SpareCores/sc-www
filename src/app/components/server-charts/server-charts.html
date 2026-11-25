@@ -78,7 +78,7 @@
     <div class="flex items-center min-h-[42px] sc-header-anchor-host">
       <h3 class="sc-chart-title">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
-        Passmark CPU Scores
+        <sc-truncated-title text="Passmark CPU Scores"></sc-truncated-title>
         @if (!isEmbedded) {
           <sc-header-anchor
             anchorId="passmark_cpu"
@@ -170,7 +170,7 @@
     <div class="flex items-center min-h-[42px] sc-header-anchor-host">
       <h3 class="sc-chart-title">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
-        Passmark Memory Scores
+        <sc-truncated-title text="Passmark Memory Scores"></sc-truncated-title>
         @if (!isEmbedded) {
           <sc-header-anchor
             anchorId="passmark_other"

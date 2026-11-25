@@ -2,8 +2,8 @@
   class="lstopo-header relative mb-4 flex min-h-9.5 items-center sc-header-anchor-host"
   [style.--lstopo-svg-width.px]="svgIntrinsicWidth || null"
 >
-  <h3 class="text-lg pr-12 sm:text-2xl sm:pr-40">
-    CPU and System Topology
+  <h3 class="sc-chart-title pr-12 sm:pr-40">
+    <sc-truncated-title text="CPU and System Topology"></sc-truncated-title>
     @if (anchored) {
       <sc-header-anchor
         anchorId="lstopo"

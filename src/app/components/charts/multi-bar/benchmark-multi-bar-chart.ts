@@ -44,6 +44,7 @@ import {
   MultiBarServer,
 } from "./benchmark-multi-bar-chart.types";
 import { TooltipTrigger } from "../../../directives/tooltip-trigger";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 
 @Component({
   selector: "sc-benchmark-multi-bar-chart",
@@ -59,6 +60,7 @@ import { TooltipTrigger } from "../../../directives/tooltip-trigger";
     Dropdown,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./benchmark-multi-bar-chart.html",
   styles: [

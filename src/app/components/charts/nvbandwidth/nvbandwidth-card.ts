@@ -17,6 +17,7 @@ import {
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
@@ -48,6 +49,7 @@ function isRightColumnSection(section: NvbandwidthSection<string>): boolean {
     LucideTriangleAlert,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./nvbandwidth-card.html",
   styleUrl: "./nvbandwidth-card.css",

@@ -22,6 +22,7 @@ import { BaseChartDirective } from "ng2-charts";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import {
   barChartOptionsSSL,
   barChartOptionsSSLCompare,
@@ -72,6 +73,7 @@ import { TooltipTrigger } from "../../../directives/tooltip-trigger";
     Dropdown,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./benchmark-line-chart.html",
   styles: [

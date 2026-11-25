@@ -20,6 +20,7 @@ import { BaseChartDirective } from "ng2-charts";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import { MemoryChartBuilder } from "./memory-chart-builder";
@@ -45,6 +46,7 @@ import { TooltipTrigger } from "../../../directives/tooltip-trigger";
     Dropdown,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./server-memory-chart.html",
   styles: [

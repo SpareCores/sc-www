@@ -21,6 +21,7 @@ import {
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import {
   barChartOptionsSSL,
   barChartOptionsSSLCompare,
@@ -60,6 +61,7 @@ import { Button } from "../../button/button";
     Dropdown,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./llm-inference-chart.html",
   styles: [

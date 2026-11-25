@@ -22,6 +22,7 @@ import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { DecimalPipe } from "@angular/common";
 import { Button } from "../button/button";
 import { HeaderAnchor } from "../header-anchor/header-anchor";
+import { TruncatedTitle } from "../truncated-title/truncated-title";
 import { CompressionChart } from "../charts/compression/compression-chart";
 import { GeekbenchRadarChart } from "../charts/geekbench/geekbench-radar-chart";
 import { GeekbenchBenchmarkMeta } from "../charts/geekbench/geekbench-radar-chart.types";
@@ -70,6 +71,7 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     StressNgFullCard,
     WorkloadProfilePanel,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./server-charts.html",
   styleUrl: "./server-charts.css",

@@ -9,7 +9,7 @@
     >
       <h3 class="sc-chart-title pr-2">
         <svg [lucideIcon]="chart().id | benchmarkIcon" class="h-6 w-6"></svg>
-        <span class="sm:whitespace-nowrap">{{ chart().name }}</span>
+        <sc-truncated-title [text]="chart().name"></sc-truncated-title>
         @if (currentOption().icon) {
           <svg
             [lucideIcon]="currentOption().icon || 'circle-arrow-up'"

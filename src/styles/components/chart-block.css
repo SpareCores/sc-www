@@ -230,29 +230,15 @@
 }
 
 .sc-chart-title {
-  @apply grid min-w-0 items-center gap-x-2 text-lg;
-  grid-auto-flow: column;
-  grid-template-columns: auto minmax(0, max-content);
+  @apply flex min-w-0 items-center gap-x-2 text-lg;
 }
 
-.sc-chart-title > svg:first-child {
-  align-self: start;
-  margin-top: 0.125rem;
-}
-
-.sc-chart-title > svg:not(:first-child) {
-  align-self: end;
-  margin-bottom: 0.375rem;
+.sc-chart-title > svg {
+  @apply shrink-0;
 }
 
 @media (width >= theme(--breakpoint-sm)) {
   .sc-chart-title {
-    @apply flex text-2xl;
-  }
-
-  .sc-chart-title > svg:first-child,
-  .sc-chart-title > svg:not(:first-child) {
-    align-self: auto;
-    margin-block: 0;
+    @apply text-2xl;
   }
 }

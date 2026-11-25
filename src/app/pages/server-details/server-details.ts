@@ -41,6 +41,7 @@ import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
 import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { ServerDescriptionSummary } from "../../components/server-description-summary/server-description-summary";
 import { DetailsCard } from "../../components/details-card/details-card";
+import { TruncatedTitle } from "../../components/truncated-title/truncated-title";
 import { DetailsHeader } from "../../components/details-header/details-header";
 import { DetailsHeaderScore } from "../../components/details-header/details-header.types";
 import { DetailsCardSection } from "../../components/details-card/details-card.types";
@@ -114,6 +115,7 @@ function createEmptyBarChartData(): ChartData<"bar"> {
     Modal,
     DetailsHeader,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./server-details.html",
   styleUrl: "./server-details.css",

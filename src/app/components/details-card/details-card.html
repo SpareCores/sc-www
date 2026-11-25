@@ -7,10 +7,8 @@
   [attr.id]="cardId()"
   #cardRoot
 >
-  <h3
-    class="text-lg sm:text-2xl sc-header-anchor-host sc-header-anchor-host--card"
-  >
-    {{ cardTitle() }}
+  <h3 class="sc-chart-title sc-header-anchor-host sc-header-anchor-host--card">
+    <sc-truncated-title [text]="cardTitle()"></sc-truncated-title>
     @if (anchorId(); as id) {
       <sc-header-anchor
         [anchorId]="id"

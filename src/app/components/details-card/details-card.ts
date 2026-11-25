@@ -20,6 +20,7 @@ import {
 } from "@lucide/angular";
 import { Button } from "../button/button";
 import { HeaderAnchor } from "../header-anchor/header-anchor";
+import { TruncatedTitle } from "../truncated-title/truncated-title";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { DetailsCardSection } from "./details-card.types";
 import { TooltipTrigger } from "../../directives/tooltip-trigger";
@@ -34,6 +35,7 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     Button,
     RouterLink,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./details-card.html",
   styleUrl: "./details-card.css",

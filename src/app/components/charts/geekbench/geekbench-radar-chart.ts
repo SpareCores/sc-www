@@ -18,6 +18,7 @@ import {
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import {
@@ -48,6 +49,7 @@ import { TooltipTrigger } from "../../../directives/tooltip-trigger";
     BaseChartDirective,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./geekbench-radar-chart.html",
   styles: [
