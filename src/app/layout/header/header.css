@@ -57,6 +57,10 @@ li {
   @apply right-0;
 }
 
+.header_panel--menu {
+  @apply -right-2 lg:-right-4;
+}
+
 .mobile_menu_panel {
   width: max-content;
   max-width: calc(100vw - 2rem);
@@ -149,6 +153,16 @@ li {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+.mobile_menu_panel__list {
+  max-height: calc(100vh - 4.625rem);
+  max-height: calc(100dvh - 4.625rem);
+
+  @media (width >= theme(--breakpoint-lg)) {
+    max-height: calc(100vh - 4.75rem);
+    max-height: calc(100dvh - 4.75rem);
+  }
 }
 
 .bg-custom {
