@@ -1069,11 +1069,10 @@ export class ServerDetails implements OnInit, OnDestroy {
   }
 
   updateChart3() {
-    const pricesPerZone: any[] = [];
+    const allPricesPerZone: any[] = [];
     if (this.serverDetails.prices.length > 0) {
-      for (let i = 0; i < this.serverDetails.prices.length && i < 10; i++) {
-        const price = this.serverDetails.prices[i];
-        const zone = pricesPerZone.find(
+      for (const price of this.serverDetails.prices) {
+        const zone = allPricesPerZone.find(
           (z) =>
             z.vendor_id === price.vendor_id &&
             z.region_id === price.region_id &&
@@ -1099,12 +1098,14 @@ export class ServerDetails implements OnInit, OnDestroy {
           data[price.allocation || "spot"].price += price.price;
           data[price.allocation || "spot"].count++;
 
-          pricesPerZone.push(data);
+          allPricesPerZone.push(data);
         } else {
           zone[price.allocation || "spot"].price += price.price;
           zone[price.allocation || "spot"].count++;
         }
       }
+
+      const pricesPerZone = allPricesPerZone.slice(0, 10);
 
       pricesPerZone.forEach((zone: any) => {
         if (zone.spot.count)
