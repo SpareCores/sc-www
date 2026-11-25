@@ -3,11 +3,11 @@
     class="w-full relative flex flex-col gap-4 sc-chart-block--scrollable workload-profile-charts-to-hide-for-test"
     [attr.id]="isEmbedded() ? 'workload_profile' : null"
     [class]="panelClass()"
-    [class.workload-profile-radar-card]="layout() === 'details'"
+    [class.workload-profile-details-card]="layout() === 'details'"
   >
     @if (showHeader()) {
       <div
-        class="flex justify-between items-center gap-4 sc-header-anchor-host sc-header-anchor-host--card"
+        class="flex justify-between items-center gap-4 sc-header-anchor-host sc-header-anchor-host--card lg:col-start-1 lg:row-start-1"
       >
         <h3 class="sc-chart-title">
           <svg
@@ -51,7 +51,7 @@
     }
     @if (layout() === "details") {
       <div
-        class="workload-profile-radar-chart workload-profile-radar-chart--details workload-profile-radar-chart-to-hide-for-test"
+        class="workload-profile-radar-chart workload-profile-radar-chart--details workload-profile-radar-chart-to-hide-for-test lg:col-start-1 lg:row-start-3 lg:mb-8"
       >
         <sc-workload-profile-radar-chart
           [layout]="layout()"
@@ -91,15 +91,13 @@
         }
       </div>
     }
-  </div>
-  @if (layout() === "details" && selectedProfileItem(); as selectedItem) {
-    <div
-      class="w-full relative flex flex-col gap-4 sc-chart-block--scrollable workload-profile-charts-to-hide-for-test"
-      [class]="panelClass()"
-      #profileCard
-    >
-      <div class="flex justify-between items-center mb-4 gap-4">
-        <h3 class="sc-chart-title min-w-0">{{ selectedItem.title }}</h3>
+    @if (layout() === "details" && selectedProfileItem(); as selectedItem) {
+      <div
+        class="flex justify-between items-center gap-4 lg:col-start-2 lg:row-start-1 lg:justify-end"
+      >
+        <h3 class="sc-chart-title min-w-0 lg:hidden">
+          {{ selectedItem.title }}
+        </h3>
         @if (profileDropdownItems().length) {
           <sc-button
             class="min-w-0"
@@ -140,7 +138,7 @@
       </div>
       <div class="workload-profile-details-layout min-w-0">
         <div
-          class="workload-profile-details-panel min-w-0"
+          class="workload-profile-details-panel min-w-0 lg:col-start-2 lg:row-start-3"
           [class.workload-profile-details-panel--with-table]="
             !!selectedBreakdownTable()
           "
@@ -177,7 +175,9 @@
               }
             </div>
             <div class="workload-profile-details-panel__description min-w-0">
-              <div class="min-w-0 text-wrap wrap-break-word font-light">
+              <div
+                class="min-w-0 text-wrap wrap-break-word font-light max-md:text-sm"
+              >
                 <span>{{ selectedItem.content }}</span>
                 @if (selectedItem.note) {
                   <span class="block mt-2 text-yellow-500">{{
@@ -190,7 +190,7 @@
         </div>
         @if (selectedBreakdownTable(); as breakdown) {
           <div
-            class="workload-profile-details-panel__table overflow-x-auto min-w-0"
+            class="workload-profile-details-panel__table overflow-x-auto min-w-0 lg:col-span-2 lg:row-start-4"
           >
             <table class="workload-profile-breakdown-table">
               <thead>
@@ -366,8 +366,8 @@
           </div>
         }
       </div>
-    </div>
-  }
+    }
+  </div>
 }
 
 @if (showHeader()) {

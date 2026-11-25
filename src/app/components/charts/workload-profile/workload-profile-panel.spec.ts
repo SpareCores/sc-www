@@ -252,7 +252,7 @@ describe("WorkloadProfilePanel", () => {
     );
   });
 
-  it("renders the profile dropdown in a separate profile card", () => {
+  it("renders the radar, profile dropdown and gauge in one card", () => {
     fixture.componentRef.setInput("layout", "details");
     fixture.componentRef.setInput("serverDetails", {
       benchmark_scores: [
@@ -269,41 +269,19 @@ describe("WorkloadProfilePanel", () => {
       ".workload-profile-charts-to-hide-for-test",
     );
 
-    expect(cards.length).toBe(2);
+    const titles = Array.from(cards[0].querySelectorAll("h3")).map((title) =>
+      title.textContent?.trim(),
+    );
+
+    expect(cards.length).toBe(1);
     expect(
       cards[0].querySelector(".workload-profile-radar-chart--details"),
     ).toBeTruthy();
-    expect(cards[0].querySelector("sc-button")).toBeNull();
-    expect(cards[1].querySelector("h3")?.textContent).toContain("Web server");
-    expect(cards[1].querySelector("sc-button")).toBeTruthy();
+    expect(titles[1]).toContain("Web server");
+    expect(cards[0].querySelector("sc-button")).toBeTruthy();
     expect(
-      cards[1].querySelector(".workload-profile-score-gauge"),
+      cards[0].querySelector(".workload-profile-score-gauge"),
     ).toBeTruthy();
-  });
-
-  it("scrolls the profile card into view when a profile is selected", () => {
-    fixture.componentRef.setInput("layout", "details");
-    fixture.componentRef.setInput("serverDetails", {
-      benchmark_scores: [
-        {
-          benchmark_id: "workload_profile:web",
-          score: 0.832,
-          score_breakdown: webBreakdown,
-        },
-      ],
-    });
-    fixture.detectChanges();
-
-    const scrollSpy = spyOn(Element.prototype, "scrollIntoView");
-
-    fixture.componentInstance.onProfileSelected("workload_profile:web");
-    fixture.detectChanges();
-    TestBed.tick();
-
-    expect(scrollSpy).toHaveBeenCalledOnceWith({
-      behavior: "smooth",
-      block: "start",
-    });
   });
 
   it("renders compact units and the breakdown table on details layout", () => {
