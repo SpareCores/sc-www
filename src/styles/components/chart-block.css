@@ -39,9 +39,13 @@
 }
 
 @media (width >= theme(--breakpoint-sm)) {
+  .sc-chart-block--taller {
+    min-height: 33.125rem;
+  }
+
   .sc-chart-block--taller .chart_div {
     aspect-ratio: auto;
-    height: 33.125rem;
+    max-height: 33.125rem;
   }
 }
 
