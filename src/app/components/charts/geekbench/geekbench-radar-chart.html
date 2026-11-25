@@ -40,14 +40,14 @@
           }
         </h3>
         <div
-          class="py-2 px-2 border-emerald-400 border-solid rounded-lg border"
+          class="py-2 px-2 border-emerald-400 border-solid rounded-lg border text-sm sm:text-base"
         >
           Score: {{ resolvedScore() }}
         </div>
       </div>
-      @if (isBrowser) {
-        <div class="min-h-0 flex-1">
-          <div class="chart_div" chartType="bar">
+      <div class="min-h-0 flex-1">
+        <div class="chart_div" chartType="bar">
+          @if (isBrowser) {
             <canvas
               [id]="canvasId()"
               baseChart
@@ -56,9 +56,9 @@
               [type]="chartType()"
             >
             </canvas>
-          </div>
+          }
         </div>
-      }
+      </div>
     </div>
   }
 } @else {

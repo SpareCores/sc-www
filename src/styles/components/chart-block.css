@@ -28,15 +28,21 @@
 .sc-chart-block--taller {
   @apply relative overflow-hidden rounded-lg border border-solid border-emerald-400 bg-secondary p-4 md:p-6;
   width: 100%;
-  min-height: 33.125rem;
   margin: auto;
 }
 
 .sc-chart-block--taller .chart_div {
-  max-height: 33.125rem;
+  aspect-ratio: 1;
   max-width: 100%;
   display: flex;
   justify-content: center;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-chart-block--taller .chart_div {
+    aspect-ratio: auto;
+    height: 33.125rem;
+  }
 }
 
 .sc-chart-block--half.sc-chart-block--open {
@@ -182,6 +188,10 @@
   max-height: none;
   max-width: none;
   height: 100%;
+}
+
+.sc-chart-embed .sc-chart-block--taller .chart_div {
+  aspect-ratio: auto;
 }
 
 .sc-chart-embed .sc-chart-block--half,

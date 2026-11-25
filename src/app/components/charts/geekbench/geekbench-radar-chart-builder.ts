@@ -158,7 +158,10 @@ export class GeekbenchRadarChartBuilder {
   }
 
   private createDetailsOptions(): GeekbenchRadarChartOptions {
-    return cloneChartOptions(radarChartOptions ?? {});
+    return {
+      ...cloneChartOptions(radarChartOptions ?? {}),
+      maintainAspectRatio: false,
+    };
   }
 
   private createCompareOptions(title: string): GeekbenchRadarChartOptions {
