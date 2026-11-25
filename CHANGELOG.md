@@ -22,6 +22,11 @@ New features:
   memberships; Active devices now list location, IP address and last-active time (#339)
 - Article author bios with avatars, roles and social links, multiple authors per
   article or talk, and article listings filtered by author (#337)
+- Phone and tablet layouts for every page: pages render at the device width instead of
+  zoomed out to 60%, so text is readable and buttons can be tapped without zooming; the
+  header, menu and footer, the listings, the Server and Database details, Compare,
+  Advisor, landing, About, article and legal pages are redesigned for small screens
+  (#344)
 
 Improvements:
 
@@ -37,6 +42,24 @@ Improvements:
 - Every listing table (Servers, Databases, Server prices, Storages, Traffic prices,
   Advisor) shows a "No ... match the selected filters." row, and the loading overlay
   covers the whole table even when scrolled sideways (#327)
+- Listings (Servers, Databases, Server prices, Storages, Traffic prices, Advisor) on
+  phones: icon-only toolbar buttons, bookmark and share buttons in the toolbar row, a
+  one-row page size and pagination footer, and tables that scroll sideways inside the
+  page; the filter sidebar shows on screens at least 1280px wide (#344)
+- Compare page on phones: two servers fit side by side, section titles and charts stay
+  in view while the table scrolls sideways, and chart options sit in the section
+  header; Show Details scrolls to the first detail row at every screen size (#344)
+- Server details page: Workload Profiles is split into a radar card and a profile card
+  that scrolls into view when a profile is picked, radar labels wrap so the chart uses
+  the card's space, and card titles stay on one line with the full title in a tooltip;
+  on phones the Geekbench cards fit their radar (#344)
+- Tooltips open on tap and keyboard focus as well as on hover, and close on Escape or a
+  tap outside them (#344)
+- Dialogs fill the screen on phones, with their main actions at the bottom (#344)
+- Articles on phones: smaller headings and text, and topic pills under the author
+  (#344)
+- The Compare button on the Server details page is outlined, and Don't Compare is
+  outlined in red with its own icon (#344)
 
 Fixes:
 
@@ -45,6 +68,10 @@ Fixes:
   databases (#323)
 - Closing the promo banner and clicking a bookmark button work before the page finishes
   loading (#335)
+- Clicking the info icon in a sortable table header no longer sorts the column (#344)
+- Buttons no longer stay highlighted after a click or tap (#344)
+- The "Link copied to clipboard!" message appears below the promo banner instead of
+  blending into it (#344)
 
 New content:
 
