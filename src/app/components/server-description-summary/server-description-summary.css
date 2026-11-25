@@ -17,7 +17,7 @@
 }
 
 .summary-paragraph {
-  @apply text-gray-200 leading-relaxed mb-4 last:-mb-3;
+  @apply text-gray-200 text-sm leading-relaxed mb-4 last:mb-0 sm:text-base sm:last:-mb-3;
 }
 
 .summary-highlights {
@@ -25,5 +25,5 @@
 }
 
 .summary-bullets {
-  @apply text-gray-200 space-y-2 list-disc list-inside;
+  @apply text-gray-200 text-sm space-y-2 list-disc list-inside sm:text-base;
 }
