@@ -2,8 +2,8 @@
 
 .delimiter {
   width: auto;
-  margin-left: max(--spacing(4), env(safe-area-inset-left));
-  margin-right: max(--spacing(4), env(safe-area-inset-right));
+  margin-left: max(--spacing(2), env(safe-area-inset-left));
+  margin-right: max(--spacing(2), env(safe-area-inset-right));
   @apply border-gray-200 border-b bg-transparent;
 
   @media (width >= theme(--breakpoint-lg)) {
@@ -13,8 +13,8 @@
 }
 
 .nav {
-  padding-left: max(--spacing(4), env(safe-area-inset-left));
-  padding-right: max(--spacing(4), env(safe-area-inset-right));
+  padding-left: max(--spacing(2), env(safe-area-inset-left));
+  padding-right: max(--spacing(2), env(safe-area-inset-right));
 
   @media (width >= theme(--breakpoint-lg)) {
     padding-left: 0;

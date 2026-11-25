@@ -10,8 +10,8 @@
   height: 620px;
   zoom: tan(
     atan2(
-      100vw - max(1rem, env(safe-area-inset-left)) -
-        max(1rem, env(safe-area-inset-right)),
+      100vw - max(0.5rem, env(safe-area-inset-left)) -
+        max(0.5rem, env(safe-area-inset-right)),
       560px
     )
   );

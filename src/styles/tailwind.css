@@ -84,8 +84,8 @@
 }
 
 @utility shell-gutter {
-  padding-left: max(--spacing(4), env(safe-area-inset-left));
-  padding-right: max(--spacing(4), env(safe-area-inset-right));
+  padding-left: max(--spacing(2), env(safe-area-inset-left));
+  padding-right: max(--spacing(2), env(safe-area-inset-right));
 
   @media (width >= theme(--breakpoint-lg)) {
     padding-left: max(--spacing(6), env(safe-area-inset-left));
@@ -94,8 +94,8 @@
 }
 
 @utility content-gutter {
-  padding-left: max(--spacing(4), env(safe-area-inset-left));
-  padding-right: max(--spacing(4), env(safe-area-inset-right));
+  padding-left: max(--spacing(2), env(safe-area-inset-left));
+  padding-right: max(--spacing(2), env(safe-area-inset-right));
 
   @media (width >= theme(--breakpoint-lg)) {
     padding-left: max(--spacing(6), env(safe-area-inset-left));
