@@ -33,15 +33,11 @@
 }
 
 .server-description-tagline {
-  @apply text-emerald-400 text-base leading-6 sm:text-lg sm:leading-7;
-}
-
-.server-description-categories {
-  @apply flex flex-wrap gap-2;
+  @apply text-emerald-400 text-sm sm:text-lg sm:leading-7;
 }
 
 .server-description-text {
-  @apply text-gray-200 leading-relaxed;
+  @apply text-gray-200 text-sm leading-relaxed sm:text-base;
 }
 
 .summarize-fab {
