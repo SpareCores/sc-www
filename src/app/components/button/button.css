@@ -183,10 +183,8 @@
   @apply border-transparent bg-white text-gray-900 hover:bg-white/90 focus-visible:bg-white/90;
 }
 
-:is(.sc-button--outline, .sc-button--icon):is(
-  .sc-button--brand,
-  .sc-button--brand-inverse
-) {
+.sc-button--outline:is(.sc-button--brand, .sc-button--brand-inverse),
+.sc-button--icon:is(.sc-button--brand, .sc-button--brand-inverse) {
   @apply border-emerald-400 text-emerald-400 hover:bg-emerald-400/10 focus-visible:bg-emerald-400/10;
 }
 
