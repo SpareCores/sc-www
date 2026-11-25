@@ -1,6 +1,6 @@
 ## November 2026
 
-New feature(s):
+New features:
 
 - Embed widgets for databases: the spec cards (Database Metadata, Availability & Pricing,
   Engine, Capacity, Features, Security) and pgbench charts of the Database details page,
@@ -23,7 +23,7 @@ New feature(s):
 - Article author bios with avatars, roles and social links, multiple authors per
   article or talk, and article listings filtered by author (#337)
 
-Improvement(s):
+Improvements:
 
 - Faster initial page load: the sign-in and analytics libraries are loaded on demand,
   halving the initial download (1.19 MB to 602 kB transferred), and sign in / sign up
@@ -38,22 +38,24 @@ Improvement(s):
   Advisor) shows a "No ... match the selected filters." row, and the loading overlay
   covers the whole table even when scrolled sideways (#327)
 
-Fix(es):
+Fixes:
 
-- Fix the "Active only" and "Orderable only" filters of the Databases listing showing as
-  Any/True/False radios where "Any" still filtered to orderable databases; they are
-  checkboxes again (#323)
-- Fix closing the promo banner or clicking a bookmark button before the page finished
-  loading having no effect (#335)
+- The "Active only" and "Orderable only" filters of the Databases listing are checkboxes
+  again instead of Any/True/False radios, where "Any" still filtered to orderable
+  databases (#323)
+- Closing the promo banner and clicking a bookmark button work before the page finishes
+  loading (#335)
 
 New content:
 
-- Article: [Link Straight to Any Section or Chart](https://sparecores.com/article/section-links)
-- Slides: [Data-Driven Instance Selection](https://sparecores.com/assets/slides/sreday-amsterdam-2026.html) (SREday Amsterdam 2026)
+- Slides:
+  - [Data-Driven Instance Selection](https://sparecores.com/assets/slides/sreday-amsterdam-2026.html) (SREday Amsterdam 2026)
+- Articles:
+  - [Link Straight to Any Section or Chart](https://sparecores.com/article/section-links)
 
 ## October 2026
 
-New feature(s):
+New features:
 
 - Stress-ng stressor results (about 84 stressors in 7 groups, e.g. CPU integer, Memory,
   Cryptography, Compression) with single-core, multi-core and scaling values on the
@@ -74,7 +76,7 @@ New feature(s):
 - Server details page shows the last known prices of servers that can no longer be
   ordered (#289)
 
-Improvement(s):
+Improvements:
 
 - Guests see all instances of a shared comparison in the compare menu (and can remove,
   reorder or pick a baseline), while adding more than 4 instances still requires an
@@ -84,26 +86,28 @@ Improvement(s):
   retries run out (#280)
 - Sign-in state stays in sync with logins and logouts made on sentinel.sparecores.com
   when returning to an open tab (#278)
-- Warn that "Orderable only" has no effect when sorting the Servers listing by price, $
-  efficiency or $Core (#289)
+- A warning that "Orderable only" has no effect when sorting the Servers listing by
+  price, $ efficiency or $Core (#289)
 
-Fix(es):
+Fixes:
 
-- Fix the sign-in overlay covering the Cloudflare captcha during registration, and the
-  login modal flashing after GitHub sign-in (#275)
-- Show zero prices as `0` instead of a dash on the Servers listing (#289)
+- The sign-in overlay no longer covers the Cloudflare captcha during registration, and
+  the login modal no longer flashes after GitHub sign-in (#275)
+- Zero prices are shown as `0` instead of a dash on the Servers listing (#289)
 
 New content:
 
-- Slides: [563 Things Karpenter Didn't Know About](https://sparecores.com/assets/slides/kcd-budapest-2026.html) (KCD Budapest 2026)
-- Article: [New PostgreSQL Benchmark: A First Look](https://sparecores.com/article/pgbench-early-results-graviton)
-- Article: [Bookmark Your Searches and Comparisons](https://sparecores.com/article/registered-users)
-- Article: [Three new conference talks across Europe](https://sparecores.com/article/conferences-2026-q4)
-- Article: [Measuring PostgreSQL Performance at Scale](https://sparecores.com/article/benchmark-pgbench-postgres)
+- Slides:
+  - [563 Things Karpenter Didn't Know About](https://sparecores.com/assets/slides/kcd-budapest-2026.html) (KCD Budapest 2026)
+- Articles:
+  - [New PostgreSQL Benchmark: A First Look](https://sparecores.com/article/pgbench-early-results-graviton)
+  - [Bookmark Your Searches and Comparisons](https://sparecores.com/article/registered-users)
+  - [Three new conference talks across Europe](https://sparecores.com/article/conferences-2026-q4)
+  - [Measuring PostgreSQL Performance at Scale](https://sparecores.com/article/benchmark-pgbench-postgres)
 
 ## September 2026
 
-New feature(s):
+New features:
 
 - User accounts: sign up or log in with email or GitHub (with a CAPTCHA and consent step
   at registration), edit the profile or delete the account from the account menu in the
@@ -116,7 +120,7 @@ New feature(s):
 - Servers listing: new searchable multi-select filter for CPU flags (#270)
 - Databases listing: new Network and Performance filter categories (#270)
 
-Improvement(s):
+Improvements:
 
 - Servers listing and Server prices: the hardware virtualization and hyperthreading
   filters are now any/yes/no filters instead of plain checkboxes (#270)
@@ -124,7 +128,7 @@ Improvement(s):
   from, and a cancelled GitHub authorization shows a clear message instead of a
   half-finished sign-up (#274)
 
-Fix(es):
+Fixes:
 
 - Servers listing, Server prices, Databases listing, Advisor and the Compare pages no
   longer reset the filters or fire an unfiltered search after a reload, changing columns
@@ -133,12 +137,13 @@ Fix(es):
 
 New content:
 
-- Slides: [The Cloud Performance Map: How Hetzner Ranks Among 5,000 Instance Types](https://sparecores.com/assets/slides/hetzner-summit-2026.html) (Hetzner Summit)
-- Slides: [SELECT instance FROM cloud WHERE workload = ? ORDER BY cost_efficiency](https://sparecores.com/assets/slides/posit-conf-2026.html) (posit::conf(2026))
+- Slides:
+  - [The Cloud Performance Map: How Hetzner Ranks Among 5,000 Instance Types](https://sparecores.com/assets/slides/hetzner-summit-2026.html) (Hetzner Summit)
+  - [SELECT instance FROM cloud WHERE workload = ? ORDER BY cost_efficiency](https://sparecores.com/assets/slides/posit-conf-2026.html) (posit::conf(2026))
 
 ## August 2026
 
-New feature(s):
+New features:
 
 - New Databases listing (`/databases`) with filters, sorting, pagination, price
   allocation options and customizable columns, and Database details pages
@@ -154,7 +159,7 @@ New feature(s):
   partner, comparison and landing pages (#264)
 - Server details page: new pgbench chart when scores are available (#261)
 
-Improvement(s):
+Improvements:
 
 - The server Compare page moved to `/servers/compare`; old `/compare` links permanently
   redirect to the new URL (#263)
@@ -168,7 +173,7 @@ Improvement(s):
 
 ## July 2026
 
-New feature(s):
+New features:
 
 - New Workload Profiles radar chart on the Server details page (also embeddable) and the
   Compare page, with a details view for each profile showing a score gauge and a
@@ -181,7 +186,7 @@ New feature(s):
 - Server details page: a warning about more variable benchmark results on burstable
   instances (#253)
 
-Improvement(s):
+Improvements:
 
 - Charts show warning icons with notes on benchmark caveats, chart tooltips name the
   vendor next to the server, and chart legends have a consistent style; the Workload
@@ -193,22 +198,24 @@ Improvement(s):
   instead of on every keystroke, with a visual cue for pending, not yet applied values
   (#256)
 
-Fix(es):
+Fixes:
 
-- Fixed some icons being rendered twice (#257)
-- Fixed the size of the AI summary modal on the Server details page (#258)
+- Icons are no longer rendered twice (#257)
+- Correct size of the AI summary modal on the Server details page (#258)
 - Compare dropdown in the header stays within the viewport and closes after comparing
   (#251)
 
 New content:
 
-- Slides: [Getting Things Logged](https://sparecores.com/assets/slides/ghana-r-2026.html) (Ghana R Conference 2026)
-- Slides: [cloud::servers[workload == R][order(cost_efficiency)][1, eval(task)]](https://sparecores.com/assets/slides/user-2026.html) (useR! 2026)
-- Article: [Burning CPU Cycles in a Wide Variety of Ways](https://sparecores.com/article/stress-ng-cpu-methods)
+- Slides:
+  - [Getting Things Logged](https://sparecores.com/assets/slides/ghana-r-2026.html) (Ghana R Conference 2026)
+  - [cloud::servers[workload == R][order(cost_efficiency)][1, eval(task)]](https://sparecores.com/assets/slides/user-2026.html) (useR! 2026)
+- Articles:
+  - [Burning CPU Cycles in a Wide Variety of Ways](https://sparecores.com/article/stress-ng-cpu-methods)
 
 ## June 2026
 
-New feature(s):
+New features:
 
 - Server details page: AI-assisted server descriptions, with a short description card and
   a "Summarize" button that opens a full summary (#248)
@@ -220,7 +227,7 @@ New feature(s):
 - Compare page: the memory bandwidth chart marks the L1D/L2/L3 cache sizes of the
   compared servers (#249)
 
-Improvement(s):
+Improvements:
 
 - Refreshed landing page and header navigation presenting Navigator, Resource Tracker and
   Sentinel (#233)
@@ -232,26 +239,27 @@ Improvement(s):
 - Landing page server slot machine prefers distinct vendors and shows results faster
   (#235)
 
-Fix(es):
+Fixes:
 
-- Advisor: correct percentage differences from the baseline server's price when traffic
-  or extra storage requirements are set (#234)
+- Correct percentage differences from the baseline server's price on the Advisor when
+  traffic or extra storage requirements are set (#234)
 - Zero values are shown as zero (not "-") in tables, and fractional GPU counts such as
   1/24 are displayed correctly (#244, #246, #249)
-- Removed an unwanted hover tooltip on the property cards of the Server details page
-  (#237)
+- No unwanted hover tooltip on the property cards of the Server details page (#237)
 - Traffic prices table no longer offers ordering by vendor, which was not supported
   (#244)
 
 New content:
 
-- Article: [AWS Graviton5 Benchmarks](https://sparecores.com/article/aws-graviton5-benchmarks)
-- Article: [A Personal Recap of PyData London 2026](https://sparecores.com/article/pydata-2026)
-- Slides: [SELECT instance FROM cloud WHERE workload = ? ORDER BY cost_efficiency](https://sparecores.com/assets/slides/pydata-london-2026.html) (PyData London 2026)
+- Slides:
+  - [SELECT instance FROM cloud WHERE workload = ? ORDER BY cost_efficiency](https://sparecores.com/assets/slides/pydata-london-2026.html) (PyData London 2026)
+- Articles:
+  - [AWS Graviton5 Benchmarks](https://sparecores.com/article/aws-graviton5-benchmarks)
+  - [A Personal Recap of PyData London 2026](https://sparecores.com/article/pydata-2026)
 
 ## May 2026
 
-New feature(s):
+New features:
 
 - Advisor page (`/advisor`) gets a hero section with an introduction video, example presets
   and a share button, a guided baseline selection (the baseline server field is focused
@@ -260,7 +268,7 @@ New feature(s):
 - Dismissible announcement banner on the home page pointing to the Advisor (#232)
 - New "Network" filter category in the Servers listing sidebar (#225)
 
-Improvement(s):
+Improvements:
 
 - Compare page: synced scrollbar mirrors and a single bottom scrollbar so wide comparisons
   are not cut off, sticky "Further Benchmarks" labels and benchmark rows, narrower columns
@@ -277,7 +285,7 @@ Improvement(s):
   License and References columns in the components table, and a "Contact Us" button
   (#230)
 
-Fix(es):
+Fixes:
 
 - Charts and tooltips on the Server details and Compare pages no longer break when
   benchmark metadata or a server is missing; the LLM inference chart hides the model
@@ -285,12 +293,13 @@ Fix(es):
 
 New content:
 
-- Article: [Conferences across Europe and USA in 2026](https://sparecores.com/article/upcoming-conferences-2026)
-- Article: [Spare Cores Awarded EIC Seal of Excellence](https://sparecores.com/article/eic-seal-of-excellence)
+- Articles:
+  - [Conferences across Europe and USA in 2026](https://sparecores.com/article/upcoming-conferences-2026)
+  - [Spare Cores Awarded EIC Seal of Excellence](https://sparecores.com/article/eic-seal-of-excellence)
 
 ## April 2026
 
-New feature(s):
+New features:
 
 - New Advisor page (`/advisor`): pick a baseline server, its region and a workload, set an
   optimization goal and filters (price allocation, minimum memory, peak GPU memory, etc.),
@@ -303,15 +312,15 @@ New feature(s):
 - Compression chart on the Server details page gets a single-core/multi-core selector
   (#214)
 
-Improvement(s):
+Improvements:
 
 - Compression chart shows results with different block sizes as separate series, adds an
   "N/A" compression level so `bzip3` results are displayed, and shows the full
   configuration in tooltips (#214, #221)
-- Removed the allocation filter dropdowns from the Economics section of the Server details
-  page (#217)
+- Simpler Economics section on the Server details page, without the allocation filter
+  dropdowns (#217)
 
-Fix(es):
+Fixes:
 
 - Malformed or outdated compare and benchmark URL parameters show an error message instead
   of breaking the page (#219)
@@ -322,12 +331,13 @@ Fix(es):
 
 New content:
 
-- Article: [Resource Tracker in Rust: Single-Binary Monitoring](https://sparecores.com/article/resource-tracker-rs)
-- Article: [A 3-Day Hackathon for Augmented Workloads](https://sparecores.com/article/ovh-softwareone-hackathon-2026)
+- Articles:
+  - [Resource Tracker in Rust: Single-Binary Monitoring](https://sparecores.com/article/resource-tracker-rs)
+  - [A 3-Day Hackathon for Augmented Workloads](https://sparecores.com/article/ovh-softwareone-hackathon-2026)
 
 ## March 2026
 
-New feature(s):
+New features:
 
 - New Benchmark Workloads page (`/navigator/benchmark-workloads`) describing each benchmark
   framework and workload with its status, configurations and score distribution histogram,
@@ -340,14 +350,14 @@ New feature(s):
 - New "CPU Cache" filter category in the Servers listing sidebar with a range slider
   (#209)
 
-Improvement(s):
+Improvements:
 
 - Server details page reorganized into collapsible property cards with a sticky table of
   contents that highlights the current section (#205)
 - Legal pages show a loading spinner and a dedicated page when a document is missing or
   fails to load; the footer always stays at the bottom of the page (#204)
 
-Fix(es):
+Fixes:
 
 - Compression charts distinguish single-core and multi-core results (#210)
 - Benchmark selection in the Servers listing updates reliably (#211)
@@ -355,7 +365,7 @@ Fix(es):
 
 ## February 2026
 
-New feature(s):
+New features:
 
 - Benchmark Coverage page (`/navigator/benchmark-coverage`, replacing `/debug`, which
   redirects): per-vendor counts and percentages of active, inactive, evaluated and missing
@@ -370,7 +380,7 @@ New feature(s):
 - Servers listing: currency selector and best price allocation selector (any, spot only,
   on-demand only, monthly) (#199)
 
-Improvement(s):
+Improvements:
 
 - Compare page shows large numbers in compact form (full value on hover) and right-aligns
   numeric columns (#198)
@@ -379,17 +389,17 @@ Improvement(s):
 
 ## January 2026
 
-New feature(s):
+New features:
 
 - New Design page (`/design`) with UI kits, icons, typography, a color palette with
   copy-to-clipboard, and downloadable logo collections (#182)
 
-Improvement(s):
+Improvements:
 
 - The Navigator overview lists Alibaba Cloud as a supported vendor (7 in total), with
   updated server, region and price counts (#181)
 
-Fix(es):
+Fixes:
 
 - Regions and zones are always matched together with their vendor, fixing mixed-up
   region names and prices on the Server details, Compare and embedded chart pages when
@@ -397,44 +407,51 @@ Fix(es):
 
 New content:
 
-- Slides: [Benchmarking 2000+ Cloud Servers for DS/ML/AI Workloads](https://sparecores.com/assets/slides/budapest-ds-meetup-2026.html) (Budapest Data Science Meetup)
-- Article: [Modern Memory Bandwidth Benchmarks](https://sparecores.com/article/membench)
-- Article: [Spare Cores Closes Pre-Seed Funding Round](https://sparecores.com/article/pre-seed)
+- Slides:
+  - [Benchmarking 2000+ Cloud Servers for DS/ML/AI Workloads](https://sparecores.com/assets/slides/budapest-ds-meetup-2026.html) (Budapest Data Science Meetup)
+- Articles:
+  - [Modern Memory Bandwidth Benchmarks](https://sparecores.com/article/membench)
+  - [Spare Cores Closes Pre-Seed Funding Round](https://sparecores.com/article/pre-seed)
 
 ## December 2025
 
 New content:
 
-- Slides: [Cost-efficient and Scalable Dashboards in the Cloud](https://sparecores.com/assets/slides/ceu-data-jamboree-2025.html) (Vienna Data Science Group)
+- Slides:
+  - [Cost-efficient and Scalable Dashboards in the Cloud](https://sparecores.com/assets/slides/ceu-data-jamboree-2025.html) (Vienna Data Science Group)
 
 ## November 2025
 
-Improvement(s):
+Improvements:
 
 - Vendor logos for OVHcloud and Alibaba Cloud
 
 New content:
 
-- Article: [What We Have Been Up to in the Past Months](https://sparecores.com/article/year-in-review-2025)
+- Articles:
+  - [What We Have Been Up to in the Past Months](https://sparecores.com/article/year-in-review-2025)
 
 ## September 2025
 
 New content:
 
-- Slides: [Resource Monitoring and Optimization with Metaflow](https://sparecores.com/assets/slides/pydata-amsterdam-2025.html) (PyData Amsterdam 2025)
-- Slides: [Magically Right Size the Compute Resources Dedicated to Your AI/ML Workloads](https://sparecores.com/assets/slides/outerbounds-office-hours-2025.html) (Outerbounds Office Hours)
-- Slides: [Benchmarking 2000+ Cloud Servers for GBM Model Training and LLM Inference Speed](https://sparecores.com/assets/slides/pydata-berlin-2025.html) (PyData Berlin 2025)
+- Slides:
+  - [Resource Monitoring and Optimization with Metaflow](https://sparecores.com/assets/slides/pydata-amsterdam-2025.html) (PyData Amsterdam 2025)
+  - [Magically Right Size the Compute Resources Dedicated to Your AI/ML Workloads](https://sparecores.com/assets/slides/outerbounds-office-hours-2025.html) (Outerbounds Office Hours)
+  - [Benchmarking 2000+ Cloud Servers for GBM Model Training and LLM Inference Speed](https://sparecores.com/assets/slides/pydata-berlin-2025.html) (PyData Berlin 2025)
 
 ## August 2025
 
 New content:
 
-- Article: [Native support for the Resource Tracker in R](https://sparecores.com/article/resource-tracker-for-r)
-- Slides: [Getting Things Logged](https://sparecores.com/assets/slides/user-2025.html) (useR! 2025)
+- Slides:
+  - [Getting Things Logged](https://sparecores.com/assets/slides/user-2025.html) (useR! 2025)
+- Articles:
+  - [Native support for the Resource Tracker in R](https://sparecores.com/article/resource-tracker-for-r)
 
 ## July 2025
 
-New feature(s):
+New features:
 
 - Revamped landing page focusing on the products, with testimonials, service offerings and
   a link to the wait-list, plus new "About Navigator" (`/about/navigator`) and "About Spare
@@ -445,28 +462,31 @@ New feature(s):
 
 New content:
 
-- Article: [Spare Cores at the useR! and PyData events](https://sparecores.com/article/upcoming-conferences-2025-Q3)
-- Slides: [Resource Monitoring and Cloud Optimization for Data Science Tasks with Metaflow](https://sparecores.com/assets/slides/budapest-ml-2025.html) (Budapest ML Forum 2025)
+- Slides:
+  - [Resource Monitoring and Cloud Optimization for Data Science Tasks with Metaflow](https://sparecores.com/assets/slides/budapest-ml-2025.html) (Budapest ML Forum 2025)
+- Articles:
+  - [Spare Cores at the useR! and PyData events](https://sparecores.com/article/upcoming-conferences-2025-Q3)
 
 ## May 2025
 
-Improvement(s):
+Improvements:
 
 - "Book a Demo" buttons open an embedded scheduling widget instead of an external link
   (#175)
 - Footer links to YouTube instead of Facebook
 
-Fix(es):
+Fixes:
 
 - Servers listing no longer breaks on benchmarks without a unit
 
 New content:
 
-- Article: [LLM Inference Speed Benchmarks](https://sparecores.com/article/llm-inference-speed)
+- Articles:
+  - [LLM Inference Speed Benchmarks](https://sparecores.com/article/llm-inference-speed)
 
 ## April 2025
 
-New feature(s):
+New features:
 
 - LLM inference speed charts (prompt processing and text generation) on the Server details
   and Compare pages, with model selection and embedding support (#173)
@@ -475,52 +495,56 @@ New feature(s):
 - New About page (`/about`) and reworked header navigation with a "Book a Demo" call to
   action (#172)
 
-Improvement(s):
+Improvements:
 
 - Benchmark scores are shown with their units in the Servers listing (#173)
 
 New content:
 
-- Slides: [Starting 2000 Cloud Servers for Benchmarking LLM Inference Speed](https://sparecores.com/assets/slides/kcd-budapest-2025.html) (KCD Budapest 2025)
-- Article: [Kubernetes and Machine Learning conferences](https://sparecores.com/article/upcoming-conferences-2025-Q2)
-- Article: [Optimizing Resource Usage of Batch Jobs](https://sparecores.com/article/metaflow-resource-tracker)
+- Slides:
+  - [Starting 2000 Cloud Servers for Benchmarking LLM Inference Speed](https://sparecores.com/assets/slides/kcd-budapest-2025.html) (KCD Budapest 2025)
+- Articles:
+  - [Kubernetes and Machine Learning conferences](https://sparecores.com/article/upcoming-conferences-2025-Q2)
+  - [Optimizing Resource Usage of Batch Jobs](https://sparecores.com/article/metaflow-resource-tracker)
 
 ## March 2025
 
-New feature(s):
+New features:
 
 - Feedback form for Resource Tracker users (`/feedback/:id`) (#168)
 
-Fix(es):
+Fixes:
 
 - The embed dialog on the Server details page no longer renders an empty iframe before it
   is opened
 
 New content:
 
-- Article: [Search and Order Servers for Any Workload](https://sparecores.com/article/search-benchmarks)
+- Articles:
+  - [Search and Order Servers for Any Workload](https://sparecores.com/article/search-benchmarks)
 
 ## February 2025
 
-New feature(s):
+New features:
 
 - Servers listing: filter and sort by any of the 500+ benchmark scores via a benchmark
   selector, and curated server lists under `/servers/:id` (e.g. `/servers/gpu` for GPU
   servers) with their own title, description, filters, columns and ordering (#164)
 - New Contact page (`/contact`) with a contact form, also linked from the footer (#167)
 
-Improvement(s):
+Improvements:
 
 - Copy-to-clipboard actions and errors show toast notifications; pages show a loading
   spinner instead of a half-rendered table (#164)
 
 New content:
 
-- Article: [Welcome 67 new server types from UpCloud!](https://sparecores.com/article/upcloud-servers)
+- Articles:
+  - [Welcome 67 new server types from UpCloud!](https://sparecores.com/article/upcloud-servers)
 
 ## January 2025
 
-Improvement(s):
+Improvements:
 
 - Compare page shows the $Core score (performance per USD) for the best on-demand and spot
   prices and for every additional region price (#159, #161)
@@ -528,12 +552,13 @@ Improvement(s):
 
 New content:
 
-- Slides: [Spare Cores introduction and project updates](https://sparecores.com/assets/slides/ngi-search-standup-2025.html) (NGI Search Standup #6)
-- Slides: [From idea to product: creating Spare Cores](https://sparecores.com/assets/slides/ceu-data-jamboree-2024.html) (Vienna Data Science Group)
+- Slides:
+  - [Spare Cores introduction and project updates](https://sparecores.com/assets/slides/ngi-search-standup-2025.html) (NGI Search Standup #6)
+  - [From idea to product: creating Spare Cores](https://sparecores.com/assets/slides/ceu-data-jamboree-2024.html) (Vienna Data Science Group)
 
 ## December 2024
 
-New feature(s):
+New features:
 
 - PassMark CPU and memory benchmark scores and charts on the Server details page and the
   Compare page, including the embeddable charts (#152)
@@ -541,26 +566,27 @@ New feature(s):
   can now be pinned to specific zones, showing the zone of the best on-demand and spot
   prices (#153)
 
-Improvement(s):
+Improvements:
 
 - The selected columns of the Servers listing and Server prices pages are stored in the
   URL (`columns` query param), so custom views can be bookmarked and shared (#155)
 - Info icons and vendor/server names no longer wrap awkwardly in compare charts and on
   the Server prices page (#154)
 
-Fix(es):
+Fixes:
 
-- Hide the redundant API reference of Azure servers whose name differs from the display
-  name only by the `Standard_` prefix (#157)
+- Azure servers no longer show a redundant API reference when it differs from the
+  display name only by the `Standard_` prefix (#157)
 
 New content:
 
-- Slides: [Spare Cores: Bringing Clarity to Cloud Server Options](https://sparecores.com/assets/slides/ow2-webinar-2024-3.html) (OW2 Open Source Webinar #3)
-- Slides: [Vendor-independent Cloud Computing Hardware Information and Benchmarking](https://sparecores.com/assets/slides/osxp-2024.html) (Open Source Experience 2024)
+- Slides:
+  - [Spare Cores: Bringing Clarity to Cloud Server Options](https://sparecores.com/assets/slides/ow2-webinar-2024-3.html) (OW2 Open Source Webinar #3)
+  - [Vendor-independent Cloud Computing Hardware Information and Benchmarking](https://sparecores.com/assets/slides/osxp-2024.html) (Open Source Experience 2024)
 
 ## November 2024
 
-New feature(s):
+New features:
 
 - Embeddable benchmark charts: an "Embed" button on the Server details page and the
   Compare page opens a dialog with a configurable iframe snippet, served from dedicated
@@ -570,7 +596,7 @@ New feature(s):
 - Numeric inputs next to the range sliders in the search filters to type exact values
   (#148)
 
-Improvement(s):
+Improvements:
 
 - Section titles of the Compare page fit on mobile screens (#141)
 - Servers listing shows the column used for ordering when it is set in the query (#147)
@@ -578,21 +604,23 @@ Improvement(s):
   filter (#147)
 - The landing page's slot machine picks top servers from three different vendors (#144)
 
-Fix(es):
+Fixes:
 
 - The maximum vCPUs filter is adjusted to never go below the minimum (#150)
 
 New content:
 
-- Article: [Fireside chat at Architecture Weekly](https://sparecores.com/article/architecture-weekly-2024)
-- Article: [Spare Cores at SFSCon 2024 in Bolzano](https://sparecores.com/article/sfscon-2024)
-- Article: [Embed Spare Cores charts in your website!](https://sparecores.com/article/embed-charts)
-- Slides: [Optimizing Cloud Compute Resources with Spare Cores](https://sparecores.com/assets/slides/sfscon-2024.html) (SFSCON 2024)
-- Article: [Say hi in person and grab a Spare Cores sticker!](https://sparecores.com/article/upcoming-conferences-2024-Q4)
+- Slides:
+  - [Optimizing Cloud Compute Resources with Spare Cores](https://sparecores.com/assets/slides/sfscon-2024.html) (SFSCON 2024)
+- Articles:
+  - [Fireside chat at Architecture Weekly](https://sparecores.com/article/architecture-weekly-2024)
+  - [Spare Cores at SFSCon 2024 in Bolzano](https://sparecores.com/article/sfscon-2024)
+  - [Embed Spare Cores charts in your website!](https://sparecores.com/article/embed-charts)
+  - [Say hi in person and grab a Spare Cores sticker!](https://sparecores.com/article/upcoming-conferences-2024-Q4)
 
 ## October 2024
 
-New feature(s):
+New features:
 
 - Curated comparisons on `/compare` when no servers are selected (e.g. best
   single-/multi-core performance per vCPU count or memory, best static web and Redis
@@ -607,7 +635,7 @@ New feature(s):
 - Similar servers on the Server details page can be listed by CPU performance per price
   (#135)
 
-Improvement(s):
+Improvements:
 
 - Benchmark charts on the Server details and Compare pages share unified dropdowns to
   pick benchmark settings (#125)
@@ -615,26 +643,27 @@ Improvement(s):
   site (#126)
 - Storage descriptions are shown on the Server details page, and memory below 1 GiB is
   shown with one decimal (#137, #138)
-- Restore the scroll position on back navigation, keep the Compare page's sticky header
-  aligned, and add side margins on narrow screens (#140)
+- Back navigation restores the scroll position, the Compare page's sticky header stays
+  aligned, and narrow screens get side margins (#140)
 
-Fix(es):
+Fixes:
 
 - Filters at the bottom of the search sidebar are reachable by scrolling (#124)
 - `true`/`false` query params are applied as proper boolean filters (#129)
 - Price filter input is readable on Safari (#136)
-- Compression chart rendering on the Server details page (#140)
-- Unique section anchors on the Compare page (#123)
+- The compression chart on the Server details page renders correctly (#140)
+- Section anchors on the Compare page are unique (#123)
 
 New content:
 
-- Article: [Spare Cores featured by The Pragmatic Engineer](https://sparecores.com/article/pragmatic-engineer-pulse-2024)
-- Article: [vCPUs in the Real World: Do They Truly Scale?](https://sparecores.com/article/multi-core-scalability)
-- Article: [NGI Search Beneficiary Interview](https://sparecores.com/article/ngi-search-interview-2024)
+- Articles:
+  - [Spare Cores featured by The Pragmatic Engineer](https://sparecores.com/article/pragmatic-engineer-pulse-2024)
+  - [vCPUs in the Real World: Do They Truly Scale?](https://sparecores.com/article/multi-core-scalability)
+  - [NGI Search Beneficiary Interview](https://sparecores.com/article/ngi-search-interview-2024)
 
 ## September 2024
 
-New feature(s):
+New features:
 
 - Storage prices (`/storages`) and Traffic prices (`/traffic-prices`) pages with
   filtering, sorting, pagination and currency selection (#118)
@@ -644,44 +673,46 @@ New feature(s):
   filter on the Servers listing and Server prices pages (#120)
 - Vendor legend on the Regions map to show or hide each vendor's regions (#111)
 
-Improvement(s):
+Improvements:
 
 - Faster loading of the Server details page (#98)
 
-Fix(es):
+Fixes:
 
-- Crash on servers without price data (#108)
-- Stale CPU cache-size markers on the memory bandwidth chart when switching servers
+- Servers without price data no longer crash the page (#108)
+- The CPU cache-size markers on the memory bandwidth chart update when switching servers
   (#106)
-- Compare page dropdown hidden behind the sticky table header (#119)
-- Landing page tooltip positioning (#105)
+- The Compare page dropdown is no longer hidden behind the sticky table header (#119)
+- Landing page tooltips are positioned correctly (#105)
 
 ## August 2024
 
-New feature(s):
+New features:
 
 - Similar servers section on the Server details page with selectable criteria (same
   family, specs, performance), kept in the URL (#86, #92, #93)
 - Price column on the Servers listing (#82)
 - The Compare page marks the best price, performance and value servers (#81)
 
-Improvement(s):
+Improvements:
 
 - Benchmark charts and tables on the Server details and Compare pages note whether
   higher or lower is better, with explanatory tooltips (#78)
 - GPU memory columns on the Servers listing show minimum and total GPU memory (#83)
 
-Fix(es):
+Fixes:
 
-- Best multi-core performance marking on the Compare page for single-vCPU servers (#85)
+- Correct best multi-core performance marking on the Compare page for single-vCPU servers
+  (#85)
 
 New content:
 
-- Article: [New Benchmarks: Static Web Server Workloads](https://sparecores.com/article/benchmark-static-webserver)
+- Articles:
+  - [New Benchmarks: Static Web Server Workloads](https://sparecores.com/article/benchmark-static-webserver)
 
 ## July 2024
 
-New feature(s):
+New features:
 
 - Server details pages have a comment section (GitHub Discussions via Giscus) (#72)
 - Each server details page has its own social preview image showing the server's
@@ -693,7 +724,7 @@ New feature(s):
 - Terms of Service and Privacy Policy are separate pages, with a list of all legal
   documents at `/legal`; the old `/legal/tos` URL redirects to the new one (#75)
 
-Improvement(s):
+Improvements:
 
 - Compare page: sticky header row, a loading indicator, benchmark sections with charts
   inside the comparison table, single-item benchmark lists opened automatically, and
@@ -705,23 +736,25 @@ Improvement(s):
   a FAQ item (#67)
 - Landing page slot machine starts animating right after pressing SPIN (#71)
 
-Fix(es):
+Fixes:
 
 - An unknown or failing server details page shows an error message instead of silently
   redirecting to the landing page (#67)
-- Fix the canonical URL of server details pages (#53)
+- Correct canonical URL of server details pages (#53)
 
 New content:
 
-- Article: [Exploring the 2024 Cloud Use Cases Landscape](https://sparecores.com/article/survey-cloud-use-cases-2024)
-- Article: [The EU Must Keep Funding Open Source!](https://sparecores.com/article/open-letter-to-eu-to-keep-ngi-funded)
-- Article: [Spare Cores Joins NVIDIA Inception](https://sparecores.com/article/nvidia-inception)
-- Article: [A closer look at Hetzner Cloud's new CX servers](https://sparecores.com/article/hetzner-new-cx-servers)
-- Slides: [Spare Cores: Harnessing Unutilized Cloud Compute Resources](https://sparecores.com/assets/slides/user-2024.html) (useR! 2024)
+- Slides:
+  - [Spare Cores: Harnessing Unutilized Cloud Compute Resources](https://sparecores.com/assets/slides/user-2024.html) (useR! 2024)
+- Articles:
+  - [Exploring the 2024 Cloud Use Cases Landscape](https://sparecores.com/article/survey-cloud-use-cases-2024)
+  - [The EU Must Keep Funding Open Source!](https://sparecores.com/article/open-letter-to-eu-to-keep-ngi-funded)
+  - [Spare Cores Joins NVIDIA Inception](https://sparecores.com/article/nvidia-inception)
+  - [A closer look at Hetzner Cloud's new CX servers](https://sparecores.com/article/hetzner-new-cx-servers)
 
 ## June 2024
 
-Breaking change(s):
+Breaking changes:
 
 - Server details URLs use the server's API reference (e.g. `/server/aws/t3.micro`)
   instead of the internal server ID (#27)
@@ -729,7 +762,7 @@ Breaking change(s):
   redirects) and the `datacenters` filter query param of the listings is now `regions`
   (#25)
 
-New feature(s):
+New features:
 
 - Compare page (`/compare`): select servers on the Servers listing or the Compare button
   on a server details page, then compare their specs, best on-demand prices (in the
@@ -746,7 +779,7 @@ New feature(s):
 - Share button copying the link of the current Servers or Server prices search (#26)
 - Vendor filter with a checkbox per vendor (#48)
 
-Improvement(s):
+Improvements:
 
 - New search bar on the Servers and Server prices listings, with filter categories
   expanded when in use, and pagination links instead of buttons (#31, #33, #35, #37)
@@ -758,29 +791,31 @@ Improvement(s):
 - The landing page slot machine picks three different servers (#42)
 - Server details pages appear as products in Google search results (#43)
 
-Fix(es):
+Fixes:
 
-- Fix the active-only filter, compression benchmark labels, and the multi-core score of
+- Correct active-only filter, compression benchmark labels, and multi-core score of
   servers where all CPUs means a single one (#31, #47)
-- Fix decompression speed not shown on screens narrower than 1025px (#48)
-- Fix a crash when selecting multiple countries or regions on the Server prices
-  listing (#34)
-- Fix losing focus while typing in search bar fields (#37)
+- Decompression speed is shown on screens narrower than 1025px (#48)
+- Selecting multiple countries or regions on the Server prices listing no longer crashes
+  the page (#34)
+- Search bar fields keep focus while typing (#37)
 
 New content:
 
-- Slides: [Harnessing Spare Cores to Breeze Through Cloud-Based Batch Jobs](https://sparecores.com/assets/slides/budapest-data-2024.html) (Budapest Data Forum 2024)
-- Slides: [Harnessing Spare Cores to Breeze Through Cloud Compute](https://sparecores.com/assets/slides/berlin-buzzwords-2024.html) (Berlin Buzzwords 2024)
-- Article: [Spare Cores at the Berlin Buzzwords 2024 conf](https://sparecores.com/article/berlin-buzzwords-2024)
+- Slides:
+  - [Harnessing Spare Cores to Breeze Through Cloud-Based Batch Jobs](https://sparecores.com/assets/slides/budapest-data-2024.html) (Budapest Data Forum 2024)
+  - [Harnessing Spare Cores to Breeze Through Cloud Compute](https://sparecores.com/assets/slides/berlin-buzzwords-2024.html) (Berlin Buzzwords 2024)
+- Articles:
+  - [Spare Cores at the Berlin Buzzwords 2024 conf](https://sparecores.com/article/berlin-buzzwords-2024)
 
 ## May 2024
 
-Breaking change(s):
+Breaking changes:
 
 - Article URLs no longer include the category: `/article/:id` instead of
   `/article/:category/:id` (#11)
 
-New feature(s):
+New features:
 
 - Servers listing (`/servers`) with filters (e.g. vCPUs, memory, price, vendor,
   continent/country/datacenter, green energy), selectable columns, currency and price
@@ -793,24 +828,25 @@ New feature(s):
   (#11)
 - Articles listing and article pages, and a Terms of Service page (#6)
 
-Improvement(s):
+Improvements:
 
 - Mobile-friendly layout with a menu icon (#8)
 - Faster loading with compressed WebP images and fixed-size logo; better accessibility
   labels and image alt texts (#10, #18, #19)
 - Landing page: updated images, larger text and faster SPIN button (#9, #10)
 
-Fix(es):
+Fixes:
 
 - Opening a vendor homepage no longer also opens a filtered Servers listing (#14)
 
 New content:
 
-- Article: [Unlocking Cloud Compute Performance](https://sparecores.com/article/cloud-compute-performance-benchmarks)
+- Articles:
+  - [Unlocking Cloud Compute Performance](https://sparecores.com/article/cloud-compute-performance-benchmarks)
 
 ## April 2024
 
-New feature(s):
+New features:
 
 - First version of sparecores.com: landing page with a slot machine picking random
   servers from live Spare Cores data, featured articles, header and footer with links
@@ -818,8 +854,9 @@ New feature(s):
 
 New content:
 
-- Article: [Meet the Spare Cores team live at conferences](https://sparecores.com/article/upcoming-conferences-2024-Q3)
-- Article: [Spot server termination rate per availability zones](https://sparecores.com/article/spot-instance-terminate-rates-per-az)
-- Article: [67% cost savings at adtech company](https://sparecores.com/article/67pct-cost-saving-at-adtech-company)
-- Article: [When to use resource ids, or prefer the names?](https://sparecores.com/article/ids-vs-names)
-- Article: [Project takeoff: NGI Search grant award](https://sparecores.com/article/ngi-search-grant)
+- Articles:
+  - [Meet the Spare Cores team live at conferences](https://sparecores.com/article/upcoming-conferences-2024-Q3)
+  - [Spot server termination rate per availability zones](https://sparecores.com/article/spot-instance-terminate-rates-per-az)
+  - [67% cost savings at adtech company](https://sparecores.com/article/67pct-cost-saving-at-adtech-company)
+  - [When to use resource ids, or prefer the names?](https://sparecores.com/article/ids-vs-names)
+  - [Project takeoff: NGI Search grant award](https://sparecores.com/article/ngi-search-grant)

@@ -40,10 +40,8 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 
 ### Changelog
 
-- Add every user-facing change (new features, UI/UX improvements, visible fixes) to `CHANGELOG.md` in the same PR, under the current month's section (e.g. `## November 2026`), creating it if needed.
-- Use these subsections in this order and omit empty ones: `Breaking change(s):` (changed or removed public URLs, routes, query params or embed parameters), `New feature(s):`, `Improvement(s):`, `Fix(es):`, `New content:`.
-- Write for end users: name pages as they appear in the UI, and end bullets with the PR number when known, e.g. `(#123)`. Skip tooling, CI, tests, refactors, dependency upgrades and SDK regenerations unless they have a visible effect.
-- List new articles and slides under `New content:` in the month of the article's `date:` or the talk date, not the commit date.
+- Document every user-facing change (new features, UI/UX improvements, visible fixes, new articles and slides) in `CHANGELOG.md` in the same PR.
+- Read `.agents/changelog.md` before editing `CHANGELOG.md`; it defines the sections, entry style and formatting.
 
 ### Formatting
 
