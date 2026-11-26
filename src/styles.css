@@ -60,7 +60,7 @@
     scroll-padding-top: 5.5rem;
   }
 
-  .sc-shell-chrome * {
+  .sc-shell-chrome *:not(.sc-dropdown, .sc-dropdown *) {
     scroll-margin-top: -5.5rem;
   }
 }
