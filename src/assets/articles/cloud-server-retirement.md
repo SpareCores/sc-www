@@ -12,14 +12,14 @@ tags: [data, crawler, vendor, aws, gcp, azure, hcloud]
 ---
 
 Cloud vendors retire server types and managed database offerings all the
-time: an older generation goes away, a family gets replaced by a cheaper and
-faster one, or a server type simply stops being sold. Sometimes the announcement comes
-months ahead, sometimes on much shorter notice. Either way, teams often find
-out late, when a migration is already urgent.
+time. An older generation may go away, a family may be replaced by a cheaper
+and faster one, or a server type may stop being sold. Vendors sometimes
+announce this months ahead, and sometimes with much shorter notice. Teams
+often find out late, when a migration is already urgent.
 
 FinOps practitioners call the work of moving off them in time
-*modernization*. It needs two things: knowing which of your servers are going
-away and when, and picking a replacement that is not slower or more expensive.
+*modernization*. To plan a move, teams need to know which ones are going
+away and when, then find a replacement that is not slower or more expensive.
 Spare Cores can now help with both. Here's what's new:
 
 - **New status**: server types and managed databases that a vendor plans to
@@ -41,9 +41,9 @@ Cloud's old and new CX servers side by side in our
 [Hetzner CX post](/article/hetzner-new-cx-servers), while the old ones were
 still around.
 
-But `inactive` only tells you that something is already gone, and not why.
-Many vendors announce a retirement ahead of time, and that early warning is
-exactly what a team needs to plan a migration.
+But `inactive` only tells you that a server type is no longer listed. It
+doesn't say why. Many vendors announce retirements in advance, giving teams
+time to plan a migration.
 
 ## What We Track Now
 
@@ -56,13 +56,13 @@ following statuses tell you about a retirement:
 | `retired` | The vendor retired it. Prices may still exist, e.g. for multi-year contracts. | no |
 | `inactive` | The vendor no longer lists it, and we don't know of a retirement. It may come back. | no |
 
-We set `planned-for-retirement` and `retired` only from an explicit signal of
-the vendor, in its API or its documentation, never from a guess.
+We set `planned-for-retirement` and `retired` only when the vendor signals
+the status in its API or documentation. We never guess.
 
-The new `retirement_date` field holds the date the vendor announced: the end
-of support (shutdown) if it is published, otherwise the end of sale. It is
-empty when the vendor hasn't announced a date. Both show up on the server
-pages of our website, for example on the
+The new `retirement_date` field stores the date announced by the vendor. If
+published, it is the end of support (shutdown); otherwise, it is the end of
+sale. The field is empty when the vendor hasn't announced a date. Both fields
+appear on our server pages, including the
 [`Standard_D1_v2` page](/server/azure/Standard_D1_v2) of Azure:
 
 <div class="text-center m-2.5 mt-8 mb-6">
@@ -89,13 +89,13 @@ No managed database is planned for retirement at the moment.
 <TODO: the page from DEV-1163 that lists the server types planned for
 retirement with their dates, with a link and a screenshot, once it ships.>
 
-In the <a href="https://docs.sparecores.com/api" target="_blank" rel="noopener">API</a>,
-the `/servers` and `/databases` endpoints return the `status` and
-`retirement_date` of each record. By default, `/servers` returns everything
-that can still be ordered (`only_orderable`), including the server types
-planned for retirement; set `only_active=true` to leave those out. There is
-no filter for `planned-for-retirement` alone, but ordering by
-`retirement_date` lists the server types with a date first, the latest first:
+The <a href="https://docs.sparecores.com/api" target="_blank" rel="noopener">API</a>'s
+`/servers` and `/databases` endpoints return each record's `status` and
+`retirement_date`. By default, `/servers` returns everything that can still be
+ordered (`only_orderable`), including server types planned for retirement.
+Set `only_active=true` to leave them out. There is no filter for
+`planned-for-retirement` alone. To list server types with a retirement date
+first, order by `retirement_date` with the latest date first:
 
 ```shell
 curl -G https://keeper.sparecores.net/servers \
@@ -121,21 +121,23 @@ Note that the database stores the status names in upper case. For managed
 databases, query the `database` table, with `database_id` in place of
 `server_id`.
 
-The OCI shapes come first in the results: their retirement date is the end
-of orderability, which has already passed, but OCI still lets you order them.
+The OCI shapes appear first in the results. Their retirement date marks the
+end of orderability, which has already passed, but OCI still lets you order
+them.
 
 ## How to Pick a Replacement
 
 Once you know which server type is going away, the [Advisor](/advisor) can
-suggest what to move to. Select the retiring server type as the baseline
-server, pick the workload that is closest to what it runs, choose an
-optimization goal, such as cost, and set its average utilization. The Advisor
-then lists the alternatives whose benchmark score for that workload covers
-what your server actually uses, ranked by the goal you chose.
+suggest a replacement. Select the retiring server type as the baseline
+server, then choose the
+workload that best matches what it runs. Set an optimization goal, such as
+cost, and the server's average utilization. The Advisor lists alternatives
+whose benchmark score for that workload covers what your server uses, ranked
+by your chosen goal.
 
-For example, take Azure's `Standard_D1_v2` from above as the baseline server,
-with the Web Server workload profile, 60% average utilization, at least
-3 GiB of memory, and cost as the optimization goal. The
+For example, use Azure's `Standard_D1_v2` from above as the baseline server.
+Choose the Web Server workload profile, set average utilization to 60%,
+require at least 3 GiB of memory, and set cost as the optimization goal. The
 <a href="/advisor?baseline_vendor=azure&baseline_server=Standard_D1_v2&limit_architecture=true&workload_id=workload_profile:web&workload_config=%7B%7D&avg_cpu_utilization=60&minimum_memory=3" target="_blank">Advisor</a>
 lists the cheapest candidates first. The top one, Alibaba Cloud's
 `ecs.e-c1m2.large`, costs 0.0028 USD per hour, 67% less than the baseline's
@@ -156,8 +158,8 @@ The following chart overlays the workload profile scores of the two servers:
   style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px;">
 </iframe>
 
-Note that none of the top candidates comes with local storage, unlike the
-54 GB of the baseline, so add a disk if your workload needs one.
+None of the top candidates includes local storage. The baseline has 54 GB,
+so add a disk if your workload needs one.
 
 ## Caveats
 
@@ -175,10 +177,9 @@ Note that none of the top candidates comes with local storage, unlike the
 
 ## Summary
 
-Vendors retire server types and managed databases regularly, and Spare Cores
-now tells you which ones are next and when, at six vendors, in the API, the
-SQLite database and on our website. Together with the Advisor, this turns a
-rushed migration into one you can plan.
+Retirement dates give teams a starting point for planning a migration before
+a server type or managed database disappears. Spare Cores now tracks them at
+six vendors, and the Advisor helps pick the replacement.
 
 ## Feedback
 
