@@ -97,11 +97,7 @@ export class BenchmarkWorkloads implements OnInit {
   private seoHandler = inject(SeoHandler);
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
-  readonly isMobileViewport = watchBelowBreakpoint(
-    isPlatformBrowser(this.platformId) ? this.document.defaultView : null,
-    "lg",
-    this.destroyRef,
-  );
+  readonly isMobileViewport = watchBelowBreakpoint("lg");
 
   readonly pageTitle = "Benchmark Workloads";
   readonly pageDescription =
