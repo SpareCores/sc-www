@@ -53,6 +53,8 @@ Improvements:
   that scrolls into view when a profile is picked, radar labels wrap so the chart uses
   the card's space, and card titles stay on one line with the full title in a tooltip;
   on phones the Geekbench cards fit their radar (#344)
+- Server and Database details pages on phones: smaller section headings, FAQ headings
+  and FAQ answers (#344)
 - Tooltips open on tap and keyboard focus as well as on hover, and close on Escape or a
   tap outside them (#344)
 - Dialogs fill the screen on phones, with their main actions at the bottom (#344)
