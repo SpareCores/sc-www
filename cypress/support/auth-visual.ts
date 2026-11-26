@@ -29,6 +29,7 @@ const PLACEHOLDER_AVATAR =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
 const SERVER_DETAILS = "/server/gcp/t2d-standard-1";
+const BOOKMARKED_SERVER_DETAILS = "/server/aws/t4g.nano";
 const DATABASE_DETAILS = "/database/gcp/db-c4a-highmem-48";
 
 function stabilizeSignedInHeader(): void {
@@ -349,8 +350,7 @@ export function registerAuthVisualSuites(prefix: VisualSizePrefix): void {
     });
 
     it("compares populated bookmarks page", () => {
-      E2EEvent.visitURL("/servers");
-      E2EEvent.waitForListingResults("servers_table");
+      E2EEvent.visitURL(BOOKMARKED_SERVER_DETAILS);
       cy.intercept("PUT", /\/collections\//).as("saveFavoriteServer");
       cy.get(UNLOCKED_BOOKMARK_BUTTON).first().should("be.visible").click();
       cy.get("sc-bookmark-button button.sc-bookmark-toggle--active", {

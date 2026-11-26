@@ -12,6 +12,7 @@ Required checks before asking for human review:
 - [ ] PR has a clear title and brief description or reference to the relevant issue with details
 - [ ] All PR builders passed (linter, unit tests, e2e tests, visual regression tests)
 - [ ] Manual testing of new features or bugfixes along with affected pages or components
+- [ ] `CHANGELOG.md` updated for user-facing new features, improvements and fixes
 - [ ] Redundant AI comments, unwanted complexity, and unintentional drifts cleaned up
 
 Further required checks after all other major items in this list are completed:
