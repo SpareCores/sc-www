@@ -332,10 +332,9 @@
                     class="profile-modal__info"
                     data-testid="profile-api-tokens-info"
                     [attr.aria-label]="messages.apiTokensInfo"
-                    (mouseenter)="showTooltip(tokensInfoTooltip, $event)"
-                    (mouseleave)="hideTooltip(tokensInfoTooltip)"
-                    (focus)="showTooltip(tokensInfoTooltip, $event)"
-                    (blur)="hideTooltip(tokensInfoTooltip)"
+                    scTooltipTrigger
+                    (tooltipOpen)="showTooltip(tokensInfoTooltip, $event)"
+                    (tooltipClose)="hideTooltip(tokensInfoTooltip)"
                   >
                     <svg lucideInfo aria-hidden="true"></svg>
                   </button>
