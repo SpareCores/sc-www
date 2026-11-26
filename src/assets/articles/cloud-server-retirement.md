@@ -7,17 +7,17 @@ teaser: Spare Cores now tracks which server types and managed databases vendors 
 # 320x220
 image: /assets/images/blog/thumbnails/cloud-server-retirement.webp
 image_alt: The details of an Azure server type on Spare Cores, with a retirement date of 2028-05-01 and the planned-for-retirement status.
-author: Adam Toth
+author: [Adam Toth, Gergely Daroczi]
 tags: [data, crawler, vendor, aws, gcp, azure, hcloud]
 ---
 
 Cloud vendors retire server types and managed database offerings all the
 time: an older generation goes away, a family gets replaced by a cheaper and
-faster one, or a SKU simply stops being sold. Sometimes the announcement comes
+faster one, or a server type simply stops being sold. Sometimes the announcement comes
 months ahead, sometimes on much shorter notice. Either way, teams often find
 out late, when a migration is already urgent.
 
-FinOps practitioners call the work of moving off these SKUs in time
+FinOps practitioners call the work of moving off them in time
 *modernization*. It needs two things: knowing which of your servers are going
 away and when, and picking a replacement that is not slower or more expensive.
 Spare Cores can now help with both. Here's what's new:
@@ -33,11 +33,11 @@ Spare Cores can now help with both. Here's what's new:
 
 ## Background
 
-Our <a href="https://github.com/SpareCores/sc-crawler" target="_blank" rel="noopener">Crawler</a> has always kept
-server types that disappear from a vendor's listing: they stay in the
-database as `inactive`, so that you can still look up their specs, prices and
-benchmark scores. This is how we could compare Hetzner Cloud's old and new CX
-servers side by side in our
+Our <a href="https://github.com/SpareCores/sc-crawler" target="_blank" rel="noopener">Crawler</a>
+has always kept server types that disappear from a vendor's listing: they
+stay in the database as `inactive`, so that you can still look up their
+specs, prices and benchmark scores. This is how we could compare Hetzner
+Cloud's old and new CX servers side by side in our
 [Hetzner CX post](/article/hetzner-new-cx-servers), while the old ones were
 still around.
 
@@ -84,18 +84,18 @@ retirement in our database:
 
 No managed database is planned for retirement at the moment.
 
-## How to Find Affected Servers
+## How to Find What's Being Retired
 
 <TODO: the page from DEV-1163 that lists the server types planned for
 retirement with their dates, with a link and a screenshot, once it ships.>
 
-In the <a href="https://docs.sparecores.com/api" target="_blank" rel="noopener">API</a>, the `/servers` and
-`/databases` endpoints return the `status` and `retirement_date` of each
-record. By default, `/servers` returns everything that can still be ordered
-(`only_orderable`), including the server types planned for retirement; set
-`only_active=true` to leave those out. There is no filter for
-`planned-for-retirement` alone, but ordering by `retirement_date` lists the
-server types with a date first, the latest first:
+In the <a href="https://docs.sparecores.com/api" target="_blank" rel="noopener">API</a>,
+the `/servers` and `/databases` endpoints return the `status` and
+`retirement_date` of each record. By default, `/servers` returns everything
+that can still be ordered (`only_orderable`), including the server types
+planned for retirement; set `only_active=true` to leave those out. There is
+no filter for `planned-for-retirement` alone, but ordering by
+`retirement_date` lists the server types with a date first, the latest first:
 
 ```shell
 curl -G https://keeper.sparecores.net/servers \
