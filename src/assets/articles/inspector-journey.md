@@ -16,8 +16,16 @@ Spare Cores helps you find the right cloud server. Our
 vendors in a single, searchable and comparable catalog, with up-to-date prices
 for every region and availability zone. Prices and vendor-provided specs alone
 don't tell you much, so we also start every server we can and look at it from the
-inside. We record what hardware it actually has, from CPU topology and caches to
-disks and GPUs. Then we run a long list of benchmarks on it, from `stress-ng` and
+inside. We record what hardware it actually has, from CPU
+[topology](/server/azure/Standard_D96a_v4#lstopo) and
+[caches](/server/gcp/c4-highmem-288-lssd-metal#processor) to
+[disks](/server/gcp/c4-standard-288-lssd#system_resources) and
+[GPUs](/server/gcp/a3-ultragpu-8g#system_resources). Some of the more
+interesting ones: Azure's `Standard_D96a_v4` shows 12 NUMA nodes on just two
+sockets, GCP's `c4-highmem-288-lssd-metal` has 1 GB of L3 cache and reads its
+memory at 934 GB/s, `c4-standard-288-lssd`
+comes with 48 local NVMe SSDs, and `a3-ultragpu-8g` packs eight H200 GPUs with
+141 GB of memory each. Then we run a long list of benchmarks on it, from `stress-ng` and
 GeekBench through memory bandwidth, compression, OpenSSL, static web serving,
 Redis and PostgreSQL to LLM inference speed.
 
