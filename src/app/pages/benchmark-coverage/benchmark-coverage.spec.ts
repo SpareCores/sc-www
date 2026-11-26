@@ -5,6 +5,9 @@ import { KeeperAPI } from "../../services/keeper-api";
 import { Toast } from "../../services/toast";
 import { BENCHMARK_COVERAGE_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { DialogRef } from "@angular/cdk/dialog";
+import { Subject } from "rxjs";
+import { ModalDialog } from "../../services/modal-dialog";
 
 describe("BenchmarkCoverage", () => {
   let component: BenchmarkCoverage;
@@ -52,5 +55,64 @@ describe("BenchmarkCoverage", () => {
     await (component as any).loadDebugData();
 
     expect(showHttpError).not.toHaveBeenCalled();
+  });
+
+  it("opens the filter modal only once while it is open", () => {
+    const closed = new Subject<unknown>();
+    const openSpy = spyOn(TestBed.inject(ModalDialog), "open").and.returnValue({
+      closed,
+      close: jasmine.createSpy("close"),
+    } as unknown as DialogRef);
+
+    component.openFilterModal();
+    component.openFilterModal();
+
+    expect(openSpy).toHaveBeenCalledTimes(1);
+
+    closed.next(undefined);
+    component.openFilterModal();
+
+    expect(openSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("clears filters while keeping the page size", () => {
+    component.limit.set(50);
+    component.searchBarChanged({
+      search: "c5",
+      vendor_ids: ["aws"],
+      server_status: "all",
+      status_bool: {},
+      benchmark_families: { geekbench: "yes" },
+    });
+    component.page.set(3);
+
+    component.clearFilters();
+
+    expect(component.filterParams()).toEqual({
+      vendors: null,
+      status: "active",
+      search: null,
+      page: 1,
+      limit: 50,
+      bools: JSON.stringify({ has_price: "yes" }),
+      benchmarks: "{}",
+    });
+  });
+
+  it("counts active filters that differ from the defaults", () => {
+    component.clearFilters();
+
+    expect(component.activeFilterCount()).toBe(0);
+
+    component.searchBarChanged({
+      search: "c5",
+      vendor_ids: ["aws", "gcp"],
+      server_status: "all",
+      status_bool: { has_hw_info: "yes" },
+      benchmark_families: { geekbench: "no" },
+    });
+
+    expect(component.searchQuery().vendor_ids).toEqual(["aws", "gcp"]);
+    expect(component.activeFilterCount()).toBe(7);
   });
 });

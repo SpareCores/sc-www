@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  TemplateRef,
   ViewChild,
   effect,
   inject,
@@ -12,6 +13,7 @@ import {
   untracked,
   viewChild,
 } from "@angular/core";
+import { DialogRef } from "@angular/cdk/dialog";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
@@ -36,6 +38,8 @@ import {
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { Button } from "../../components/button/button";
+import { FilterModal } from "../../components/filter-modal/filter-modal";
+import { ListingFloatingActions } from "../../components/listing-floating-actions/listing-floating-actions";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
 import { PageActions } from "../../components/page-actions/page-actions";
@@ -45,12 +49,14 @@ import type {
   SearchBarParameter,
   SearchBarQuery,
 } from "../../components/search-bar/types/search-bar.types";
+import { countActiveFilters } from "../../components/search-bar/utils/search-bar.utils";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { Analytics } from "../../services/analytics";
 import { KeeperAPI } from "../../services/keeper-api";
+import { ModalDialog } from "../../services/modal-dialog";
 import { SeoHandler } from "../../services/seo-handler";
 import { CompareSelection } from "../../services/compare-selection";
 import { Toast } from "../../services/toast";
@@ -135,6 +141,8 @@ type DatabaseListingQuery = Params &
     BenchmarkIconPipe,
     BookmarkButton,
     CollectionSaveModal,
+    FilterModal,
+    ListingFloatingActions,
   ],
   templateUrl: "./database-listing.html",
   styleUrl: "./database-listing.css",
@@ -153,6 +161,10 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private auth = inject(AuthState);
   saveSearchModal = viewChild(CollectionSaveModal);
   private serverCompare = inject(CompareSelection);
+  private modalDialog = inject(ModalDialog);
+  filterModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "filterModalTemplate",
+  );
 
   isCollapsed = false;
 
@@ -260,6 +272,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private searchRequestId = 0;
   private searchAbortController: AbortController | null = null;
   private previousSearchParams: Record<string, unknown> | null = null;
+  private filterModalRef: DialogRef | null = null;
 
   constructor() {
     effect(() => {
@@ -459,6 +472,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
     this.searchAbortController?.abort();
     this.subscription.unsubscribe();
     this.toastService.removeToast(QUERY_ERROR_DATABASES_TOAST_ID);
+    this.filterModalRef?.close();
   }
 
   toggleCollapse() {
@@ -491,6 +505,29 @@ export class DatabaseListing implements OnInit, OnDestroy {
   searchBarChanged(event: SearchBarQuery) {
     this.page = 1;
     this.searchOptionsChanged(event);
+  }
+
+  activeFilterCount(): number {
+    return countActiveFilters(
+      this.query,
+      this.searchParameters,
+      this.filterCategories,
+    );
+  }
+
+  openFilterModal() {
+    if (this.filterModalRef) {
+      return;
+    }
+
+    this.filterModalRef = this.modalDialog.open(this.filterModalTemplate());
+    this.filterModalRef.closed.subscribe(() => {
+      this.filterModalRef = null;
+    });
+  }
+
+  clearFilters() {
+    this.searchBarChanged({});
   }
 
   searchOptionsChanged(event: SearchBarQuery | DatabaseListingQuery) {

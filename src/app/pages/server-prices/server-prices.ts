@@ -7,7 +7,10 @@ import {
   ElementRef,
   OnDestroy,
   inject,
+  TemplateRef,
+  viewChild,
 } from "@angular/core";
+import { DialogRef } from "@angular/cdk/dialog";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
@@ -68,6 +71,10 @@ import {
   TableColumn,
 } from "../../tools/table-columns";
 import { TooltipTrigger } from "../../directives/tooltip-trigger";
+import { FilterModal } from "../../components/filter-modal/filter-modal";
+import { ListingFloatingActions } from "../../components/listing-floating-actions/listing-floating-actions";
+import { ModalDialog } from "../../services/modal-dialog";
+import { countActiveFilters } from "../../components/search-bar/utils/search-bar.utils";
 
 export type CountryMetadata = {
   continent: string;
@@ -123,6 +130,8 @@ export type RegionVendorMetadata = {
     LoadingSpinner,
     SelectDropdown,
     ColumnPicker,
+    FilterModal,
+    ListingFloatingActions,
   ],
   templateUrl: "./server-prices.html",
   styleUrl: "./server-prices.css",
@@ -138,6 +147,13 @@ export class ServerPrices implements OnInit, OnDestroy {
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
   private uiTooltip = inject(UiTooltip);
+  private modalDialog = inject(ModalDialog);
+
+  readonly filterModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "filterModalTemplate",
+  );
+
+  private filterModalRef: DialogRef | null = null;
 
   private subscription = new Subscription();
   private searchRequestId = 0;
@@ -359,10 +375,35 @@ export class ServerPrices implements OnInit, OnDestroy {
     this.searchAbortController?.abort();
     this.subscription.unsubscribe();
     this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
+    this.filterModalRef?.close();
   }
 
   toggleCollapse() {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  activeFilterCount() {
+    return countActiveFilters(
+      this.query,
+      this.searchParameters ?? [],
+      this.filterCategories,
+    );
+  }
+
+  openFilterModal() {
+    if (this.filterModalRef) {
+      return;
+    }
+
+    const ref = this.modalDialog.open(this.filterModalTemplate());
+    ref.closed.subscribe(() => {
+      this.filterModalRef = null;
+    });
+    this.filterModalRef = ref;
+  }
+
+  clearFilters() {
+    this.searchBarChanged({});
   }
 
   getMemory(item: ServerPriceWithPKs) {

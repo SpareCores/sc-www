@@ -5,10 +5,13 @@ import {
   tick,
 } from "@angular/core/testing";
 import { Router } from "@angular/router";
+import { DialogRef } from "@angular/cdk/dialog";
+import { Subject } from "rxjs";
 import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { DatabaseListing } from "./database-listing";
 import { KeeperAPI } from "../../services/keeper-api";
+import { ModalDialog } from "../../services/modal-dialog";
 import { Toast } from "../../services/toast";
 import { QUERY_ERROR_DATABASES_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltip } from "../../services/ui-tooltip";
@@ -170,6 +173,58 @@ describe("DatabaseListing", () => {
         replaceUrl: true,
       }),
     );
+  });
+
+  it("opens the filter modal once and closes it on destroy", () => {
+    const close = jasmine.createSpy("close");
+    const openSpy = spyOn(TestBed.inject(ModalDialog), "open").and.returnValue({
+      closed: new Subject<void>(),
+      close,
+    } as unknown as DialogRef);
+
+    component.openFilterModal();
+    component.openFilterModal();
+
+    expect(openSpy).toHaveBeenCalledTimes(1);
+
+    component.ngOnDestroy();
+
+    expect(close).toHaveBeenCalled();
+  });
+
+  it("clears filters and keeps limit, ordering, currency and columns", () => {
+    const navigateSpy = spyOn(router, "navigate").and.resolveTo(true);
+    component.page = 3;
+    component.limit = 50;
+    component.orderBy = "vendor_id";
+    component.orderDir = OrderDir.Desc;
+    component.selectedCurrency = component.availableCurrencies[1];
+    component.hasCustomColumns = true;
+    component.query = { vcpus_min: 8, vendor: "aws", page: 3 };
+
+    component.clearFilters();
+
+    expect(component.page).toBe(1);
+    expect(navigateSpy.calls.mostRecent().args[1]?.queryParams).toEqual({
+      order_by: "vendor_id",
+      order_dir: OrderDir.Desc,
+      currency: component.availableCurrencies[1].slug,
+      limit: 50,
+      columns: jasmine.any(Number),
+    });
+  });
+
+  it("counts active filters from the applied query", () => {
+    component.query = {
+      vcpus_min: 1,
+      vendor: "aws",
+      engine_version: "16",
+      only_orderable: false,
+      currency: "EUR",
+      limit: 50,
+    };
+
+    expect(component.activeFilterCount()).toBe(3);
   });
 
   it("ignores stale search responses", fakeAsync(() => {

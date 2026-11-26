@@ -167,6 +167,9 @@ import {
   stableStringify,
 } from "./advisor.utils";
 import { TooltipTrigger } from "../../directives/tooltip-trigger";
+import { FilterModal } from "../../components/filter-modal/filter-modal";
+import { ListingFloatingActions } from "../../components/listing-floating-actions/listing-floating-actions";
+import { countActiveFilters } from "../../components/search-bar/utils/search-bar.utils";
 
 const ADVISOR_RECOMMENDATION_DEBOUNCE_MS = 350;
 
@@ -416,6 +419,8 @@ type AdvisorComparableResourceKey =
     SearchBar,
     CollectionSaveModal,
     Modal,
+    FilterModal,
+    ListingFloatingActions,
   ],
   templateUrl: "./advisor.html",
   styleUrl: "./advisor.css",
@@ -438,9 +443,13 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   readonly advisorUi = inject(AdvisorUi);
   saveAssessmentModal = viewChild(CollectionSaveModal);
   readonly searchBar = viewChild(SearchBar);
+  private readonly filterModal = viewChild(FilterModal);
   private readonly introductionModalTemplate = viewChild.required<
     TemplateRef<unknown>
   >("introductionModalTemplate");
+  private readonly filterModalTemplate = viewChild.required<
+    TemplateRef<unknown>
+  >("filterModalTemplate");
   readonly tooltipDefault =
     viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   private compareSubscription = new Subscription();
@@ -458,6 +467,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private baselineAddonPricingRequestVersion = 0;
   private baselineScoreComparisonRequestVersion = 0;
   private introductionDialogRef: DialogRef | null = null;
+  private filterModalRef: DialogRef | null = null;
   showIntroductionVideo = false;
   private hasViewInitialized = signal(false);
   private pendingCustomControlFocus = signal<string | null>(null);
@@ -973,6 +983,42 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
         : [],
     };
   });
+
+  readonly advisorControlChangeCount = computed(
+    () =>
+      [
+        this.selectedBaselineServer() !== null,
+        this.selectedBenchmarkConfig() !== null,
+        this.optimizationGoal() !== ADVISOR_DEFAULT_OPTIMIZATION_GOAL,
+        this.averageCpuUtilization() !== null,
+        this.minimumMemoryGiB() !== ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+        this.peakGpuMemoryGiB() !== ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
+        this.limitToSameArchitecture(),
+        this.limitToSameCpuAllocation(),
+        this.isPriceAllocationEnabled(),
+        this.isBaselineRegionEnabled(),
+      ].filter(Boolean).length,
+  );
+
+  readonly activeFilterCount = computed(
+    () =>
+      countActiveFilters(
+        this.query(),
+        this.searchParameters,
+        this.advisorFilterCategories,
+        this.advisorParameterPlacements,
+      ) + this.advisorControlChangeCount(),
+  );
+
+  readonly advisorFilterCategoryCounts = computed(() => ({
+    advisor: this.advisorControlChangeCount(),
+  }));
+
+  readonly filterModalApplyDisabledReason = computed(() =>
+    this.selectedBaselineServer() && this.selectedBenchmarkConfig()
+      ? null
+      : "Fill in the required fields first.",
+  );
 
   readonly recommendationQuery = computed<SearchServersServersGetParams | null>(
     () => {
@@ -1652,6 +1698,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.introductionDialogRef?.close();
+    this.filterModalRef?.close();
     this.toastService.removeToast(QUERY_ERROR_ADVISOR_TOAST_ID);
     this.toastService.removeToast(ADVISOR_BASELINE_SERVERS_ERROR_TOAST_ID);
     this.toastService.removeToast(ADVISOR_BENCHMARK_CONFIGS_ERROR_TOAST_ID);
@@ -2127,6 +2174,17 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     this.introductionDialogRef.closed.subscribe(() => {
       this.introductionDialogRef = null;
       this.showIntroductionVideo = false;
+    });
+  }
+
+  openFilterModal(): void {
+    if (this.filterModalRef) {
+      return;
+    }
+
+    this.filterModalRef = this.modalDialog.open(this.filterModalTemplate());
+    this.filterModalRef.closed.subscribe(() => {
+      this.filterModalRef = null;
     });
   }
 
@@ -3198,7 +3256,11 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
       this.lastPendingCustomControlFocus = focusTarget;
     }
 
-    if (this.searchBar()?.focusCustomControl(focusTarget)) {
+    const focusHost = this.filterModalRef
+      ? this.filterModal()
+      : this.searchBar();
+
+    if (focusHost?.focusCustomControl(focusTarget)) {
       this.customControlFocusAttemptCount = 0;
       this.lastPendingCustomControlFocus = null;
       this.pendingCustomControlFocus.set(null);

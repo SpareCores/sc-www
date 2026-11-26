@@ -89,6 +89,23 @@
       </sc-modal>
     </ng-template>
 
+    <ng-template #filterModalTemplate>
+      <sc-filter-modal
+        [query]="query()"
+        [extraParameters]="advisorSearchBarExtraParameters()"
+        [filterCategories]="advisorFilterCategories"
+        [searchParameters]="searchParameters"
+        [customControls]="customControls()"
+        [parameterPlacements]="advisorParameterPlacements"
+        [extraCategoryCounts]="advisorFilterCategoryCounts()"
+        [activeFilterCount]="activeFilterCount()"
+        [applyDisabledReason]="filterModalApplyDisabledReason()"
+        (searchChanged)="onSearchChanged($event)"
+        (customControlChanged)="onCustomControlChanged($event)"
+        (clearAll)="clearFilters()"
+      ></sc-filter-modal>
+    </ng-template>
+
     <div class="advisor-page-body content-gutter">
       <div
         class="advisor-filter-bar bg-primary"
@@ -132,14 +149,24 @@
           </sc-search-bar>
 
           @if (!isCollapsed()) {
-            <div class="px-4 pb-4 bg-secondary flex flex-col gap-3">
+            <div class="px-4 pb-4 bg-secondary flex gap-3">
               <sc-button
+                class="flex-1"
+                label="All filters"
+                icon="funnel"
+                iconPosition="start"
+                size="small"
+                data-ph-capture-attribute-sc-event="listing all filters open"
+                (buttonClick)="openFilterModal()"
+              ></sc-button>
+              <sc-button
+                class="flex-1"
                 label="Clear filters"
                 icon="funnel-x"
                 iconPosition="start"
                 size="small"
-                class="w-full"
-                (click)="clearFilters()"
+                data-ph-capture-attribute-sc-event="listing filters clear"
+                (buttonClick)="clearFilters()"
               ></sc-button>
             </div>
           }
@@ -1417,26 +1444,28 @@
   </div>
 </div>
 
-@if (showCompareActions()) {
-  <div class="advisor-compare-bar">
-    <div class="advisor-compare-bar-actions">
-      <sc-button
-        label="Clear"
-        icon="circle-x"
-        iconPosition="start"
-        color="danger"
-        class="advisor-compare-bar-button"
-        buttonClass="sc-button--floating"
-        (click)="clearCompareSelection()"
-      ></sc-button>
-      <sc-button
-        [label]="'Compare (' + compareCount() + ')'"
-        icon="scale"
-        iconPosition="start"
-        class="advisor-compare-bar-button"
-        buttonClass="sc-button--floating"
-        (click)="openCompare()"
-      ></sc-button>
-    </div>
-  </div>
-}
+<sc-listing-floating-actions
+  [filterCount]="activeFilterCount()"
+  [compareActive]="showCompareActions()"
+  [sidebarCollapsed]="isCollapsed()"
+  (openFilters)="openFilterModal()"
+  (clearFilters)="clearFilters()"
+>
+  @if (showCompareActions()) {
+    <sc-button
+      label="Clear"
+      icon="circle-x"
+      iconPosition="start"
+      color="danger"
+      buttonClass="sc-button--floating"
+      (click)="clearCompareSelection()"
+    ></sc-button>
+    <sc-button
+      [label]="'Compare (' + compareCount() + ')'"
+      icon="scale"
+      iconPosition="start"
+      buttonClass="sc-button--floating"
+      (click)="openCompare()"
+    ></sc-button>
+  }
+</sc-listing-floating-actions>

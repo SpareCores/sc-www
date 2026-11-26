@@ -4,12 +4,17 @@ import {
   fakeAsync,
   tick,
 } from "@angular/core/testing";
+import { DialogRef } from "@angular/cdk/dialog";
+import { Router } from "@angular/router";
+import { Subject } from "rxjs";
 
 import { TrafficPrices } from "./traffic-prices";
 import { KeeperAPI } from "../../services/keeper-api";
+import { ModalDialog } from "../../services/modal-dialog";
 import { Toast } from "../../services/toast";
 import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { OrderDir } from "../../../../sdk/data-contracts";
 
 describe("TrafficPrices", () => {
   let component: TrafficPrices;
@@ -191,5 +196,68 @@ describe("TrafficPrices", () => {
     component.ngOnDestroy();
 
     expect(activeSignal?.aborted).toBeTrue();
+  });
+
+  it("opens the filter modal once and closes it on destroy", () => {
+    const closed = new Subject<unknown>();
+    const close = jasmine.createSpy("close");
+    const dialogRef = { closed, close } as unknown as DialogRef;
+    const open = spyOn(TestBed.inject(ModalDialog), "open").and.returnValue(
+      dialogRef,
+    );
+
+    component.openFilterModal();
+    component.openFilterModal();
+
+    expect(open).toHaveBeenCalledTimes(1);
+
+    closed.next(undefined);
+    component.openFilterModal();
+
+    expect(open).toHaveBeenCalledTimes(2);
+
+    component.ngOnDestroy();
+
+    expect(close).toHaveBeenCalled();
+  });
+
+  it("clears filters and keeps sorting, page size and currency", () => {
+    const navigate = spyOn(TestBed.inject(Router), "navigate").and.resolveTo(
+      true,
+    );
+    component.query = { vendor: ["aws"], direction: "inbound" };
+    component.orderBy = "price";
+    component.orderDir = OrderDir.Desc;
+    component.limit = 25;
+    component.page = 3;
+    component.selectedCurrency = component.availableCurrencies[1];
+
+    component.clearFilters();
+
+    expect(component.page).toBe(1);
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: {
+          order_by: "price",
+          order_dir: OrderDir.Desc,
+          limit: 25,
+          currency: "EUR",
+        },
+      }),
+    );
+  });
+
+  it("counts active filters in the current query", () => {
+    component.query = {
+      vendor: ["aws", "gcp"],
+      direction: "inbound",
+      monthly_traffic: "1",
+      order_by: "price",
+      limit: "25",
+      add_total_count_header: true,
+    };
+
+    expect(component.activeFilterCount()).toBe(3);
   });
 });

@@ -45,6 +45,8 @@ import {
 } from "../../services/toast-ids";
 import { NeetoCal } from "../../services/neeto-cal";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { DialogRef } from "@angular/cdk/dialog";
+import { ModalDialog } from "../../services/modal-dialog";
 import {
   COLUMN_BENCHMARK_EFFICIENCY_TOOLTIP,
   COLUMN_SCORE_PER_PRICE_TOOLTIP,
@@ -1459,6 +1461,12 @@ describe("Advisor", () => {
     const results = host.querySelector(
       ".advisor-results",
     ) as HTMLElement | null;
+    const getFloatingButton = (label: string) =>
+      Array.from(
+        host.querySelectorAll<HTMLElement>(
+          "sc-listing-floating-actions sc-button",
+        ),
+      ).find((button) => normalizeText(button.textContent) === label);
     const baselineServer = component.serverTableRows()[0];
     component.selectedBaselineServer.set(baselineServer);
     component.hasLoadedRecommendations.set(true);
@@ -1474,7 +1482,8 @@ describe("Advisor", () => {
     selectionChanged.next(compareService.selectedForCompare);
     fixture.detectChanges();
 
-    expect(host.querySelector(".advisor-compare-bar")).toBeNull();
+    expect(host.querySelector(".sc-floating-actions--wide")).toBeNull();
+    expect(getFloatingButton("Clear")).toBeUndefined();
     expect(
       results?.classList.contains("advisor-results--compare-active"),
     ).toBeFalse();
@@ -1496,18 +1505,14 @@ describe("Advisor", () => {
     selectionChanged.next(compareService.selectedForCompare);
     fixture.detectChanges();
 
-    const compareBar = host.querySelector(".advisor-compare-bar");
-    const compareBarButtons = host.querySelectorAll(
-      ".advisor-compare-bar-button",
-    );
-    const clearButton = compareBarButtons[0] as HTMLElement | null;
-    const compareButton = compareBarButtons[1] as HTMLElement | null;
+    const clearButton = getFloatingButton("Clear");
+    const compareButton = getFloatingButton("Compare (2)");
 
-    expect(compareBar).not.toBeNull();
+    expect(host.querySelector(".sc-floating-actions--wide")).not.toBeNull();
     expect(
       results?.classList.contains("advisor-results--compare-active"),
     ).toBeTrue();
-    expect(compareButton?.textContent).toContain("Compare (2)");
+    expect(compareButton).toBeDefined();
 
     compareButton?.click();
 
@@ -1517,7 +1522,8 @@ describe("Advisor", () => {
     fixture.detectChanges();
 
     expect(compareService.clearCompare).toHaveBeenCalled();
-    expect(host.querySelector(".advisor-compare-bar")).toBeNull();
+    expect(host.querySelector(".sc-floating-actions--wide")).toBeNull();
+    expect(getFloatingButton("Clear")).toBeUndefined();
     expect(
       results?.classList.contains("advisor-results--compare-active"),
     ).toBeFalse();
@@ -2501,6 +2507,43 @@ describe("Advisor", () => {
     expect(component.limit()).toBe(ADVISOR_DEFAULT_PAGE_LIMIT);
     expect(component.manualOrderBy()).toBeUndefined();
     expect(component.manualOrderDir()).toBeUndefined();
+  });
+
+  it("counts active vendor filters and changed advisor controls", () => {
+    expect(component.activeFilterCount()).toBe(0);
+
+    component.query.set({ vendor: ["aws", "gcp"] });
+    component.optimizationGoal.set("performance");
+    component.peakGpuMemoryGiB.set(8);
+
+    expect(component.activeFilterCount()).toBe(4);
+    expect(component.advisorFilterCategoryCounts()).toEqual({ advisor: 2 });
+
+    component.clearFilters();
+
+    expect(component.activeFilterCount()).toBe(0);
+  });
+
+  it("opens the filter modal once from the sidebar until it closes", () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const closed = new Subject<unknown>();
+    const dialogRef = { closed, close: jasmine.createSpy("close") };
+    const open = spyOn(TestBed.inject(ModalDialog), "open").and.returnValue(
+      dialogRef as unknown as DialogRef,
+    );
+    const allFiltersButton = host.querySelector<HTMLButtonElement>(
+      '[data-ph-capture-attribute-sc-event="listing all filters open"] button',
+    );
+
+    allFiltersButton?.click();
+    allFiltersButton?.click();
+
+    expect(open).toHaveBeenCalledTimes(1);
+
+    closed.next(undefined);
+    component.openFilterModal();
+
+    expect(open).toHaveBeenCalledTimes(2);
   });
 
   it("shows query-error toast when recommendation search fails with 422", fakeAsync(() => {

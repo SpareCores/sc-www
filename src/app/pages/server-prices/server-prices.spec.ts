@@ -12,6 +12,10 @@ import { Toast } from "../../services/toast";
 import { QUERY_ERROR_SERVER_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { Router } from "@angular/router";
+import { DialogRef } from "@angular/cdk/dialog";
+import { Subject } from "rxjs";
+import { ModalDialog } from "../../services/modal-dialog";
 
 describe("ServerPrices", () => {
   let component: ServerPrices;
@@ -198,5 +202,64 @@ describe("ServerPrices", () => {
     component.ngOnDestroy();
 
     expect(activeSignal?.aborted).toBeTrue();
+  });
+
+  it("opens the filter modal only once while it is open", () => {
+    const closed = new Subject<unknown>();
+    const openSpy = spyOn(TestBed.inject(ModalDialog), "open").and.returnValue({
+      closed,
+      close: jasmine.createSpy("close"),
+    } as unknown as DialogRef);
+
+    component.openFilterModal();
+    component.openFilterModal();
+
+    expect(openSpy).toHaveBeenCalledTimes(1);
+
+    closed.next(undefined);
+    component.openFilterModal();
+
+    expect(openSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("clears filters while keeping sort, currency, allocation and limit", () => {
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate").and.resolveTo(
+      true,
+    );
+    component.query = { vendor: ["aws"], vcpus_min: "4", page: "3" };
+    component.page = 3;
+    component.limit = 50;
+    component.orderBy = "vendor_id";
+    component.orderDir = OrderDir.Desc;
+    component.selectedCurrency = component.availableCurrencies[1];
+    component.allocation = component.allocationTypes[1];
+
+    component.clearFilters();
+
+    expect(component.page).toBe(1);
+    expect(navigateSpy).toHaveBeenCalledOnceWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: {
+          order_by: "vendor_id",
+          order_dir: OrderDir.Desc,
+          currency: "EUR",
+          allocation: "spot",
+          limit: 50,
+        },
+      }),
+    );
+  });
+
+  it("counts active filters from the current query", () => {
+    component.query = {
+      vendor: ["aws", "gcp"],
+      vcpus_min: "4",
+      only_active: "true",
+      order_by: "price",
+      limit: "50",
+    };
+
+    expect(component.activeFilterCount()).toBe(3);
   });
 });

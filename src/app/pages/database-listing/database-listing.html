@@ -54,6 +54,26 @@
           AIAssistantType="databases"
           (searchChanged)="searchBarChanged($event)"
         >
+          <div searchBarActions class="flex gap-3 px-4 pt-4">
+            <sc-button
+              class="flex-1"
+              label="All filters"
+              icon="funnel"
+              iconPosition="start"
+              size="small"
+              data-ph-capture-attribute-sc-event="listing all filters open"
+              (buttonClick)="openFilterModal()"
+            ></sc-button>
+            <sc-button
+              class="flex-1"
+              label="Clear filters"
+              icon="funnel-x"
+              iconPosition="start"
+              size="small"
+              data-ph-capture-attribute-sc-event="listing filters clear"
+              (buttonClick)="clearFilters()"
+            ></sc-button>
+          </div>
         </sc-search-bar>
       </div>
       <div
@@ -463,36 +483,48 @@
   </div>
 </div>
 
-@if (hasLoadedDatabases && compareCount() >= 2) {
-  <div
-    class="sc-floating-actions"
-    [class.sc-floating-actions--collapsed]="isCollapsed"
-  >
-    <div class="flex gap-4">
-      <sc-button
-        labelClass="sc-button__label--fit"
-        buttonClass="sc-button--floating"
-        label="Clear"
-        icon="circle-x"
-        iconPosition="start"
-        color="danger"
-        data-ph-capture-attribute-sc-event="database listing compare"
-        data-ph-capture-attribute-database-listing-compare-action="clear"
-        (click)="clearCompare()"
-      ></sc-button>
-      <sc-button
-        labelClass="sc-button__label--fit"
-        buttonClass="sc-button--floating"
-        [label]="'Compare (' + compareCount() + ')'"
-        icon="scale"
-        iconPosition="start"
-        data-ph-capture-attribute-sc-event="database listing compare"
-        data-ph-capture-attribute-database-listing-compare-action="open"
-        (click)="openCompare()"
-      ></sc-button>
-    </div>
-  </div>
-}
+<sc-listing-floating-actions
+  [filterCount]="activeFilterCount()"
+  [compareActive]="hasLoadedDatabases && compareCount() >= 2"
+  [sidebarCollapsed]="isCollapsed"
+  (openFilters)="openFilterModal()"
+  (clearFilters)="clearFilters()"
+>
+  @if (hasLoadedDatabases && compareCount() >= 2) {
+    <sc-button
+      labelClass="sc-button__label--fit"
+      buttonClass="sc-button--floating"
+      label="Clear"
+      icon="circle-x"
+      iconPosition="start"
+      color="danger"
+      data-ph-capture-attribute-sc-event="database listing compare"
+      data-ph-capture-attribute-database-listing-compare-action="clear"
+      (click)="clearCompare()"
+    ></sc-button>
+    <sc-button
+      labelClass="sc-button__label--fit"
+      buttonClass="sc-button--floating"
+      [label]="'Compare (' + compareCount() + ')'"
+      icon="scale"
+      iconPosition="start"
+      data-ph-capture-attribute-sc-event="database listing compare"
+      data-ph-capture-attribute-database-listing-compare-action="open"
+      (click)="openCompare()"
+    ></sc-button>
+  }
+</sc-listing-floating-actions>
+
+<ng-template #filterModalTemplate>
+  <sc-filter-modal
+    [query]="query"
+    [searchParameters]="searchParameters"
+    [filterCategories]="filterCategories"
+    [activeFilterCount]="activeFilterCount()"
+    (searchChanged)="searchBarChanged($event)"
+    (clearAll)="clearFilters()"
+  ></sc-filter-modal>
+</ng-template>
 
 <div
   id="tooltipDefault"

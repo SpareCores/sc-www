@@ -27,8 +27,16 @@ New features:
   header, menu and footer, the listings, the Server and Database details, Compare,
   Advisor, landing, About, article and legal pages are redesigned for small screens
   (#344)
+- Filters on phones and tablets: below 1280px, the Servers, Server prices, Storages,
+  Traffic prices, Databases, Benchmark Coverage and Advisor pages show a floating Filters
+  button with the number of active filters and a red Clear filters button, next to the
+  Compare and Clear buttons; it opens a Filters dialog with collapsible categories on
+  phones and category tabs on tablets, and Clear all and Apply buttons
 
 Improvements:
+
+- Long checkbox filter lists (e.g. Vendors) show the first 4 options and a "See all"
+  link; selected options always stay visible
 
 - Faster initial page load: the sign-in and analytics libraries are loaded on demand,
   halving the initial download (1.19 MB to 602 kB transferred), and sign in / sign up

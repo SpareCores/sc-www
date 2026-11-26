@@ -1,3 +1,4 @@
+import { DialogRef } from "@angular/cdk/dialog";
 import {
   Component,
   DestroyRef,
@@ -5,6 +6,8 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  TemplateRef,
+  viewChild,
 } from "@angular/core";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
@@ -25,7 +28,12 @@ import { TableFooter } from "../../components/table-footer/table-footer";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { ColumnPicker } from "../../components/column-picker/column-picker";
+import { Button } from "../../components/button/button";
+import { FilterModal } from "../../components/filter-modal/filter-modal";
+import { ListingFloatingActions } from "../../components/listing-floating-actions/listing-floating-actions";
+import { countActiveFilters } from "../../components/search-bar/utils/search-bar.utils";
 import { KeeperAPI } from "../../services/keeper-api";
+import { ModalDialog } from "../../services/modal-dialog";
 import { Toast } from "../../services/toast";
 import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { SeoHandler } from "../../services/seo-handler";
@@ -53,6 +61,9 @@ import {
     LoadingSpinner,
     SelectDropdown,
     ColumnPicker,
+    Button,
+    FilterModal,
+    ListingFloatingActions,
   ],
   templateUrl: "./traffic-prices.html",
 })
@@ -64,6 +75,12 @@ export class TrafficPrices implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
+  private modalDialog = inject(ModalDialog);
+
+  private filterModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "filterModalTemplate",
+  );
+  private filterModalRef: DialogRef | null = null;
 
   private subscription = new Subscription();
   private searchRequestId = 0;
@@ -182,10 +199,34 @@ export class TrafficPrices implements OnInit, OnDestroy {
     this.searchAbortController?.abort();
     this.subscription.unsubscribe();
     this.toastService.removeToast(QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID);
+    this.filterModalRef?.close();
   }
 
   toggleCollapse() {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  activeFilterCount() {
+    return countActiveFilters(
+      this.query,
+      this.searchParameters,
+      this.filterCategories,
+    );
+  }
+
+  openFilterModal() {
+    if (this.filterModalRef) {
+      return;
+    }
+
+    this.filterModalRef = this.modalDialog.open(this.filterModalTemplate());
+    this.filterModalRef.closed.subscribe(() => {
+      this.filterModalRef = null;
+    });
+  }
+
+  clearFilters() {
+    this.searchBarChanged({});
   }
 
   searchBarChanged(event: any) {
