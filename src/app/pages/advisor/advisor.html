@@ -148,9 +148,7 @@
 
       <div
         class="advisor-results flex flex-col gap-4"
-        [class.advisor-results--compare-active]="
-          compareCount() >= 2 && selectedBaselineServer()
-        "
+        [class.advisor-results--compare-active]="showCompareActions()"
       >
         <div class="advisor-toolbar">
           @if (recommendationSummary(); as summary) {
@@ -1419,7 +1417,7 @@
   </div>
 </div>
 
-@if (compareCount() >= 2 && selectedBaselineServer()) {
+@if (showCompareActions()) {
   <div class="advisor-compare-bar">
     <div class="advisor-compare-bar-actions">
       <sc-button

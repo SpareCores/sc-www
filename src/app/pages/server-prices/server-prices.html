@@ -551,7 +551,7 @@
     </div>
   </div>
 
-  @if (compareCount() >= 2) {
+  @if (hasLoadedServers && compareCount() >= 2) {
     <div
       class="sc-floating-actions"
       [class.sc-floating-actions--collapsed]="isCollapsed"

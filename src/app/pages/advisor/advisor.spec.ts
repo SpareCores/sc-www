@@ -1461,6 +1461,7 @@ describe("Advisor", () => {
     ) as HTMLElement | null;
     const baselineServer = component.serverTableRows()[0];
     component.selectedBaselineServer.set(baselineServer);
+    component.hasLoadedRecommendations.set(true);
 
     compareService.selectedForCompare = [
       {

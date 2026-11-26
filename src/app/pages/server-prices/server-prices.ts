@@ -223,6 +223,7 @@ export class ServerPrices implements OnInit, OnDestroy {
   modalSearch: any;
 
   isLoading = true;
+  hasLoadedServers = false;
 
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
@@ -524,6 +525,7 @@ export class ServerPrices implements OnInit, OnDestroy {
             this.searchAbortController = null;
           }
           this.isLoading = false;
+          this.hasLoadedServers = true;
         }
       });
   }

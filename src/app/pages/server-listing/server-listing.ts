@@ -269,6 +269,7 @@ export class ServerListing implements OnInit, OnDestroy {
   query: any = {};
 
   isLoading = true;
+  hasLoadedServers = false;
 
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
@@ -1034,6 +1035,7 @@ export class ServerListing implements OnInit, OnDestroy {
             this.searchAbortController = null;
           }
           this.isLoading = false;
+          this.hasLoadedServers = true;
         }
       });
   }

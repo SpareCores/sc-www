@@ -513,6 +513,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   );
   readonly recommendations = signal<SearchServersServersGetData>([]);
   readonly isLoadingRecommendations = signal(false);
+  readonly hasLoadedRecommendations = signal(false);
   readonly totalRecommendationCount = signal(0);
   readonly compareSelectionKeys = signal<string[]>([]);
   readonly tooltipContent = signal("");
@@ -895,6 +896,12 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     );
   });
   readonly compareCount = computed(() => this.compareSelectionKeys().length);
+  readonly showCompareActions = computed(
+    () =>
+      this.hasLoadedRecommendations() &&
+      this.compareCount() >= 2 &&
+      !!this.selectedBaselineServer(),
+  );
   readonly isBaselineSelectedForCompare = computed(() => {
     const selectedBaselineServer = this.selectedBaselineServer();
 
@@ -2817,6 +2824,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
         this.activeRecommendationRequestKey === requestKey
       ) {
         this.isLoadingRecommendations.set(false);
+        this.hasLoadedRecommendations.set(true);
       }
     }
   }

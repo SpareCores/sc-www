@@ -241,6 +241,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   query: DatabaseListingQuery = {};
 
   isLoading = true;
+  hasLoadedDatabases = false;
   title = "Cloud Databases Navigator";
   description =
     'Explore, search, and evaluate the supported managed database services (DBaaS) in the table below. This comprehensive comparison includes diverse attributes such as database engine, version support, vCPU count, memory, storage capacity, high availability, backup retention, and regional availability. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare database instances by selecting at least two rows using the checkboxes.';
@@ -637,6 +638,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
             this.searchAbortController = null;
           }
           this.isLoading = false;
+          this.hasLoadedDatabases = true;
         }
       });
   }
