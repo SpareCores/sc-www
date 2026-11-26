@@ -58,7 +58,7 @@
 }
 
 .property_value ::ng-deep .property_unit {
-  @apply max-md:block;
+  @apply block md:inline;
 }
 
 .property_value ::ng-deep ul li {
@@ -72,13 +72,13 @@
 
 .details_card_columns thead th:not(:first-child),
 .details_card_columns tbody td:not(:first-child) {
-  @apply max-md:pl-2 max-md:text-right;
+  @apply pl-2 text-right md:pl-5 md:text-left;
 }
 
 .sc-kv-table--fixed-rows {
-  @apply max-md:table-auto;
+  @apply table-auto md:table-fixed;
 }
 
 .sc-kv-table tbody td.sc-kv-table__label {
-  @apply max-md:w-px max-md:pr-4 max-md:whitespace-nowrap;
+  @apply w-px pr-4 whitespace-nowrap md:w-62.5 md:pr-5 md:whitespace-normal;
 }

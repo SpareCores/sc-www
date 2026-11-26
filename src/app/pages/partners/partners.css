@@ -81,7 +81,11 @@
 }
 
 .partner-logos--compact .partner-logo-image {
-  @apply h-10 max-sm:max-w-full sm:h-7 md:h-8;
+  @apply h-10 max-w-full sm:h-7 md:h-8;
+}
+
+.partner-logos--compact.partner-logos--two-rows-mobile .partner-logo-image {
+  @apply sm:max-w-[min(100%,8rem)] md:max-w-full;
 }
 
 .partner-logos--compact .partner-logo-image--compact {
