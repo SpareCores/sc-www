@@ -88,17 +88,20 @@
   </div>
 } @else {
   <div [class]="blockClass()">
-    @if (hasSelector() && !controlsInHeader()) {
-      <div class="flex justify-end items-center">
+    @if (hasSelector()) {
+      <div
+        class="justify-end items-center"
+        [class]="controlsInHeader() ? 'hidden sm:flex' : 'flex'"
+      >
         <ng-container [ngTemplateOutlet]="compareControls" />
       </div>
     }
-    <ng-template #compareControls>
+    <ng-template #compareControls let-idSuffix="idSuffix">
       @if (hasSelector()) {
         <sc-button
           class="min-w-0"
           #selectorDropdown="scDropdown"
-          [id]="buttonId"
+          [id]="buttonId + (idSuffix ?? '')"
           [scDropdown]="selectorPanel"
           [dropdownEnabled]="hasSelector()"
           [label]="resolvedSelectedOptionName()"

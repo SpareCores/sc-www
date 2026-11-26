@@ -87,18 +87,19 @@
 } @else {
   <div class="relative z-30">
     <div class="sc-chart-block sc-chart-block--split">
-      @if (!controlsInHeader()) {
-        <div class="flex justify-end items-center">
-          <div class="flex gap-2 sm:gap-4">
-            <ng-container [ngTemplateOutlet]="compareControls" />
-          </div>
+      <div
+        class="justify-end items-center"
+        [class]="controlsInHeader() ? 'hidden sm:flex' : 'flex'"
+      >
+        <div class="flex gap-2 sm:gap-4">
+          <ng-container [ngTemplateOutlet]="compareControls" />
         </div>
-      }
-      <ng-template #compareControls>
+      </div>
+      <ng-template #compareControls let-idSuffix="idSuffix">
         <sc-button
           class="min-w-0"
           #selectorDropdown="scDropdown"
-          [id]="buttonId"
+          [id]="buttonId + (idSuffix ?? '')"
           [scDropdown]="comparePanel"
           [dropdownEnabled]="hasOptions()"
           [label]="currentCompareOptionName()"

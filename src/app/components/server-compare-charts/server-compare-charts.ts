@@ -3,7 +3,6 @@ import {
   afterNextRender,
   Component,
   computed,
-  DestroyRef,
   ElementRef,
   inject,
   Injector,
@@ -132,7 +131,6 @@ import {
 } from "../charts/workload-profile/workload-profile.utils";
 import { TooltipTrigger } from "../../directives/tooltip-trigger";
 import { TruncatedTitle } from "../truncated-title/truncated-title";
-import { watchBelowBreakpoint } from "../../tools/breakpoints";
 
 @Component({
   selector: "sc-server-compare-charts",
@@ -175,18 +173,11 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   private llmBuilder = inject(LlmInferenceChartBuilder);
   private advisorUi = inject(AdvisorUi);
   private legendVisibility = inject(CompareChartLegendVisibility);
-  private destroyRef = inject(DestroyRef);
   private injector = inject(Injector);
   private memoryChart = viewChild(ServerCompareMemoryChart);
   private compressionChart = viewChild(CompressionChart);
   private llmChart = viewChild(LlmInferenceChart);
   private lineChartComponents = viewChildren(BenchmarkLineChart);
-
-  readonly isPhoneViewport = watchBelowBreakpoint(
-    isPlatformBrowser(this.platformId) ? this.document.defaultView : null,
-    "sm",
-    this.destroyRef,
-  );
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() baselineServer: ExtendedServerDetails | null = null;
@@ -582,10 +573,6 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   readonly formatWorkloadProfileLabel = formatWorkloadProfileLabel;
 
   getHeaderChartControls(sectionId: string): TemplateRef<unknown> | undefined {
-    if (!this.isPhoneViewport()) {
-      return undefined;
-    }
-
     switch (sectionId) {
       case "bw_mem":
         return this.memoryChart()?.compareControls();

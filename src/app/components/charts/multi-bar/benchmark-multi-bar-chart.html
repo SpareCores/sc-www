@@ -73,19 +73,18 @@
   </div>
 } @else {
   <div class="sc-chart-block sc-chart-block--inline">
-    @if (!controlsInHeader()) {
-      <div
-        class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-2 sm:gap-4"
-      >
-        <ng-container [ngTemplateOutlet]="compareControls" />
-      </div>
-    }
-    <ng-template #compareControls>
+    <div
+      class="shrink-0 min-w-0 flex-nowrap items-center justify-end gap-2 sm:gap-4"
+      [class]="controlsInHeader() ? 'hidden sm:flex' : 'flex'"
+    >
+      <ng-container [ngTemplateOutlet]="compareControls" />
+    </div>
+    <ng-template #compareControls let-idSuffix="idSuffix">
       @if (hasSecondaryOptions()) {
         <sc-button
           class="min-w-0"
           #secondaryDropdown="scDropdown"
-          [id]="secondaryButtonId"
+          [id]="secondaryButtonId + (idSuffix ?? '')"
           [scDropdown]="secondaryPanel"
           [dropdownEnabled]="!!chartData() && hasSecondaryOptions()"
           [label]="currentSecondaryOption()?.name || ''"
@@ -99,7 +98,7 @@
       <sc-button
         class="min-w-0"
         #primaryDropdown="scDropdown"
-        [id]="buttonId"
+        [id]="buttonId + (idSuffix ?? '')"
         [scDropdown]="primaryPanel"
         [dropdownEnabled]="!!chartData()"
         [label]="currentOption().name || ''"

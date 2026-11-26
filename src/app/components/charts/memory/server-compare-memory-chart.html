@@ -2,16 +2,17 @@
   class="sc-chart-block sc-chart-block--inline"
   [class.memory-compare-chart--cache-markers]="hasCacheAnnotations()"
 >
-  @if (!controlsInHeader()) {
-    <div class="flex justify-end items-center">
-      <ng-container [ngTemplateOutlet]="compareControls" />
-    </div>
-  }
-  <ng-template #compareControls>
+  <div
+    class="justify-end items-center"
+    [class]="controlsInHeader() ? 'hidden sm:flex' : 'flex'"
+  >
+    <ng-container [ngTemplateOutlet]="compareControls" />
+  </div>
+  <ng-template #compareControls let-idSuffix="idSuffix">
     <sc-button
       class="min-w-0"
       #memoryCompareDropdown="scDropdown"
-      [id]="buttonId"
+      [id]="buttonId + (idSuffix ?? '')"
       [scDropdown]="memoryComparePanel"
       [dropdownEnabled]="availableOptions().length > 0"
       [label]="currentOptionName()"

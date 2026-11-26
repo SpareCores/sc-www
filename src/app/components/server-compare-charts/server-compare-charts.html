@@ -1361,7 +1361,12 @@
                   @if (categoryControls || (!isEmbedded && canToggleDetails)) {
                     <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
                       @if (categoryControls) {
-                        <ng-container [ngTemplateOutlet]="categoryControls" />
+                        <div class="contents sm:hidden">
+                          <ng-container
+                            [ngTemplateOutlet]="categoryControls"
+                            [ngTemplateOutletContext]="{ idSuffix: '_header' }"
+                          />
+                        </div>
                       }
                       @if (!isEmbedded && canToggleDetails) {
                         <sc-button
@@ -1407,7 +1412,7 @@
                   @if (benchmarkCategory.id === "bw_mem") {
                     <div>
                       <sc-server-compare-memory-chart
-                        [controlsInHeader]="isPhoneViewport()"
+                        [controlsInHeader]="true"
                         [servers]="memoryCompareServers"
                         [benchmarkMeta]="memoryBenchmarkMeta"
                       ></sc-server-compare-memory-chart>
@@ -1419,7 +1424,7 @@
                         layout="compare"
                         blockClass="sc-chart-block sc-chart-block--inline"
                         chartSource="compare-ssl"
-                        [controlsInHeader]="isPhoneViewport()"
+                        [controlsInHeader]="true"
                         chartType="bar"
                         [servers]="lineCompareServers"
                         [benchmarkMeta]="lineBenchmarkMeta"
@@ -1453,7 +1458,7 @@
                   @if (benchmarkCategory.id === "compress") {
                     <div>
                       <sc-compression-chart
-                        [controlsInHeader]="isPhoneViewport()"
+                        [controlsInHeader]="true"
                         layout="compare"
                         [servers]="compressionServers"
                         [benchmarkMeta]="compressionBenchmarkMeta"
@@ -1482,7 +1487,7 @@
                   @if (benchmarkCategory.id === "llm_inference") {
                     <div>
                       <sc-llm-inference-chart
-                        [controlsInHeader]="isPhoneViewport()"
+                        [controlsInHeader]="true"
                         layout="compare"
                         [benchmarkMeta]="benchmarkMeta"
                         [servers]="llmCompareServers"
@@ -1865,14 +1870,16 @@
                     ></sc-header-anchor>
                   }
                 </h3>
-                @let multiBarControls =
-                  isPhoneViewport()
-                    ? multiBarChart.compareControls()
-                    : undefined;
+                @let multiBarControls = multiBarChart.compareControls();
                 @if (multiBarControls || !isEmbedded) {
                   <div class="flex items-stretch gap-2 shrink-0 sm:gap-4">
                     @if (multiBarControls) {
-                      <ng-container [ngTemplateOutlet]="multiBarControls" />
+                      <div class="contents sm:hidden">
+                        <ng-container
+                          [ngTemplateOutlet]="multiBarControls"
+                          [ngTemplateOutletContext]="{ idSuffix: '_header' }"
+                        />
+                      </div>
                     }
                     @if (!isEmbedded) {
                       <sc-button
@@ -1907,7 +1914,7 @@
               >
                 <sc-benchmark-multi-bar-chart
                   #multiBarChart
-                  [controlsInHeader]="isPhoneViewport()"
+                  [controlsInHeader]="true"
                   [chartItem]="chartItem"
                   [benchmarkMeta]="benchmarkMeta"
                   [servers]="multiBarCompareServers"
