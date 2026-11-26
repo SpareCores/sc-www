@@ -42,6 +42,24 @@ describe("UiTooltip", () => {
     expect(tooltip.style.opacity).toBe("1");
   });
 
+  it("shows text in a shared tooltip attached to the body", () => {
+    const first = createTooltipTarget();
+    const second = createTooltipTarget();
+
+    service.showText(first, "Memory Bandwidth");
+    const tooltip = document.body.lastElementChild as HTMLElement;
+
+    expect(tooltip.textContent).toBe("Memory Bandwidth");
+    expect(tooltip.classList).toContain("tooltip-panel");
+    expect(tooltip.style.display).toBe("block");
+
+    service.hideText(second);
+    expect(tooltip.style.display).toBe("block");
+
+    service.hideText(first);
+    expect(tooltip.style.display).toBe("none");
+  });
+
   it("hides a tooltip and resets inline positioning styles", () => {
     const tooltip = document.createElement("div");
     tooltip.style.display = "block";

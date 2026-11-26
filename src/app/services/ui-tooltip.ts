@@ -1,4 +1,5 @@
-import { Injectable, NgZone, inject, signal } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
+import { DestroyRef, Injectable, NgZone, inject, signal } from "@angular/core";
 
 export type TooltipPlacement = {
   left: "anchor-left" | "anchor-right" | "fixed-left";
@@ -12,6 +13,7 @@ export type TooltipVariant = "default" | "warning" | "warning-wide";
 })
 export class UiTooltip {
   private readonly ngZone = inject(NgZone);
+  private readonly document = inject(DOCUMENT);
   private readonly activeAnchor = signal<Element | null>(null);
   readonly shownAnchor = this.activeAnchor.asReadonly();
   private readonly viewportPadding = 16;
@@ -23,6 +25,7 @@ export class UiTooltip {
     left: "anchor-right",
     top: "anchor-below",
   };
+  private textTooltipElement?: HTMLElement;
   private activeTooltipElement?: HTMLElement;
   private activeAnchorElement?: Element;
   private animationFrameId?: number;
@@ -50,6 +53,22 @@ export class UiTooltip {
       this.hideActiveTooltip();
     }
   };
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.textTooltipElement?.remove());
+  }
+
+  showText(anchor: Element, text: string) {
+    const tooltipElement = this.getTextTooltipElement();
+    tooltipElement.textContent = text;
+    this.show(tooltipElement, anchor);
+  }
+
+  hideText(anchor: Element) {
+    if (this.activeAnchorElement === anchor) {
+      this.hide(this.textTooltipElement);
+    }
+  }
 
   show(
     tooltipElement: HTMLElement,
@@ -123,6 +142,17 @@ export class UiTooltip {
 
     this.resetTooltipStyles(tooltipElement);
     this.applyVariant(tooltipElement, "default");
+  }
+
+  private getTextTooltipElement(): HTMLElement {
+    if (!this.textTooltipElement) {
+      this.textTooltipElement = this.document.createElement("div");
+      this.textTooltipElement.className =
+        "tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden";
+      this.document.body.appendChild(this.textTooltipElement);
+    }
+
+    return this.textTooltipElement;
   }
 
   private applyVariant(
