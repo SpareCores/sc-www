@@ -1,6 +1,8 @@
 <div class="w-full min-w-0">
   @if (showHeading()) {
-    <h3 class="font-bold text-3xl wrap-break-word sc-header-anchor-host">
+    <h3
+      class="font-bold text-2xl wrap-break-word sm:text-3xl sc-header-anchor-host"
+    >
       @if (useFaqSchema()) {
         {{ heading() }} FAQs
       } @else {
@@ -49,7 +51,7 @@
           }
         </button>
         <p
-          class="min-w-0 pl-2 text-wrap wrap-break-word font-light"
+          class="min-w-0 pl-2 text-sm text-wrap wrap-break-word font-light sm:text-base"
           [class.mb-6]="i < items().length - 1"
           [class.pb-4]="i === items().length - 1"
           [attr.itemscope]="useFaqSchema() ? '' : null"
