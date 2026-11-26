@@ -79,6 +79,8 @@ Fixes:
   blending into it (#344)
 - The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
   pages stay behind the Edit profile and other modals instead of covering them (#344)
+- The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
+  pages appear once the table has loaded instead of while it is still loading (#344)
 
 New content:
 
