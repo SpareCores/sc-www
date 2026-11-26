@@ -149,7 +149,7 @@
 }
 
 .sc-compare-table tbody tr.section_header {
-  @apply scroll-mt-6;
+  @apply scroll-mt-8 sm:scroll-mt-4 lg:scroll-mt-5;
 }
 
 .sc-compare-table tbody tr td {
