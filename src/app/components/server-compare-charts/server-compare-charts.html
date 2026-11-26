@@ -517,16 +517,10 @@
                     [lucideIcon]="'workload_profile' | benchmarkIcon"
                     class="h-6 w-6 shrink-0"
                   ></svg>
-                  <span
+                  <sc-truncated-title
                     class="compare-section-header-title__text"
-                    scTooltipTrigger
-                    (tooltipOpen)="
-                      showTruncatedTitleTooltip($event, 'Workload Profiles')
-                    "
-                    (tooltipClose)="hideTooltip()"
-                  >
-                    Workload Profiles
-                  </span>
+                    text="Workload Profiles"
+                  ></sc-truncated-title>
                   <span class="compare-section-header-title__icons">
                     <svg
                       lucideCircleArrowUp
@@ -741,16 +735,10 @@
                     [lucideIcon]="'nvbandwidth' | benchmarkIcon"
                     class="h-6 w-6 shrink-0"
                   ></svg>
-                  <span
+                  <sc-truncated-title
                     class="compare-section-header-title__text"
-                    scTooltipTrigger
-                    (tooltipOpen)="
-                      showTruncatedTitleTooltip($event, nvbandwidthTitle)
-                    "
-                    (tooltipClose)="hideTooltip()"
-                  >
-                    {{ nvbandwidthTitle }}
-                  </span>
+                    [text]="nvbandwidthTitle"
+                  ></sc-truncated-title>
                 </span>
                 @if (!isEmbedded) {
                   <sc-header-anchor
@@ -954,16 +942,10 @@
                       [lucideIcon]="'stress_ng' | benchmarkIcon"
                       class="h-6 w-6 shrink-0"
                     ></svg>
-                    <span
+                    <sc-truncated-title
                       class="compare-section-header-title__text"
-                      scTooltipTrigger
-                      (tooltipOpen)="
-                        showTruncatedTitleTooltip($event, stressNgTitle)
-                      "
-                      (tooltipClose)="hideTooltip()"
-                    >
-                      {{ stressNgTitle }}
-                    </span>
+                      [text]="stressNgTitle"
+                    ></sc-truncated-title>
                     <span class="compare-section-header-title__icons">
                       <svg
                         lucideCircleArrowUp
@@ -1200,19 +1182,10 @@
                         [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
                         class="h-6 w-6 shrink-0"
                       ></svg>
-                      <span
+                      <sc-truncated-title
                         class="compare-section-header-title__text"
-                        scTooltipTrigger
-                        (tooltipOpen)="
-                          showTruncatedTitleTooltip(
-                            $event,
-                            benchmarkCategory.name
-                          )
-                        "
-                        (tooltipClose)="hideTooltip()"
-                      >
-                        {{ benchmarkCategory.name }}
-                      </span>
+                        [text]="benchmarkCategory.name"
+                      ></sc-truncated-title>
                       <span class="compare-section-header-title__icons">
                         <svg
                           lucideCircleArrowUp
@@ -1814,15 +1787,10 @@
                       [lucideIcon]="chartItem.chart.name | benchmarkIcon"
                       class="h-6 w-6 shrink-0"
                     ></svg>
-                    <span
-                      class="compare-section-header-title__text min-w-0 truncate"
-                      scTooltipTrigger
-                      (tooltipOpen)="
-                        showTruncatedTitleTooltip($event, chartItem.chart.name)
-                      "
-                      (tooltipClose)="hideTooltip()"
-                      >{{ chartItem.chart.name }}</span
-                    >
+                    <sc-truncated-title
+                      class="compare-section-header-title__text"
+                      [text]="chartItem.chart.name"
+                    ></sc-truncated-title>
                     <span class="compare-section-header-title__icons">
                       @if (
                         chartItem.chart.options[chartItem.chart.selectedOption]
@@ -2115,16 +2083,10 @@
                     [lucideIcon]="'pgbench' | benchmarkIcon"
                     class="h-6 w-6 shrink-0"
                   ></svg>
-                  <span
+                  <sc-truncated-title
                     class="compare-section-header-title__text"
-                    scTooltipTrigger
-                    (tooltipOpen)="
-                      showTruncatedTitleTooltip($event, pgbenchTitle)
-                    "
-                    (tooltipClose)="hideTooltip()"
-                  >
-                    {{ pgbenchTitle }}
-                  </span>
+                    [text]="pgbenchTitle"
+                  ></sc-truncated-title>
                   <span class="compare-section-header-title__icons">
                     <svg
                       lucideCircleArrowUp

@@ -131,6 +131,7 @@ import {
   WORKLOAD_PROFILE_INFO_TOOLTIP,
 } from "../charts/workload-profile/workload-profile.utils";
 import { TooltipTrigger } from "../../directives/tooltip-trigger";
+import { TruncatedTitle } from "../truncated-title/truncated-title";
 import { watchBelowBreakpoint } from "../../tools/breakpoints";
 
 @Component({
@@ -156,6 +157,7 @@ import { watchBelowBreakpoint } from "../../tools/breakpoints";
     Dropdown,
     HeaderAnchor,
     NgTemplateOutlet,
+    TruncatedTitle,
   ],
   providers: [CompareChartLegendVisibility],
   templateUrl: "./server-compare-charts.html",
@@ -597,12 +599,6 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
           ?.compareControls();
       default:
         return undefined;
-    }
-  }
-
-  showTruncatedTitleTooltip(el: Element, title: string) {
-    if (el.scrollWidth > el.clientWidth) {
-      this.showTooltip(el, title);
     }
   }
 

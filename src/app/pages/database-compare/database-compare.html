@@ -269,19 +269,10 @@
                               [lucideIcon]="'pgbench' | benchmarkIcon"
                               class="h-6 w-6 shrink-0"
                             ></svg>
-                            <span
+                            <sc-truncated-title
                               class="compare-section-header-title__text"
-                              scTooltipTrigger
-                              (tooltipOpen)="
-                                showTruncatedTitleTooltip(
-                                  $event,
-                                  pgbenchMeta.title
-                                )
-                              "
-                              (tooltipClose)="hideChartTooltip()"
-                            >
-                              {{ pgbenchMeta.title }}
-                            </span>
+                              [text]="pgbenchMeta.title"
+                            ></sc-truncated-title>
                             <span class="compare-section-header-title__icons">
                               <svg
                                 lucideCircleArrowUp

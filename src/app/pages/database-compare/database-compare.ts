@@ -106,6 +106,7 @@ import {
 } from "./database-compare.constants";
 import databaseComparesData from "./database-compares.js";
 import { TooltipTrigger } from "../../directives/tooltip-trigger";
+import { TruncatedTitle } from "../../components/truncated-title/truncated-title";
 
 @Component({
   selector: "sc-database-compare",
@@ -129,6 +130,7 @@ import { TooltipTrigger } from "../../directives/tooltip-trigger";
     CompareToolbar,
     ScrollbarMirror,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./database-compare.html",
   styleUrl: "./database-compare.css",
@@ -327,12 +329,6 @@ export class DatabaseCompare implements OnInit, AfterViewInit, OnDestroy {
         this.chartTooltipContent = tooltipContent;
       },
     });
-  }
-
-  showTruncatedTitleTooltip(el: Element, title: string): void {
-    if (el.scrollWidth > el.clientWidth) {
-      this.showChartTooltip(el, title);
-    }
   }
 
   hideChartTooltip(): void {
