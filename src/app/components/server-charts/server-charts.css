@@ -50,10 +50,6 @@
       td.passmark-score-col {
         text-align: right;
       }
-
-      td.fixed_width {
-        width: 250px;
-      }
     }
   }
 }

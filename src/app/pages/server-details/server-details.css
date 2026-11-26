@@ -85,9 +85,6 @@
           @apply pr-0 md:pr-5;
         }
       }
-      td.fixed_width {
-        width: 250px;
-      }
     }
   }
 }

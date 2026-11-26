@@ -70,14 +70,6 @@
   @apply min-w-0 justify-between overflow-hidden;
 }
 
-@utility chart-selector-button__label {
-  @apply min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left;
-}
-
-@utility chart-selector-button__icon {
-  @apply flex h-full w-12 shrink-0 items-center justify-center rounded-r-lg bg-primary px-3 py-2;
-}
-
 @utility content {
   max-width: 1400px;
   margin: auto;

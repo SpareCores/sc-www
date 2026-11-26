@@ -2,7 +2,7 @@ import { DialogRef } from "@angular/cdk/dialog";
 import { Component, inject, input } from "@angular/core";
 import { Button } from "../../button/button";
 
-export type ModalSize = "sm" | "lg" | "xl" | "3xl" | "4xl" | "wide" | "full";
+export type ModalSize = "sm" | "lg" | "xl" | "3xl" | "4xl" | "wide";
 
 export function modalTitleId(dialogId: string): string {
   return `${dialogId}-title`;
