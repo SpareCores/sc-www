@@ -45,6 +45,9 @@ Fixes:
   databases (#323)
 - Closing the promo banner and clicking a bookmark button work before the page finishes
   loading (#335)
+- The Lowest Prices chart of the Server details page shows the ondemand price of every
+  listed zone instead of 0 for zones whose ondemand price was not among the 10 cheapest
+  prices (#347)
 
 New content:
 
