@@ -306,7 +306,7 @@
   bottom: 1rem;
   left: 0.75rem;
   right: 0.75rem;
-  z-index: 100;
+  z-index: 40;
   box-sizing: border-box;
 }
 

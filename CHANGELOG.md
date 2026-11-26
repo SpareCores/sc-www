@@ -72,6 +72,8 @@ Fixes:
 - Buttons no longer stay highlighted after a click or tap (#344)
 - The "Link copied to clipboard!" message appears below the promo banner instead of
   blending into it (#344)
+- The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
+  pages stay behind the Edit profile and other modals instead of covering them (#344)
 
 New content:
 
