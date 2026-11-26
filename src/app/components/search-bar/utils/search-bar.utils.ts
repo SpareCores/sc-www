@@ -6,7 +6,9 @@ import {
 import type {
   BenchmarkFilterOption,
   SearchBarCustomControl,
+  SearchBarFilterCategory,
   SearchBarParameter,
+  SearchBarParameterPlacement,
   SearchBarParameterType,
 } from "../types/search-bar.types";
 
@@ -479,4 +481,127 @@ export function parseTextDraftValue(rawValue: unknown): string {
     return "";
   }
   return String(rawValue);
+}
+
+const MULTI_VALUE_PARAMETER_TYPES: SearchBarParameterType[] = [
+  "country",
+  "vendor_regions",
+  "compliance_framework",
+  "vendor",
+  "storage_id",
+  "enumArray",
+  "enumArraySearch",
+];
+
+export function getParameterCategoryId(
+  parameter: SearchBarParameter,
+  parameterPlacements: SearchBarParameterPlacement[] = [],
+): string | undefined {
+  for (let index = parameterPlacements.length - 1; index >= 0; index--) {
+    const placement = parameterPlacements[index];
+
+    if (placement.parameterName === parameter.name) {
+      return placement.categoryId || parameter.schema.category_id;
+    }
+  }
+
+  return parameter.schema.category_id;
+}
+
+export function getParameterResetValue(parameter: SearchBarParameter): unknown {
+  const type = getParameterType(parameter);
+  const value = parameter.schema.default ?? null;
+
+  if (Array.isArray(value)) {
+    return [...value];
+  }
+
+  if (value !== null && typeof value === "object") {
+    return { ...value };
+  }
+
+  if (value === null && MULTI_VALUE_PARAMETER_TYPES.includes(type)) {
+    return [];
+  }
+
+  if (value === null && type === "benchmarkTriState") {
+    return {};
+  }
+
+  if (value === null && parameter.schema.null_value) {
+    return parameter.schema.null_value;
+  }
+
+  return value;
+}
+
+function toFilterValueList(value: unknown): string[] {
+  const values = Array.isArray(value) ? value : String(value).split(",");
+
+  return values
+    .filter((item) => item !== null && item !== undefined && item !== "")
+    .map((item) => String(item));
+}
+
+export function countParameterFilters(
+  parameter: SearchBarParameter,
+  value: unknown,
+): number {
+  if (value === null || value === undefined || value === "") {
+    return 0;
+  }
+
+  const type = getParameterType(parameter);
+
+  if (type === "benchmarkTriState") {
+    const selected = normalizeBenchmarkTriStateValue(value);
+    const defaults = normalizeBenchmarkTriStateValue(parameter.schema.default);
+    const keys = new Set([...Object.keys(selected), ...Object.keys(defaults)]);
+
+    return [...keys].filter((key) => selected[key] !== defaults[key]).length;
+  }
+
+  if (MULTI_VALUE_PARAMETER_TYPES.includes(type)) {
+    const values = toFilterValueList(value);
+    const defaults = toFilterValueList(parameter.schema.default ?? []);
+    const matchesDefault =
+      values.length === defaults.length &&
+      values.every((item) => defaults.includes(item));
+
+    return matchesDefault ? 0 : values.length;
+  }
+
+  if (type === "checkbox") {
+    const checked = value === true || value === "true";
+
+    return checked === (parameter.schema.default === true) ? 0 : 1;
+  }
+
+  const text = String(value);
+
+  return text === String(parameter.schema.default) ||
+    text === String(parameter.schema.null_value)
+    ? 0
+    : 1;
+}
+
+export function countActiveFilters(
+  query: Record<string, unknown>,
+  searchParameters: SearchBarParameter[],
+  filterCategories: SearchBarFilterCategory[],
+  parameterPlacements: SearchBarParameterPlacement[] = [],
+): number {
+  const categoryIds = new Set(
+    filterCategories.map((category) => category.category_id),
+  );
+
+  return searchParameters.reduce((count, parameter) => {
+    const categoryId = getParameterCategoryId(parameter, parameterPlacements);
+
+    if (!categoryId || !categoryIds.has(categoryId)) {
+      return count;
+    }
+
+    return count + countParameterFilters(parameter, query[parameter.name]);
+  }, 0);
 }

@@ -48,6 +48,7 @@ export class SearchBarCustomControls {
   parameters = input<SearchBarParameter[]>([]);
   parameterPlacements = input<SearchBarParameterPlacement[]>([]);
   filterCategoryId = input.required<string>();
+  idPrefix = input("");
   parameterTemplate =
     input.required<TemplateRef<SearchBarParameterTemplateContext>>();
 
@@ -423,13 +424,21 @@ export class SearchBarCustomControls {
     this.benchmarkConfigDropdownOpen[control.name] = false;
   }
 
+  isWideControl(control: SearchBarCustomControl): boolean {
+    return (
+      control.type === "serverAutocomplete" ||
+      control.type === "benchmarkConfigSelect" ||
+      !!control.sectionHeader
+    );
+  }
+
   focusControl(name: string): boolean {
     if (!isPlatformBrowser(this.platformId)) {
       return false;
     }
 
     const element = document.getElementById(
-      `custom_control_input_${name}`,
+      `${this.idPrefix()}custom_control_input_${name}`,
     ) as HTMLInputElement | null;
 
     if (!element || element.disabled) {

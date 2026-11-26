@@ -1,5 +1,9 @@
 @for (control of controls(); track control.name) {
-  <div class="mb-4" [class.custom-control--nested]="control.nested">
+  <div
+    class="mb-4"
+    [class.custom-control--nested]="control.nested"
+    [class.custom-control--wide]="isWideControl(control)"
+  >
     @if (control.sectionHeader) {
       <div class="font-bold text-emerald-400 text-sm mb-4 mt-2">
         {{ control.sectionHeader }}
@@ -42,7 +46,7 @@
       >
         <input
           type="checkbox"
-          [id]="'custom_control_checkbox_' + control.name"
+          [id]="idPrefix() + 'custom_control_checkbox_' + control.name"
           [checked]="control.checked"
           [disabled]="control.disabled"
           (change)="onCustomCheckboxInput(control, $event)"
@@ -80,7 +84,7 @@
           <div class="flex items-center gap-1">
             <input
               type="checkbox"
-              [id]="'custom_control_group_checkbox_' + option.name"
+              [id]="idPrefix() + 'custom_control_group_checkbox_' + option.name"
               [checked]="option.checked"
               [disabled]="option.disabled"
               (change)="onCustomCheckboxGroupInput(option.name, $event)"
@@ -102,7 +106,7 @@
       <div class="custom-autocomplete mt-4">
         <div class="custom-autocomplete__input-wrap">
           <input
-            [id]="'custom_control_input_' + control.name"
+            [id]="idPrefix() + 'custom_control_input_' + control.name"
             type="text"
             [value]="control.inputValue || ''"
             [placeholder]="control.placeholder || ''"
@@ -160,7 +164,7 @@
       <div class="custom-autocomplete mt-4">
         <div class="custom-autocomplete__input-wrap">
           <input
-            [id]="'custom_control_input_' + control.name"
+            [id]="idPrefix() + 'custom_control_input_' + control.name"
             type="text"
             [value]="control.inputValue || ''"
             [placeholder]="control.placeholder || ''"
@@ -356,7 +360,7 @@
         (increment)="incrementPowerOfTwoValue(control)"
       >
         <input
-          id="custom_control_numeric_{{ control.name }}"
+          id="{{ idPrefix() }}custom_control_numeric_{{ control.name }}"
           type="text"
           inputmode="decimal"
           autocomplete="off"
@@ -393,6 +397,7 @@
       [ngTemplateOutletContext]="{
         parameter: parameter,
         filterCategoryId: filterCategoryId(),
+        idPrefix: idPrefix(),
       }"
     ></ng-container>
   }

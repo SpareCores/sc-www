@@ -6,6 +6,7 @@ import {
   inject,
   input,
   output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
@@ -51,6 +52,9 @@ import {
 import { SearchBarMultiSelect } from "../search-bar-multi-select/search-bar-multi-select";
 import { formatKebabTitle } from "../../../../pipes/pipe-utils";
 import { TooltipTrigger } from "../../../../directives/tooltip-trigger";
+import { Button } from "../../../button/button";
+
+const COLLAPSED_ENUM_OPTION_COUNT = 4;
 
 type CpuCacheRangeFocusLossSkip = {
   target: HTMLInputElement | null;
@@ -69,6 +73,7 @@ type CpuCacheRangeFocusLossSkip = {
     BenchmarkIconPipe,
     NumbersOnly,
     SearchBarMultiSelect,
+    Button,
   ],
   templateUrl: "./search-bar-parameter-field.html",
 })
@@ -88,6 +93,9 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
   vendors = input<VendorMetadata[]>([]);
   storageIds = input<StorageMetadata[]>([]);
   warning = input<string | undefined>(undefined);
+  idPrefix = input("");
+
+  readonly enumOptionsExpanded = signal(false);
 
   valueChanged = output<void>();
   filterServers = output<void>();
@@ -313,6 +321,32 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
     parameter.modelValue = next;
     this.lastModelValue = parameter.modelValue;
     this.filterServers.emit();
+  }
+
+  hasCollapsibleEnumOptions(parameter: SearchBarParameter): boolean {
+    return (parameter.schema.enum?.length ?? 0) > COLLAPSED_ENUM_OPTION_COUNT;
+  }
+
+  getVisibleEnumOptions(
+    parameter: SearchBarParameter,
+  ): BenchmarkFilterOption[] {
+    const options = parameter.schema.enum ?? [];
+
+    if (
+      this.enumOptionsExpanded() ||
+      !this.hasCollapsibleEnumOptions(parameter)
+    ) {
+      return options;
+    }
+
+    return options.filter(
+      (option, index) =>
+        index < COLLAPSED_ENUM_OPTION_COUNT || this.isEnumSelected(option),
+    );
+  }
+
+  toggleEnumOptions() {
+    this.enumOptionsExpanded.update((expanded) => !expanded);
   }
 
   isEnumSelected(valueOrObj: BenchmarkFilterOption): boolean {

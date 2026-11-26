@@ -97,6 +97,7 @@ export type SearchBarTooltipEvent = {
 export type SearchBarParameterTemplateContext = {
   parameter: SearchBarParameter;
   filterCategoryId: string;
+  idPrefix: string;
 };
 
 export type SearchBarFilterCategory = {

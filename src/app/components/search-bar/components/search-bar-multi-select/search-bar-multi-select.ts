@@ -31,6 +31,7 @@ export class SearchBarMultiSelect {
   placeholder = input("Search…");
   parameterName = input("");
   filterCategoryId = input("");
+  idPrefix = input("");
 
   selectionChange = output<string[]>();
 
@@ -52,7 +53,7 @@ export class SearchBarMultiSelect {
 
   listboxId = computed(
     () =>
-      `search-bar-multi-select-${this.parameterName() || "options"}-listbox`,
+      `${this.idPrefix()}search-bar-multi-select-${this.parameterName() || "options"}-listbox`,
   );
 
   activeOptionId = computed(() => {

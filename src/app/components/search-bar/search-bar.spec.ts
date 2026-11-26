@@ -461,4 +461,94 @@ describe("SearchBar", () => {
     expect(searchParameters[0].modelValue).toBe(false);
     expect(filterCategories[0].collapsed).toBeFalse();
   });
+
+  describe("modal layout", () => {
+    const tabCategories = [
+      { category_id: "basic", name: "Basics", icon: "server", collapsed: true },
+      {
+        category_id: "memory",
+        name: "Memory",
+        icon: "memory-stick",
+        collapsed: true,
+      },
+    ];
+
+    function createTabParameters(): SearchBarParameter[] {
+      return [
+        {
+          name: "partial_name_or_id",
+          modelValue: null,
+          schema: {
+            category_id: "basic",
+            title: "Partial name",
+            type: "string",
+          },
+        },
+        {
+          name: "memory_min",
+          modelValue: null,
+          schema: { category_id: "memory", title: "Memory", type: "number" },
+        },
+      ];
+    }
+
+    function element(): HTMLElement {
+      return fixture.nativeElement as HTMLElement;
+    }
+
+    function tabs(): HTMLButtonElement[] {
+      return Array.from(element().querySelectorAll('[role="tab"]'));
+    }
+
+    beforeEach(() => {
+      fixture.componentRef.setInput("layout", "modal");
+      fixture.componentRef.setInput("filterCategories", tabCategories);
+      fixture.componentRef.setInput("searchParameters", createTabParameters());
+      fixture.componentRef.setInput("query", { memory_min: "8" });
+      fixture.detectChanges();
+    });
+
+    it("switches the panel to the selected category", () => {
+      expect(tabs().length).toBe(2);
+      expect(tabs()[0].getAttribute("aria-selected")).toBe("true");
+      expect(
+        element().querySelector("#filter_text_partial_name_or_id"),
+      ).not.toBeNull();
+
+      tabs()[1].click();
+      fixture.detectChanges();
+
+      expect(tabs()[1].getAttribute("aria-selected")).toBe("true");
+      expect(
+        element().querySelector("#filter_number_memory_min"),
+      ).not.toBeNull();
+      expect(
+        element().querySelector("#filter_text_partial_name_or_id"),
+      ).toBeNull();
+    });
+
+    it("renders the accordion sections with their own id prefix", () => {
+      expect(element().querySelectorAll(".search_bar_section").length).toBe(2);
+      expect(
+        element().querySelector("#accordion_filter_number_memory_min"),
+      ).not.toBeNull();
+    });
+
+    it("shows the active filter count per tab", () => {
+      expect(tabs()[0].querySelector(".search_bar_count")).toBeNull();
+      expect(tabs()[1].querySelector(".search_bar_count")?.textContent).toBe(
+        "1",
+      );
+    });
+
+    it("resets the active category and emits the cleared query", () => {
+      const emitSpy = spyOn(component.searchChanged, "emit");
+
+      tabs()[1].click();
+      fixture.detectChanges();
+      component.resetCategory(tabCategories[1]);
+
+      expect(emitSpy).toHaveBeenCalledWith({});
+    });
+  });
 });

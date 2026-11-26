@@ -15,7 +15,7 @@
       }
       <div
         class="font-bold text-emerald-400 text-sm"
-        id="filter_title_{{ parameter.name }}"
+        id="{{ idPrefix() }}filter_title_{{ parameter.name }}"
       >
         {{ parameter.schema.title }}
         @if (parameter.schema.description) {
@@ -46,7 +46,7 @@
               type="text"
               inputmode="decimal"
               scNumbersOnly
-              id="filter_range_value_{{ parameter.name }}"
+              id="{{ idPrefix() }}filter_range_value_{{ parameter.name }}"
               class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-hidden text-white rounded-xs h-5 text-center"
               [class.filter-draft-input--dirty]="
                 isParameterDraftDirty(parameter)
@@ -72,13 +72,13 @@
         ) {
           <div
             class="text-white text-sm"
-            id="filter_range_value_{{ parameter.name }}"
+            id="{{ idPrefix() }}filter_range_value_{{ parameter.name }}"
           >
             &#8734; {{ parameter.schema.unit }}
           </div>
         }
         <input
-          id="filter_range_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_range_{{ parameter.name }}"
           type="range"
           min="{{ parameter.schema.range_min }}"
           max="{{ parameter.schema.range_max }}"
@@ -106,7 +106,9 @@
             inputmode="numeric"
             scNumbersOnly
             [allowDecimal]="false"
-            id="filter_discrete_range_value_{{ parameter.name }}"
+            id="{{ idPrefix() }}filter_discrete_range_value_{{
+              parameter.name
+            }}"
             class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-hidden text-white rounded-xs h-5 text-center"
             [class.filter-draft-input--dirty]="
               isCpuCacheRangeDraftDirty(parameter)
@@ -127,7 +129,7 @@
         }
         <div class="cpu-cache-slider">
           <input
-            id="filter_discrete_range_{{ parameter.name }}"
+            id="{{ idPrefix() }}filter_discrete_range_{{ parameter.name }}"
             type="range"
             min="0"
             [max]="getCpuCacheRangeMaxIndex(parameter)"
@@ -172,7 +174,7 @@
           type="text"
           inputmode="decimal"
           scNumbersOnly
-          id="filter_number_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_number_{{ parameter.name }}"
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="number"
           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -205,7 +207,7 @@
           type="text"
           inputmode="decimal"
           scNumbersOnly
-          id="filter_price_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_price_{{ parameter.name }}"
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="number"
           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -235,7 +237,11 @@
       <div class="mb-4 mt-4">
         <input
           type="text"
-          id="filter_text_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_text_{{ parameter.name }}"
+          [attr.aria-label]="parameter.schema.title || null"
+          [attr.placeholder]="
+            showParameterTitles() ? null : parameter.schema.title || null
+          "
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="text"
           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -263,7 +269,7 @@
       <div class="flex gap-2 items-center mb-2">
         <input
           type="checkbox"
-          id="filter_checkbox_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_checkbox_{{ parameter.name }}"
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="checkbox"
           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -311,7 +317,7 @@
         <label class="flex items-center gap-1 cursor-pointer">
           <input
             type="radio"
-            [name]="'filter_boolean_' + parameter.name"
+            [name]="idPrefix() + 'filter_boolean_' + parameter.name"
             [checked]="booleanFilterSelection() === 'all'"
             (change)="setBooleanFilterSelection('all')"
             [disabled]="disabled()"
@@ -322,7 +328,7 @@
         <label class="flex items-center gap-1 cursor-pointer">
           <input
             type="radio"
-            [name]="'filter_boolean_' + parameter.name"
+            [name]="idPrefix() + 'filter_boolean_' + parameter.name"
             [checked]="booleanFilterSelection() === 'yes'"
             (change)="setBooleanFilterSelection('yes')"
             [disabled]="disabled()"
@@ -333,7 +339,7 @@
         <label class="flex items-center gap-1 cursor-pointer">
           <input
             type="radio"
-            [name]="'filter_boolean_' + parameter.name"
+            [name]="idPrefix() + 'filter_boolean_' + parameter.name"
             [checked]="booleanFilterSelection() === 'no'"
             (change)="setBooleanFilterSelection('no')"
             [disabled]="disabled()"
@@ -350,6 +356,7 @@
           [selected]="getEnumArraySearchSelected(parameter)"
           [disabled]="disabled()"
           [parameterName]="parameter.name"
+          [idPrefix]="idPrefix()"
           [filterCategoryId]="filterCategoryId()"
           placeholder="Search CPU flags"
           (selectionChange)="setEnumArraySearchSelection($event)"
@@ -364,14 +371,14 @@
     ) {
       <div class="flex flex-col gap-2 mb-4 mt-4">
         @for (
-          enum of parameter.schema.enum;
+          enum of getVisibleEnumOptions(parameter);
           track benchmarkFilterOptionKey(enum) ||
             benchmarkFilterOptionLabel(enum)
         ) {
           <div class="flex items-center gap-2">
             <input
               type="checkbox"
-              id="filter_enum_{{ parameter.name }}_{{
+              id="{{ idPrefix() }}filter_enum_{{ parameter.name }}_{{
                 benchmarkFilterOptionKey(enum) ||
                   benchmarkFilterOptionLabel(enum)
               }}"
@@ -393,13 +400,30 @@
             </div>
           </div>
         }
+        @if (hasCollapsibleEnumOptions(parameter)) {
+          <sc-button
+            class="-ml-3 self-start"
+            variant="link"
+            size="small"
+            [label]="
+              enumOptionsExpanded()
+                ? 'See less'
+                : 'See all (' + (parameter.schema.enum?.length ?? 0) + ')'
+            "
+            [icon]="enumOptionsExpanded() ? 'chevron-up' : 'chevron-down'"
+            [ariaExpanded]="enumOptionsExpanded()"
+            data-ph-capture-attribute-sc-event="search bar see all options"
+            [attr.data-ph-capture-attribute-filter-id]="parameter.name"
+            (buttonClick)="toggleEnumOptions()"
+          ></sc-button>
+        }
       </div>
     }
     @if (parameterType === "singleRadio") {
       @if (!showParameterTitles()) {
         <div
           class="font-bold text-emerald-400 text-sm mb-2"
-          id="filter_title_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_title_{{ parameter.name }}"
         >
           {{ parameter.schema.title }}
         </div>
@@ -413,7 +437,7 @@
           <label class="flex items-center gap-1 cursor-pointer">
             <input
               type="radio"
-              [name]="'single_radio_' + parameter.name"
+              [name]="idPrefix() + 'single_radio_' + parameter.name"
               [value]="benchmarkFilterOptionKey(enum)"
               [checked]="
                 parameter.modelValue === benchmarkFilterOptionKey(enum)
@@ -454,6 +478,7 @@
               <label
                 class="flex items-center gap-1 cursor-pointer"
                 [attr.for]="
+                  idPrefix() +
                   'filter_benchmark_' +
                   parameter.name +
                   '_' +
@@ -464,6 +489,7 @@
                 <input
                   type="radio"
                   [id]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -471,6 +497,7 @@
                     '_all'
                   "
                   [name]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -487,6 +514,7 @@
               <label
                 class="flex items-center gap-1 cursor-pointer"
                 [attr.for]="
+                  idPrefix() +
                   'filter_benchmark_' +
                   parameter.name +
                   '_' +
@@ -497,6 +525,7 @@
                 <input
                   type="radio"
                   [id]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -504,6 +533,7 @@
                     '_yes'
                   "
                   [name]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -520,6 +550,7 @@
               <label
                 class="flex items-center gap-1 cursor-pointer"
                 [attr.for]="
+                  idPrefix() +
                   'filter_benchmark_' +
                   parameter.name +
                   '_' +
@@ -530,6 +561,7 @@
                 <input
                   type="radio"
                   [id]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -537,6 +569,7 @@
                     '_no'
                   "
                   [name]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +

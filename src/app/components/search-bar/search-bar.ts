@@ -7,6 +7,7 @@ import {
   OnInit,
   TemplateRef,
   ViewEncapsulation,
+  computed,
   effect,
   inject,
   input,
@@ -48,7 +49,9 @@ import type {
   VendorMetadata,
 } from "./types/search-bar.types";
 import {
+  countParameterFilters,
   draftValueFromUnknown,
+  getParameterResetValue,
   getParameterType as getSearchBarParameterType,
   isDraftValueDirty,
   normalizeBenchmarkTriStateValue,
@@ -81,6 +84,8 @@ export type {
 type ApiResponse<T> = {
   body?: T;
 };
+
+export type SearchBarLayout = "sidebar" | "modal";
 
 @Component({
   selector: "sc-search-bar",
@@ -121,11 +126,16 @@ export class SearchBar implements OnInit, OnDestroy {
   customControls = input<SearchBarCustomControl[]>([]);
   parameterPlacements = input<SearchBarParameterPlacement[]>([]);
   parameterWarnings = input<Record<string, string>>({});
+  layout = input<SearchBarLayout>("sidebar");
+  idPrefix = input("");
+  extraCategoryCounts = input<Record<string, number>>({});
+  emitPendingOnDestroy = input(false);
 
   searchChanged = output<SearchBarQuery>();
   customControlChanged = output<SearchBarCustomControlChange>();
 
   tooltip = viewChild.required<ElementRef<HTMLElement>>("tooltipDefault");
+  categoryTabs = viewChildren<ElementRef<HTMLButtonElement>>("categoryTab");
   customControlsComponents = viewChildren(SearchBarCustomControls);
   searchPromptModalTemplate = viewChild.required<TemplateRef<unknown>>(
     "searchPromptModalTemplate",
@@ -142,6 +152,23 @@ export class SearchBar implements OnInit, OnDestroy {
 
   vendorRegionCollapsedVendors: Record<string, boolean> = {};
 
+  readonly sectionIdPrefix = computed(() =>
+    this.layout() === "modal"
+      ? this.idPrefix() + "accordion_"
+      : this.idPrefix(),
+  );
+
+  readonly activeCategoryId = signal<string | null>(null);
+  readonly activeCategory = computed(() => {
+    const categories = this.filterCategories();
+
+    return (
+      categories.find(
+        (category) => category.category_id === this.activeCategoryId(),
+      ) ?? categories[0]
+    );
+  });
+
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
   modalResponse: SearchBarQuery | null = null;
@@ -152,6 +179,7 @@ export class SearchBar implements OnInit, OnDestroy {
 
   private readonly valueChangeDebouncer = new Subject<number>();
   private valueChangeGeneration = 0;
+  private hasPendingValueChange = false;
   private readonly subscription = new Subscription();
   private countriesRequest: Promise<CountryMetadata[]> | null = null;
   private lastSelectedCountryIdsKey: string | null = null;
@@ -255,6 +283,7 @@ export class SearchBar implements OnInit, OnDestroy {
     filterCategories: SearchBarFilterCategory[],
   ) {
     this.valueChangeGeneration++;
+    this.hasPendingValueChange = false;
     searchParameters.forEach((item) => {
       const parameterType = this.getParameterType(item);
 
@@ -420,6 +449,7 @@ export class SearchBar implements OnInit, OnDestroy {
   }
 
   filterServers() {
+    this.hasPendingValueChange = false;
     this.normalizeSearchParameterValues();
 
     const queryObject = this.getQueryObject();
@@ -530,6 +560,100 @@ export class SearchBar implements OnInit, OnDestroy {
     }
 
     category.collapsed = !category.collapsed;
+  }
+
+  selectCategory(category: SearchBarFilterCategory) {
+    this.activeCategoryId.set(category.category_id);
+  }
+
+  onCategoryTabKeydown(event: KeyboardEvent, index: number) {
+    const categories = this.filterCategories();
+    const lastIndex = categories.length - 1;
+    const nextIndex =
+      event.key === "ArrowDown"
+        ? index === lastIndex
+          ? 0
+          : index + 1
+        : event.key === "ArrowUp"
+          ? index === 0
+            ? lastIndex
+            : index - 1
+          : event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? lastIndex
+              : null;
+
+    if (nextIndex === null) {
+      return;
+    }
+
+    event.preventDefault();
+    this.selectCategory(categories[nextIndex]);
+    this.categoryTabs()[nextIndex]?.nativeElement.focus();
+  }
+
+  getCategoryActiveCount(category: SearchBarFilterCategory): number {
+    const selectedCountryCount = this.countryMetadata().filter(
+      (country) => country.selected,
+    ).length;
+
+    return this.searchParameters().reduce((count, parameter) => {
+      if (
+        this.getResolvedParameterCategory(parameter) !== category.category_id ||
+        this.isParameterDisabled(parameter.name)
+      ) {
+        return count;
+      }
+
+      return (
+        count +
+        (this.getParameterType(parameter) === "country"
+          ? selectedCountryCount
+          : countParameterFilters(parameter, parameter.modelValue))
+      );
+    }, this.extraCategoryCounts()[category.category_id] ?? 0);
+  }
+
+  hasCustomControls(category: SearchBarFilterCategory): boolean {
+    return this.getCustomControlsByCategory(category.category_id).length > 0;
+  }
+
+  hasRequiredCustomControls(category: SearchBarFilterCategory): boolean {
+    return this.getCustomControlsByCategory(category.category_id).some(
+      (control) => control.required,
+    );
+  }
+
+  isWideParameter(parameter: SearchBarParameter): boolean {
+    const type = this.getParameterType(parameter);
+
+    return type === "text" || type === "enumArraySearch";
+  }
+
+  resetCategory(category: SearchBarFilterCategory) {
+    this.searchParameters().forEach((parameter) => {
+      if (
+        this.getResolvedParameterCategory(parameter) !== category.category_id ||
+        this.isParameterDisabled(parameter.name)
+      ) {
+        return;
+      }
+
+      if (this.getParameterType(parameter) === "country") {
+        this.countryMetadata.update((countries) =>
+          countries.map((country) => ({ ...country, selected: false })),
+        );
+        this.continentMetadata.forEach((continent) => {
+          continent.selected = false;
+        });
+      }
+
+      parameter.modelValue = getParameterResetValue(parameter);
+      delete this.parameterDraftValues[parameter.name];
+    });
+
+    this.filterServers();
   }
 
   getParameterTrackId(parameter: SearchBarParameter): string {
@@ -661,6 +785,7 @@ export class SearchBar implements OnInit, OnDestroy {
   }
 
   valueChanged() {
+    this.hasPendingValueChange = true;
     this.valueChangeDebouncer.next(this.valueChangeGeneration);
   }
 
@@ -1014,6 +1139,9 @@ export class SearchBar implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.emitPendingOnDestroy() && this.hasPendingValueChange) {
+      this.filterServers();
+    }
     this.searchPromptDialogRef?.close();
     this.loadAbortController.abort();
     this.subscription.unsubscribe();
