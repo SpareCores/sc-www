@@ -147,4 +147,19 @@ describe("TooltipTrigger", () => {
     expect(trigger.hasAttribute("tabindex")).toBeFalse();
     expect(trigger.hasAttribute("aria-expanded")).toBeFalse();
   });
+
+  it("stays inert in off mode", () => {
+    host.mode.set("off");
+    fixture.detectChanges();
+
+    trigger.dispatchEvent(pointer("pointerenter", "mouse"));
+    trigger.click();
+    trigger.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+    expect(host.opens.length).toBe(0);
+    expect(host.parentClicks()).toBe(1);
+    expect(trigger.hasAttribute("tabindex")).toBeFalse();
+    expect(trigger.hasAttribute("role")).toBeFalse();
+    expect(trigger.hasAttribute("aria-expanded")).toBeFalse();
+  });
 });

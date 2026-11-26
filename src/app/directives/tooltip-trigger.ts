@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { UiTooltip } from "../services/ui-tooltip";
 
-export type TooltipTriggerMode = "info" | "action";
+export type TooltipTriggerMode = "info" | "action" | "off";
 
 type TooltipOpenSource = "hover" | "tap" | "focus";
 
@@ -66,7 +66,7 @@ export class TooltipTrigger {
   );
 
   protected onPointerEnter(event: PointerEvent): void {
-    if (event.pointerType === "mouse") {
+    if (event.pointerType === "mouse" && this.tooltipMode() !== "off") {
       this.open("hover");
     }
   }
@@ -78,7 +78,7 @@ export class TooltipTrigger {
   }
 
   protected onClick(event: MouseEvent): void {
-    if (this.tooltipMode() === "action") {
+    if (this.tooltipMode() !== "info") {
       return;
     }
 
@@ -88,7 +88,7 @@ export class TooltipTrigger {
   }
 
   protected onKeyboardActivate(event: Event): void {
-    if (this.tooltipMode() === "action" || this.isNativelyFocusable) {
+    if (this.tooltipMode() !== "info" || this.isNativelyFocusable) {
       return;
     }
 
@@ -97,7 +97,10 @@ export class TooltipTrigger {
   }
 
   protected onFocusIn(): void {
-    if (this.host.nativeElement.matches(":focus-visible")) {
+    if (
+      this.tooltipMode() !== "off" &&
+      this.host.nativeElement.matches(":focus-visible")
+    ) {
       this.open("focus");
     }
   }

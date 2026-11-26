@@ -1,13 +1,9 @@
 <span
+  #label
   class="block truncate"
   scTooltipTrigger
+  [tooltipMode]="isTruncated() ? 'info' : 'off'"
   (tooltipOpen)="showIfTruncated($event)"
   (tooltipClose)="hideTooltip()"
   >{{ text() }}</span
 >
-<div
-  #tooltip
-  class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
->
-  {{ tooltipText() }}
-</div>
