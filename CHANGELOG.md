@@ -79,6 +79,11 @@ Fixes:
   blending into it (#344)
 - The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
   pages stay behind the Edit profile and other modals instead of covering them (#344)
+- Opening the header menus with the keyboard or tabbing into the header no longer
+  scrolls the page up (#344)
+- Section links of the server and database Compare pages scroll the section title
+  right below the sticky server and database names, without covering it on phones or
+  leaving a gap on tablets and desktops (#344)
 - The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
   pages appear once the table has loaded instead of while it is still loading (#344)
 
