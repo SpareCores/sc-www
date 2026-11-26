@@ -50,7 +50,7 @@
 
 .sc-floating-actions {
   position: fixed;
-  bottom: 2rem;
+  bottom: max(0.5rem, env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 40;
@@ -59,6 +59,68 @@
 .sc-floating-actions sc-button {
   width: max-content;
   min-width: 9rem;
+}
+
+.sc-floating-actions__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sc-floating-actions sc-button.sc-floating-actions__icon {
+  flex: none;
+  min-width: 0;
+}
+
+.sc-floating-actions__divider {
+  flex: none;
+  width: 1px;
+  height: 1.5rem;
+  background-color: var(--color-gray-600);
+}
+
+.sc-floating-actions--wide {
+  left: max(0.5rem, env(safe-area-inset-left));
+  right: max(0.5rem, env(safe-area-inset-right));
+  transform: none;
+}
+
+.sc-floating-actions--wide sc-button {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}
+
+.sc-floating-actions--wide sc-button.sc-floating-actions__filters {
+  flex: none;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-floating-actions {
+    bottom: 2rem;
+  }
+
+  .sc-floating-actions__bar {
+    gap: 1rem;
+  }
+
+  .sc-floating-actions__divider {
+    height: 1.75rem;
+  }
+
+  .sc-floating-actions--wide {
+    left: 50%;
+    right: auto;
+    bottom: 2rem;
+    max-width: calc(100vw - 1.5rem);
+    transform: translateX(-50%);
+  }
+
+  .sc-floating-actions--wide sc-button,
+  .sc-floating-actions--wide sc-button.sc-floating-actions__filters {
+    flex: 1 1 9rem;
+    min-width: 9rem;
+  }
 }
 
 @media (width >= theme(--breakpoint-xl)) {

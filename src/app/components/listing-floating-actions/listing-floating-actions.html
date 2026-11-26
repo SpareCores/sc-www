@@ -1,0 +1,44 @@
+<div
+  class="sc-floating-actions"
+  [class]="{ 'xl:hidden': !compareActive() }"
+  [class.sc-floating-actions--collapsed]="sidebarCollapsed()"
+  [class.sc-floating-actions--wide]="compareActive()"
+>
+  <div class="sc-floating-actions__bar">
+    <div class="contents xl:hidden">
+      <sc-button
+        class="sc-floating-actions__filters"
+        labelClass="sc-button__label--fit"
+        buttonClass="sc-button--floating"
+        label="Filters"
+        icon="funnel"
+        iconPosition="start"
+        [compact]="compareActive()"
+        [badge]="filterCount() > 0 ? filterCount() : null"
+        [ariaLabel]="
+          filterCount() > 0
+            ? 'Open filters, ' + filterCount() + ' active'
+            : 'Open filters'
+        "
+        data-ph-capture-attribute-sc-event="listing filters open"
+        (buttonClick)="openFilters.emit()"
+      ></sc-button>
+      @if (filterCount() > 0) {
+        <sc-button
+          class="sc-floating-actions__icon"
+          buttonClass="sc-button--floating"
+          icon="funnel-x"
+          color="danger"
+          ariaLabel="Clear filters"
+          title="Clear filters"
+          data-ph-capture-attribute-sc-event="listing filters clear"
+          (buttonClick)="clearFilters.emit()"
+        ></sc-button>
+      }
+      @if (compareActive()) {
+        <span class="sc-floating-actions__divider" aria-hidden="true"></span>
+      }
+    </div>
+    <ng-content></ng-content>
+  </div>
+</div>

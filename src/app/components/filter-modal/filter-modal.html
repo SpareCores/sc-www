@@ -1,0 +1,54 @@
+<sc-modal
+  modalTitle="Filters"
+  size="wide"
+  closeLabel="Close filters"
+  closeCaptureEvent="filter modal close"
+>
+  <sc-search-bar
+    data-modal-fill
+    class="search-bar--borderless block sm:flex sm:min-h-0 sm:flex-1 sm:flex-col"
+    idPrefix="filter_modal_"
+    layout="modal"
+    [showTopSection]="false"
+    [emitPendingOnDestroy]="true"
+    [query]="query()"
+    [searchParameters]="searchParameters()"
+    [extraParameters]="extraParameters()"
+    [filterCategories]="filterCategories()"
+    [selectedCurrency]="selectedCurrency()"
+    [showParameterTitles]="showParameterTitles()"
+    [customControls]="customControls()"
+    [parameterPlacements]="parameterPlacements()"
+    [parameterWarnings]="parameterWarnings()"
+    [extraCategoryCounts]="extraCategoryCounts()"
+    (searchChanged)="searchChanged.emit($event)"
+    (customControlChanged)="customControlChanged.emit($event)"
+  ></sc-search-bar>
+
+  <div modalFooter class="flex flex-wrap items-center justify-end gap-3 p-4">
+    @if (applyDisabledReason(); as reason) {
+      <p class="mr-auto text-xs text-gray-200">{{ reason }}</p>
+    }
+    <sc-button
+      label="Clear all"
+      icon="funnel-x"
+      iconPosition="start"
+      variant="outline"
+      color="brand-inverse"
+      buttonClass="sc-button--dialog"
+      data-ph-capture-attribute-sc-event="filter modal clear"
+      [disabled]="activeFilterCount() === 0"
+      (buttonClick)="clearAll.emit()"
+    ></sc-button>
+    <sc-button
+      label="Apply"
+      icon="check"
+      iconPosition="start"
+      buttonClass="sc-button--dialog"
+      data-ph-capture-attribute-sc-event="filter modal apply"
+      [disabled]="!!applyDisabledReason()"
+      [title]="applyDisabledReason()"
+      (buttonClick)="apply()"
+    ></sc-button>
+  </div>
+</sc-modal>
