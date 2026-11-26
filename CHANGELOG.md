@@ -47,12 +47,13 @@ Improvements:
   one-row page size and pagination footer, and tables that scroll sideways inside the
   page; the filter sidebar shows on screens at least 1280px wide (#344)
 - Compare page on phones: two servers fit side by side, section titles and charts stay
-  in view while the table scrolls sideways, and chart options sit in the section
-  header; Show Details scrolls to the first detail row at every screen size (#344)
+  in view while the table scrolls sideways, cut-off section titles show the full title in
+  a tooltip, and chart options sit in the section header; Show Details scrolls to the
+  first detail row at every screen size (#344)
 - Server details page: Workload Profiles is split into a radar card and a profile card
   that scrolls into view when a profile is picked, radar labels wrap so the chart uses
-  the card's space, and card titles stay on one line with the full title in a tooltip;
-  on phones the Geekbench cards fit their radar (#344)
+  the card's space, and card titles stay on one line, with the full title in a tooltip
+  when cut off; on phones the Geekbench cards fit their radar (#344)
 - Server and Database details pages on phones: smaller section headings, FAQ headings
   and FAQ answers (#344)
 - Tooltips open on tap and keyboard focus as well as on hover, and close on Escape or a
