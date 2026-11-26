@@ -188,8 +188,8 @@ Some examples from our logs and git history:
   for `c5.12xlarge` (48 vCPUs), `c7g.16xlarge` and several `.metal` instances
   with up to 192 vCPUs. One cleanup commit had to reset 103 failed LLM results to
   retry them with the concurrency lowered to one server at a time.
-- **Azure**: the last 126 runs of the start workflow (October 25 - November 20,
-  2026) contain **3,524 distinct quota rejections** of the "exceeding approved
+- **Azure**: the last 126 runs of the start workflow (October 25 -
+  November 20, 2026) contain **3,524 distinct quota rejections** of the "exceeding approved
   Total Regional Cores quota" kind, across **212 instance types**. In 2,575 cases
   the current limit was **10 vCPUs**, and in 932 it was **zero**. A typical one:
   `Standard_E16as_v5` in `centralindia` failed with
