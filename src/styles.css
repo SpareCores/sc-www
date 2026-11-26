@@ -59,6 +59,10 @@
   html {
     scroll-padding-top: 5.5rem;
   }
+
+  .sc-shell-chrome * {
+    scroll-margin-top: -5.5rem;
+  }
 }
 
 @layer base {
