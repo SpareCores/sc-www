@@ -39,6 +39,11 @@ export const GUEST_COUNTRY_LIMIT_TOAST_ID = "guest-country-limit";
 export const GUEST_REGION_LIMIT_TOAST_ID = "guest-region-limit";
 
 export const SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID = "search-bar-countries-error";
+export const SEARCH_BAR_REGIONS_ERROR_TOAST_ID = "search-bar-regions-error";
+export const SEARCH_BAR_VENDORS_ERROR_TOAST_ID = "search-bar-vendors-error";
+export const SEARCH_BAR_STORAGES_ERROR_TOAST_ID = "search-bar-storages-error";
+export const SEARCH_BAR_COMPLIANCE_FRAMEWORKS_ERROR_TOAST_ID =
+  "search-bar-compliance-frameworks-error";
 export const CPU_CACHE_INPUT_ERROR_TOAST_ID = "cpu-cache-input-error";
 export const DESIGN_COLOR_COPY_TOAST_ID = "design-color-copy";
 export const LINK_COPY_TOAST_ID = "link-copy";
