@@ -69,8 +69,9 @@ Improvements:
 - Dialogs fill the screen on phones, with their main actions at the bottom (#344)
 - Articles on phones: smaller headings and text, and topic pills under the author
   (#344)
-- The Compare button on the Server details page is outlined, and Don't Compare is
-  outlined in red with its own icon (#344)
+- The Compare button on the Server details page and the Compare baseline button on the
+  Advisor are outlined, and Don't Compare and Remove baseline are outlined in red with
+  their own icon (#344)
 
 Fixes:
 

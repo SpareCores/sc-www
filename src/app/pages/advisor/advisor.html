@@ -234,9 +234,10 @@
               id="advisor_compare_baseline_button"
               [compact]="true"
               [label]="baselineCompareButtonLabel()"
-              icon="scale"
+              [icon]="isBaselineSelectedForCompare() ? 'scale-off' : 'scale'"
               iconPosition="start"
-              [variant]="isBaselineSelectedForCompare() ? 'solid' : 'outline'"
+              variant="outline"
+              [color]="isBaselineSelectedForCompare() ? 'danger' : 'brand'"
               [disabled]="!selectedBaselineServer()"
               (click)="toggleBaselineCompare()"
             ></sc-button>
