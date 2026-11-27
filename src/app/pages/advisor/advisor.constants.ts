@@ -44,7 +44,13 @@ export const ADVISOR_FILTER_CATEGORIES: SearchBarFilterCategory[] = [
     alwaysExpanded: true,
     hideHeader: true,
   },
-  { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+  {
+    category_id: "vendor",
+    name: "Vendor",
+    icon: "home",
+    collapsed: true,
+    modalShowAllOptions: true,
+  },
   { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
 ];
 

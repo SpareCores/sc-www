@@ -1,0 +1,38 @@
+<div
+  class="sc-floating-actions"
+  [class.sc-floating-actions--collapsed]="sidebarCollapsed()"
+>
+  <div class="sc-floating-actions__bar">
+    <sc-button
+      labelClass="sc-button__label--fit"
+      buttonClass="sc-button--floating"
+      label="Filters"
+      icon="funnel"
+      iconPosition="start"
+      [compact]="true"
+      [badge]="filterCount() > 0 ? filterCount() : null"
+      [ariaLabel]="
+        filterCount() > 0
+          ? 'Open filters, ' + filterCount() + ' active'
+          : 'Open filters'
+      "
+      data-ph-capture-attribute-sc-event="listing filters open"
+      (buttonClick)="openFilters.emit()"
+    ></sc-button>
+    @if (filterCount() > 0) {
+      <sc-button
+        labelClass="sc-button__label--fit"
+        buttonClass="sc-button--floating"
+        label="Clear"
+        icon="funnel-x"
+        iconPosition="start"
+        color="danger"
+        [compact]="true"
+        ariaLabel="Clear filters"
+        title="Clear filters"
+        data-ph-capture-attribute-sc-event="listing filters clear"
+        (buttonClick)="clearFilters.emit()"
+      ></sc-button>
+    }
+  </div>
+</div>

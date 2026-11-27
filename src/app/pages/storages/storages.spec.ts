@@ -1,11 +1,16 @@
+import { DialogRef } from "@angular/cdk/dialog";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { Router } from "@angular/router";
+import { Subject } from "rxjs";
 import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { Storages } from "./storages";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import { KeeperAPI } from "../../services/keeper-api";
+import { ModalDialog } from "../../services/modal-dialog";
 import { Toast } from "../../services/toast";
 import { QUERY_ERROR_STORAGE_PRICES_TOAST_ID } from "../../services/toast-ids";
+import { availableCurrencies } from "../../tools/shared_data";
 
 describe("Storages", () => {
   let component: Storages;
@@ -112,5 +117,66 @@ describe("Storages", () => {
     component.ngOnDestroy();
 
     expect(activeSignal?.aborted).toBeTrue();
+  });
+
+  it("opens the filter modal once and closes it on destroy", () => {
+    const modalDialog = TestBed.inject(ModalDialog);
+    const closed = new Subject<void>();
+    const close = jasmine.createSpy("close");
+    const open = spyOn(modalDialog, "open").and.returnValue({
+      closed,
+      close,
+    } as unknown as DialogRef);
+
+    component.openFilterModal();
+    component.openFilterModal();
+
+    expect(open).toHaveBeenCalledTimes(1);
+
+    closed.next();
+    component.openFilterModal();
+
+    expect(open).toHaveBeenCalledTimes(2);
+
+    component.ngOnDestroy();
+
+    expect(close).toHaveBeenCalled();
+  });
+
+  it("clears filters while keeping sort, page size and currency", () => {
+    const router = TestBed.inject(Router);
+    const navigate = spyOn(router, "navigate");
+    component.query = { vendor: "aws", storage_min: 100 };
+    component.orderBy = "price";
+    component.orderDir = OrderDir.Asc;
+    component.limit = 25;
+    component.page = 3;
+    component.selectedCurrency = availableCurrencies[1];
+
+    component.clearFilters();
+
+    expect(component.page).toBe(1);
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: {
+          order_by: "price",
+          order_dir: OrderDir.Asc,
+          limit: 25,
+          currency: availableCurrencies[1].slug,
+        },
+      }),
+    );
+  });
+
+  it("counts active filters from the current query", () => {
+    component.query = {
+      vendor: ["aws", "gcp"],
+      storage_min: "100",
+      limit: "25",
+      currency: "EUR",
+    };
+
+    expect(component.activeFilterCount()).toBe(3);
   });
 });

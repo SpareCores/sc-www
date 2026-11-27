@@ -204,3 +204,22 @@
     </div>
   </div>
 </div>
+
+@if (hasLoadedStorages) {
+  <sc-listing-floating-actions
+    [filterCount]="activeFilterCount()"
+    [sidebarCollapsed]="isCollapsed"
+    (openFilters)="openFilterModal()"
+    (clearFilters)="clearFilters()"
+  ></sc-listing-floating-actions>
+}
+
+<ng-template #filterModalTemplate>
+  <sc-filter-modal
+    AIAssistantType="storages"
+    [query]="query"
+    [filterCategories]="filterCategories"
+    [searchParameters]="searchParameters"
+    (searchChanged)="searchBarChanged($event)"
+  ></sc-filter-modal>
+</ng-template>

@@ -1,10 +1,17 @@
 @for (control of controls(); track control.name) {
-  <div class="mb-4" [class.custom-control--nested]="control.nested">
-    @if (control.sectionHeader) {
-      <div class="font-bold text-emerald-400 text-sm mb-4 mt-2">
-        {{ control.sectionHeader }}
-      </div>
-    }
+  @if (control.sectionHeader) {
+    <div
+      class="custom-control--wide font-bold text-emerald-400 text-sm mb-4 mt-2"
+    >
+      {{ control.sectionHeader }}
+    </div>
+  }
+  <div
+    class="mb-4"
+    [class.custom-control--nested]="control.nested"
+    [class.custom-control--wide]="isWideControl(control)"
+    [class.custom-control--inline]="isInlineControl(control)"
+  >
     @if (
       control.type !== "checkbox" &&
       control.type !== "checkboxGroup" &&
@@ -42,7 +49,7 @@
       >
         <input
           type="checkbox"
-          [id]="'custom_control_checkbox_' + control.name"
+          [id]="idPrefix() + 'custom_control_checkbox_' + control.name"
           [checked]="control.checked"
           [disabled]="control.disabled"
           (change)="onCustomCheckboxInput(control, $event)"
@@ -75,12 +82,15 @@
       </div>
     }
     @if (control.type === "checkboxGroup") {
-      <div class="flex flex-col gap-2 mb-4 mt-4">
+      <div
+        class="flex flex-col gap-2 mb-4 mt-4"
+        [class.search_bar_options--grid]="compactFromXl()"
+      >
         @for (option of control.checkboxOptions || []; track option.name) {
           <div class="flex items-center gap-1">
             <input
               type="checkbox"
-              [id]="'custom_control_group_checkbox_' + option.name"
+              [id]="idPrefix() + 'custom_control_group_checkbox_' + option.name"
               [checked]="option.checked"
               [disabled]="option.disabled"
               (change)="onCustomCheckboxGroupInput(option.name, $event)"
@@ -99,10 +109,10 @@
       </div>
     }
     @if (control.type === "serverAutocomplete") {
-      <div class="custom-autocomplete mt-4">
+      <div class="custom-autocomplete mt-4 search_bar_field">
         <div class="custom-autocomplete__input-wrap">
           <input
-            [id]="'custom_control_input_' + control.name"
+            [id]="idPrefix() + 'custom_control_input_' + control.name"
             type="text"
             [value]="control.inputValue || ''"
             [placeholder]="control.placeholder || ''"
@@ -157,10 +167,10 @@
       </div>
     }
     @if (control.type === "benchmarkConfigSelect") {
-      <div class="custom-autocomplete mt-4">
+      <div class="custom-autocomplete mt-4 search_bar_field">
         <div class="custom-autocomplete__input-wrap">
           <input
-            [id]="'custom_control_input_' + control.name"
+            [id]="idPrefix() + 'custom_control_input_' + control.name"
             type="text"
             [value]="control.inputValue || ''"
             [placeholder]="control.placeholder || ''"
@@ -264,7 +274,7 @@
     }
     @if (control.type === "singleSelect") {
       <div
-        class="custom-autocomplete"
+        class="custom-autocomplete search_bar_field"
         [class.mt-4]="!control.hideTitle"
         [class.mt-2]="control.hideTitle"
         (focusout)="handleSingleSelectFocusOut(control, $event)"
@@ -310,7 +320,7 @@
       </div>
     }
     @if (control.type === "rangeSlider") {
-      <div class="custom-slider mt-4">
+      <div class="custom-slider mt-4 search_bar_field">
         <div class="custom-slider__header">
           <div class="custom-slider__value">
             {{ formatRangeSliderValue(control) }}
@@ -346,7 +356,7 @@
     }
     @if (control.type === "powerOfTwoStepper") {
       <sc-stepper
-        class="mt-4"
+        class="mt-4 search_bar_field"
         [controls]="'custom_control_numeric_' + control.name"
         [decreaseLabel]="'Decrease ' + control.title"
         [increaseLabel]="'Increase ' + control.title"
@@ -356,7 +366,7 @@
         (increment)="incrementPowerOfTwoValue(control)"
       >
         <input
-          id="custom_control_numeric_{{ control.name }}"
+          id="{{ idPrefix() }}custom_control_numeric_{{ control.name }}"
           type="text"
           inputmode="decimal"
           autocomplete="off"
@@ -393,6 +403,8 @@
       [ngTemplateOutletContext]="{
         parameter: parameter,
         filterCategoryId: filterCategoryId(),
+        idPrefix: idPrefix(),
+        compactFromXl: compactFromXl(),
       }"
     ></ng-container>
   }

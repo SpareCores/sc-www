@@ -7,12 +7,14 @@ import {
   ElementRef,
   OnDestroy,
   inject,
+  TemplateRef,
+  viewChild,
 } from "@angular/core";
+import { DialogRef } from "@angular/cdk/dialog";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { Button } from "../../components/button/button";
 import { KeeperAPI } from "../../services/keeper-api";
 import { OrderDir, ServerPriceWithPKs } from "../../../../sdk/data-contracts";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
@@ -68,6 +70,10 @@ import {
   TableColumn,
 } from "../../tools/table-columns";
 import { TooltipTrigger } from "../../directives/tooltip-trigger";
+import { FilterModal } from "../../components/filter-modal/filter-modal";
+import { ListingFloatingActions } from "../../components/listing-floating-actions/listing-floating-actions";
+import { ModalDialog } from "../../services/modal-dialog";
+import { countActiveFilters } from "../../components/search-bar/utils/search-bar.utils";
 
 export type CountryMetadata = {
   continent: string;
@@ -115,7 +121,6 @@ export type RegionVendorMetadata = {
     LucideCheck,
     LucideX,
     RouterModule,
-    Button,
     PageHeader,
     PageActions,
     SearchBar,
@@ -123,6 +128,8 @@ export type RegionVendorMetadata = {
     LoadingSpinner,
     SelectDropdown,
     ColumnPicker,
+    FilterModal,
+    ListingFloatingActions,
   ],
   templateUrl: "./server-prices.html",
   styleUrl: "./server-prices.css",
@@ -138,6 +145,13 @@ export class ServerPrices implements OnInit, OnDestroy {
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
   private uiTooltip = inject(UiTooltip);
+  private modalDialog = inject(ModalDialog);
+
+  readonly filterModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "filterModalTemplate",
+  );
+
+  private filterModalRef: DialogRef | null = null;
 
   private subscription = new Subscription();
   private searchRequestId = 0;
@@ -179,7 +193,13 @@ export class ServerPrices implements OnInit, OnDestroy {
       icon: "database",
       collapsed: true,
     },
-    { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+    {
+      category_id: "vendor",
+      name: "Vendor",
+      icon: "home",
+      collapsed: true,
+      modalShowAllOptions: true,
+    },
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
@@ -359,10 +379,35 @@ export class ServerPrices implements OnInit, OnDestroy {
     this.searchAbortController?.abort();
     this.subscription.unsubscribe();
     this.toastService.removeToast(QUERY_ERROR_SERVER_PRICES_TOAST_ID);
+    this.filterModalRef?.close();
   }
 
   toggleCollapse() {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  activeFilterCount() {
+    return countActiveFilters(
+      this.query,
+      this.searchParameters ?? [],
+      this.filterCategories,
+    );
+  }
+
+  openFilterModal() {
+    if (this.filterModalRef) {
+      return;
+    }
+
+    const ref = this.modalDialog.open(this.filterModalTemplate());
+    ref.closed.subscribe(() => {
+      this.filterModalRef = null;
+    });
+    this.filterModalRef = ref;
+  }
+
+  clearFilters() {
+    this.searchBarChanged({});
   }
 
   getMemory(item: ServerPriceWithPKs) {
@@ -808,21 +853,6 @@ export class ServerPrices implements OnInit, OnDestroy {
           }
         : undefined,
     );
-  }
-
-  compareCount() {
-    return this.serverCompare.serverCompareCount();
-  }
-
-  clearCompare() {
-    this.serverCompare.clearCompare();
-    this.servers?.forEach((server: any) => {
-      server.selected = false;
-    });
-  }
-
-  openCompare() {
-    this.serverCompare.openCompare();
   }
 
   showAPIReference(item: any) {

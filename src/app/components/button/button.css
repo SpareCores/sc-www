@@ -453,6 +453,10 @@
   @apply px-3 py-2 sm:px-4 sm:py-3;
 }
 
+.sc-button--icon-only.sc-button--floating {
+  @apply size-9.5 p-0 sm:size-11.5;
+}
+
 .sc-button.sc-button--close.sc-button--dialog {
   @apply size-9.5 p-2.25 sm:size-8 sm:p-1.5;
 }

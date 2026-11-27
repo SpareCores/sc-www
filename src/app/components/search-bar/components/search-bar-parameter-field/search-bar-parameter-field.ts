@@ -6,6 +6,7 @@ import {
   inject,
   input,
   output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
@@ -51,6 +52,21 @@ import {
 import { SearchBarMultiSelect } from "../search-bar-multi-select/search-bar-multi-select";
 import { formatKebabTitle } from "../../../../pipes/pipe-utils";
 import { TooltipTrigger } from "../../../../directives/tooltip-trigger";
+import { Button } from "../../../button/button";
+
+const COLLAPSED_ENUM_OPTION_COUNT = 4;
+const COMPACT_ENUM_CELL_COUNT = 12;
+
+function responsiveDisplayClass(
+  visibleBelowXl: boolean,
+  visibleFromXl: boolean,
+): string {
+  if (visibleBelowXl) {
+    return visibleFromXl ? "flex" : "flex xl:hidden";
+  }
+
+  return visibleFromXl ? "hidden xl:flex" : "hidden";
+}
 
 type CpuCacheRangeFocusLossSkip = {
   target: HTMLInputElement | null;
@@ -69,6 +85,7 @@ type CpuCacheRangeFocusLossSkip = {
     BenchmarkIconPipe,
     NumbersOnly,
     SearchBarMultiSelect,
+    Button,
   ],
   templateUrl: "./search-bar-parameter-field.html",
 })
@@ -88,6 +105,11 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
   vendors = input<VendorMetadata[]>([]);
   storageIds = input<StorageMetadata[]>([]);
   warning = input<string | undefined>(undefined);
+  idPrefix = input("");
+  showAllOptionsFromXl = input(false);
+  compactFromXl = input(false);
+
+  readonly enumOptionsExpanded = signal(false);
 
   valueChanged = output<void>();
   filterServers = output<void>();
@@ -313,6 +335,57 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
     parameter.modelValue = next;
     this.lastModelValue = parameter.modelValue;
     this.filterServers.emit();
+  }
+
+  hasCollapsibleEnumOptions(parameter: SearchBarParameter): boolean {
+    return (parameter.schema.enum?.length ?? 0) > COLLAPSED_ENUM_OPTION_COUNT;
+  }
+
+  getEnumOptionClass(
+    parameter: SearchBarParameter,
+    option: BenchmarkFilterOption,
+    index: number,
+  ): string {
+    const hiddenBeyond = (limit: number) =>
+      !this.enumOptionsExpanded() &&
+      index >= limit &&
+      !this.isEnumSelected(option);
+
+    return responsiveDisplayClass(
+      !(
+        this.hasCollapsibleEnumOptions(parameter) &&
+        hiddenBeyond(COLLAPSED_ENUM_OPTION_COUNT)
+      ),
+      !(
+        this.collapsesFromXl(parameter) &&
+        hiddenBeyond(
+          this.compactFromXl()
+            ? COMPACT_ENUM_CELL_COUNT - 1
+            : COLLAPSED_ENUM_OPTION_COUNT,
+        )
+      ),
+    );
+  }
+
+  getEnumToggleClass(parameter: SearchBarParameter): string {
+    return responsiveDisplayClass(
+      this.hasCollapsibleEnumOptions(parameter),
+      this.collapsesFromXl(parameter),
+    );
+  }
+
+  private collapsesFromXl(parameter: SearchBarParameter): boolean {
+    if (this.showAllOptionsFromXl()) {
+      return false;
+    }
+
+    return this.compactFromXl()
+      ? (parameter.schema.enum?.length ?? 0) > COMPACT_ENUM_CELL_COUNT
+      : this.hasCollapsibleEnumOptions(parameter);
+  }
+
+  toggleEnumOptions() {
+    this.enumOptionsExpanded.update((expanded) => !expanded);
   }
 
   isEnumSelected(valueOrObj: BenchmarkFilterOption): boolean {

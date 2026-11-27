@@ -28,6 +28,10 @@
   cursor: pointer;
 }
 
+.sc-filter-sidebar--collapsed .sc-filter-sidebar__collapser svg {
+  rotate: 180deg;
+}
+
 .sc-listing-results--narrow {
   width: 100%;
 }
@@ -50,15 +54,35 @@
 
 .sc-floating-actions {
   position: fixed;
-  bottom: 2rem;
+  bottom: max(0.5rem, env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 40;
 }
 
 .sc-floating-actions sc-button {
+  flex: none;
   width: max-content;
-  min-width: 9rem;
+}
+
+.sc-floating-actions__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-floating-actions {
+    bottom: 2rem;
+  }
+
+  .sc-floating-actions sc-button {
+    min-width: 9rem;
+  }
+
+  .sc-floating-actions__bar {
+    gap: 1rem;
+  }
 }
 
 @media (width >= theme(--breakpoint-xl)) {

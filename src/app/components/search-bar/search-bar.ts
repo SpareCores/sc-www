@@ -7,11 +7,14 @@ import {
   OnInit,
   TemplateRef,
   ViewEncapsulation,
+  computed,
   effect,
   inject,
   input,
+  linkedSignal,
   output,
   signal,
+  untracked,
   viewChild,
   viewChildren,
 } from "@angular/core";
@@ -19,11 +22,9 @@ import { FormsModule } from "@angular/forms";
 import { LucideChevronDown, LucideDynamicIcon } from "@lucide/angular";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { KeeperAPI } from "../../services/keeper-api";
-import { isAbortError } from "../../services/keeper-http-client";
 import { ModalDialog } from "../../services/modal-dialog";
-import { Toast } from "../../services/toast";
-import { SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID } from "../../services/toast-ids";
 import { TooltipVariant, UiTooltip } from "../../services/ui-tooltip";
+import { FilterMetadataStore } from "../../shared/store/filter-metadata-store";
 import { Button } from "../button/button";
 import { Modal } from "../modals/modal/modal";
 import {
@@ -32,10 +33,8 @@ import {
   SearchBarParameterField,
 } from "./components";
 import type {
-  ComplianceFrameworkMetadata,
   ContinentMetadata,
   CountryMetadata,
-  RegionMetadata,
   SearchBarCurrency,
   SearchBarCustomControl,
   SearchBarCustomControlChange,
@@ -44,11 +43,11 @@ import type {
   SearchBarParameterPlacement,
   SearchBarParameterType,
   SearchBarQuery,
-  StorageMetadata,
-  VendorMetadata,
 } from "./types/search-bar.types";
 import {
+  countParameterFilters,
   draftValueFromUnknown,
+  getParameterResetValue,
   getParameterType as getSearchBarParameterType,
   isDraftValueDirty,
   normalizeBenchmarkTriStateValue,
@@ -82,6 +81,8 @@ type ApiResponse<T> = {
   body?: T;
 };
 
+export type SearchBarLayout = "sidebar" | "modal";
+
 @Component({
   selector: "sc-search-bar",
   imports: [
@@ -101,9 +102,9 @@ type ApiResponse<T> = {
 })
 export class SearchBar implements OnInit, OnDestroy {
   private keeperAPI = inject(KeeperAPI);
-  private toastService = inject(Toast);
   private uiTooltip = inject(UiTooltip);
   private modalDialog = inject(ModalDialog);
+  private filterMetadata = inject(FilterMetadataStore);
 
   query = input<SearchBarQuery>({});
   searchParameters = input.required<SearchBarParameter[]>();
@@ -116,31 +117,67 @@ export class SearchBar implements OnInit, OnDestroy {
   topSearchParameterName = input("search");
   topSearchPlaceholder = input("Search vendor or API reference");
   showTopSection = input(true);
+  initialCategoryId = input<string | null>(null);
   showParameterTitles = input(true);
   noTopPaddingCategoryIds = input<string[]>([]);
   customControls = input<SearchBarCustomControl[]>([]);
   parameterPlacements = input<SearchBarParameterPlacement[]>([]);
   parameterWarnings = input<Record<string, string>>({});
+  layout = input<SearchBarLayout>("sidebar");
+  idPrefix = input("");
+  extraCategoryCounts = input<Record<string, number>>({});
+  deferChanges = input(false);
 
   searchChanged = output<SearchBarQuery>();
   customControlChanged = output<SearchBarCustomControlChange>();
+  categorySelected = output<string>();
+  promptConfirmed = output<void>();
 
   tooltip = viewChild.required<ElementRef<HTMLElement>>("tooltipDefault");
+  categoryTabs = viewChildren<ElementRef<HTMLButtonElement>>("categoryTab");
   customControlsComponents = viewChildren(SearchBarCustomControls);
   searchPromptModalTemplate = viewChild.required<TemplateRef<unknown>>(
     "searchPromptModalTemplate",
   );
   tooltipContent = "";
 
-  complianceFrameworks: ComplianceFrameworkMetadata[] = [];
-  vendors: VendorMetadata[] = [];
-  storageIds: StorageMetadata[] = [];
+  readonly complianceFrameworks = this.filterMetadata.complianceFrameworks;
+  readonly vendors = this.filterMetadata.vendors;
+  readonly storageIds = this.filterMetadata.storages;
+  readonly regionMetadata = this.filterMetadata.regions;
 
   countryMetadata = signal<CountryMetadata[]>([]);
   continentMetadata: ContinentMetadata[] = [];
-  regionMetadata = signal<RegionMetadata[]>([]);
 
   vendorRegionCollapsedVendors: Record<string, boolean> = {};
+
+  readonly sectionIdPrefix = computed(() =>
+    this.layout() === "modal"
+      ? this.idPrefix() + "accordion_"
+      : this.idPrefix(),
+  );
+
+  private readonly draftVersion = signal(0);
+
+  readonly activeFilterCount = computed(() => {
+    this.draftVersion();
+
+    return this.filterCategories().reduce(
+      (count, category) => count + this.getCategoryActiveCount(category),
+      0,
+    );
+  });
+
+  readonly activeCategoryId = linkedSignal(() => this.initialCategoryId());
+  readonly activeCategory = computed(() => {
+    const categories = this.filterCategories();
+
+    return (
+      categories.find(
+        (category) => category.category_id === this.activeCategoryId(),
+      ) ?? categories[0]
+    );
+  });
 
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
@@ -152,10 +189,11 @@ export class SearchBar implements OnInit, OnDestroy {
 
   private readonly valueChangeDebouncer = new Subject<number>();
   private valueChangeGeneration = 0;
+  private hasDraftChange = false;
   private readonly subscription = new Subscription();
-  private countriesRequest: Promise<CountryMetadata[]> | null = null;
+  private lastAppliedCountries: CountryMetadata[] | null = null;
   private lastSelectedCountryIdsKey: string | null = null;
-  private loadAbortController = new AbortController();
+  private lastSyncedExtraParameters: SearchBarQuery = {};
 
   constructor() {
     effect(() => {
@@ -163,11 +201,40 @@ export class SearchBar implements OnInit, OnDestroy {
     });
 
     effect(() => {
+      const extraParameters = this.deferChanges()
+        ? untracked(() => this.extraParameters())
+        : this.extraParameters();
+
+      this.valueChangeGeneration++;
       this.syncSearchParameters(
         this.searchParameters(),
         this.query(),
-        this.extraParameters(),
+        extraParameters,
         this.filterCategories(),
+      );
+    });
+
+    effect(() => {
+      if (!this.deferChanges()) {
+        return;
+      }
+
+      const extraParameters = this.extraParameters();
+      const changedNames = new Set([
+        ...Object.keys(this.lastSyncedExtraParameters),
+        ...Object.keys(extraParameters),
+      ]);
+      this.lastSyncedExtraParameters = extraParameters;
+
+      untracked(() =>
+        this.syncSearchParameters(
+          this.searchParameters().filter((parameter) =>
+            changedNames.has(parameter.name),
+          ),
+          this.query(),
+          extraParameters,
+          this.filterCategories(),
+        ),
       );
     });
 
@@ -177,39 +244,7 @@ export class SearchBar implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const requestParams = { signal: this.loadAbortController.signal };
-
-    this.keeperAPI
-      .getComplianceFrameworks(requestParams)
-      .then((response: ApiResponse<ComplianceFrameworkMetadata[]>) => {
-        if (this.loadAbortController.signal.aborted) {
-          return;
-        }
-        this.complianceFrameworks = response.body ?? [];
-      })
-      .catch((error: unknown) => {
-        if (isAbortError(error) || this.loadAbortController.signal.aborted) {
-          return;
-        }
-        console.error(error);
-      });
-
-    this.keeperAPI
-      .getStorages(requestParams)
-      .then((response: ApiResponse<StorageMetadata[]>) => {
-        if (this.loadAbortController.signal.aborted) {
-          return;
-        }
-        this.storageIds = response.body ?? [];
-      })
-      .catch((error: unknown) => {
-        if (isAbortError(error) || this.loadAbortController.signal.aborted) {
-          return;
-        }
-        console.error(error);
-      });
-
-    this.loadRegions();
+    void this.filterMetadata.load();
 
     this.subscription.add(
       this.valueChangeDebouncer
@@ -235,7 +270,8 @@ export class SearchBar implements OnInit, OnDestroy {
               (country): country is string => typeof country === "string",
             )
           : [];
-    this.loadCountries(selectedCountries);
+    const countryRows = this.filterMetadata.countries();
+    untracked(() => this.applyCountries(countryRows, selectedCountries));
 
     if (selectedCountries.length) {
       const regionCategory = this.filterCategories().find(
@@ -254,7 +290,6 @@ export class SearchBar implements OnInit, OnDestroy {
     extraParameters: SearchBarQuery,
     filterCategories: SearchBarFilterCategory[],
   ) {
-    this.valueChangeGeneration++;
     searchParameters.forEach((item) => {
       const parameterType = this.getParameterType(item);
 
@@ -366,6 +401,8 @@ export class SearchBar implements OnInit, OnDestroy {
         this.syncParameterDraftValue(item);
       }
     });
+
+    this.draftVersion.update((version) => version + 1);
   }
 
   private syncVendorRegionSelectionVisibility() {
@@ -421,7 +458,44 @@ export class SearchBar implements OnInit, OnDestroy {
 
   filterServers() {
     this.normalizeSearchParameterValues();
+    this.draftVersion.update((version) => version + 1);
 
+    if (this.deferChanges()) {
+      this.hasDraftChange = true;
+      return;
+    }
+
+    this.searchChanged.emit(this.getQueryWithCountries());
+  }
+
+  buildQuery(): SearchBarQuery {
+    this.searchParameters().forEach((parameter) => {
+      if (this.isParameterDraftDirty(parameter)) {
+        this.commitParameterValue(parameter);
+      }
+    });
+    this.normalizeSearchParameterValues();
+
+    return this.getQueryWithCountries();
+  }
+
+  hasDraftChanges(): boolean {
+    return (
+      this.hasDraftChange ||
+      this.searchParameters().some((parameter) =>
+        this.isParameterDraftDirty(parameter),
+      )
+    );
+  }
+
+  resetAll() {
+    this.filterCategories().forEach((category) => {
+      this.resetCategoryValues(category);
+    });
+    this.filterServers();
+  }
+
+  private getQueryWithCountries(): SearchBarQuery {
     const queryObject = this.getQueryObject();
     const selectedCountryIds = this.countryMetadata()
       .filter((country) => country.selected)
@@ -433,7 +507,7 @@ export class SearchBar implements OnInit, OnDestroy {
       delete queryObject.countries;
     }
 
-    this.searchChanged.emit(queryObject);
+    return queryObject;
   }
 
   private normalizeSearchParameterValues() {
@@ -530,6 +604,104 @@ export class SearchBar implements OnInit, OnDestroy {
     }
 
     category.collapsed = !category.collapsed;
+  }
+
+  selectCategory(category: SearchBarFilterCategory) {
+    this.activeCategoryId.set(category.category_id);
+    this.categorySelected.emit(category.category_id);
+  }
+
+  onCategoryTabKeydown(event: KeyboardEvent, index: number) {
+    const categories = this.filterCategories();
+    const lastIndex = categories.length - 1;
+    const nextIndex =
+      event.key === "ArrowDown"
+        ? index === lastIndex
+          ? 0
+          : index + 1
+        : event.key === "ArrowUp"
+          ? index === 0
+            ? lastIndex
+            : index - 1
+          : event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? lastIndex
+              : null;
+
+    if (nextIndex === null) {
+      return;
+    }
+
+    event.preventDefault();
+    this.selectCategory(categories[nextIndex]);
+    this.categoryTabs()[nextIndex]?.nativeElement.focus();
+  }
+
+  getCategoryActiveCount(category: SearchBarFilterCategory): number {
+    const selectedCountryCount = this.countryMetadata().filter(
+      (country) => country.selected,
+    ).length;
+
+    return this.searchParameters().reduce((count, parameter) => {
+      if (
+        this.getResolvedParameterCategory(parameter) !== category.category_id ||
+        this.isParameterDisabled(parameter.name)
+      ) {
+        return count;
+      }
+
+      return (
+        count +
+        (this.getParameterType(parameter) === "country"
+          ? selectedCountryCount
+          : countParameterFilters(parameter, parameter.modelValue))
+      );
+    }, this.extraCategoryCounts()[category.category_id] ?? 0);
+  }
+
+  hasCustomControls(category: SearchBarFilterCategory): boolean {
+    return this.getCustomControlsByCategory(category.category_id).length > 0;
+  }
+
+  hasRequiredCustomControls(category: SearchBarFilterCategory): boolean {
+    return this.getCustomControlsByCategory(category.category_id).some(
+      (control) => control.required,
+    );
+  }
+
+  isWideParameter(parameter: SearchBarParameter): boolean {
+    const type = this.getParameterType(parameter);
+
+    return type === "text" || type === "enumArraySearch";
+  }
+
+  resetCategory(category: SearchBarFilterCategory) {
+    this.resetCategoryValues(category);
+    this.filterServers();
+  }
+
+  private resetCategoryValues(category: SearchBarFilterCategory) {
+    this.searchParameters().forEach((parameter) => {
+      if (
+        this.getResolvedParameterCategory(parameter) !== category.category_id ||
+        this.isParameterDisabled(parameter.name)
+      ) {
+        return;
+      }
+
+      if (this.getParameterType(parameter) === "country") {
+        this.countryMetadata.update((countries) =>
+          countries.map((country) => ({ ...country, selected: false })),
+        );
+        this.continentMetadata.forEach((continent) => {
+          continent.selected = false;
+        });
+      }
+
+      parameter.modelValue = getParameterResetValue(parameter);
+      delete this.parameterDraftValues[parameter.name];
+    });
   }
 
   getParameterTrackId(parameter: SearchBarParameter): string {
@@ -661,6 +833,13 @@ export class SearchBar implements OnInit, OnDestroy {
   }
 
   valueChanged() {
+    this.draftVersion.update((version) => version + 1);
+
+    if (this.deferChanges()) {
+      this.hasDraftChange = true;
+      return;
+    }
+
     this.valueChangeDebouncer.next(this.valueChangeGeneration);
   }
 
@@ -786,138 +965,76 @@ export class SearchBar implements OnInit, OnDestroy {
     this.vendorRegionCollapsedVendors = vendorRegionCollapsedVendors;
   }
 
-  private loadCountries(selectedCountryIds: string[]) {
+  private applyCountries(
+    countries: CountryMetadata[],
+    selectedCountryIds: string[],
+  ) {
     const selectedKey = [...selectedCountryIds].sort().join(",");
     if (
-      this.lastSelectedCountryIdsKey === selectedKey &&
-      this.countryMetadata().length > 0
+      !countries.length ||
+      (this.lastAppliedCountries === countries &&
+        this.lastSelectedCountryIdsKey === selectedKey)
     ) {
       return;
     }
+    this.lastAppliedCountries = countries;
     this.lastSelectedCountryIdsKey = selectedKey;
 
-    const applyCountries = (countries: CountryMetadata[]) => {
-      if (!countries.length) {
-        return;
-      }
-
-      const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
-        type: "region",
-      });
-      this.countryMetadata.set(
-        countries
-          .map((item) => {
-            return {
-              ...item,
-              selected: selectedCountryIds.indexOf(item.country_id) !== -1,
-            };
-          })
-          .sort(
-            (a, b) =>
-              regionNamesInEnglish
-                .of(a.country_id)
-                ?.localeCompare(regionNamesInEnglish.of(b.country_id) || "") ||
-              0,
-          ),
-      );
-
-      const previousContinents = new Map(
-        this.continentMetadata.map((continent) => [
-          continent.continent,
-          continent,
-        ]),
-      );
-
-      this.continentMetadata = [];
-      this.countryMetadata().forEach((country) => {
-        const continent = this.continentMetadata.find(
-          (item) => item.continent === country.continent,
-        );
-        if (!continent) {
-          const previous = previousContinents.get(country.continent);
-          const hasSelectedCountry = this.countryMetadata().some(
-            (item) => item.continent === country.continent && item.selected,
-          );
-          this.continentMetadata.push({
-            continent: country.continent,
-            selected: false,
-            collapsed: previous ? previous.collapsed : !hasSelectedCountry,
-          });
-        }
-      });
-
-      this.continentMetadata.sort((a, b) =>
-        a.continent.localeCompare(b.continent),
-      );
-
-      this.continentMetadata.forEach((continent) => {
-        continent.selected =
-          this.countryMetadata().find(
-            (country) =>
-              country.continent === continent.continent && !country.selected,
-          ) === undefined;
-      });
-    };
-
-    if (!this.countriesRequest) {
-      this.countriesRequest = this.keeperAPI
-        .getCountries({ signal: this.loadAbortController.signal })
-        .then((response: ApiResponse<CountryMetadata[]>) => {
-          if (this.loadAbortController.signal.aborted) {
-            return [] as CountryMetadata[];
-          }
-          if (!response.body) {
-            this.countriesRequest = null;
-            return [];
-          }
-          return response.body;
+    const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+      type: "region",
+    });
+    this.countryMetadata.set(
+      countries
+        .map((item) => {
+          return {
+            ...item,
+            selected: selectedCountryIds.indexOf(item.country_id) !== -1,
+          };
         })
-        .catch((error: unknown) => {
-          if (isAbortError(error) || this.loadAbortController.signal.aborted) {
-            return [] as CountryMetadata[];
-          }
-          this.countriesRequest = null;
-          console.error(error);
-          this.toastService.show({
-            title: "Failed to load countries",
-            body: "Please try again later.",
-            type: "error",
-            id: SEARCH_BAR_COUNTRIES_ERROR_TOAST_ID,
-          });
-          return [] as CountryMetadata[];
+        .sort(
+          (a, b) =>
+            regionNamesInEnglish
+              .of(a.country_id)
+              ?.localeCompare(regionNamesInEnglish.of(b.country_id) || "") || 0,
+        ),
+    );
+
+    const previousContinents = new Map(
+      this.continentMetadata.map((continent) => [
+        continent.continent,
+        continent,
+      ]),
+    );
+
+    this.continentMetadata = [];
+    this.countryMetadata().forEach((country) => {
+      const continent = this.continentMetadata.find(
+        (item) => item.continent === country.continent,
+      );
+      if (!continent) {
+        const previous = previousContinents.get(country.continent);
+        const hasSelectedCountry = this.countryMetadata().some(
+          (item) => item.continent === country.continent && item.selected,
+        );
+        this.continentMetadata.push({
+          continent: country.continent,
+          selected: false,
+          collapsed: previous ? previous.collapsed : !hasSelectedCountry,
         });
-    }
+      }
+    });
 
-    this.countriesRequest.then(applyCountries);
-  }
+    this.continentMetadata.sort((a, b) =>
+      a.continent.localeCompare(b.continent),
+    );
 
-  private loadRegions() {
-    const requestParams = { signal: this.loadAbortController.signal };
-    const vendorsRequest: Promise<ApiResponse<VendorMetadata[]>> =
-      this.keeperAPI.getVendors(requestParams);
-    const regionsRequest: Promise<ApiResponse<RegionMetadata[]>> =
-      this.keeperAPI.getRegions(requestParams);
-
-    Promise.all([vendorsRequest, regionsRequest])
-      .then(([vendorResponse, regionResponse]) => {
-        if (this.loadAbortController.signal.aborted) {
-          return;
-        }
-        if (vendorResponse.body) {
-          this.vendors = vendorResponse.body;
-        }
-        if (regionResponse.body) {
-          this.regionMetadata.set(
-            regionResponse.body.sort((a, b) => a.name.localeCompare(b.name)),
-          );
-        }
-      })
-      .catch((error: unknown) => {
-        if (isAbortError(error) || this.loadAbortController.signal.aborted) {
-          return;
-        }
-        console.error(error);
-      });
+    this.continentMetadata.forEach((continent) => {
+      continent.selected =
+        this.countryMetadata().find(
+          (country) =>
+            country.continent === continent.continent && !country.selected,
+        ) === undefined;
+    });
   }
 
   openSearchPrompt() {
@@ -936,8 +1053,9 @@ export class SearchBar implements OnInit, OnDestroy {
 
   closeModal(confirm: boolean) {
     const modalResponse = this.modalResponse;
+    const applied = confirm && !!modalResponse;
 
-    if (confirm && modalResponse) {
+    if (applied) {
       const searchParameters = this.searchParameters();
 
       searchParameters.forEach((param) => {
@@ -958,6 +1076,10 @@ export class SearchBar implements OnInit, OnDestroy {
     }
 
     this.searchPromptDialogRef?.close();
+
+    if (applied) {
+      this.promptConfirmed.emit();
+    }
   }
 
   async submitFreetextSearch() {
@@ -1015,7 +1137,6 @@ export class SearchBar implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.searchPromptDialogRef?.close();
-    this.loadAbortController.abort();
     this.subscription.unsubscribe();
     this.valueChangeDebouncer.complete();
   }

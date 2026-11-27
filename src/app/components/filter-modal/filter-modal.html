@@ -1,0 +1,69 @@
+<sc-modal
+  modalTitle="Filters"
+  size="wide-lg"
+  closeLabel="Close filters"
+  closeCaptureEvent="filter modal close"
+>
+  <sc-search-bar
+    data-modal-fill
+    class="search-bar--borderless block sm:flex sm:min-h-0 sm:flex-1 sm:flex-col"
+    idPrefix="filter_modal_"
+    layout="modal"
+    [deferChanges]="true"
+    [showTopSection]="showTopSection() && useTopSearchInput()"
+    [AIAssistantType]="AIAssistantType()"
+    [useTopSearchInput]="useTopSearchInput()"
+    [topSearchPlaceholder]="topSearchPlaceholder()"
+    [query]="query()"
+    [searchParameters]="draftParameters()"
+    [extraParameters]="extraParameters()"
+    [filterCategories]="filterCategories()"
+    [selectedCurrency]="selectedCurrency()"
+    [showParameterTitles]="showParameterTitles()"
+    [customControls]="customControls()"
+    [parameterPlacements]="parameterPlacements()"
+    [parameterWarnings]="parameterWarnings()"
+    [extraCategoryCounts]="extraCategoryCounts()"
+    [initialCategoryId]="initialCategoryId"
+    (customControlChanged)="customControlChanged.emit($event)"
+    (categorySelected)="rememberCategory($event)"
+    (promptConfirmed)="apply()"
+  ></sc-search-bar>
+
+  <div modalFooter class="flex flex-wrap items-center justify-end gap-3 p-4">
+    @if (showTopSection() && !useTopSearchInput()) {
+      <sc-button
+        class="mr-auto"
+        label="Search Prompt"
+        icon="search"
+        iconPosition="start"
+        variant="outline"
+        [compact]="true"
+        data-ph-capture-attribute-server-listing-search-prompt-action="open"
+        (buttonClick)="openSearchPrompt()"
+      ></sc-button>
+    }
+    @if (applyDisabledReason(); as reason) {
+      <p class="mr-auto text-xs text-gray-200">{{ reason }}</p>
+    }
+    <sc-button
+      label="Clear all"
+      icon="funnel-x"
+      iconPosition="start"
+      variant="outline"
+      color="danger"
+      data-ph-capture-attribute-sc-event="filter modal clear"
+      [disabled]="draftFilterCount() === 0"
+      (buttonClick)="clear()"
+    ></sc-button>
+    <sc-button
+      label="Apply"
+      icon="check"
+      iconPosition="start"
+      data-ph-capture-attribute-sc-event="filter modal apply"
+      [disabled]="!!applyDisabledReason()"
+      [title]="applyDisabledReason()"
+      (buttonClick)="apply()"
+    ></sc-button>
+  </div>
+</sc-modal>

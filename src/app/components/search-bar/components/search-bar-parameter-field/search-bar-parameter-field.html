@@ -15,7 +15,7 @@
       }
       <div
         class="font-bold text-emerald-400 text-sm"
-        id="filter_title_{{ parameter.name }}"
+        id="{{ idPrefix() }}filter_title_{{ parameter.name }}"
       >
         {{ parameter.schema.title }}
         @if (parameter.schema.description) {
@@ -33,7 +33,7 @@
       </div>
     }
     @if (parameterType === "range") {
-      <div class="mb-4 mt-4">
+      <div class="mb-4 mt-4 search_bar_field">
         @if (
           parameter.modelValue &&
           !(
@@ -46,7 +46,7 @@
               type="text"
               inputmode="decimal"
               scNumbersOnly
-              id="filter_range_value_{{ parameter.name }}"
+              id="{{ idPrefix() }}filter_range_value_{{ parameter.name }}"
               class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-hidden text-white rounded-xs h-5 text-center"
               [class.filter-draft-input--dirty]="
                 isParameterDraftDirty(parameter)
@@ -72,13 +72,13 @@
         ) {
           <div
             class="text-white text-sm"
-            id="filter_range_value_{{ parameter.name }}"
+            id="{{ idPrefix() }}filter_range_value_{{ parameter.name }}"
           >
             &#8734; {{ parameter.schema.unit }}
           </div>
         }
         <input
-          id="filter_range_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_range_{{ parameter.name }}"
           type="range"
           min="{{ parameter.schema.range_min }}"
           max="{{ parameter.schema.range_max }}"
@@ -99,14 +99,16 @@
       </div>
     }
     @if (parameterType === "cpuCacheRange") {
-      <div class="mb-6 mt-4">
+      <div class="mb-6 mt-4 search_bar_field">
         <div class="text-white text-sm flex gap-1 items-center mb-2">
           <input
             type="text"
             inputmode="numeric"
             scNumbersOnly
             [allowDecimal]="false"
-            id="filter_discrete_range_value_{{ parameter.name }}"
+            id="{{ idPrefix() }}filter_discrete_range_value_{{
+              parameter.name
+            }}"
             class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-hidden text-white rounded-xs h-5 text-center"
             [class.filter-draft-input--dirty]="
               isCpuCacheRangeDraftDirty(parameter)
@@ -127,7 +129,7 @@
         }
         <div class="cpu-cache-slider">
           <input
-            id="filter_discrete_range_{{ parameter.name }}"
+            id="{{ idPrefix() }}filter_discrete_range_{{ parameter.name }}"
             type="range"
             min="0"
             [max]="getCpuCacheRangeMaxIndex(parameter)"
@@ -167,12 +169,12 @@
       </div>
     }
     @if (parameterType === "number") {
-      <div class="mb-4 mt-4 relative">
+      <div class="mb-4 mt-4 relative search_bar_field">
         <input
           type="text"
           inputmode="decimal"
           scNumbersOnly
-          id="filter_number_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_number_{{ parameter.name }}"
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="number"
           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -200,12 +202,12 @@
       </div>
     }
     @if (parameterType === "price") {
-      <div class="mb-4 mt-4 relative">
+      <div class="mb-4 mt-4 relative search_bar_field">
         <input
           type="text"
           inputmode="decimal"
           scNumbersOnly
-          id="filter_price_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_price_{{ parameter.name }}"
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="number"
           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -232,10 +234,14 @@
       </div>
     }
     @if (parameterType === "text") {
-      <div class="mb-4 mt-4">
+      <div class="mb-4 mt-4 search_bar_field">
         <input
           type="text"
-          id="filter_text_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_text_{{ parameter.name }}"
+          [attr.aria-label]="parameter.schema.title || null"
+          [attr.placeholder]="
+            showParameterTitles() ? null : parameter.schema.title || null
+          "
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="text"
           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -260,10 +266,13 @@
       </div>
     }
     @if (parameterType === "checkbox") {
-      <div class="flex gap-2 items-center mb-2">
+      <div
+        class="flex gap-2 items-center mb-2"
+        [class]="{ 'xl:mb-4': compactFromXl() }"
+      >
         <input
           type="checkbox"
-          id="filter_checkbox_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_checkbox_{{ parameter.name }}"
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="checkbox"
           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -311,7 +320,7 @@
         <label class="flex items-center gap-1 cursor-pointer">
           <input
             type="radio"
-            [name]="'filter_boolean_' + parameter.name"
+            [name]="idPrefix() + 'filter_boolean_' + parameter.name"
             [checked]="booleanFilterSelection() === 'all'"
             (change)="setBooleanFilterSelection('all')"
             [disabled]="disabled()"
@@ -322,7 +331,7 @@
         <label class="flex items-center gap-1 cursor-pointer">
           <input
             type="radio"
-            [name]="'filter_boolean_' + parameter.name"
+            [name]="idPrefix() + 'filter_boolean_' + parameter.name"
             [checked]="booleanFilterSelection() === 'yes'"
             (change)="setBooleanFilterSelection('yes')"
             [disabled]="disabled()"
@@ -333,7 +342,7 @@
         <label class="flex items-center gap-1 cursor-pointer">
           <input
             type="radio"
-            [name]="'filter_boolean_' + parameter.name"
+            [name]="idPrefix() + 'filter_boolean_' + parameter.name"
             [checked]="booleanFilterSelection() === 'no'"
             (change)="setBooleanFilterSelection('no')"
             [disabled]="disabled()"
@@ -344,12 +353,13 @@
       </div>
     }
     @if (parameterType === "enumArraySearch") {
-      <div class="mb-4 mt-4">
+      <div class="mb-4 mt-4 search_bar_field">
         <sc-search-bar-multi-select
           [options]="getEnumArraySearchOptions(parameter)"
           [selected]="getEnumArraySearchSelected(parameter)"
           [disabled]="disabled()"
           [parameterName]="parameter.name"
+          [idPrefix]="idPrefix()"
           [filterCategoryId]="filterCategoryId()"
           placeholder="Search CPU flags"
           (selectionChange)="setEnumArraySearchSelection($event)"
@@ -362,16 +372,23 @@
       parameterType === "vendor" ||
       parameterType === "storage_id"
     ) {
-      <div class="flex flex-col gap-2 mb-4 mt-4">
+      <div
+        class="flex flex-col gap-2 mb-4 mt-4"
+        [class.search_bar_options--grid]="compactFromXl()"
+      >
         @for (
-          enum of parameter.schema.enum;
+          enum of parameter.schema.enum ?? [];
           track benchmarkFilterOptionKey(enum) ||
-            benchmarkFilterOptionLabel(enum)
+            benchmarkFilterOptionLabel(enum);
+          let index = $index
         ) {
-          <div class="flex items-center gap-2">
+          <div
+            class="items-center gap-2"
+            [class]="getEnumOptionClass(parameter, enum, index)"
+          >
             <input
               type="checkbox"
-              id="filter_enum_{{ parameter.name }}_{{
+              id="{{ idPrefix() }}filter_enum_{{ parameter.name }}_{{
                 benchmarkFilterOptionKey(enum) ||
                   benchmarkFilterOptionLabel(enum)
               }}"
@@ -393,13 +410,32 @@
             </div>
           </div>
         }
+        <div
+          class="-ml-3 self-start xl:-my-2 xl:self-center"
+          [class]="getEnumToggleClass(parameter)"
+        >
+          <sc-button
+            variant="link"
+            size="small"
+            [label]="
+              enumOptionsExpanded()
+                ? 'See less'
+                : 'See all (' + (parameter.schema.enum?.length ?? 0) + ')'
+            "
+            [icon]="enumOptionsExpanded() ? 'chevron-up' : 'chevron-down'"
+            [ariaExpanded]="enumOptionsExpanded()"
+            data-ph-capture-attribute-sc-event="search bar see all options"
+            [attr.data-ph-capture-attribute-filter-id]="parameter.name"
+            (buttonClick)="toggleEnumOptions()"
+          ></sc-button>
+        </div>
       </div>
     }
     @if (parameterType === "singleRadio") {
       @if (!showParameterTitles()) {
         <div
           class="font-bold text-emerald-400 text-sm mb-2"
-          id="filter_title_{{ parameter.name }}"
+          id="{{ idPrefix() }}filter_title_{{ parameter.name }}"
         >
           {{ parameter.schema.title }}
         </div>
@@ -413,7 +449,7 @@
           <label class="flex items-center gap-1 cursor-pointer">
             <input
               type="radio"
-              [name]="'single_radio_' + parameter.name"
+              [name]="idPrefix() + 'single_radio_' + parameter.name"
               [value]="benchmarkFilterOptionKey(enum)"
               [checked]="
                 parameter.modelValue === benchmarkFilterOptionKey(enum)
@@ -454,6 +490,7 @@
               <label
                 class="flex items-center gap-1 cursor-pointer"
                 [attr.for]="
+                  idPrefix() +
                   'filter_benchmark_' +
                   parameter.name +
                   '_' +
@@ -464,6 +501,7 @@
                 <input
                   type="radio"
                   [id]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -471,6 +509,7 @@
                     '_all'
                   "
                   [name]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -487,6 +526,7 @@
               <label
                 class="flex items-center gap-1 cursor-pointer"
                 [attr.for]="
+                  idPrefix() +
                   'filter_benchmark_' +
                   parameter.name +
                   '_' +
@@ -497,6 +537,7 @@
                 <input
                   type="radio"
                   [id]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -504,6 +545,7 @@
                     '_yes'
                   "
                   [name]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -520,6 +562,7 @@
               <label
                 class="flex items-center gap-1 cursor-pointer"
                 [attr.for]="
+                  idPrefix() +
                   'filter_benchmark_' +
                   parameter.name +
                   '_' +
@@ -530,6 +573,7 @@
                 <input
                   type="radio"
                   [id]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +
@@ -537,6 +581,7 @@
                     '_no'
                   "
                   [name]="
+                    idPrefix() +
                     'filter_benchmark_' +
                     parameter.name +
                     '_' +

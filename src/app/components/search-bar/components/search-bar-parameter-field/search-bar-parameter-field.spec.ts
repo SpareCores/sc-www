@@ -3,6 +3,7 @@ import { By } from "@angular/platform-browser";
 import { NumbersOnly } from "../../../../directives/numbers-only";
 import { SearchBarParameterField } from "./search-bar-parameter-field";
 import type { SearchBarParameter } from "../../types/search-bar.types";
+import { sharedTestingProviders } from "../../../../../testing/testbed.providers";
 
 describe("SearchBarParameterField", () => {
   let component: SearchBarParameterField;
@@ -11,6 +12,7 @@ describe("SearchBarParameterField", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SearchBarParameterField],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SearchBarParameterField);
@@ -150,5 +152,105 @@ describe("SearchBarParameterField", () => {
     parameter.modelValue = 57;
     component.onRangeSliderChanged();
     expect(emitSpy).toHaveBeenCalledTimes(1);
+  });
+
+  describe("long checkbox lists", () => {
+    function createEnumParameter(modelValue: string[]): SearchBarParameter {
+      return {
+        name: "architecture",
+        modelValue,
+        schema: {
+          category_id: "processor",
+          title: "Processor architecture",
+          type: "array",
+          enum: ["arm64", "arm64_mac", "i386", "x86_64", "x86_64_mac"],
+        },
+      };
+    }
+
+    function optionIds(): string[] {
+      return Array.from(
+        (fixture.nativeElement as HTMLElement).querySelectorAll(
+          'input[type="checkbox"]',
+        ),
+      )
+        .filter((input) => !input.parentElement?.classList.contains("hidden"))
+        .map((input) => input.id);
+    }
+
+    function toggleButton(): HTMLButtonElement {
+      return (fixture.nativeElement as HTMLElement).querySelector(
+        'sc-button[data-ph-capture-attribute-sc-event="search bar see all options"] button',
+      ) as HTMLButtonElement;
+    }
+
+    it("shows the first four options and toggles the rest with See all", () => {
+      fixture.componentRef.setInput("parameter", createEnumParameter([]));
+      fixture.componentRef.setInput("filterCategoryId", "processor");
+      fixture.detectChanges();
+
+      expect(optionIds().length).toBe(4);
+      expect(toggleButton().textContent).toContain("See all (5)");
+
+      toggleButton().click();
+      fixture.detectChanges();
+
+      expect(optionIds().length).toBe(5);
+      expect(toggleButton().textContent).toContain("See less");
+    });
+
+    it("keeps selected options visible while collapsed", () => {
+      fixture.componentRef.setInput(
+        "parameter",
+        createEnumParameter(["x86_64_mac"]),
+      );
+      fixture.componentRef.setInput("filterCategoryId", "processor");
+      fixture.detectChanges();
+
+      expect(optionIds()).toContain("filter_enum_architecture_x86_64_mac");
+      expect(optionIds().length).toBe(5);
+    });
+
+    it("lays the options out in a grid from xl when compact", () => {
+      fixture.componentRef.setInput("parameter", createEnumParameter([]));
+      fixture.componentRef.setInput("filterCategoryId", "processor");
+      fixture.componentRef.setInput("compactFromXl", true);
+      fixture.detectChanges();
+
+      const list = (fixture.nativeElement as HTMLElement).querySelector(
+        "#filter_enum_architecture_arm64",
+      )?.parentElement?.parentElement;
+
+      expect(list?.classList).toContain("search_bar_options--grid");
+    });
+
+    it("shows up to 12 options from xl without See all", () => {
+      fixture.componentRef.setInput("parameter", createEnumParameter([]));
+      fixture.componentRef.setInput("filterCategoryId", "processor");
+      fixture.componentRef.setInput("compactFromXl", true);
+      fixture.detectChanges();
+
+      const lastOption = (fixture.nativeElement as HTMLElement).querySelector(
+        "#filter_enum_architecture_x86_64_mac",
+      )?.parentElement;
+
+      expect(toggleButton().closest("div")?.classList).toContain("xl:hidden");
+      expect(lastOption?.classList).toContain("xl:flex");
+    });
+
+    it("shows every option and hides See all from xl when requested", () => {
+      fixture.componentRef.setInput("parameter", createEnumParameter([]));
+      fixture.componentRef.setInput("filterCategoryId", "processor");
+      fixture.componentRef.setInput("showAllOptionsFromXl", true);
+      fixture.detectChanges();
+
+      const host = fixture.nativeElement as HTMLElement;
+      const lastOption = host.querySelector(
+        "#filter_enum_architecture_x86_64_mac",
+      )?.parentElement;
+
+      expect(lastOption?.classList).toContain("xl:flex");
+      expect(toggleButton().closest("div")?.classList).toContain("xl:hidden");
+    });
   });
 });

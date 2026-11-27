@@ -180,10 +180,6 @@
   position: relative;
 }
 
-.advisor-results--compare-active {
-  padding-bottom: 6rem;
-}
-
 .advisor-filter-bar.advisor-filter-bar-collapsed + .advisor-results {
   align-self: flex-start;
 }
@@ -299,47 +295,6 @@
 
 .advisor-compare-checkbox {
   @apply cursor-pointer accent-emerald-400 text-emerald-400 outline-hidden focus:ring-emerald-400;
-}
-
-.advisor-compare-bar {
-  position: fixed;
-  bottom: 1rem;
-  left: 0.75rem;
-  right: 0.75rem;
-  z-index: 40;
-  box-sizing: border-box;
-}
-
-@media (width >= theme(--breakpoint-sm)) {
-  .advisor-compare-bar {
-    bottom: 2rem;
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    max-width: calc(100vw - 1.5rem);
-  }
-}
-
-.advisor-compare-bar-actions {
-  @apply flex gap-3 w-full;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.advisor-compare-bar-button {
-  min-width: 0;
-  flex: 1 1 0;
-}
-
-@media (width >= theme(--breakpoint-sm)) {
-  .advisor-compare-bar-actions {
-    @apply gap-4 w-auto;
-  }
-
-  .advisor-compare-bar-button {
-    min-width: 9rem;
-    flex: 1 1 9rem;
-  }
 }
 
 @media (width >= theme(--breakpoint-xl)) {

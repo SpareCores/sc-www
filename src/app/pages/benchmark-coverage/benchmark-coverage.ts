@@ -7,6 +7,7 @@ import {
   signal,
   effect,
   viewChild,
+  TemplateRef,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -57,6 +58,16 @@ import {
   parseServerStatusFilter,
   safeJsonParse,
 } from "./benchmark-coverage.utils";
+import { DialogRef } from "@angular/cdk/dialog";
+import { FilterModal } from "../../components/filter-modal/filter-modal";
+import { ListingFloatingActions } from "../../components/listing-floating-actions/listing-floating-actions";
+import { ModalDialog } from "../../services/modal-dialog";
+import { countActiveFilters } from "../../components/search-bar/utils/search-bar.utils";
+
+const DEFAULT_SERVER_STATUS: ServerStatusFilter = "active";
+const DEFAULT_STATUS_BOOL_FILTERS: SearchQuery["status_bool"] = {
+  has_price: "yes",
+};
 
 @Component({
   selector: "sc-benchmark-coverage",
@@ -79,6 +90,8 @@ import {
     SearchBar,
     LoadingSpinner,
     Dropdown,
+    FilterModal,
+    ListingFloatingActions,
   ],
   templateUrl: "./benchmark-coverage.html",
   styleUrls: ["./benchmark-coverage.css"],
@@ -91,6 +104,7 @@ export class BenchmarkCoverage implements OnInit {
       this.loadAbortController?.abort();
       this.loadAbortController = null;
       this.toastService.removeToast(BENCHMARK_COVERAGE_ERROR_TOAST_ID);
+      this.filterModalRef?.close();
     });
 
     effect(() => {
@@ -118,6 +132,13 @@ export class BenchmarkCoverage implements OnInit {
   private seoHandler = inject(SeoHandler);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
+  private modalDialog = inject(ModalDialog);
+
+  readonly filterModalTemplate = viewChild.required<TemplateRef<unknown>>(
+    "filterModalTemplate",
+  );
+
+  private filterModalRef: DialogRef | null = null;
 
   isCollapsed = false;
 
@@ -135,10 +156,12 @@ export class BenchmarkCoverage implements OnInit {
   readonly errorMessage = signal<string | null>(null);
 
   readonly selectedVendorIds = signal<Set<string>>(new Set());
-  readonly serverStatusFilter = signal<ServerStatusFilter>("active");
+  readonly serverStatusFilter = signal<ServerStatusFilter>(
+    DEFAULT_SERVER_STATUS,
+  );
   readonly statusBoolFilters = signal<
     Record<string, BenchmarkFamilyFilterValue>
-  >({ has_price: "yes" });
+  >({ ...DEFAULT_STATUS_BOOL_FILTERS });
   readonly searchTerm = signal<string>("");
 
   readonly INSPECTOR_DATA_ROOT_URL =
@@ -165,17 +188,23 @@ export class BenchmarkCoverage implements OnInit {
   }));
   private router = inject(Router);
 
-  searchQuery: SearchQuery = {
-    search: "",
-    vendor_ids: [],
-    server_status: "active",
-    status_bool: {},
-    benchmark_families: {},
-  };
-  searchParameters: SearchParameter[] = [];
+  readonly searchQuery = computed<SearchQuery>(() => ({
+    search: this.searchTerm(),
+    vendor_ids: Array.from(this.selectedVendorIds()),
+    server_status: this.serverStatusFilter(),
+    status_bool: { ...this.statusBoolFilters() },
+    benchmark_families: { ...this.benchmarkFamilyFilters() },
+  }));
+  readonly searchParameters = signal<SearchParameter[]>([]);
 
   filterCategories: FilterCategory[] = [
-    { category_id: "vendor", name: "Vendors", icon: "home", collapsed: false },
+    {
+      category_id: "vendor",
+      name: "Vendors",
+      icon: "home",
+      collapsed: false,
+      modalShowAllOptions: true,
+    },
     {
       category_id: "status",
       name: "Status",
@@ -359,13 +388,21 @@ export class BenchmarkCoverage implements OnInit {
   readonly hasActiveFilters = computed<boolean>(() => {
     return (
       this.selectedVendorIds().size > 0 ||
-      this.serverStatusFilter() !== "active" ||
+      this.serverStatusFilter() !== DEFAULT_SERVER_STATUS ||
       JSON.stringify(this.statusBoolFilters()) !==
-        JSON.stringify({ has_price: "yes" }) ||
+        JSON.stringify(DEFAULT_STATUS_BOOL_FILTERS) ||
       Object.keys(this.benchmarkFamilyFilters()).length > 0 ||
       this.searchTerm().trim().length > 0
     );
   });
+
+  readonly activeFilterCount = computed<number>(() =>
+    countActiveFilters(
+      this.searchQuery(),
+      this.searchParameters(),
+      this.filterCategories,
+    ),
+  );
 
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
@@ -476,12 +513,24 @@ export class BenchmarkCoverage implements OnInit {
 
   clearFilters() {
     this.selectedVendorIds.set(new Set());
-    this.serverStatusFilter.set("active");
-    this.statusBoolFilters.set({ has_price: "yes" });
+    this.serverStatusFilter.set(DEFAULT_SERVER_STATUS);
+    this.statusBoolFilters.set({ ...DEFAULT_STATUS_BOOL_FILTERS });
     this.benchmarkFamilyFilters.set({});
     this.searchTerm.set("");
     this.page.set(1);
     this.initializeSearchBar();
+  }
+
+  openFilterModal() {
+    if (this.filterModalRef) {
+      return;
+    }
+
+    const ref = this.modalDialog.open(this.filterModalTemplate());
+    ref.closed.subscribe(() => {
+      this.filterModalRef = null;
+    });
+    this.filterModalRef = ref;
   }
 
   toggleCategory(category: FilterCategory) {
@@ -582,6 +631,7 @@ export class BenchmarkCoverage implements OnInit {
           category_id: "status",
           type: "string",
           filter_mode: "single_radio",
+          default: DEFAULT_SERVER_STATUS,
           enum: [
             { key: "all", value: "Any" },
             { key: "active", value: "Active" },
@@ -597,6 +647,7 @@ export class BenchmarkCoverage implements OnInit {
           category_id: "status",
           type: "array",
           filter_mode: "tri_state_boolean",
+          default: DEFAULT_STATUS_BOOL_FILTERS,
           enum: [
             { key: "has_price", value: "Has price" },
             { key: "has_hw_info", value: "Has hardware discovery" },
@@ -624,14 +675,7 @@ export class BenchmarkCoverage implements OnInit {
   }
 
   private initializeSearchBar() {
-    this.searchQuery = {
-      search: this.searchTerm(),
-      vendor_ids: Array.from(this.selectedVendorIds()),
-      server_status: this.serverStatusFilter(),
-      status_bool: { ...this.statusBoolFilters() },
-      benchmark_families: { ...this.benchmarkFamilyFilters() },
-    };
-    this.searchParameters = this.buildSearchParameters();
+    this.searchParameters.set(this.buildSearchParameters());
   }
 
   getBenchmarkRawDataUrl(

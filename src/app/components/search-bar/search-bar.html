@@ -1,7 +1,8 @@
 <div
   class="search_bar_content"
-  id="serverSearchBar"
+  [id]="idPrefix() + 'serverSearchBar'"
   [class.search_bar_content--without-top]="!showTopSection()"
+  [class.search_bar_content--modal]="layout() === 'modal'"
 >
   @if (showTopSection()) {
     <div class="top overflow-hidden bg-secondary">
@@ -60,24 +61,33 @@
     </div>
   }
 
-  <div class="filters overflow-hidden bg-secondary">
+  <div
+    class="filters overflow-hidden"
+    [class.bg-secondary]="layout() === 'sidebar'"
+    [class.bg-primary]="layout() !== 'sidebar'"
+  >
     <ng-template
       #parameterTemplate
       let-parameter="parameter"
       let-filterCategoryId="filterCategoryId"
+      let-fieldIdPrefix="idPrefix"
+      let-showAllOptionsFromXl="showAllOptionsFromXl"
+      let-compactFromXl="compactFromXl"
     >
       @if (
         getParameterType(parameter) === "country" ||
         getParameterType(parameter) === "vendor_regions"
       ) {
         <sc-search-bar-geo-filters
+          [class.search_bar_field--wide]="isWideParameter(parameter)"
           [parameter]="parameter"
+          [idPrefix]="fieldIdPrefix"
           [filterCategoryId]="filterCategoryId"
           [showParameterTitles]="showParameterTitles()"
           [countryMetadata]="countryMetadata()"
           [continentMetadata]="continentMetadata"
           [regionMetadata]="regionMetadata()"
-          [vendorMetadata]="vendors"
+          [vendorMetadata]="vendors()"
           [disabled]="isParameterDisabled(parameter.name)"
           [vendorRegionCollapsedVendors]="vendorRegionCollapsedVendors"
           (countryMetadataChanged)="setCountryMetadata($event)"
@@ -91,14 +101,18 @@
         ></sc-search-bar-geo-filters>
       } @else {
         <sc-search-bar-parameter-field
+          [class.search_bar_field--wide]="isWideParameter(parameter)"
           [parameter]="parameter"
+          [idPrefix]="fieldIdPrefix"
           [filterCategoryId]="filterCategoryId"
           [showParameterTitles]="showParameterTitles()"
           [selectedCurrency]="selectedCurrency()"
           [disabled]="isParameterDisabled(parameter.name)"
-          [complianceFrameworks]="complianceFrameworks"
-          [vendors]="vendors"
-          [storageIds]="storageIds"
+          [complianceFrameworks]="complianceFrameworks()"
+          [vendors]="vendors()"
+          [storageIds]="storageIds()"
+          [showAllOptionsFromXl]="!!showAllOptionsFromXl"
+          [compactFromXl]="!!compactFromXl"
           [warning]="parameterWarnings()[parameter.name]"
           (valueChanged)="valueChanged()"
           (filterServers)="filterServers()"
@@ -110,9 +124,121 @@
       }
     </ng-template>
 
+    @if (layout() === "modal") {
+      @let activeFilter = activeCategory();
+      <div
+        class="search_bar_tabs__list"
+        role="tablist"
+        aria-orientation="vertical"
+        aria-label="Filter categories"
+      >
+        @for (
+          filter of filterCategories();
+          track filter.category_id;
+          let index = $index
+        ) {
+          @let isActive = filter.category_id === activeFilter?.category_id;
+          @let count = getCategoryActiveCount(filter);
+          <button
+            #categoryTab
+            type="button"
+            role="tab"
+            class="search_bar_tab"
+            [class.search_bar_tab--active]="isActive"
+            [id]="idPrefix() + 'filter_tab_' + filter.category_id"
+            [attr.aria-selected]="isActive"
+            [attr.aria-controls]="idPrefix() + 'filter_tabpanel'"
+            [attr.tabindex]="isActive ? 0 : -1"
+            [attr.data-category-id]="filter.category_id"
+            (click)="selectCategory(filter)"
+            (keydown)="onCategoryTabKeydown($event, index)"
+          >
+            <span class="flex min-w-0 items-center gap-2">
+              <svg [lucideIcon]="filter.icon" class="h-4 w-4 shrink-0"></svg>
+              <span class="truncate">{{ filter.name }}</span>
+            </span>
+            @if (count > 0) {
+              <span class="search_bar_count">{{ count }}</span>
+            }
+          </button>
+        }
+      </div>
+
+      @if (activeFilter) {
+        <div
+          class="search_bar_tabs__panel"
+          role="tabpanel"
+          [id]="idPrefix() + 'filter_tabpanel'"
+          [attr.aria-labelledby]="
+            idPrefix() + 'filter_tab_' + activeFilter.category_id
+          "
+          [attr.data-category-id]="activeFilter.category_id"
+        >
+          <div class="search_bar_tabs__header">
+            <h3 class="text-base font-semibold text-white">
+              {{ activeFilter.name }}
+            </h3>
+            @if (hasRequiredCustomControls(activeFilter)) {
+              <span class="text-xs text-gray-200">
+                <span class="text-red-300" aria-hidden="true">*</span>
+                Required
+              </span>
+            } @else if (
+              !hasCustomControls(activeFilter) &&
+              getCategoryActiveCount(activeFilter) > 0
+            ) {
+              <sc-button
+                class="-my-3"
+                variant="link"
+                [label]="'Reset ' + activeFilter.name"
+                icon="rotate-ccw"
+                iconPosition="start"
+                data-ph-capture-attribute-sc-event="filter modal reset category"
+                [attr.data-ph-capture-attribute-filter-category]="
+                  activeFilter.category_id
+                "
+                (buttonClick)="resetCategory(activeFilter)"
+              ></sc-button>
+            }
+          </div>
+          <div class="search_bar_tabs__grid">
+            <sc-search-bar-custom-controls
+              [controls]="getCustomControlsByCategory(activeFilter.category_id)"
+              [parameters]="getParametersByCategory(activeFilter.category_id)"
+              [parameterPlacements]="parameterPlacements()"
+              [filterCategoryId]="activeFilter.category_id"
+              [parameterTemplate]="parameterTemplate"
+              [idPrefix]="idPrefix()"
+              [compactFromXl]="true"
+              (customControlChanged)="customControlChanged.emit($event)"
+              (showTooltip)="showTooltip($event.event, $event.content)"
+              (hideTooltip)="hideTooltip()"
+            ></sc-search-bar-custom-controls>
+
+            @for (
+              parameter of getTrailingParametersByCategory(
+                activeFilter.category_id
+              );
+              track getParameterTrackId(parameter)
+            ) {
+              <ng-container
+                [ngTemplateOutlet]="parameterTemplate"
+                [ngTemplateOutletContext]="{
+                  parameter: parameter,
+                  filterCategoryId: activeFilter.category_id,
+                  idPrefix: idPrefix(),
+                  showAllOptionsFromXl: activeFilter.modalShowAllOptions,
+                  compactFromXl: true,
+                }"
+              ></ng-container>
+            }
+          </div>
+        </div>
+      }
+    }
     @for (filter of filterCategories(); track filter.category_id) {
       <div
-        class="mx-2 p-3 border-b border-gray-200"
+        class="search_bar_section mx-2 p-3 border-b border-gray-200"
         [attr.data-category-id]="filter.category_id"
       >
         @if (!filter.hideHeader) {
@@ -129,9 +255,19 @@
               <svg [lucideIcon]="filter.icon" class="h-4 w-4 text-white"></svg>
               <div class="text-sm">{{ filter.name }}</div>
             </div>
-            <div>
-              <svg lucideChevronDown class="h-4 w-4 text-white"></svg>
-            </div>
+            @if (layout() === "modal") {
+              @let count = getCategoryActiveCount(filter);
+              <div class="flex items-center gap-2">
+                @if (count > 0) {
+                  <span class="search_bar_count">{{ count }}</span>
+                }
+                <svg lucideChevronDown class="h-4 w-4 text-white"></svg>
+              </div>
+            } @else {
+              <div>
+                <svg lucideChevronDown class="h-4 w-4 text-white"></svg>
+              </div>
+            }
           </div>
         }
         @if (isCategoryExpanded(filter)) {
@@ -147,6 +283,7 @@
               [parameterPlacements]="parameterPlacements()"
               [filterCategoryId]="filter.category_id"
               [parameterTemplate]="parameterTemplate"
+              [idPrefix]="sectionIdPrefix()"
               (customControlChanged)="customControlChanged.emit($event)"
               (showTooltip)="showTooltip($event.event, $event.content)"
               (hideTooltip)="hideTooltip()"
@@ -161,6 +298,7 @@
                 [ngTemplateOutletContext]="{
                   parameter: parameter,
                   filterCategoryId: filter.category_id,
+                  idPrefix: sectionIdPrefix(),
                 }"
               ></ng-container>
             }
@@ -225,7 +363,7 @@
 </ng-template>
 
 <div
-  id="tooltipDefault"
+  [id]="idPrefix() + 'tooltipDefault'"
   #tooltipDefault
   class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
 >

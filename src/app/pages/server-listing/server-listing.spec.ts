@@ -10,7 +10,8 @@ import {
   Router,
   convertToParamMap,
 } from "@angular/router";
-import { BehaviorSubject, of } from "rxjs";
+import { BehaviorSubject, Subject, of } from "rxjs";
+import { DialogRef } from "@angular/cdk/dialog";
 import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { ServerListing } from "./server-listing";
@@ -22,6 +23,7 @@ import {
   SERVER_LISTING_BENCHMARK_ERROR_TOAST_ID,
 } from "../../services/toast-ids";
 import { UiTooltip } from "../../services/ui-tooltip";
+import { ModalDialog } from "../../services/modal-dialog";
 import { areSearchParamsEqual } from "../../tools/listing-search-params";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -155,6 +157,89 @@ describe("ServerListing", () => {
       queryParams?: Record<string, unknown>;
     };
     expect(columnNavArgs.queryParams?.["vcpus_min"]).toBeUndefined();
+  });
+
+  it("opens the filter modal from the floating Filters button once the table has loaded", () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const openSpy = spyOn(component, "openFilterModal");
+    const filtersButton = () =>
+      host.querySelector<HTMLButtonElement>(
+        '.sc-floating-actions sc-button[data-ph-capture-attribute-sc-event="listing filters open"] button',
+      );
+
+    component.hasLoadedServers = false;
+    fixture.detectChanges();
+
+    expect(filtersButton()).toBeNull();
+
+    component.hasLoadedServers = true;
+    fixture.detectChanges();
+    filtersButton()?.click();
+
+    expect(openSpy).toHaveBeenCalled();
+  });
+
+  it("opens the filter modal once until it is closed", () => {
+    const closed = new Subject<void>();
+    const dialogRef = {
+      closed,
+      close: () => closed.next(),
+    } as unknown as DialogRef;
+    const modalDialog = TestBed.inject(ModalDialog);
+    const openSpy = spyOn(modalDialog, "open").and.returnValue(dialogRef);
+
+    component.openFilterModal();
+    component.openFilterModal();
+
+    expect(openSpy).toHaveBeenCalledTimes(1);
+
+    closed.next();
+    component.openFilterModal();
+
+    expect(openSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("clears filters and keeps limit, sort and currency", () => {
+    const navigateSpy = spyOn(router, "navigate").and.resolveTo(true);
+    component.query = { vcpus_min: "4", vendor: "aws", page: "3" };
+    component.page = 3;
+    component.limit = 50;
+    component.orderBy = "vendor_id";
+    component.orderDir = OrderDir.Desc;
+    component.selectedCurrency = component.availableCurrencies[1];
+
+    component.clearFilters();
+
+    const navArgs = navigateSpy.calls.mostRecent().args[1] as {
+      queryParams?: Record<string, unknown>;
+    };
+    expect(component.page).toBe(1);
+    expect(navArgs.queryParams).toEqual(
+      jasmine.objectContaining({
+        limit: 50,
+        order_by: "vendor_id",
+        order_dir: OrderDir.Desc,
+        currency: "EUR",
+      }),
+    );
+    expect(navArgs.queryParams?.["vcpus_min"]).toBeUndefined();
+    expect(navArgs.queryParams?.["vendor"]).toBeUndefined();
+    expect(navArgs.queryParams?.["page"]).toBeUndefined();
+  });
+
+  it("counts active filters from the current query", () => {
+    component.query = {
+      vcpus_min: "4",
+      vendor: ["aws", "gcp"],
+      limit: "50",
+      order_by: "vendor_id",
+    };
+
+    expect(component.activeFilterCount()).toBe(3);
+
+    component.query = { limit: "50" };
+
+    expect(component.activeFilterCount()).toBe(0);
   });
 
   it("treats column-only URL changes as equal search state", () => {

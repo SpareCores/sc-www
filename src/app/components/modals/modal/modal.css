@@ -23,3 +23,7 @@
 .modal--wide {
   @apply sm:max-w-350;
 }
+
+.modal--wide-lg {
+  @apply sm:max-w-350 xl:max-w-5xl;
+}

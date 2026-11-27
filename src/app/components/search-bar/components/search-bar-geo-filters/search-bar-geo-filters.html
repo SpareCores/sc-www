@@ -13,7 +13,7 @@
       }
       <div
         class="font-bold text-emerald-400 text-sm"
-        id="filter_title_{{ parameter.name }}"
+        id="{{ idPrefix() }}filter_title_{{ parameter.name }}"
       >
         {{ parameter.schema.title }}
         @if (parameter.schema.description) {
@@ -39,7 +39,9 @@
                 @if (auth.isAuthenticated()) {
                   <input
                     type="checkbox"
-                    id="filter_continent_{{ continent.continent }}"
+                    id="{{ idPrefix() }}filter_continent_{{
+                      continent.continent
+                    }}"
                     data-ph-capture-attribute-sc-event="server listing filter"
                     data-ph-capture-attribute-server-listing-filter-type="checkbox"
                     [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -69,7 +71,9 @@
                   <div class="flex gap-2 align-center">
                     <input
                       type="checkbox"
-                      id="filter_country_{{ country.country_id }}"
+                      id="{{ idPrefix() }}filter_country_{{
+                        country.country_id
+                      }}"
                       data-ph-capture-attribute-sc-event="server listing filter"
                       data-ph-capture-attribute-server-listing-filter-type="checkbox"
                       [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -103,7 +107,7 @@
                 @if (auth.isAuthenticated()) {
                   <input
                     type="checkbox"
-                    id="filter_vendor_regions_{{ vendorId }}"
+                    id="{{ idPrefix() }}filter_vendor_regions_{{ vendorId }}"
                     data-ph-capture-attribute-sc-event="server listing filter"
                     data-ph-capture-attribute-server-listing-filter-type="checkbox"
                     [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -138,7 +142,9 @@
                   <div class="flex gap-2 align-center">
                     <input
                       type="checkbox"
-                      id="filter_vendor_region_{{ vendorRegion }}"
+                      id="{{ idPrefix() }}filter_vendor_region_{{
+                        vendorRegion
+                      }}"
                       data-ph-capture-attribute-sc-event="server listing filter"
                       data-ph-capture-attribute-server-listing-filter-type="checkbox"
                       [attr.data-ph-capture-attribute-server-listing-filter-id]="

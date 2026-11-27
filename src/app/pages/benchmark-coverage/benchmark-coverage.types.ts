@@ -28,6 +28,7 @@ export type FilterCategory = {
   name: string;
   icon: string;
   collapsed: boolean;
+  modalShowAllOptions?: boolean;
 };
 
 export type BenchmarkFamilyFilterValue = "all" | "yes" | "no";
@@ -42,6 +43,7 @@ export type SearchParameterSchema = {
   type: string;
   filter_mode?: string;
   enum?: SearchParameterEnumOption[];
+  default?: unknown;
 };
 
 export type SearchParameter = {

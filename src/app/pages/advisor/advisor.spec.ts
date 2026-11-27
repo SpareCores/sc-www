@@ -45,6 +45,8 @@ import {
 } from "../../services/toast-ids";
 import { NeetoCal } from "../../services/neeto-cal";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { DialogRef } from "@angular/cdk/dialog";
+import { ModalDialog } from "../../services/modal-dialog";
 import {
   COLUMN_BENCHMARK_EFFICIENCY_TOOLTIP,
   COLUMN_SCORE_PER_PRICE_TOOLTIP,
@@ -1454,75 +1456,6 @@ describe("Advisor", () => {
     expect(component.baselineCompareButtonLabel()).toBe("Compare baseline");
   });
 
-  it("shows compare UI only for two selections and wires its actions", () => {
-    const host = fixture.nativeElement as HTMLElement;
-    const results = host.querySelector(
-      ".advisor-results",
-    ) as HTMLElement | null;
-    const baselineServer = component.serverTableRows()[0];
-    component.selectedBaselineServer.set(baselineServer);
-    component.hasLoadedRecommendations.set(true);
-
-    compareService.selectedForCompare = [
-      {
-        display_name: "large",
-        vendor: "aws",
-        server: "large",
-        zonesRegions: [],
-      },
-    ];
-    selectionChanged.next(compareService.selectedForCompare);
-    fixture.detectChanges();
-
-    expect(host.querySelector(".advisor-compare-bar")).toBeNull();
-    expect(
-      results?.classList.contains("advisor-results--compare-active"),
-    ).toBeFalse();
-
-    compareService.selectedForCompare = [
-      {
-        display_name: "large",
-        vendor: "aws",
-        server: "large",
-        zonesRegions: [],
-      },
-      {
-        display_name: "c7a.large",
-        vendor: "aws",
-        server: "c7a.large",
-        zonesRegions: [],
-      },
-    ];
-    selectionChanged.next(compareService.selectedForCompare);
-    fixture.detectChanges();
-
-    const compareBar = host.querySelector(".advisor-compare-bar");
-    const compareBarButtons = host.querySelectorAll(
-      ".advisor-compare-bar-button",
-    );
-    const clearButton = compareBarButtons[0] as HTMLElement | null;
-    const compareButton = compareBarButtons[1] as HTMLElement | null;
-
-    expect(compareBar).not.toBeNull();
-    expect(
-      results?.classList.contains("advisor-results--compare-active"),
-    ).toBeTrue();
-    expect(compareButton?.textContent).toContain("Compare (2)");
-
-    compareButton?.click();
-
-    expect(compareService.openCompare).toHaveBeenCalled();
-
-    clearButton?.click();
-    fixture.detectChanges();
-
-    expect(compareService.clearCompare).toHaveBeenCalled();
-    expect(host.querySelector(".advisor-compare-bar")).toBeNull();
-    expect(
-      results?.classList.contains("advisor-results--compare-active"),
-    ).toBeFalse();
-  });
-
   it("highlights the matching recommendation row for the selected baseline server", () => {
     const baselineServer = component.serverTableRows()[0];
     component.selectedBaselineServer.set(baselineServer);
@@ -2502,6 +2435,131 @@ describe("Advisor", () => {
     expect(component.manualOrderBy()).toBeUndefined();
     expect(component.manualOrderDir()).toBeUndefined();
   });
+
+  it("counts active vendor filters and changed advisor controls", () => {
+    expect(component.activeFilterCount()).toBe(0);
+
+    component.query.set({ vendor: ["aws", "gcp"] });
+    component.optimizationGoal.set("performance");
+    component.peakGpuMemoryGiB.set(8);
+
+    expect(component.activeFilterCount()).toBe(4);
+    expect(component.advisorFilterCategoryCounts()).toEqual({ advisor: 2 });
+
+    component.clearFilters();
+
+    expect(component.activeFilterCount()).toBe(0);
+  });
+
+  it("clears the filters from the sidebar's outlined red Clear filters button", () => {
+    const clearSpy = spyOn(component, "clearFilters");
+    const clearButton = () =>
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(
+        '.advisor-filter-bar sc-button[data-ph-capture-attribute-sc-event="advisor filters clear"] button',
+      );
+
+    expect(clearButton()?.classList).toContain("sc-button--outline");
+    expect(clearButton()?.classList).toContain("sc-button--danger");
+    expect(clearButton()?.disabled).toBeTrue();
+
+    component.limitToSameArchitecture.set(true);
+    fixture.detectChanges();
+
+    expect(clearButton()?.disabled).toBeFalse();
+
+    clearButton()?.click();
+
+    expect(clearSpy).toHaveBeenCalled();
+  });
+
+  it("opens the filter modal once from the floating Filters button until it closes", () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const closed = new Subject<unknown>();
+    const dialogRef = { closed, close: jasmine.createSpy("close") };
+    const open = spyOn(TestBed.inject(ModalDialog), "open").and.returnValue(
+      dialogRef as unknown as DialogRef,
+    );
+    const filtersButton = host.querySelector<HTMLButtonElement>(
+      '.sc-floating-actions sc-button[data-ph-capture-attribute-sc-event="listing filters open"] button',
+    );
+
+    filtersButton?.click();
+    filtersButton?.click();
+
+    expect(open).toHaveBeenCalledTimes(1);
+
+    closed.next(undefined);
+    component.openFilterModal();
+
+    expect(open).toHaveBeenCalledTimes(2);
+  });
+
+  it("requires average utilization before the filter modal can apply", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    expect(component.filterModalApplyDisabledReason()).toBe(
+      "Fill in the required fields first.",
+    );
+
+    component.averageCpuUtilization.set(50);
+
+    expect(component.filterModalApplyDisabledReason()).toBeNull();
+  }));
+
+  function openFilterModalWithDialog(): Subject<unknown> {
+    const closed = new Subject<unknown>();
+    spyOn(TestBed.inject(ModalDialog), "open").and.returnValue({
+      closed,
+      close: jasmine.createSpy("close"),
+    } as unknown as DialogRef);
+
+    component.openFilterModal();
+
+    return closed;
+  }
+
+  function fillRequiredInputs(): void {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+    fixture.detectChanges();
+  }
+
+  it("holds recommendation requests while the filter modal is open and restores the controls on close", fakeAsync(() => {
+    const closed = openFilterModalWithDialog();
+    searchServers.calls.reset();
+
+    fillRequiredInputs();
+
+    expect(searchServers).not.toHaveBeenCalled();
+
+    closed.next(undefined);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(component.selectedBaselineServer()).toBeNull();
+    expect(component.averageCpuUtilization()).toBeNull();
+    expect(searchServers).not.toHaveBeenCalled();
+  }));
+
+  it("requests recommendations once the filter modal is applied", fakeAsync(() => {
+    const closed = openFilterModalWithDialog();
+    searchServers.calls.reset();
+
+    fillRequiredInputs();
+    closed.next(true);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(component.averageCpuUtilization()).toBe(50);
+    expect(searchServers).toHaveBeenCalled();
+  }));
 
   it("shows query-error toast when recommendation search fails with 422", fakeAsync(() => {
     searchServers.and.rejectWith({

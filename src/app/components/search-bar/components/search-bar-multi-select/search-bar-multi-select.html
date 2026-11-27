@@ -56,39 +56,41 @@
   </div>
 
   @if (dropdownOpen() && !disabled()) {
-    <div
-      #optionsPanel
-      role="listbox"
-      [id]="listboxId()"
-      class="search-bar-multi-select__panel"
-    >
-      @if (filteredOptions().length) {
-        @for (option of filteredOptions(); track option; let index = $index) {
-          <div
-            role="option"
-            [id]="optionId(index)"
-            class="search-bar-multi-select__option"
-            [class.search-bar-multi-select__option--active]="
-              activeIndex() === index
-            "
-            aria-selected="false"
-            (mousedown)="$event.preventDefault()"
-            (click)="selectOption(option)"
-            data-ph-capture-attribute-sc-event="server listing filter"
-            data-ph-capture-attribute-server-listing-filter-type="multi-select-option"
-            [attr.data-ph-capture-attribute-server-listing-filter-id]="
-              parameterName()
-            "
-            [attr.data-ph-capture-attribute-server-listing-filter-category]="
-              filterCategoryId()
-            "
-          >
-            {{ option }}
-          </div>
+    <div #dropdown class="search-bar-multi-select__dropdown">
+      <div
+        #optionsPanel
+        role="listbox"
+        [id]="listboxId()"
+        class="search-bar-multi-select__panel"
+      >
+        @if (filteredOptions().length) {
+          @for (option of filteredOptions(); track option; let index = $index) {
+            <div
+              role="option"
+              [id]="optionId(index)"
+              class="search-bar-multi-select__option"
+              [class.search-bar-multi-select__option--active]="
+                activeIndex() === index
+              "
+              aria-selected="false"
+              (mousedown)="$event.preventDefault()"
+              (click)="selectOption(option)"
+              data-ph-capture-attribute-sc-event="server listing filter"
+              data-ph-capture-attribute-server-listing-filter-type="multi-select-option"
+              [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                parameterName()
+              "
+              [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                filterCategoryId()
+              "
+            >
+              {{ option }}
+            </div>
+          }
+        } @else {
+          <div class="search-bar-multi-select__hint">No matching flags.</div>
         }
-      } @else {
-        <div class="search-bar-multi-select__hint">No matching flags.</div>
-      }
+      </div>
     </div>
   }
 </div>

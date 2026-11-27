@@ -56,6 +56,7 @@ export class SearchBarGeoFilters {
   disabled = input(false);
   vendorRegionCollapsedVendors = input<Record<string, boolean>>({});
   maxVendorRegions = input(3);
+  idPrefix = input("");
 
   countryMetadataChanged = output<CountryMetadata[]>();
   continentMetadataChanged = output<ContinentMetadata[]>();
