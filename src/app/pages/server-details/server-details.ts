@@ -203,9 +203,9 @@ export class ServerDetails implements OnInit, OnDestroy {
 
   barChartOptions: ChartConfiguration<"bar">["options"] = barChartOptions;
   barChartType = "bar" as const;
-  barChartData: ChartData<"bar"> = createEmptyBarChartData();
-  barChartData2: ChartData<"bar"> = createEmptyBarChartData();
-  barChartData3: ChartData<"bar"> = createEmptyBarChartData();
+  pricePerRegionChartData: ChartData<"bar"> = createEmptyBarChartData();
+  pricesPerZoneChartData: ChartData<"bar"> = createEmptyBarChartData();
+  lowestPricesChartData: ChartData<"bar"> = createEmptyBarChartData();
 
   benchmarksByCategory: any[] = [];
 
@@ -866,9 +866,9 @@ export class ServerDetails implements OnInit, OnDestroy {
       system_resources: false,
       availability: false,
     };
-    this.barChartData = createEmptyBarChartData();
-    this.barChartData2 = createEmptyBarChartData();
-    this.barChartData3 = createEmptyBarChartData();
+    this.pricePerRegionChartData = createEmptyBarChartData();
+    this.pricesPerZoneChartData = createEmptyBarChartData();
+    this.lowestPricesChartData = createEmptyBarChartData();
     this.benchmarksByCategory = [];
     this.instanceProperties = [];
     this.benchmarkMeta = [];
@@ -922,12 +922,12 @@ export class ServerDetails implements OnInit, OnDestroy {
   }
 
   refreshPricesGraphs() {
-    this.updateChart1();
-    this.updateChart2();
-    this.updateChart3();
+    this.updatePricePerRegionChart();
+    this.updatePricesPerZoneChart();
+    this.updateLowestPricesChart();
   }
 
-  updateChart1() {
+  updatePricePerRegionChart() {
     this.availabilityRegions = [];
     this.availabilitySections = this.serverSpecCards.buildAvailabilitySections(
       [],
@@ -972,11 +972,11 @@ export class ServerDetails implements OnInit, OnDestroy {
         }
       });
 
-      this.barChartData = series;
+      this.pricePerRegionChartData = series;
     }
   }
 
-  updateChart2() {
+  updatePricesPerZoneChart() {
     this.availabilityZones = [];
     if (this.serverDetails.prices.length > 0) {
       this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
@@ -1064,16 +1064,15 @@ export class ServerDetails implements OnInit, OnDestroy {
         }
       });
 
-      this.barChartData2 = series;
+      this.pricesPerZoneChartData = series;
     }
   }
 
-  updateChart3() {
-    const pricesPerZone: any[] = [];
+  updateLowestPricesChart() {
+    const allPricesPerZone: any[] = [];
     if (this.serverDetails.prices.length > 0) {
-      for (let i = 0; i < this.serverDetails.prices.length && i < 10; i++) {
-        const price = this.serverDetails.prices[i];
-        const zone = pricesPerZone.find(
+      for (const price of this.serverDetails.prices) {
+        const zone = allPricesPerZone.find(
           (z) =>
             z.vendor_id === price.vendor_id &&
             z.region_id === price.region_id &&
@@ -1099,12 +1098,14 @@ export class ServerDetails implements OnInit, OnDestroy {
           data[price.allocation || "spot"].price += price.price;
           data[price.allocation || "spot"].count++;
 
-          pricesPerZone.push(data);
+          allPricesPerZone.push(data);
         } else {
           zone[price.allocation || "spot"].price += price.price;
           zone[price.allocation || "spot"].count++;
         }
       }
+
+      const pricesPerZone = allPricesPerZone.slice(0, 10);
 
       pricesPerZone.forEach((zone: any) => {
         if (zone.spot.count)
@@ -1139,7 +1140,7 @@ export class ServerDetails implements OnInit, OnDestroy {
         series.datasets[1].data.push(zone.ondemand?.price || 0);
       });
 
-      this.barChartData3 = series;
+      this.lowestPricesChartData = series;
     }
   }
 
