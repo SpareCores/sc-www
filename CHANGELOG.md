@@ -54,6 +54,7 @@ New content:
 - Slides:
   - [Data-Driven Instance Selection](https://sparecores.com/assets/slides/sreday-amsterdam-2026.html) (SREday Amsterdam 2026)
 - Articles:
+  - [From Cron Jobs to a Nine-Cloud Kubernetes Cluster](https://sparecores.com/article/inspector-journey)
   - [Link Straight to Any Section or Chart](https://sparecores.com/article/section-links)
 
 ## October 2026
