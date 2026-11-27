@@ -249,7 +249,7 @@ VRAM) with various token lengths and input/output sizes, resulting in almost 75k
 data points.
 
 To count how many servers could successfully run each model, we queried our
-<a href="https://sc-data-public-40e9d310.s3.amazonaws.com/sc-data-all.db.bz2" target="_blank" rel="noopener">live database dump</a> (36 MB SQLite file):
+<a href="https://docs.sparecores.com/sqlite" target="_blank" rel="noopener">live database dump</a> (36 MB SQLite file):
 
 ```sql
 WITH models as (

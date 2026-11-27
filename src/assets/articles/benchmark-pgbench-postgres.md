@@ -99,7 +99,7 @@ blocks that exercise different PostgreSQL subsystems:
 Spreading the work across these components means no single code path dominates
 the result. A trivial one-row `SELECT` benchmark, by contrast, is easily
 distorted by network latency and per-transaction overhead. See our <a
-href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/workloads.md#pgbench_ro"
+href="https://docs.sparecores.com/images/benchmark-pgbench-postgres/workloads#pgbench_ro"
 target="_blank" rel="noopener">workload documentation</a> for details.
 
 ### Concurrency Profile
@@ -115,7 +115,7 @@ covers the usual suspects.
 Note that this is not a quick test: with warmups, a default run takes \~25
 minutes per server with 4 or more vCPUs, excluding data preparation. Across
 thousands of server types, that adds up. The <a
-href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/usage.md#run-duration"
+href="https://docs.sparecores.com/images/benchmark-pgbench-postgres/usage#run-duration"
 target="_blank" rel="noopener">run duration docs</a> break down the timing.
 
 ## Running the Benchmark
@@ -142,7 +142,7 @@ target="_blank" rel="noopener">pgtune</a> based on the detected vCPU count and
 memory. The image also raises PostgreSQL's priority with `nice -n -20`, which
 only takes effect in a container allowed to change priorities (for example, a
 privileged one). The <a
-href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/usage.md#standalone-mode"
+href="https://docs.sparecores.com/images/benchmark-pgbench-postgres/usage#standalone-mode"
 target="_blank" rel="noopener">standalone mode docs</a> list the exact settings.
 
 ### Remote Mode
@@ -161,7 +161,7 @@ Set `SC_DB_VCPUS` to the database server's vCPU count. It defaults to the CPU
 count of the machine running the container, so on a separate client VM the
 concurrency points would be sized for the wrong machine. The remote server is
 benchmarked as-is: the image does not retune it. See the <a
-href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/usage.md#remote-mode"
+href="https://docs.sparecores.com/images/benchmark-pgbench-postgres/usage#remote-mode"
 target="_blank" rel="noopener">remote mode docs</a> for the prerequisites and
 connection settings.
 
@@ -179,8 +179,8 @@ The benchmark prints one JSON object to stdout:
 Comparing the `profile[]` curves tells you more than the headline score: two
 servers with the same peak can behave very differently once load goes past their
 vCPU count. The <a
-href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/README.md#results"
-target="_blank" rel="noopener">README</a> explains the main output fields.
+href="https://docs.sparecores.com/images/benchmark-pgbench-postgres#results"
+target="_blank" rel="noopener">image docs</a> explains the main output fields.
 
 ## Caveats
 
@@ -189,12 +189,12 @@ database dimension. Note the following:
 
 - **Disk performance**: not measured, as storage is sold separately for most
   cloud server types. See <a
-  href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/limitations.md#disk-io-speed"
+  href="https://docs.sparecores.com/images/benchmark-pgbench-postgres/limitations#disk-io-speed"
   target="_blank" rel="noopener">Disk I/O Speed</a>.
 - **Network throughput and latency**: the score is agnostic to both, because the
   default workload is heavy enough per transaction that RTT has little effect.
   See <a
-  href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/limitations.md#network-performance"
+  href="https://docs.sparecores.com/images/benchmark-pgbench-postgres/limitations#network-performance"
   target="_blank" rel="noopener">Network Performance</a>.
 - **DBaaS engine tuning**: provider-managed settings are part of what is
   measured, not something the benchmark controls.
@@ -204,7 +204,7 @@ database dimension. Note the following:
   providers apply minor upgrades automatically.
 - **Application-specific workloads**: the workload is synthetic, so results help
   with server selection but do not replace testing your own application. See <a
-  href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-pgbench-postgres/docs/limitations.md#a-production-workload"
+  href="https://docs.sparecores.com/images/benchmark-pgbench-postgres/limitations#a-production-workload"
   target="_blank" rel="noopener">A Production Workload</a>.
 
 ## Summary

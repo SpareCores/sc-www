@@ -45,8 +45,9 @@ interested in the actual implementation details:
 5. **Benchmarking**: The [Inspector](https://github.com/sparecores/sc-inspector)
    continuously scans our database for servers with missing performance data and
    runs the necessary benchmarks as needed.
-6. **Results:** The results are automatically published in our SQLite database
-   files, public APIs, and webpage.
+6. **Results:** The results are automatically published in our
+   [SQLite database files](https://docs.sparecores.com/sqlite),
+   [public APIs](https://docs.sparecores.com/api), and webpage.
 
 ## Server Families
 
