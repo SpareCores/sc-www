@@ -293,7 +293,17 @@
   @apply inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-red-500 text-[0.625rem] leading-none text-white;
 }
 
-.search_bar_content--modal {
+.search_bar_content.search_bar_content--modal {
+  height: auto;
+
+  .top {
+    @apply h-auto shrink-0 border-t-0 border-b border-solid border-gray-600 p-4;
+  }
+
+  .top_search_wrap {
+    @apply mt-0 w-full;
+  }
+
   .search_bar_tabs__list,
   .search_bar_tabs__panel {
     display: none;
@@ -331,19 +341,16 @@
 }
 
 .search_bar_tabs__list {
-  @apply w-58 shrink-0 flex-col overflow-y-auto bg-secondary;
+  @apply w-41 shrink-0 flex-col gap-2 overflow-y-auto bg-secondary py-2 pl-2;
+  box-shadow: inset -1px 0 0 var(--color-gray-600);
 }
 
 .search_bar_tab {
-  @apply flex min-h-12 w-full items-center justify-between gap-2 border-r border-b border-solid border-gray-600 bg-secondary px-4 text-left text-sm text-white outline-hidden transition-colors duration-150 hover:bg-primary focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-inset;
+  @apply flex max-h-11.5 min-h-9.5 w-full flex-1 items-center justify-between gap-2 rounded-l-lg border border-solid border-gray-600 bg-primary/40 px-3 text-left text-sm text-white outline-hidden transition-colors duration-150 hover:bg-primary/70 focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-inset;
 }
 
 .search_bar_tab.search_bar_tab--active {
   @apply border-r-transparent bg-primary text-emerald-400;
-}
-
-.search_bar_tabs__filler {
-  @apply flex-1 border-r border-solid border-gray-600;
 }
 
 .search_bar_tabs__panel {
@@ -370,5 +377,30 @@
 @media (width >= theme(--breakpoint-md)) {
   .search_bar_tabs__grid {
     @apply grid-cols-2;
+  }
+}
+
+@media (width >= theme(--breakpoint-xl)) {
+  .search_bar_tabs__grid,
+  .search_bar_options--grid {
+    @apply grid grid-cols-6 gap-x-4;
+  }
+
+  .search_bar_options--grid {
+    @apply gap-y-4;
+  }
+
+  .search_bar_tabs__panel .search_bar_field {
+    @apply w-1/4;
+  }
+
+  .search_bar_tabs__grid > *,
+  .search_bar_tabs__grid > sc-search-bar-custom-controls > * {
+    grid-column: 1 / -1;
+  }
+
+  .search_bar_tabs__grid .custom-control--inline {
+    grid-column: auto;
+    align-self: center;
   }
 }

@@ -198,7 +198,13 @@ export class BenchmarkCoverage implements OnInit {
   readonly searchParameters = signal<SearchParameter[]>([]);
 
   filterCategories: FilterCategory[] = [
-    { category_id: "vendor", name: "Vendors", icon: "home", collapsed: false },
+    {
+      category_id: "vendor",
+      name: "Vendors",
+      icon: "home",
+      collapsed: false,
+      modalShowAllOptions: true,
+    },
     {
       category_id: "status",
       name: "Status",

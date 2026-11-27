@@ -212,7 +212,13 @@ export class DatabaseListing implements OnInit, OnDestroy {
       icon: "shield-cog",
       collapsed: true,
     },
-    { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+    {
+      category_id: "vendor",
+      name: "Vendor",
+      icon: "home",
+      collapsed: true,
+      modalShowAllOptions: true,
+    },
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
@@ -1018,21 +1024,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
   isDeleteSearchPending(): boolean {
     const saved = this.activeSavedSearch();
     return !!saved && this.collectionsUi.isDeletingSearch(saved.id);
-  }
-
-  compareCount() {
-    return this.serverCompare.databaseCompareCount();
-  }
-
-  clearCompare() {
-    this.serverCompare.clearDatabaseCompare();
-    this.databases?.forEach((database) => {
-      database.selected = false;
-    });
-  }
-
-  openCompare() {
-    this.serverCompare.openDatabaseCompare();
   }
 
   private applyDatabaseBenchmarkMeta(benchmarkMeta: Benchmark[]) {

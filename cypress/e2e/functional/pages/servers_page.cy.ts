@@ -86,6 +86,14 @@ describe("Server listing filter modal", () => {
     cy.get(FILTER_MODAL)
       .find('[id="filter_modal_filter_enum_architecture_arm64"]')
       .should("be.checked");
+    cy.get(FILTER_MODAL).find('[id="filter_modal_filter_tab_memory"]').click();
+    cy.get(FILTER_MODAL)
+      .find('[id="filter_modal_filter_tab_processor"]')
+      .click();
+    cy.get("@filteredServersSearch.all").should("have.length", 0);
+    cy.location("search").should((search) => {
+      expect(new URLSearchParams(search).has("architecture")).to.equal(false);
+    });
 
     cy.get(FILTER_MODAL).find(APPLY_FILTERS_BUTTON).click();
     cy.get(FILTER_MODAL).should("not.exist");

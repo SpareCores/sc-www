@@ -159,6 +159,26 @@ describe("ServerListing", () => {
     expect(columnNavArgs.queryParams?.["vcpus_min"]).toBeUndefined();
   });
 
+  it("opens the filter modal from the floating Filters button once the table has loaded", () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const openSpy = spyOn(component, "openFilterModal");
+    const filtersButton = () =>
+      host.querySelector<HTMLButtonElement>(
+        '.sc-floating-actions sc-button[data-ph-capture-attribute-sc-event="listing filters open"] button',
+      );
+
+    component.hasLoadedServers = false;
+    fixture.detectChanges();
+
+    expect(filtersButton()).toBeNull();
+
+    component.hasLoadedServers = true;
+    fixture.detectChanges();
+    filtersButton()?.click();
+
+    expect(openSpy).toHaveBeenCalled();
+  });
+
   it("opens the filter modal once until it is closed", () => {
     const closed = new Subject<void>();
     const dialogRef = {

@@ -143,11 +143,6 @@ describe("Advisor filter modal", () => {
       .first()
       .click();
 
-    cy.location("search").should((search) => {
-      const params = new URLSearchParams(search);
-      expect(params.get("baseline_vendor")).to.equal("aws");
-      expect(params.get("baseline_server")).to.be.a("string").and.not.equal("");
-    });
     cy.get(FILTER_MODAL).find(APPLY_FILTERS_BUTTON).should("be.disabled");
 
     cy.get(FILTER_MODAL)
@@ -161,12 +156,18 @@ describe("Advisor filter modal", () => {
       .first()
       .click();
 
-    cy.location("search").should((search) => {
-      expect(new URLSearchParams(search).get("workload_id"))
-        .to.be.a("string")
-        .and.not.equal("");
-    });
+    cy.get(FILTER_MODAL).find(APPLY_FILTERS_BUTTON).should("be.disabled");
+    cy.get(FILTER_MODAL)
+      .find(".custom-slider__input")
+      .invoke("val", 50)
+      .trigger("input");
     cy.get(FILTER_MODAL).find(APPLY_FILTERS_BUTTON).should("be.enabled");
+
+    cy.location("search").should((search) => {
+      const params = new URLSearchParams(search);
+      expect(params.has("baseline_server")).to.equal(false);
+      expect(params.has("workload_id")).to.equal(false);
+    });
 
     cy.get(FILTER_MODAL).find('[id="filter_modal_filter_tab_vendor"]').click();
     cy.get(FILTER_MODAL)

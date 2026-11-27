@@ -8,7 +8,6 @@ import { Button } from "../button/button";
 })
 export class ListingFloatingActions {
   filterCount = input(0);
-  compareActive = input(false);
   sidebarCollapsed = input(false);
 
   openFilters = output<void>();

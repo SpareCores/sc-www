@@ -33,7 +33,7 @@
       </div>
     }
     @if (parameterType === "range") {
-      <div class="mb-4 mt-4">
+      <div class="mb-4 mt-4 search_bar_field">
         @if (
           parameter.modelValue &&
           !(
@@ -99,7 +99,7 @@
       </div>
     }
     @if (parameterType === "cpuCacheRange") {
-      <div class="mb-6 mt-4">
+      <div class="mb-6 mt-4 search_bar_field">
         <div class="text-white text-sm flex gap-1 items-center mb-2">
           <input
             type="text"
@@ -169,7 +169,7 @@
       </div>
     }
     @if (parameterType === "number") {
-      <div class="mb-4 mt-4 relative">
+      <div class="mb-4 mt-4 relative search_bar_field">
         <input
           type="text"
           inputmode="decimal"
@@ -202,7 +202,7 @@
       </div>
     }
     @if (parameterType === "price") {
-      <div class="mb-4 mt-4 relative">
+      <div class="mb-4 mt-4 relative search_bar_field">
         <input
           type="text"
           inputmode="decimal"
@@ -234,7 +234,7 @@
       </div>
     }
     @if (parameterType === "text") {
-      <div class="mb-4 mt-4">
+      <div class="mb-4 mt-4 search_bar_field">
         <input
           type="text"
           id="{{ idPrefix() }}filter_text_{{ parameter.name }}"
@@ -266,7 +266,10 @@
       </div>
     }
     @if (parameterType === "checkbox") {
-      <div class="flex gap-2 items-center mb-2">
+      <div
+        class="flex gap-2 items-center mb-2"
+        [class]="{ 'xl:mb-4': compactFromXl() }"
+      >
         <input
           type="checkbox"
           id="{{ idPrefix() }}filter_checkbox_{{ parameter.name }}"
@@ -350,7 +353,7 @@
       </div>
     }
     @if (parameterType === "enumArraySearch") {
-      <div class="mb-4 mt-4">
+      <div class="mb-4 mt-4 search_bar_field">
         <sc-search-bar-multi-select
           [options]="getEnumArraySearchOptions(parameter)"
           [selected]="getEnumArraySearchSelected(parameter)"
@@ -369,13 +372,20 @@
       parameterType === "vendor" ||
       parameterType === "storage_id"
     ) {
-      <div class="flex flex-col gap-2 mb-4 mt-4">
+      <div
+        class="flex flex-col gap-2 mb-4 mt-4"
+        [class.search_bar_options--grid]="compactFromXl()"
+      >
         @for (
-          enum of getVisibleEnumOptions(parameter);
+          enum of parameter.schema.enum ?? [];
           track benchmarkFilterOptionKey(enum) ||
-            benchmarkFilterOptionLabel(enum)
+            benchmarkFilterOptionLabel(enum);
+          let index = $index
         ) {
-          <div class="flex items-center gap-2">
+          <div
+            class="items-center gap-2"
+            [class]="getEnumOptionClass(parameter, enum, index)"
+          >
             <input
               type="checkbox"
               id="{{ idPrefix() }}filter_enum_{{ parameter.name }}_{{
@@ -400,9 +410,11 @@
             </div>
           </div>
         }
-        @if (hasCollapsibleEnumOptions(parameter)) {
+        <div
+          class="-ml-3 self-start xl:-my-2 xl:self-center"
+          [class]="getEnumToggleClass(parameter)"
+        >
           <sc-button
-            class="-ml-3 self-start"
             variant="link"
             size="small"
             [label]="
@@ -416,7 +428,7 @@
             [attr.data-ph-capture-attribute-filter-id]="parameter.name"
             (buttonClick)="toggleEnumOptions()"
           ></sc-button>
-        }
+        </div>
       </div>
     }
     @if (parameterType === "singleRadio") {

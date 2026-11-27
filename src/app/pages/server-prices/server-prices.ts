@@ -15,7 +15,6 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { Button } from "../../components/button/button";
 import { KeeperAPI } from "../../services/keeper-api";
 import { OrderDir, ServerPriceWithPKs } from "../../../../sdk/data-contracts";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
@@ -122,7 +121,6 @@ export type RegionVendorMetadata = {
     LucideCheck,
     LucideX,
     RouterModule,
-    Button,
     PageHeader,
     PageActions,
     SearchBar,
@@ -195,7 +193,13 @@ export class ServerPrices implements OnInit, OnDestroy {
       icon: "database",
       collapsed: true,
     },
-    { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+    {
+      category_id: "vendor",
+      name: "Vendor",
+      icon: "home",
+      collapsed: true,
+      modalShowAllOptions: true,
+    },
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
@@ -849,21 +853,6 @@ export class ServerPrices implements OnInit, OnDestroy {
           }
         : undefined,
     );
-  }
-
-  compareCount() {
-    return this.serverCompare.serverCompareCount();
-  }
-
-  clearCompare() {
-    this.serverCompare.clearCompare();
-    this.servers?.forEach((server: any) => {
-      server.selected = false;
-    });
-  }
-
-  openCompare() {
-    this.serverCompare.openCompare();
   }
 
   showAPIReference(item: any) {

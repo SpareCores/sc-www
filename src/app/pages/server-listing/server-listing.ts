@@ -198,6 +198,7 @@ export class ServerListing implements OnInit, OnDestroy {
       name: "Accelerator",
       icon: "cpu",
       collapsed: true,
+      modalShowAllOptions: true,
     },
     { category_id: "gpu", name: "GPU", icon: "gpu", collapsed: true },
     { category_id: "asic", name: "ASIC", icon: "cpu-ai", collapsed: true },
@@ -213,7 +214,13 @@ export class ServerListing implements OnInit, OnDestroy {
       icon: "arrow-up-down",
       collapsed: true,
     },
-    { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+    {
+      category_id: "vendor",
+      name: "Vendor",
+      icon: "home",
+      collapsed: true,
+      modalShowAllOptions: true,
+    },
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
@@ -1339,21 +1346,6 @@ export class ServerListing implements OnInit, OnDestroy {
 
   isFavoriteServer(vendorId: string, serverId: string): boolean {
     return this.collectionsUi.store.isFavoriteServer(vendorId, serverId);
-  }
-
-  compareCount() {
-    return this.serverCompare.serverCompareCount();
-  }
-
-  clearCompare() {
-    this.serverCompare.clearCompare();
-    this.servers?.forEach((server: any) => {
-      server.selected = false;
-    });
-  }
-
-  openCompare() {
-    this.serverCompare.openCompare();
   }
 
   openIntroductionModal(): void {

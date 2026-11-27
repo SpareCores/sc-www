@@ -1,14 +1,17 @@
 @for (control of controls(); track control.name) {
+  @if (control.sectionHeader) {
+    <div
+      class="custom-control--wide font-bold text-emerald-400 text-sm mb-4 mt-2"
+    >
+      {{ control.sectionHeader }}
+    </div>
+  }
   <div
     class="mb-4"
     [class.custom-control--nested]="control.nested"
     [class.custom-control--wide]="isWideControl(control)"
+    [class.custom-control--inline]="isInlineControl(control)"
   >
-    @if (control.sectionHeader) {
-      <div class="font-bold text-emerald-400 text-sm mb-4 mt-2">
-        {{ control.sectionHeader }}
-      </div>
-    }
     @if (
       control.type !== "checkbox" &&
       control.type !== "checkboxGroup" &&
@@ -79,7 +82,10 @@
       </div>
     }
     @if (control.type === "checkboxGroup") {
-      <div class="flex flex-col gap-2 mb-4 mt-4">
+      <div
+        class="flex flex-col gap-2 mb-4 mt-4"
+        [class.search_bar_options--grid]="compactFromXl()"
+      >
         @for (option of control.checkboxOptions || []; track option.name) {
           <div class="flex items-center gap-1">
             <input
@@ -103,7 +109,7 @@
       </div>
     }
     @if (control.type === "serverAutocomplete") {
-      <div class="custom-autocomplete mt-4">
+      <div class="custom-autocomplete mt-4 search_bar_field">
         <div class="custom-autocomplete__input-wrap">
           <input
             [id]="idPrefix() + 'custom_control_input_' + control.name"
@@ -161,7 +167,7 @@
       </div>
     }
     @if (control.type === "benchmarkConfigSelect") {
-      <div class="custom-autocomplete mt-4">
+      <div class="custom-autocomplete mt-4 search_bar_field">
         <div class="custom-autocomplete__input-wrap">
           <input
             [id]="idPrefix() + 'custom_control_input_' + control.name"
@@ -268,7 +274,7 @@
     }
     @if (control.type === "singleSelect") {
       <div
-        class="custom-autocomplete"
+        class="custom-autocomplete search_bar_field"
         [class.mt-4]="!control.hideTitle"
         [class.mt-2]="control.hideTitle"
         (focusout)="handleSingleSelectFocusOut(control, $event)"
@@ -314,7 +320,7 @@
       </div>
     }
     @if (control.type === "rangeSlider") {
-      <div class="custom-slider mt-4">
+      <div class="custom-slider mt-4 search_bar_field">
         <div class="custom-slider__header">
           <div class="custom-slider__value">
             {{ formatRangeSliderValue(control) }}
@@ -350,7 +356,7 @@
     }
     @if (control.type === "powerOfTwoStepper") {
       <sc-stepper
-        class="mt-4"
+        class="mt-4 search_bar_field"
         [controls]="'custom_control_numeric_' + control.name"
         [decreaseLabel]="'Decrease ' + control.title"
         [increaseLabel]="'Increase ' + control.title"
@@ -398,6 +404,7 @@
         parameter: parameter,
         filterCategoryId: filterCategoryId(),
         idPrefix: idPrefix(),
+        compactFromXl: compactFromXl(),
       }"
     ></ng-container>
   }

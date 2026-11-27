@@ -12,6 +12,7 @@ import {
   computed,
   effect,
   inject,
+  linkedSignal,
   signal,
   untracked,
   viewChild,
@@ -523,7 +524,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   );
   readonly recommendations = signal<SearchServersServersGetData>([]);
   readonly isLoadingRecommendations = signal(false);
-  readonly hasLoadedRecommendations = signal(false);
   readonly totalRecommendationCount = signal(0);
   readonly compareSelectionKeys = signal<string[]>([]);
   readonly tooltipContent = signal("");
@@ -905,13 +905,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
       this.missingRequiredInputs(),
     );
   });
-  readonly compareCount = computed(() => this.compareSelectionKeys().length);
-  readonly showCompareActions = computed(
-    () =>
-      this.hasLoadedRecommendations() &&
-      this.compareCount() >= 2 &&
-      !!this.selectedBaselineServer(),
-  );
   readonly isBaselineSelectedForCompare = computed(() => {
     const selectedBaselineServer = this.selectedBaselineServer();
 
@@ -1015,7 +1008,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   }));
 
   readonly filterModalApplyDisabledReason = computed(() =>
-    this.selectedBaselineServer() && this.selectedBenchmarkConfig()
+    this.missingRequiredInputs().length === 0
       ? null
       : "Fill in the required fields first.",
   );
@@ -1090,6 +1083,38 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
       return recommendationQuery;
     },
   );
+
+  private readonly isFilterModalOpen = signal(false);
+
+  private readonly appliedRecommendationQuery = this.freezeWhileFilterModalOpen(
+    () => this.recommendationQuery(),
+  );
+
+  private readonly appliedBaselinePriceParams = this.freezeWhileFilterModalOpen(
+    () => {
+      const query = this.query();
+
+      return {
+        server: this.selectedBaselineServer(),
+        currency: this.selectedCurrency().slug,
+        extraStorageSize: query["extra_storage_size"],
+        extraStorageType: query["extra_storage_type"],
+        monthlyInboundTraffic: query["monthly_inbound_traffic"],
+        monthlyOutboundTraffic: query["monthly_outbound_traffic"],
+        vendorRegions: query["vendor_regions"],
+        isPriceAllocationEnabled: this.isPriceAllocationEnabled(),
+        bestPriceAllocation: this.bestPriceAllocation().slug,
+        isBaselineRegionEnabled: this.isBaselineRegionEnabled(),
+        selectedBaselineVendorRegion: this.selectedBaselineVendorRegion(),
+      };
+    },
+  );
+
+  private readonly appliedBaselineScoreComparisonParams =
+    this.freezeWhileFilterModalOpen(() => ({
+      server: this.selectedBaselineServer(),
+      hasColumns: this.hasBaselineScoreComparisonColumns(),
+    }));
 
   readonly customControls = computed<SearchBarCustomControl[]>(() => {
     const controls: SearchBarCustomControl[] = [
@@ -1467,75 +1492,69 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     effect(() => {
       const selectedBaselineServer = this.selectedBaselineServer();
       const selectedCurrency = this.selectedCurrency().slug;
-      const query = this.query();
-      const extraStorageSize = query["extra_storage_size"];
-      const extraStorageType = query["extra_storage_type"];
-      const monthlyInboundTraffic = query["monthly_inbound_traffic"];
-      const monthlyOutboundTraffic = query["monthly_outbound_traffic"];
-      void this.isPriceAllocationEnabled();
-      void this.bestPriceAllocation();
-      void this.isBaselineRegionEnabled();
-      void this.selectedBaselineVendorRegion();
 
       if (!selectedBaselineServer) {
         this.baselineServerPrices.set([]);
-        this.baselinePriceComparisonRows.set([]);
-        this.baselineScoreComparisonRow.set(null);
-        this.baselineAddonPricingRow.set(null);
         this.isLoadingBaselineRegions.set(false);
         this.isBaselineRegionEnabled.set(false);
         this.selectedBaselineVendorRegion.set(null);
         return;
       }
 
-      void extraStorageSize;
-      void extraStorageType;
-      void monthlyInboundTraffic;
-      void monthlyOutboundTraffic;
-
       void this.loadBaselineRegionPrices(
         selectedBaselineServer,
         selectedCurrency,
       );
-      void this.loadBaselinePriceComparisonRows(
-        selectedBaselineServer,
-        selectedCurrency,
-      );
-
-      if (this.hasTrafficStorageRequirements()) {
-        void this.loadBaselineAddonPricing(
-          selectedBaselineServer,
-          selectedCurrency,
-        );
-      } else {
-        this.baselineAddonPricingRow.set(null);
-      }
     });
 
     effect(() => {
-      const selectedBaselineServer = this.selectedBaselineServer();
-      const hasBaselineScoreComparisonColumns =
-        this.hasBaselineScoreComparisonColumns();
-      const baselineRecommendation = selectedBaselineServer
-        ? this.recommendations().find((recommendation) => {
-            return this.isSelectedBaselineRecommendation(recommendation);
-          })
-        : null;
+      const { server, currency } = this.appliedBaselinePriceParams();
 
-      if (!selectedBaselineServer || !hasBaselineScoreComparisonColumns) {
-        this.baselineScoreComparisonRow.set(null);
-        return;
-      }
+      untracked(() => {
+        if (!server) {
+          this.baselinePriceComparisonRows.set([]);
+          this.baselineScoreComparisonRow.set(null);
+          this.baselineAddonPricingRow.set(null);
+          return;
+        }
 
-      if (
-        baselineRecommendation?.score != null &&
-        baselineRecommendation?.score_per_price != null
-      ) {
-        this.baselineScoreComparisonRow.set(null);
-        return;
-      }
+        void this.loadBaselinePriceComparisonRows(server, currency);
 
-      void this.loadBaselineScoreComparisonRow(selectedBaselineServer);
+        if (this.hasTrafficStorageRequirements()) {
+          void this.loadBaselineAddonPricing(server, currency);
+        } else {
+          this.baselineAddonPricingRow.set(null);
+        }
+      });
+    });
+
+    effect(() => {
+      const { server, hasColumns } =
+        this.appliedBaselineScoreComparisonParams();
+      const recommendations = this.recommendations();
+
+      untracked(() => {
+        if (!server || !hasColumns) {
+          this.baselineScoreComparisonRow.set(null);
+          return;
+        }
+
+        const baselineRecommendation = recommendations.find(
+          (recommendation) =>
+            getAdvisorCompareKey(recommendation) ===
+            getAdvisorCompareKey(server),
+        );
+
+        if (
+          baselineRecommendation?.score != null &&
+          baselineRecommendation?.score_per_price != null
+        ) {
+          this.baselineScoreComparisonRow.set(null);
+          return;
+        }
+
+        void this.loadBaselineScoreComparisonRow(server);
+      });
     });
 
     effect(() => {
@@ -1581,7 +1600,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     });
 
     effect(() => {
-      const recommendationQuery = this.recommendationQuery();
+      const recommendationQuery = this.appliedRecommendationQuery();
 
       if (!recommendationQuery) {
         this.recommendationRequestVersion += 1;
@@ -1601,6 +1620,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
 
     effect(() => {
       if (
+        this.isFilterModalOpen() ||
         !this.hasRestoredRouteState() ||
         !isPlatformBrowser(this.platformId)
       ) {
@@ -2060,10 +2080,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  clearCompareSelection(): void {
-    this.serverCompare.clearCompare();
-  }
-
   isAuthenticated(): boolean {
     return this.auth.isAuthenticated();
   }
@@ -2182,18 +2198,67 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    const restoreState = this.getFilterModalStateSignals().map((state) => {
+      const value = state();
+      return () => state.set(value);
+    });
+    this.isFilterModalOpen.set(true);
+
     this.filterModalRef = this.modalDialog.open(this.filterModalTemplate());
-    this.filterModalRef.closed.subscribe(() => {
+    this.filterModalRef.closed.subscribe((applied) => {
       this.filterModalRef = null;
+
+      if (!applied) {
+        restoreState.forEach((restore) => restore());
+      }
+
+      this.isFilterModalOpen.set(false);
+    });
+  }
+
+  private getFilterModalStateSignals(): WritableSignal<unknown>[] {
+    return [
+      this.query,
+      this.baselineServerInput,
+      this.selectedBaselineServer,
+      this.benchmarkConfigInput,
+      this.selectedBenchmarkConfig,
+      this.pendingBaselineVendorId,
+      this.pendingBaselineApiReference,
+      this.pendingWorkloadId,
+      this.pendingWorkloadConfig,
+      this.optimizationGoal,
+      this.averageCpuUtilization,
+      this.limitToSameArchitecture,
+      this.limitToSameCpuAllocation,
+      this.minimumMemoryGiB,
+      this.peakGpuMemoryGiB,
+      this.isPriceAllocationEnabled,
+      this.bestPriceAllocation,
+      this.isBaselineRegionEnabled,
+      this.selectedBaselineVendorRegion,
+      this.baselineServerPrices,
+      this.selectedCurrency,
+      this.displayedCurrency,
+      this.page,
+      this.limit,
+      this.manualOrderBy,
+      this.manualOrderDir,
+      this.possibleColumns,
+    ];
+  }
+
+  private freezeWhileFilterModalOpen<T>(source: () => T) {
+    return linkedSignal<{ isOpen: boolean; value: T }, T>({
+      source: () => ({ isOpen: this.isFilterModalOpen(), value: source() }),
+      computation: (current, previous) =>
+        current.isOpen && previous ? previous.value : current.value,
+      equal: (left, right) => stableStringify(left) === stableStringify(right),
     });
   }
 
   toggleCollapse(): void {
     this.isCollapsed.update((value) => !value);
-  }
-
-  openCompare(): void {
-    this.serverCompare.openCompare();
   }
 
   onSearchChanged(query: Record<string, unknown>): void {
@@ -2882,7 +2947,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
         this.activeRecommendationRequestKey === requestKey
       ) {
         this.isLoadingRecommendations.set(false);
-        this.hasLoadedRecommendations.set(true);
       }
     }
   }

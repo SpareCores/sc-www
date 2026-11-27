@@ -28,6 +28,7 @@ export type FilterCategory = {
   name: string;
   icon: string;
   collapsed: boolean;
+  modalShowAllOptions?: boolean;
 };
 
 export type BenchmarkFamilyFilterValue = "all" | "yes" | "no";

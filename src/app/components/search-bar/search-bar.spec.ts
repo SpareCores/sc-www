@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { SearchBar } from "./search-bar";
 import { SearchBarParameterField } from "./components";
@@ -462,6 +467,28 @@ describe("SearchBar", () => {
     expect(filterCategories[0].collapsed).toBeFalse();
   });
 
+  it("cancels a pending sidebar change when the extra parameters change", fakeAsync(() => {
+    const searchParameters: SearchBarParameter[] = [
+      {
+        name: "memory_min",
+        modelValue: null,
+        schema: { category_id: "memory", title: "Memory", type: "number" },
+      },
+    ];
+    const emitSpy = spyOn(component.searchChanged, "emit");
+    fixture.componentRef.setInput("searchParameters", searchParameters);
+    fixture.detectChanges();
+
+    searchParameters[0].modelValue = 16;
+    component.valueChanged();
+    fixture.componentRef.setInput("extraParameters", { vendor: ["aws"] });
+    fixture.detectChanges();
+    tick(500);
+
+    expect(emitSpy).not.toHaveBeenCalled();
+    expect(searchParameters[0].modelValue).toBeNull();
+  }));
+
   describe("modal layout", () => {
     const tabCategories = [
       { category_id: "basic", name: "Basics", icon: "server", collapsed: true },
@@ -527,6 +554,14 @@ describe("SearchBar", () => {
       ).toBeNull();
     });
 
+    it("narrows the panel inputs from xl", () => {
+      expect(
+        element().querySelector(
+          ".search_bar_tabs__panel .search_bar_field #filter_text_partial_name_or_id",
+        ),
+      ).not.toBeNull();
+    });
+
     it("renders the accordion sections with their own id prefix", () => {
       expect(element().querySelectorAll(".search_bar_section").length).toBe(2);
       expect(
@@ -541,6 +576,24 @@ describe("SearchBar", () => {
       );
     });
 
+    it("emits promptConfirmed after applying a confirmed prompt", () => {
+      const confirmedSpy = spyOn(component.promptConfirmed, "emit");
+
+      component.closeModal(true);
+
+      expect(confirmedSpy).not.toHaveBeenCalled();
+
+      component.modalResponse = { memory_min: 16 };
+      component.closeModal(true);
+
+      expect(confirmedSpy).toHaveBeenCalled();
+      expect(
+        component
+          .searchParameters()
+          .find((parameter) => parameter.name === "memory_min")?.modelValue,
+      ).toBe(16);
+    });
+
     it("resets the active category and emits the cleared query", () => {
       const emitSpy = spyOn(component.searchChanged, "emit");
 
@@ -549,6 +602,49 @@ describe("SearchBar", () => {
       component.resetCategory(tabCategories[1]);
 
       expect(emitSpy).toHaveBeenCalledWith({});
+    });
+
+    describe("with deferred changes", () => {
+      beforeEach(() => {
+        fixture.componentRef.setInput("deferChanges", true);
+        fixture.detectChanges();
+      });
+
+      it("keeps a category reset as a draft", () => {
+        const emitSpy = spyOn(component.searchChanged, "emit");
+
+        expect(component.hasDraftChanges()).toBeFalse();
+
+        component.resetCategory(tabCategories[1]);
+
+        expect(emitSpy).not.toHaveBeenCalled();
+        expect(component.hasDraftChanges()).toBeTrue();
+        expect(component.buildQuery()).toEqual({});
+      });
+
+      it("counts and resets every draft filter without emitting", () => {
+        const emitSpy = spyOn(component.searchChanged, "emit");
+
+        expect(component.activeFilterCount()).toBe(1);
+
+        component.resetAll();
+
+        expect(component.activeFilterCount()).toBe(0);
+        expect(emitSpy).not.toHaveBeenCalled();
+      });
+
+      it("commits typed number drafts when building the query", () => {
+        const memoryParameter = component
+          .searchParameters()
+          .find(
+            (parameter) => parameter.name === "memory_min",
+          ) as SearchBarParameter;
+
+        component.setParameterDraftValue(memoryParameter, "16");
+
+        expect(component.hasDraftChanges()).toBeTrue();
+        expect(component.buildQuery()).toEqual({ memory_min: 16 });
+      });
     });
   });
 });

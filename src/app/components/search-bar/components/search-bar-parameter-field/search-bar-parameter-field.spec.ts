@@ -173,7 +173,9 @@ describe("SearchBarParameterField", () => {
         (fixture.nativeElement as HTMLElement).querySelectorAll(
           'input[type="checkbox"]',
         ),
-      ).map((input) => input.id);
+      )
+        .filter((input) => !input.parentElement?.classList.contains("hidden"))
+        .map((input) => input.id);
     }
 
     function toggleButton(): HTMLButtonElement {
@@ -207,6 +209,48 @@ describe("SearchBarParameterField", () => {
 
       expect(optionIds()).toContain("filter_enum_architecture_x86_64_mac");
       expect(optionIds().length).toBe(5);
+    });
+
+    it("lays the options out in a grid from xl when compact", () => {
+      fixture.componentRef.setInput("parameter", createEnumParameter([]));
+      fixture.componentRef.setInput("filterCategoryId", "processor");
+      fixture.componentRef.setInput("compactFromXl", true);
+      fixture.detectChanges();
+
+      const list = (fixture.nativeElement as HTMLElement).querySelector(
+        "#filter_enum_architecture_arm64",
+      )?.parentElement?.parentElement;
+
+      expect(list?.classList).toContain("search_bar_options--grid");
+    });
+
+    it("shows up to 12 options from xl without See all", () => {
+      fixture.componentRef.setInput("parameter", createEnumParameter([]));
+      fixture.componentRef.setInput("filterCategoryId", "processor");
+      fixture.componentRef.setInput("compactFromXl", true);
+      fixture.detectChanges();
+
+      const lastOption = (fixture.nativeElement as HTMLElement).querySelector(
+        "#filter_enum_architecture_x86_64_mac",
+      )?.parentElement;
+
+      expect(toggleButton().closest("div")?.classList).toContain("xl:hidden");
+      expect(lastOption?.classList).toContain("xl:flex");
+    });
+
+    it("shows every option and hides See all from xl when requested", () => {
+      fixture.componentRef.setInput("parameter", createEnumParameter([]));
+      fixture.componentRef.setInput("filterCategoryId", "processor");
+      fixture.componentRef.setInput("showAllOptionsFromXl", true);
+      fixture.detectChanges();
+
+      const host = fixture.nativeElement as HTMLElement;
+      const lastOption = host.querySelector(
+        "#filter_enum_architecture_x86_64_mac",
+      )?.parentElement;
+
+      expect(lastOption?.classList).toContain("xl:flex");
+      expect(toggleButton().closest("div")?.classList).toContain("xl:hidden");
     });
   });
 });

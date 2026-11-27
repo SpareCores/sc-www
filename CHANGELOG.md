@@ -27,17 +27,24 @@ New features:
   header, menu and footer, the listings, the Server and Database details, Compare,
   Advisor, landing, About, article and legal pages are redesigned for small screens
   (#344)
-- Filters on phones and tablets: below 1280px, the Servers, Server prices, Storages,
-  Traffic prices, Databases, Benchmark Coverage and Advisor pages show a floating Filters
-  button with the number of active filters and a red Clear filters button, next to the
-  Compare and Clear buttons; it opens a Filters dialog with collapsible categories on
-  phones and category tabs on tablets, and Clear all and Apply buttons
+- Floating Filters button on the Servers, Server prices, Storages, Traffic prices,
+  Databases, Benchmark Coverage and Advisor pages, with the number of active filters and a
+  red Clear button (icons only on phones), shown on the listings once their table has
+  loaded; it replaces the floating Compare and Clear buttons, and comparisons open from
+  the header's Compare menu (#351)
+- Filters dialog with collapsible categories on phones and category tabs on larger
+  screens, the search box on Benchmark Coverage, and Search Prompt, Clear all and Apply
+  buttons; changes take effect only on Apply or on confirming a Search Prompt, closing the
+  dialog discards them, it reopens on the last viewed category, and Apply on the Advisor
+  stays disabled until every required field is filled in (#351)
 
 Improvements:
 
 - Long checkbox filter lists (e.g. Vendors) show the first 4 options and a "See all"
-  link; selected options always stay visible
-
+  link, and selected options always stay visible; on wide screens the Filters dialog lays
+  the options out in a grid and shows every Vendor (#351)
+- The Advisor's Clear filters button is outlined in red and disabled while no filter is
+  set (#351)
 - Faster initial page load: the sign-in and analytics libraries are loaded on demand,
   halving the initial download (1.19 MB to 602 kB transferred), and sign in / sign up
   buttons open the modal at once (#319)
@@ -75,6 +82,9 @@ Improvements:
 
 Fixes:
 
+- The button that reopens the collapsed filter sidebar on the Servers, Server prices,
+  Storages, Traffic prices and Databases pages points right instead of left, as it already
+  did on Benchmark Coverage (#351)
 - The "Active only" and "Orderable only" filters of the Databases listing are checkboxes
   again instead of Any/True/False radios, where "Any" still filtered to orderable
   databases (#323)
@@ -87,15 +97,14 @@ Fixes:
 - Buttons no longer stay highlighted after a click or tap (#344)
 - The "Link copied to clipboard!" message appears below the promo banner instead of
   blending into it (#344)
-- The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
-  pages stay behind the Edit profile and other modals instead of covering them (#344)
+- The listing filters show an error message when their regions, vendors, storage types
+  or compliance frameworks fail to load, as they already did for countries, and these
+  filter options load once per visit instead of on every listing page (#351)
 - Opening the header menus with the keyboard or tabbing into the header no longer
   scrolls the page up (#344)
 - Section links of the server and database Compare pages scroll the section title
   right below the sticky server and database names, without covering it on phones or
   leaving a gap on tablets and desktops (#344)
-- The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
-  pages appear once the table has loaded instead of while it is still loading (#344)
 
 New content:
 

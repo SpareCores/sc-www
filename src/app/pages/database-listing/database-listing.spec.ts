@@ -214,6 +214,26 @@ describe("DatabaseListing", () => {
     });
   });
 
+  it("opens the filter modal from the floating Filters button once the table has loaded", () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const openSpy = spyOn(component, "openFilterModal");
+    const filtersButton = () =>
+      host.querySelector<HTMLButtonElement>(
+        '.sc-floating-actions sc-button[data-ph-capture-attribute-sc-event="listing filters open"] button',
+      );
+
+    component.hasLoadedDatabases = false;
+    fixture.detectChanges();
+
+    expect(filtersButton()).toBeNull();
+
+    component.hasLoadedDatabases = true;
+    fixture.detectChanges();
+    filtersButton()?.click();
+
+    expect(openSpy).toHaveBeenCalled();
+  });
+
   it("counts active filters from the applied query", () => {
     component.query = {
       vcpus_min: 1,

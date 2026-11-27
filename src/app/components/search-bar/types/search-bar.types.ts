@@ -98,6 +98,7 @@ export type SearchBarParameterTemplateContext = {
   parameter: SearchBarParameter;
   filterCategoryId: string;
   idPrefix: string;
+  compactFromXl?: boolean;
 };
 
 export type SearchBarFilterCategory = {
@@ -107,6 +108,7 @@ export type SearchBarFilterCategory = {
   collapsed: boolean;
   alwaysExpanded?: boolean;
   hideHeader?: boolean;
+  modalShowAllOptions?: boolean;
 };
 
 export type SearchBarParameterPlacement = {

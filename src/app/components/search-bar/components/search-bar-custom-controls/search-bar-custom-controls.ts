@@ -49,6 +49,7 @@ export class SearchBarCustomControls {
   parameterPlacements = input<SearchBarParameterPlacement[]>([]);
   filterCategoryId = input.required<string>();
   idPrefix = input("");
+  compactFromXl = input(false);
   parameterTemplate =
     input.required<TemplateRef<SearchBarParameterTemplateContext>>();
 
@@ -422,6 +423,12 @@ export class SearchBarCustomControls {
 
   closeBenchmarkConfigDropdown(control: SearchBarCustomControl) {
     this.benchmarkConfigDropdownOpen[control.name] = false;
+  }
+
+  isInlineControl(control: SearchBarCustomControl): boolean {
+    return (
+      this.compactFromXl() && control.type === "checkbox" && !control.nested
+    );
   }
 
   isWideControl(control: SearchBarCustomControl): boolean {

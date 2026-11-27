@@ -55,6 +55,18 @@ import { TooltipTrigger } from "../../../../directives/tooltip-trigger";
 import { Button } from "../../../button/button";
 
 const COLLAPSED_ENUM_OPTION_COUNT = 4;
+const COMPACT_ENUM_CELL_COUNT = 12;
+
+function responsiveDisplayClass(
+  visibleBelowXl: boolean,
+  visibleFromXl: boolean,
+): string {
+  if (visibleBelowXl) {
+    return visibleFromXl ? "flex" : "flex xl:hidden";
+  }
+
+  return visibleFromXl ? "hidden xl:flex" : "hidden";
+}
 
 type CpuCacheRangeFocusLossSkip = {
   target: HTMLInputElement | null;
@@ -94,6 +106,8 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
   storageIds = input<StorageMetadata[]>([]);
   warning = input<string | undefined>(undefined);
   idPrefix = input("");
+  showAllOptionsFromXl = input(false);
+  compactFromXl = input(false);
 
   readonly enumOptionsExpanded = signal(false);
 
@@ -327,22 +341,47 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
     return (parameter.schema.enum?.length ?? 0) > COLLAPSED_ENUM_OPTION_COUNT;
   }
 
-  getVisibleEnumOptions(
+  getEnumOptionClass(
     parameter: SearchBarParameter,
-  ): BenchmarkFilterOption[] {
-    const options = parameter.schema.enum ?? [];
+    option: BenchmarkFilterOption,
+    index: number,
+  ): string {
+    const hiddenBeyond = (limit: number) =>
+      !this.enumOptionsExpanded() &&
+      index >= limit &&
+      !this.isEnumSelected(option);
 
-    if (
-      this.enumOptionsExpanded() ||
-      !this.hasCollapsibleEnumOptions(parameter)
-    ) {
-      return options;
+    return responsiveDisplayClass(
+      !(
+        this.hasCollapsibleEnumOptions(parameter) &&
+        hiddenBeyond(COLLAPSED_ENUM_OPTION_COUNT)
+      ),
+      !(
+        this.collapsesFromXl(parameter) &&
+        hiddenBeyond(
+          this.compactFromXl()
+            ? COMPACT_ENUM_CELL_COUNT - 1
+            : COLLAPSED_ENUM_OPTION_COUNT,
+        )
+      ),
+    );
+  }
+
+  getEnumToggleClass(parameter: SearchBarParameter): string {
+    return responsiveDisplayClass(
+      this.hasCollapsibleEnumOptions(parameter),
+      this.collapsesFromXl(parameter),
+    );
+  }
+
+  private collapsesFromXl(parameter: SearchBarParameter): boolean {
+    if (this.showAllOptionsFromXl()) {
+      return false;
     }
 
-    return options.filter(
-      (option, index) =>
-        index < COLLAPSED_ENUM_OPTION_COUNT || this.isEnumSelected(option),
-    );
+    return this.compactFromXl()
+      ? (parameter.schema.enum?.length ?? 0) > COMPACT_ENUM_CELL_COUNT
+      : this.hasCollapsibleEnumOptions(parameter);
   }
 
   toggleEnumOptions() {

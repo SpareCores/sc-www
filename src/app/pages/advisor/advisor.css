@@ -180,10 +180,6 @@
   position: relative;
 }
 
-.advisor-results--compare-active {
-  padding-bottom: 6rem;
-}
-
 .advisor-filter-bar.advisor-filter-bar-collapsed + .advisor-results {
   align-self: flex-start;
 }

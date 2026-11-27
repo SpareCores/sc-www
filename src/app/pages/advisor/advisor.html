@@ -98,8 +98,8 @@
         [customControls]="customControls()"
         [parameterPlacements]="advisorParameterPlacements"
         [extraCategoryCounts]="advisorFilterCategoryCounts()"
-        [activeFilterCount]="activeFilterCount()"
         [applyDisabledReason]="filterModalApplyDisabledReason()"
+        [showTopSection]="false"
         (searchChanged)="onSearchChanged($event)"
         (customControlChanged)="onCustomControlChanged($event)"
         (clearAll)="clearFilters()"
@@ -149,23 +149,17 @@
           </sc-search-bar>
 
           @if (!isCollapsed()) {
-            <div class="px-4 pb-4 bg-secondary flex gap-3">
+            <div class="px-4 pb-4 bg-secondary flex flex-col gap-3">
               <sc-button
-                class="flex-1"
-                label="All filters"
-                icon="funnel"
-                iconPosition="start"
-                size="small"
-                data-ph-capture-attribute-sc-event="listing all filters open"
-                (buttonClick)="openFilterModal()"
-              ></sc-button>
-              <sc-button
-                class="flex-1"
                 label="Clear filters"
                 icon="funnel-x"
                 iconPosition="start"
                 size="small"
-                data-ph-capture-attribute-sc-event="listing filters clear"
+                variant="outline"
+                color="danger"
+                class="w-full"
+                data-ph-capture-attribute-sc-event="advisor filters clear"
+                [disabled]="activeFilterCount() === 0"
                 (buttonClick)="clearFilters()"
               ></sc-button>
             </div>
@@ -173,10 +167,7 @@
         </div>
       </div>
 
-      <div
-        class="advisor-results flex flex-col gap-4"
-        [class.advisor-results--compare-active]="showCompareActions()"
-      >
+      <div class="advisor-results flex flex-col gap-4">
         <div class="advisor-toolbar">
           @if (recommendationSummary(); as summary) {
             <div
@@ -1447,26 +1438,7 @@
 
 <sc-listing-floating-actions
   [filterCount]="activeFilterCount()"
-  [compareActive]="showCompareActions()"
   [sidebarCollapsed]="isCollapsed()"
   (openFilters)="openFilterModal()"
   (clearFilters)="clearFilters()"
->
-  @if (showCompareActions()) {
-    <sc-button
-      label="Clear"
-      icon="circle-x"
-      iconPosition="start"
-      color="danger"
-      buttonClass="sc-button--floating"
-      (click)="clearCompareSelection()"
-    ></sc-button>
-    <sc-button
-      [label]="'Compare (' + compareCount() + ')'"
-      icon="scale"
-      iconPosition="start"
-      buttonClass="sc-button--floating"
-      (click)="openCompare()"
-    ></sc-button>
-  }
-</sc-listing-floating-actions>
+></sc-listing-floating-actions>

@@ -28,7 +28,6 @@ import { TableFooter } from "../../components/table-footer/table-footer";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
 import { ColumnPicker } from "../../components/column-picker/column-picker";
-import { Button } from "../../components/button/button";
 import { FilterModal } from "../../components/filter-modal/filter-modal";
 import { ListingFloatingActions } from "../../components/listing-floating-actions/listing-floating-actions";
 import { countActiveFilters } from "../../components/search-bar/utils/search-bar.utils";
@@ -61,7 +60,6 @@ import {
     LoadingSpinner,
     SelectDropdown,
     ColumnPicker,
-    Button,
     FilterModal,
     ListingFloatingActions,
   ],
@@ -101,6 +99,7 @@ export class TrafficPrices implements OnInit, OnDestroy {
 
   isCollapsed = false;
   isLoading = true;
+  hasLoadedTrafficPrices = false;
 
   filterCategories = [
     {
@@ -109,7 +108,13 @@ export class TrafficPrices implements OnInit, OnDestroy {
       icon: "database",
       collapsed: false,
     },
-    { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+    {
+      category_id: "vendor",
+      name: "Vendor",
+      icon: "home",
+      collapsed: true,
+      modalShowAllOptions: true,
+    },
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
@@ -324,6 +329,7 @@ export class TrafficPrices implements OnInit, OnDestroy {
             this.searchAbortController = null;
           }
           this.isLoading = false;
+          this.hasLoadedTrafficPrices = true;
         }
       });
   }

@@ -251,6 +251,35 @@ describe("SearchBarCustomControls", () => {
     expect(nestedControl.textContent).toContain("US East 1");
   });
 
+  it("lays compact checkboxes inline and keeps their section header full width", () => {
+    fixture.componentRef.setInput("compactFromXl", true);
+    fixture.componentRef.setInput("controls", [
+      {
+        name: "limit_cpu_allocation",
+        category_id: "advisor",
+        type: "checkbox",
+        sectionHeader: "Limit search for matching:",
+        title: "CPU allocation",
+        checked: false,
+      },
+      {
+        name: "limit_architecture",
+        category_id: "advisor",
+        type: "checkbox",
+        title: "CPU architecture",
+        checked: false,
+      },
+    ]);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelectorAll(".custom-control--inline").length).toBe(2);
+    expect(
+      host.querySelector(".custom-control--inline")?.textContent,
+    ).not.toContain("Limit search for matching:");
+  });
+
   it("renders range slider summary text inline with its value", () => {
     fixture.componentRef.setInput("controls", [
       {

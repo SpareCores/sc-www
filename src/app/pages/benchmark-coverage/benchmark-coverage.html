@@ -212,17 +212,10 @@
             role="button"
             [attr.aria-expanded]="!isCollapsed"
           >
-            @if (isCollapsed) {
-              <svg
-                lucideChevronRight
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            } @else {
-              <svg
-                lucideChevronLeft
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            }
+            <svg
+              lucideChevronLeft
+              class="h-6 w-6 shrink-0 text-emerald-400"
+            ></svg>
           </div>
           <sc-search-bar
             [query]="searchQuery()"
@@ -239,32 +232,10 @@
 
           @if (!isCollapsed) {
             <div
-              class="px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
+              class="px-4 pb-4 bg-secondary border-r border-emerald-400 border-solid text-sm text-white text-center"
             >
-              <div class="text-sm text-white text-center">
-                {{ filteredTableRows().length }} of
-                {{ tableRows().length }} servers
-              </div>
-              <div class="flex gap-3">
-                <sc-button
-                  class="flex-1"
-                  label="All filters"
-                  icon="funnel"
-                  iconPosition="start"
-                  size="small"
-                  data-ph-capture-attribute-sc-event="listing all filters open"
-                  (buttonClick)="openFilterModal()"
-                ></sc-button>
-                <sc-button
-                  class="flex-1"
-                  label="Clear filters"
-                  icon="funnel-x"
-                  iconPosition="start"
-                  size="small"
-                  data-ph-capture-attribute-sc-event="listing filters clear"
-                  (buttonClick)="clearFilters()"
-                ></sc-button>
-              </div>
+              {{ filteredTableRows().length }} of
+              {{ tableRows().length }} servers
             </div>
           }
         </div>
@@ -584,9 +555,8 @@
     [filterCategories]="filterCategories"
     [searchParameters]="searchParameters()"
     [showParameterTitles]="false"
-    [activeFilterCount]="activeFilterCount()"
+    [useTopSearchInput]="true"
     (searchChanged)="searchBarChanged($event)"
-    (clearAll)="clearFilters()"
   ></sc-filter-modal>
 </ng-template>
 

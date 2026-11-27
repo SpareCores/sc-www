@@ -33,26 +33,6 @@
           AIAssistantType="traffic_prices"
           (searchChanged)="searchBarChanged($event)"
         >
-          <div searchBarActions class="flex gap-3 px-4 pt-4">
-            <sc-button
-              class="flex-1"
-              label="All filters"
-              icon="funnel"
-              iconPosition="start"
-              size="small"
-              data-ph-capture-attribute-sc-event="listing all filters open"
-              (buttonClick)="openFilterModal()"
-            ></sc-button>
-            <sc-button
-              class="flex-1"
-              label="Clear filters"
-              icon="funnel-x"
-              iconPosition="start"
-              size="small"
-              data-ph-capture-attribute-sc-event="listing filters clear"
-              (buttonClick)="clearFilters()"
-            ></sc-button>
-          </div>
         </sc-search-bar>
       </div>
       <div
@@ -233,20 +213,21 @@
   </div>
 </div>
 
-<sc-listing-floating-actions
-  [filterCount]="activeFilterCount()"
-  [sidebarCollapsed]="isCollapsed"
-  (openFilters)="openFilterModal()"
-  (clearFilters)="clearFilters()"
-></sc-listing-floating-actions>
+@if (hasLoadedTrafficPrices) {
+  <sc-listing-floating-actions
+    [filterCount]="activeFilterCount()"
+    [sidebarCollapsed]="isCollapsed"
+    (openFilters)="openFilterModal()"
+    (clearFilters)="clearFilters()"
+  ></sc-listing-floating-actions>
+}
 
 <ng-template #filterModalTemplate>
   <sc-filter-modal
+    AIAssistantType="traffic_prices"
     [query]="query"
     [filterCategories]="filterCategories"
     [searchParameters]="searchParameters"
-    [activeFilterCount]="activeFilterCount()"
     (searchChanged)="searchBarChanged($event)"
-    (clearAll)="clearFilters()"
   ></sc-filter-modal>
 </ng-template>

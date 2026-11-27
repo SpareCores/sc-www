@@ -71,6 +71,8 @@
       let-parameter="parameter"
       let-filterCategoryId="filterCategoryId"
       let-fieldIdPrefix="idPrefix"
+      let-showAllOptionsFromXl="showAllOptionsFromXl"
+      let-compactFromXl="compactFromXl"
     >
       @if (
         getParameterType(parameter) === "country" ||
@@ -85,7 +87,7 @@
           [countryMetadata]="countryMetadata()"
           [continentMetadata]="continentMetadata"
           [regionMetadata]="regionMetadata()"
-          [vendorMetadata]="vendors"
+          [vendorMetadata]="vendors()"
           [disabled]="isParameterDisabled(parameter.name)"
           [vendorRegionCollapsedVendors]="vendorRegionCollapsedVendors"
           (countryMetadataChanged)="setCountryMetadata($event)"
@@ -106,9 +108,11 @@
           [showParameterTitles]="showParameterTitles()"
           [selectedCurrency]="selectedCurrency()"
           [disabled]="isParameterDisabled(parameter.name)"
-          [complianceFrameworks]="complianceFrameworks"
-          [vendors]="vendors"
-          [storageIds]="storageIds"
+          [complianceFrameworks]="complianceFrameworks()"
+          [vendors]="vendors()"
+          [storageIds]="storageIds()"
+          [showAllOptionsFromXl]="!!showAllOptionsFromXl"
+          [compactFromXl]="!!compactFromXl"
           [warning]="parameterWarnings()[parameter.name]"
           (valueChanged)="valueChanged()"
           (filterServers)="filterServers()"
@@ -158,7 +162,6 @@
             }
           </button>
         }
-        <div class="search_bar_tabs__filler" aria-hidden="true"></div>
       </div>
 
       @if (activeFilter) {
@@ -185,6 +188,7 @@
               getCategoryActiveCount(activeFilter) > 0
             ) {
               <sc-button
+                class="-my-3"
                 variant="link"
                 [label]="'Reset ' + activeFilter.name"
                 icon="rotate-ccw"
@@ -205,6 +209,7 @@
               [filterCategoryId]="activeFilter.category_id"
               [parameterTemplate]="parameterTemplate"
               [idPrefix]="idPrefix()"
+              [compactFromXl]="true"
               (customControlChanged)="customControlChanged.emit($event)"
               (showTooltip)="showTooltip($event.event, $event.content)"
               (hideTooltip)="hideTooltip()"
@@ -222,6 +227,8 @@
                   parameter: parameter,
                   filterCategoryId: activeFilter.category_id,
                   idPrefix: idPrefix(),
+                  showAllOptionsFromXl: activeFilter.modalShowAllOptions,
+                  compactFromXl: true,
                 }"
               ></ng-container>
             }
@@ -299,7 +306,6 @@
         }
       </div>
     }
-    <ng-content select="[searchBarActions]"></ng-content>
   </div>
 </div>
 

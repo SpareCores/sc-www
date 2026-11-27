@@ -7,20 +7,14 @@ import { ListingFloatingActions } from "./listing-floating-actions";
   template: `
     <sc-listing-floating-actions
       [filterCount]="filterCount()"
-      [compareActive]="compareActive()"
       (openFilters)="opened = opened + 1"
       (clearFilters)="cleared = cleared + 1"
-    >
-      @if (compareActive()) {
-        <button id="compare" type="button">Compare</button>
-      }
-    </sc-listing-floating-actions>
+    ></sc-listing-floating-actions>
   `,
   imports: [ListingFloatingActions],
 })
 class HostComponent {
   filterCount = signal(0);
-  compareActive = signal(false);
   opened = 0;
   cleared = 0;
 }
@@ -74,28 +68,5 @@ describe("ListingFloatingActions", () => {
 
     expect(host.opened).toBe(1);
     expect(host.cleared).toBe(1);
-  });
-
-  it("renders the divider and projected compare buttons when compare is active", () => {
-    expect(element().querySelector(".sc-floating-actions__divider")).toBeNull();
-
-    host.compareActive.set(true);
-    fixture.detectChanges();
-
-    expect(
-      element().querySelector(".sc-floating-actions__divider"),
-    ).not.toBeNull();
-    expect(element().querySelector("#compare")).not.toBeNull();
-  });
-
-  it("hides the bar from xl up unless compare is active", () => {
-    const bar = () => element().querySelector(".sc-floating-actions");
-
-    expect(bar()?.classList).toContain("xl:hidden");
-
-    host.compareActive.set(true);
-    fixture.detectChanges();
-
-    expect(bar()?.classList).not.toContain("xl:hidden");
   });
 });
