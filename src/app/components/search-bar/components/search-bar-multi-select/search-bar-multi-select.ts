@@ -24,6 +24,7 @@ export class SearchBarMultiSelect {
     viewChild<ElementRef<HTMLInputElement>>("searchInput");
   private readonly optionsPanel =
     viewChild<ElementRef<HTMLElement>>("optionsPanel");
+  private readonly dropdown = viewChild<ElementRef<HTMLElement>>("dropdown");
 
   options = input.required<string[]>();
   selected = input<string[]>([]);
@@ -82,14 +83,14 @@ export class SearchBarMultiSelect {
     if (this.disabled()) {
       return;
     }
-    this.dropdownOpen.set(true);
+    this.showDropdown();
   }
 
   focusSearch() {
     if (this.disabled()) {
       return;
     }
-    this.dropdownOpen.set(true);
+    this.showDropdown();
     queueMicrotask(() => this.searchInput()?.nativeElement.focus());
   }
 
@@ -194,6 +195,16 @@ export class SearchBarMultiSelect {
 
     this.selectionChange.emit(
       this.selected().filter((selected) => selected !== option),
+    );
+  }
+
+  private showDropdown() {
+    if (this.dropdownOpen()) {
+      return;
+    }
+    this.dropdownOpen.set(true);
+    requestAnimationFrame(() =>
+      this.dropdown()?.nativeElement.scrollIntoView({ block: "nearest" }),
     );
   }
 

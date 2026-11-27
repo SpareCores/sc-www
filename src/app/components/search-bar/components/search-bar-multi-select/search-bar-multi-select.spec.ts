@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from "@angular/core/testing";
 import { SearchBarMultiSelect } from "./search-bar-multi-select";
 
 describe("SearchBarMultiSelect", () => {
@@ -38,4 +43,19 @@ describe("SearchBarMultiSelect", () => {
     component.onSearchInput("se");
     expect(component.filteredOptions()).toEqual(["ssse3"]);
   });
+
+  it("scrolls the dropdown into view when it opens", fakeAsync(() => {
+    const scrollSpy = spyOn(Element.prototype, "scrollIntoView");
+
+    component.openDropdown();
+    fixture.detectChanges();
+    tick(16);
+
+    expect(scrollSpy).toHaveBeenCalledOnceWith({ block: "nearest" });
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        ".search-bar-multi-select__dropdown",
+      ),
+    ).not.toBeNull();
+  }));
 });

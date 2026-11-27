@@ -29,8 +29,12 @@
   @apply min-w-[6rem] flex-1 border-0 bg-transparent p-0 text-sm text-sky-950 outline-hidden placeholder:text-sky-800/70 disabled:cursor-not-allowed disabled:text-gray-600;
 }
 
+.search-bar-multi-select__dropdown {
+  @apply pointer-events-none absolute top-full right-0 left-0 z-20 pt-1 pb-4;
+}
+
 .search-bar-multi-select__panel {
-  @apply absolute left-0 right-0 z-20 mt-1 max-h-64 overflow-y-auto rounded-lg border border-solid border-emerald-400 bg-primary;
+  @apply pointer-events-auto max-h-64 overflow-y-auto rounded-lg border border-solid border-emerald-400 bg-primary;
 }
 
 .search-bar-multi-select__option {
