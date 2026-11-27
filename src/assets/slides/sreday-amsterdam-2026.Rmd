@@ -5,6 +5,7 @@ date: "2026-11-02"
 conference: "SREday Amsterdam 2026"
 conference_url: "https://sreday.com/2026-amsterdam-q4/"
 conference_talk_url: "https://sreday.com/2026-amsterdam-q4/Gergely_Daroczi_Spare_Cores_DataDriven_Instance_Selection#speakers-section"
+conference_talk_slides: "/assets/slides/sreday-amsterdam-2026.html#/cover-slide"
 location: "Amsterdam, Netherlands"
 abstract: |
   Choosing a cloud instance type for a task is still largely a heuristic exercise. While public pricing and hardware specifications are available, they are fragmented, inconsistently structured, and challenging to compare across (or even within) cloud providers -- especially once real workload performance is taken into account. In this talk, we present Spare Cores Navigator, a Python-queryable and open-source benchmark dataset that covers thousands of cloud server types from multiple vendors, with standardized performance and cost-efficiency metrics. We demonstrate how instance selection can be expressed as a simple data query, e.g. filtering by workload characteristics, hardware or compliance constraints, and budget, then ranking candidates by price-performance.
