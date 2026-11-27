@@ -10,6 +10,7 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
 import { AuthorAvatars } from "../../components/author-avatars/author-avatars";
 import { authorNames } from "../../services/team-members";
 import {
+  LucideCalendarX,
   LucideDynamicIcon,
   LucideHourglass,
   LucideScrollText,
@@ -22,6 +23,7 @@ import {
     RouterModule,
     TimeToShortDatePipe,
     AuthorAvatars,
+    LucideCalendarX,
     LucideDynamicIcon,
     LucideHourglass,
     LucideScrollText,
