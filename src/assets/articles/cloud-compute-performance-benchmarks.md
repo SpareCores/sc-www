@@ -115,7 +115,8 @@ or multi-core subsection scores, computed using the geometric mean of
 the underlying standardized workload scores.
 
 Here's a quick preview of the 16+1 single-core scores presented in our
-server details pages, which is also available in our public datasets:
+server details pages, which is also available in our
+[public datasets](https://docs.sparecores.com/data):
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -232,7 +233,7 @@ and the "Multi-Score Spare Cores Score 🤯).
 
 If you are interested in the details of starting the cloud instances
 and running the benchmarks, please check out the `Runner` and
-`Inspector` components of the [Spare Cores ecosystem](/#project_components).
+`Inspector` components of the [Spare Cores ecosystem](https://docs.sparecores.com/under-the-hood#components).
 
 Both the development and the actual runs happen in public:
 you can find the repositories on GitHub, and all the steps of
@@ -244,7 +245,7 @@ As always, we appreciate any feedback or any kind of contributions 🙇
 ## Future plans
 
 Although you can already find the above performance metrics in our
-public database dumps and our homepage (see
+[public database dumps](https://docs.sparecores.com/sqlite) and our homepage (see
 e.g. [`t4g.large`](/server/aws/t4g.large)) for most servers, there are
 a few servers that we were unable to start yet due to capacity
 quotas at some vendors. We also plan to add support for more vendors.

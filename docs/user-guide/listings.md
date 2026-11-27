@@ -90,7 +90,9 @@ specifications and benchmark information, and includes a **Compare** control.
 
 To share a search, select **Share** in the page header of the listing. It
 copies a link that keeps your filters, benchmark, and columns. You do not
-need an account to share.
+need an account to share. Sections and charts on a detail page can also be
+[linked](https://sparecores.com/article/section-links) and
+[embedded](https://sparecores.com/article/embed-charts) on other websites.
 
 ## Find managed databases
 

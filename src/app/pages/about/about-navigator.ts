@@ -190,6 +190,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
       description: "Raw hardware information and benchmark results.",
       github: "sc-inspector-data",
       license: "CC BY-SA 4.0",
+      docs: "https://docs.sparecores.com/data",
     },
     {
       component: "Crawler",
@@ -197,7 +198,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
       github: "sc-crawler",
       license: "MPL 2.0",
       pypi: "sparecores-crawler",
-      docs: "https://sparecores.github.io/sc-crawler",
+      docs: "https://docs.sparecores.com/crawler",
       description: "Cloud vendor API and Inspector Data integrations.",
     },
     {
@@ -205,6 +206,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
       status: "Stable",
       github: "sc-data-dumps",
       license: "CC BY-SA 4.0",
+      docs: "https://docs.sparecores.com/data",
       description: "JSON dumps of collected cloud resource information.",
     },
     {
@@ -212,6 +214,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
       status: "Stable",
       data: "https://cdn.sparecores.net/sc-data/latest/sc-data-all.sql.xz",
       license: "BSL 1.1",
+      docs: "https://docs.sparecores.com/sqlite",
       description:
         "SQLite database dump of current cloud resource information.",
     },
@@ -221,6 +224,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
       github: "sc-data",
       license: "MPL 2.0",
       pypi: "sparecores-data",
+      docs: "https://docs.sparecores.com/sqlite",
       description: "Python package for easy integration of the Database.",
     },
     {
@@ -229,7 +233,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
       description: "Programmatic access to the Database.",
       github: "sc-keeper",
       license: "MPL 2.0",
-      docs: "https://keeper.sparecores.net/docs",
+      docs: "https://docs.sparecores.com/api",
       api: "https://keeper.sparecores.net",
     },
     {
@@ -238,6 +242,7 @@ export class AboutNavigator implements OnInit, AfterViewInit {
       github: "sc-www",
       license: "MPL 2.0",
       description: "Web frontend for human access to the Database.",
+      docs: "https://docs.sparecores.com/web-ui",
       www: "https://sparecores.com/servers",
     },
   ];

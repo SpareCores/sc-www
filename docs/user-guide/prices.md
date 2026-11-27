@@ -15,7 +15,7 @@ scores use. It offers the following categories:
 - **Ondemand prices**: pay-as-you-go hourly prices, with no commitment.
 - **Monthly prices**: on-demand prices per month.
 - **Spot prices**: discounted prices for spare capacity, which the vendor can
-  reclaim at short notice.
+  [reclaim at short notice](https://sparecores.com/article/spot-instance-terminate-rates-per-az).
 
 In the Advisor, select **Price allocation** under
 **Limit search for matching:** to choose one of the same categories.
