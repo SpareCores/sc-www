@@ -91,7 +91,12 @@
                           <svg lucideIcon="youtube"></svg>
                         </a>
                       }
-                      @if (
+                      @if (talk.conference_status === "cancelled") {
+                        <span title="Conference cancelled">
+                          <svg lucideCalendarX aria-hidden="true"></svg>
+                          <span class="sr-only">Conference cancelled</span>
+                        </span>
+                      } @else if (
                         !talk.conference_talk_slides &&
                         !talk.conference_talk_video
                       ) {
