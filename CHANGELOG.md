@@ -37,6 +37,10 @@ Improvements:
 - Every listing table (Servers, Databases, Server prices, Storages, Traffic prices,
   Advisor) shows a "No ... match the selected filters." row, and the loading overlay
   covers the whole table even when scrolled sideways (#327)
+- Links to the [Spare Cores documentation](https://docs.sparecores.com): the footer's
+  Database documentation icon opens the schemas, the About Navigator components table
+  links each component's docs, and the landing page, About Navigator page and articles
+  link the data, API, SQLite, benchmark and container image docs
 
 Fixes:
 
@@ -48,6 +52,8 @@ Fixes:
 - The Lowest Prices chart of the Server details page shows the ondemand price of every
   listed zone instead of 0 for zones whose ondemand price was not among the 10 cheapest
   prices (#347)
+- The "SC Crawler project" link of the Vendors and Regions pages opens the Crawler docs
+  instead of a missing section of the landing page
 
 New content:
 
