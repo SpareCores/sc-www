@@ -8,6 +8,7 @@ conference: "KCD Budapest 2026"
 conference_url: "https://kcdbudapest.hu/"
 conference_talk_url: "https://kcdbudapest.hu/agenda/#session-1336916"
 conference_talk_slides: "/assets/slides/kcd-budapest-2026.html#/cover-slide"
+conference_talk_video: "https://www.youtube.com/watch?v=NpBfO4OaelM"
 location: "Budapest, Hungary"
 filters:
   - speakers.lua
