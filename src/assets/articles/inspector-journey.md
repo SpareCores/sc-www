@@ -18,18 +18,18 @@ prices for every region and availability zone. Prices and vendor-provided specs
 alone don't tell you much, so we also start every server we can and look at it
 from the inside.
 
-We record what hardware it actually has, from CPU
-[topology](/server/azure/Standard_D96a_v4#lstopo) and
-[caches](/server/gcp/c4-highmem-288-lssd-metal#processor) to
-[disks](/server/gcp/c4-standard-288-lssd#system_resources) and
-[GPUs](/server/gcp/a3-ultragpu-8g#system_resources). Some of the more
-interesting ones: Azure's `Standard_D96a_v4` shows 12 NUMA nodes on just two
-sockets, GCP's `c4-highmem-288-lssd-metal` has 1 GB of L3 cache and reads its
-memory at 934 GB/s, `c4-standard-288-lssd` comes with 48 local NVMe SSDs, and
-`a3-ultragpu-8g` packs eight H200 GPUs with 141 GB of memory each. Then we run a
-long list of benchmarks on it, from `stress-ng` and Geekbench through memory
-bandwidth, compression, OpenSSL, static web serving, Redis and PostgreSQL to LLM
-inference speed.
+We record what hardware it actually has, from CPU topology and caches to disks
+and GPUs. Some of the more interesting ones: Azure's
+[`Standard_D96a_v4`](/server/azure/Standard_D96a_v4#lstopo) shows 12 NUMA nodes
+on just two sockets, GCP's
+[`c4-highmem-288-lssd-metal`](/server/gcp/c4-highmem-288-lssd-metal#processor)
+has 1 GB of L3 cache and reads its memory at 934 GB/s,
+[`c4-standard-288-lssd`](/server/gcp/c4-standard-288-lssd#system_resources)
+comes with 48 local NVMe SSDs, and
+[`a3-ultragpu-8g`](/server/gcp/a3-ultragpu-8g#system_resources) packs eight H200
+GPUs with 141 GB of memory each. Then we run a long list of benchmarks on it,
+from `stress-ng` and Geekbench through memory bandwidth, compression, OpenSSL,
+static web serving, Redis and PostgreSQL to LLM inference speed.
 
 The big picture is described in the
 <a href="https://docs.sparecores.com/under-the-hood/" target="_blank" rel="noopener">Under the Hood</a>
@@ -43,16 +43,23 @@ repository, from where the crawler parses them back into the database. That
 database feeds our API and this website.
 
 This article is about the inspector. It tells how we started, what hurt, and why
-we ended up building our own multi-cloud Kubernetes node autoscaler. Some
-highlights:
+we ended up building
+<a href="https://github.com/SpareCores/scarpenter" target="_blank" rel="noopener">SCarpenter</a>,
+our own multi-cloud Kubernetes node autoscaler.
 
-- **2.5 years of the original pipeline**: ~29,000 server starts, 76,000+
-  benchmark and inspection reports, 153,000+ git commits, and an estimated
-  ~35,000 instance-hours of machine time.
+The original pipeline in numbers:
+
+- **2.5 years**: ~29,000 server starts, 76,000+ benchmark and inspection reports
+  with more than 3 million benchmark results, 153,000+ git commits, and an
+  estimated ~35,000 instance-hours of machine time.
 - **Quotas were the real enemy, not the code**: we lost countless runs to "you
-  can have 10 vCPUs in this region" limits. A single month of logs had 3,524
-  distinct Azure quota rejections across 212 instance types.
-- **SCarpenter**: our own Karpenter-based node autoscaler that can launch 3,657
+  can have 10 vCPUs in this region" limits. For example, a single month of logs
+  had 3,524 distinct quota rejections across 212 instance types at a
+  hyperscaler.
+
+What the new pipeline brings:
+
+- **SCarpenter**: a Karpenter-based node autoscaler that can launch 3,657
   instance types in 195 regions of nine cloud vendors into one Kubernetes
   cluster.
 - **Fast nodes**: the median node is Ready 105 seconds after the launch API
@@ -64,7 +71,7 @@ highlights:
 
 ## The Original Pipeline: GitHub Actions and Pulumi
 
-When we started in spring 2024, we wanted the simplest thing that could possibly
+When we started in early 2024, we wanted the simplest thing that could possibly
 work and that needed no infrastructure of our own to run. We ended up with three
 repositories:
 
@@ -104,8 +111,9 @@ jobs:
 
 Each run went through these steps:
 
-1. Load the latest Spare Cores SQLite database to list every active instance
-   type and the regions and zones that offer it.
+1. Load the latest Spare Cores Navigator SQLite database (by now more than 1 GB,
+   even without historical records) to list every active instance type and the
+   regions and zones that offer it.
 2. For each instance type, read the `meta.json` files from git. Start the server
    if a task has never run, if its definition (hash) changed, or if a retriable
    failure is old enough.
@@ -114,11 +122,11 @@ Each run went through these steps:
 4. Run several `pulumi up` jobs in parallel threads, each creating one VM with a
    cloud-init script. Walk through the candidate regions and zones until one
    succeeds.
-5. On the VM, cloud-init installs Docker and starts the inspector container
-   again, this time in `inspect` mode. It runs the hardware discovery tasks
-   (`dmidecode`, `lshw`, `lscpu`, `lstopo`, ...) in parallel, then the
-   benchmarks one by one. After each group of tasks it commits the results and
-   pushes them to git.
+5. On the VM, cloud-init installs Docker (and NVIDIA drivers where needed) and
+   starts the inspector container again, this time in `inspect` mode. It runs
+   the hardware discovery tasks (`dmidecode`, `lshw`, `lscpu`, `lstopo`, ...) in
+   parallel, then the benchmarks one by one. After each group of tasks it
+   commits the results and pushes them to git.
 6. The VM powers itself off. Another workflow, also running every 15 minutes,
    notices that all tasks have ended and runs `pulumi destroy`.
 
@@ -167,8 +175,8 @@ RETRYABLE_START_ERROR_MARKERS = (
 ```
 
 A separate list held the errors that make a whole region useless, such as VPC,
-subnet or address limits, or Azure's regional core quota. Those made the
-inspector skip to the next region instead of trying another instance type.
+subnet or address limits, or regional core quotas. Those made the inspector skip
+to the next region instead of trying another instance type.
 
 ### The Quota Hunger Games
 
@@ -182,45 +190,6 @@ region could still be out of capacity for that particular instance type. Getting
 enough quota to start the *largest* instances, like servers with 192+ vCPUs or
 8-GPU boxes, is still unusually hard.
 
-Some examples from our logs and git history:
-
-- **AWS**: in April 2025, while rolling out the
-  [LLM benchmarks](/article/llm-inference-speed), we hit
-  `VcpuLimitExceeded: You have requested more vCPU capacity than your current vCPU limit of 16 allows`
-  for `c5.12xlarge` (48 vCPUs), `c7g.16xlarge` and several `.metal` instances
-  with up to 192 vCPUs. One cleanup commit had to reset 103 failed LLM results
-  to retry them with the concurrency lowered to one server at a time.
-- **Azure**: the last 126 runs of the start workflow (October 25 - November 20,
-  2026) contain 3,524 distinct quota rejections of the "exceeding approved Total
-  Regional Cores quota" kind, across 212 instance types. In 2,575 cases the
-  current limit was 10 vCPUs, and in 932 it was zero. A typical one:
-  `Standard_E16as_v5` in `centralindia` failed with
-  `Current Limit: 10, Current Usage: 0, Additional Required: 16`. Our spot quota
-  on Azure is 3 cores in every region, enough for nothing larger than 2 vCPUs.
-  An earlier attempt with a `Standard_HX176-24rs` failed in `australiaeast`
-  against a limit of 65 vCPUs for a 176-vCPU machine.
-- **UpCloud**: `GPU-48xCPU-960GB-4xH100` failed with
-  `Memory quota of 2800 GB exceeded by 112 GB`.
-- **OVHcloud**: GPU flavors such as `h100-380` came back as
-  `Flavor out of stock`.
-- **OCI**: our core-count limit increase requests haven't been approved so far.
-
-On top of the quota limits, our cloud credits ran out from time to time. The
-comments in the (now disabled) start workflow still list which vendor was
-paused, and why:
-
-```yaml
-# Vendor matrix (keep in sync with workflow_dispatch options except "all"):
-#   aws,      # ran out of credits
-#   gcp,      # ran out of credits at Aug 3, 2026
-#   azure,    # we have no quota for new instances  → skiplist
-#   alicloud,
-#   hcloud,
-#   upcloud,
-#   vultr,
-#   ovh       # ran out of credits                 → skiplist
-```
-
 ### Tetris Without Seeing the Board
 
 Quotas are measured in vCPUs per family, so they don't fit the "one instance
@@ -228,7 +197,7 @@ type at a time" thinking. With 96 vCPUs allowed for a family, you can start a
 64-vCPU and a 32-vCPU server together, but not a 64-vCPU and a 96-vCPU one. The
 inspector had no central state about what was running where, so it couldn't plan
 for that. It just tried, failed, and tried the next region. One commit message
-from November 2026 sums it up: an Azure VM start walked the regions
+from November 2026 sums it up: a VM start at a hyperscaler walked the regions
 cheapest-first, and "a typical SKU tried \~18 regions (1-2 minutes each) before
 landing".
 
@@ -237,8 +206,8 @@ and round: from eight down to one by October 2024, and after several attempts to
 raise it, back to one for good in April 2025, with a code comment that says it's
 "best to leave this at 1 to avoid quota issues". With a 15-minute schedule,
 that's at most four servers per vendor per hour. At the very end we gave up on
-the "no direct API calls" rule for Azure, and started reading its quota API to
-order the regions.
+the "no direct API calls" rule for some vendors, and started reading their quota
+APIs to order the regions.
 
 ### Slow and Fragile State
 
@@ -265,6 +234,12 @@ up both. Over the years we added:
 In August 2026 a single cleanup commit removed 1,146 "started but never ended"
 `meta.json` files across 166 instance types, left behind by broken runs.
 
+Broken state could also cost real money. Once our cost monitor alerted us that
+an expensive server had been running for two days without any Pulumi state. The
+vendor's API had returned an error on create, so Pulumi recorded the failure and
+moved on, while the server kept running in the background and burning our
+budget.
+
 ## If Everybody Uses Kubernetes, Why Don't We?
 
 At some point we sat down and asked the obvious question. Everything we built by
@@ -284,11 +259,15 @@ model we wanted. But its cloud providers each cover one vendor and expect the
 nodes to live next to that vendor's managed cluster. We even built a small
 helper,
 <a href="https://github.com/SpareCores/sc-karpenter-nodepool" target="_blank" rel="noopener">sc-karpenter-nodepool</a>,
-that turns Spare Cores data into Karpenter NodePools for managed Karpenter
-offerings such as EKS Auto Mode and AKS node auto-provisioning, and presented it
-at [KCD Budapest 2026](/article/conferences-2026-q4). That was useful, but it
-was still one cloud per cluster. We couldn't find anything that joins nodes from
-nine vendors into one cluster, so we built it.
+that turns Spare Cores Navigator data into Karpenter NodePools for managed
+Karpenter offerings such as EKS Auto Mode and AKS node auto-provisioning. We
+presented it at KCD Budapest 2026 in our talk "563 Things Karpenter Didn't Know
+About" (see the
+<a href="/assets/slides/kcd-budapest-2026.html" target="_blank" rel="noopener">slides</a>
+and our other [talks](/talks)). That was useful, but it was still one cloud per
+cluster. We couldn't find anything that joins nodes from nine vendors into one
+cluster, and the great feedback at the conference was the final push to build it
+ourselves.
 
 ## SCarpenter
 
@@ -297,17 +276,17 @@ is a multi-vendor
 <a href="https://karpenter.sh/" target="_blank" rel="noopener">Karpenter</a>
 cloud provider. It runs as a single Deployment in any conformant Kubernetes
 cluster, and launches any instance type of any supported vendor as a node,
-choosing the cheapest matching offering from the Spare Cores catalog. Karpenter
-core does what it is good at: NodePools, NodeClaims, disruption, expiry and
-consolidation. SCarpenter adds the vendor drivers and an `SCNodeClass` resource,
-and one class can span many vendors.
+choosing the cheapest matching offering from the Spare Cores Navigator catalog.
+Karpenter core does what it is good at: NodePools, NodeClaims, disruption,
+expiry and consolidation. SCarpenter adds the vendor drivers and an
+`SCNodeClass` resource, and one class can span many vendors.
 
 Some of the design choices that make it work:
 
-- **All data comes from the Spare Cores API.** Instance types, regions, zones,
-  prices, CPU and GPU details are never hard-coded. The full catalog is about
-  half a million offerings (instance type × zone × capacity type), kept in
-  memory and refreshed regularly. Instance types are named like
+- **All data comes from the Spare Cores Navigator API.** Instance types,
+  regions, zones, prices, CPU and GPU details are never hard-coded. The full
+  catalog is about half a million offerings (instance type × zone × capacity
+  type), kept in memory and refreshed regularly. Instance types are named like
   `aws.c7g.16xlarge` or `oci.VM.Standard.E6.Flex.2-16`.
 - **Every node runs
   <a href="https://www.flatcar.org/" target="_blank" rel="noopener">Flatcar Container Linux</a>.**
@@ -317,8 +296,8 @@ Some of the design choices that make it work:
   No package installation, no configuration management, and the same image
   everywhere: from a 2-vCPU VM to bare metal, on all nine vendors. Where a
   vendor has no official Flatcar image, we import or build one.
-- **Plain TLS bootstrap.** The controller mints a short-lived bootstrap token
-  for each NodeClaim, and the kubelet uses it to get its certificate. No
+- **Plain TLS bootstrap.** The controller mints a short-lived bootstrap access
+  token for each NodeClaim, and the kubelet uses it to get its certificate. No
   cloud-controller-manager is needed, so it works with k3s, kubeadm or RKE2.
 - **A mesh VPN instead of cloud networks.** Every node joins a
   <a href="https://tailscale.com/" target="_blank" rel="noopener">Tailscale</a>-compatible
@@ -337,7 +316,7 @@ Some of the design choices that make it work:
   instance type and zone are kept out of spot scheduling for 10 minutes.
 - **Nothing leaks.** A garbage collector deletes tagged instances that have no
   NodeClaim, and also cleans up nodes that never became Ready and orphaned
-  bootstrap tokens.
+  bootstrap access tokens.
 
 ## The Cluster: Nine Clouds, One Pulumi Repo
 
@@ -400,7 +379,7 @@ can be a Kubernetes node within a couple of minutes, from a single
 Across all launches, the median is 105 seconds and p90 is 193 seconds. That's
 from nothing to a Flatcar machine that has booted, joined the mesh, registered
 with the control plane and is ready to run Pods. Hetzner, AWS and GCP usually do
-it in less than a minute and a half. Bare metal is a different story: a Vultr
+it in less than a minute and a half. Bare metal is a different story: one
 bare-metal server took more than 15 minutes to register. That's longer than
 Karpenter's fixed 15-minute registration timeout, so we had to patch Karpenter
 core to make the timeout configurable.
@@ -421,12 +400,12 @@ byte-for-byte compatible with the old inspector. Everything else changed.
 
 ### Planning
 
-At regular intervals, for each vendor, it asks the Spare Cores API which active
-servers are eligible for which tasks. The API knows which tasks need a GPU, how
-much memory, and so on. The planner then compares that with the `meta.json`
-files and picks the next server with due tasks. Servers that SCarpenter can't
-launch right now (no quota, no price, no offering) are skipped. Per-vendor
-limits cap the number of runs in flight and the spend per hour.
+At regular intervals, for each vendor, it asks the Spare Cores Navigator API
+which active servers are eligible for which tasks. The API knows which tasks
+need a GPU, how much memory, and so on. The planner then compares that with the
+`meta.json` files and picks the next server with due tasks. Servers that
+SCarpenter can't launch right now (no quota, no price, no offering) are skipped.
+Per-vendor limits cap the number of runs in flight and the spend per hour.
 
 ### Running
 
@@ -607,11 +586,11 @@ coding agents). A few stories we'll remember:
 
 We started in 2024 with sc-runner, Pulumi and sc-inspector, driven by GitHub
 Actions cron jobs, with git as the only state. It started servers about 29,000
-times, collected 76,000+ inspection and benchmark reports for almost 4,000
-server types across eight vendors, and made more than 153,000 git commits. We
-measured 4,290 hours of instance time for the 3,392 runs that have full timing
-data. Extrapolating that to all starts, it burned roughly 35,000 instance-hours,
-about four years of machine time.
+times, collected 76,000+ inspection and benchmark reports (more than 3 million
+benchmark results) for almost 4,000 server types across eight vendors, and made
+more than 153,000 git commits. We measured 4,290 hours of instance time for the
+3,392 runs that have full timing data. Extrapolating that to all starts, it
+burned roughly 35,000 instance-hours, about four years of machine time.
 
 The pain was never the benchmarks themselves. It was getting machines: quotas
 per family, region and capacity type that we could only discover by failing,
