@@ -5,6 +5,7 @@ date: "2026-11-24"
 conference: "DevOpsDays Warsaw 2026"
 conference_url: "https://devopsdays.pl/"
 conference_talk_url: "https://devopsdays.pl/lecture/#id=108834"
+conference_status: "cancelled"
 location: "Warsaw, Poland"
 format:
   revealjs:

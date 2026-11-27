@@ -24,6 +24,7 @@ export type SlidesMeta = {
   conference_talk_url: string;
   conference_talk_video?: string;
   conference_talk_slides?: string;
+  conference_status?: "cancelled";
   location: string;
   featured: boolean;
 
