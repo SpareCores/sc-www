@@ -24,6 +24,7 @@ import { ChartConfiguration, Plugin, ArcElement } from "chart.js";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { Accordion } from "../../accordion/accordion";
 import { Dropdown } from "../../../directives/dropdown";
 import { ChartTooltip } from "../shared/chart-tooltip";
@@ -51,6 +52,7 @@ import {
 } from "./workload-profile.utils";
 
 import { chartColors } from "../shared/chart-colors.constants";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 const SCORE_GAUGE_MAX = 2;
 const SCORE_GAUGE_TRACK_COLOR = chartColors["sky-900"];
@@ -138,7 +140,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
       cutout: "72%",
       layout: {
         padding: {
-          top: 8,
+          top: 20,
           bottom: 4,
           left: 16,
           right: 16,
@@ -160,6 +162,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
   selector: "sc-workload-profile-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideCircleArrowUp,
@@ -171,6 +174,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
     BaseChartDirective,
     Dropdown,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./workload-profile-panel.html",
   styleUrls: ["./workload-profile-panel.css"],
@@ -210,8 +214,8 @@ export class WorkloadProfilePanel {
         : "sc-chart-block sc-chart-block--full";
     }
     return this.layout() === "compare"
-      ? "px-4 py-4 bg-transparent min-h-[500px] h-auto overflow-visible max-lg:min-h-[520px]"
-      : "px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px] h-auto overflow-visible";
+      ? "workload-profile-panel--compare"
+      : "workload-profile-panel--details";
   });
 
   readonly workloadProfileBenchmarks = computed(() =>
@@ -350,19 +354,19 @@ export class WorkloadProfilePanel {
     }
   }
 
-  showTooltip(el: Event, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (text) => this.tooltipContent.set(text),
     });
   }
 
-  showWarningTooltip(el: Event, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (text) => this.tooltipContent.set(text),

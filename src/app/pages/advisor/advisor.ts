@@ -43,12 +43,13 @@ import {
 import openApiSpec from "../../../../sdk/openapi.json";
 import { Button } from "../../components/button/button";
 import { PageHeader } from "../../components/page-header/page-header";
+import { PageActions } from "../../components/page-actions/page-actions";
 import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { Pagination } from "../../components/pagination/pagination";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import {
   SearchBarBenchmarkConfigGroup,
   SearchBarBenchmarkConfigOption,
@@ -57,7 +58,8 @@ import {
   SearchBarParameter,
   SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar";
-import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size-pipe";
 import { AcceleratorCountPipe } from "../../pipes/accelerator-count-pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count-pipe";
@@ -99,6 +101,7 @@ import {
   bestPriceAllocationTypes as BEST_PRICE_ALLOCATION_TYPES,
   BestPriceAllocationType,
   CurrencyOption,
+  currencyLabel,
 } from "../../tools/shared_data";
 import { TableColumn, buildAdvisorColumns } from "../../tools/table-columns";
 import { AdvisorUi } from "./advisor-ui";
@@ -163,6 +166,7 @@ import {
   restoreAdvisorColumnsFromQuery,
   stableStringify,
 } from "./advisor.utils";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 const ADVISOR_RECOMMENDATION_DEBOUNCE_MS = 350;
 
@@ -386,9 +390,11 @@ type AdvisorComparableResourceKey =
 @Component({
   selector: "sc-advisor",
   imports: [
+    TooltipTrigger,
     Button,
     Breadcrumbs,
-    Dropdown,
+    SelectDropdown,
+    ColumnPicker,
     LucideArrowDownNarrowWide,
     LucideArrowDownWideNarrow,
     LucideChevronLeft,
@@ -397,7 +403,8 @@ type AdvisorComparableResourceKey =
     LucideScale,
     LoadingSpinner,
     PageHeader,
-    Pagination,
+    PageActions,
+    TableFooter,
     AcceleratorCountPipe,
     CpuCacheSizePipe,
     Ipv4CountPipe,
@@ -430,8 +437,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   private modalDialog = inject(ModalDialog);
   readonly advisorUi = inject(AdvisorUi);
   saveAssessmentModal = viewChild(CollectionSaveModal);
-  readonly currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  readonly pageDropdown = viewChild<Dropdown>("pageDropdown");
   readonly searchBar = viewChild(SearchBar);
   private readonly introductionModalTemplate = viewChild.required<
     TemplateRef<unknown>
@@ -508,6 +513,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   );
   readonly recommendations = signal<SearchServersServersGetData>([]);
   readonly isLoadingRecommendations = signal(false);
+  readonly hasLoadedRecommendations = signal(false);
   readonly totalRecommendationCount = signal(0);
   readonly compareSelectionKeys = signal<string[]>([]);
   readonly tooltipContent = signal("");
@@ -523,6 +529,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   readonly manualOrderDir = signal<OrderDir | undefined>(undefined);
   readonly pageLimits = ADVISOR_PAGE_LIMITS;
   readonly availableCurrencies = AVAILABLE_CURRENCIES;
+  readonly currencyLabel = currencyLabel;
   private readonly defaultCurrency =
     this.availableCurrencies.find(
       (currency) => currency.slug === ADVISOR_DEFAULT_CURRENCY,
@@ -889,6 +896,12 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     );
   });
   readonly compareCount = computed(() => this.compareSelectionKeys().length);
+  readonly showCompareActions = computed(
+    () =>
+      this.hasLoadedRecommendations() &&
+      this.compareCount() >= 2 &&
+      !!this.selectedBaselineServer(),
+  );
   readonly isBaselineSelectedForCompare = computed(() => {
     const selectedBaselineServer = this.selectedBaselineServer();
 
@@ -1677,7 +1690,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
       : "arrow-down-narrow-wide";
   }
 
-  showTooltip(event: Event, content: string): void {
+  showTooltip(event: Element | Event, content: string): void {
     const tooltipElement = this.tooltipDefault()?.nativeElement;
 
     if (!tooltipElement) {
@@ -1923,8 +1936,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
     this.limit.set(limit);
     this.page.set(1);
 
-    this.pageDropdown()?.hide();
-
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
@@ -1933,7 +1944,6 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
   selectCurrency(currency: CurrencyOption): void {
     this.selectedCurrency.set(currency);
     this.page.set(1);
-    this.currencyDropdown()?.hide();
   }
 
   setColumnVisibility(columnName: string, show: boolean): void {
@@ -2814,6 +2824,7 @@ export class Advisor implements OnInit, AfterViewInit, OnDestroy {
         this.activeRecommendationRequestKey === requestKey
       ) {
         this.isLoadingRecommendations.set(false);
+        this.hasLoadedRecommendations.set(true);
       }
     }
   }

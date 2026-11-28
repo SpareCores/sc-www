@@ -22,6 +22,11 @@ New features:
   memberships; Active devices now list location, IP address and last-active time (#339)
 - Article author bios with avatars, roles and social links, multiple authors per
   article or talk, and article listings filtered by author (#337)
+- Phone and tablet layouts for every page: pages render at the device width instead of
+  zoomed out to 60%, so text is readable and buttons can be tapped without zooming; the
+  header, menu and footer, the listings, the Server and Database details, Compare,
+  Advisor, landing, About, article and legal pages are redesigned for small screens
+  (#344)
 
 Improvements:
 
@@ -37,6 +42,27 @@ Improvements:
 - Every listing table (Servers, Databases, Server prices, Storages, Traffic prices,
   Advisor) shows a "No ... match the selected filters." row, and the loading overlay
   covers the whole table even when scrolled sideways (#327)
+- Listings (Servers, Databases, Server prices, Storages, Traffic prices, Advisor) on
+  phones: icon-only toolbar buttons, bookmark and share buttons in the toolbar row, a
+  one-row page size and pagination footer, and tables that scroll sideways inside the
+  page; the filter sidebar shows on screens at least 1280px wide (#344)
+- Compare page on phones: two servers fit side by side, section titles and charts stay
+  in view while the table scrolls sideways, cut-off section titles show the full title in
+  a tooltip, and chart options sit in the section header; Show Details scrolls to the
+  first detail row at every screen size (#344)
+- Server details page: Workload Profiles is split into a radar card and a profile card
+  that scrolls into view when a profile is picked, radar labels wrap so the chart uses
+  the card's space, and card titles stay on one line, with the full title in a tooltip
+  when cut off; on phones the Geekbench cards fit their radar (#344)
+- Server and Database details pages on phones: smaller section headings, FAQ headings
+  and FAQ answers (#344)
+- Tooltips open on tap and keyboard focus as well as on hover, and close on Escape or a
+  tap outside them (#344)
+- Dialogs fill the screen on phones, with their main actions at the bottom (#344)
+- Articles on phones: smaller headings and text, and topic pills under the author
+  (#344)
+- The Compare button on the Server details page is outlined, and Don't Compare is
+  outlined in red with its own icon (#344)
 
 Fixes:
 
@@ -48,6 +74,19 @@ Fixes:
 - The Lowest Prices chart of the Server details page shows the ondemand price of every
   listed zone instead of 0 for zones whose ondemand price was not among the 10 cheapest
   prices (#347)
+- Clicking the info icon in a sortable table header no longer sorts the column (#344)
+- Buttons no longer stay highlighted after a click or tap (#344)
+- The "Link copied to clipboard!" message appears below the promo banner instead of
+  blending into it (#344)
+- The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
+  pages stay behind the Edit profile and other modals instead of covering them (#344)
+- Opening the header menus with the keyboard or tabbing into the header no longer
+  scrolls the page up (#344)
+- Section links of the server and database Compare pages scroll the section title
+  right below the sticky server and database names, without covering it on phones or
+  leaving a gap on tablets and desktops (#344)
+- The Compare and Clear buttons of the Servers, Server prices, Databases and Advisor
+  pages appear once the table has loaded instead of while it is still loading (#344)
 
 New content:
 

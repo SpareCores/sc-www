@@ -1,47 +1,66 @@
 <div class="w-full">
-  <div class="content pt-16 pb-4 text-white flex flex-col gap-8">
+  <div
+    class="content pt-4 sm:pt-8 lg:pt-16 pb-4 text-white flex flex-col gap-8"
+  >
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
   </div>
-  <div class="content_section odd first">
-    <div class="content w-2/3">
+  <div class="content_section first">
+    <div class="content w-full lg:w-2/3">
       <sc-theme-text
+        class="justify-center pb-4 sm:pb-12"
         text="navigator"
-        classes="text-6xl justify-center font-bold pb-12"
+        size="lg"
       ></sc-theme-text>
     </div>
-    <div class="w-2/3 mx-auto flex gap-8 flex-col lg:flex-row pb-12">
-      <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
-        <div class="mx-auto my-auto font-bold text-2xl text-left">
+    <div
+      class="w-full lg:w-2/3 mx-auto flex gap-8 flex-col lg:flex-row pb-8 sm:pb-12"
+    >
+      <div class="flex flex-col gap-8 sm:gap-12 w-full lg:w-1/2 my-auto">
+        <div class="mx-auto my-auto text-sm sm:text-2xl text-left font-bold">
           A Python-based open-source framework and managed service offering the
           most detailed and transparent dataset on cloud servers.
         </div>
         <div class="grid grid-cols-2 gap-4 mx-auto lg:ml-0">
           <div class="flex gap-4 items-center">
-            <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+            <div
+              class="flex size-9.5 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-400 sm:size-11"
+            >
               <svg lucideDatabase class="h-5 w-5"></svg>
             </div>
-            <div class="text-white font-bold text-lg">Open Data</div>
+            <div class="text-white font-bold text-sm sm:text-lg">Open Data</div>
           </div>
           <div class="flex gap-4 items-center">
-            <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+            <div
+              class="flex size-9.5 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-400 sm:size-11"
+            >
               <svg lucidePackageOpen class="h-5 w-5"></svg>
             </div>
-            <div class="text-white font-bold text-lg">Python</div>
+            <div class="text-white font-bold text-sm sm:text-lg">Python</div>
           </div>
           <div class="flex gap-4 items-center">
-            <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+            <div
+              class="flex size-9.5 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-400 sm:size-11"
+            >
               <svg lucideSquareKanban class="h-5 w-5"></svg>
             </div>
-            <div class="text-white font-bold text-lg">Benchmarks</div>
+            <div class="text-white font-bold text-sm sm:text-lg">
+              Benchmarks
+            </div>
           </div>
           <div class="flex gap-4 items-center">
-            <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+            <div
+              class="flex size-9.5 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-400 sm:size-11"
+            >
               <svg lucideDollarSign class="h-5 w-5"></svg>
             </div>
-            <div class="text-white font-bold text-lg">Real-time pricing</div>
+            <div class="text-white font-bold text-sm sm:text-lg">
+              Real-time pricing
+            </div>
           </div>
         </div>
-        <div class="flex gap-8 justify-center lg:justify-start">
+        <div
+          class="flex flex-col items-center sm:flex-row gap-2 sm:gap-8 justify-center lg:justify-start"
+        >
           <sc-button
             label="Get Started"
             size="large"
@@ -57,7 +76,7 @@
         </div>
       </div>
       <div class="w-full lg:w-1/2 justify-center flex items-center">
-        <div class="w-full min-w-[400px] max-w-[800px]">
+        <div class="w-full max-w-200">
           <div class="relative w-full overflow-hidden aspect-video">
             <iframe
               width="100%"
@@ -76,21 +95,20 @@
               "
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
-              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0 aspect-video"
+              class="border-emerald-400 border-2 rounded-lg size-full"
             ></iframe>
           </div>
         </div>
       </div>
     </div>
-    <div class="w-2/3 mx-auto text-2xl text-left">
-      <p class="pb-4">
+    <div class="w-full lg:w-2/3 mx-auto text-sm sm:text-2xl text-left">
+      <p>
         We run low-level hardware inspection tools and diverse benchmarks on
         thousands of cloud server options across clouds to collect reliable and
         reproducible data. Everything is published under open licenses as Python
         packages, public datasets, API endpoints, and SDKs — making it easy to
         search, analyze, and integrate.
-      </p>
-      <p>
+        <br /><br />
         The Spare Cores Navigator is not just about data. It's a full platform:
         open-source code, interactive data visualizations, and managed
         infrastructure. For teams that need SLA-backed support or custom
@@ -99,21 +117,22 @@
     </div>
   </div>
 </div>
-<div class="content_section even">
-  <div class="flex flex-col gap-12 justify-center">
-    <sc-theme-text
-      text="extract_transform_load"
-      classes="text-4xl justify-center font-light sc-header-anchor-host"
+<div class="content_section even snug-bottom">
+  <div class="flex flex-col gap-8 sm:gap-12 justify-center">
+    <sc-section-heading
+      tag="extract_transform_load"
+      [monoTitle]="true"
+      [wideTitleGap]="true"
+      [monoDescription]="true"
+      anchorId="extract-transform-load"
+      anchorLabel="Extract, transform, load"
+      [anchorWithTarget]="true"
     >
-      <sc-header-anchor
-        anchorId="extract-transform-load"
-        label="Extract, transform, load"
-      ></sc-header-anchor>
-    </sc-theme-text>
-    <div class="font-mono full flex justify-center mx-auto my-auto text-2xl">
       Here are some key highlights regarding the information we currently cover.
-    </div>
-    <div class="flex gap-24 justify-center flex-col lg:flex-row">
+    </sc-section-heading>
+    <div
+      class="flex gap-8 sm:gap-12 lg:gap-24 justify-center flex-col lg:flex-row"
+    >
       <div class="flex justify-center">
         <!-- 550x380 -->
         <img
@@ -123,58 +142,50 @@
         />
       </div>
       <div class="flex flex-col justify-center">
-        <div class="w-[450px] m-auto">
-          <div>
-            <div class="flex gap-2 text-2xl items-center text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                <svg lucideCheck class="h-4 w-4"></svg>
-              </div>
-              <b> 8 </b>
-              <span>
-                (out of
-                <span
-                  class="underline decoration-dotted cursor-pointer"
-                  (mouseenter)="showTooltip($event)"
-                  (mouseleave)="hideTooltip()"
-                  >10 planned</span
-                >) vendors
-              </span>
-            </div>
-            @for (feature of features; track feature.text; let i = $index) {
-              <div>
-                <div
-                  class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
-                ></div>
-                <div class="flex gap-2 text-2xl items-center text-gray-200">
-                  <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                    <svg lucideCheck class="h-4 w-4"></svg>
-                  </div>
+        <div class="w-full max-w-112.5 m-auto">
+          <div class="mx-4.75 sm:mx-0">
+            <sc-check-list>
+              <sc-check-list-item>
+                <b> 8 </b>
+                <span>
+                  (out of
+                  <span
+                    class="underline decoration-dotted cursor-pointer"
+                    scTooltipTrigger
+                    (tooltipOpen)="showTooltip($event)"
+                    (tooltipClose)="hideTooltip()"
+                    >10 planned</span
+                  >) vendors
+                </span>
+              </sc-check-list-item>
+              @for (feature of features; track feature.text) {
+                <sc-check-list-item>
                   <b> {{ feature.count }} </b>
                   <span> {{ feature.text }} </span>
-                </div>
-              </div>
-            }
-            <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
+                </sc-check-list-item>
+              }
+            </sc-check-list>
+            <div class="mt-4 text-sm sm:text-lg">Tracked every 5 mins.</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<div class="content_section odd">
+<div class="content_section snug-top snug-bottom">
   <div class="content">
-    <div class="flex flex-col w-full lg:w-1/2 justify-center mx-auto gap-8">
-      <sc-theme-text
-        text="fun_facts"
-        classes="text-4xl justify-center font-light sc-header-anchor-host"
-      >
-        <sc-header-anchor
-          anchorId="fun-facts"
-          label="Fun facts"
-        ></sc-header-anchor>
-      </sc-theme-text>
+    <div
+      class="flex flex-col w-full lg:w-1/2 justify-center mx-auto gap-4 sm:gap-8"
+    >
+      <sc-section-heading
+        tag="fun_facts"
+        [monoTitle]="true"
+        anchorId="fun-facts"
+        anchorLabel="Fun facts"
+        [anchorWithTarget]="true"
+      ></sc-section-heading>
       <swiper-container
-        class="w-full"
+        class="navigator-swiper w-full"
         slides-per-view="1"
         speed="2000"
         loop="true"
@@ -183,76 +194,85 @@
         init="false"
       >
         <swiper-slide>
-          <div class="flex gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
-                class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
+                class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideHeater class="shrink-0 size-[50px]"></svg>
+                <svg lucideHeater class="shrink-0 size-9 sm:size-[50px]"></svg>
               </span>
             </div>
-            <div class="text-2xl">
+            <div class="text-sm sm:text-2xl">
               The most expensive server costs over $250 per hour. It comes with
               448 vCPUs and 24TB RAM.
             </div>
           </div>
         </swiper-slide>
         <swiper-slide>
-          <div class="flex gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
-                class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
+                class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideBuilding2 class="shrink-0 size-[50px]"></svg>
+                <svg
+                  lucideBuilding2
+                  class="shrink-0 size-9 sm:size-[50px]"
+                ></svg>
               </span>
             </div>
-            <div class="text-2xl">
+            <div class="text-sm sm:text-2xl">
               Most regions have 3 independent zones.<br />Some are single-zone,
               and one have 6 zones.
             </div>
           </div>
         </swiper-slide>
         <swiper-slide>
-          <div class="flex gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
-                class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
+                class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideChartCandlestick class="shrink-0 size-[50px]"></svg>
+                <svg
+                  lucideChartCandlestick
+                  class="shrink-0 size-9 sm:size-[50px]"
+                ></svg>
               </span>
             </div>
-            <div class="text-2xl">
+            <div class="text-sm sm:text-2xl">
               While spot prices are relatively stable nowadays, they can still
               fluctuate by up to 10% within a day.
             </div>
           </div>
         </swiper-slide>
         <swiper-slide>
-          <div class="flex gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
-                class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
+                class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideScale class="shrink-0 size-[50px]"></svg>
+                <svg lucideScale class="shrink-0 size-9 sm:size-[50px]"></svg>
               </span>
             </div>
             <!-- u-24tb1.112xlarge VS m1.small as per cloudperf/crc16 -->
-            <div class="text-2xl">
+            <div class="text-sm sm:text-2xl">
               There is a 2500x performance difference between the fastest and
               slowest nodes.
             </div>
           </div>
         </swiper-slide>
         <swiper-slide>
-          <div class="flex gap-8 items-center px-2 pb-12">
+          <div class="flex gap-4 sm:gap-8 items-center px-2 pb-6 sm:pb-12">
             <div>
               <span
-                class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
+                class="inline-flex justify-center items-center size-16 sm:size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideMapPinned class="shrink-0 size-[50px]"></svg>
+                <svg
+                  lucideMapPinned
+                  class="shrink-0 size-9 sm:size-[50px]"
+                ></svg>
               </span>
             </div>
-            <div class="text-2xl">
+            <div class="text-sm sm:text-2xl">
               Some vendors charge 6+ times the price of a public IPv4 address
               compared to others.
             </div>
@@ -262,26 +282,24 @@
     </div>
   </div>
 </div>
-<div class="content_section even">
+<div class="content_section even snug-top snug-bottom">
   <div class="content">
-    <div class="flex flex-col gap-12 justify-center">
-      <sc-theme-text
-        text="resource_optimization"
-        classes="text-4xl justify-center font-light sc-header-anchor-host"
-      >
-        <sc-header-anchor
-          anchorId="resource-optimization"
-          label="Resource optimization"
-        ></sc-header-anchor>
-      </sc-theme-text>
+    <div class="flex flex-col gap-4 sm:gap-12 justify-center">
+      <sc-section-heading
+        tag="resource_optimization"
+        [monoTitle]="true"
+        anchorId="resource-optimization"
+        anchorLabel="Resource optimization"
+        [anchorWithTarget]="true"
+      ></sc-section-heading>
       <div
-        class="w-full lg:w-2/5 mx-auto my-auto font-bold text-4xl text-center mb-8"
+        class="w-full lg:w-2/5 mx-auto my-auto font-bold text-xl sm:text-4xl text-center mb-4 sm:mb-8"
       >
         Only 3 Steps to <span class="text-emerald-400">optimize</span> your
         <span class="text-emerald-400">compute resources</span>
       </div>
-      <div class="flex gap-12 flex-col lg:flex-row">
-        <div class="w-full lg:w-1/3 flex flex-col gap-6">
+      <div class="flex gap-8 sm:gap-12 flex-col lg:flex-row">
+        <div class="w-full lg:w-1/3 flex flex-col gap-4 sm:gap-6">
           <div class="w-full h-[260px] rounded-lg">
             <!-- 300x260 -->
             <img
@@ -299,16 +317,16 @@
               class="w-full my-auto border-b border-emerald-400 border-solid"
             ></div>
           </div>
-          <div class="text-emerald-400 font-bold text-2xl">
+          <div class="text-emerald-400 font-bold text-xl sm:text-2xl">
             Define Your Needs
           </div>
-          <div class="text-white text-xl">
+          <div class="text-white text-sm sm:text-xl">
             Utilize our platform's dozens of filters to precisely outline your
             workload requirements, specifying details like number of vCPUs,
             amount of memory/storage, or GPU options.
           </div>
         </div>
-        <div class="w-full lg:w-1/3 flex flex-col gap-6">
+        <div class="w-full lg:w-1/3 flex flex-col gap-4 sm:gap-6">
           <div class="w-full h-[260px] rounded-lg">
             <!-- 300x260 -->
             <img
@@ -326,16 +344,16 @@
               class="w-full my-auto border-b border-emerald-400 border-solid"
             ></div>
           </div>
-          <div class="text-emerald-400 font-bold text-2xl">
+          <div class="text-emerald-400 font-bold text-xl sm:text-2xl">
             Find Optimal Resource
           </div>
-          <div class="text-white text-xl">
+          <div class="text-white text-sm sm:text-xl">
             Let Spare Cores narrow down 5,000+ server types and 500,000 pricing
             options based on your criteria. We prioritize cost efficiency,
             presenting you with optimal choices.
           </div>
         </div>
-        <div class="w-full lg:w-1/3 flex flex-col gap-6">
+        <div class="w-full lg:w-1/3 flex flex-col gap-4 sm:gap-6">
           <div class="w-full h-[260px] rounded-lg">
             <!-- 300x260 -->
             <img
@@ -353,17 +371,17 @@
               class="w-full my-auto border-b border-emerald-400 border-solid"
             ></div>
           </div>
-          <div class="text-emerald-400 font-bold text-2xl">
+          <div class="text-emerald-400 font-bold text-xl sm:text-2xl">
             Deploy with Ease
           </div>
-          <div class="text-white text-xl">
+          <div class="text-white text-sm sm:text-xl">
             Use our CLI tool to launch the selected instance in your cloud
             environment. Our streamlined process ensures it is up and running
             without unnecessary complexities.
           </div>
         </div>
       </div>
-      <div class="flex justify-center">
+      <div class="flex justify-center mt-4 sm:mt-0">
         <sc-button
           id="meeting-navigator-caas"
           label="Contact Us to Discuss Your Needs"
@@ -373,141 +391,148 @@
     </div>
   </div>
 </div>
-<div class="content_section odd" id="project-components">
+<div class="content_section snug-top snug-bottom" id="project-components">
   <div class="content flex justify-center">
-    <div class="w-full lg:w-3/5 flex flex-col gap-12">
-      <sc-theme-text
-        text="project_components"
-        classes="text-4xl justify-center font-light sc-header-anchor-host"
+    <div class="w-full lg:w-3/5 flex flex-col gap-8 sm:gap-12">
+      <sc-section-heading
+        tag="project_components"
+        [monoTitle]="true"
+        [wideTitleGap]="true"
+        [monoDescription]="true"
+        anchorId="project-components"
+        anchorLabel="Project components"
       >
-        <sc-header-anchor
-          anchorId="project-components"
-          label="Project components"
-          [withTarget]="false"
-        ></sc-header-anchor>
-      </sc-theme-text>
-      <div class="flex gap-4 justify-center">
-        <div class="font-mono text-2xl text-center">
-          The status and brief descriptions of the<br />Spare Cores Navigator
-          components:
-        </div>
-      </div>
-      <table class="repo_table mb-8">
-        <thead>
-          <tr>
-            <th>COMPONENT</th>
-            <th>SRC LICENSE</th>
-            <th>REFERENCES</th>
-            <th>DESCRIPTION</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (
-            githubComponent of gitHubComponents;
-            track githubComponent.component
-          ) {
+        The status and brief descriptions of the Spare Cores Navigator
+        components:
+      </sc-section-heading>
+      <div class="min-w-0 overflow-x-auto sm:mb-8">
+        <table class="sc-table w-full">
+          <thead>
             <tr>
-              <td class="text-nowrap">{{ githubComponent.component }}</td>
-              <td class="text-nowrap">{{ githubComponent.license }}</td>
-              <td class="flex gap-1">
-                @if (githubComponent.github) {
-                  <a
-                    href="https://github.com/SpareCores/{{
-                      githubComponent.github
-                    }}"
-                    target="_blank"
-                    rel="noopener"
-                    [title]="'GitHub repository of ' + githubComponent.github"
-                    [attr.aria-label]="
-                      'GitHub repository of ' + githubComponent.github
-                    "
-                  >
-                    <svg lucideIcon="github"></svg>
-                  </a>
-                }
-                @if (githubComponent.pypi) {
-                  <a
-                    href="https://pypi.org/project/{{ githubComponent.pypi }}"
-                    target="_blank"
-                    rel="noopener"
-                    [title]="githubComponent.pypi + ' on PyPI'"
-                    [attr.aria-label]="githubComponent.pypi + ' on PyPI'"
-                  >
-                    <img
-                      class="w-[24px] align-middle"
-                      src="assets/images/icons/python.svg"
-                      alt="Python logo"
-                    />
-                  </a>
-                }
-                @if (githubComponent.docs) {
-                  <a
-                    href="{{ githubComponent.docs }}"
-                    target="_blank"
-                    rel="noopener"
-                    [title]="
-                      'Documentation site of ' + githubComponent.component
-                    "
-                    [attr.aria-label]="
-                      'Documentation site of ' + githubComponent.component
-                    "
-                  >
-                    <svg lucideBookText></svg>
-                  </a>
-                }
-                @if (githubComponent.www) {
-                  <a
-                    href="{{ githubComponent.www }}"
-                    target="_blank"
-                    rel="noopener"
-                    [title]="'Homepage of ' + githubComponent.component"
-                    [attr.aria-label]="
-                      'Homepage of ' + githubComponent.component
-                    "
-                  >
-                    <img
-                      class="w-[24px] align-middle"
-                      src="assets/images/icons/www.svg"
-                      alt="WWW logo"
-                    />
-                  </a>
-                }
-                @if (githubComponent.api) {
-                  <a
-                    href="{{ githubComponent.api }}"
-                    target="_blank"
-                    rel="noopener"
-                    [title]="'API endpoint of ' + githubComponent.component"
-                    [attr.aria-label]="
-                      'API endpoint of ' + githubComponent.component
-                    "
-                  >
-                    <img
-                      class="w-[24px] align-middle"
-                      src="assets/images/icons/api.svg"
-                      alt="API logo"
-                    />
-                  </a>
-                }
-                @if (githubComponent.data) {
-                  <a
-                    href="{{ githubComponent.data }}"
-                    target="_blank"
-                    rel="noopener"
-                    [title]="'Download ' + githubComponent.component"
-                    [attr.aria-label]="'Download ' + githubComponent.component"
-                  >
-                    <svg lucideDatabase></svg>
-                  </a>
-                }
-              </td>
-              <td>{{ githubComponent.description }}</td>
+              <th>COMPONENT</th>
+              <th>SRC LICENSE</th>
+              <th>REFERENCES</th>
+              <th>DESCRIPTION</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (
+              githubComponent of gitHubComponents;
+              track githubComponent.component
+            ) {
+              <tr>
+                <td class="text-nowrap">{{ githubComponent.component }}</td>
+                <td class="text-nowrap">{{ githubComponent.license }}</td>
+                <td>
+                  <div class="flex gap-1">
+                    @if (githubComponent.github) {
+                      <a
+                        href="https://github.com/SpareCores/{{
+                          githubComponent.github
+                        }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="
+                          'GitHub repository of ' + githubComponent.github
+                        "
+                        [attr.aria-label]="
+                          'GitHub repository of ' + githubComponent.github
+                        "
+                      >
+                        <svg lucideIcon="github"></svg>
+                      </a>
+                    }
+                    @if (githubComponent.pypi) {
+                      <a
+                        href="https://pypi.org/project/{{
+                          githubComponent.pypi
+                        }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="githubComponent.pypi + ' on PyPI'"
+                        [attr.aria-label]="githubComponent.pypi + ' on PyPI'"
+                      >
+                        <img
+                          class="w-[24px] align-middle"
+                          src="assets/images/icons/python.svg"
+                          alt="Python logo"
+                        />
+                      </a>
+                    }
+                    @if (githubComponent.docs) {
+                      <a
+                        href="{{ githubComponent.docs }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="
+                          'Documentation site of ' + githubComponent.component
+                        "
+                        [attr.aria-label]="
+                          'Documentation site of ' + githubComponent.component
+                        "
+                      >
+                        <svg lucideBookText></svg>
+                      </a>
+                    }
+                    @if (githubComponent.www) {
+                      <a
+                        href="{{ githubComponent.www }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="'Homepage of ' + githubComponent.component"
+                        [attr.aria-label]="
+                          'Homepage of ' + githubComponent.component
+                        "
+                      >
+                        <img
+                          class="w-[24px] align-middle"
+                          src="assets/images/icons/www.svg"
+                          alt="WWW logo"
+                        />
+                      </a>
+                    }
+                    @if (githubComponent.api) {
+                      <a
+                        href="{{ githubComponent.api }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="'API endpoint of ' + githubComponent.component"
+                        [attr.aria-label]="
+                          'API endpoint of ' + githubComponent.component
+                        "
+                      >
+                        <img
+                          class="w-[24px] align-middle"
+                          src="assets/images/icons/api.svg"
+                          alt="API logo"
+                        />
+                      </a>
+                    }
+                    @if (githubComponent.data) {
+                      <a
+                        href="{{ githubComponent.data }}"
+                        target="_blank"
+                        rel="noopener"
+                        [title]="'Download ' + githubComponent.component"
+                        [attr.aria-label]="
+                          'Download ' + githubComponent.component
+                        "
+                      >
+                        <svg lucideDatabase></svg>
+                      </a>
+                    }
+                  </div>
+                </td>
+                <td class="text-nowrap sm:text-wrap">
+                  {{ githubComponent.description }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
       <div class="flex justify-center">
-        <p class="text-xl w-full">
+        <p class="text-sm sm:text-xl w-full">
           To make the Spare Cores Navigator available to the community, our
           software components are licensed under MPL 2.0 and all raw collected
           data under CC BY-SA 4.0. For deep production integrations and
@@ -518,11 +543,13 @@
     </div>
   </div>
 </div>
-<div class="content_section even">
+<div class="content_section even snug-top snug-bottom">
   <div class="content flex gap-8 flex-col lg:flex-row">
     <div class="w-full lg:w-3/5 my-auto">
       <div class="flex flex-col gap-4 justify-center">
-        <div class="text-center lg:text-left text-4xl gap-2 font-semibold">
+        <div
+          class="text-center lg:text-left text-xl sm:text-4xl gap-2 font-semibold"
+        >
           <span class="text-emerald-400"><</span>spare_cores<span
             class="text-emerald-400"
             >></span
@@ -530,7 +557,7 @@
           is <span class="text-emerald-400">100%</span> committed to using and
           contributing to <span class="text-emerald-400">open-source</span>!
         </div>
-        <div class="text-2xl mt-8 mb-8 mr-8">
+        <div class="text-sm sm:text-2xl mb-4 sm:mt-8 sm:mb-8 mr-0 sm:mr-8">
           The Spare Cores Navigator is the successor to <code>cloudperf</code>,
           an AWS-focused open-source project for exploring spot prices and
           <code>stress-ng</code> benchmarks, which we started in 2017. This
@@ -545,7 +572,9 @@
           >
           funding.
         </div>
-        <div class="flex gap-8 justify-center lg:justify-start">
+        <div
+          class="flex flex-col items-center sm:flex-row gap-2 sm:gap-8 justify-center lg:justify-start"
+        >
           <sc-button
             label="Check us out on GitHub"
             icon="github"
@@ -578,24 +607,23 @@
     </div>
   </div>
 </div>
-<div class="content_section odd">
+<div class="content_section snug-top snug-bottom">
   <div class="content">
-    <div class="flex flex-col w-full lg:w-2/3 justify-center mx-auto gap-8">
-      <sc-theme-text
-        text="testimonials"
-        classes="text-4xl justify-center font-light sc-header-anchor-host"
+    <div
+      class="flex flex-col w-full lg:w-2/3 justify-center mx-auto gap-4 sm:gap-8"
+    >
+      <sc-section-heading
+        tag="testimonials"
+        [monoTitle]="true"
+        anchorId="testimonials"
+        anchorLabel="Testimonials"
+        [anchorWithTarget]="true"
       >
-        <sc-header-anchor
-          anchorId="testimonials"
-          label="Testimonials"
-        ></sc-header-anchor>
-      </sc-theme-text>
-      <div class="w-full mx-auto my-auto font-bold text-2xl text-center">
         What the community is saying about the Spare Cores Navigator:
-      </div>
+      </sc-section-heading>
       <swiper-container
         #testimonialsSwiper
-        class="w-full"
+        class="navigator-swiper w-full"
         slides-per-view="1"
         speed="2000"
         loop="true"
@@ -605,20 +633,22 @@
       >
         @for (quote of publishableQuotes; track quote.quote) {
           <swiper-slide>
-            <div class="flex gap-8 items-center px-2 pb-2">
+            <div class="flex gap-4 sm:gap-8 items-center px-2 pb-2">
               <div>
                 <span
-                  class="inline-flex justify-center items-center size-[90px] text-emerald-400"
+                  class="inline-flex justify-center items-center size-16 sm:size-[90px] text-emerald-400"
                 >
-                  <svg lucideQuote class="shrink-0 size-[50px]"></svg>
+                  <svg lucideQuote class="shrink-0 size-9 sm:size-[50px]"></svg>
                 </span>
               </div>
-              <div class="text-2xl">
+              <div class="text-sm sm:text-2xl">
                 {{ quote.quote }}
               </div>
             </div>
-            <div class="flex gap-8 items-center px-2 pl-[130px] pb-12">
-              <div class="text-xl text-gray-400">
+            <div
+              class="flex gap-8 items-center px-2 sm:pl-[130px] pb-6 sm:pb-12"
+            >
+              <div class="text-sm sm:text-xl text-gray-400">
                 — {{ quote.author }}
                 @if (quote.source) {
                   <span>

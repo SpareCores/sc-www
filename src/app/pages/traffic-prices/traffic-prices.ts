@@ -5,13 +5,10 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
-  viewChild,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
   LucideChevronLeft,
-  LucideDollarSign,
   LucideDynamicIcon,
   LucideInfo,
 } from "@lucide/angular";
@@ -22,16 +19,21 @@ import {
   Breadcrumbs,
   BreadcrumbSegment,
 } from "../../components/breadcrumbs/breadcrumbs";
-import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
-import { Pagination } from "../../components/pagination/pagination";
+import { PageHeader } from "../../components/page-header/page-header";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import { SearchBar } from "../../components/search-bar/search-bar";
-import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { KeeperAPI } from "../../services/keeper-api";
 import { Toast } from "../../services/toast";
 import { QUERY_ERROR_TRAFFIC_PRICES_TOAST_ID } from "../../services/toast-ids";
 import { SeoHandler } from "../../services/seo-handler";
-import { availableCurrencies, CurrencyOption } from "../../tools/shared_data";
+import {
+  availableCurrencies,
+  CurrencyOption,
+  currencyLabel,
+} from "../../tools/shared_data";
 import {
   buildTrafficPricesColumns,
   TableColumn,
@@ -40,18 +42,17 @@ import {
 @Component({
   selector: "sc-traffic-prices",
   imports: [
-    FormsModule,
     Breadcrumbs,
+    PageHeader,
     LucideDynamicIcon,
     LucideChevronLeft,
-    LucideDollarSign,
     LucideInfo,
     RouterModule,
-    Button,
     SearchBar,
-    Pagination,
+    TableFooter,
     LoadingSpinner,
-    Dropdown,
+    SelectDropdown,
+    ColumnPicker,
   ],
   templateUrl: "./traffic-prices.html",
 })
@@ -63,8 +64,6 @@ export class TrafficPrices implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  pageDropdown = viewChild<Dropdown>("pageDropdown");
 
   private subscription = new Subscription();
   private searchRequestId = 0;
@@ -112,6 +111,8 @@ export class TrafficPrices implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
   selectedCurrency: CurrencyOption = availableCurrencies[0];
+
+  readonly currencyLabel = currencyLabel;
 
   ngOnInit() {
     this.SEOHandler.updateThumbnail(
@@ -304,12 +305,10 @@ export class TrafficPrices implements OnInit, OnDestroy {
     this.searchOptionsChanged(this.query);
   }
 
-  selectCurrency(currency: any) {
+  selectCurrency(currency: CurrencyOption) {
     this.selectedCurrency = currency;
 
     this.searchOptionsChanged(this.query);
-
-    this.currencyDropdown()?.hide();
   }
 
   getOrderingIcon(column: TableColumn) {
@@ -327,8 +326,6 @@ export class TrafficPrices implements OnInit, OnDestroy {
     this.limit = limit;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-
-    this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
   }
@@ -341,6 +338,16 @@ export class TrafficPrices implements OnInit, OnDestroy {
           obj && (obj as any)[key] ? (obj as any)[key] : undefined,
         item,
       );
+  }
+
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
   }
 
   refreshColumns() {

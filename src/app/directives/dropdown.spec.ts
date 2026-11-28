@@ -80,6 +80,8 @@ describe("Dropdown", () => {
   });
 
   it("positions the panel below the trigger in page coordinates", () => {
+    trigger.style.position = "fixed";
+    trigger.style.top = "0";
     fixture.componentInstance.dropdown().open();
 
     const host = panel()!.parentElement!;

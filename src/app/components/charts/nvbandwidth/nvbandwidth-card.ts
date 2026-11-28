@@ -17,6 +17,7 @@ import {
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import {
@@ -27,6 +28,7 @@ import {
   formatNvbandwidthScore,
   nvbandwidthGroupId,
 } from "./nvbandwidth.utils";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 const RIGHT_COLUMN_GROUPS = ["efficiency"];
 
@@ -39,6 +41,7 @@ function isRightColumnSection(section: NvbandwidthSection<string>): boolean {
 @Component({
   selector: "sc-nvbandwidth-card",
   imports: [
+    TooltipTrigger,
     NgTemplateOutlet,
     LucideCircleArrowDown,
     LucideDynamicIcon,
@@ -46,6 +49,7 @@ function isRightColumnSection(section: NvbandwidthSection<string>): boolean {
     LucideTriangleAlert,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./nvbandwidth-card.html",
   styleUrl: "./nvbandwidth-card.css",
@@ -88,13 +92,13 @@ export class NvbandwidthCard {
   );
 
   showTooltip(
-    event: MouseEvent,
+    event: Element | Event,
     content: string | null | undefined,
     variant?: "warning",
   ) {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event,
+      anchor: event,
       content: content ?? undefined,
       variant,
       onShow: (tooltipContent) => {

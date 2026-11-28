@@ -4,6 +4,7 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
+import { PageHeader } from "../../components/page-header/page-header";
 import { ArticlesApi, SlidesMeta } from "../../services/articles-api";
 import { SeoHandler } from "../../services/seo-handler";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date-pipe";
@@ -20,6 +21,7 @@ import {
   selector: "sc-talks",
   imports: [
     Breadcrumbs,
+    PageHeader,
     RouterModule,
     TimeToShortDatePipe,
     AuthorAvatars,

@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.score-gauge__canvas {
+  position: relative;
+  width: 100%;
+  height: 6.5rem;
+}
+
+.score-gauge__fallback {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 6.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.score-gauge__value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0.25rem;
+  pointer-events: none;
+}
+
+.score-gauge__number {
+  color: var(--color-emerald-400);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.score-gauge__label {
+  color: var(--color-gray-200);
+  text-align: center;
+}

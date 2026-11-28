@@ -1,10 +1,14 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-    <div class="content_gutter flex flex-col mt-8 text-white">
-      <h1 class="font-semibold text-3xl mb-4">Spare Cores Legal Documents</h1>
-      <div class="text-white text-xl pr-16 mb-4">
+    <div class="content-gutter flex flex-col mt-4 sm:mt-8 text-white">
+      <sc-page-header
+        class="mb-4"
+        icon="scroll-text"
+        title="Spare Cores Legal Documents"
+      ></sc-page-header>
+      <div class="sc-page-description mb-4">
         Below, you can find the legal documents currently in effect for our web
         service. These documents currently include our Terms of Service and
         Privacy Policy. Please review them to understand your rights and

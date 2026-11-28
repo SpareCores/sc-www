@@ -1,0 +1,3 @@
+.sc-page-description {
+  @apply text-sm text-white sm:text-xl;
+}

@@ -18,10 +18,16 @@ import {
 } from "../../collections/collections-ui";
 import { FEATURE_REGISTER_HINT } from "../../collections/collections.utils";
 import { UiTooltip } from "../../services/ui-tooltip";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-bookmark-button",
-  imports: [LucideBookmark, LucideBookmarkPlus, LucideBookmarkOff],
+  imports: [
+    TooltipTrigger,
+    LucideBookmark,
+    LucideBookmarkPlus,
+    LucideBookmarkOff,
+  ],
   templateUrl: "./bookmark-button.html",
   styleUrl: "./bookmark-button.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -109,14 +115,14 @@ export class BookmarkButton {
     );
   }
 
-  protected onMouseEnter(event: MouseEvent): void {
+  protected onMouseEnter(event: Element | Event): void {
     if (this.isAuthenticated()) {
       return;
     }
     this.showTooltip(event);
   }
 
-  protected showTooltip(event: MouseEvent): void {
+  protected showTooltip(event: Element | Event): void {
     const tooltip = this.tooltip()?.nativeElement;
     if (!tooltip) {
       return;

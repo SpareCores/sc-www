@@ -13,10 +13,21 @@ describe("ThemeText", () => {
 
     fixture = TestBed.createComponent(ThemeText);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("text", "spare_cores");
     fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain("spare_cores");
+  });
+
+  it("should apply the size classes", () => {
+    fixture.componentRef.setInput("size", "lg");
+    fixture.detectChanges();
+    const text: HTMLElement = fixture.nativeElement.querySelector(".logo_text");
+    expect(text.classList).toContain("logo_text");
+    expect(text.classList).toContain("logo_text--lg");
+    expect(text.classList).not.toContain("logo_text--sm");
   });
 });

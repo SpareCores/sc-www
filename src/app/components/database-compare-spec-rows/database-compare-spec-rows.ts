@@ -9,10 +9,18 @@ import {
   ComparePropertySection,
   LoadedCompareDatabase,
 } from "../../services/database-compare-specs.types";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-database-compare-spec-rows",
-  imports: [LucideCheck, LucideInfo, LucideX, RouterLink, HeaderAnchor],
+  imports: [
+    TooltipTrigger,
+    LucideCheck,
+    LucideInfo,
+    LucideX,
+    RouterLink,
+    HeaderAnchor,
+  ],
   templateUrl: "./database-compare-spec-rows.html",
   styleUrl: "./database-compare-spec-rows.css",
 })
@@ -26,7 +34,7 @@ export class DatabaseCompareSpecRows {
   linkTarget = input<string>();
   showAnchors = input(false);
 
-  descriptionEnter = output<{ event: MouseEvent; content: string }>();
+  descriptionEnter = output<{ event: Element | Event; content: string }>();
   descriptionLeave = output<void>();
 
   sectionAnchorId(section: ComparePropertySection): string {

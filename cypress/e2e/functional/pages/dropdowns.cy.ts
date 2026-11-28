@@ -59,7 +59,7 @@ describe("Dropdowns", () => {
     cy.get("#currency_options")
       .closest(".sc-dropdown-panel")
       .should("have.css", "position", "absolute")
-      .and("have.css", "z-index", "35");
+      .and("have.css", "z-index", "45");
   });
 
   it("keeps a page dropdown attached to its trigger while scrolling", () => {

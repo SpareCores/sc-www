@@ -1,11 +1,33 @@
 @reference "../../../styles/tailwind.css";
 
-p {
-  @apply text-white text-xl pr-16 mb-4 pb-4;
+.about-paragraph {
+  @apply my-4 text-sm text-left text-white sm:my-10 sm:text-lg;
 }
+
+.about-paragraph--list-intro {
+  @apply mb-3;
+}
+
+.about-paragraph--outro {
+  @apply mb-0 sm:mb-10;
+}
+
+.about-heading {
+  @apply text-xl font-bold text-white mt-8 mb-4 border-t border-gray-600 pt-8 sm:text-2xl;
+}
+
+.about-heading + .about-paragraph {
+  @apply mt-4 sm:mt-8;
+}
+
+.about-list {
+  @apply mb-8;
+}
+
+.about-list li {
+  @apply list-disc text-sm text-left my-1 mx-8 text-white sm:mr-0 sm:text-lg;
+}
+
 a {
-  @apply underline decoration-dotted hover:text-gray-500;
-}
-h2 {
-  @apply font-semibold text-2xl mb-4;
+  @apply underline decoration-dotted hover:text-gray-500 focus-visible:text-gray-500;
 }

@@ -7,7 +7,7 @@
 }
 
 .sc-table thead th {
-  @apply px-5 py-3 text-left text-xs font-normal;
+  @apply px-2 py-3 text-left text-xs font-normal sm:px-5;
 }
 
 .sc-table tbody tr:nth-child(odd) {
@@ -19,12 +19,26 @@
 }
 
 .sc-table tbody td {
-  @apply px-5 py-3 text-left text-sm;
+  @apply px-2 py-3 text-left text-xs sm:px-5 sm:text-sm;
+}
+
+.sc-table thead th:first-child,
+.sc-table tbody td:first-child {
+  @apply pl-3 sm:pl-5;
+}
+
+.sc-table thead th:last-child,
+.sc-table tbody td:last-child {
+  @apply pr-3 sm:pr-5;
 }
 
 .sc-table--compact thead th,
-.sc-table--compact tbody td {
-  @apply pr-2 pl-3;
+.sc-table--compact tbody td,
+.sc-table--compact thead th:first-child,
+.sc-table--compact tbody td:first-child,
+.sc-table--compact thead th:last-child,
+.sc-table--compact tbody td:last-child {
+  @apply sm:pr-2 sm:pl-3;
 }
 
 .sc-table--hoverable tbody tr,
@@ -81,7 +95,7 @@
 }
 
 .sc-kv-table thead th {
-  @apply border-b border-solid border-gray-200 bg-secondary px-5 py-3 text-left leading-5 font-normal;
+  @apply border-b border-solid border-gray-200 bg-secondary px-5 py-3 text-left text-xs leading-5 font-normal sm:text-base;
 }
 
 .sc-kv-table tbody tr {
@@ -89,7 +103,7 @@
 }
 
 .sc-kv-table tbody td {
-  @apply px-5 py-3 text-left text-sm;
+  @apply px-5 py-3 text-left text-xs sm:text-sm;
 }
 
 .sc-kv-table__label {
@@ -118,7 +132,7 @@
 }
 
 .sc-compare-table thead th {
-  @apply px-5 py-3 text-left text-xs font-normal;
+  @apply px-2 py-3 text-left text-xs font-normal md:px-5;
 }
 
 .sc-compare-table thead th.compact-number-header-cell {
@@ -134,11 +148,21 @@
 }
 
 .sc-compare-table tbody tr.section_header {
-  @apply scroll-mt-6;
+  @apply scroll-mt-8 sm:scroll-mt-4 lg:scroll-mt-5;
 }
 
 .sc-compare-table tbody tr td {
-  @apply px-5 py-3 text-left text-sm;
+  @apply px-2 py-3 text-left text-xs sm:text-sm md:px-5;
+}
+
+.sc-compare-table thead tr th:first-child,
+.sc-compare-table tbody tr td:first-child {
+  @apply sm:pl-0 md:pl-5;
+}
+
+.sc-compare-table thead tr th:last-child,
+.sc-compare-table tbody tr td:last-child {
+  @apply sm:pr-0 md:pr-5;
 }
 
 .sc-compare-table tbody tr td.compact-number {
@@ -158,21 +182,44 @@
 }
 
 .sc-compare-table--fixed {
-  --compare-first-column-width: clamp(8rem, 12vw, 12rem);
+  --compare-first-column-width: 7.5rem;
+  --compare-column-min-width: 8rem;
+  --compare-column-char-width: 0px;
+  --compare-column-name-gap: 0px;
   min-width: 100%;
   table-layout: fixed;
 }
 
+@media (width >= theme(--breakpoint-sm)) {
+  .sc-compare-table--fixed {
+    --compare-first-column-width: clamp(8rem, 12vw, 12rem);
+    --compare-column-min-width: 10.5rem;
+    --compare-column-char-width: 1ch;
+    --compare-column-name-gap: 3ch;
+  }
+}
+
 .sc-compare-table--fixed col.compare-first-column-col {
-  width: var(--compare-first-column-width);
+  width: 7.5rem;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    width: var(--compare-first-column-width);
+  }
 }
 
 .sc-compare-table--fixed thead tr th:nth-of-type(1),
 .sc-compare-table--fixed tbody tr td:nth-of-type(1) {
-  width: var(--compare-first-column-width);
-  min-width: var(--compare-first-column-width);
-  max-width: var(--compare-first-column-width);
-  white-space: nowrap;
+  width: 7.5rem;
+  min-width: 7.5rem;
+  max-width: 7.5rem;
+  overflow-wrap: break-word;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    width: var(--compare-first-column-width);
+    min-width: var(--compare-first-column-width);
+    max-width: var(--compare-first-column-width);
+    white-space: nowrap;
+  }
 }
 
 .sc-compare-table--fixed tbody tr td:not(:nth-of-type(1)) {
@@ -201,4 +248,13 @@
 
 .sc-compare-table--fixed tbody tr.compare-instance-section-last-row td {
   padding-bottom: 0;
+}
+
+.sc-compare-table tbody tr td.sc-compare-table__pinned-cell {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sc-compare-table__pinned-content {
+  @apply sticky left-0 box-border px-2 sm:px-0 md:px-5;
 }

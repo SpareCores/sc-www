@@ -5,14 +5,15 @@
     [class.stress_ng_collapsed]="collapsed()"
   >
     <div class="flex items-center min-h-[42px] sc-header-anchor-host">
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3 class="sc-chart-title">
         <svg [lucideIcon]="'stress_ng' | benchmarkIcon" class="h-6 w-6"></svg>
-        {{ title }}
+        <sc-truncated-title [text]="title"></sc-truncated-title>
         <svg
           lucideCircleArrowUp
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
+          scTooltipTrigger
+          (tooltipOpen)="showTooltip($event, 'Higher is better.')"
+          (tooltipClose)="hideTooltip()"
         ></svg>
         @if (anchored()) {
           <sc-header-anchor
@@ -62,72 +63,81 @@
 }
 
 <ng-template #sectionTable let-section>
-  <table class="stress_ng_table">
-    <colgroup>
-      <col class="stress_ng_col_name" />
-      <col class="stress_ng_col_single" />
-      <col class="stress_ng_col_multi" />
-      <col class="stress_ng_col_scaling" />
-    </colgroup>
-    <thead>
-      <tr>
-        <th>{{ section.name }}</th>
-        <th class="stress_ng_value">Single</th>
-        <th class="stress_ng_value">Multi</th>
-        <th class="stress_ng_value">Scaling</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (row of section.rows; track row.benchmark.benchmark_id) {
+  <div class="min-w-0 overflow-x-auto">
+    <table class="stress_ng_table">
+      <colgroup>
+        <col class="stress_ng_col_name" />
+        <col class="stress_ng_col_single" />
+        <col class="stress_ng_col_multi" />
+        <col class="stress_ng_col_scaling" />
+      </colgroup>
+      <thead>
         <tr>
-          <td>
-            <div class="flex gap-2 items-center">
-              <span>{{ row.name }}</span>
-              @if (row.benchmark.higher_is_better === false) {
-                <svg
-                  lucideCircleArrowDown
-                  class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="showTooltip($event, 'Lower is better.')"
-                  (mouseleave)="hideTooltip()"
-                ></svg>
-              }
-              @if (row.benchmark.description) {
-                <svg
-                  lucideInfo
-                  class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="showTooltip($event, row.benchmark.description)"
-                  (mouseleave)="hideTooltip()"
-                ></svg>
-              }
-              @if (rowNote(row.benchmark.benchmark_id); as note) {
-                <svg
-                  lucideTriangleAlert
-                  class="benchmark-note-icon"
-                  (mouseenter)="showTooltip($event, note, 'warning')"
-                  (mouseleave)="hideTooltip()"
-                ></svg>
-              }
-            </div>
-          </td>
-          <td
-            class="stress_ng_value"
-            (mouseenter)="showTooltip($event, row.single.exact)"
-            (mouseleave)="hideTooltip()"
-          >
-            {{ row.single.text }}
-          </td>
-          <td
-            class="stress_ng_value"
-            (mouseenter)="showTooltip($event, row.multi.exact)"
-            (mouseleave)="hideTooltip()"
-          >
-            {{ row.multi.text }}
-          </td>
-          <td class="stress_ng_value">{{ row.scaling }}</td>
+          <th>{{ section.name }}</th>
+          <th class="stress_ng_value">Single</th>
+          <th class="stress_ng_value">Multi</th>
+          <th class="stress_ng_value">Scaling</th>
         </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @for (row of section.rows; track row.benchmark.benchmark_id) {
+          <tr>
+            <td>
+              <div class="flex gap-2 items-center">
+                <span>{{ row.name }}</span>
+                @if (row.benchmark.higher_is_better === false) {
+                  <svg
+                    lucideCircleArrowDown
+                    class="h-4 w-4 shrink-0 text-gray-200"
+                    scTooltipTrigger
+                    (tooltipOpen)="showTooltip($event, 'Lower is better.')"
+                    (tooltipClose)="hideTooltip()"
+                  ></svg>
+                }
+                @if (row.benchmark.description) {
+                  <svg
+                    lucideInfo
+                    class="h-4 w-4 shrink-0 text-gray-200"
+                    scTooltipTrigger
+                    (tooltipOpen)="
+                      showTooltip($event, row.benchmark.description)
+                    "
+                    (tooltipClose)="hideTooltip()"
+                  ></svg>
+                }
+                @if (rowNote(row.benchmark.benchmark_id); as note) {
+                  <svg
+                    lucideTriangleAlert
+                    class="benchmark-note-icon"
+                    scTooltipTrigger
+                    (tooltipOpen)="showTooltip($event, note, 'warning')"
+                    (tooltipClose)="hideTooltip()"
+                  ></svg>
+                }
+              </div>
+            </td>
+            <td class="stress_ng_value">
+              <span
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, row.single.exact)"
+                (tooltipClose)="hideTooltip()"
+                >{{ row.single.text }}</span
+              >
+            </td>
+            <td class="stress_ng_value">
+              <span
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, row.multi.exact)"
+                (tooltipClose)="hideTooltip()"
+                >{{ row.multi.text }}</span
+              >
+            </td>
+            <td class="stress_ng_value">{{ row.scaling }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </ng-template>
 
 <div

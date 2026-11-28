@@ -1,5 +1,5 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16 text-white">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16 text-white">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     @if (isLoading) {
@@ -18,79 +18,77 @@
     }
 
     @if (serverDetails) {
-      <sc-details-header
-        resource="server"
-        [vendorId]="serverDetails.vendor_id"
-        [vendorName]="serverDetails.vendor.name"
-        [vendorLogo]="serverDetails.vendor.logo"
-        [entityId]="serverDetails.api_reference"
-        [displayName]="serverDetails.display_name"
-        [description]="description"
-        [priceDescription]="cardPriceDescription"
-        [features]="features"
-        [score]="{
-          primary: getBenchmark(true),
-          primaryLabel: 'All-cores',
-          secondary: getBenchmark(false),
-          secondaryLabel: 'Single-core',
-        }"
-      >
-        <span detailsScoreTitle
-          >Spare <span class="text-emerald-400"> SC</span>ore</span
-        >
-        <sc-button
-          detailsActions
-          label="Summarize"
-          icon="sparkles"
-          [disabled]="!descriptionsAvailable"
-          [title]="
-            descriptionsAvailable
-              ? 'Open AI-generated server summary'
-              : 'AI summary not available for this server'
-          "
-          data-ph-capture-attribute-sc-event="server details summarize open"
-          (click)="openSummarizeModal()"
-        ></sc-button>
-      </sc-details-header>
-    }
-
-    @if (serverDetails && getBenchmark(true) === "-") {
       <div
-        class="mx-2 xl:mx-0 mt-8 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
-        role="alert"
+        class="content-gutter flex flex-wrap gap-4 md:gap-8 mt-4 sm:mt-8 lg:mt-12"
       >
-        <svg lucideTriangleAlert class="h-6 w-6 bounce-3"></svg>
-        <div>
-          <span class="font-bold"
-            >Benchmark data is currently unavailable for this server.
-          </span>
-          View this
-          <a
-            class="underline font-semibold"
-            routerLink="/navigator/benchmark-coverage"
-            [queryParams]="{
-              search: serverDetails.api_reference,
-            }"
-            fragment="benchmark-coverage-details-pointer"
-          >
-            server's measurement status </a
-          >, or visit the
-          <a
-            class="underline font-semibold"
-            routerLink="/navigator/benchmark-coverage"
-            >general Benchmark Coverage</a
-          >
-          page to learn more about possible causes.
-        </div>
-      </div>
-    }
-
-    @if (serverDetails) {
-      <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
-        <div
-          class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
+        <sc-details-header
+          class="w-full"
+          resource="server"
+          [vendorId]="serverDetails.vendor_id"
+          [vendorName]="serverDetails.vendor.name"
+          [vendorLogo]="serverDetails.vendor.logo"
+          [entityId]="serverDetails.api_reference"
+          [displayName]="serverDetails.display_name"
+          [description]="description"
+          [priceDescription]="cardPriceDescription"
+          [features]="features"
+          [score]="headerScore"
         >
-          <h2 class="text-3xl font-bold">
+          <span detailsScoreTitle
+            >Spare <span class="text-emerald-400"> SC</span>ore</span
+          >
+          <sc-button
+            detailsActions
+            label="Summarize"
+            [compact]="true"
+            icon="sparkles"
+            [disabled]="!descriptionsAvailable"
+            [title]="
+              descriptionsAvailable
+                ? 'Open AI-generated server summary'
+                : 'AI summary not available for this server'
+            "
+            data-ph-capture-attribute-sc-event="server details summarize open"
+            (click)="openSummarizeModal()"
+          ></sc-button>
+        </sc-details-header>
+        @if (!headerScore || headerScore.primaryValue === null) {
+          <div
+            class="w-full bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
+            role="alert"
+          >
+            <svg
+              lucideTriangleAlert
+              class="h-4 w-4 shrink-0 bounce-3 sm:h-6 sm:w-6"
+            ></svg>
+            <div>
+              <span class="font-bold"
+                >Benchmark data is currently unavailable for this server.
+              </span>
+              View this
+              <a
+                class="underline font-semibold"
+                routerLink="/navigator/benchmark-coverage"
+                [queryParams]="{
+                  search: serverDetails.api_reference,
+                }"
+                fragment="benchmark-coverage-details-pointer"
+              >
+                server's measurement status </a
+              >, or visit the
+              <a
+                class="underline font-semibold"
+                routerLink="/navigator/benchmark-coverage"
+                >general Benchmark Coverage</a
+              >
+              page to learn more about possible causes.
+            </div>
+          </div>
+        }
+        <div
+          class="mt-4 sm:my-2 w-full flex justify-between items-center sc-header-anchor-host"
+        >
+          <h2 class="text-2xl font-bold sm:text-3xl">
             Specifications
             <sc-header-anchor
               anchorId="specifications"
@@ -147,12 +145,10 @@
         ></sc-details-card>
         @if (lstopoSvgExists !== false) {
           <div
-            class="sc-chart-block sc-chart-block--full"
+            class="sc-chart-block sc-chart-block--half sc-chart-block--half-from-xl"
             id="lstopo"
-            [style.width]="
-              !isSmallScreen && lstopoSvgWidth > 0 && lstopoSvgWidth <= 600
-                ? 'calc(50% - 1rem)'
-                : '100%'
+            [class.sc-chart-block--full]="
+              !(lstopoSvgWidth > 0 && lstopoSvgWidth <= 600)
             "
           >
             <sc-server-lstopo
@@ -167,14 +163,16 @@
         }
         @if (descriptionsAvailable && serverDescription) {
           <div
-            class="sc-chart-block sc-chart-block--half sc-chart-block--open server-description-card"
+            class="sc-chart-block sc-chart-block--half sc-chart-block--half-from-xl sc-chart-block--open server-description-card"
             [class.sc-chart-block--full]="descriptionCardIsFullWidth()"
           >
             <div
               class="flex justify-between items-center gap-4 sc-header-anchor-host sc-header-anchor-host--card"
             >
-              <h3 class="text-2xl">
-                Server Description
+              <h3 class="sc-chart-title">
+                <sc-truncated-title
+                  text="Server Description"
+                ></sc-truncated-title>
                 <sc-header-anchor
                   anchorId="description"
                   label="Server Description"
@@ -182,6 +180,7 @@
               </h3>
               <sc-button
                 label="More details"
+                [compact]="true"
                 size="small"
                 icon="maximize-2"
                 iconPosition="start"
@@ -196,7 +195,20 @@
               </p>
             }
             @if (serverDescription.categories.length) {
-              <div class="server-description-categories">
+              <div class="flex flex-wrap gap-2 sm:hidden">
+                @for (
+                  category of serverDescription.categories;
+                  track category
+                ) {
+                  <sc-button
+                    variant="outline"
+                    size="mobile"
+                    [label]="category"
+                    [disabled]="true"
+                  ></sc-button>
+                }
+              </div>
+              <div class="hidden flex-wrap gap-2 sm:flex">
                 @for (
                   category of serverDescription.categories;
                   track category
@@ -215,8 +227,8 @@
             </p>
           </div>
         }
-        <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold sc-header-anchor-host">
+        <div class="mt-4 sm:my-2 w-full">
+          <h2 class="text-2xl font-bold sm:text-3xl sc-header-anchor-host">
             Economics
             <sc-header-anchor
               anchorId="economics"
@@ -230,8 +242,10 @@
           <div
             class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
           >
-            <h3 class="text-2xl">
-              Average Price per Region
+            <h3 class="sc-chart-title">
+              <sc-truncated-title
+                text="Average Price per Region"
+              ></sc-truncated-title>
               <sc-header-anchor
                 anchorId="price_per_region"
                 label="Average Price per Region"
@@ -259,8 +273,8 @@
           <div
             class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
           >
-            <h3 class="text-2xl">
-              Prices per Zone
+            <h3 class="sc-chart-title">
+              <sc-truncated-title text="Prices per Zone"></sc-truncated-title>
               <sc-header-anchor
                 anchorId="prices_per_zone"
                 label="Prices per Zone"
@@ -274,6 +288,7 @@
                 #regionDropdown="scDropdown"
                 label="Regions"
                 icon="chevron-down"
+                compactIcon="globe"
                 variant="dropdown"
                 size="small"
               ></sc-button>
@@ -298,9 +313,9 @@
           class="sc-chart-block sc-chart-block--half price-sections-to-hide-for-test"
         >
           <h3
-            class="text-2xl sc-header-anchor-host sc-header-anchor-host--card"
+            class="sc-chart-title sc-header-anchor-host sc-header-anchor-host--card"
           >
-            Lowest Prices
+            <sc-truncated-title text="Lowest Prices"></sc-truncated-title>
             <sc-header-anchor
               anchorId="lowest_prices"
               label="Lowest Prices"
@@ -322,8 +337,8 @@
           }
         </div>
         @if (serverDetails.benchmark_scores.length) {
-          <div class="my-2 w-full">
-            <h2 class="text-3xl font-bold sc-header-anchor-host">
+          <div class="mt-4 sm:my-2 w-full">
+            <h2 class="text-2xl font-bold sm:text-3xl sc-header-anchor-host">
               Performance
               <sc-header-anchor
                 anchorId="performance"
@@ -333,10 +348,13 @@
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
-              class="mx-2 xl:mx-0 mb-4 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-full"
+              class="bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-full"
               role="alert"
             >
-              <svg lucideTriangleAlert class="h-6 w-6 bounce-3"></svg>
+              <svg
+                lucideTriangleAlert
+                class="h-4 w-4 shrink-0 bounce-3 sm:h-6 sm:w-6"
+              ></svg>
               <div>
                 <span class="font-bold">{{
                   burstableInstanceWarningTitle
@@ -347,13 +365,13 @@
           }
         }
         <sc-server-charts
-          class="w-full flex flex-wrap gap-8"
+          class="w-full flex flex-wrap gap-4 md:gap-8"
           [serverDetails]="serverDetails"
           [benchmarksByCategory]="benchmarksByCategory"
           [benchmarkMeta]="benchmarkMeta"
         ></sc-server-charts>
-        <div class="my-2 w-full">
-          <h2 class="text-3xl font-bold sc-header-anchor-host">
+        <div class="mt-4 sm:my-2 w-full">
+          <h2 class="text-2xl font-bold sm:text-3xl sc-header-anchor-host">
             Alternatives
             <sc-header-anchor
               anchorId="alternatives"
@@ -361,57 +379,66 @@
             ></sc-header-anchor>
           </h2>
         </div>
-        <div class="sc-chart-block sc-chart-block--half">
+        <div
+          class="sc-chart-block sc-chart-block--half h-auto min-h-0 md:min-h-115"
+        >
           <div
             class="flex items-center min-h-[42px] sc-header-anchor-host sc-header-anchor-host--card"
           >
-            <h3 class="text-2xl">
-              Servers of the Same Family
+            <h3 class="sc-chart-title">
+              <sc-truncated-title
+                text="Servers of the Same Family"
+              ></sc-truncated-title>
               <sc-header-anchor
                 anchorId="same_family"
                 label="Servers of the Same Family"
               ></sc-header-anchor>
             </h3>
           </div>
-          <table class="items_table_similar similar_family_table">
-            <thead>
-              <tr>
-                <th>INSTANCE</th>
-                <th>vCPUs</th>
-                <th>MEMORY</th>
-                <th>Accelerators</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (
-                server of similarByFamily;
-                track server.vendor_id + "_" + server.server_id
-              ) {
+          <div class="overflow-x-auto">
+            <table class="items_table_similar similar_family_table">
+              <thead>
                 <tr>
-                  <td>
-                    <a
-                      class="sc-link"
-                      [routerLink]="[
-                        '/server',
-                        server.vendor_id,
-                        server.api_reference,
-                      ]"
-                    >
-                      {{ server.display_name }}
-                    </a>
-                  </td>
-                  <td>{{ server.vcpus }}</td>
-                  <td>{{ getMemory(server.memory_amount) }}</td>
-                  <td>{{ server.accelerator_count | acceleratorCount }}</td>
+                  <th>INSTANCE</th>
+                  <th>vCPUs</th>
+                  <th>MEMORY</th>
+                  <th>Accelerators</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (
+                  server of similarByFamily;
+                  track server.vendor_id + "_" + server.server_id
+                ) {
+                  <tr>
+                    <td>
+                      <a
+                        class="sc-link"
+                        [routerLink]="[
+                          '/server',
+                          server.vendor_id,
+                          server.api_reference,
+                        ]"
+                      >
+                        {{ server.display_name }}
+                      </a>
+                    </td>
+                    <td>{{ server.vcpus }}</td>
+                    <td>{{ getMemory(server.memory_amount) }}</td>
+                    <td>{{ server.accelerator_count | acceleratorCount }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="sc-chart-block sc-chart-block--half" id="similar_servers">
+        <div
+          class="sc-chart-block sc-chart-block--half h-auto min-h-0 md:min-h-115"
+          id="similar_servers"
+        >
           <div class="flex justify-between items-center sc-header-anchor-host">
-            <h3 class="text-2xl">
-              Similar Servers
+            <h3 class="sc-chart-title">
+              <sc-truncated-title text="Similar Servers"></sc-truncated-title>
               <sc-header-anchor
                 anchorId="similar_servers"
                 label="Similar Servers"
@@ -426,85 +453,90 @@
                 #similarDropdown="scDropdown"
                 [label]="selectedSimilarOption.name"
                 icon="chevron-down"
+                compactIcon="settings"
                 variant="dropdown"
                 size="small"
               ></sc-button>
             </div>
           </div>
-          <table class="items_table_similar" id="similar_table">
-            <thead>
-              <tr>
-                <th>INSTANCE</th>
-                <th>VENDOR</th>
-                <th>vCPUs</th>
-                <th>MEMORY</th>
-                @if (selectedSimilarOption.key === "bySpecs") {
-                  <th>Accelerators</th>
-                }
-                @if (selectedSimilarOption.key === "byScore") {
-                  <th>SCORE</th>
-                }
-                @if (selectedSimilarOption.key === "byPerformancePerPrice") {
-                  <th>$CORE</th>
-                }
-              </tr>
-            </thead>
-            <tbody>
-              @for (
-                server of similarServers;
-                track server.vendor_id + "_" + server.server_id
-              ) {
-                <tr class="similar_line">
-                  <td>
-                    <a
-                      class="sc-link"
-                      [routerLink]="[
-                        '/server',
-                        server.vendor_id,
-                        server.api_reference,
-                      ]"
-                    >
-                      {{ server.display_name }}
-                    </a>
-                  </td>
-                  <td>{{ server.vendor_id }}</td>
-                  <td>{{ server.vcpus }}</td>
-                  <td>{{ getMemory(server.memory_amount) }}</td>
+          <div class="overflow-x-auto">
+            <table class="items_table_similar" id="similar_table">
+              <thead>
+                <tr>
+                  <th>INSTANCE</th>
+                  <th>VENDOR</th>
+                  <th>vCPUs</th>
+                  <th>MEMORY</th>
                   @if (selectedSimilarOption.key === "bySpecs") {
-                    <td>
-                      {{ server.accelerator_count | acceleratorCount }}
-                    </td>
+                    <th>Accelerators</th>
                   }
                   @if (selectedSimilarOption.key === "byScore") {
-                    <td>
-                      {{ formatScore(server.score) }}
-                    </td>
+                    <th>SCORE</th>
                   }
                   @if (selectedSimilarOption.key === "byPerformancePerPrice") {
-                    <td>
-                      {{ formatScore(server.score_per_price) }}
-                    </td>
+                    <th>$CORE</th>
                   }
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (
+                  server of similarServers;
+                  track server.vendor_id + "_" + server.server_id
+                ) {
+                  <tr class="similar_line">
+                    <td>
+                      <a
+                        class="sc-link"
+                        [routerLink]="[
+                          '/server',
+                          server.vendor_id,
+                          server.api_reference,
+                        ]"
+                      >
+                        {{ server.display_name }}
+                      </a>
+                    </td>
+                    <td>{{ server.vendor_id }}</td>
+                    <td>{{ server.vcpus }}</td>
+                    <td>{{ getMemory(server.memory_amount) }}</td>
+                    @if (selectedSimilarOption.key === "bySpecs") {
+                      <td>
+                        {{ server.accelerator_count | acceleratorCount }}
+                      </td>
+                    }
+                    @if (selectedSimilarOption.key === "byScore") {
+                      <td>
+                        {{ formatScore(server.score) }}
+                      </td>
+                    }
+                    @if (
+                      selectedSimilarOption.key === "byPerformancePerPrice"
+                    ) {
+                      <td>
+                        {{ formatScore(server.score_per_price) }}
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    }
-
-    @if (serverDetails) {
-      <div #giscusParent class="my-8 w-1/2 m-auto">
-        <sc-accordion
-          [useFaqSchema]="true"
-          [showHeading]="true"
-          anchorId="faqs"
-          [heading]="serverDetails.display_name"
-          [items]="faqs"
-          [activeIndex]="activeFAQ"
-          (activeIndexChange)="activeFAQChanged($event)"
-        ></sc-accordion>
-        <div class="giscus"></div>
+        <div
+          #giscusParent
+          class="w-full px-4.25 mt-4 mb-8 sm:mt-2 md:px-6.25 lg:mx-auto lg:w-1/2 lg:px-0"
+        >
+          <sc-accordion
+            [useFaqSchema]="true"
+            [showHeading]="true"
+            anchorId="faqs"
+            [heading]="serverDetails.display_name"
+            [items]="faqs"
+            [activeIndex]="activeFAQ"
+            (activeIndexChange)="activeFAQChanged($event)"
+          ></sc-accordion>
+          <div class="giscus"></div>
+        </div>
       </div>
     }
   </div>
@@ -576,7 +608,9 @@
     closeCaptureEvent="server details summarize close"
   >
     @if (serverDescription && isSummarizeModalOpen) {
-      <div class="flex flex-col gap-4 p-4 md:p-6 max-h-[70vh] overflow-y-auto">
+      <div
+        class="flex flex-col gap-4 p-4 sm:max-h-[70vh] sm:overflow-y-auto md:p-6"
+      >
         @if (serverDescription.tagline || serverDescription.categories.length) {
           <div class="flex flex-col gap-4 pb-4 border-b border-gray-600">
             @if (serverDescription.tagline) {
@@ -585,7 +619,20 @@
               </p>
             }
             @if (serverDescription.categories.length) {
-              <div class="server-description-categories">
+              <div class="flex flex-wrap gap-2 sm:hidden">
+                @for (
+                  category of serverDescription.categories;
+                  track category
+                ) {
+                  <sc-button
+                    variant="outline"
+                    size="mobile"
+                    [label]="category"
+                    [disabled]="true"
+                  ></sc-button>
+                }
+              </div>
+              <div class="hidden flex-wrap gap-2 sm:flex">
                 @for (
                   category of serverDescription.categories;
                   track category

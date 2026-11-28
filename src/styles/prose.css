@@ -26,6 +26,18 @@
   @apply text-gray-500;
 }
 
+:host ::ng-deep .sc-prose a {
+  overflow-wrap: anywhere;
+}
+
+:host ::ng-deep .sc-prose iframe {
+  max-width: 100%;
+}
+
+:host ::ng-deep .sc-prose pre {
+  overflow-x: auto;
+}
+
 :host ::ng-deep .sc-prose p {
   @apply my-10;
   @apply text-lg;

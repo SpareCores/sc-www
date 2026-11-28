@@ -62,6 +62,30 @@ describe("WorkloadProfileRadarChartBuilder", () => {
     ).toBe("Workload profile: Web server");
   });
 
+  it("wraps long radar point labels at word boundaries", () => {
+    const charts = service.buildDetailsCharts({
+      serverDetails: {
+        benchmark_scores: [
+          { benchmark_id: "workload_profile:compute", score: 0.5 },
+        ],
+      },
+      benchmarkMeta: [
+        {
+          benchmark_id: "workload_profile:compute",
+          name: "Workload profile: Compute Heavy Applications",
+          status: Status.Active,
+        },
+      ],
+    });
+    const callback = charts?.options?.scales?.["r"]?.pointLabels?.callback;
+
+    expect(callback?.("Compute Heavy Applications", 0)).toEqual([
+      "Compute Heavy",
+      "Applications",
+    ]);
+    expect(callback?.("Web Server", 1)).toEqual(["Web Server"]);
+  });
+
   it("excludes workload profiles without score data from details charts", () => {
     const charts = service.buildDetailsCharts({
       serverDetails: {

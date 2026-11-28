@@ -89,7 +89,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 ### Overlays
 
 - Dropdowns use the `[scDropdown]` directive (`src/app/directives/dropdown.ts`); modals use `<sc-modal>` opened through the `ModalDialog` service (`src/app/services/modal-dialog.ts`). Both run on Angular CDK; never reintroduce Flowbite, Popper or hand-rolled show/hide overlays.
-- Keep `OVERLAY_DEFAULT_CONFIG` set to `{ usePopover: false }` in `app.config.ts`; the overlay z-index layers (page dropdowns 40, header dropdowns and dialogs 60) depend on it.
+- Keep `OVERLAY_DEFAULT_CONFIG` set to `{ usePopover: false }` in `app.config.ts`; the overlay z-index layers (page dropdowns 45, header dropdowns and dialogs 60) depend on it.
 
 ## HTML Templates (`*.html`)
 
@@ -117,6 +117,7 @@ Repository-level rules for AI coding agents. Global rules apply to every task; t
 - Stylesheets are plain `.css`; never add SCSS. Component stylesheets that use `@apply` or `theme()` start with `@reference "<relative path>/styles/tailwind.css";`.
 - Shared classes use the `sc-` prefix with BEM modifiers (`sc-card`, `sc-card--primary`) and live in `src/styles/components/*.css`, imported from `src/styles.css` with `layer(components)`. Layered rules lose to utilities and to unlayered component CSS; only the embedded chart overflow rule in `src/styles.css` is unlayered on purpose. Page-specific `innerHTML` styles (e.g. `src/styles/prose.css`) load through the pages' `styleUrls`, not the global stylesheet.
 - Colors come from theme tokens (utilities or `var(--color-*)`). Never add hex or `rgb()` literals outside `src/styles/theme.css` and `src/app/components/charts/shared/chart-colors.constants.ts`, except inside data-URI SVG images, which cannot read CSS variables; add new colors as OKLCH tokens in `theme.css`.
-- Use the theme breakpoints (`sm` to `2xl` and `wide`) through variants or `@media (width < theme(--breakpoint-*))`; never raw pixel media queries.
+- Use Tailwind's default breakpoints (`sm` to `2xl`) mobile-first, through variants or `@media (width >= theme(--breakpoint-*))`; never raw pixel media queries or custom `--breakpoint-*` tokens.
+- Handle responsive sizing and layout in CSS, not with script viewport checks (`matchMedia`, breakpoint signals). When a component input differs per breakpoint, render both variants and toggle them with `hidden`/`sm:flex`-style utilities. Behavior state that depends on the viewport (e.g. collapsing a sidebar on mobile) may use `watchBelowBreakpoint` (`src/app/tools/breakpoints.ts`), which reads the viewport only after hydration.
 - Use `::ng-deep` only for third-party markup (e.g. SurveyJS) and `innerHTML` content. Style child components through inputs, host classes or shared classes, and do not add `ViewEncapsulation.None`.
 - There is no dark mode; never add `dark:` variants.

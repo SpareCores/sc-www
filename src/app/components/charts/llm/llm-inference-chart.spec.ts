@@ -119,6 +119,21 @@ describe("LlmInferenceChart", () => {
     expect(component.comparePromptData()?.labels).toEqual([128]);
   });
 
+  it("hides the inline compare controls on phones when the host shows them in the header", () => {
+    fixture.componentRef.setInput("layout", "compare");
+    fixture.componentRef.setInput("controlsInHeader", true);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const inlineControls = element
+      .querySelector("sc-button")
+      ?.closest(".justify-end") as HTMLElement | null;
+
+    expect(inlineControls?.classList).toContain("hidden");
+    expect(inlineControls?.classList).toContain("sm:flex");
+    expect(component.compareControls()).toBeDefined();
+  });
+
   it("closes the compare dropdown after selecting a model", () => {
     const benchmarkMeta: LlmBenchmarkMeta[] = [
       {

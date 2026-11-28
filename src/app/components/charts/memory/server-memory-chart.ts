@@ -20,6 +20,7 @@ import { BaseChartDirective } from "ng2-charts";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import { MemoryChartBuilder } from "./memory-chart-builder";
@@ -30,11 +31,13 @@ import {
   MemoryBenchmarkMeta,
   MemoryDetailsServer,
 } from "./memory-chart.types";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-server-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideInfo,
@@ -43,6 +46,7 @@ import {
     Dropdown,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./server-memory-chart.html",
   styles: [
@@ -151,10 +155,10 @@ export class ServerMemoryChart {
     this.memoryChartDropdown()?.hide();
   }
 
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -162,10 +166,10 @@ export class ServerMemoryChart {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {

@@ -6,30 +6,35 @@
           <div
             class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
           >
-            <h3 class="text-2xl flex items-center gap-2">
+            <h3 class="sc-chart-title">
               <svg
                 [lucideIcon]="'llm_speed' | benchmarkIcon"
                 class="h-6 w-6"
               ></svg>
-              LLM Inference Speed for Prompt Processing
+              <sc-truncated-title
+                text="LLM Inference Speed for Prompt Processing"
+              ></sc-truncated-title>
               <svg
                 lucideCircleArrowUp
                 class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, orderTooltip)"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, orderTooltip)"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               <svg
                 lucideInfo
                 class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, promptInfoTooltip())"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, promptInfoTooltip())"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               @if (promptMetaNote()) {
                 <svg
                   lucideTriangleAlert
                   class="benchmark-note-icon"
-                  (mouseenter)="showWarningTooltip($event, promptMetaNote())"
-                  (mouseleave)="hideTooltip()"
+                  scTooltipTrigger
+                  (tooltipOpen)="showWarningTooltip($event, promptMetaNote())"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (promptAnchorId(); as id) {
@@ -65,32 +70,37 @@
           <div
             class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
           >
-            <h3 class="text-2xl flex items-center gap-2">
+            <h3 class="sc-chart-title">
               <svg
                 [lucideIcon]="'llm_speed' | benchmarkIcon"
                 class="h-6 w-6"
               ></svg>
-              LLM Inference Speed for Text Generation
+              <sc-truncated-title
+                text="LLM Inference Speed for Text Generation"
+              ></sc-truncated-title>
               <svg
                 lucideCircleArrowUp
                 class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, orderTooltip)"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, orderTooltip)"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               <svg
                 lucideInfo
                 class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, generationInfoTooltip())"
-                (mouseleave)="hideTooltip()"
+                scTooltipTrigger
+                (tooltipOpen)="showTooltip($event, generationInfoTooltip())"
+                (tooltipClose)="hideTooltip()"
               ></svg>
               @if (generationMetaNote()) {
                 <svg
                   lucideTriangleAlert
                   class="benchmark-note-icon"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     showWarningTooltip($event, generationMetaNote())
                   "
-                  (mouseleave)="hideTooltip()"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
               }
               @if (generationAnchorId(); as id) {
@@ -121,32 +131,32 @@
   }
 } @else {
   <div class="sc-chart-block sc-chart-block--split">
-    <div class="flex justify-end items-center mb-4">
+    <div
+      class="justify-end items-center mb-4"
+      [class]="controlsInHeader() ? 'hidden sm:flex' : 'flex'"
+    >
       <div class="flex gap-4">
-        <button
-          #modelDropdown="scDropdown"
-          [id]="buttonId"
-          class="dropdown_button chart-selector-button"
-          type="button"
-          [scDropdown]="modelPanel"
-          [dropdownEnabled]="availableModels().length > 0"
-        >
-          <div class="chart-selector-button__label">
-            {{ currentModelName() }}
-          </div>
-          <div class="chart-selector-button__icon">
-            <svg
-              lucideChevronDown
-              class="h-6 w-6 shrink-0 text-emerald-400"
-            ></svg>
-          </div>
-        </button>
+        <ng-container [ngTemplateOutlet]="compareControls" />
       </div>
     </div>
+    <ng-template #compareControls let-idSuffix="idSuffix">
+      <sc-button
+        class="min-w-0"
+        #modelDropdown="scDropdown"
+        [id]="buttonId + (idSuffix ?? '')"
+        [scDropdown]="modelPanel"
+        [dropdownEnabled]="availableModels().length > 0"
+        [label]="currentModelName()"
+        icon="chevron-down"
+        compactIcon="settings"
+        variant="dropdown"
+        size="small"
+      ></sc-button>
+    </ng-template>
     @if (isBrowser) {
       <div class="charts_div">
         @if (comparePromptData()) {
-          <div chartType="bar" class="chart_div">
+          <div chartType="bar" class="chart_div sm:pb-5">
             <canvas
               baseChart
               [data]="comparePromptData()"
@@ -157,7 +167,7 @@
           </div>
         }
         @if (compareGenerationData()) {
-          <div chartType="bar" class="chart_div">
+          <div chartType="bar" class="chart_div sm:pb-5">
             <canvas
               baseChart
               [data]="compareGenerationData()"

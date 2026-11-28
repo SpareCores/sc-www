@@ -2,18 +2,25 @@
   class="sc-chart-block sc-chart-block--inline"
   [class.memory-compare-chart--cache-markers]="hasCacheAnnotations()"
 >
-  <div class="flex justify-end items-center">
+  <div
+    class="justify-end items-center"
+    [class]="controlsInHeader() ? 'hidden sm:flex' : 'flex'"
+  >
+    <ng-container [ngTemplateOutlet]="compareControls" />
+  </div>
+  <ng-template #compareControls let-idSuffix="idSuffix">
     <sc-button
       class="min-w-0"
       #memoryCompareDropdown="scDropdown"
-      [id]="buttonId"
+      [id]="buttonId + (idSuffix ?? '')"
       [scDropdown]="memoryComparePanel"
       [dropdownEnabled]="availableOptions().length > 0"
       [label]="currentOptionName()"
       icon="chevron-down"
+      compactIcon="settings"
       variant="dropdown"
     ></sc-button>
-  </div>
+  </ng-template>
   @if (chartData() && isBrowser) {
     <div class="h-full">
       <div class="chart_div" chartType="bar">

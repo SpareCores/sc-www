@@ -1,6 +1,24 @@
 @reference "../../../styles/tailwind.css";
 
 .delimiter {
-  width: 100%;
+  width: auto;
+  margin-left: max(--spacing(2), env(safe-area-inset-left));
+  margin-right: max(--spacing(2), env(safe-area-inset-right));
   @apply border-gray-200 border-b bg-transparent;
+
+  @media (width >= theme(--breakpoint-lg)) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.nav {
+  padding-left: max(--spacing(2), env(safe-area-inset-left));
+  padding-right: max(--spacing(2), env(safe-area-inset-right));
+
+  @media (width >= theme(--breakpoint-lg)) {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: --spacing(3);
+  }
 }

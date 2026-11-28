@@ -81,6 +81,27 @@ export function openGuestAuthButton(label: "Register" | "Log in"): void {
     });
 }
 
+export function openAccountMenu(): Cypress.Chainable<string> {
+  return cy.get("#auth_button", { timeout: 30000 }).then(($authButton) => {
+    const inHeader = $authButton.is(":visible");
+    const trigger = inHeader ? "#auth_button" : "#menu_button";
+    const panel = inHeader ? "#auth_options" : "#menu_options";
+
+    cy.get(trigger).should("be.visible").click();
+    cy.get(panel).should("be.visible");
+    return cy.wrap(panel);
+  });
+}
+
+export function openAccountAction(label: "Edit Profile" | "Sign Out"): void {
+  openAccountMenu().then((panel) => {
+    cy.contains(`${panel} button`, label)
+      .scrollIntoView()
+      .should("be.visible")
+      .click();
+  });
+}
+
 export function expectAuthModalStep(title: string): void {
   cy.get('[data-testid="auth-modal"] h2', { timeout: 30000 }).should(
     ($title) => {
@@ -130,7 +151,7 @@ export function acceptRegisterConsent(): void {
 
 export function expectSignedIn(): void {
   cy.get('[data-testid="auth-modal"]', { timeout: 30000 }).should("not.exist");
-  cy.get("#auth_button", { timeout: 30000 }).should("be.visible");
+  cy.get("#auth_button", { timeout: 30000 }).should("exist");
 }
 
 export function registerClerkTestUser(email: string, password: string): void {
@@ -181,10 +202,9 @@ export function loginClerkTestUser(email: string, password: string): void {
 
 export function signOutClerkTestUser(): void {
   E2EEvent.visitURL("/");
-  cy.get("#auth_button").should("be.visible").click();
-  cy.get("#auth_options").should("be.visible");
-  cy.contains("#auth_options button", "Sign Out").click();
+  openAccountAction("Sign Out");
   cy.get("#auth_button").should("not.exist");
+  cy.get("#menu_account").should("not.exist");
   cy.then(() => Cypress.session.clearAllSavedSessions());
 }
 

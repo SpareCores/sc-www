@@ -1,28 +1,61 @@
 @reference "../../../styles/tailwind.css";
 
-.repo_table {
-  @apply w-full;
+.content_section {
+  @apply bg-primary;
+  @apply text-white;
+  padding: 3rem 1rem;
+  border-top: 1px solid var(--color-emerald-400);
 
-  thead {
-    @apply border-b border-emerald-400 border-solid;
-    th {
-      @apply text-left px-5 py-3 font-normal text-xs;
-    }
+  @media (width >= theme(--breakpoint-sm)) {
+    padding: 4rem 2rem;
   }
-  tbody {
-    tr:nth-child(2n + 1) {
-      @apply bg-primary;
-    }
-    tr:nth-child(2n) {
-      @apply bg-secondary;
-    }
-    tr {
-      td {
-        @apply px-5 py-3 text-left text-sm;
-        a:hover {
-          opacity: 0.5;
-        }
-      }
-    }
+}
+
+.content_section.even {
+  @apply bg-secondary;
+}
+
+.content_section.snug-top {
+  padding-top: 2rem;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-top: 4rem;
+  }
+}
+
+.content_section.snug-bottom {
+  padding-bottom: 2rem;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-bottom: 4rem;
+  }
+}
+
+.content_section.first {
+  border-top: 0px;
+  padding-top: 0;
+  padding-bottom: 2rem;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+.navigator-swiper {
+  --swiper-pagination-bottom: 0px;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    --swiper-pagination-bottom: 8px;
+  }
+}
+
+.navigator-swiper::part(pagination) {
+  display: flex;
+  justify-content: center;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    display: block;
+    justify-content: normal;
   }
 }

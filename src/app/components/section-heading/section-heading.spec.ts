@@ -1,0 +1,78 @@
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+
+import { SectionHeading } from "./section-heading";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
+
+describe("SectionHeading", () => {
+  let fixture: ComponentFixture<SectionHeading>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SectionHeading],
+      providers: [...sharedTestingProviders],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SectionHeading);
+    fixture.componentRef.setInput("tag", "product");
+    fixture.detectChanges();
+  });
+
+  it("should create with the tag only", () => {
+    const title = fixture.nativeElement.querySelector("h2");
+    expect(title.textContent.replace(/\s/g, "")).toBe("<product>");
+    expect(fixture.nativeElement.querySelectorAll("p").length).toBe(1);
+  });
+
+  it("renders the attribute and the subtitle", () => {
+    fixture.componentRef.setInput("attrName", "id");
+    fixture.componentRef.setInput("attrValue", "sentinel");
+    fixture.componentRef.setInput("subtitle", "For platform leads");
+    fixture.detectChanges();
+
+    const title = fixture.nativeElement.querySelector("h2");
+    expect(title.textContent).toContain('product id="sentinel"');
+    expect(fixture.nativeElement.textContent).toContain("For platform leads");
+  });
+
+  it("sets the title in the mono font from sm when monoTitle is set", () => {
+    const title = fixture.nativeElement.querySelector("h2");
+    expect(title.classList).not.toContain("sm:font-mono");
+
+    fixture.componentRef.setInput("monoTitle", true);
+    fixture.detectChanges();
+
+    expect(title.classList).toContain("sm:font-mono");
+  });
+
+  it("widens the gap below the title from sm when wideTitleGap is set", () => {
+    const title = fixture.nativeElement.querySelector("h2");
+    expect(title.classList).not.toContain("sm:mb-4");
+
+    fixture.componentRef.setInput("wideTitleGap", true);
+    fixture.detectChanges();
+
+    expect(title.classList).toContain("sm:mb-4");
+  });
+
+  it("sets the description in the mono font from sm when monoDescription is set", () => {
+    const description = fixture.nativeElement.querySelector("p");
+    expect(description.classList).not.toContain("sm:font-mono");
+
+    fixture.componentRef.setInput("monoDescription", true);
+    fixture.detectChanges();
+
+    expect(description.classList).toContain("sm:font-mono");
+  });
+
+  it("renders a header anchor in the title when anchorId is set", () => {
+    expect(fixture.nativeElement.querySelector("sc-header-anchor")).toBeNull();
+
+    fixture.componentRef.setInput("anchorId", "sentinel");
+    fixture.componentRef.setInput("anchorLabel", "Sentinel");
+    fixture.detectChanges();
+
+    const title = fixture.nativeElement.querySelector("h2");
+    expect(title.classList).toContain("sc-header-anchor-host");
+    expect(title.querySelector("a.sc-header-anchor")).not.toBeNull();
+  });
+});

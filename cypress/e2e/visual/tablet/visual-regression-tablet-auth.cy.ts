@@ -1,9 +1,12 @@
 import { registerAuthVisualSuites } from "../../../support/auth-visual";
+import { TABLET_VISUAL_VIEWPORTS } from "../../../support/generics";
 
-describe("Auth visual (medium screen - 1024px)", () => {
-  beforeEach(() => {
-    cy.viewport(1024, 900);
+TABLET_VISUAL_VIEWPORTS.forEach(({ prefix, width, height }) => {
+  describe(`Auth visual (tablet - ${width}x${height})`, () => {
+    beforeEach(() => {
+      cy.viewport(width, height);
+    });
+
+    registerAuthVisualSuites(prefix);
   });
-
-  registerAuthVisualSuites("tablet");
 });

@@ -38,13 +38,15 @@ import {
 import { Button } from "../../components/button/button";
 import { LoadingSpinner } from "../../components/loading-spinner/loading-spinner";
 import { PageHeader } from "../../components/page-header/page-header";
-import { Pagination } from "../../components/pagination/pagination";
+import { PageActions } from "../../components/page-actions/page-actions";
+import { TableFooter } from "../../components/table-footer/table-footer";
 import { SearchBar } from "../../components/search-bar/search-bar";
 import type {
   SearchBarParameter,
   SearchBarQuery,
 } from "../../components/search-bar/types/search-bar.types";
-import { Dropdown } from "../../directives/dropdown";
+import { SelectDropdown } from "../../components/select-dropdown/select-dropdown";
+import { ColumnPicker } from "../../components/column-picker/column-picker";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon-pipe";
 import { StoragePipe } from "../../pipes/storage-pipe";
 import { Analytics } from "../../services/analytics";
@@ -72,13 +74,16 @@ import { AuthState } from "../../core/auth";
 import {
   BestDatabasePriceAllocationType,
   CurrencyOption,
+  allocationLabel,
   availableCurrencies,
   bestDatabasePriceAllocationTypes,
+  currencyLabel,
 } from "../../tools/shared_data";
 import {
   TableColumn,
   buildDatabaseListingColumns,
 } from "../../tools/table-columns";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 type OpenApiParameterSource = {
   name: string;
@@ -107,6 +112,7 @@ type DatabaseListingQuery = Params &
 @Component({
   selector: "sc-database-listing",
   imports: [
+    TooltipTrigger,
     CommonModule,
     FormsModule,
     Breadcrumbs,
@@ -119,11 +125,13 @@ type DatabaseListingQuery = Params &
     RouterModule,
     Button,
     PageHeader,
+    PageActions,
     SearchBar,
-    Pagination,
+    TableFooter,
     LoadingSpinner,
     StoragePipe,
-    Dropdown,
+    SelectDropdown,
+    ColumnPicker,
     BenchmarkIconPipe,
     BookmarkButton,
     CollectionSaveModal,
@@ -137,9 +145,6 @@ export class DatabaseListing implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandler);
-  currencyDropdown = viewChild<Dropdown>("currencyDropdown");
-  allocationDropdown = viewChild<Dropdown>("allocationDropdown");
-  pageDropdown = viewChild<Dropdown>("pageDropdown");
   private analytics = inject(Analytics);
   private toastService = inject(Toast);
   private destroyRef = inject(DestroyRef);
@@ -215,6 +220,8 @@ export class DatabaseListing implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
   displayedCurrency = this.availableCurrencies[0];
+  readonly currencyLabel = currencyLabel;
+  readonly allocationLabel = allocationLabel;
 
   bestPriceAllocationTypes: BestDatabasePriceAllocationType[] =
     bestDatabasePriceAllocationTypes;
@@ -234,6 +241,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
   query: DatabaseListingQuery = {};
 
   isLoading = true;
+  hasLoadedDatabases = false;
   title = "Cloud Databases Navigator";
   description =
     'Explore, search, and evaluate the supported managed database services (DBaaS) in the table below. This comprehensive comparison includes diverse attributes such as database engine, version support, vCPU count, memory, storage capacity, high availability, backup retention, and regional availability. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare database instances by selecting at least two rows using the checkboxes.';
@@ -630,6 +638,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
             this.searchAbortController = null;
           }
           this.isLoading = false;
+          this.hasLoadedDatabases = true;
         }
       });
   }
@@ -710,6 +719,16 @@ export class DatabaseListing implements OnInit, OnDestroy {
     });
   }
 
+  setColumnVisibility(columnName: string, show: boolean) {
+    const column = this.possibleColumns.find(
+      (item) => item.name === columnName,
+    );
+    if (column) {
+      column.show = show;
+      this.refreshColumns();
+    }
+  }
+
   refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
     if (isPlatformBrowser(this.platformId) && save) {
@@ -725,21 +744,18 @@ export class DatabaseListing implements OnInit, OnDestroy {
     this.selectedCurrency = currency;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.currencyDropdown()?.hide();
   }
 
   selectAllocation(allocation: BestDatabasePriceAllocationType) {
     this.bestPriceAllocation = allocation;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.allocationDropdown()?.hide();
   }
 
   selectPageSize(limit: number) {
     this.limit = limit;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.pageDropdown()?.hide();
     window.scrollTo(0, 0);
   }
 
@@ -779,7 +795,7 @@ export class DatabaseListing implements OnInit, OnDestroy {
     );
   }
 
-  showTooltip(el: Event, content: string, autoHide = false) {
+  showTooltip(el: Element | Event, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
     this.uiTooltip.show(tooltip, el, {

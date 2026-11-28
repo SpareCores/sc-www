@@ -1,9 +1,10 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   effect,
   inject,
@@ -21,6 +22,7 @@ import { ChartData, ChartOptions } from "chart.js";
 import { Button } from "../../button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { CompressionChartBuilder } from "./compression-chart-builder";
 import {
   CompareCompressionOption,
@@ -44,11 +46,14 @@ import {
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
 import { Dropdown } from "../../../directives/dropdown";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-compression-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
+    TooltipTrigger,
     Button,
     LucideDynamicIcon,
     LucideInfo,
@@ -57,6 +62,7 @@ import { Dropdown } from "../../../directives/dropdown";
     Dropdown,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./compression-chart.html",
   styles: [
@@ -80,6 +86,8 @@ export class CompressionChart {
   coresDropdown = viewChild<Dropdown>("coresDropdown");
 
   layout = input<"details" | "compare">("details");
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
   benchmarksByCategory = input<CompressionBenchmarkGroup[]>([]);
   benchmarkMeta = input<CompressionBenchmarkMeta[]>([]);
   servers = input<CompressionServer[]>([]);
@@ -286,10 +294,10 @@ export class CompressionChart {
     this.coresDropdown()?.hide();
   }
 
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -297,10 +305,10 @@ export class CompressionChart {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {

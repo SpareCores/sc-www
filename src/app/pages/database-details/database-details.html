@@ -1,5 +1,5 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16 text-white">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16 text-white">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     @if (isLoading) {
@@ -16,35 +16,41 @@
       </div>
     }
     @if (databaseDetails) {
-      <sc-details-header
-        resource="database"
-        [vendorId]="databaseDetails.vendor_id"
-        [vendorName]="databaseDetails.vendor?.name || databaseDetails.vendor_id"
-        [vendorLogo]="databaseDetails.vendor?.logo"
-        [entityId]="databaseDetails.api_reference"
-        [displayName]="databaseDetails.display_name"
-        [description]="description"
-        [priceDescription]="cardPriceDescription"
-        [features]="features"
-        [score]="
-          hasPgbenchHeaderScores
-            ? {
-                primary: pgbenchPeakScore ?? '',
-                primaryLabel: 'Peak TPM',
-                secondary: pgbenchSingleScore ?? '',
-                secondaryLabel: 'Single-client baseline',
-              }
-            : null
-        "
+      <div
+        class="content-gutter flex flex-wrap gap-4 md:gap-8 mt-4 sm:mt-8 lg:mt-12"
       >
-        <span detailsScoreTitle>Performance</span>
-      </sc-details-header>
-
-      <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
-        <div
-          class="my-2 w-full flex justify-between items-center sc-header-anchor-host"
+        <sc-details-header
+          class="w-full"
+          resource="database"
+          [vendorId]="databaseDetails.vendor_id"
+          [vendorName]="
+            databaseDetails.vendor?.name || databaseDetails.vendor_id
+          "
+          [vendorLogo]="databaseDetails.vendor?.logo"
+          [entityId]="databaseDetails.api_reference"
+          [displayName]="databaseDetails.display_name"
+          [description]="description"
+          [priceDescription]="cardPriceDescription"
+          [features]="features"
+          [score]="
+            hasPgbenchHeaderScores
+              ? {
+                  primary: pgbenchPeakScore ?? '',
+                  primaryValue: pgbenchPeakValue,
+                  primaryLabel: 'Peak TPM',
+                  secondary: pgbenchSingleScore ?? '',
+                  secondaryValue: pgbenchSingleValue,
+                  secondaryLabel: 'Single-client baseline',
+                }
+              : null
+          "
         >
-          <h2 class="text-3xl font-bold">
+          <span detailsScoreTitle>Performance</span>
+        </sc-details-header>
+        <div
+          class="mt-4 sm:my-2 w-full flex justify-between items-center sc-header-anchor-host"
+        >
+          <h2 class="text-2xl font-bold sm:text-3xl">
             Specifications
             <sc-header-anchor
               anchorId="specifications"
@@ -79,7 +85,7 @@
           anchorId="availability"
           [sections]="availabilitySections"
           [fixedRows]="false"
-          [fullWidthBelowWide]="true"
+          [halfFromXl]="true"
           rowClass="availability_line"
           moreLabel="Show more"
           [isOpen]="expandedCards.availability"
@@ -123,8 +129,8 @@
         ></sc-details-card>
 
         @if (pgbenchChart) {
-          <div class="my-2 w-full">
-            <h2 class="text-3xl font-bold sc-header-anchor-host">
+          <div class="mt-4 sm:my-2 w-full">
+            <h2 class="text-2xl font-bold sm:text-3xl sc-header-anchor-host">
               Performance
               <sc-header-anchor
                 anchorId="performance"
@@ -148,9 +154,9 @@
         }
         @if (showUnderlyingServerPerformance && underlyingServerPgbenchChart) {
           <div
-            class="my-2 w-full flex justify-between items-center gap-4 flex-wrap sc-header-anchor-host"
+            class="mt-4 sm:my-2 w-full flex justify-between items-center gap-4 sc-header-anchor-host"
           >
-            <h2 class="text-3xl font-bold">
+            <h2 class="text-2xl font-bold sm:text-3xl">
               Underlying Server's Performance
               <sc-header-anchor
                 anchorId="underlying_server_performance"
@@ -159,6 +165,8 @@
             </h2>
             <sc-button
               label="More details"
+              [compact]="true"
+              ariaLabel="More details"
               icon="square-arrow-up-right"
               [routerLink]="underlyingServerLink"
               data-ph-capture-attribute-sc-event="database details underlying server"

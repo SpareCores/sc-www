@@ -22,6 +22,7 @@
 @import "./styles/components/link.css" layer(components);
 @import "./styles/components/stepper.css" layer(components);
 @import "./styles/components/input.css" layer(components);
+@import "./styles/components/page-description.css" layer(components);
 
 @layer base {
   *,
@@ -57,6 +58,10 @@
 @layer base {
   html {
     scroll-padding-top: 5.5rem;
+  }
+
+  .sc-shell-chrome *:not(.sc-dropdown, .sc-dropdown *) {
+    scroll-margin-top: -5.5rem;
   }
 }
 
@@ -111,7 +116,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 35;
+  z-index: 45;
 }
 
 .sc-chart-embed .sc-chart-block--scrollable {

@@ -5,7 +5,6 @@ import {
   DestroyRef,
   DOCUMENT,
   ElementRef,
-  HostListener,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
@@ -42,7 +41,9 @@ import { ServerLstopo } from "../../components/server-lstopo/server-lstopo";
 import { HeaderAnchor } from "../../components/header-anchor/header-anchor";
 import { ServerDescriptionSummary } from "../../components/server-description-summary/server-description-summary";
 import { DetailsCard } from "../../components/details-card/details-card";
+import { TruncatedTitle } from "../../components/truncated-title/truncated-title";
 import { DetailsHeader } from "../../components/details-header/details-header";
+import { DetailsHeaderScore } from "../../components/details-header/details-header.types";
 import { DetailsCardSection } from "../../components/details-card/details-card.types";
 import { Dropdown } from "../../directives/dropdown";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name-pipe";
@@ -79,7 +80,6 @@ import {
 } from "./server-details.constants";
 
 import { chartColors } from "../../components/charts/shared/chart-colors.constants";
-import { isBelowBreakpoint } from "../../tools/breakpoints";
 import {
   ExtendedServerDetails,
   ExtendedServerPrice,
@@ -115,6 +115,7 @@ function createEmptyBarChartData(): ChartData<"bar"> {
     Modal,
     DetailsHeader,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./server-details.html",
   styleUrl: "./server-details.css",
@@ -147,7 +148,6 @@ export class ServerDetails implements OnInit, OnDestroy {
   serverDetails!: ExtendedServerDetails;
   lstopoSvgExists: boolean | null = null;
   lstopoSvgWidth: number = 0;
-  isSmallScreen = false;
   serverZones: string[] = [];
   serverRegions: string[] = [];
 
@@ -157,6 +157,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   ];
 
   features: any[] = [];
+  headerScore: DetailsHeaderScore | null = null;
 
   description = "";
   cardPriceDescription = "";
@@ -235,15 +236,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   private giscusInterval: ReturnType<typeof setInterval> | null = null;
   private visibilityChangeHandler: (() => void) | null = null;
 
-  @HostListener("window:resize")
-  onResize() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.isSmallScreen = isBelowBreakpoint(window, "wide");
-    }
-  }
-
   ngOnInit() {
-    this.onResize();
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.subscription.add(
       this.route.params.subscribe((params) => {
@@ -315,6 +308,7 @@ export class ServerDetails implements OnInit, OnDestroy {
               ) as any;
 
               this.serverDetails.benchmark_scores = benchmarks;
+              this.headerScore = this.buildHeaderScore();
               this.serverDetails.vendor = vendors.find(
                 (v: any) => v.vendor_id === this.serverDetails.vendor_id,
               );
@@ -839,6 +833,7 @@ export class ServerDetails implements OnInit, OnDestroy {
       { name: "Servers", url: "/servers" },
     ];
     this.features = [];
+    this.headerScore = null;
     this.title = "";
     this.description = "";
     this.cardPriceDescription = "";
@@ -1144,15 +1139,27 @@ export class ServerDetails implements OnInit, OnDestroy {
     }
   }
 
-  getBenchmark(isMulti: boolean) {
-    const score = this.serverDetails.benchmark_scores?.find(
-      (b: any) =>
-        b.benchmark_id === (isMulti ? "stress_ng:bestn" : "stress_ng:best1"),
-    )?.score;
-    if (score == null) {
-      return "-";
+  private buildHeaderScore(): DetailsHeaderScore | null {
+    const scoreOf = (benchmarkId: string) =>
+      this.serverDetails.benchmark_scores?.find(
+        (b) => b.benchmark_id === benchmarkId,
+      )?.score ?? null;
+    const primaryValue = scoreOf("stress_ng:bestn");
+    const secondaryValue = scoreOf("stress_ng:best1");
+    if (primaryValue === null && secondaryValue === null) {
+      return null;
     }
-    return formatNumberWithCommas(Math.round(score));
+
+    const format = (value: number | null) =>
+      value === null ? "-" : formatNumberWithCommas(Math.round(value));
+    return {
+      primary: format(primaryValue),
+      primaryValue,
+      primaryLabel: "All-cores",
+      secondary: format(secondaryValue),
+      secondaryValue,
+      secondaryLabel: "Single-core",
+    };
   }
 
   formatScore(value: number | undefined | null) {
@@ -1372,11 +1379,7 @@ export class ServerDetails implements OnInit, OnDestroy {
   }
 
   descriptionCardIsFullWidth(): boolean {
-    return (
-      this.lstopoSvgExists === false ||
-      this.isSmallScreen ||
-      this.lstopoSvgWidth > 600
-    );
+    return this.lstopoSvgExists === false || this.lstopoSvgWidth > 600;
   }
 
   openSummarizeModal(): void {

@@ -1,8 +1,8 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+    <div class="flex flex-col gap-4 mt-4 mb-4 sm:mt-8 sm:mb-8 content-gutter">
       <sc-page-header
         icon="database"
         [title]="title"
@@ -14,13 +14,15 @@
         [showEdit]="!!activeSavedSearch()"
         editAriaLabel="Edit search"
         [showShare]="true"
-        [copyLink]="true"
+        [actionsFromSm]="true"
         shareButtonId="database_listing_share_button"
         (bookmarkClick)="toggleSavedSearch()"
         (editClick)="openSaveSearchModal()"
       >
       </sc-page-header>
-      <div class="text-white text-xl pr-16">{{ description }}</div>
+      <div class="sc-page-description">
+        {{ description }}
+      </div>
     </div>
 
     <sc-collection-save-modal
@@ -31,7 +33,7 @@
       (confirmed)="confirmSaveSearch($event)"
     ></sc-collection-save-modal>
 
-    <div class="flex gap-8 mx-2 xl:mx-0">
+    <div class="flex gap-8 content-gutter">
       <div
         class="sc-filter-sidebar bg-primary"
         [class.sc-filter-sidebar--collapsed]="isCollapsed"
@@ -60,11 +62,23 @@
         [class.w-full]="isCollapsed"
       >
         <div
-          class="sc-listing-toolbar w-[calc(100%-60px)] flex justify-end gap-4 items-center ml-auto"
+          class="sc-listing-toolbar w-full xl:w-[calc(100%-60px)] flex justify-end gap-2 sm:gap-4 items-center ml-auto"
         >
+          <sc-page-actions
+            [bookmarkGuestLocked]="!isAuthenticated()"
+            [bookmarkActive]="!!activeSavedSearch()"
+            [bookmarkDisabled]="!activeSavedSearch() && !canSaveSearch()"
+            [bookmarkLoading]="isDeleteSearchPending()"
+            [showEdit]="!!activeSavedSearch()"
+            editAriaLabel="Edit search"
+            shareButtonId="database_listing_share_button_mobile"
+            (bookmarkClick)="toggleSavedSearch()"
+            (editClick)="openSaveSearchModal()"
+          ></sc-page-actions>
           <div class="min-w-0">
             <sc-button
               id="benchmark_select_button"
+              [compact]="true"
               data-ph-capture-attribute-sc-event="database listing benchmark select"
               class="min-w-0 max-w-full"
               variant="benchmark"
@@ -74,39 +88,35 @@
               [sublabel]="selectedBenchmarkConfig"
             ></sc-button>
           </div>
-          <div class="min-w-0">
-            <sc-button
-              id="allocation_button"
-              data-ph-capture-attribute-sc-event="database listing price allocation select"
-              [scDropdown]="allocationPanel"
-              #allocationDropdown="scDropdown"
-              [label]="bestPriceAllocation.name"
-              icon="calendar-search"
-              variant="dropdown"
-              class="min-w-0 max-w-full"
-            ></sc-button>
-          </div>
-          <div>
-            <sc-button
-              id="currency_button"
-              data-ph-capture-attribute-sc-event="database listing currency select"
-              [scDropdown]="currencyPanel"
-              #currencyDropdown="scDropdown"
-              [label]="selectedCurrency.slug"
-              icon="credit-card"
-              variant="dropdown"
-            ></sc-button>
-          </div>
-          <div>
-            <sc-button
-              id="column_button"
-              data-ph-capture-attribute-sc-event="database listing columns select"
-              [scDropdown]="columnPanel"
-              label="Columns"
-              icon="columns-3-cog"
-              variant="dropdown"
-            ></sc-button>
-          </div>
+          <sc-select-dropdown
+            data-ph-capture-attribute-sc-event="database listing price allocation select"
+            buttonId="allocation_button"
+            panelId="allocation_options"
+            icon="calendar-search"
+            compactIcon="calendar-search"
+            [label]="bestPriceAllocation.name"
+            [options]="bestPriceAllocationTypes"
+            [selected]="bestPriceAllocation"
+            [optionLabel]="allocationLabel"
+            (selectedChange)="selectAllocation($event)"
+          ></sc-select-dropdown>
+          <sc-select-dropdown
+            data-ph-capture-attribute-sc-event="database listing currency select"
+            buttonId="currency_button"
+            panelId="currency_options"
+            icon="credit-card"
+            compactIcon="credit-card"
+            [label]="selectedCurrency.slug"
+            [options]="availableCurrencies"
+            [selected]="selectedCurrency"
+            [optionLabel]="currencyLabel"
+            (selectedChange)="selectCurrency($event)"
+          ></sc-select-dropdown>
+          <sc-column-picker
+            data-ph-capture-attribute-sc-event="database listing columns select"
+            [columns]="possibleColumns"
+            (visibilityChange)="setColumnVisibility($event.name, $event.show)"
+          ></sc-column-picker>
         </div>
         <div>
           <div class="relative">
@@ -129,8 +139,9 @@
                           @if (column.info) {
                             <svg
                               lucideInfo
-                              (mouseenter)="showTooltip($event, column.info)"
-                              (mouseleave)="hideTooltip()"
+                              scTooltipTrigger
+                              (tooltipOpen)="showTooltip($event, column.info)"
+                              (tooltipClose)="hideTooltip()"
                               class="h-4 w-4 text-gray-200"
                             ></svg>
                           }
@@ -205,7 +216,9 @@
                                   item.vendor.vendor_id
                                 }}/{{ item.api_reference }}"
                               >
-                                <div class="text-sm text-white flex gap-1">
+                                <div
+                                  class="text-xs sm:text-sm text-white flex gap-1"
+                                >
                                   <span class="whitespace-nowrap"
                                     >{{ item.display_name }}
                                   </span>
@@ -225,7 +238,9 @@
                         }
                         @if (column.type === "processor") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               @if (item.vcpus !== null) {
                                 {{ item.vcpus }} vCPUs
                               } @else {
@@ -236,7 +251,9 @@
                         }
                         @if (column.type === "benchmark") {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ getScore(item.selected_benchmark_score) }}
                             </div>
                             @if (item.selected_benchmark_score) {
@@ -278,38 +295,42 @@
                               priceValue !== undefined &&
                               priceValue !== ""
                             ) {
-                              <div class="text-sm text-white whitespace-nowrap">
+                              <div
+                                class="text-xs sm:text-sm text-white whitespace-nowrap"
+                              >
                                 {{ priceValue }} {{ displayedCurrency.slug }}
                               </div>
                             } @else {
-                              <div class="text-sm text-white">-</div>
+                              <div class="text-xs sm:text-sm text-white">-</div>
                             }
                           </td>
                         }
                         @if (column.type === "memory") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ getMemory(item) }}
                             </div>
                           </td>
                         }
                         @if (column.type === "storage") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ item.storage_size | storage }}
                             </div>
                           </td>
                         }
                         @if (column.type === "list" && column.key) {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ formatList(getField(item, column.key)) }}
                             </div>
                           </td>
                         }
                         @if (column.type === "sla" && column.key) {
                           <td>
-                            <div class="text-sm text-white whitespace-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white whitespace-nowrap"
+                            >
                               {{ formatSla(getField(item, column.key)) }}
                             </div>
                           </td>
@@ -379,7 +400,7 @@
                                 />
                               </div>
                             } @else {
-                              <div class="text-white text-sm">
+                              <div class="text-white text-xs sm:text-sm">
                                 {{ item.vendor.name }}
                               </div>
                             }
@@ -425,31 +446,16 @@
             }
           </div>
           <div>
-            <div class="flex justify-between mt-4 flex-wrap gap-4">
-              <div class="flex items-center gap-2">
-                <sc-button
-                  id="pagesize_button"
-                  data-ph-capture-attribute-sc-event="database listing page size select"
-                  [scDropdown]="pageSizePanel"
-                  [dropdownFlip]="true"
-                  [dropdownPlacement]="'bottom-start'"
-                  #pageDropdown="scDropdown"
-                  [label]="'' + limit"
-                  icon="chevron-down"
-                  variant="dropdown"
-                ></sc-button>
-                <span class="text-white">items per page</span>
-              </div>
-              <div>
-                <sc-pagination
-                  baseURL="/databases"
-                  [currentPage]="page"
-                  [totalPages]="totalPages"
-                  [baseQueryParams]="getQueryObjectBase()"
-                >
-                </sc-pagination>
-              </div>
-            </div>
+            <sc-table-footer
+              baseURL="/databases"
+              pageSizeEvent="database listing page size select"
+              [limit]="limit"
+              [pageLimits]="pageLimits"
+              [page]="page"
+              [totalPages]="totalPages"
+              [baseQueryParams]="getQueryObjectBase()"
+              (limitChange)="selectPageSize($event)"
+            ></sc-table-footer>
           </div>
         </div>
       </div>
@@ -457,7 +463,7 @@
   </div>
 </div>
 
-@if (compareCount() >= 2) {
+@if (hasLoadedDatabases && compareCount() >= 2) {
   <div
     class="sc-floating-actions"
     [class.sc-floating-actions--collapsed]="isCollapsed"
@@ -465,6 +471,7 @@
     <div class="flex gap-4">
       <sc-button
         labelClass="sc-button__label--fit"
+        buttonClass="sc-button--floating"
         label="Clear"
         icon="circle-x"
         iconPosition="start"
@@ -475,6 +482,7 @@
       ></sc-button>
       <sc-button
         labelClass="sc-button__label--fit"
+        buttonClass="sc-button--floating"
         [label]="'Compare (' + compareCount() + ')'"
         icon="scale"
         iconPosition="start"
@@ -485,91 +493,6 @@
     </div>
   </div>
 }
-
-<ng-template #pageSizePanel>
-  <div id="pagesize_options" class="sc-dropdown w-44">
-    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
-      @for (pageLimit of pageLimits; track $index) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectPageSize(pageLimit)"
-          (keydown.enter)="selectPageSize(pageLimit)"
-          (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
-          role="option"
-          [attr.aria-selected]="pageLimit === limit"
-          tabindex="0"
-        >
-          <div class="text-white text-sm">{{ pageLimit }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #allocationPanel>
-  <div id="allocation_options" class="sc-dropdown w-44">
-    <ul class="sc-dropdown__list" aria-labelledby="allocation_button">
-      @for (
-        allocationType of bestPriceAllocationTypes;
-        track allocationType.name
-      ) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectAllocation(allocationType)"
-          (keydown.enter)="selectAllocation(allocationType)"
-          (keydown.space)="
-            selectAllocation(allocationType); $event.preventDefault()
-          "
-          role="option"
-          [attr.aria-selected]="allocationType === bestPriceAllocation"
-          tabindex="0"
-        >
-          <div class="text-white text-sm">{{ allocationType.name }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #currencyPanel>
-  <div id="currency_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list" aria-labelledby="currency_button">
-      @for (currency of availableCurrencies; track currency.name) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectCurrency(currency)"
-          (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
-          (keydown.space)="selectCurrency(currency); $event.preventDefault()"
-          role="option"
-          [attr.aria-selected]="currency === selectedCurrency"
-          tabindex="0"
-        >
-          <div class="text-white text-sm">
-            {{ currency.name }} ({{ currency.symbol }})
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #columnPanel>
-  <div id="column_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list px-3" aria-labelledby="dropdownDefaultButton">
-      @for (column of possibleColumns; track column.name) {
-        <li class="flex py-1 gap-2 items-center">
-          <input
-            type="checkbox"
-            [(ngModel)]="column.show"
-            (ngModelChange)="refreshColumns()"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
-          />
-          <div class="text-white text-sm">{{ column.name }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
 
 <div
   id="tooltipDefault"

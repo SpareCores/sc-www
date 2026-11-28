@@ -94,6 +94,14 @@ export class BenchmarkMultiBarChartBuilder {
         option.YLabel = benchmark.unit;
       },
     );
+
+    chartTemplate.chartOptions = {
+      ...chartTemplate.chartOptions,
+      plugins: {
+        ...chartTemplate.chartOptions.plugins,
+        title: { ...chartTemplate.chartOptions.plugins.title, display: false },
+      },
+    };
   }
 
   syncDetailsChart(

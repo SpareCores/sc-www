@@ -70,21 +70,34 @@
   @apply min-w-0 justify-between overflow-hidden;
 }
 
-@utility chart-selector-button__label {
-  @apply min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left;
-}
-
-@utility chart-selector-button__icon {
-  @apply flex h-full w-12 shrink-0 items-center justify-center rounded-r-lg bg-primary px-3 py-2;
-}
-
 @utility content {
   max-width: 1400px;
   margin: auto;
 }
 
-@utility content_gutter {
-  @apply px-2 xl:px-0;
+@utility shell-gutter {
+  padding-left: max(--spacing(4), env(safe-area-inset-left));
+  padding-right: max(--spacing(4), env(safe-area-inset-right));
+
+  @media (width >= theme(--breakpoint-lg)) {
+    padding-left: max(--spacing(6), env(safe-area-inset-left));
+    padding-right: max(--spacing(6), env(safe-area-inset-right));
+  }
+}
+
+@utility content-gutter {
+  padding-left: max(--spacing(2), env(safe-area-inset-left));
+  padding-right: max(--spacing(2), env(safe-area-inset-right));
+
+  @media (width >= theme(--breakpoint-lg)) {
+    padding-left: max(--spacing(6), env(safe-area-inset-left));
+    padding-right: max(--spacing(6), env(safe-area-inset-right));
+  }
+
+  @media (width >= theme(--breakpoint-xl)) {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }
 
 @utility scrollbar-hidden {

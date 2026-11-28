@@ -1,18 +1,8 @@
 import { DialogRef } from "@angular/cdk/dialog";
-import { Component, computed, inject, input } from "@angular/core";
+import { Component, inject, input } from "@angular/core";
 import { Button } from "../../button/button";
 
-export type ModalSize = "sm" | "lg" | "xl" | "3xl" | "4xl" | "wide" | "full";
-
-const SIZE_CLASSES: Record<ModalSize, string> = {
-  sm: "max-w-100",
-  lg: "max-w-lg",
-  xl: "max-w-xl",
-  "3xl": "max-w-3xl",
-  "4xl": "max-w-4xl",
-  wide: "max-w-350",
-  full: "max-w-full",
-};
+export type ModalSize = "sm" | "lg" | "xl" | "3xl" | "4xl" | "wide";
 
 export function modalTitleId(dialogId: string): string {
   return `${dialogId}-title`;
@@ -22,6 +12,7 @@ export function modalTitleId(dialogId: string): string {
   selector: "sc-modal",
   imports: [Button],
   templateUrl: "./modal.html",
+  styleUrl: "./modal.css",
   host: {
     class: "block",
   },
@@ -41,7 +32,6 @@ export class Modal {
   protected readonly titleId = this.dialogRef
     ? modalTitleId(this.dialogRef.id)
     : null;
-  protected readonly sizeClass = computed(() => SIZE_CLASSES[this.size()]);
 
   close() {
     this.dialogRef?.close();

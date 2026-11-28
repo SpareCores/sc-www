@@ -20,9 +20,25 @@ div.giscus {
 }
 
 :host ::ng-deep .sc-prose li {
-  @apply text-lg;
+  @apply text-sm sm:text-lg;
   @apply my-1;
   @apply ml-8;
+}
+
+:host ::ng-deep .sc-prose h1 {
+  @apply text-xl sm:text-4xl;
+}
+
+:host ::ng-deep .sc-prose h2 {
+  @apply text-xl my-6 sm:text-2xl sm:my-10;
+}
+
+:host ::ng-deep .sc-prose p {
+  @apply text-sm my-4 sm:text-lg sm:my-10;
+}
+
+:host ::ng-deep .sc-prose pre[class*="language-"] {
+  @apply text-sm sm:text-base;
 }
 
 :host ::ng-deep .sc-prose div.code-toolbar {
@@ -41,7 +57,7 @@ div.giscus {
 
 :host ::ng-deep .sc-prose table tbody tr td {
   @apply whitespace-nowrap;
-  @apply px-5 py-3 text-sm;
+  @apply px-5 py-3 text-xs sm:text-sm;
 }
 
 :host ::ng-deep .sc-prose table tbody td.file-size span.num,

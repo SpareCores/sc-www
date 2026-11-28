@@ -1,0 +1,271 @@
+@reference "../../../styles/tailwind.css";
+
+:host {
+  display: block;
+}
+
+.animated_slot_machine {
+  position: relative;
+  width: 560px;
+  height: 620px;
+  zoom: tan(
+    atan2(
+      100vw - max(0.5rem, env(safe-area-inset-left)) -
+        max(0.5rem, env(safe-area-inset-right)),
+      560px
+    )
+  );
+
+  @media (width >= theme(--breakpoint-sm)) {
+    zoom: 1;
+  }
+
+  @media (width >= theme(--breakpoint-lg)) {
+    zoom: 0.75;
+  }
+
+  @media (width >= theme(--breakpoint-xl)) {
+    zoom: 1;
+  }
+
+  .outer_border {
+    position: absolute;
+    left: 0;
+    top: 55px;
+    border-radius: 1rem;
+    border: 1px solid var(--color-emerald-400);
+    width: 560px;
+    height: 500px;
+  }
+  .top_wide_border_segment {
+    position: absolute;
+    left: 120px;
+    top: 47px;
+    width: 320px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: var(--color-emerald-400);
+  }
+
+  .top_bottom_border_segment {
+    position: absolute;
+    left: 35px;
+    top: 547px;
+    width: 270px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: var(--color-emerald-400);
+  }
+  .input_border {
+    border-radius: 8px;
+    border: 2px solid var(--color-emerald-400);
+  }
+
+  .price_input {
+    position: absolute;
+    left: 175px;
+    top: 22px;
+    width: 210px;
+    height: 64px;
+  }
+
+  .price_input:disabled {
+    opacity: 1;
+  }
+
+  .cpu_input,
+  .ram_input {
+    position: absolute;
+    top: 531px;
+    width: 90px;
+    height: 48px;
+  }
+  .cpu_input {
+    left: 70px;
+  }
+  .ram_input {
+    left: 190px;
+  }
+  .price_div {
+    position: absolute;
+    left: 220px;
+    top: -10px;
+  }
+  .cpu_div {
+    position: absolute;
+    left: 100px;
+    top: 585px;
+  }
+  .ram_div {
+    position: absolute;
+    left: 200px;
+    top: 585px;
+  }
+  .spinner_box_1,
+  .spinner_box_2,
+  .spinner_box_3 {
+    position: absolute;
+    top: 95px;
+  }
+  .spinner_box_1 {
+    left: 25px;
+  }
+  .spinner_box_2 {
+    left: 207.5px;
+  }
+  .spinner_box_3 {
+    left: 390px;
+  }
+
+  .spinner_holder {
+    position: relative;
+    height: 400px;
+    width: 145px;
+    background: linear-gradient(
+      0deg,
+      var(--color-primary) 10%,
+      var(--color-emerald-400) 50%,
+      var(--color-primary) 90%
+    );
+    overflow: hidden;
+    z-index: 2;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: inherit;
+      mask-image: linear-gradient(
+        to bottom,
+        var(--color-primary) 5%,
+        transparent 33%,
+        transparent 67%,
+        var(--color-primary) 95%
+      );
+    }
+
+    .ring_lines {
+      position: absolute;
+      top: 130px;
+      width: 100%;
+      height: 140px;
+      border-top: 1px solid var(--color-emerald-400);
+      border-bottom: 1px solid var(--color-emerald-400);
+    }
+  }
+  .spin_ring {
+    position: absolute;
+    top: 132px;
+    width: 100%;
+    height: 135px;
+    transform-style: preserve-3d;
+    z-index: 1;
+
+    .slot {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0.9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backface-visibility: hidden;
+    }
+
+    .slot_inner {
+      height: calc(100% - 1rem);
+      width: calc(100% - 1rem);
+      margin: 0.5rem;
+      border-radius: 1rem;
+      color: var(--color-gray-200);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      &.slot_link {
+        cursor: pointer;
+        transition:
+          box-shadow 150ms ease-in-out,
+          transform 150ms ease-in-out;
+
+        &:hover,
+        &:focus-visible {
+          box-shadow: 0 0 0 2px
+            color-mix(in oklab, var(--color-emerald-400) 55%, transparent);
+          transform: scale(1.01);
+          outline: none;
+        }
+      }
+
+      &.slot_inner--active {
+        background: var(--color-white);
+        color: var(--color-black);
+      }
+    }
+  }
+
+  .slot_logo {
+    margin: 0.5rem;
+    min-height: 0;
+    object-fit: contain;
+  }
+
+  .container {
+    position: absolute;
+    left: 350px;
+    top: 526px;
+    width: 150px;
+    height: 60px;
+  }
+
+  .container > .button {
+    --slot-face: var(--color-slot-face);
+    position: absolute;
+    left: 2px;
+    z-index: 3;
+    width: calc(100% - 0.25rem);
+    height: 50px;
+    color: var(--color-white);
+    letter-spacing: 0.2rem;
+    background-color: var(--slot-face);
+    border: 1px solid
+      color-mix(in oklab, var(--slot-face), var(--color-black) 20%);
+    border-radius: 15px;
+    transition: transform 100ms ease-out;
+  }
+  .container > .button:hover {
+    --slot-face: var(--color-slot-face-hover);
+    text-shadow:
+      0 0 60px var(--color-white),
+      0 0 40px var(--color-white),
+      0 0 20px var(--color-white);
+  }
+  .container > .button:active:not(:disabled) {
+    transform: translateY(6px);
+  }
+  .container > .button:disabled {
+    --slot-face: var(--color-slot-face-disabled);
+    text-shadow: none;
+    color: var(--color-slot-label-disabled);
+  }
+
+  .container .button__bottom {
+    position: absolute;
+    top: 6px;
+    z-index: 2;
+    width: 100%;
+    height: 58px;
+    background-color: var(--color-slot-base);
+    border-radius: 10px 10px 15px 15px;
+  }
+  .container .button__bottom[disabled="true"] {
+    background-color: var(--color-slot-base-disabled);
+  }
+
+  .cpu_input:disabled,
+  .ram_input:disabled {
+    @apply text-gray-200;
+  }
+}

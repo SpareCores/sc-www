@@ -1,31 +1,38 @@
 @if (layout() === "details") {
-  <div class="sc-chart-block sc-chart-block--half" id="{{ chart().id }}_chart">
+  <div
+    class="sc-chart-block sc-chart-block--half"
+    [class.sc-chart-block--aspect-from-md]="chart().id === 'static_web'"
+    id="{{ chart().id }}_chart"
+  >
     <div
       class="flex justify-between items-center sc-header-anchor-host sc-header-anchor-host--card"
     >
-      <h3 class="text-2xl flex items-center gap-2 pr-2">
+      <h3 class="sc-chart-title pr-2">
         <svg [lucideIcon]="chart().id | benchmarkIcon" class="h-6 w-6"></svg>
-        <span class="whitespace-nowrap">{{ chart().name }}</span>
+        <sc-truncated-title [text]="chart().name"></sc-truncated-title>
         @if (currentOption().icon) {
           <svg
             [lucideIcon]="currentOption().icon || 'circle-arrow-up'"
             class="benchmark-direction-icon h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, currentOption().tooltip)"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showTooltip($event, currentOption().tooltip)"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         <svg
           lucideInfo
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, currentBenchmarkDescription())"
-          (mouseleave)="hideTooltip()"
+          scTooltipTrigger
+          (tooltipOpen)="showTooltip($event, currentBenchmarkDescription())"
+          (tooltipClose)="hideTooltip()"
         ></svg>
         @if (currentBenchmarkNote()) {
           <svg
             lucideTriangleAlert
             class="benchmark-note-icon"
-            (mouseenter)="showWarningTooltip($event, currentBenchmarkNote())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showWarningTooltip($event, currentBenchmarkNote())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (anchorId(); as id) {
@@ -43,6 +50,7 @@
         [dropdownEnabled]="!!chartData()"
         [label]="currentOption().name || ''"
         icon="chevron-down"
+        compactIcon="settings"
         variant="dropdown"
         size="small"
         [title]="currentOption().name || null"
@@ -66,17 +74,22 @@
 } @else {
   <div class="sc-chart-block sc-chart-block--inline">
     <div
-      class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-4"
+      class="shrink-0 min-w-0 flex-nowrap items-center justify-end gap-2 sm:gap-4"
+      [class]="controlsInHeader() ? 'hidden sm:flex' : 'flex'"
     >
+      <ng-container [ngTemplateOutlet]="compareControls" />
+    </div>
+    <ng-template #compareControls let-idSuffix="idSuffix">
       @if (hasSecondaryOptions()) {
         <sc-button
           class="min-w-0"
           #secondaryDropdown="scDropdown"
-          [id]="secondaryButtonId"
+          [id]="secondaryButtonId + (idSuffix ?? '')"
           [scDropdown]="secondaryPanel"
           [dropdownEnabled]="!!chartData() && hasSecondaryOptions()"
           [label]="currentSecondaryOption()?.name || ''"
           icon="chevron-down"
+          compactIcon="layers"
           variant="dropdown"
           size="small"
           [title]="currentSecondaryOption()?.name || null"
@@ -85,19 +98,20 @@
       <sc-button
         class="min-w-0"
         #primaryDropdown="scDropdown"
-        [id]="buttonId"
+        [id]="buttonId + (idSuffix ?? '')"
         [scDropdown]="primaryPanel"
         [dropdownEnabled]="!!chartData()"
         [label]="currentOption().name || ''"
         icon="chevron-down"
+        compactIcon="settings"
         variant="dropdown"
         size="small"
         [title]="currentOption().name || null"
       ></sc-button>
-    </div>
+    </ng-template>
     @if (chartData() && isBrowserEnvironment()) {
       <div class="min-h-0 flex-1">
-        <div class="chart_div" chartType="bar">
+        <div class="chart_div sm:pt-8.5" chartType="bar">
           <canvas
             baseChart
             [data]="chartData()"

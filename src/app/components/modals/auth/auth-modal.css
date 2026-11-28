@@ -1,3 +1,5 @@
+@reference "../../../../styles/tailwind.css";
+
 .auth-modal__main {
   position: relative;
 }
@@ -147,4 +149,54 @@
   color: var(--color-gray-400);
   font-size: 0.875rem;
   text-align: center;
+}
+
+.modal-form__body {
+  flex: 1 0 auto;
+}
+
+.modal-form__body::before {
+  content: "";
+  flex: 1 1 0;
+  margin-bottom: -1rem;
+}
+
+.auth-modal__main,
+.auth-modal__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.modal-form__body > .modal-form__form,
+.auth-modal__content > .modal-form__form {
+  flex: 1 1 auto;
+}
+
+.auth-modal__submit,
+.modal-form__actions {
+  margin-top: auto;
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .modal-form__body,
+  .modal-form__body > .modal-form__form,
+  .auth-modal__content,
+  .auth-modal__content > .modal-form__form {
+    flex: 0 1 auto;
+  }
+
+  .modal-form__body::before {
+    content: none;
+  }
+
+  .auth-modal__main {
+    display: block;
+    flex: 0 1 auto;
+  }
+
+  .auth-modal__submit,
+  .modal-form__actions {
+    margin-top: 0;
+  }
 }

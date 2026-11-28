@@ -9,7 +9,28 @@ Cypress.Commands.overwrite("log", function (log, ...args) {
   }
 });
 
-export type VisualSizePrefix = "mobile" | "tablet" | "desktop";
+export type VisualSizePrefix =
+  | "mobile"
+  | "mobile-landscape"
+  | "tablet"
+  | "tablet-landscape"
+  | "desktop";
+
+export interface VisualViewport {
+  prefix: VisualSizePrefix;
+  width: number;
+  height: number;
+}
+
+export const MOBILE_VISUAL_VIEWPORTS: readonly VisualViewport[] = [
+  { prefix: "mobile", width: 390, height: 850 },
+  { prefix: "mobile-landscape", width: 850, height: 390 },
+];
+
+export const TABLET_VISUAL_VIEWPORTS: readonly VisualViewport[] = [
+  { prefix: "tablet", width: 768, height: 1024 },
+  { prefix: "tablet-landscape", width: 1024, height: 768 },
+];
 
 export function visualSnapshotName(
   name: string,
@@ -280,7 +301,9 @@ export abstract class E2EEvent {
     cy.get("#menu_options .navbar_link").each(($item) => {
       cy.wrap($item).scrollIntoView().should("be.visible");
     });
-    cy.get("#menu_options .mobile_menu_panel__list").scrollTo("top");
+    cy.get("#menu_options .mobile_menu_panel__list").scrollTo("top", {
+      ensureScrollable: false,
+    });
     cy.scrollTo("top");
   }
 

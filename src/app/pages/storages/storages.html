@@ -1,15 +1,13 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
-      <div class="flex gap-4 items-center w-full justify-between">
-        <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideDollarSign class="h-8 w-8 mr-2"></svg>
-          Cloud Block Storage Prices
-        </h1>
-      </div>
-      <div class="text-white text-xl pr-16">
+    <div class="flex flex-col gap-4 mt-4 mb-4 sm:mt-8 sm:mb-8 content-gutter">
+      <sc-page-header
+        icon="dollar-sign"
+        title="Cloud Block Storage Prices"
+      ></sc-page-header>
+      <div class="sc-page-description">
         Explore, search, and evaluate block storage options and their pricing at
         various cloud providers in the table below. Note that the quoted pricing
         only includes capacity, and some options require extra payment for
@@ -17,7 +15,7 @@
       </div>
     </div>
 
-    <div class="flex gap-8 mx-2 xl:mx-0">
+    <div class="flex gap-8 content-gutter">
       <div
         class="sc-filter-sidebar bg-primary"
         [class.sc-filter-sidebar--collapsed]="isCollapsed"
@@ -46,24 +44,24 @@
         [class.w-full]="isCollapsed"
       >
         <div
-          class="sc-listing-toolbar w-full flex justify-end gap-4 items-center"
+          class="sc-listing-toolbar w-full flex justify-end gap-2 sm:gap-4 items-center"
         >
-          <sc-button
-            id="currency_button"
-            [scDropdown]="currencyPanel"
-            #currencyDropdown="scDropdown"
-            [label]="selectedCurrency.slug"
+          <sc-select-dropdown
+            buttonId="currency_button"
+            panelId="currency_options"
             icon="credit-card"
-            variant="dropdown"
-          ></sc-button>
-          <sc-button
-            id="column_button"
+            compactIcon="credit-card"
+            [label]="selectedCurrency.slug"
+            [options]="availableCurrencies"
+            [selected]="selectedCurrency"
+            [optionLabel]="currencyLabel"
+            (selectedChange)="selectCurrency($event)"
+          ></sc-select-dropdown>
+          <sc-column-picker
             data-ph-capture-attribute-sc-event="storage prices columns select"
-            [scDropdown]="columnPanel"
-            label="Columns"
-            icon="columns-3-cog"
-            variant="dropdown"
-          ></sc-button>
+            [columns]="possibleColumns"
+            (visibilityChange)="setColumnVisibility($event.name, $event.show)"
+          ></sc-column-picker>
         </div>
         <div>
           <div class="relative">
@@ -102,7 +100,7 @@
                       @for (column of tableColumns; track column.name) {
                         @if (column.type === "name") {
                           <td>
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ storage.storage.name }}
                             </div>
                             <div class="text-xs text-white flex gap-1">
@@ -112,7 +110,9 @@
                         }
                         @if (column.type === "price") {
                           <td>
-                            <div class="text-sm text-white text-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white text-nowrap"
+                            >
                               {{ storage.price }} {{ storage.currency }}/{{
                                 storage.unit
                               }}
@@ -121,7 +121,9 @@
                         }
                         @if (column.type === "storage" && column.key) {
                           <td>
-                            <div class="text-sm text-white text-nowrap">
+                            <div
+                              class="text-xs sm:text-sm text-white text-nowrap"
+                            >
                               {{ getField(storage, column.key) | storage }}
                             </div>
                           </td>
@@ -144,7 +146,7 @@
                               </div>
                             }
                             @if (!storage.vendor.logo) {
-                              <div class="text-white text-sm">
+                              <div class="text-white text-xs sm:text-sm">
                                 {{ storage.vendor.name }}
                               </div>
                             }
@@ -152,7 +154,7 @@
                         }
                         @if (column.type === "region") {
                           <td class="min-w-[225px]">
-                            <div class="text-sm text-white">
+                            <div class="text-xs sm:text-sm text-white">
                               {{ storage.region.display_name }}
                             </div>
                             <div class="text-xs text-white flex gap-1">
@@ -186,86 +188,19 @@
             }
           </div>
           <div>
-            <div class="flex justify-between mt-4 flex-wrap gap-4">
-              <div class="flex items-center gap-2">
-                <sc-button
-                  id="pagesize_button"
-                  data-ph-capture-attribute-sc-event="storage prices page size select"
-                  [scDropdown]="pageSizePanel"
-                  [dropdownFlip]="true"
-                  [dropdownPlacement]="'bottom-start'"
-                  #pageDropdown="scDropdown"
-                  [label]="'' + limit"
-                  icon="chevron-down"
-                  variant="dropdown"
-                ></sc-button>
-                <span class="text-white">items per page</span>
-              </div>
-              <div>
-                <sc-pagination
-                  baseURL="/storages"
-                  [currentPage]="page"
-                  [totalPages]="totalPages"
-                  [baseQueryParams]="getQueryObjectBase()"
-                >
-                </sc-pagination>
-              </div>
-            </div>
+            <sc-table-footer
+              baseURL="/storages"
+              pageSizeEvent="storage prices page size select"
+              [limit]="limit"
+              [pageLimits]="pageLimits"
+              [page]="page"
+              [totalPages]="totalPages"
+              [baseQueryParams]="getQueryObjectBase()"
+              (limitChange)="selectPageSize($event)"
+            ></sc-table-footer>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<ng-template #pageSizePanel>
-  <div id="pagesize_options" class="sc-dropdown w-44">
-    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
-      @for (pageLimit of pageLimits; track $index) {
-        <li
-          class="sc-dropdown__option"
-          (click)="selectPageSize(pageLimit)"
-          tabindex="0"
-        >
-          <div class="text-white text-sm">{{ pageLimit }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #columnPanel>
-  <div id="column_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list px-3" aria-labelledby="dropdownDefaultButton">
-      @for (column of possibleColumns; track column.name) {
-        <li class="flex py-1 gap-2 items-center">
-          <input
-            type="checkbox"
-            [(ngModel)]="column.show"
-            (ngModelChange)="refreshColumns()"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
-          />
-          <div class="text-white text-sm">{{ column.name }}</div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
-<ng-template #currencyPanel>
-  <div id="currency_options" class="sc-dropdown w-52">
-    <ul class="sc-dropdown__list" aria-labelledby="dropdownDefaultButton">
-      @for (currency of availableCurrencies; track currency.name) {
-        <li
-          tabindex="0"
-          class="sc-dropdown__option"
-          (click)="selectCurrency(currency)"
-        >
-          <div class="text-white text-sm">
-            {{ currency.name }} ({{ currency.symbol }})
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>

@@ -50,6 +50,7 @@ import { ModalDialog } from "../../services/modal-dialog";
 import { ShareLink } from "../../services/share-link";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { mutationKey } from "../../shared/store/with-mutation-status";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 type BookmarksFeature = {
   name: string;
@@ -101,6 +102,7 @@ function normalizeBookmarksNameQuery(value: string): string {
 @Component({
   selector: "sc-bookmarks",
   imports: [
+    TooltipTrigger,
     RouterModule,
     Breadcrumbs,
     PageHeader,
@@ -420,20 +422,21 @@ export class Bookmarks implements OnDestroy {
     return !!this.expandedDetails()[cardId];
   }
 
-  protected showDetailTooltip(event: MouseEvent, content: string): void {
+  protected showDetailTooltip(anchor: Element, content: string): void {
     const tooltip = this.tooltipRef()?.nativeElement;
-    const target = event.currentTarget;
+    const target = anchor.closest("td") ?? anchor;
     if (
       !tooltip ||
       !content ||
       !(target instanceof HTMLElement) ||
-      target.scrollWidth <= target.clientWidth
+      (target.scrollWidth <= target.clientWidth &&
+        anchor.scrollWidth <= anchor.clientWidth)
     ) {
       return;
     }
 
     this.tooltipContent = content;
-    this.uiTooltip.show(tooltip, event, {
+    this.uiTooltip.show(tooltip, anchor, {
       left: "anchor-right",
       top: "anchor-below",
     });

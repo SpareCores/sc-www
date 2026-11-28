@@ -32,10 +32,12 @@ import { DATABASE_COMPARE_SPECS_WIDGET_ID } from "../../services/database-embed.
 import { hasPgbenchScores } from "../../services/database-pgbench";
 import { showInvalidUrlParamToast } from "../../services/page-toast.helpers";
 import { Toast } from "../../services/toast";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-embedded-compare-widget",
   imports: [
+    TooltipTrigger,
     BenchmarkIconPipe,
     BenchmarkLineChart,
     DatabaseCompareSpecRows,
@@ -95,10 +97,10 @@ export class EmbeddedCompareWidget {
     return this.compareSpecs.columnWidth(displayName);
   }
 
-  showTooltip(event: MouseEvent, content: string) {
+  showTooltip(event: Element | Event, content: string) {
     this.chartTooltip.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event,
+      anchor: event,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -106,10 +108,10 @@ export class EmbeddedCompareWidget {
     });
   }
 
-  showWarningTooltip(event: MouseEvent, content: string) {
+  showWarningTooltip(event: Element | Event, content: string) {
     this.chartTooltip.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event,
+      anchor: event,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {

@@ -1,5 +1,9 @@
 <!-- Sticky TOC sidebar -->
-<div class="filter_bar bg-primary" [class.collapsed]="isCollapsed()">
+<div
+  class="filter_bar bg-primary"
+  [class.collapsed]="isCollapsed()"
+  [class.filter_bar--auto]="autoCollapse()"
+>
   <div class="toc_shell">
     <div class="top overflow-hidden bg-secondary">
       <div class="top_label" [class.top_label_hidden]="isCollapsed()">
@@ -41,10 +45,10 @@
               [class.active]="family.isHighlighted"
               [class.toc_family_btn_mini]="isCollapsed()"
               (click)="handleFamilyClick(family.framework)"
-              (mouseenter)="showSidebarTooltip($event, family.framework)"
-              (mouseleave)="hideSidebarTooltip()"
-              (focus)="showSidebarTooltip($event, family.framework)"
-              (blur)="hideSidebarTooltip()"
+              scTooltipTrigger
+              tooltipMode="action"
+              (tooltipOpen)="showSidebarTooltip($event, family.framework)"
+              (tooltipClose)="hideSidebarTooltip()"
             >
               <span
                 class="toc_family_info"

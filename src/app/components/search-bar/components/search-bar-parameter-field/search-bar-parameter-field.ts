@@ -50,6 +50,7 @@ import {
 } from "../../utils/search-bar.utils";
 import { SearchBarMultiSelect } from "../search-bar-multi-select/search-bar-multi-select";
 import { formatKebabTitle } from "../../../../pipes/pipe-utils";
+import { TooltipTrigger } from "../../../../directives/tooltip-trigger";
 
 type CpuCacheRangeFocusLossSkip = {
   target: HTMLInputElement | null;
@@ -59,6 +60,7 @@ type CpuCacheRangeFocusLossSkip = {
 @Component({
   selector: "sc-search-bar-parameter-field",
   imports: [
+    TooltipTrigger,
     CommonModule,
     FormsModule,
     LucideDynamicIcon,
@@ -448,7 +450,7 @@ export class SearchBarParameterField implements DoCheck, OnDestroy {
   }
 
   emitTooltip(
-    event: MouseEvent | FocusEvent,
+    event: Element | Event,
     content: string | undefined,
     variant?: TooltipVariant,
   ) {

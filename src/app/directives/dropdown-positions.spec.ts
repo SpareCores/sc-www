@@ -15,7 +15,7 @@ describe("placePanel", () => {
   it("places bottom-end below the trigger, aligned to its end", () => {
     expect(
       placePanel(trigger(100, 500), panel, viewport, "bottom-end", false),
-    ).toEqual({ top: 150, left: 400 });
+    ).toEqual({ top: 150, left: 400, maxHeight: 642 });
   });
 
   it("aligns bottom-start to the trigger start and bottom to its center", () => {
@@ -34,10 +34,18 @@ describe("placePanel", () => {
     ).toBe(540);
   });
 
-  it("stays below without flip even when there is no room", () => {
+  it("stays below without flip when the space below is at least 160px", () => {
+    const tallPanel = { width: 200, height: 300 };
+
     expect(
-      placePanel(trigger(700, 500), panel, viewport, "bottom-start", false).top,
-    ).toBe(750);
+      placePanel(trigger(582, 500), tallPanel, viewport, "bottom-start", false),
+    ).toEqual({ top: 632, left: 500, maxHeight: 160 });
+  });
+
+  it("moves to the larger side without flip below 160px of space", () => {
+    expect(
+      placePanel(trigger(700, 500), panel, viewport, "bottom-start", false),
+    ).toEqual({ top: 540, left: 500, maxHeight: 682 });
   });
 
   it("keeps the panel inside the horizontal viewport edges", () => {

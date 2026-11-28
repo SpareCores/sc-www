@@ -4,6 +4,14 @@ export interface CurrencyOption {
   symbol: string;
 }
 
+export function currencyLabel(currency: CurrencyOption): string {
+  return `${currency.name} (${currency.symbol})`;
+}
+
+export function allocationLabel(allocation: { name: string }): string {
+  return allocation.name;
+}
+
 export interface AllocationType {
   name: string;
   slug: string | null;

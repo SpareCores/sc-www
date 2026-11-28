@@ -67,6 +67,7 @@ export const barChartOptionsSSL: ChartConfiguration<"bar">["options"] = {
 };
 
 export const barChartOptionsStaticWeb: ChartConfiguration<"bar">["options"] = {
+  maintainAspectRatio: false,
   scales: {
     ...barChartOptions.scales,
     y: {

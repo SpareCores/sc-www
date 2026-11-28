@@ -4,7 +4,7 @@
       @let sectionId = sectionAnchorId(section);
       <tr class="section_header sc-header-anchor-host" [id]="sectionId">
         <td>
-          <h2 class="text-xl font-semibold">
+          <h2 class="text-lg sm:text-xl font-semibold whitespace-nowrap">
             {{ section.name }}
             @if (showAnchors()) {
               <sc-header-anchor
@@ -37,20 +37,21 @@
         [class.compare-instance-section-first-row]="first"
         [class.compare-instance-section-last-row]="last"
       >
-        <td class="whitespace-nowrap">
+        <td class="sm:whitespace-nowrap">
           <div class="flex gap-2 items-center">
             {{ row.name }}
             @if (row.description) {
               <svg
                 lucideInfo
                 class="h-4 w-4 shrink-0 text-gray-200"
-                (mouseenter)="
+                scTooltipTrigger
+                (tooltipOpen)="
                   descriptionEnter.emit({
                     event: $event,
                     content: row.description,
                   })
                 "
-                (mouseleave)="descriptionLeave.emit()"
+                (tooltipClose)="descriptionLeave.emit()"
               ></svg>
             }
           </div>
@@ -130,7 +131,7 @@
     @if (sectionIndex === 0 && priceRows().length) {
       <tr class="section_header sc-header-anchor-host" id="spec_line_pricing">
         <td>
-          <h2 class="text-xl font-semibold">
+          <h2 class="text-lg sm:text-xl font-semibold whitespace-nowrap">
             Pricing
             @if (showAnchors()) {
               <sc-header-anchor
@@ -157,20 +158,21 @@
           [class.compare-instance-section-first-row]="first"
           [class.compare-instance-section-last-row]="last"
         >
-          <td class="whitespace-nowrap">
+          <td class="sm:whitespace-nowrap">
             <div class="flex gap-2 items-center">
               {{ row.name }}
               @if (row.description) {
                 <svg
                   lucideInfo
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     descriptionEnter.emit({
                       event: $event,
                       content: row.description,
                     })
                   "
-                  (mouseleave)="descriptionLeave.emit()"
+                  (tooltipClose)="descriptionLeave.emit()"
                 ></svg>
               }
             </div>

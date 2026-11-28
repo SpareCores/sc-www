@@ -12,7 +12,11 @@
 
 .stress_ng_table {
   @apply w-full text-white self-start;
-  table-layout: fixed;
+  table-layout: auto;
+
+  @media (width >= theme(--breakpoint-md)) {
+    table-layout: fixed;
+  }
 
   .stress_ng_col_name {
     width: 40%;
@@ -32,11 +36,19 @@
 
   thead {
     th {
-      @apply bg-secondary border-b border-gray-200 border-solid text-left px-3 py-2 leading-5 font-normal uppercase;
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-2 py-2 text-xs leading-5 font-normal uppercase sm:text-base md:px-3;
+
+      &:first-child {
+        @apply px-0 md:px-3;
+      }
+
+      &:last-child {
+        @apply pr-0 md:pr-3;
+      }
     }
 
     th.stress_ng_value {
-      @apply text-right text-sm;
+      @apply text-right text-xs pr-0 sm:text-sm md:pr-3;
     }
   }
 
@@ -46,11 +58,19 @@
     }
 
     td {
-      @apply px-3 py-1.5 text-left text-sm;
+      @apply px-2 py-1.5 text-left text-xs sm:text-sm md:px-3;
+
+      &:first-child {
+        @apply px-0 md:px-3;
+      }
+
+      &:last-child {
+        @apply pr-0 md:pr-3;
+      }
     }
 
     td.stress_ng_value {
-      @apply text-right whitespace-nowrap tabular-nums;
+      @apply text-right whitespace-nowrap tabular-nums pr-0 md:pr-3;
     }
   }
 }

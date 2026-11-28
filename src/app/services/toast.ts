@@ -8,6 +8,9 @@ import {
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
+const TOAST_MIN_TOP = 80;
+const TOAST_BANNER_GAP = 8;
+
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (char) => {
     switch (char) {
@@ -61,9 +64,17 @@ export class Toast implements OnDestroy {
     if (isPlatformBrowser(this.platformId) && !this.toastContainer) {
       this.toastContainer = document.createElement("div");
       this.toastContainer.className =
-        "fixed top-[80px] right-4 z-50 flex flex-col items-end gap-1";
+        "fixed right-4 z-50 flex flex-col items-end gap-1";
+      this.toastContainer.style.top = `${TOAST_MIN_TOP}px`;
       document.body.appendChild(this.toastContainer);
     }
+  }
+
+  private positionContainer(container: HTMLDivElement) {
+    const banner = document.querySelector("sc-promo-banner");
+    const bannerBottom = banner?.getBoundingClientRect().bottom ?? 0;
+    const top = Math.max(TOAST_MIN_TOP, bannerBottom + TOAST_BANNER_GAP);
+    container.style.top = `${top}px`;
   }
 
   showHttpError(
@@ -162,6 +173,7 @@ export class Toast implements OnDestroy {
       }
       this.toasts.delete(toastId);
     }
+    this.positionContainer(this.toastContainer);
     this.toastContainer.appendChild(toast);
 
     let timeoutId: any;

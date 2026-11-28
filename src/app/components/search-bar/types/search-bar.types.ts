@@ -89,7 +89,7 @@ export type SearchBarCustomControlChange = {
 };
 
 export type SearchBarTooltipEvent = {
-  event: MouseEvent | FocusEvent;
+  event: Element | Event;
   content: string;
   variant?: TooltipVariant;
 };

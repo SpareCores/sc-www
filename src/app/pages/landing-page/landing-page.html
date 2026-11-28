@@ -2,37 +2,39 @@
   <div class="content_section content_section--flush" id="hero">
     <div class="content">
       <div class="flex gap-8 flex-col lg:flex-row">
-        <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
-          <div class="text-4xl font-bold leading-12">
+        <div class="flex flex-col gap-4 sm:gap-12 w-full lg:w-1/2 my-auto">
+          <div class="text-3xl leading-10 font-bold sm:text-4xl sm:leading-12">
             Don't gamble with your cloud costs.
             <span class="text-emerald-400">Use Spare Cores!</span>
           </div>
-          <div class="text-3xl">
-            <p class="py-2">
+          <div class="text-sm sm:text-3xl">
+            <p class="sm:py-2">
               Right-size AI/ML compute with vendor-neutral cloud intelligence
               and real workload telemetry.
             </p>
-            <p class="py-2">
+            <p class="mt-5 sm:mt-0 sm:py-2">
               Compare cloud servers, measure real AI/ML job usage, and get
               recommendations before over-provisioning becomes the default.
             </p>
           </div>
-          <div class="pb-12 lg:pb-0">
+          <div class="mt-4 sm:mt-0 sm:pb-12 lg:pb-0">
             <div
-              class="mx-auto grid max-w-xl grid-cols-2 grid-rows-2 gap-y-2 gap-x-8 lg:mx-0"
+              class="mx-auto grid max-w-xl grid-cols-2 gap-x-4 gap-y-2 sm:grid-rows-2 sm:gap-x-8 lg:mx-0"
             >
               <sc-button
                 [label]="'Compare cloud servers\nfor free'"
                 size="large"
                 [routerLink]="'/servers'"
-                class="row-span-2 w-full self-center"
-                buttonClass="min-h-23 text-center"
+                class="col-span-2 w-full self-center sm:col-span-1 sm:row-span-2"
+                buttonClass="text-center sm:min-h-23"
+                labelClass="whitespace-normal! sm:whitespace-pre-line!"
               ></sc-button>
               <sc-button
                 label="Measure AI/ML jobs >"
                 variant="link"
                 size="small"
                 color="accent"
+                buttonClass="min-h-11 sm:min-h-0"
                 (click)="scrollTo('resource-tracker')"
               ></sc-button>
               <sc-button
@@ -40,269 +42,54 @@
                 variant="link"
                 size="small"
                 color="accent"
+                buttonClass="min-h-11 sm:min-h-0"
                 (click)="scrollTo('sentinel')"
               ></sc-button>
             </div>
           </div>
         </div>
         <div
-          class="w-full lg:w-1/2 justify-center flex min-h-[600px]"
+          class="w-full lg:w-1/2 justify-center flex min-h-80 sm:min-h-120 md:min-h-150 lg:min-h-120 xl:min-h-150"
           id="slot-machine"
         >
-          <div class="animated_slot_machine">
-            <div class="outer_border"></div>
-            <div class="top_wide_border_segment"></div>
-            <div class="top_bottom_border_segment"></div>
-            <div class="font-mono font-light text-lg price_div">
-              PRICE/HOURS
-            </div>
-            <div class="font-mono font-light text-sm cpu_div">CPU</div>
-            <div class="font-mono font-light text-sm ram_div">RAM (GB)</div>
-            <div class="container">
-              <button
-                id="spin_button"
-                data-ph-capture-attribute-sc-event="landing slot machine start"
-                data-ph-capture-attribute-slot-machine-action="start"
-                class="button font-bold text-3xl"
-                [disabled]="isSpinning"
-                (click)="spinClicked()"
-              >
-                SPIN
-              </button>
-              <div class="button__bottom" [attr.disabled]="isSpinning"></div>
-            </div>
-            <input
-              [(ngModel)]="priceValue"
-              aria-label="Price of highlighted instance"
-              class="input_border price_input bg-primary text-center text-4xl font-bold"
-              [class.text-gray-400]="isSpinning"
-              [class.text-gray-200]="!isSpinning"
-              readonly
-              disabled
-            />
-            <input
-              id="cpuCount"
-              [(ngModel)]="cpuCount"
-              step="1"
-              aria-label="Minimum vCPU filter"
-              type="number"
-              min="1"
-              class="input_border cpu_input bg-primary text-center text-3xl font-bold"
-              [disabled]="isSpinning"
-              data-ph-capture-attribute-sc-event="landing slot machine filter"
-              data-ph-capture-attribute-slot-machine-action="filter"
-              data-ph-capture-attribute-slot-machine-filter="cpu"
-            />
-            <input
-              id="ramCount"
-              [(ngModel)]="ramCount"
-              step="1"
-              aria-label="Minimum memory filter"
-              type="number"
-              min="0.1"
-              class="input_border ram_input bg-primary text-center text-3xl font-bold"
-              [disabled]="isSpinning"
-              data-ph-capture-attribute-sc-event="landing slot machine filter"
-              data-ph-capture-attribute-slot-machine-action="filter"
-              data-ph-capture-attribute-slot-machine-filter="memory"
-            />
-            <div class="spinner_box_1">
-              <div class="font-mono font-light text-sm text-center w-[145px]">
-                CLOUD VENDOR
-              </div>
-              <div class="spinner_holder">
-                <div id="ring1" class="spin_ring">
-                  @for (
-                    spinnerItem of spinnerContents[0];
-                    track spinnerItem;
-                    let i = $index
-                  ) {
-                    <div
-                      class="slot flex flex-col align-center"
-                      [style]="getStyle(i)"
-                    >
-                      @if (isSlotLinkActive(i) && hasVendorLink(spinnerItem)) {
-                        <a
-                          id="slot_vendor_link"
-                          class="slot_inner slot_link"
-                          [class.slot_inner--active]="isSlotLinkActive(i)"
-                          [routerLink]="getVendorRouteCommands(spinnerItem)"
-                        >
-                          @if (!spinnerItem.logo) {
-                            <div class="text-center font-bold text-3xl">
-                              {{ spinnerItem.name }}
-                            </div>
-                          }
-                          @if (spinnerItem.logo) {
-                            <img
-                              [src]="spinnerItem.logo"
-                              class="slot_logo rounded-lg"
-                              alt="{{ spinnerItem.name }} logo"
-                            />
-                          }
-                        </a>
-                      } @else {
-                        <div
-                          class="slot_inner"
-                          [class.slot_inner--active]="isSlotLinkActive(i)"
-                        >
-                          @if (!spinnerItem.logo) {
-                            <div class="text-center font-bold text-3xl">
-                              {{ spinnerItem.name }}
-                            </div>
-                          }
-                          @if (spinnerItem.logo) {
-                            <img
-                              [src]="spinnerItem.logo"
-                              class="slot_logo rounded-lg"
-                              alt="{{ spinnerItem.name }} logo"
-                            />
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
-                <div class="ring_lines"></div>
-              </div>
-            </div>
-            <div class="spinner_box_2">
-              <div class="font-mono font-light text-sm text-center w-[145px]">
-                SERVER TYPE
-              </div>
-              <div class="spinner_holder">
-                <div id="ring2" class="spin_ring">
-                  @for (
-                    spinnerItem of spinnerContents[1];
-                    track spinnerItem;
-                    let i = $index
-                  ) {
-                    <div
-                      class="slot flex flex-col align-center"
-                      [style]="getStyle(i)"
-                    >
-                      @if (isSlotLinkActive(i) && hasServerLink(spinnerItem)) {
-                        <a
-                          id="slot_server_link"
-                          class="slot_inner slot_link"
-                          [class.slot_inner--active]="isSlotLinkActive(i)"
-                          [routerLink]="getServerRouteCommands(spinnerItem)"
-                        >
-                          <div
-                            class="text-center font-bold overflow-hidden text-ellipsis"
-                            [class.text-xl]="spinnerItem.name.length < 13"
-                            [class.text-md]="spinnerItem.name.length >= 13"
-                          >
-                            {{ spinnerItem.name }}
-                          </div>
-                          <div class="text-center">
-                            {{ spinnerItem.architecture }}
-                          </div>
-                        </a>
-                      } @else {
-                        <div
-                          class="slot_inner"
-                          [class.slot_inner--active]="isSlotLinkActive(i)"
-                        >
-                          <div
-                            class="text-center font-bold overflow-hidden text-ellipsis"
-                            [class.text-xl]="spinnerItem.name.length < 13"
-                            [class.text-md]="spinnerItem.name.length >= 13"
-                          >
-                            {{ spinnerItem.name }}
-                          </div>
-                          <div class="text-center">
-                            {{ spinnerItem.architecture }}
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
-                <div class="ring_lines"></div>
-              </div>
-            </div>
-            <div class="spinner_box_3">
-              <div class="font-mono font-light text-sm text-center w-[145px]">
-                REGION
-              </div>
-              <div class="spinner_holder">
-                <div id="ring3" class="spin_ring">
-                  @for (
-                    spinnerItem of spinnerContents[2];
-                    track spinnerItem;
-                    let i = $index
-                  ) {
-                    <div
-                      class="slot flex flex-col align-center"
-                      [style]="getStyle(i)"
-                    >
-                      @if (isSlotLinkActive(i) && hasRegionLink(spinnerItem)) {
-                        <a
-                          id="slot_region_link"
-                          class="slot_inner slot_link"
-                          [class.slot_inner--active]="isSlotLinkActive(i)"
-                          routerLink="/servers"
-                          [queryParams]="getRegionQueryParams(spinnerItem)"
-                        >
-                          <div
-                            class="text-center font-bold overflow-hidden text-ellipsis"
-                            [class.text-xl]="spinnerItem.name.length < 13"
-                            [class.text-md]="spinnerItem.name.length >= 13"
-                          >
-                            {{ spinnerItem.name }}
-                          </div>
-                          <div class="text-center">{{ spinnerItem.city }}</div>
-                        </a>
-                      } @else {
-                        <div
-                          class="slot_inner"
-                          [class.slot_inner--active]="isSlotLinkActive(i)"
-                        >
-                          <div
-                            class="text-center font-bold overflow-hidden text-ellipsis"
-                            [class.text-xl]="spinnerItem.name.length < 13"
-                            [class.text-md]="spinnerItem.name.length >= 13"
-                          >
-                            {{ spinnerItem.name }}
-                          </div>
-                          <div class="text-center">{{ spinnerItem.city }}</div>
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
-                <div class="ring_lines"></div>
-              </div>
-            </div>
-          </div>
+          <sc-slot-machine></sc-slot-machine>
         </div>
       </div>
       <div
-        class="mt-12 grid overflow-hidden rounded-lg border border-emerald-400 text-center md:grid-cols-2 lg:grid-cols-4"
+        class="mx-4.75 mt-8 grid auto-rows-fr grid-cols-2 sm:mx-0 sm:mt-12 sm:auto-rows-auto sm:grid-cols-1 overflow-hidden rounded-lg border border-emerald-400 text-center md:grid-cols-2 lg:grid-cols-4"
         aria-label="Spare Cores cloud intelligence coverage"
       >
         <div
-          class="border-b border-emerald-400/40 p-6 md:border-r lg:border-b-0"
+          class="flex flex-col justify-center border-b border-r border-emerald-400/40 p-4 sm:block sm:border-r-0 sm:p-6 md:border-r lg:border-b-0"
         >
-          <div class="text-3xl font-bold text-emerald-400">7</div>
-          <div class="pt-2 text-lg font-light text-gray-200">providers</div>
+          <div class="text-xl font-bold text-emerald-400 sm:text-3xl">7</div>
+          <div class="text-sm font-light text-gray-200 sm:pt-2 sm:text-lg">
+            providers
+          </div>
         </div>
         <div
-          class="border-b border-emerald-400/40 p-6 lg:border-b-0 lg:border-r"
+          class="flex flex-col justify-center border-b border-emerald-400/40 p-4 sm:block sm:p-6 lg:border-b-0 lg:border-r"
         >
-          <div class="text-3xl font-bold text-emerald-400">5,000+</div>
-          <div class="pt-2 text-lg font-light text-gray-200">cloud servers</div>
+          <div class="text-xl font-bold text-emerald-400 sm:text-3xl">
+            5,000+
+          </div>
+          <div class="text-sm font-light text-gray-200 sm:pt-2 sm:text-lg">
+            cloud servers
+          </div>
         </div>
         <div
-          class="border-b border-emerald-400/40 p-6 md:border-b-0 md:border-r"
+          class="flex flex-col justify-center border-r border-emerald-400/40 p-4 sm:block sm:border-r-0 sm:border-b sm:p-6 md:border-b-0 md:border-r"
         >
-          <div class="text-3xl font-bold text-emerald-400">2M+</div>
-          <div class="pt-2 text-lg font-light text-gray-200">benchmarks</div>
+          <div class="text-xl font-bold text-emerald-400 sm:text-3xl">2M+</div>
+          <div class="text-sm font-light text-gray-200 sm:pt-2 sm:text-lg">
+            benchmarks
+          </div>
         </div>
-        <div class="p-6">
-          <div class="text-3xl font-bold text-emerald-400">500k live</div>
-          <div class="pt-2 text-lg font-light text-gray-200">
+        <div class="flex flex-col justify-center p-4 sm:block sm:p-6">
+          <div class="text-xl font-bold text-emerald-400 sm:text-3xl">
+            500k live
+          </div>
+          <div class="text-sm font-light text-gray-200 sm:pt-2 sm:text-lg">
             and 100M+ historical prices
           </div>
         </div>
@@ -313,173 +100,65 @@
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
+        <sc-section-heading
+          tag="why"
+          attrName="use"
+          attrValue="spare_cores"
+          anchorId="why"
+          anchorLabel="Why use Spare Cores"
         >
-          <span class="text-emerald-400"><</span>
-          <span class="text-gray-400">why </span>
-          <span class="text-gray-400">use="</span>spare_cores<span
-            class="text-gray-400"
-            >"</span
-          >
-          <span class="text-emerald-400">></span>
-          <sc-header-anchor
-            anchorId="why"
-            label="Why use Spare Cores"
-            [withTarget]="false"
-          ></sc-header-anchor>
-        </div>
-        <div class="w-4/5 lg:w-2/3 mx-auto my-auto text-2xl text-center">
           AI/ML cloud waste starts with guesswork. Spare Cores helps teams
           compare infrastructure, measure real workload usage, turn telemetry
           into recommendations, and govern cloud usage across jobs, projects,
           and teams.
-        </div>
+        </sc-section-heading>
         <div
-          class="grid gap-x-8 gap-y-24 pt-20 px-4 md:grid-cols-2 xl:grid-cols-4"
+          class="grid gap-x-8 gap-y-22 px-4.75 pt-14 sm:gap-y-24 sm:px-4 sm:pt-20 md:grid-cols-2 xl:grid-cols-4"
         >
-          <div
-            class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
+          <sc-feature-card
+            badge="Know"
+            heading="navigator"
+            headingVariant="tag"
+            actionIcon="square-arrow-up-right"
+            actionLabel="Explore Navigator"
+            actionLink="/servers"
           >
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div
-                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
-              >
-                <span class="text-2xl font-bold">Know</span>
-              </div>
-            </div>
-            <div
-              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
-            >
-              <span class="text-emerald-400">&lt;</span>
-              <span class="text-white font-light">navigator</span>
-              <span class="text-emerald-400">&gt;</span>
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Search and compare 5,000+ servers by price, specs, benchmarks, and
-              cost efficiency.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <a
-                routerLink="/servers"
-                class="text-emerald-400"
-                aria-label="Explore Navigator"
-              >
-                <svg
-                  lucideSquareArrowUpRight
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </a>
-            </div>
-          </div>
-          <div
-            class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
+            Search and compare 5,000+ servers by price, specs, benchmarks, and
+            cost efficiency.
+          </sc-feature-card>
+          <sc-feature-card
+            badge="Track"
+            heading="resource_tracker"
+            headingVariant="tag"
+            actionIcon="square-arrow-down"
+            actionLabel="Explore Resource Tracker"
+            (actionClick)="scrollTo('resource-tracker')"
           >
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div
-                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
-              >
-                <span class="text-2xl font-bold">Track</span>
-              </div>
-            </div>
-            <div
-              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
-            >
-              <span class="text-emerald-400">&lt;</span>
-              <span class="text-white font-light">resource_tracker</span>
-              <span class="text-emerald-400">&gt;</span>
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Track real CPU, GPU, memory, and runtime usage from AI/ML jobs
-              with open-source tooling.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                (click)="scrollTo('resource-tracker')"
-                class="text-emerald-400 cursor-pointer"
-                aria-label="Explore Resource Tracker"
-              >
-                <svg
-                  lucideSquareArrowDown
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
-          <div
-            class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
+            Track real CPU, GPU, memory, and runtime usage from AI/ML jobs with
+            open-source tooling.
+          </sc-feature-card>
+          <sc-feature-card
+            badge="Scale"
+            heading="advisor"
+            headingVariant="tag"
+            actionIcon="square-arrow-up-right"
+            actionLabel="Explore Advisor"
+            actionLink="/advisor"
           >
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div
-                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
-              >
-                <span class="text-2xl font-bold">Scale</span>
-              </div>
-            </div>
-            <div
-              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
-            >
-              <span class="text-emerald-400">&lt;</span>
-              <span class="text-white font-light">advisor</span>
-              <span class="text-emerald-400">&gt;</span>
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Turn utilization data and constraints into ranked, explainable
-              instance recommendations.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <a
-                routerLink="/advisor"
-                class="text-emerald-400"
-                aria-label="Explore Advisor"
-              >
-                <svg
-                  lucideSquareArrowUpRight
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </a>
-            </div>
-          </div>
-          <div
-            class="relative flex flex-col gap-4 sc-card sc-card--primary p-8"
+            Turn utilization data and constraints into ranked, explainable
+            instance recommendations.
+          </sc-feature-card>
+          <sc-feature-card
+            badge="Govern"
+            heading="sentinel"
+            headingVariant="tag"
+            actionIcon="square-arrow-down"
+            actionLabel="Explore Sentinel"
+            (actionClick)="scrollTo('sentinel')"
           >
-            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div
-                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
-              >
-                <span class="text-2xl font-bold">Govern</span>
-              </div>
-            </div>
-            <div
-              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
-            >
-              <span class="text-emerald-400">&lt;</span>
-              <span class="text-white font-light">sentinel</span>
-              <span class="text-emerald-400">&gt;</span>
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Use dashboards, reports, alerts, and team controls to catch
-              over-provisioning and track savings.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                (click)="scrollTo('sentinel')"
-                class="text-emerald-400 cursor-pointer"
-                aria-label="Explore Sentinel"
-              >
-                <svg
-                  lucideSquareArrowDown
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
+            Use dashboards, reports, alerts, and team controls to catch
+            over-provisioning and track savings.
+          </sc-feature-card>
         </div>
       </div>
     </div>
@@ -488,76 +167,35 @@
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
-        >
-          <span class="text-emerald-400"><</span>
-          <span class="text-gray-400">product </span>
-          <span class="text-gray-400">id="</span>resource_tracker<span
-            class="text-gray-400"
-            >"</span
-          >
-          <span class="text-emerald-400">></span>
-          <sc-header-anchor
-            anchorId="resource-tracker"
-            label="Resource Tracker"
-            [withTarget]="false"
-          ></sc-header-anchor>
-        </div>
-        <div
-          class="w-full mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
-        >
-          For Data Scientists, ML engineers and AI practitioners
-        </div>
-        <div class="grid gap-8 pt-4 xl:grid-cols-2 xl:gap-12">
-          <div class="flex flex-col justify-center max-lg:px-20">
-            <div>
-              <div class="flex gap-2 text-2xl font-light text-gray-200">
-                <div
-                  class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
-                >
-                  <svg lucideCheck class="h-4 w-4"></svg>
-                </div>
-                <span>Add lightweight telemetry to AI/ML jobs.</span>
-              </div>
-              <div
-                class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-              ></div>
-              <div class="flex gap-2 text-2xl font-light text-gray-200">
-                <div
-                  class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
-                >
-                  <svg lucideCheck class="h-4 w-4"></svg>
-                </div>
-                <span>Capture CPU, GPU, memory, disk and network usage.</span>
-              </div>
-              <div
-                class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-              ></div>
-              <div class="flex gap-2 text-2xl font-light text-gray-200">
-                <div
-                  class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
-                >
-                  <svg lucideCheck class="h-4 w-4"></svg>
-                </div>
-                <span
-                  >Get reports plus basic sizing advice in your workflow.</span
-                >
-              </div>
-              <div
-                class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-              ></div>
-              <div class="flex gap-2 text-2xl font-light text-gray-200">
-                <div
-                  class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
-                >
-                  <svg lucideCheck class="h-4 w-4"></svg>
-                </div>
-                <span>Open-source and MPL-licensed.</span>
-              </div>
-            </div>
+        <sc-section-heading
+          tag="product"
+          attrName="id"
+          attrValue="resource_tracker"
+          subtitle="For Data Scientists, ML engineers and AI practitioners"
+          [fullWidthSubtitle]="true"
+          anchorId="resource-tracker"
+          anchorLabel="Resource Tracker"
+        ></sc-section-heading>
+        <div class="grid gap-8 sm:pt-4 xl:grid-cols-2 xl:gap-12">
+          <div class="flex flex-col justify-center sm:px-20 lg:px-0">
+            <sc-check-list
+              class="mx-4.75 sm:mx-0 sm:font-light *:sm:pt-6 *:sm:pb-4.75"
+            >
+              <sc-check-list-item>
+                Add lightweight telemetry to AI/ML jobs.
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Capture CPU, GPU, memory, disk and network usage.
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Get reports plus basic sizing advice in your workflow.
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Open-source and MPL-licensed.
+              </sc-check-list-item>
+            </sc-check-list>
             <div
-              class="w-4/5 lg:w-full text-2xl font-bold pt-12 text-center lg:text-left mx-auto"
+              class="w-full sm:w-4/5 lg:w-full text-xl sm:text-2xl font-bold pt-8 sm:pt-12 text-center lg:text-left mx-auto"
             >
               <a
                 href="https://sparecores.github.io/resource-tracker/"
@@ -587,22 +225,24 @@
               "
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
-              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0 aspect-video"
+              class="border-emerald-400 border-2 rounded-lg mx-auto sm:mt-8 lg:mt-0 aspect-video"
             ></iframe>
           </div>
         </div>
-        <div class="w-full lg:w-4/5 mx-auto my-auto text-2xl pt-8">
-          <div class="quote-container flex gap-8 items-center px-2 pb-2">
+        <div class="w-full lg:w-4/5 mx-auto my-auto text-2xl sm:pt-8">
+          <div
+            class="quote-container flex flex-col items-center gap-4 px-2 sm:flex-row sm:gap-8 sm:pb-2"
+          >
             <div>
               <span
-                class="inline-flex justify-center items-center size-[90px] text-emerald-400"
+                class="flex justify-center items-center size-12.5 sm:inline-flex sm:size-22.5 text-emerald-400"
               >
-                <svg lucideQuote class="shrink-0 size-[50px]"></svg>
+                <svg lucideQuote class="shrink-0 size-12.5"></svg>
               </span>
             </div>
             <div class="w-full">
               <button
-                class="quote-preview text-2xl cursor-zoom-in"
+                class="quote-preview text-sm sm:text-2xl cursor-zoom-in"
                 (click)="toggleQuote($event)"
               >
                 The Resource Tracker has become an essential part of our
@@ -612,7 +252,7 @@
                   >— Data Engineer, Too Good To Go</span
                 >
               </button>
-              <div class="quote-full text-2xl hidden">
+              <div class="quote-full text-sm sm:text-2xl hidden">
                 <p class="pb-4">
                   We run several ML pipelines that process high volumes of data
                   daily. Initially, we over-provisioned CPU and memory to avoid
@@ -656,168 +296,135 @@
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
-        >
-          <span class="text-emerald-400"><</span>
-          <span class="text-gray-400">product </span>
-          <span class="text-gray-400">id="</span>sentinel<span
-            class="text-gray-400"
-            >"</span
-          >
-          <span class="text-emerald-400">></span>
-          <sc-header-anchor
-            anchorId="sentinel"
-            label="Sentinel"
-            [withTarget]="false"
-          ></sc-header-anchor>
-        </div>
-        <div
-          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
-        >
-          For DS/AI/ML platform and FinOps leads
-        </div>
-        <div
-          class="w-4/5 mx-auto my-auto text-4xl font-light italic text-center pt-8"
+        <sc-section-heading
+          tag="product"
+          attrName="id"
+          attrValue="sentinel"
+          subtitle="For DS/AI/ML platform and FinOps leads"
+          description="lead"
+          anchorId="sentinel"
+          anchorLabel="Sentinel"
         >
           Sentinel gives teams a live view of telemetry and cost signals across
           their jobs to spot over-provisioning, catch drift, and turn
           infrastructure guesswork into measurable optimization.
-        </div>
+        </sc-section-heading>
         <div
-          class="flex gap-24 flex-col max-lg:px-20 lg:flex-row lg:gap-24 pt-8"
+          class="flex flex-col gap-8 sm:gap-24 sm:px-20 lg:flex-row lg:gap-24 lg:px-0 sm:pt-8"
         >
           <div class="flex flex-col w-full lg:w-1/2">
-            <div class="flex flex-row gap-4 items-center pb-8">
-              <div class="rounded-full border-2 border-emerald-400 p-6">
-                <svg lucideScanEye class="h-12 w-12 text-emerald-400"></svg>
-              </div>
-              <div>
-                <div class="text-3xl font-bold text-emerald-400">
-                  Sentinel Access
-                </div>
-                <div class="text-2xl font-light">
-                  <a
-                    href="https://sentinel.sparecores.com/"
-                    target="_blank"
-                    rel="noopener"
-                    class="sc-link"
-                    >Start free</a
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
-              </div>
-              <span>360-view of every job you run in a central dashboard</span>
-            </div>
             <div
-              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
+              class="grid grid-cols-[auto_1fr] items-center gap-x-2 pb-4 sm:gap-x-4 sm:pb-8"
+            >
+              <div
+                class="flex size-9.5 items-center justify-center rounded-full border-2 border-emerald-400 sm:row-span-2 sm:size-25"
+              >
+                <svg
+                  lucideScanEye
+                  class="size-4.75 text-emerald-400 sm:size-12"
+                  aria-hidden="true"
+                ></svg>
               </div>
-              <span>Feature-rich reports, 7-day retention</span>
-            </div>
-            <div
-              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
+              <div
+                class="text-xl font-bold text-emerald-400 sm:self-end sm:text-3xl"
+              >
+                Sentinel Access
               </div>
-              <span>Hierarchical or tag-based report breakouts</span>
-            </div>
-            <div
-              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
+              <div
+                class="col-start-2 text-xl font-light sm:self-start sm:text-2xl"
+              >
+                <a
+                  href="https://sentinel.sparecores.com/"
+                  target="_blank"
+                  rel="noopener"
+                  class="sc-link"
+                  >Start free</a
+                >
               </div>
-              <span>Free cloud service for individual users</span>
             </div>
+            <sc-check-list
+              class="mx-4.75 sm:mx-0 sm:font-light *:sm:pt-6 *:sm:pb-4.75"
+            >
+              <sc-check-list-item>
+                360-view of every job you run in a central dashboard
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Feature-rich reports, 7-day retention
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Hierarchical or tag-based report breakouts
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Free cloud service for individual users
+              </sc-check-list-item>
+            </sc-check-list>
           </div>
           <div class="flex flex-col w-full lg:w-1/2">
-            <div class="flex flex-row gap-4 items-center pb-8">
-              <div class="rounded-full border-2 border-emerald-400 p-6">
-                <svg lucideRocket class="h-12 w-12 text-emerald-400"></svg>
-              </div>
-              <div>
-                <div class="text-3xl font-bold text-emerald-400">
-                  Sentinel team plans
-                </div>
-                <div class="text-2xl font-light">
-                  <button
-                    type="button"
-                    id="meeting-sentinel-team-plans"
-                    class="bg-transparent sc-link"
-                  >
-                    Contact sales
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
-              </div>
-              <span>Everything in Sentinel Access, plus team support</span>
-            </div>
             <div
-              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
+              class="grid grid-cols-[auto_1fr] items-center gap-x-2 pb-4 sm:gap-x-4 sm:pb-8"
+            >
+              <div
+                class="flex size-9.5 items-center justify-center rounded-full border-2 border-emerald-400 sm:row-span-2 sm:size-25"
+              >
+                <svg
+                  lucideRocket
+                  class="size-4.75 text-emerald-400 sm:size-12"
+                  aria-hidden="true"
+                ></svg>
               </div>
-              <span>Full historical optimization and savings analysis</span>
-            </div>
-            <div
-              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
+              <div
+                class="text-xl font-bold text-emerald-400 sm:self-end sm:text-3xl"
+              >
+                Sentinel team plans
               </div>
-              <span>Auto-tuning resource allocations</span>
-            </div>
-            <div
-              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
+              <div
+                class="col-start-2 text-xl font-light sm:self-start sm:text-2xl"
+              >
+                <button
+                  type="button"
+                  id="meeting-sentinel-team-plans"
+                  class="bg-transparent sc-link"
+                >
+                  Contact sales
+                </button>
               </div>
-              <span>Custom data retention, SLA, SSO & RBAC</span>
             </div>
-            <div
-              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-2xl font-light text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
-                <svg lucideCheck class="h-4 w-4"></svg>
-              </div>
-              <span>Optional on-prem or hybrid deployment</span>
-            </div>
+            <sc-check-list
+              class="mx-4.75 sm:mx-0 sm:font-light *:sm:pt-6 *:sm:pb-4.75"
+            >
+              <sc-check-list-item>
+                Everything in Sentinel Access, plus team support
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Full historical optimization and savings analysis
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Auto-tuning resource allocations
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Custom data retention, SLA, SSO & RBAC
+              </sc-check-list-item>
+              <sc-check-list-item>
+                Optional on-prem or hybrid deployment
+              </sc-check-list-item>
+            </sc-check-list>
           </div>
         </div>
       </div>
-      <div class="w-4/5 mx-auto my-auto text-2xl pt-16">
-        <div class="quote-container flex gap-8 items-center px-2 pb-2">
+      <div class="w-full sm:w-4/5 mx-auto my-auto text-2xl pt-8 sm:pt-16">
+        <div
+          class="quote-container flex flex-col items-center gap-4 px-2 sm:flex-row sm:gap-8 sm:pb-2"
+        >
           <div>
             <span
-              class="inline-flex justify-center items-center size-[90px] text-emerald-400"
+              class="flex justify-center items-center size-12.5 sm:inline-flex sm:size-22.5 text-emerald-400"
             >
-              <svg lucideQuote class="shrink-0 size-[50px]"></svg>
+              <svg lucideQuote class="shrink-0 size-12.5"></svg>
             </span>
           </div>
           <div class="w-full">
             <button
-              class="quote-preview text-2xl cursor-zoom-in"
+              class="quote-preview text-sm sm:text-2xl cursor-zoom-in"
               (click)="toggleQuote($event)"
             >
               They brought stability and scalability to the platform,
@@ -825,7 +432,7 @@
               costs [...]
               <span class="text-gray-400">— Chief Data Officer, System1</span>
             </button>
-            <div class="quote-full text-2xl hidden">
+            <div class="quote-full text-sm sm:text-2xl hidden">
               <p class="pb-4">
                 Gergely and his team played a key role in building and
                 productionizing the infrastructure for our data science
@@ -857,30 +464,21 @@
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
+        <sc-section-heading
+          tag="init"
+          attrName="products"
+          attrValue="resource_tracker sentinel"
+          subtitle="Ready to right‑size your workflows?"
+          anchorId="get-started"
+          anchorLabel="Get started"
+        ></sc-section-heading>
         <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
-        >
-          <span class="text-emerald-400"><</span>
-          <span class="text-gray-400">init </span>
-          <span class="text-gray-400">products="</span>resource_tracker
-          sentinel<span class="text-gray-400">"</span>
-          <span class="text-emerald-400">></span>
-          <sc-header-anchor
-            anchorId="get-started"
-            label="Get started"
-            [withTarget]="false"
-          ></sc-header-anchor>
-        </div>
-        <div
-          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
-        >
-          Ready to right‑size your workflows?
-        </div>
-        <div
-          class="w-4/5 lg:w-full mx-auto flex gap-8 lg:gap-24 flex-col lg:flex-row pt-4 px-4"
+          class="w-full sm:w-4/5 lg:w-full mx-auto flex gap-8 lg:gap-24 flex-col lg:flex-row sm:pt-4 sm:px-4"
         >
           <div class="flex flex-col w-full lg:w-1/2 justify-center">
-            <ol class="list-decimal list-outside text-2xl leading-[42px]">
+            <ol
+              class="list-decimal list-outside mx-4.75 pl-6.75 text-sm leading-6 sm:mx-0 sm:pl-0 sm:text-2xl sm:leading-10.5"
+            >
               <li class="pb-4">
                 <a routerLink="/servers" class="sc-link font-bold">
                   Compare cloud servers for free
@@ -914,7 +512,7 @@
                 </a>
                 to see recent workflow history and alerts.
               </li>
-              <li class="pb-4">
+              <li class="sm:pb-4">
                 <a
                   class="sc-link cursor-pointer font-bold"
                   id="meeting-painpoints"
@@ -926,9 +524,12 @@
               </li>
             </ol>
           </div>
-          <div class="flex flex-col w-full lg:w-1/2 justify-center">
+          <div class="flex min-w-0 flex-col w-full lg:w-1/2 justify-center">
             @if (showResourceTrackerCode) {
-              <pre class="language-python line-numbers" data-line="4"><code>
+              <pre
+                class="language-python line-numbers text-sm sm:text-base"
+                data-line="4"
+              ><code>
                                           from resource_tracker import ResourceTracker
 
                                           # start trackers in the background (non-blocking)
@@ -952,166 +553,85 @@
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div
-          class="logo_text text-4xl justify-center font-light text-center sc-header-anchor-host"
-        >
-          <span class="text-emerald-400"><</span>
-          <span class="text-gray-400">services </span>
-          <span class="text-gray-400">from="</span>spare_cores<span
-            class="text-gray-400"
-            >"</span
-          >
-          <span class="text-emerald-400">></span>
-          <sc-header-anchor
-            anchorId="services"
-            label="Services"
-            [withTarget]="false"
-          ></sc-header-anchor>
-        </div>
-        <div
-          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
-        >
-          More ways Spare Cores helps
-        </div>
-        <div
-          class="w-4/5 mx-auto my-auto text-4xl font-light italic text-center pt-8"
+        <sc-section-heading
+          tag="services"
+          attrName="from"
+          attrValue="spare_cores"
+          subtitle="More ways Spare Cores helps"
+          description="lead"
+          anchorId="services"
+          anchorLabel="Services"
         >
           Assess, implement, and operate AI/ML cloud optimization with the team
           that built the tools.
-        </div>
+        </sc-section-heading>
         <div
-          class="grid gap-8 justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-4 pt-8 px-4"
+          class="grid gap-8 justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-4 px-4.75 sm:pt-8 sm:px-4"
         >
-          <div
-            class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
+          <sc-feature-card
+            heading="Spare Cores Navigator"
+            actionIcon="square-arrow-up-right"
+            actionLabel="Learn about Navigator"
+            actionLink="/about/navigator"
           >
-            <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
-              Spare Cores Navigator
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Vendor-neutral cloud intelligence covering 5,000+ cloud servers
-              across providers, with standardized pricing, specs, and
-              benchmarks.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <a
-                routerLink="/about/navigator"
-                class="text-emerald-400"
-                aria-label="Learn about Navigator"
-              >
-                <svg
-                  lucideSquareArrowUpRight
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </a>
-            </div>
-          </div>
-          <div
-            class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
+            Vendor-neutral cloud intelligence covering 5,000+ cloud servers
+            across providers, with standardized pricing, specs, and benchmarks.
+          </sc-feature-card>
+          <sc-feature-card
+            heading="Cloud Optimization Assessment"
+            actionIcon="message-square-more"
+            actionLabel="Contact sales about Cloud Optimization Assessment"
+            actionId="meeting-services-consulting"
           >
-            <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
-              Cloud Optimization Assessment
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Baseline AI/ML infrastructure spend, identify workload
-              inefficiencies, recommend and prioritize right-sizing actions.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                id="meeting-services-consulting"
-                class="text-emerald-400 cursor-pointer"
-                aria-label="Contact sales about Cloud Optimization Assessment"
-              >
-                <svg
-                  lucideMessageSquareMore
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
-          <div
-            class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
+            Baseline AI/ML infrastructure spend, identify workload
+            inefficiencies, recommend and prioritize right-sizing actions.
+          </sc-feature-card>
+          <sc-feature-card
+            heading="Scalable Shiny / Streamlit Hosting"
+            actionIcon="message-square-more"
+            actionLabel="Contact sales about Shiny and Streamlit hosting"
+            actionId="meeting-services-shiny"
           >
-            <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
-              Scalable Shiny / Streamlit Hosting
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Monitoring and auto‑scaling containerized dashboards from zero to
-              thousands of users on your cloud—or ours.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                id="meeting-services-shiny"
-                class="text-emerald-400 cursor-pointer"
-                aria-label="Contact sales about Shiny and Streamlit hosting"
-              >
-                <svg
-                  lucideMessageSquareMore
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
-          <div
-            class="flex flex-col gap-4 p-8 sc-card sc-card--primary relative"
+            Monitoring and auto‑scaling containerized dashboards from zero to
+            thousands of users on your cloud—or ours.
+          </sc-feature-card>
+          <sc-feature-card
+            heading="Ad-hoc AI Workload Sizing"
+            actionIcon="message-square-more"
+            actionLabel="Contact sales about AI workload sizing"
+            actionId="meeting-services-llms"
           >
-            <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
-              Ad-hoc AI Workload Sizing
-            </div>
-            <div class="text-left text-white text-xl pb-8">
-              Instantly pick the lowest-cost, right-sized infra for one-off
-              tasks—like labeling 10 k PDFs with an LLM.
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <button
-                type="button"
-                id="meeting-services-llms"
-                class="text-emerald-400 cursor-pointer"
-                aria-label="Contact sales about AI workload sizing"
-              >
-                <svg
-                  lucideMessageSquareMore
-                  class="h-[30px] w-[30px]"
-                  aria-hidden="true"
-                ></svg>
-              </button>
-            </div>
-          </div>
+            Instantly pick the lowest-cost, right-sized infra for one-off
+            tasks—like labeling 10 k PDFs with an LLM.
+          </sc-feature-card>
         </div>
       </div>
     </div>
   </div>
   <div id="articles" class="h-0"></div>
   <div class="content_section">
-    <div class="content flex flex-col gap-12">
-      <sc-theme-text
-        text="release_notes"
-        classes="text-4xl justify-center font-light sc-header-anchor-host"
+    <div class="content flex flex-col gap-4 sm:gap-12">
+      <sc-section-heading
+        tag="release_notes"
+        [monoTitle]="true"
+        description="compact"
+        anchorId="articles"
+        anchorLabel="Release notes"
       >
-        <sc-header-anchor
-          anchorId="articles"
-          label="Release notes"
-          [withTarget]="false"
-        ></sc-header-anchor>
-      </sc-theme-text>
-      <div class="text-xl text-center font-medium w-3/5 mx-auto">
         We publish case studies, learnings from implementing Spare Cores
         components, and other project updates from time to time. Find some of
         our featured articles below:
-      </div>
-      <div class="articles_holder flex mt-4 flex-wrap">
+      </sc-section-heading>
+      <div class="articles_holder flex sm:mt-4 flex-wrap">
         @for (article of featuredArticles; track article.title) {
-          <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4">
+          <div
+            class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-0 sm:px-6 py-4"
+          >
             <sc-article-card [article]="article"></sc-article-card>
           </div>
         }
       </div>
-      <div class="flex justify-center gap-2 items-center">
+      <div class="flex flex-col justify-center gap-2 items-center sm:flex-row">
         <sc-button
           label="Read more articles"
           icon="notebook-text"

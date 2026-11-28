@@ -13,11 +13,11 @@
 }
 
 .workload-profile-radar-chart__canvas--compare {
-  height: 460px;
+  height: 100%;
 }
 
 .workload-profile-radar-chart__canvas--details {
-  height: 420px;
+  height: 100%;
 }
 
 @media (width < theme(--breakpoint-lg)) {

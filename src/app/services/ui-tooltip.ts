@@ -1,4 +1,5 @@
-import { Injectable } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
+import { DestroyRef, Injectable, NgZone, inject, signal } from "@angular/core";
 
 export type TooltipPlacement = {
   left: "anchor-left" | "anchor-right" | "fixed-left";
@@ -11,6 +12,10 @@ export type TooltipVariant = "default" | "warning" | "warning-wide";
   providedIn: "root",
 })
 export class UiTooltip {
+  private readonly ngZone = inject(NgZone);
+  private readonly document = inject(DOCUMENT);
+  private readonly activeAnchor = signal<Element | null>(null);
+  readonly shownAnchor = this.activeAnchor.asReadonly();
   private readonly viewportPadding = 16;
   private readonly tooltipOffset = 5;
   private readonly dismissListenerOptions: AddEventListenerOptions = {
@@ -20,6 +25,7 @@ export class UiTooltip {
     left: "anchor-right",
     top: "anchor-below",
   };
+  private textTooltipElement?: HTMLElement;
   private activeTooltipElement?: HTMLElement;
   private activeAnchorElement?: Element;
   private animationFrameId?: number;
@@ -30,14 +36,47 @@ export class UiTooltip {
 
     this.hide(this.activeTooltipElement);
   };
+  private readonly hideOnOutsidePointer = (event: PointerEvent) => {
+    const target = event.target;
+    if (
+      target instanceof Node &&
+      (this.activeAnchorElement?.contains(target) ||
+        this.activeTooltipElement?.contains(target))
+    ) {
+      return;
+    }
+
+    this.hideActiveTooltip();
+  };
+  private readonly hideOnEscape = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.hideActiveTooltip();
+    }
+  };
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.textTooltipElement?.remove());
+  }
+
+  showText(anchor: Element, text: string) {
+    const tooltipElement = this.getTextTooltipElement();
+    tooltipElement.textContent = text;
+    this.show(tooltipElement, anchor);
+  }
+
+  hideText(anchor: Element) {
+    if (this.activeAnchorElement === anchor) {
+      this.hide(this.textTooltipElement);
+    }
+  }
 
   show(
     tooltipElement: HTMLElement,
-    event: Event,
+    anchor: Element | Event,
     placement: TooltipPlacement = this.defaultPlacement,
     variant: TooltipVariant = "default",
   ) {
-    const anchorElement = this.resolveAnchorElement(event);
+    const anchorElement = this.resolveAnchorElement(anchor);
     if (!anchorElement) {
       return;
     }
@@ -46,6 +85,7 @@ export class UiTooltip {
     this.unregisterDismissListeners();
     this.activeTooltipElement = tooltipElement;
     this.activeAnchorElement = anchorElement;
+    this.activeAnchor.set(anchorElement);
     this.registerDismissListeners();
 
     this.applyVariant(tooltipElement, variant);
@@ -69,13 +109,13 @@ export class UiTooltip {
 
   showIfPresent<T>(params: {
     tooltipElement: HTMLElement | undefined;
-    event: Event;
+    anchor: Element | Event;
     content: T | null | undefined | false | "";
     onShow: (content: T) => void;
     placement?: TooltipPlacement;
     variant?: TooltipVariant;
   }) {
-    const { tooltipElement, event, content, onShow, placement, variant } =
+    const { tooltipElement, anchor, content, onShow, placement, variant } =
       params;
 
     if (!content || !tooltipElement) {
@@ -83,7 +123,7 @@ export class UiTooltip {
     }
 
     onShow(content);
-    this.show(tooltipElement, event, placement, variant ?? "default");
+    this.show(tooltipElement, anchor, placement, variant ?? "default");
     return true;
   }
 
@@ -97,10 +137,22 @@ export class UiTooltip {
       this.unregisterDismissListeners();
       this.activeTooltipElement = undefined;
       this.activeAnchorElement = undefined;
+      this.activeAnchor.set(null);
     }
 
     this.resetTooltipStyles(tooltipElement);
     this.applyVariant(tooltipElement, "default");
+  }
+
+  private getTextTooltipElement(): HTMLElement {
+    if (!this.textTooltipElement) {
+      this.textTooltipElement = this.document.createElement("div");
+      this.textTooltipElement.className =
+        "tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden";
+      this.document.body.appendChild(this.textTooltipElement);
+    }
+
+    return this.textTooltipElement;
   }
 
   private applyVariant(
@@ -202,7 +254,12 @@ export class UiTooltip {
     return Math.min(Math.max(preferred, min), max);
   }
 
-  private resolveAnchorElement(event: Event): Element | null {
+  private resolveAnchorElement(anchor: Element | Event): Element | null {
+    if (anchor instanceof Element) {
+      return anchor;
+    }
+
+    const event = anchor;
     const currentTarget = event.currentTarget;
     if (currentTarget instanceof Element) {
       return currentTarget;
@@ -236,16 +293,24 @@ export class UiTooltip {
   }
 
   private registerDismissListeners(): void {
-    document.addEventListener(
-      "scroll",
-      this.hideActiveTooltip,
-      this.dismissListenerOptions,
-    );
-    window.addEventListener(
-      "scroll",
-      this.hideActiveTooltip,
-      this.dismissListenerOptions,
-    );
+    this.ngZone.runOutsideAngular(() => {
+      document.addEventListener(
+        "scroll",
+        this.hideActiveTooltip,
+        this.dismissListenerOptions,
+      );
+      window.addEventListener(
+        "scroll",
+        this.hideActiveTooltip,
+        this.dismissListenerOptions,
+      );
+      document.addEventListener(
+        "pointerdown",
+        this.hideOnOutsidePointer,
+        this.dismissListenerOptions,
+      );
+      document.addEventListener("keydown", this.hideOnEscape);
+    });
   }
 
   private unregisterDismissListeners(): void {
@@ -259,5 +324,11 @@ export class UiTooltip {
       this.hideActiveTooltip,
       this.dismissListenerOptions,
     );
+    document.removeEventListener(
+      "pointerdown",
+      this.hideOnOutsidePointer,
+      this.dismissListenerOptions,
+    );
+    document.removeEventListener("keydown", this.hideOnEscape);
   }
 }

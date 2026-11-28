@@ -252,6 +252,38 @@ describe("WorkloadProfilePanel", () => {
     );
   });
 
+  it("renders the radar, profile dropdown and gauge in one card", () => {
+    fixture.componentRef.setInput("layout", "details");
+    fixture.componentRef.setInput("serverDetails", {
+      benchmark_scores: [
+        {
+          benchmark_id: "workload_profile:web",
+          score: 0.832,
+          score_breakdown: webBreakdown,
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    const cards = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      ".workload-profile-charts-to-hide-for-test",
+    );
+
+    const titles = Array.from(cards[0].querySelectorAll("h3")).map((title) =>
+      title.textContent?.trim(),
+    );
+
+    expect(cards.length).toBe(1);
+    expect(
+      cards[0].querySelector(".workload-profile-radar-chart--details"),
+    ).toBeTruthy();
+    expect(titles[1]).toContain("Web server");
+    expect(cards[0].querySelector("sc-button")).toBeTruthy();
+    expect(
+      cards[0].querySelector(".workload-profile-score-gauge"),
+    ).toBeTruthy();
+  });
+
   it("renders compact units and the breakdown table on details layout", () => {
     fixture.componentRef.setInput("layout", "details");
     fixture.componentRef.setInput("serverDetails", {
@@ -280,10 +312,7 @@ describe("WorkloadProfilePanel", () => {
       By.css("td button[aria-label='Show benchmark note']"),
     );
     expect(warningButton).toBeTruthy();
-    warningButton.triggerEventHandler(
-      "mouseenter",
-      new MouseEvent("mouseenter"),
-    );
+    (warningButton.nativeElement as HTMLButtonElement).click();
     fixture.detectChanges();
     expect(fixture.componentInstance.tooltipContent()).toBe(
       "Limited scaling above 32 vCPUs.",

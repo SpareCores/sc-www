@@ -1,29 +1,32 @@
 @if (chartData() && currentMemoryChartOption()) {
   <div class="sc-chart-block sc-chart-block--half" id="bw_mem_chart">
     <div
-      class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between sc-header-anchor-host sc-header-anchor-host--card"
+      class="flex items-center justify-between gap-4 sm:flex-col sm:items-start md:flex-row md:items-center sc-header-anchor-host sc-header-anchor-host--card"
     >
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3 class="sc-chart-title">
         <svg [lucideIcon]="'bwmem' | benchmarkIcon" class="h-6 w-6"></svg>
-        <span class="whitespace-nowrap">Memory Bandwidth</span>
+        <sc-truncated-title text="Memory Bandwidth"></sc-truncated-title>
         <svg
           [lucideIcon]="currentMemoryChartIcon()"
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, currentMemoryChartOrderTooltip())"
-          (mouseleave)="hideTooltip()"
+          scTooltipTrigger
+          (tooltipOpen)="showTooltip($event, currentMemoryChartOrderTooltip())"
+          (tooltipClose)="hideTooltip()"
         ></svg>
         <svg
           lucideInfo
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, currentMemoryChartInfo())"
-          (mouseleave)="hideTooltip()"
+          scTooltipTrigger
+          (tooltipOpen)="showTooltip($event, currentMemoryChartInfo())"
+          (tooltipClose)="hideTooltip()"
         ></svg>
         @if (currentMemoryChartNote()) {
           <svg
             lucideTriangleAlert
             class="benchmark-note-icon"
-            (mouseenter)="showWarningTooltip($event, currentMemoryChartNote())"
-            (mouseleave)="hideTooltip()"
+            scTooltipTrigger
+            (tooltipOpen)="showWarningTooltip($event, currentMemoryChartNote())"
+            (tooltipClose)="hideTooltip()"
           ></svg>
         }
         @if (anchorId(); as id) {
@@ -41,6 +44,7 @@
         [dropdownEnabled]="availableMemoryChartOptions().length > 0"
         [label]="currentMemoryChartOption().name"
         icon="chevron-down"
+        compactIcon="settings"
         variant="dropdown"
         size="small"
       ></sc-button>

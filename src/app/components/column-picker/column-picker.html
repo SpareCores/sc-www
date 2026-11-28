@@ -1,0 +1,34 @@
+<sc-button
+  [attr.id]="buttonId()"
+  [scDropdown]="panel"
+  label="Columns"
+  icon="columns-3-cog"
+  compactIcon="columns-3-cog"
+  variant="dropdown"
+></sc-button>
+
+<ng-template #panel>
+  <div [attr.id]="panelId()" class="sc-dropdown w-56">
+    <ul class="sc-dropdown__list px-3" [attr.aria-labelledby]="buttonId()">
+      @for (column of columns(); track column.name) {
+        <li>
+          <label class="flex cursor-pointer items-center gap-2 py-1">
+            <input
+              #checkbox
+              type="checkbox"
+              [checked]="column.show"
+              (change)="
+                visibilityChange.emit({
+                  name: column.name,
+                  show: checkbox.checked,
+                })
+              "
+              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden cursor-pointer"
+            />
+            <span class="text-sm text-white">{{ column.name }}</span>
+          </label>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>

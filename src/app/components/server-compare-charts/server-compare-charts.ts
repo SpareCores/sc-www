@@ -1,17 +1,21 @@
-import { DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { DOCUMENT, NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
+  afterNextRender,
   Component,
   computed,
   ElementRef,
   inject,
+  Injector,
   Input,
   OnChanges,
   OnDestroy,
   output,
   PLATFORM_ID,
   signal,
+  TemplateRef,
   ViewChild,
   viewChild,
+  viewChildren,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
@@ -125,10 +129,13 @@ import {
   isWorkloadProfileBenchmark,
   WORKLOAD_PROFILE_INFO_TOOLTIP,
 } from "../charts/workload-profile/workload-profile.utils";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
+import { TruncatedTitle } from "../truncated-title/truncated-title";
 
 @Component({
   selector: "sc-server-compare-charts",
   imports: [
+    TooltipTrigger,
     LucideDynamicIcon,
     LucideCircleArrowDown,
     LucideCircleArrowUp,
@@ -147,6 +154,8 @@ import {
     Button,
     Dropdown,
     HeaderAnchor,
+    NgTemplateOutlet,
+    TruncatedTitle,
   ],
   providers: [CompareChartLegendVisibility],
   templateUrl: "./server-compare-charts.html",
@@ -164,6 +173,11 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   private llmBuilder = inject(LlmInferenceChartBuilder);
   private advisorUi = inject(AdvisorUi);
   private legendVisibility = inject(CompareChartLegendVisibility);
+  private injector = inject(Injector);
+  private memoryChart = viewChild(ServerCompareMemoryChart);
+  private compressionChart = viewChild(CompressionChart);
+  private llmChart = viewChild(LlmInferenceChart);
+  private lineChartComponents = viewChildren(BenchmarkLineChart);
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() baselineServer: ExtendedServerDetails | null = null;
@@ -329,8 +343,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   }
 
   getServerColumnWidth(server: ExtendedServerDetails) {
-    const displayNameLength = server.display_name?.length ?? 0;
-    return `max(10.5rem, ${displayNameLength + 3}ch)`;
+    return compareTableLayout.getCompareColumnWidth(server.display_name);
   }
 
   private schedulePinnedRowLayoutUpdate(): void {
@@ -559,11 +572,28 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
   readonly formatWorkloadProfileLabel = formatWorkloadProfileLabel;
 
-  showTooltip(el: MouseEvent, content?: string, autoHide = false) {
+  getHeaderChartControls(sectionId: string): TemplateRef<unknown> | undefined {
+    switch (sectionId) {
+      case "bw_mem":
+        return this.memoryChart()?.compareControls();
+      case "compress":
+        return this.compressionChart()?.compareControls();
+      case "llm_inference":
+        return this.llmChart()?.compareControls();
+      case "openssl":
+        return this.lineChartComponents()
+          .find((chart) => chart.chartSource() === "compare-ssl")
+          ?.compareControls();
+      default:
+        return undefined;
+    }
+  }
+
+  showTooltip(el: Element | Event, content?: string, autoHide = false) {
     this.tooltipHtml = "";
     const didShow = this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
@@ -577,11 +607,11 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string) {
+  showWarningTooltip(el: Element | Event, content?: string) {
     this.tooltipHtml = "";
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning",
       onShow: (tooltipContent) => {
@@ -590,11 +620,11 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     });
   }
 
-  showWarningSectionTooltip(el: MouseEvent, content?: string) {
+  showWarningSectionTooltip(el: Element | Event, content?: string) {
     this.tooltipHtml = "";
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {
@@ -603,7 +633,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     });
   }
 
-  showTooltipChart(el: MouseEvent, type: string) {
+  showTooltipChart(el: Element | Event, type: string) {
     this.tooltipHtml = "";
     const content = this.benchmarkMeta.find(
       (b: any) => b.benchmark_id === type,
@@ -611,7 +641,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
 
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
@@ -619,7 +649,7 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     });
   }
 
-  showGeekbenchInfoTooltip(el: MouseEvent): void {
+  showGeekbenchInfoTooltip(el: Element | Event): void {
     const geekbenchMeta = this.geekbenchBenchmarkMeta.filter((b) =>
       b.benchmark_id?.includes("geekbench"),
     );
@@ -1093,6 +1123,24 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
   toggleWorkloadProfileDetails(): void {
     this.workloadProfileShowMore = !this.workloadProfileShowMore;
     this.layoutChanged.emit();
+
+    if (this.workloadProfileShowMore) {
+      this.scrollToSectionDetails("benchmark_line_workload_profile");
+    }
+  }
+
+  private scrollToSectionDetails(sectionId: string): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    afterNextRender(
+      () =>
+        this.document
+          .querySelector(`[data-compare-details-start="${sectionId}"]`)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      { injector: this.injector },
+    );
   }
 
   getUncategorizedBenchmarksCategories() {
@@ -1121,7 +1169,10 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     );
   }
 
-  toggleBenchmarkCategory(category: BenchmarkMultiBarChartItem): void {
+  toggleBenchmarkCategory(
+    category: BenchmarkMultiBarChartItem,
+    sectionId: string,
+  ): void {
     category.show_more = !category.show_more;
 
     // single item lists are auto toggled
@@ -1130,6 +1181,10 @@ export class ServerCompareCharts implements OnChanges, OnDestroy {
     }
 
     this.layoutChanged.emit();
+
+    if (category.show_more) {
+      this.scrollToSectionDetails(sectionId);
+    }
   }
 
   serializeConfig(config: any) {

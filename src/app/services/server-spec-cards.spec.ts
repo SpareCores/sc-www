@@ -80,7 +80,10 @@ describe("ServerSpecCards", () => {
     ]);
 
     expect(section.columns).toEqual(["Region / ID", "Spot", "Ondemand"]);
-    expect(section.rows[0].values).toEqual(["-", "1 USD/h"]);
+    expect(section.rows[0].values).toEqual([
+      "-",
+      '1 <span class="property_unit">USD/h</span>',
+    ]);
     expect(section.rows[0].warning).toContain("not currently orderable");
   });
 });

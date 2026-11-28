@@ -18,6 +18,7 @@ import {
 import { Benchmark, BenchmarkScore } from "../../../../../sdk/data-contracts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import { Button } from "../../button/button";
 import { ChartTooltip } from "../shared/chart-tooltip";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
@@ -26,10 +27,12 @@ import {
   buildStressNgSections,
   splitStressNgColumns,
 } from "./stress-ng-full.utils";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-stress-ng-full-card",
   imports: [
+    TooltipTrigger,
     NgTemplateOutlet,
     LucideCircleArrowDown,
     LucideCircleArrowUp,
@@ -39,6 +42,7 @@ import {
     BenchmarkIconPipe,
     Button,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./stress-ng-full-card.html",
   styleUrl: "./stress-ng-full-card.css",
@@ -70,13 +74,13 @@ export class StressNgFullCard {
   }
 
   showTooltip(
-    event: MouseEvent,
+    event: Element | Event,
     content: string | null | undefined,
     variant?: "warning",
   ) {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event,
+      anchor: event,
       content: content ?? undefined,
       variant,
       onShow: (tooltipContent) => {

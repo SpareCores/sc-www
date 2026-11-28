@@ -27,6 +27,7 @@ import {
   chartColors,
   chartColor,
 } from "../charts/shared/chart-colors.constants";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 export interface BenchmarkConfigEntry {
   key: string;
@@ -43,6 +44,7 @@ interface HistogramBin {
 @Component({
   selector: "sc-benchmark-workload",
   imports: [
+    TooltipTrigger,
     LucideCircleArrowDown,
     LucideCircleArrowUp,
     LucideTriangleAlert,
@@ -146,14 +148,14 @@ export class BenchmarkWorkload {
             ticks: {
               color: chartColors.white,
               maxRotation: 45,
-              font: { size: 10 },
+              font: { size: 12 },
             },
             grid: { color: chartColor("gray-600", 0.4) },
             title: {
               display: true,
               text: xLabel,
               color: chartColors.white,
-              font: { size: 11 },
+              font: { size: 12 },
             },
           },
           y: {
@@ -163,7 +165,7 @@ export class BenchmarkWorkload {
               display: true,
               text: yLabel,
               color: chartColors.white,
-              font: { size: 11 },
+              font: { size: 12 },
             },
           },
         },
@@ -193,7 +195,7 @@ export class BenchmarkWorkload {
     return `${this.formatValue(bins[0].low)} – ${this.formatValue(bins[bins.length - 1].high)}`;
   }
 
-  showTooltip(ev: MouseEvent, content: string): void {
+  showTooltip(ev: Element | Event, content: string): void {
     const tooltip = this.tooltipEl()?.nativeElement;
     if (!tooltip) return;
 

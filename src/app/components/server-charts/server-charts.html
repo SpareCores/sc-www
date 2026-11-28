@@ -76,9 +76,9 @@
     id="passmark_cpu"
   >
     <div class="flex items-center min-h-[42px] sc-header-anchor-host">
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3 class="sc-chart-title">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
-        Passmark CPU Scores
+        <sc-truncated-title text="Passmark CPU Scores"></sc-truncated-title>
         @if (!isEmbedded) {
           <sc-header-anchor
             anchorId="passmark_cpu"
@@ -107,22 +107,24 @@
                 <svg
                   lucideInfo
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     showTooltipChart($event, cpuBenchmark.benchmark_id)
                   "
-                  (mouseleave)="hideTooltip()"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
                 @if (benchmarkRowNote(cpuBenchmark.benchmark_id)) {
                   <svg
                     lucideTriangleAlert
                     class="benchmark-note-icon"
-                    (mouseenter)="
+                    scTooltipTrigger
+                    (tooltipOpen)="
                       showWarningTooltip(
                         $event,
                         benchmarkRowNote(cpuBenchmark.benchmark_id)
                       )
                     "
-                    (mouseleave)="hideTooltip()"
+                    (tooltipClose)="hideTooltip()"
                   ></svg>
                 }
               </div>
@@ -162,12 +164,13 @@
 @if (isChartShown("passmark_other") && passmarkOTHERData?.length) {
   <div
     class="sc-chart-block sc-chart-block--half sc-chart-block--scrollable"
+    [class.passmark_card_fit]="!isEmbedded"
     id="passmark_other"
   >
     <div class="flex items-center min-h-[42px] sc-header-anchor-host">
-      <h3 class="text-2xl flex items-center gap-2">
+      <h3 class="sc-chart-title">
         <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
-        Passmark Memory Scores
+        <sc-truncated-title text="Passmark Memory Scores"></sc-truncated-title>
         @if (!isEmbedded) {
           <sc-header-anchor
             anchorId="passmark_other"
@@ -196,22 +199,24 @@
                 <svg
                   lucideInfo
                   class="h-4 w-4 shrink-0 text-gray-200"
-                  (mouseenter)="
+                  scTooltipTrigger
+                  (tooltipOpen)="
                     showTooltipChart($event, otherBenchmark.benchmark_id)
                   "
-                  (mouseleave)="hideTooltip()"
+                  (tooltipClose)="hideTooltip()"
                 ></svg>
                 @if (benchmarkRowNote(otherBenchmark.benchmark_id)) {
                   <svg
                     lucideTriangleAlert
                     class="benchmark-note-icon"
-                    (mouseenter)="
+                    scTooltipTrigger
+                    (tooltipOpen)="
                       showWarningTooltip(
                         $event,
                         benchmarkRowNote(otherBenchmark.benchmark_id)
                       )
                     "
-                    (mouseleave)="hideTooltip()"
+                    (tooltipClose)="hideTooltip()"
                   ></svg>
                 }
               </div>

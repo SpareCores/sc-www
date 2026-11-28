@@ -1,10 +1,10 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16">
+  <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
     <sc-breadcrumbs [segments]="breadcrumbs()"></sc-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+    <div class="flex flex-col gap-4 mt-4 mb-8 sm:mt-8 content-gutter">
       <sc-page-header icon="activity" [title]="pageTitle"></sc-page-header>
-      <div class="text-white text-xl pr-4 md:pr-16">
+      <div class="sc-page-description">
         {{ pageDescription }}
       </div>
     </div>
@@ -20,169 +20,171 @@
     } @else if (errorMessage()) {
       <div class="text-red-300 text-lg">{{ errorMessage() }}</div>
     } @else {
-      <div class="overflow-x-auto mx-2 xl:mx-0">
-        <table class="sc-table sc-table--compact w-full">
-          <thead class="bg-secondary">
-            <tr>
-              <th class="px-3 md:px-12 py-4 min-w-[16rem]">
-                <div class="flex gap-1 whitespace-nowrap">VENDOR</div>
-              </th>
-              <th class="px-3 md:px-12 py-4">
-                <div class="flex justify-center whitespace-nowrap">
-                  IDENTIFIED SERVERS
-                </div>
-              </th>
-              <th
-                colspan="2"
-                class="border-l border-gray-600 px-3 md:px-12 py-4"
-              >
-                <div class="flex justify-center whitespace-nowrap">
-                  INACTIVE SERVERS
-                </div>
-              </th>
-              <th
-                colspan="2"
-                class="border-l border-gray-600 px-3 md:px-12 py-4"
-              >
-                <div class="flex justify-center whitespace-nowrap">
-                  ACTIVE SERVERS
-                </div>
-              </th>
-              <th
-                colspan="2"
-                class="border-l border-gray-600 px-3 md:px-12 py-4"
-              >
-                <div class="flex justify-center whitespace-nowrap">
-                  EVALUATED ACTIVE SERVERS
-                </div>
-              </th>
-              <th
-                colspan="2"
-                class="border-l border-gray-600 px-3 md:px-12 py-4"
-              >
-                <div class="flex justify-center whitespace-nowrap">
-                  MISSING ACTIVE SERVERS
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (vendor of vendorDebugData(); track vendor.vendor_id) {
+      <div class="content-gutter">
+        <div class="min-w-0 overflow-x-auto">
+          <table
+            class="sc-table sc-table--compact w-full text-nowrap sm:text-wrap"
+          >
+            <thead class="bg-secondary">
               <tr>
-                <td>
-                  <div class="flex gap-1">
-                    <a
-                      [routerLink]="['/vendors', vendor.vendor_id]"
-                      class="sc-link"
-                    >
-                      {{
-                        vendorNameById()[vendor.vendor_id] || vendor.vendor_id
-                      }}
-                    </a>
+                <th class="px-3 md:px-12 py-4 sm:min-w-[16rem]">
+                  <div class="flex gap-1 whitespace-nowrap">VENDOR</div>
+                </th>
+                <th class="px-3 md:px-12 py-4">
+                  <div class="flex justify-center whitespace-nowrap">
+                    IDENTIFIED SERVERS
                   </div>
+                </th>
+                <th
+                  colspan="2"
+                  class="border-l border-gray-600 px-3 md:px-12 py-4"
+                >
+                  <div class="flex justify-center whitespace-nowrap">
+                    INACTIVE SERVERS
+                  </div>
+                </th>
+                <th
+                  colspan="2"
+                  class="border-l border-gray-600 px-3 md:px-12 py-4"
+                >
+                  <div class="flex justify-center whitespace-nowrap">
+                    ACTIVE SERVERS
+                  </div>
+                </th>
+                <th
+                  colspan="2"
+                  class="border-l border-gray-600 px-3 md:px-12 py-4"
+                >
+                  <div class="flex justify-center whitespace-nowrap">
+                    EVALUATED ACTIVE SERVERS
+                  </div>
+                </th>
+                <th
+                  colspan="2"
+                  class="border-l border-gray-600 px-3 md:px-12 py-4"
+                >
+                  <div class="flex justify-center whitespace-nowrap">
+                    MISSING ACTIVE SERVERS
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (vendor of vendorDebugData(); track vendor.vendor_id) {
+                <tr>
+                  <td>
+                    <div class="flex gap-1">
+                      <a
+                        [routerLink]="['/vendors', vendor.vendor_id]"
+                        class="sc-link"
+                      >
+                        {{
+                          vendorNameById()[vendor.vendor_id] || vendor.vendor_id
+                        }}
+                      </a>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex justify-center">
+                      {{ vendor.all }}
+                    </div>
+                  </td>
+                  <td class="border-l border-gray-600 w-16">
+                    <div class="flex justify-end">
+                      {{ vendor.inactive }}
+                    </div>
+                  </td>
+                  <td class="w-20">
+                    <div class="flex justify-start">
+                      <div class="w-12 flex justify-end">
+                        {{ vendor.inactive / vendor.all | percent: "1.2" }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-l border-gray-600 w-16">
+                    <div class="flex justify-end">
+                      {{ vendor.active }}
+                    </div>
+                  </td>
+                  <td class="w-20">
+                    <div class="flex justify-start">
+                      <div class="w-12 flex justify-end">
+                        {{ vendor.active / vendor.all | percent: "1.2" }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-l border-gray-600 w-16">
+                    <div class="flex justify-end">
+                      {{ vendor.evaluated }}
+                    </div>
+                  </td>
+                  <td class="w-20">
+                    <div class="flex justify-start">
+                      <div class="w-12 flex justify-end">
+                        {{
+                          vendor.active
+                            ? (vendor.evaluated / vendor.active
+                              | percent: "1.2")
+                            : "—"
+                        }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="border-l border-gray-600 w-16">
+                    <div class="flex justify-end">
+                      {{ vendor.missing }}
+                    </div>
+                  </td>
+                  <td class="w-20">
+                    <div class="flex justify-start">
+                      <div class="w-12 flex justify-end">
+                        {{
+                          vendor.active
+                            ? (vendor.missing / vendor.active | percent: "1.2")
+                            : "—"
+                        }}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              }
+              <tr class="font-bold border-t-2 border-emerald-400">
+                <td>
+                  <div class="flex gap-1">Total</div>
                 </td>
                 <td>
                   <div class="flex justify-center">
-                    {{ vendor.all }}
+                    {{ vendorSummaryStats().all }}
                   </div>
                 </td>
-                <td class="border-l border-gray-600 w-16">
-                  <div class="flex justify-end">
-                    {{ vendor.inactive }}
+                <td colspan="2" class="border-l border-gray-600">
+                  <div class="flex justify-center">
+                    {{ vendorSummaryStats().inactive }}
                   </div>
                 </td>
-                <td class="w-20">
-                  <div class="flex justify-start">
-                    <div class="w-12 flex justify-end">
-                      {{ vendor.inactive / vendor.all | percent: "1.2" }}
-                    </div>
+                <td colspan="2" class="border-l border-gray-600">
+                  <div class="flex justify-center">
+                    {{ vendorSummaryStats().active }}
                   </div>
                 </td>
-                <td class="border-l border-gray-600 w-16">
-                  <div class="flex justify-end">
-                    {{ vendor.active }}
+                <td colspan="2" class="border-l border-gray-600">
+                  <div class="flex justify-center">
+                    {{ vendorSummaryStats().evaluated }}
                   </div>
                 </td>
-                <td class="w-20">
-                  <div class="flex justify-start">
-                    <div class="w-12 flex justify-end">
-                      {{ vendor.active / vendor.all | percent: "1.2" }}
-                    </div>
-                  </div>
-                </td>
-                <td class="border-l border-gray-600 w-16">
-                  <div class="flex justify-end">
-                    {{ vendor.evaluated }}
-                  </div>
-                </td>
-                <td class="w-20">
-                  <div class="flex justify-start">
-                    <div class="w-12 flex justify-end">
-                      {{
-                        vendor.active
-                          ? (vendor.evaluated / vendor.active | percent: "1.2")
-                          : "—"
-                      }}
-                    </div>
-                  </div>
-                </td>
-                <td class="border-l border-gray-600 w-16">
-                  <div class="flex justify-end">
-                    {{ vendor.missing }}
-                  </div>
-                </td>
-                <td class="w-20">
-                  <div class="flex justify-start">
-                    <div class="w-12 flex justify-end">
-                      {{
-                        vendor.active
-                          ? (vendor.missing / vendor.active | percent: "1.2")
-                          : "—"
-                      }}
-                    </div>
+                <td colspan="2" class="border-l border-gray-600">
+                  <div class="flex justify-center">
+                    {{ vendorSummaryStats().missing }}
                   </div>
                 </td>
               </tr>
-            }
-            <tr class="font-bold border-t-2 border-emerald-400">
-              <td>
-                <div class="flex gap-1">Total</div>
-              </td>
-              <td>
-                <div class="flex justify-center">
-                  {{ vendorSummaryStats().all }}
-                </div>
-              </td>
-              <td colspan="2" class="border-l border-gray-600">
-                <div class="flex justify-center">
-                  {{ vendorSummaryStats().inactive }}
-                </div>
-              </td>
-              <td colspan="2" class="border-l border-gray-600">
-                <div class="flex justify-center">
-                  {{ vendorSummaryStats().active }}
-                </div>
-              </td>
-              <td colspan="2" class="border-l border-gray-600">
-                <div class="flex justify-center">
-                  {{ vendorSummaryStats().evaluated }}
-                </div>
-              </td>
-              <td colspan="2" class="border-l border-gray-600">
-                <div class="flex justify-center">
-                  {{ vendorSummaryStats().missing }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     }
-    <div class="flex flex-col gap-4 mt-8 mb-12 mx-2 xl:mx-0">
-      <div
-        class="text-white text-xl pr-4 md:pr-16"
-        id="benchmark-coverage-details-pointer"
-      >
+    <div class="flex flex-col gap-4 mt-8 mb-12 content-gutter">
+      <div class="sc-page-description" id="benchmark-coverage-details-pointer">
         {{ pageHelperText }}
       </div>
     </div>
@@ -196,7 +198,7 @@
         ></sc-loading-spinner>
       </div>
     } @else {
-      <div class="flex items-start gap-8 mx-2 xl:mx-0">
+      <div class="flex items-start gap-8 content-gutter">
         <div
           class="sc-filter-sidebar sc-filter-sidebar--sticky shrink-0 bg-primary"
           [class.sc-filter-sidebar--collapsed]="isCollapsed"
@@ -315,8 +317,10 @@
                 } @else {
                   @for (row of paginatedTableRows(); track row.serverKey) {
                     <tr>
-                      <td class="text-sm">{{ row.vendor_id }}</td>
-                      <td class="text-sm">{{ row.api_reference }}</td>
+                      <td class="text-xs sm:text-sm">{{ row.vendor_id }}</td>
+                      <td class="text-xs sm:text-sm">
+                        {{ row.api_reference }}
+                      </td>
                       <td
                         class="text-center border-l border-gray-600 icon-cell"
                       >
@@ -473,6 +477,8 @@
                 [label]="limit() | pageLimitLabel"
                 icon="chevron-down"
                 variant="dropdown"
+                size="small"
+                buttonClass="sc-button--pagination-size"
               ></sc-button>
               <span class="text-white hidden md:inline">items per page</span>
             </div>

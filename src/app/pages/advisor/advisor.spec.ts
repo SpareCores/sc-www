@@ -52,6 +52,7 @@ import {
 } from "../../tools/column-tooltips";
 
 describe("Advisor", () => {
+  let filterBarStyle: HTMLStyleElement;
   const queryParams$ = new BehaviorSubject({});
   const getServersSelect = jasmine.createSpy("getServersSelect");
   const getServerBenchmarkMeta = jasmine.createSpy("getServerBenchmarkMeta");
@@ -354,6 +355,11 @@ describe("Advisor", () => {
       ],
     }).compileComponents();
 
+    filterBarStyle = document.createElement("style");
+    filterBarStyle.textContent =
+      ".advisor-filter-bar { display: block !important; }";
+    document.head.appendChild(filterBarStyle);
+
     fixture = TestBed.createComponent(Advisor);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -362,6 +368,7 @@ describe("Advisor", () => {
   });
 
   afterEach(() => {
+    filterBarStyle.remove();
     queryParams$.next({});
   });
 
@@ -1454,6 +1461,7 @@ describe("Advisor", () => {
     ) as HTMLElement | null;
     const baselineServer = component.serverTableRows()[0];
     component.selectedBaselineServer.set(baselineServer);
+    component.hasLoadedRecommendations.set(true);
 
     compareService.selectedForCompare = [
       {
@@ -1801,11 +1809,11 @@ describe("Advisor", () => {
     const cpuCacheLines =
       cells[visibleColumnIndex("CPU CACHE")].querySelectorAll("div");
     const memoryPrimaryLine = cells[visibleColumnIndex("MEMORY")].querySelector(
-      "div.text-sm",
+      "div.sm\\:text-sm",
     ) as HTMLElement;
     const memorySecondaryLine = cells[
       visibleColumnIndex("MEMORY")
-    ].querySelector("div.text-xs") as HTMLElement;
+    ].querySelector("div.text-xs:not(.sm\\:text-sm)") as HTMLElement;
     const memoryDelta = memoryPrimaryLine.querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
@@ -1909,10 +1917,10 @@ describe("Advisor", () => {
       visibleColumnIndex("XPU")
     ] as HTMLTableCellElement;
     const memoryPrimaryLine = memoryCell.querySelector(
-      "div.text-sm",
+      "div.sm\\:text-sm",
     ) as HTMLElement;
     const memorySecondaryLine = memoryCell.querySelector(
-      "div.text-xs",
+      "div.text-xs:not(.sm\\:text-sm)",
     ) as HTMLElement;
     const memoryDelta = memoryPrimaryLine.querySelector(".advisor-table-delta");
     const acceleratorDelta = acceleratorCell.querySelector(

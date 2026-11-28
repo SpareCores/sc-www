@@ -2,7 +2,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  HostListener,
+  NgZone,
   afterNextRender,
   computed,
   effect,
@@ -20,18 +20,22 @@ import {
 } from "@lucide/angular";
 import { Button } from "../button/button";
 import { HeaderAnchor } from "../header-anchor/header-anchor";
+import { TruncatedTitle } from "../truncated-title/truncated-title";
 import { UiTooltip } from "../../services/ui-tooltip";
 import { DetailsCardSection } from "./details-card.types";
+import { TooltipTrigger } from "../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-details-card",
   imports: [
+    TooltipTrigger,
     LucideDynamicIcon,
     LucideInfo,
     LucideTriangleAlert,
     Button,
     RouterLink,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./details-card.html",
   styleUrl: "./details-card.css",
@@ -39,13 +43,14 @@ import { DetailsCardSection } from "./details-card.types";
 export class DetailsCard {
   private uiTooltip = inject(UiTooltip);
   private destroyRef = inject(DestroyRef);
+  private ngZone = inject(NgZone);
 
   cardTitle = input.required<string>();
   cardId = input.required<string>();
   anchorId = input<string | null>(null);
   sections = input<DetailsCardSection[]>([]);
   fixedRows = input(true);
-  fullWidthBelowWide = input(false);
+  halfFromXl = input(false);
   rowClass = input("");
   moreLabel = input("View more details");
   lessLabel = input("Show less");
@@ -82,6 +87,7 @@ export class DetailsCard {
 
     afterNextRender(() => {
       this.scheduleOverflowCheck();
+      this.observeCardResize();
     });
 
     this.destroyRef.onDestroy(() => {
@@ -91,20 +97,15 @@ export class DetailsCard {
     });
   }
 
-  @HostListener("window:resize")
-  onResize() {
-    this.scheduleOverflowCheck();
-  }
-
   captureEvent(action: "more" | "less"): string | null {
     const prefix = this.captureEventPrefix();
     return prefix ? `${prefix} show ${action} ${this.cardId()}` : null;
   }
 
-  showTooltip(event: Event, content: string | undefined) {
+  showTooltip(event: Element | Event, content: string | undefined) {
     this.uiTooltip.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event,
+      anchor: event,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -116,10 +117,10 @@ export class DetailsCard {
     this.uiTooltip.hide(this.tooltip()?.nativeElement);
   }
 
-  showWarningTooltip(event: Event, content: string) {
+  showWarningTooltip(event: Element | Event, content: string) {
     this.uiTooltip.showIfPresent({
       tooltipElement: this.warningTooltip()?.nativeElement,
-      event,
+      anchor: event,
       content,
       variant: "warning",
       onShow: (tooltipContent) => {
@@ -146,6 +147,19 @@ export class DetailsCard {
     }, 0);
   }
 
+  private observeCardResize() {
+    const cardElement = this.cardRoot()?.nativeElement;
+    if (!cardElement || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    this.ngZone.runOutsideAngular(() => {
+      const observer = new ResizeObserver(() => this.updateOverflowState());
+      observer.observe(cardElement);
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    });
+  }
+
   private updateOverflowState() {
     const cardElement = this.cardRoot()?.nativeElement;
     if (!cardElement) {
@@ -157,10 +171,14 @@ export class DetailsCard {
       cardElement.classList.remove("sc-chart-block--open");
     }
 
-    this.canExpand.set(cardElement.scrollHeight > cardElement.clientHeight + 1);
+    const canExpand = cardElement.scrollHeight > cardElement.clientHeight + 1;
 
     if (hadOpenClass) {
       cardElement.classList.add("sc-chart-block--open");
+    }
+
+    if (canExpand !== this.canExpand()) {
+      this.ngZone.run(() => this.canExpand.set(canExpand));
     }
   }
 }

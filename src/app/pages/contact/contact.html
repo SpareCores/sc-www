@@ -1,12 +1,14 @@
 <div class="w-full bg-primary min-h-screen">
-  <div class="content pt-16 pb-4 text-white flex flex-col gap-8">
+  <div class="content pt-8 lg:pt-16 pb-4 text-white flex flex-col gap-8">
     <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-    <div class="max-w-3xl mx-auto w-full px-4">
-      <h1 class="font-semibold text-3xl mb-4">
-        Hi, we would love to hear from you!
-      </h1>
-      <div class="text-white text-xl pr-16 mb-4 pb-4">
+    <div class="max-w-3xl mx-auto w-full px-2">
+      <sc-page-header
+        class="mb-4"
+        icon="mail"
+        title="Hi, we would love to hear from you!"
+      ></sc-page-header>
+      <div class="sc-page-description">
         You can reach us on social media (find the related links at the bottom
         of the page), or you can use the form below to contact us regarding any
         matter (let it be a general inquiry about our open-source tools,
@@ -17,7 +19,7 @@
       <form
         [formGroup]="contactForm"
         (ngSubmit)="onSubmit()"
-        class="flex flex-col gap-6"
+        class="mt-4 flex flex-col gap-6"
       >
         <input type="hidden" id="powChallenge" formControlName="powChallenge" />
         <input type="hidden" id="powSolution" formControlName="powSolution" />
@@ -127,12 +129,12 @@
           }
         </div>
 
-        <div class="flex items-center space-x-2">
+        <div class="flex items-start sm:items-center space-x-2">
           <input
             type="checkbox"
             id="privacyPolicy"
             formControlName="privacyPolicy"
-            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden"
+            class="size-6 shrink-0 sm:size-4 focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-hidden"
           />
           <label for="privacyPolicy" class="font-medium text-white">
             I (a certified human, not a robot) accept the

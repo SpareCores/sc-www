@@ -1,96 +1,97 @@
 @if (viewReady()) {
   <div class="w-full bg-primary">
-    <div class="content pt-16 pb-16">
+    <div class="content pt-4 pb-8 sm:pt-8 lg:pt-16 lg:pb-16">
       <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
-      <div class="flex flex-col gap-4 my-6 mx-2 xl:mx-0">
+      <div class="flex flex-col gap-4 mt-4 mb-8 sm:my-6 content-gutter">
         <sc-page-header
           icon="folder-bookmark"
           title="Bookmarks"
         ></sc-page-header>
-        <p class="text-white text-xl pr-16">
+        <p class="sc-page-description">
           Manage your bookmarks, saved searches, comparisons, and advisor
           recommendations in one place. Edit their note or rename them to make
           them easier to find.
         </p>
-        <div class="bookmarks-search">
-          <div class="bookmarks-search__input-wrap">
-            <svg
-              [lucideIcon]="'search'"
-              class="bookmarks-search__icon"
-              aria-hidden="true"
-            ></svg>
-            <input
-              id="bookmarks-name-search"
-              type="search"
-              class="bookmarks-search__input"
-              placeholder="Search bookmarks by name"
-              aria-label="Search bookmarks by name"
-              [value]="nameQuery()"
-              (input)="onNameQueryInput($event)"
-            />
-          </div>
-          <div class="bookmarks-search__sort">
-            <div class="bookmarks-sort-control">
-              <button
-                type="button"
-                id="bookmarks_sort_button"
-                [scDropdown]="sortPanel"
-                [dropdownTriggerType]="'none'"
-                #sortDropdown="scDropdown"
-                class="bookmarks-sort-control__label"
-                (click)="toggleSortDropdown($event)"
-              >
-                <span class="bookmarks-sort-control__label-text">{{
-                  sortByLabel()
-                }}</span>
-              </button>
-              <button
-                type="button"
-                class="bookmarks-sort-control__dir"
-                [disabled]="!canToggleSortDir()"
-                [attr.aria-label]="sortDirAriaLabel()"
-                (click)="onSortDirClick($event)"
-              >
-                <svg
-                  [lucideIcon]="sortDirIcon()"
-                  class="bookmarks-sort-control__dir-icon"
-                  aria-hidden="true"
-                ></svg>
-              </button>
+        <div class="bookmarks-controls">
+          <div class="bookmarks-search">
+            <div class="bookmarks-search__input-wrap">
+              <svg
+                [lucideIcon]="'search'"
+                class="bookmarks-search__icon"
+                aria-hidden="true"
+              ></svg>
+              <input
+                id="bookmarks-name-search"
+                type="search"
+                class="bookmarks-search__input"
+                placeholder="Search bookmarks by name"
+                aria-label="Search bookmarks by name"
+                [value]="nameQuery()"
+                (input)="onNameQueryInput($event)"
+              />
+            </div>
+            <div class="bookmarks-search__sort">
+              <div class="bookmarks-sort-control">
+                <button
+                  type="button"
+                  id="bookmarks_sort_button"
+                  [scDropdown]="sortPanel"
+                  [dropdownTriggerType]="'none'"
+                  #sortDropdown="scDropdown"
+                  class="bookmarks-sort-control__label"
+                  (click)="toggleSortDropdown($event)"
+                >
+                  <span class="bookmarks-sort-control__label-text">{{
+                    sortByLabel()
+                  }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="bookmarks-sort-control__dir"
+                  [disabled]="!canToggleSortDir()"
+                  [attr.aria-label]="sortDirAriaLabel()"
+                  (click)="onSortDirClick($event)"
+                >
+                  <svg
+                    [lucideIcon]="sortDirIcon()"
+                    class="bookmarks-sort-control__dir-icon"
+                    aria-hidden="true"
+                  ></svg>
+                </button>
+              </div>
             </div>
           </div>
+          <div class="bookmarks-stats">
+            @for (stat of statEntries(); track stat.key) {
+              <label
+                class="bookmarks-stats__item"
+                [attr.aria-label]="stat.label + ': ' + stat.value"
+              >
+                <input
+                  type="checkbox"
+                  class="peer sr-only"
+                  [checked]="stat.enabled"
+                  (change)="toggleFilter(stat.key, $any($event.target).checked)"
+                />
+                <span class="bookmarks-filter__track">
+                  <span class="bookmarks-filter__thumb"></span>
+                </span>
+                <svg
+                  [lucideIcon]="stat.icon"
+                  class="bookmarks-stats__icon"
+                  aria-hidden="true"
+                ></svg>
+                <span class="bookmarks-stats__label"
+                  >{{ stat.label }}: {{ stat.value }}</span
+                >
+                <span class="bookmarks-stats__badge" aria-hidden="true">{{
+                  stat.value
+                }}</span>
+              </label>
+            }
+          </div>
         </div>
-      </div>
-
-      <div class="bookmarks-stats mx-2 xl:mx-0">
-        @for (stat of statEntries(); track stat.key) {
-          <label
-            class="bookmarks-stats__item"
-            [attr.aria-label]="stat.label + ': ' + stat.value"
-          >
-            <input
-              type="checkbox"
-              class="peer sr-only"
-              [checked]="stat.enabled"
-              (change)="toggleFilter(stat.key, $any($event.target).checked)"
-            />
-            <span class="bookmarks-filter__track">
-              <span class="bookmarks-filter__thumb"></span>
-            </span>
-            <svg
-              [lucideIcon]="stat.icon"
-              class="bookmarks-stats__icon"
-              aria-hidden="true"
-            ></svg>
-            <span class="bookmarks-stats__label"
-              >{{ stat.label }}: {{ stat.value }}</span
-            >
-            <span class="bookmarks-stats__badge" aria-hidden="true">{{
-              stat.value
-            }}</span>
-          </label>
-        }
       </div>
 
       @if (isLoading()) {
@@ -98,12 +99,12 @@
           <sc-loading-spinner size="lg"></sc-loading-spinner>
         </div>
       } @else if (!cards().length) {
-        <div class="text-center text-gray-400 py-16 mx-2 xl:mx-0">
+        <div class="text-center text-gray-400 py-16 content-gutter">
           No bookmarks match the current filters.
         </div>
       } @else {
         <div
-          class="bookmarks-grid mx-2 xl:mx-0"
+          class="bookmarks-grid content-gutter"
           cdkDropList
           cdkDropListOrientation="mixed"
           [cdkDropListDisabled]="!canReorder()"
@@ -221,30 +222,31 @@
                       <tbody>
                         @for (row of visibleDetails(card); track $index) {
                           <tr>
-                            <td
-                              class="bookmarks-card__table-filter"
-                              (mouseenter)="
-                                showDetailTooltip($event, row.field)
-                              "
-                              (mouseleave)="hideDetailTooltip()"
-                            >
+                            <td class="bookmarks-card__table-filter">
                               @if (row.fieldHref) {
                                 <a
                                   class="bookmarks-card__table-link"
                                   [routerLink]="row.fieldHref"
+                                  scTooltipTrigger
+                                  tooltipMode="action"
+                                  (tooltipOpen)="
+                                    showDetailTooltip($event, row.field)
+                                  "
+                                  (tooltipClose)="hideDetailTooltip()"
                                   >{{ row.field }}</a
                                 >
                               } @else {
-                                {{ row.field }}
+                                <span
+                                  scTooltipTrigger
+                                  (tooltipOpen)="
+                                    showDetailTooltip($event, row.field)
+                                  "
+                                  (tooltipClose)="hideDetailTooltip()"
+                                  >{{ row.field }}</span
+                                >
                               }
                             </td>
-                            <td
-                              class="bookmarks-card__table-value"
-                              (mouseenter)="
-                                showDetailTooltip($event, row.value)
-                              "
-                              (mouseleave)="hideDetailTooltip()"
-                            >
+                            <td class="bookmarks-card__table-value">
                               <span class="bookmarks-card__table-value-inner">
                                 @if (row.isBaseline) {
                                   <svg
@@ -257,10 +259,23 @@
                                   <a
                                     class="bookmarks-card__table-link"
                                     [routerLink]="row.valueHref"
+                                    scTooltipTrigger
+                                    tooltipMode="action"
+                                    (tooltipOpen)="
+                                      showDetailTooltip($event, row.value)
+                                    "
+                                    (tooltipClose)="hideDetailTooltip()"
                                     >{{ row.value }}</a
                                   >
                                 } @else {
-                                  {{ row.value }}
+                                  <span
+                                    scTooltipTrigger
+                                    (tooltipOpen)="
+                                      showDetailTooltip($event, row.value)
+                                    "
+                                    (tooltipClose)="hideDetailTooltip()"
+                                    >{{ row.value }}</span
+                                  >
                                 }
                               </span>
                             </td>
@@ -274,6 +289,7 @@
                       <div class="bookmarks-card__details-more">
                         <sc-button
                           icon="chevron-down"
+                          size="small"
                           ariaLabel="Expand list"
                           color="brand"
                           (buttonClick)="toggleDetails(cardKey(card))"
@@ -283,6 +299,7 @@
                       <div class="bookmarks-card__details-less">
                         <sc-button
                           icon="chevron-up"
+                          size="small"
                           ariaLabel="Collapse list"
                           color="brand"
                           (buttonClick)="toggleDetails(cardKey(card))"
@@ -302,6 +319,7 @@
                 @if (isEditableCard(card)) {
                   <sc-button
                     icon="square-pen"
+                    size="small"
                     ariaLabel="Edit"
                     title="Edit"
                     variant="outline"
@@ -310,6 +328,7 @@
                   ></sc-button>
                   <sc-button
                     icon="notebook-text"
+                    size="small"
                     ariaLabel="View note"
                     title="View note"
                     variant="outline"
@@ -321,6 +340,7 @@
                 @if (cardLink(card)) {
                   <sc-button
                     icon="square-arrow-out-up-right"
+                    size="small"
                     ariaLabel="Open"
                     title="Open"
                     variant="outline"
@@ -330,6 +350,7 @@
                 }
                 <sc-button
                   icon="bookmark-off"
+                  size="small"
                   ariaLabel="Delete"
                   title="Delete"
                   variant="outline"
@@ -340,6 +361,7 @@
                 @if (cardLink(card)) {
                   <sc-button
                     [icon]="shareIcon(card)"
+                    size="small"
                     ariaLabel="Share"
                     title="Share"
                     variant="outline"
@@ -396,7 +418,7 @@
       </div>
       @if (noteCard()?.note && isNoteModalOpen()) {
         <div
-          class="bookmarks-note-modal-body p-4 md:p-6 max-h-[70vh] overflow-y-auto"
+          class="bookmarks-note-modal-body p-4 sm:max-h-[70vh] sm:overflow-y-auto md:p-6"
         >
           <p class="bookmarks-note-modal-text">{{ noteCard()?.note }}</p>
         </div>

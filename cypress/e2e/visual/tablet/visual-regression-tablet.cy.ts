@@ -1,20 +1,16 @@
+import { TABLET_VISUAL_VIEWPORTS } from "../../../support/generics";
 import {
   registerMobileMenuSuite,
   registerVisualSuites,
 } from "../../../support/visual";
 
-describe("Visual regression tests (medium screen - 1024px)", () => {
-  beforeEach(() => {
-    cy.viewport(1024, 900);
-  });
-
-  registerVisualSuites("tablet");
-
-  describe("mobile menu (960px)", () => {
+TABLET_VISUAL_VIEWPORTS.forEach(({ prefix, width, height }) => {
+  describe(`Visual regression tests (tablet - ${width}x${height})`, () => {
     beforeEach(() => {
-      cy.viewport(960, 900);
+      cy.viewport(width, height);
     });
 
-    registerMobileMenuSuite("tablet");
+    registerVisualSuites(prefix);
+    registerMobileMenuSuite(prefix);
   });
 });

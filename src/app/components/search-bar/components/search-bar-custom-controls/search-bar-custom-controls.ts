@@ -27,10 +27,18 @@ import {
   normalizeCommittedPowerOfTwoStepperValue,
   parsePowerOfTwoStepperNumericValue,
 } from "../../utils/search-bar.utils";
+import { TooltipTrigger } from "../../../../directives/tooltip-trigger";
 
 @Component({
   selector: "sc-search-bar-custom-controls",
-  imports: [CommonModule, LucideDynamicIcon, LucideInfo, Stepper, LucideX],
+  imports: [
+    TooltipTrigger,
+    CommonModule,
+    LucideDynamicIcon,
+    LucideInfo,
+    Stepper,
+    LucideX,
+  ],
   templateUrl: "./search-bar-custom-controls.html",
 })
 export class SearchBarCustomControls {
@@ -568,7 +576,7 @@ export class SearchBarCustomControls {
     return `${parameter.name}_${String(parameter.schema.title || "")}`;
   }
 
-  emitTooltip(event: MouseEvent | FocusEvent, content: string | undefined) {
+  emitTooltip(event: Element | Event, content: string | undefined) {
     if (content) {
       this.showTooltip.emit({ event, content });
     }

@@ -1,9 +1,10 @@
-import { isPlatformBrowser } from "@angular/common";
+import { NgTemplateOutlet, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   PLATFORM_ID,
+  TemplateRef,
   computed,
   effect,
   inject,
@@ -13,7 +14,6 @@ import {
 } from "@angular/core";
 import {
   LucideDynamicIcon,
-  LucideChevronDown,
   LucideCircleArrowUp,
   LucideInfo,
   LucideTriangleAlert,
@@ -21,6 +21,7 @@ import {
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon-pipe";
 import { HeaderAnchor } from "../../header-anchor/header-anchor";
+import { TruncatedTitle } from "../../truncated-title/truncated-title";
 import {
   barChartOptionsSSL,
   barChartOptionsSSLCompare,
@@ -42,20 +43,25 @@ import {
   syncCompareLegendData,
   syncCompareLegendOptions,
 } from "../shared/compare-chart-legend.bind";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
+import { Button } from "../../button/button";
 
 @Component({
   selector: "sc-llm-inference-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
+    TooltipTrigger,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideCircleArrowUp,
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,
+    Button,
     Dropdown,
     BenchmarkIconPipe,
     HeaderAnchor,
+    TruncatedTitle,
   ],
   templateUrl: "./llm-inference-chart.html",
   styles: [
@@ -78,6 +84,8 @@ export class LlmInferenceChart {
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
   layout = input<"details" | "compare">("details");
+  controlsInHeader = input(false);
+  compareControls = viewChild<TemplateRef<unknown>>("compareControls");
   promptData = input<LlmBarChartData | undefined>(undefined);
   promptOptions = input<LlmBarChartOptions>(undefined);
   generationData = input<LlmBarChartData | undefined>(undefined);
@@ -261,10 +269,10 @@ export class LlmInferenceChart {
     this.modelDropdown()?.hide();
   }
 
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
@@ -272,10 +280,10 @@ export class LlmInferenceChart {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Element | Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
+      anchor: el,
       content,
       variant: "warning-wide",
       onShow: (tooltipContent) => {

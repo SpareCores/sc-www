@@ -10,6 +10,7 @@ import {
   BreadcrumbSegment,
   Breadcrumbs,
 } from "../../components/breadcrumbs/breadcrumbs";
+import { PageHeader } from "../../components/page-header/page-header";
 import { SeoHandler } from "../../services/seo-handler";
 import { KeeperAPI } from "../../services/keeper-api";
 import {
@@ -45,6 +46,7 @@ const colors = chartSeriesTokens.map((token) => chartColors[token]);
   imports: [
     Button,
     Breadcrumbs,
+    PageHeader,
     CountryIdtoNamePipe,
     FormsModule,
     RouterModule,

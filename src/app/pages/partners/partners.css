@@ -1,31 +1,36 @@
 @reference "../../../styles/tailwind.css";
 
 .partners-paragraph {
-  @apply my-10 text-lg text-white;
-
-  text-align: justify;
-  text-align-last: left;
+  @apply my-4 text-sm text-left text-white sm:my-10 sm:text-lg;
 }
 
 .partners-paragraph--list-intro {
   @apply mb-3;
 }
 
+.partners-paragraph--outro {
+  @apply mb-0 sm:mb-10;
+}
+
 .partners-heading {
-  @apply font-bold text-emerald-400 my-4;
+  @apply font-bold text-white my-4;
 }
 
 .partners-heading--section {
-  @apply text-2xl my-10;
+  @apply text-xl mt-8 mb-4 border-t border-gray-600 pt-8 sm:text-2xl;
+}
+
+.partners-heading--section + .partners-paragraph {
+  @apply mt-4 sm:mt-8;
 }
 
 .partners-heading--subsection {
-  @apply text-xl;
+  @apply text-xl mt-8 sm:mt-4;
 }
 
 .partner-logos {
   --partner-mobile-gap: 2rem;
-  @apply my-8 flex flex-wrap items-center justify-center gap-8 overflow-x-auto pb-2;
+  @apply flex flex-wrap mb-4 sm:my-8 items-center justify-center gap-8 overflow-x-auto sm:pb-2;
 }
 
 @media (width < theme(--breakpoint-md)) {
@@ -76,15 +81,19 @@
 }
 
 .partner-logos--compact .partner-logo-image {
-  @apply h-7 md:h-8;
+  @apply h-10 max-w-full sm:h-7 md:h-8;
+}
+
+.partner-logos--compact.partner-logos--two-rows-mobile .partner-logo-image {
+  @apply sm:max-w-[min(100%,8rem)] md:max-w-full;
 }
 
 .partner-logos--compact .partner-logo-image--compact {
-  @apply h-6 md:h-7;
+  @apply h-10 sm:h-6 md:h-7;
 }
 
 .partner-logo-link {
-  @apply inline-flex shrink-0 items-center justify-center;
+  @apply inline-flex h-10 shrink-0 items-center justify-center sm:h-auto;
 }
 
 .partner-logo-image {
@@ -100,14 +109,5 @@
 }
 
 .partners-list li {
-  @apply list-disc text-lg my-1 ml-8 text-white;
-
-  text-align: justify;
-  text-align-last: left;
-}
-
-.partners-divider {
-  @apply my-10 border-0 border-t;
-
-  border-color: color-mix(in oklab, var(--color-emerald-400) 40%, transparent);
+  @apply list-disc text-sm text-left my-1 mx-8 text-white sm:mr-0 sm:text-lg;
 }

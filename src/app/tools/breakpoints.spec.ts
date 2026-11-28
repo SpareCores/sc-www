@@ -1,20 +1,55 @@
-import { isBelowBreakpoint } from "./breakpoints";
+import { TestBed } from "@angular/core/testing";
+import { watchBelowBreakpoint } from "./breakpoints";
 
-describe("isBelowBreakpoint", () => {
-  it("should query the viewport below the breakpoint width", () => {
-    const matchMedia = spyOn(window, "matchMedia").and.returnValue({
-      matches: true,
-    } as MediaQueryList);
+describe("watchBelowBreakpoint", () => {
+  let changeListener: ((event: MediaQueryListEvent) => void) | undefined;
+  let query: jasmine.SpyObj<MediaQueryList>;
 
-    expect(isBelowBreakpoint(window, "wide")).toBeTrue();
-    expect(matchMedia).toHaveBeenCalledWith("(width < 75rem)");
+  beforeEach(() => {
+    changeListener = undefined;
+    query = jasmine.createSpyObj<MediaQueryList>(
+      "MediaQueryList",
+      ["addEventListener", "removeEventListener"],
+      { matches: true },
+    );
+    query.addEventListener.and.callFake(
+      (_type: string, listener: EventListenerOrEventListenerObject) => {
+        changeListener = listener as (event: MediaQueryListEvent) => void;
+      },
+    );
   });
 
-  it("should return false at or above the breakpoint", () => {
-    spyOn(window, "matchMedia").and.returnValue({
-      matches: false,
-    } as MediaQueryList);
+  it("should start false and read the viewport after the first render", () => {
+    const matchMedia = spyOn(window, "matchMedia").and.returnValue(query);
 
-    expect(isBelowBreakpoint(window, "lg")).toBeFalse();
+    const isBelow = TestBed.runInInjectionContext(() =>
+      watchBelowBreakpoint("lg"),
+    );
+
+    expect(isBelow()).toBeFalse();
+    expect(matchMedia).not.toHaveBeenCalled();
+
+    TestBed.tick();
+
+    expect(matchMedia).toHaveBeenCalledWith("(width < 64rem)");
+    expect(isBelow()).toBeTrue();
+
+    changeListener?.({ matches: false } as MediaQueryListEvent);
+
+    expect(isBelow()).toBeFalse();
+  });
+
+  it("should remove the listener on destroy", () => {
+    spyOn(window, "matchMedia").and.returnValue(query);
+
+    TestBed.runInInjectionContext(() => watchBelowBreakpoint("lg"));
+    TestBed.tick();
+    TestBed.resetTestingModule();
+
+    expect(changeListener).toBeDefined();
+    expect(query.removeEventListener).toHaveBeenCalledWith(
+      "change",
+      changeListener as EventListener,
+    );
   });
 });

@@ -44,6 +44,7 @@ import {
 } from "../../../core/auth";
 import { ModalDialog } from "../../../services/modal-dialog";
 import { UiTooltip } from "../../../services/ui-tooltip";
+import { TooltipTrigger } from "../../../directives/tooltip-trigger";
 import { Button } from "../../button/button";
 import { LoadingSpinner } from "../../loading-spinner/loading-spinner";
 import { Modal } from "../modal/modal";
@@ -98,6 +99,7 @@ const CONFIRM_SECTIONS: Record<ProfileConfirm["kind"], ProfileSection> = {
   imports: [
     DatePipe,
     NgTemplateOutlet,
+    TooltipTrigger,
     FormsModule,
     Button,
     LucideBuilding,
@@ -496,8 +498,8 @@ export class ProfileModal {
     await this.loadTokens();
   }
 
-  protected showTooltip(tooltip: HTMLElement, event: Event): void {
-    this.uiTooltip.show(tooltip, event);
+  protected showTooltip(tooltip: HTMLElement, anchor: Element): void {
+    this.uiTooltip.show(tooltip, anchor);
   }
 
   protected hideTooltip(tooltip: HTMLElement): void {
